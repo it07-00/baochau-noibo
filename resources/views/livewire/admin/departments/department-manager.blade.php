@@ -1,6 +1,6 @@
 <div>
     @section('title', 'Quản lý Phòng ban')
-    @section('page_title', 'Danh sách Phòng ban (Livewire)')
+    @section('page_title', 'Danh sách Phòng ban')
 
     @php
         $breadcrumbs = [

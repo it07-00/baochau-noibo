@@ -1,6 +1,6 @@
 <div>
     @section('title', 'Người dùng')
-    @section('page_title', 'Người dùng (Livewire)')
+    @section('page_title', 'Người dùng')
 
     @php
         $breadcrumbs = [
