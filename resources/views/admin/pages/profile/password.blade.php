@@ -5,8 +5,8 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
-        ['label' => 'Hồ sơ của tôi', 'url' => route('admin.profile.index')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
+        ['label' => 'Hồ sơ của tôi', 'url' => route('app.profile.index')],
         ['label' => 'Đổi mật khẩu'],
     ];
 @endphp
@@ -34,7 +34,7 @@
                 <div class="card-body p-6">
                     <h3 class="h6 fs-4 fw-semibold mb-4">Đổi mật khẩu tài khoản</h3>
 
-                    <form method="POST" action="{{ route('admin.password.update') }}">
+                    <form method="POST" action="{{ route('app.password.update') }}">
                         @csrf
 
                         <div class="mb-3">
@@ -74,7 +74,7 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.profile.index') }}" class="btn btn-custom-secondary">Quay lại hồ sơ</a>
+                            <a href="{{ route('app.profile.index') }}" class="btn btn-custom-secondary">Quay lại hồ sơ</a>
                             <button class="btn btn-primary" type="submit">Cập nhật mật khẩu</button>
                         </div>
                     </form>

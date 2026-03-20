@@ -5,8 +5,8 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
-        ['label' => 'Vai trò', 'url' => route('admin.roles.index')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
+        ['label' => 'Vai trò', 'url' => route('app.roles.index')],
         ['label' => 'Chỉnh sửa'],
     ];
 
@@ -34,7 +34,7 @@
 @endphp
 
 @section('content')
-    <form action="{{ route('admin.roles.update', $role) }}" method="POST">
+    <form action="{{ route('app.roles.update', $role) }}" method="POST">
         @csrf
         @method('PUT')
         
@@ -53,7 +53,7 @@
 
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-primary py-2">Lưu thay đổi</button>
-                            <a href="{{ route('admin.roles.index') }}" class="btn btn-light mt-2 py-2">Hủy bỏ</a>
+                            <a href="{{ route('app.roles.index') }}" class="btn btn-light mt-2 py-2">Hủy bỏ</a>
                         </div>
                     </div>
                 </div>

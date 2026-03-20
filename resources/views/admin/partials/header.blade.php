@@ -93,9 +93,9 @@
                             </div>
                         </div>
                         <div class="dropdown-body py-2">
-                            <a class="dropdown-item" href="{{ route('admin.profile.index') }}">Hồ sơ của tôi</a>
-                            <a class="dropdown-item" href="{{ route('admin.password.index') }}">Đổi mật khẩu</a>
-                            <a class="dropdown-item" href="{{ route('admin.settings.index') }}">Cài đặt hệ thống</a>
+                            <a class="dropdown-item" href="{{ route('app.profile.index') }}">Hồ sơ của tôi</a>
+                            <a class="dropdown-item" href="{{ route('app.password.index') }}">Đổi mật khẩu</a>
+                            <a class="dropdown-item" href="{{ route('app.settings.index') }}">Cài đặt hệ thống</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="dropdown-item">Đăng xuất</button>

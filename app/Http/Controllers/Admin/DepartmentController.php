@@ -35,7 +35,7 @@ class DepartmentController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.departments.index')
+            ->route('app.departments.index')
             ->with('status', 'Tạo phòng ban thành công.');
     }
 
@@ -59,7 +59,7 @@ class DepartmentController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.departments.index')
+            ->route('app.departments.index')
             ->with('status', 'Cập nhật phòng ban thành công.');
     }
 
@@ -72,7 +72,7 @@ class DepartmentController extends Controller
         $department->delete();
 
         return redirect()
-            ->route('admin.departments.index')
+            ->route('app.departments.index')
             ->with('status', 'Xóa phòng ban thành công.');
     }
 }

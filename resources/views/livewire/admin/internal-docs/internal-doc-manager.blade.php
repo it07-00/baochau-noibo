@@ -4,7 +4,7 @@
             <h4 class="mb-0">Danh sách Quy định</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Bảng điều khiển</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
                     <li class="breadcrumb-item active">Quy định</li>
                 </ol>
             </nav>

@@ -58,7 +58,7 @@ class UserController extends Controller
         $user->syncRoles([$validated['role']]);
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('app.users.index')
             ->with('status', 'Tạo người dùng thành công.');
     }
 
@@ -100,7 +100,7 @@ class UserController extends Controller
         $user->syncRoles([$validated['role']]);
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('app.users.index')
             ->with('status', 'Cập nhật người dùng thành công.');
     }
 
@@ -113,7 +113,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('app.users.index')
             ->with('status', 'Xóa người dùng thành công.');
     }
 }

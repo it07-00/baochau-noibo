@@ -40,7 +40,7 @@ class RoleController extends Controller
         }
 
         return redirect()
-            ->route('admin.roles.index')
+            ->route('app.roles.index')
             ->with('status', 'Tạo vai trò thành công.');
     }
 
@@ -67,7 +67,7 @@ class RoleController extends Controller
         $role->syncPermissions($validated['permissions'] ?? []);
 
         return redirect()
-            ->route('admin.roles.index')
+            ->route('app.roles.index')
             ->with('status', 'Cập nhật vai trò thành công.');
     }
 
@@ -80,7 +80,7 @@ class RoleController extends Controller
         $role->delete();
 
         return redirect()
-            ->route('admin.roles.index')
+            ->route('app.roles.index')
             ->with('status', 'Xóa vai trò thành công.');
     }
 }

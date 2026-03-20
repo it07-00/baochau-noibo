@@ -5,7 +5,7 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
         ['label' => 'Người dùng'],
     ];
 @endphp
@@ -35,7 +35,7 @@
             <div class="pure-card rounded-custom card-bg shadow-custom">
                 <div class="pure-card-header d-flex align-items-center justify-content-between gap-3">
                     <h3 class="pure-card-title m-0">Danh sách người dùng</h3>
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm">Tạo người dùng</a>
+                    <a href="{{ route('app.users.create') }}" class="btn btn-primary btn-sm">Tạo người dùng</a>
                 </div>
                 <div class="pure-card-body pb-3">
                     <div class="table-responsive">
@@ -87,12 +87,12 @@
                                         @endif
                                     </td>
                                     <td class="text-end">
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" title="Sửa">
+                                        <a href="{{ route('app.users.edit', $user) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" title="Sửa">
                                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                        <form action="{{ route('app.users.destroy', $user) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>

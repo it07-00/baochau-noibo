@@ -5,8 +5,8 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
-        ['label' => 'Người dùng', 'url' => route('admin.users.index')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
+        ['label' => 'Người dùng', 'url' => route('app.users.index')],
         ['label' => 'Chỉnh sửa'],
     ];
 @endphp
@@ -20,7 +20,7 @@
                 </div>
                 
                 <div class="pure-card-body p-4">
-                    <form action="{{ route('admin.users.update', $user) }}" method="POST">
+                    <form action="{{ route('app.users.update', $user) }}" method="POST">
                         @csrf
                         @method('PUT')
                         
@@ -94,7 +94,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4 pt-4 border-top">
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-light px-4">Hủy bỏ</a>
+                            <a href="{{ route('app.users.index') }}" class="btn btn-light px-4">Hủy bỏ</a>
                             <button type="submit" class="btn btn-primary px-4">Lưu thay đổi</button>
                         </div>
                     </form>

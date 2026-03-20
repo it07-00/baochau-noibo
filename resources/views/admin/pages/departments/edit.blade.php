@@ -5,8 +5,8 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
-        ['label' => 'Phòng ban', 'url' => route('admin.departments.index')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
+        ['label' => 'Phòng ban', 'url' => route('app.departments.index')],
         ['label' => 'Chỉnh sửa'],
     ];
 @endphp
@@ -19,7 +19,7 @@
                     <h5 class="pure-card-title m-0">Thông tin phòng ban</h5>
                 </div>
                 <div class="pure-card-body p-4">
-                    <form action="{{ route('admin.departments.update', $department) }}" method="POST">
+                    <form action="{{ route('app.departments.update', $department) }}" method="POST">
                         @csrf
                         @method('PUT')
                         
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4 pt-4 border-top">
-                            <a href="{{ route('admin.departments.index') }}" class="btn btn-light px-4">Hủy bỏ</a>
+                            <a href="{{ route('app.departments.index') }}" class="btn btn-light px-4">Hủy bỏ</a>
                             <button type="submit" class="btn btn-primary px-4">Lưu thay đổi</button>
                         </div>
                     </form>

@@ -8,7 +8,7 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ route('admin.dashboard') }}" class="app-sidebar-logo">
+            <a href="{{ route('app.dashboard') }}" class="app-sidebar-logo">
                 <img class="app-main-logo logo-black" width="105" src="{{ asset('assets/images/logo.png') }}" alt="Conca">
                 <img class="app-main-logo logo-white d-none" width="105" src="{{ asset('assets/images/logo-white.png') }}" alt="Conca">
             </a>
@@ -23,7 +23,7 @@
         <div id="app-sidebar-menu" class="app-sidebar-menu">
             <ul>
                 <li class="app-sidebar-menu-item">
-                    <a href="{{ route('admin.dashboard') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('admin.dashboard') ? 'active menu-current' : '' }}">
+                    <a href="{{ route('app.dashboard') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="0.75" y="0.75" width="6.00021" height="7.5" rx="1.5" stroke="currentColor" stroke-width="1.5"></rect>
@@ -45,7 +45,7 @@
 
                 @can('users.view')
                 <li class="app-sidebar-menu-item">
-                    <a href="{{ route('admin.users.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('admin.users.*') ? 'active menu-current' : '' }}">
+                    <a href="{{ route('app.users.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.users.*') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
                             <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.94234 5.9423C7.37615 5.9423 8.53849 4.77997 8.53849 3.34615C8.53849 1.91234 7.37615 0.75 5.94234 0.75C4.50853 0.75 3.34619 1.91234 3.34619 3.34615C3.34619 4.77997 4.50853 5.9423 5.94234 5.9423Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -59,7 +59,7 @@
 
                 @can('roles.view')
                 <li class="app-sidebar-menu-item">
-                    <a href="{{ route('admin.roles.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('admin.roles.*') ? 'active menu-current' : '' }}">
+                    <a href="{{ route('app.roles.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.roles.*') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M8.5 1.5L2.5 4.5V8.5C2.5 12.5 5.5 15.5 8.5 16.5C11.5 15.5 14.5 12.5 14.5 8.5V4.5L8.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -72,7 +72,7 @@
 
                 @can('departments.view')
                 <li class="app-sidebar-menu-item">
-                    <a href="{{ route('admin.departments.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('admin.departments.*') ? 'active menu-current' : '' }}">
+                    <a href="{{ route('app.departments.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.departments.*') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.5 15.5V5.5L8.5 1.5L14.5 5.5V15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -243,10 +243,10 @@ SVG;
                     $activeGroup = null;
                     $activeChild = null;
 
-                    if (request()->routeIs('admin.internal-docs.*')) {
+                    if (request()->routeIs('app.internal-docs.*')) {
                         $activeGroup = 'Nội bộ';
                         $activeChild = 'Quy định';
-                    } elseif (request()->routeIs('admin.contracts.waste.*')) {
+                    } elseif (request()->routeIs('app.contracts.waste.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
                         $activeChild = 'Hợp đồng chất thải';
                     }
@@ -302,13 +302,13 @@ SVG;
                                     @php
                                         $href = 'javascript:void(0)';
                                         if ($menu['title'] === 'Nội bộ' && $child === 'Quy định') {
-                                            $href = route('admin.internal-docs.index');
+                                            $href = route('app.internal-docs.index');
                                         } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng chất thải') {
-                                            $href = route('admin.contracts.waste.index');
+                                            $href = route('app.contracts.waste.index');
                                         }
 
-                                        $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('admin.internal-docs.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng chất thải' && request()->routeIs('admin.contracts.waste.*'));
+                                        $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('app.internal-docs.*')) ||
+                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng chất thải' && request()->routeIs('app.contracts.waste.*'));
                                     @endphp
                                     <li>
                                         <a href="{{ $href }}" class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">

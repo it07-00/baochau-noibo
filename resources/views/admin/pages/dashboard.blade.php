@@ -5,7 +5,7 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
         ['label' => 'Bảng điều khiển'],
     ];
 @endphp

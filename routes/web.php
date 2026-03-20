@@ -2,14 +2,14 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return auth()->check()
-        ? redirect()->route('admin.dashboard')
+        ? redirect()->route('app.dashboard')
         : redirect()->route('login');
 });
 
@@ -22,7 +22,19 @@ Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+// Legacy URLs redirect: /admin/* -> /*
+Route::middleware('auth')->get('/admin/{path?}', function (Request $request, ?string $path = null) {
+    $target = '/' . ltrim($path ?: 'dashboard', '/');
+    $query = $request->getQueryString();
+
+    if ($query) {
+        $target .= '?' . $query;
+    }
+
+    return redirect($target, 301);
+})->where('path', '.*');
+
+Route::middleware('auth')->name('app.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('profile')->name('profile.')->group(function () {

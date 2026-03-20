@@ -35,7 +35,7 @@
             <h4 class="mb-0">Quản lý Hợp đồng chất thải</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Bảng điều khiển</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
                     <li class="breadcrumb-item active">Quản lý Hợp đồng chất thải</li>
                 </ol>
             </nav>

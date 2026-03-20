@@ -58,7 +58,7 @@ class SettingController extends Controller
         $user->save();
 
         return redirect()
-            ->route('admin.profile.index')
+            ->route('app.profile.index')
             ->with('status', 'Cập nhật thông tin thành công.');
     }
 
@@ -74,7 +74,7 @@ class SettingController extends Controller
         $user->save();
 
         return redirect()
-            ->route('admin.profile.index')
+            ->route('app.profile.index')
             ->with('status', 'Đổi mật khẩu thành công.');
     }
 }

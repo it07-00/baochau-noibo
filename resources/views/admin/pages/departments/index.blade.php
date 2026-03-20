@@ -5,7 +5,7 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
         ['label' => 'Phòng ban'],
     ];
 @endphp
@@ -23,7 +23,7 @@
             <div class="pure-card rounded-custom card-bg shadow-custom">
                 <div class="pure-card-header d-flex align-items-center justify-content-between gap-3">
                     <h3 class="pure-card-title m-0">Tất cả phòng ban</h3>
-                    <a href="{{ route('admin.departments.create') }}" class="btn btn-primary btn-sm">Tạo phòng ban</a>
+                    <a href="{{ route('app.departments.create') }}" class="btn btn-primary btn-sm">Tạo phòng ban</a>
                 </div>
                 <div class="pure-card-body pb-3">
                     <div class="table-responsive">
@@ -68,12 +68,12 @@
                                         <span class="badge bg-label-info px-2 py-1"><i class="fs-7 me-1 text-info fas fa-users"></i> {{ $department->users_count }} nhân sự</span>
                                     </td>
                                     <td class="text-end">
-                                        <a href="{{ route('admin.departments.edit', $department) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" title="Sửa">
+                                        <a href="{{ route('app.departments.edit', $department) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" title="Sửa">
                                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.departments.destroy', $department) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Xóa phòng ban này có thể ảnh hưởng hệ thống. Bạn có chắc chắn?');">
+                                        <form action="{{ route('app.departments.destroy', $department) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Xóa phòng ban này có thể ảnh hưởng hệ thống. Bạn có chắc chắn?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $department->users_count > 0 ? 'disabled' : '' }}>

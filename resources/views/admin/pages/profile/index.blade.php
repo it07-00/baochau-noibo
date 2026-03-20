@@ -5,7 +5,7 @@
 
 @php
     $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
+        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
         ['label' => 'Hồ sơ của tôi'],
     ];
 
@@ -37,7 +37,7 @@
                 <div class="card-body p-6">
                     <h3 class="h6 fs-4 fw-semibold mb-5">Chỉnh sửa thông tin cá nhân</h3>
 
-                    <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('app.profile.update') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-4">
@@ -148,7 +148,7 @@
                 <div class="card-body p-6">
                     <h3 class="h6 fs-4 fw-semibold mb-4">Đổi mật khẩu</h3>
                     <p class="text-muted mb-4">Tính năng đổi mật khẩu đã được tách sang trang riêng để dễ quản lý hơn.</p>
-                    <a href="{{ route('admin.password.index') }}" class="btn btn-label-primary w-100">Đi tới trang đổi mật khẩu</a>
+                    <a href="{{ route('app.password.index') }}" class="btn btn-label-primary w-100">Đi tới trang đổi mật khẩu</a>
                 </div>
             </div>
         </div>
