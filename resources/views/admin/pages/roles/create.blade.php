@@ -1,0 +1,125 @@
+@extends('admin.layouts.app')
+
+@section('title', 'Thêm vai trò')
+@section('page_title', 'Tạo vai trò mới')
+
+@php
+    $breadcrumbs = [
+        ['label' => 'Quản trị', 'url' => route('admin.dashboard')],
+        ['label' => 'Vai trò', 'url' => route('admin.roles.index')],
+        ['label' => 'Tạo mới'],
+    ];
+
+    $moduleNames = [
+        'users' => 'Người dùng',
+        'roles' => 'Vai trò & Phân quyền',
+        'departments' => 'Phòng ban',
+        'master-data' => 'Dữ liệu chuẩn',
+        'settings' => 'Cài đặt hệ thống',
+        'contracts-waste' => 'Hợp đồng chất thải',
+        'contracts-consulting' => 'Hợp đồng tư vấn',
+        'contracts-project' => 'Hợp đồng dự án',
+        'contracts-commercial' => 'Hợp đồng thương mại',
+        'invoices' => 'Hóa đơn',
+        'mail-delivery' => 'Chuyển phát thư',
+        'quotations' => 'Báo giá',
+        'waste-requests' => 'Yêu cầu rác',
+        'consulting-requests' => 'Yêu cầu tư vấn',
+        'project-requests' => 'Yêu cầu dự án',
+        'commercial-requests' => 'Yêu cầu thương mại',
+        'commissions' => 'Hoa hồng',
+        'reports' => 'Báo cáo',
+        'internal-docs' => 'Tài liệu nội bộ',
+    ];
+@endphp
+
+@section('content')
+    <form action="{{ route('admin.roles.store') }}" method="POST">
+        @csrf
+        
+        <div class="row g-4 mt-1">
+            <div class="col-12 col-xl-4">
+                <div class="pure-card rounded-custom card-bg shadow-custom mb-4 position-sticky" style="top: 100px;">
+                    <div class="pure-card-header border-bottom">
+                        <h5 class="pure-card-title m-0">Thông tin cơ bản</h5>
+                    </div>
+                    <div class="pure-card-body p-4">
+                        <div class="mb-4">
+                            <label class="form-label fw-medium">Tên vai trò <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required placeholder="Ví dụ: it, kinh-doanh">
+                            @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <div class="form-text mt-2">Dùng chữ thường không dấu, phân cách bằng dấu gạch ngang (VD: ketoan-truong).</div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary py-2">Tạo mới vai trò</button>
+                            <a href="{{ route('admin.roles.index') }}" class="btn btn-light mt-2 py-2">Hủy bỏ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-8">
+                <div class="pure-card rounded-custom card-bg shadow-custom">
+                    <div class="pure-card-header border-bottom d-flex align-items-center justify-content-between">
+                        <h5 class="pure-card-title m-0">Phân quyền chi tiết</h5>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="checkAll">
+                            <label class="form-check-label" for="checkAll">Chọn tất cả</label>
+                        </div>
+                    </div>
+                    <div class="pure-card-body p-0">
+                        @foreach($permissions as $module => $modulePermissions)
+                        <div class="permission-group border-bottom p-4">
+                            <h6 class="fw-bold mb-3 text-primary">{{ $moduleNames[$module] ?? strtoupper($module) }}</h6>
+                            <div class="row g-3">
+                                @foreach($modulePermissions as $permission)
+                                    @php
+                                        // Rút gọn tên permission để hiển thị đẹp hơn
+                                        $displayParts = explode('.', $permission->name);
+                                        $action = isset($displayParts[1]) ? $displayParts[1] : $displayParts[0];
+                                        $actionLabels = [
+                                            'view' => 'Xem danh sách',
+                                            'create' => 'Thêm mới',
+                                            'edit' => 'Chỉnh sửa',
+                                            'delete' => 'Xóa',
+                                            'approve' => 'Phê duyệt',
+                                            'export' => 'Xuất dữ liệu',
+                                            'report' => 'Xem báo cáo'
+                                        ];
+                                        $displayAction = $actionLabels[$action] ?? ucfirst($action);
+                                    @endphp
+                                    <div class="col-md-4 col-sm-6">
+                                        <div class="form-check custom-checkbox">
+                                            <input class="form-check-input perm-check" type="checkbox" 
+                                                name="permissions[]" 
+                                                value="{{ $permission->name }}" 
+                                                id="perm_{{ $permission->id }}"
+                                                {{ (is_array(old('permissions')) && in_array($permission->name, old('permissions'))) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="perm_{{ $permission->id }}">
+                                                {{ $displayAction }}
+                                                <small class="d-block text-muted" style="font-size: 0.75rem">{{ $permission->name }}</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @push('scripts')
+    <script>
+        document.getElementById('checkAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.perm-check');
+            checkboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+        });
+    </script>
+    @endpush
+@endsection
