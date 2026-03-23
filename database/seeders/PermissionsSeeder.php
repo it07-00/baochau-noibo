@@ -41,9 +41,10 @@ class PermissionsSeeder extends Seeder
             'renewals'            => ['view', 'create', 'edit', 'delete'],
             'revenue-progress'    => ['view', 'create', 'edit', 'delete'],
 
-            // Tài chính
+            // Tài chính & Báo cáo
             'commissions'         => ['view', 'create', 'edit', 'delete'],
             'advance-requests'    => ['view', 'create', 'edit', 'delete'],
+            'daily-reports'       => ['view', 'view-all', 'create', 'edit', 'delete'],
 
             // Vận hành
             'waste-requests'      => ['view', 'create', 'edit', 'delete'],
@@ -108,6 +109,9 @@ class PermissionsSeeder extends Seeder
             // Nội bộ & Bài viết
             'internal-docs.view', 'internal-docs.create', 'internal-docs.edit', 'internal-docs.delete',
             'articles.view', 'articles.create',
+            // Báo cáo ngày & Hoa hồng
+            'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit', 'daily-reports.delete',
+            'commissions.view', 'commissions.create', 'commissions.edit', 'commissions.delete',
         ]);
 
         // --- Kinh doanh (gộp Marketing) ---
@@ -132,6 +136,9 @@ class PermissionsSeeder extends Seeder
             // Nội bộ & Bài viết (Marketing)
             'internal-docs.view',
             'articles.view', 'articles.create', 'articles.edit', 'articles.delete',
+            // Báo cáo ngày & Hoa hồng
+            'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            'commissions.view', 'commissions.create',
         ]);
 
         // --- Kế toán ---
@@ -150,6 +157,9 @@ class PermissionsSeeder extends Seeder
             'rankings.view', 'statistics.view', 'reports.view',
             // Nội bộ
             'internal-docs.view',
+            // Báo cáo ngày & Hoa hồng
+            'daily-reports.view', 'daily-reports.create',
+            'commissions.view', 'commissions.create', 'commissions.edit', 'commissions.delete',
         ]);
 
         // --- Tư vấn - CSKH (gộp) ---
@@ -175,6 +185,8 @@ class PermissionsSeeder extends Seeder
             'rankings.view', 'statistics.view', 'reports.view',
             // Nội bộ
             'internal-docs.view',
+            // Báo cáo ngày
+            'daily-reports.view', 'daily-reports.create',
         ]);
         
         // --- Kỹ thuật ---
@@ -185,6 +197,8 @@ class PermissionsSeeder extends Seeder
                 'waste-requests.view', 'waste-requests.create', 'waste-requests.edit',
                 'technical-requests.view', 'technical-requests.create', 'technical-requests.edit', 'technical-requests.delete',
                 'internal-docs.view',
+                // Báo cáo ngày
+                'daily-reports.view', 'daily-reports.create',
             ]);
         }
     }

@@ -1,0 +1,198 @@
+/* ================================================
+   Contract Management - Custom Styles
+   Dùng chung cho tất cả các trang quản lý hợp đồng
+   ================================================ */
+
+/* Inline style ẩn Alpine.js trước khi load */
+[x-cloak] { display: none !important; }
+
+/* ----- Filter Labels ----- */
+.custom-filter-label {
+    font-size: 12px;
+    margin-bottom: 2px;
+    color: #666;
+}
+
+/* ----- Form Controls (compact size) ----- */
+.form-control-xs {
+    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+    height: auto;
+}
+
+/* ----- Table (compact) ----- */
+.table-xs td,
+.table-xs th {
+    font-size: 14px;
+    padding: 0.5rem 0.25rem;
+}
+
+/* ----- Modal title (white text trên nền tối) ----- */
+.modal-title-custom {
+    color: #ffffff !important;
+}
+
+/* ----- Filter / Action buttons ----- */
+.btn-filter {
+    font-size: 13px;
+    padding: 0.35rem 1rem;
+}
+
+/* ----- Searchable dropdown (Alpine.js) ----- */
+.dropdown-custom {
+    position: relative;
+}
+.dropdown-menu-custom {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    min-width: 100%;
+    padding: .5rem 0;
+    margin: .125rem 0 0;
+    font-size: 13px;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .175);
+}
+.dropdown-menu-custom .dropdown-item {
+    font-size: 13px;
+    padding: 0.4rem 0.8rem;
+}
+.dropdown-menu-custom .form-control-sm {
+    font-size: 13px;
+}
+
+/* Cho phép text dài wrap trong dropdown button */
+.dropdown-item.text-wrap,
+.form-select.text-wrap {
+    white-space: normal !important;
+}
+.form-select.text-wrap {
+    height: auto !important;
+    min-height: 31px;
+}
+
+/* ================================================
+   Dark Mode Overrides  (:root[data-bs-theme=dark])
+   ================================================ */
+:root[data-bs-theme=dark] .custom-filter-label {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+:root[data-bs-theme=dark] .dropdown-menu-custom {
+    background-color: #1e2029;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+:root[data-bs-theme=dark] .dropdown-menu-custom .dropdown-item {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+:root[data-bs-theme=dark] .dropdown-menu-custom .dropdown-item:hover,
+:root[data-bs-theme=dark] .dropdown-menu-custom .dropdown-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* Card header bg-white trong dark mode */
+:root[data-bs-theme=dark] .card-header.bg-white {
+    background-color: var(--bs-body-bg) !important;
+}
+
+/* ================================================
+   Consulting Workflow Stepper
+   ================================================ */
+.workflow-stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+    padding: 0 10px;
+}
+
+.workflow-stepper::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.stepper-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    z-index: 2;
+}
+
+.stepper-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.stepper-label {
+    font-size: 11px;
+    color: #6c757d;
+    text-align: center;
+    font-weight: 500;
+}
+
+.stepper-item.completed .stepper-circle {
+    background: #198754;
+    border-color: #198754;
+    color: #fff;
+}
+
+.stepper-item.active .stepper-circle {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+.stepper-item.active .stepper-label {
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.stepper-item.rejected .stepper-circle {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+:root[data-bs-theme=dark] .workflow-stepper::before {
+    background: #444;
+}
+
+:root[data-bs-theme=dark] .stepper-circle {
+    background: #2b3035;
+    border-color: #444;
+}
+
+.xsmall {
+    font-size: 10px;
+    padding: 2px 5px;
+}

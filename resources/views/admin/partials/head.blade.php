@@ -1,4 +1,13 @@
 <head>
+    <script>
+        (function() {
+            const theme = localStorage.getItem('conca_theme') || 'auto';
+            const resolvedTheme = theme === 'auto' 
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') 
+                : theme;
+            document.documentElement.setAttribute('data-bs-theme', resolvedTheme);
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,6 +20,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/sweetalert2.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
 
     @stack('styles')
     @livewireStyles

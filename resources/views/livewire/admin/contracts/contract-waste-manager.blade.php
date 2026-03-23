@@ -1,35 +1,5 @@
 <div>
-    <style>
-        [x-cloak] { display: none !important; }
-        .custom-filter-label { font-size: 12px; margin-bottom: 2px; text-transform: uppercase; color: #666; }
-        .form-control-xs { font-size: 12px; padding: 0.25rem 0.5rem; height: auto; }
-        .table-xs td, .table-xs th { font-size: 14px; padding: 0.5rem 0.25rem; }
-        .modal-title-custom { color: #ffffff !important; }
-        .dropdown-item.text-wrap { white-space: normal !important; }
-        .form-select.text-wrap { white-space: normal !important; height: auto !important; min-height: 31px; }
-        .dropdown-custom { position: relative; }
-        .dropdown-menu-custom { 
-            position: absolute; 
-            top: 100%; 
-            left: 0; 
-            z-index: 1000; 
-            min-width: 100%; 
-            padding: .5rem 0; 
-            margin: .125rem 0 0; 
-            font-size: 13px; 
-            color: #212529; 
-            text-align: left; 
-            list-style: none; 
-            background-color: #fff; 
-            background-clip: padding-box; 
-            border: 1px solid rgba(0,0,0,.15); 
-            border-radius: .25rem;
-            box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
-        }
-        .dropdown-menu-custom .dropdown-item { font-size: 13px; padding: 0.4rem 0.8rem; }
-        .dropdown-menu-custom .form-control-sm { font-size: 13px; }
-        .btn-filter { font-size: 13px; padding: 0.35rem 1rem; }
-    </style>
+
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
             <h4 class="mb-0">Quản lý Hợp đồng chất thải</h4>
@@ -269,31 +239,17 @@
                     </div>
 
                     <div class="col-md-9 d-flex align-items-end gap-2 justify-content-start">
-                        <button class="btn btn-info text-white px-4 d-flex align-items-center gap-2 btn-filter" wire:click="$refresh">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-                                <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            Lọc
+                        <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
+                            <i class="bi bi-search me-1"></i>Lọc
                         </button>
-                        <button class="btn btn-secondary px-4 d-flex align-items-center gap-2 btn-filter" wire:click="resetFilters">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C10.5 3 9 3.5 8 4.5M3 12H8V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Xóa lọc
+                        <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>Xóa lọc
                         </button>
-                        <button class="btn btn-success px-4 d-flex align-items-center gap-2 btn-filter">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 3V15M12 15L8 11M12 15L16 11M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Xuất Excel
+                        <button class="btn btn-success px-4 btn-filter">
+                            <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
                         </button>
-                        <button class="btn btn-primary px-4 d-flex align-items-center gap-2 btn-filter">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16 2H8C4.68629 2 2 4.68629 2 8V16C2 19.3137 4.68629 22 8 22H16C19.3137 22 22 19.3137 22 16V8C22 4.68629 19.3137 2 16 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Quy trình
+                        <button class="btn btn-primary px-4 btn-filter">
+                            <i class="bi bi-diagram-3 me-1"></i>Quy trình
                         </button>
                     </div>
                 </div>
@@ -364,15 +320,10 @@
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm p-0 text-danger" wire:click="viewDetail({{ $doc->id }})">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                                    <i class="bi bi-eye fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-info">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M21 11.5V11C21 6.02944 16.9706 2 12 2C7.02944 2 3 6.02944 3 11V11.5C3 13.5 3.5 15.5 4.5 17L3 21L7 19.5C8.5 20.5 10.5 21 12.5 21C17.4706 21 21.5 16.9706 21.5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                                    <i class="bi bi-chat-dots fs-5"></i>
                                 </button>
                             </div>
                         </td>

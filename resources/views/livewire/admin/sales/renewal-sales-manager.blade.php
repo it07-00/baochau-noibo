@@ -1,0 +1,213 @@
+<div>
+    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-0">Quản lý Doanh số tái ký</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
+                    <li class="breadcrumb-item active">Quản lý Doanh số tái ký</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary d-flex align-items-center gap-2" wire:click="openCreateModal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Thêm mới
+            </button>
+            <div class="input-group" style="width: 250px;">
+                <input type="text" class="form-control" placeholder="Tìm kiếm theo SHD..." wire:model.live.debounce.300ms="search">
+                <button class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom border-secondary-subtle">
+            <h6 class="mb-0 fw-bold">Bộ lọc Doanh số tái ký</h6>
+            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+        </div>
+        <div class="collapse show" id="filterCollapse">
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold custom-filter-label">Tháng tính doanh số</label>
+                        <input type="month" class="form-control form-control-sm" wire:model.live="filter_month">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
+                        <select class="form-select form-control-sm" wire:model.live="filter_status">
+                            <option value="">Chọn tình trạng</option>
+                            @foreach($statuses as $st) <option value="{{ $st }}">{{ $st }}</option> @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button class="btn btn-primary px-4"><i class="bi bi-search me-1"></i> Lọc</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom border-secondary-subtle">
+            <h6 class="mb-0 fw-bold">Danh sách Doanh số tái ký</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">THÔNG TIN HỢP ĐỒNG</th>
+                        <th>KHÁCH HÀNG</th>
+                        <th class="text-center">THÁNG TÍNH DOANH SỐ</th>
+                        <th class="text-end">GIÁ TRỊ TÍNH DOANH SỐ</th>
+                        <th class="text-end">HOA HỒNG</th>
+                        <th class="text-end">DOANH SỐ</th>
+                        <th class="text-center">TÌNH TRẠNG</th>
+                        <th class="text-center pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($items as $item)
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold">SHD: {{ $item->contract_number }}</div>
+                            <small class="text-muted">Ngày tạo: {{ $item->created_at->format('d/m/Y') }}</small>
+                        </td>
+                        <td>
+                            <div class="text-muted small">Cần bổ sung quan hệ khách hàng</div>
+                        </td>
+                        <td class="text-center">{{ $item->sales_month->format('m/Y') }}</td>
+                        <td class="text-end fw-bold text-danger">{{ number_format($item->sales_value) }}đ</td>
+                        <td class="text-end fw-bold">{{ number_format($item->commission) }}đ</td>
+                        <td class="text-end fw-bold">{{ number_format($item->sales_amount) }}đ</td>
+                        <td class="text-center">
+                            <span class="badge bg-info-subtle text-info border border-info-subtle">{{ $item->status ?? 'Chờ xử lý' }}</span>
+                        </td>
+                        <td class="text-center pe-4">
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-sm btn-outline-primary" wire:click="edit({{ $item->id }})"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="confirm('Xác nhận xóa?') || event.stopImmediatePropagation()" wire:click="delete({{ $item->id }})"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <p class="text-muted">Không tìm thấy dữ liệu</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white border-0 py-3">
+            {{ $items->links() }}
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal fade" id="renewal-modal" tabindex="-1" wire:ignore.self>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title">{{ $isEditing ? 'Cập nhật Doanh số tái ký' : 'Thêm mới Doanh số tái ký' }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form wire:submit.prevent="save">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Số hợp đồng <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" wire:model="contract_number" placeholder="Chọn số hợp đồng">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Tháng tính doanh số <span class="text-danger">*</span></label>
+                                <input type="month" class="form-control form-control-sm" wire:model="sales_month">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Giá trị tính doanh số <span class="text-danger">*</span></label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" wire:model.blur="sales_value" wire:change="calculateSales">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Hoa hồng <span class="text-danger">*</span></label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" wire:model="commission">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">% tính doanh số <span class="text-danger">*</span></label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" wire:model.blur="sales_percentage" wire:change="calculateSales">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold">Doanh số</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control bg-light" wire:model="sales_amount" readonly>
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Tình trạng <span class="text-danger">*</span></label>
+                                <select class="form-select form-control-sm" wire:model="status">
+                                    <option value="">Chọn tình trạng</option>
+                                    <option value="Hợp đồng mẫu">Hợp đồng mẫu</option>
+                                    <option value="Đã ký">Đã ký</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Ghi chú</label>
+                                <textarea class="form-control form-control-sm" wire:model="notes" rows="3"></textarea>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Tệp đính kèm</label>
+                                <input type="file" class="form-control form-control-sm" wire:model="file">
+                                <small class="text-muted">.doc|.docx|.pdf|.rar|.zip|.ppt|.pptx|.xls|.xlsx|.png|.jpg</small>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Thoát</button>
+                            <button type="submit" class="btn btn-primary px-4">Lưu lại</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts for Modal -->
+    <script>
+        window.addEventListener('open-modal', event => {
+            if(event.detail === 'renewal-modal') {
+                var myModal = new bootstrap.Modal(document.getElementById('renewal-modal'));
+                myModal.show();
+            }
+        });
+        window.addEventListener('close-modal', event => {
+            if(event.detail === 'renewal-modal') {
+                var myModalel = document.getElementById('renewal-modal');
+                var modal = bootstrap.Modal.getInstance(myModalel);
+                if(modal) modal.hide();
+            }
+        });
+    </script>
+</div>

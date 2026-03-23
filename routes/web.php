@@ -71,8 +71,28 @@ Route::middleware('auth')->name('app.')->group(function () {
     // Internal Docs
     Route::get('internal-docs', \App\Livewire\Admin\InternalDocs\InternalDocManager::class)->name('internal-docs.index')->middleware('permission:internal-docs.view');
 
+    // Daily Reports
+    Route::get('daily-reports', \App\Livewire\Admin\DailyReports\DailyReportManager::class)->name('daily-reports.index')->middleware('permission:daily-reports.view');
+
+    // Commissions
+    Route::prefix('commissions')->name('commissions.')->middleware('permission:commissions.view')->group(function () {
+        Route::get('/', \App\Livewire\Admin\Commissions\CommissionRequestManager::class)->name('index');
+        Route::get('/create', \App\Livewire\Admin\Commissions\CommissionRequestForm::class)->name('create');
+        Route::get('/{id}/edit', \App\Livewire\Admin\Commissions\CommissionRequestForm::class)->name('edit');
+    });
+
     // Contracts
     Route::prefix('contracts')->name('contracts.')->group(function () {
         Route::get('waste', \App\Livewire\Admin\Contracts\ContractWasteManager::class)->name('waste.index')->middleware('permission:contracts-waste.view');
+        Route::get('consulting', \App\Livewire\Admin\Contracts\ContractConsultingManager::class)->name('consulting.index')->middleware('permission:contracts-consulting.view');
+        Route::get('project', \App\Livewire\Admin\Contracts\ContractProjectManager::class)->name('project.index')->middleware('permission:contracts-project.view');
+        Route::get('commercial', \App\Livewire\Admin\Contracts\ContractCommercialManager::class)->name('commercial.index')->middleware('permission:contracts-commercial.view');
+    });
+
+    // Sales Department
+    Route::prefix('sales')->name('sales.')->group(function () {
+        Route::get('quotation', \App\Livewire\Admin\Sales\QuotationSalesManager::class)->name('quotation.index')->middleware('permission:sales-quotation.view');
+        Route::get('renewal', \App\Livewire\Admin\Sales\RenewalSalesManager::class)->name('renewal.index')->middleware('permission:sales-renewal.view');
+        Route::get('progressive', \App\Livewire\Admin\Sales\ProgressiveSalesManager::class)->name('progressive.index')->middleware('permission:sales-progressive.view');
     });
 });
