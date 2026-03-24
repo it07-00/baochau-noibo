@@ -158,7 +158,7 @@ SVG;
                             'title' => 'Chuyển phát thư',
                             'icon' => $stackIcon,
                             'permission' => 'mail-delivery.view',
-                            'children' => ['Chuyển phát thư'],
+                            'children' => ['Quản lý chuyển phát'],
                         ],
                         [
                             'title' => 'Bộ phận kinh doanh',
@@ -279,6 +279,9 @@ SVG;
                     } elseif (request()->routeIs('app.sales.progressive.*')) {
                         $activeGroup = 'Bộ phận kinh doanh';
                         $activeChild = 'Doanh số theo tiến độ';
+                    } elseif (request()->routeIs('app.postal-deliveries.*')) {
+                        $activeGroup = 'Chuyển phát thư';
+                        $activeChild = 'Quản lý chuyển phát';
                     }
                 @endphp
 
@@ -351,6 +354,8 @@ SVG;
                                             $href = route('app.sales.renewal.index');
                                         } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ') {
                                             $href = route('app.sales.progressive.index');
+                                        } elseif ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát') {
+                                            $href = route('app.postal-deliveries.index');
                                         }
 
                                         $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('app.internal-docs.*')) ||
@@ -362,7 +367,8 @@ SVG;
                                                       ($menu['title'] === 'Bộ phận kế toán' && $child === 'Yêu cầu chi hoa hồng' && request()->routeIs('app.commissions.*')) ||
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số báo giá' && request()->routeIs('app.sales.quotation.*')) ||
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số tái ký' && request()->routeIs('app.sales.renewal.*')) ||
-                                                      ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ' && request()->routeIs('app.sales.progressive.*'));
+                                                      ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ' && request()->routeIs('app.sales.progressive.*')) ||
+                                                      ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát' && request()->routeIs('app.app.postal-deliveries.*'));
                                     @endphp
                                     <li>
                                         <a href="{{ $href }}" class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">

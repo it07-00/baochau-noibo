@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'viettelpost' => [
+        'base_url' => env('VIETTELPOST_BASE_URL', 'https://partner.viettelpost.vn/v2'),
+        'username' => env('VIETTELPOST_USERNAME'),
+        'password' => env('VIETTELPOST_PASSWORD'),
+        // Thông tin người gửi mặc định (công ty)
+        'sender_name' => env('VIETTELPOST_SENDER_NAME', 'Công ty Môi trường Bảo Châu'),
+        'sender_phone' => env('VIETTELPOST_SENDER_PHONE'),
+        'sender_address' => env('VIETTELPOST_SENDER_ADDRESS'),
+        'sender_ward' => env('VIETTELPOST_SENDER_WARD'),
+        'sender_district' => env('VIETTELPOST_SENDER_DISTRICT'),
+        'sender_province' => env('VIETTELPOST_SENDER_PROVINCE'),
+    ],
+
 ];
