@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['user_id', 'date', 'content', 'plan', 'issues'])]
+#[Fillable(['user_id', 'date', 'content', 'plan', 'status', 'issues'])]
 class DailyReport extends Model
 {
     /** @use HasFactory */

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('date');
             $table->text('content');
             $table->text('plan');
+            $table->string('status')->default('Hoàn thành');
             $table->text('issues')->nullable();
             $table->timestamps();
         });

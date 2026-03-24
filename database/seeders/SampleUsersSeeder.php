@@ -47,6 +47,20 @@ class SampleUsersSeeder extends Seeder
                 'role'          => 'tu-van',
                 'department'    => 'tu-van-cskh',
             ],
+            [
+                'name'          => 'Nguyễn Văn Giám Đốc',
+                'username'      => 'giamdoc',
+                'password'      => 'password',
+                'role'          => 'it',
+                'department'    => 'admin',
+            ],
+            [
+                'name'          => 'Trần Thị Trưởng Phòng',
+                'username'      => 'tpkd',
+                'password'      => 'password',
+                'role'          => 'quan-ly',
+                'department'    => 'kinh-doanh',
+            ],
         ];
 
         foreach ($sampleUsers as $userData) {

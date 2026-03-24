@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             SampleUsersSeeder::class,
             InternalDocsSeeder::class,
             ContractWasteSeeder::class,
+            DailyReportSeeder::class,
         ]);
     }
 }

@@ -4,6 +4,7 @@
 <script src="{{ asset('assets/js/conca-sidebar.js') }}"></script>
 <script src="{{ asset('assets/js/conca.js') }}"></script>
 <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>
+<script src="{{ asset('assets/js/ckeditor.js') }}"></script>
 
 <script>
     // Toast configuration
@@ -63,6 +64,22 @@
             if (result.isConfirmed) {
                 // Call the component method back
                 window.Livewire.find(event.detail[0].component).call(event.detail[0].method, event.detail[0].id);
+            }
+        });
+    });
+
+    window.addEventListener('swal:success', event => {
+        Swal.fire({
+            title: 'Thành công!',
+            text: event.detail[0].message,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false,
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
             }
         });
     });
