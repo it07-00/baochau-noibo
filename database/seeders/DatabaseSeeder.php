@@ -15,18 +15,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(20)->create();
-
-        User::factory()->create([
-            'name' => 'Quản trị hệ thống',
-            'username' => 'admin',
-            'password' => 'password',
-        ]);
-
-        User::factory()->create([
-            'name' => 'Tài khoản mẫu',
-            'username' => 'testuser',
-            'password' => 'password',
+        $this->call([
+            PermissionsSeeder::class,
+            RolesSeeder::class,
+            DepartmentsSeeder::class,
+            SampleUsersSeeder::class,
+            InternalDocsSeeder::class,
+            ContractWasteSeeder::class,
         ]);
     }
 }
