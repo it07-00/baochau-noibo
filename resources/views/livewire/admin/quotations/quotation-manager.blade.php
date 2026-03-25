@@ -65,14 +65,11 @@
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem;">
                 <thead class="bg-light bg-opacity-50">
-                    <tr class="text-muted text-uppercase fw-bold">
+                    <tr class="text-muted fw-bold">
                         <th class="ps-3" style="width: 50px;">STT</th>
                         <th style="width: 100px;">Sale</th>
                         <th style="width: 100px;">Ngày</th>
-                        <th style="width: 200px;">Công ty</th>
-                        <th style="width: 250px;">Địa chỉ</th>
-                        <th style="width: 120px;">Ngành nghề</th>
-                        <th style="width: 120px;">Khách hàng</th>
+                        <th style="width: 400px;">Thông tin khách hàng / Đối tác</th>
                         <th>Nội dung công việc</th>
                         <th class="text-center" style="width: 150px;">Tình trạng</th>
                         <th class="text-end" style="width: 120px;">Giá chưa VAT</th>
@@ -89,11 +86,35 @@
                         <td class="ps-3">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
                         <td>{{ $item->staff?->name }}</td>
                         <td>{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</td>
-                        <td class="fw-bold text-uppercase">{{ $item->company_name }}</td>
-                        <td class="small text-muted">{{ $item->address }}</td>
-                        <td>{{ $item->industry }}</td>
-                        <td>{{ $item->contact_person }}</td>
-                        <td class="text-wrap" style="max-width: 300px;">{{ $item->work_description }}</td>
+                        <td>
+                            <div class="fw-bold text-primary mb-1 text-capitalize" style="font-size: 0.9rem; line-height: 1.3;">
+                                {{ $item->company_name }}
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                @if($item->industry)
+                                <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.7rem; font-weight: 500;">
+                                    <i class="bi bi-tag-fill me-1 text-muted"></i>{{ $item->industry }}
+                                </span>
+                                @endif
+                                @if($item->contact_person)
+                                <span class="small text-muted fw-medium">
+                                    <i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}
+                                </span>
+                                @endif
+                            </div>
+                            @if($item->address)
+                            <div class="small text-muted text-wrap opacity-75" 
+                                 style="line-height: 1.2; font-size: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                 title="{{ $item->address }}">
+                                <i class="bi bi-geo-alt-fill me-1"></i>{{ $item->address }}
+                            </div>
+                            @endif
+                        </td>
+                        <td class="text-wrap" style="max-width: 300px;">
+                            <div style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->work_description }}">
+                                {{ $item->work_description }}
+                            </div>
+                        </td>
                         <td class="text-center">
                             @php
                                 $colorClass = match($item->status) {
@@ -135,7 +156,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="14" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
+                        <td colspan="11" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -163,7 +184,7 @@
                             <tbody>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3" style="width: 30%;">Công ty / Khách hàng</th>
-                                    <td class="px-4 py-3 text-uppercase fw-bold text-primary">{{ $selectedQuotation->company_name }}</td>
+                                    <td class="px-4 py-3 fw-bold text-primary text-capitalize">{{ $selectedQuotation->company_name }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Địa chỉ</th>
