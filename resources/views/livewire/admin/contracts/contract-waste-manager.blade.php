@@ -11,6 +11,12 @@
             </nav>
         </div>
         <div class="d-flex gap-2">
+            <button class="btn btn-success d-flex align-items-center gap-2" wire:click="create">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Thêm mới
+            </button>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm" wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary">
@@ -319,11 +325,16 @@
                         </td>
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm p-0 text-danger" wire:click="viewDetail({{ $doc->id }})">
+                                <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                <button class="btn btn-sm p-0 text-info">
-                                    <i class="bi bi-chat-dots fs-5"></i>
+                                <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $doc->id }})">
+                                    <i class="bi bi-pencil-square fs-5"></i>
+                                </button>
+                                <button class="btn btn-sm p-0 text-danger" 
+                                        onclick="confirm('Xác nhận xóa hợp đồng này?') || event.stopImmediatePropagation()"
+                                        wire:click="delete({{ $doc->id }})">
+                                    <i class="bi bi-trash fs-5"></i>
                                 </button>
                             </div>
                         </td>
@@ -348,7 +359,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">Thông tin Hợp Đồng</h5>
+                    <h5 class="modal-title fw-bold text-white">Thông tin Hợp Đồng</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -445,8 +456,215 @@
         </div>
     </div>
 
+    <!-- Form Modal -->
+    <div wire:ignore.self class="modal fade" id="formModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content overflow-hidden border-0 shadow-lg">
+                <div class="modal-header bg-primary py-3">
+                    <h5 class="modal-title fw-bold text-white">{{ $isEditing ? 'Cập nhật Hợp đồng' : 'Thêm Hợp đồng mới' }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form wire:submit.prevent="save">
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <!-- Info -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Số HĐ CXL</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Số HĐ BC</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.shd_ad">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Khách hàng <span class="text-danger">*</span></label>
+                                <select class="form-select @error('formData.customer_id') is-invalid @enderror" wire:model.defer="formData.customer_id">
+                                    <option value="">Chọn khách hàng</option>
+                                    @foreach($customers as $customer)
+                                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('formData.customer_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Chủ xử lý <span class="text-danger">*</span></label>
+                                <select class="form-select @error('formData.handler_id') is-invalid @enderror" wire:model.defer="formData.handler_id">
+                                    <option value="">Chọn chủ xử lý</option>
+                                    @foreach($handlers as $h)
+                                        <option value="{{ $h->id }}">{{ $h->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('formData.handler_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Nhân viên <span class="text-danger">*</span></label>
+                                <select class="form-select @error('formData.staff_id') is-invalid @enderror" wire:model.defer="formData.staff_id">
+                                    <option value="">Chọn nhân viên</option>
+                                    @foreach($staffs as $s)
+                                        <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('formData.staff_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Phòng ban</label>
+                                <select class="form-select" wire:model.defer="formData.department_id">
+                                    <option value="">Chọn phòng ban</option>
+                                    @foreach($departments as $d)
+                                        <option value="{{ $d->id }}">{{ $d->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Nội dung</label>
+                                <textarea class="form-control" rows="2" wire:model.defer="formData.content"></textarea>
+                            </div>
+
+                            <!-- Values -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Giá trị hợp đồng <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control @error('formData.value') is-invalid @enderror" wire:model.defer="formData.value">
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                                @error('formData.value') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Hoa hồng</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" wire:model.defer="formData.commission">
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Doanh số thực</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" wire:model.defer="formData.revenue">
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                            </div>
+
+                            <!-- Dates -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ngày ký</label>
+                                <input type="date" class="form-control" wire:model.defer="formData.signed_at">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ngày hiệu lực</label>
+                                <input type="date" class="form-control" wire:model.defer="formData.effective_at">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ngày kết thúc</label>
+                                <input type="date" class="form-control" wire:model.defer="formData.end_at">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ngày trình ký</label>
+                                <input type="date" class="form-control" wire:model.defer="formData.submitted_at">
+                            </div>
+
+                            <!-- Addresses -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Địa chỉ xuất HĐ</label>
+                                <textarea class="form-control" rows="2" wire:model.defer="formData.billing_address"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Địa chỉ thực hiện</label>
+                                <textarea class="form-control" rows="2" wire:model.defer="formData.execution_address"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Địa chỉ gửi thư</label>
+                                <textarea class="form-control" rows="2" wire:model.defer="formData.mailing_address"></textarea>
+                            </div>
+
+                            <!-- Statuses -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tình trạng</label>
+                                <select class="form-select" wire:model.defer="formData.status">
+                                    <option value="">Chọn tình trạng</option>
+                                    <option value="ĐANG THỰC HIỆN">ĐANG THỰC HIỆN</option>
+                                    <option value="HOÀN THÀNH">HOÀN THÀNH</option>
+                                    <option value="TẠM DỪNG">TẠM DỪNG</option>
+                                    <option value="HỦY BỎ">HỦY BỎ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tình trạng tái ký</label>
+                                <select class="form-select" wire:model.defer="formData.renewal_status">
+                                    <option value="">Chọn tình trạng</option>
+                                    <option value="CHƯA ĐẾN HẠN">CHƯA ĐẾN HẠN</option>
+                                    <option value="ĐÃ TÁI KÝ">ĐÃ TÁI KÝ</option>
+                                    <option value="KHÔNG TÁI KÝ">KHÔNG TÁI KÝ</option>
+                                    <option value="CHỜ XÁC NHẬN">CHỜ XÁC NHẬN</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tình trạng chứng từ</label>
+                                <select class="form-select" wire:model.defer="formData.voucher_status">
+                                    <option value="">Chọn tình trạng</option>
+                                    <option value="CHƯA CÓ">CHƯA CÓ</option>
+                                    <option value="ĐÃ CÓ">ĐÃ CÓ</option>
+                                    <option value="THIẾU">THIẾU</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Nguồn thông tin</label>
+                                <select class="form-select" wire:model.defer="formData.source">
+                                    <option value="MỚI">MỚI</option>
+                                    <option value="TÁI KÝ">TÁI KÝ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">PT thanh toán</label>
+                                <select class="form-select" wire:model.defer="formData.payment_method">
+                                    <option value="Sau ký">Sau ký</option>
+                                    <option value="Trước ký">Trước ký</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 d-flex align-items-center gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="form_offset" wire:model.defer="formData.is_offset">
+                                    <label class="form-check-label" for="form_offset">Có bù trừ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="form_overdue" wire:model.defer="formData.is_overdue">
+                                    <label class="form-check-label" for="form_overdue">Trễ hạn</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Ghi chú</label>
+                                <textarea class="form-control" rows="2" wire:model.defer="formData.note"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                            <span wire:loading wire:target="save" class="spinner-border spinner-border-sm"></span>
+                            Lưu hợp đồng
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
+        window.addEventListener('openFormModal', () => {
+            let modal = new bootstrap.Modal(document.getElementById('formModal'));
+            modal.show();
+        });
+
+        window.addEventListener('closeFormModal', () => {
+            let modalElement = document.getElementById('formModal');
+            let modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+        });
+
         window.addEventListener('openDetailModal', () => {
             let modal = new bootstrap.Modal(document.getElementById('detailModal'));
             modal.show();

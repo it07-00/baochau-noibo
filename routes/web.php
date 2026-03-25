@@ -98,4 +98,7 @@ Route::middleware('auth')->name('app.')->group(function () {
 
     // Postal Deliveries
     Route::get('postal-deliveries', \App\Livewire\Admin\PostalDeliveries\PostalDeliveryManager::class)->name('postal-deliveries.index')->middleware('permission:mail-delivery.view');
+
+    // Quotation Tracking
+    Route::get('quotation-tracking', \App\Livewire\Admin\Quotations\QuotationManager::class)->name('quotation-tracking.index')->middleware('permission:quotation-tracking.view');
 });

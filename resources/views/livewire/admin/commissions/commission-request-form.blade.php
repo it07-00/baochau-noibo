@@ -34,11 +34,11 @@
         <div class="card-body p-4">
             <div class="row g-4">
                 <div class="col-12">
-                    <label class="form-label fw-bold">Số hợp đồng AD: <span class="text-danger">*</span></label>
+                    <label class="form-label fw-bold">Số hợp đồng BC: <span class="text-danger">*</span></label>
                     <select wire:model="contract_waste_id" class="form-select @error('contract_waste_id') is-invalid @enderror">
                         <option value="">Chọn số hợp đồng</option>
                         @foreach($contracts as $contract)
-                            <option value="{{ $contract->id }}">{{ $contract->shd_ad }} - {{ $contract->customer->name ?? 'N/A' }}</option>
+                            <option value="{{ $contract->id }}">BC {{ $contract->shd_ad }} - {{ $contract->customer->name ?? 'N/A' }}</option>
                         @endforeach
                     </select>
                     @error('contract_waste_id') <div class="invalid-feedback">{{ $message }}</div> @enderror

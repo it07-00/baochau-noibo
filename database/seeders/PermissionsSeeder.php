@@ -37,9 +37,10 @@ class PermissionsSeeder extends Seeder
             'handler-invoices'    => ['view', 'create', 'edit', 'delete'],
 
             // Kinh doanh
-            'quotations'          => ['view', 'create', 'edit', 'delete'],
-            'renewals'            => ['view', 'create', 'edit', 'delete'],
-            'revenue-progress'    => ['view', 'create', 'edit', 'delete'],
+            'sales-quotation'     => ['view', 'create', 'edit', 'delete'],
+            'quotation-tracking'  => ['view', 'create', 'edit', 'delete'],
+            'sales-renewal'       => ['view', 'create', 'edit', 'delete'],
+            'sales-progressive'   => ['view', 'create', 'edit', 'delete'],
 
             // Tài chính & Báo cáo
             'commissions'         => ['view', 'create', 'edit', 'delete'],
@@ -95,9 +96,10 @@ class PermissionsSeeder extends Seeder
             // Hóa đơn: xem
             'invoices.view', 'handler-invoices.view',
             // Kinh doanh: CRUD
-            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.delete',
-            'renewals.view', 'renewals.create', 'renewals.edit', 'renewals.delete',
-            'revenue-progress.view',
+            'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
+            'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
+            'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
+            'sales-progressive.view',
             // Tài chính: xem
             'commissions.view', 'advance-requests.view',
             // Vận hành: xem
@@ -123,9 +125,10 @@ class PermissionsSeeder extends Seeder
             'contracts-project.view', 'contracts-project.create',
             'contracts-commercial.view', 'contracts-commercial.create',
             // Kinh doanh: CRUD
-            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.delete',
-            'renewals.view', 'renewals.create', 'renewals.edit', 'renewals.delete',
-            'revenue-progress.view', 'revenue-progress.create', 'revenue-progress.edit', 'revenue-progress.delete',
+            'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
+            'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
+            'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
+            'sales-progressive.view', 'sales-progressive.create', 'sales-progressive.edit', 'sales-progressive.delete',
             // Tài chính: tạo YC
             'commissions.view', 'commissions.create',
             'advance-requests.view', 'advance-requests.create',
@@ -171,9 +174,10 @@ class PermissionsSeeder extends Seeder
             // Hóa đơn: xem
             'invoices.view',
             // Kinh doanh
-            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.delete',
-            'renewals.view',
-            'revenue-progress.view',
+            'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
+            'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
+            'sales-renewal.view',
+            'sales-progressive.view',
             // Tài chính: tạo YC
             'commissions.view', 'commissions.create',
             'advance-requests.view', 'advance-requests.create',

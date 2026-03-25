@@ -9,14 +9,46 @@ use App\Models\User;
 use App\Models\Department;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class ContractWasteManager extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $search = '';
     
-    // Filters
+    public $showDetail = false;
+    public $showModal = false;
+    public $isEditing = false;
+    public $selectedDoc = null;
+
+    public $formData = [
+        'shd_cxl' => '',
+        'shd_ad' => '',
+        'customer_id' => '',
+        'handler_id' => '',
+        'staff_id' => '',
+        'department_id' => '',
+        'content' => '',
+        'value' => 0,
+        'commission' => 0,
+        'revenue' => 0,
+        'payment_method' => 'Sau ký',
+        'source' => 'MỚI',
+        'signed_at' => '',
+        'effective_at' => '',
+        'end_at' => '',
+        'submitted_at' => '',
+        'billing_address' => '',
+        'execution_address' => '',
+        'mailing_address' => '',
+        'status' => '',
+        'renewal_status' => '',
+        'voucher_status' => '',
+        'is_offset' => false,
+        'is_overdue' => false,
+        'note' => '',
+    ];
     public $filter = [
         'signed_from' => '',
         'signed_to' => '',
@@ -40,14 +72,129 @@ class ContractWasteManager extends Component
         'voucher_status' => '',
     ];
 
-    public $showDetail = false;
-    public $selectedDoc = null;
+    protected $queryString = ['search', 'quotation_id'];
+    public $quotation_id;
 
-    protected $queryString = ['search'];
+    public function mount()
+    {
+        if ($this->quotation_id) {
+            $quotation = \App\Models\Quotation::find($this->quotation_id);
+            if ($quotation) {
+                // Find or create customer
+                $customer = \App\Models\Customer::firstOrCreate(
+                    ['name' => $quotation->company_name],
+                    ['address' => $quotation->address]
+                );
+                
+                $this->formData['customer_id'] = $customer->id;
+                $this->formData['content'] = $quotation->work_description;
+                $this->formData['value'] = $quotation->original_value;
+                $this->formData['commission'] = $quotation->commission_value;
+                $this->formData['revenue'] = $quotation->total_value;
+                $this->formData['staff_id'] = $quotation->staff_id;
+                $this->formData['billing_address'] = $quotation->address;
+                $this->formData['source'] = 'MỚI';
+                $this->formData['status'] = 'ĐANG THỰC HIỆN';
+                
+                $this->showModal = true;
+                $this->dispatch('openFormModal');
+            }
+        }
+    }
 
     public function updatedSearch()
     {
         $this->resetPage();
+    }
+
+    public function create()
+    {
+        $this->resetForm();
+        $this->isEditing = false;
+        $this->showModal = true;
+        $this->dispatch('openFormModal');
+    }
+
+    public function edit($id)
+    {
+        $doc = ContractWaste::findOrFail($id);
+        $this->selectedDoc = $doc;
+        $this->formData = $doc->toArray();
+        // Format dates for input
+        $this->formData['signed_at'] = $doc->signed_at ? $doc->signed_at->format('Y-m-d') : '';
+        $this->formData['effective_at'] = $doc->effective_at ? $doc->effective_at->format('Y-m-d') : '';
+        $this->formData['end_at'] = $doc->end_at ? $doc->end_at->format('Y-m-d') : '';
+        $this->formData['submitted_at'] = $doc->submitted_at ? $doc->submitted_at->format('Y-m-d') : '';
+        
+        $this->isEditing = true;
+        $this->showModal = true;
+        $this->dispatch('openFormModal');
+    }
+
+    public function save()
+    {
+        $this->validate([
+            'formData.customer_id' => 'required',
+            'formData.handler_id' => 'required',
+            'formData.staff_id' => 'required',
+            'formData.value' => 'required|numeric',
+        ]);
+
+        $data = collect($this->formData)->map(function ($value) {
+            return $value === '' ? null : $value;
+        })->toArray();
+
+        if ($this->isEditing) {
+            $this->selectedDoc->update($data);
+            $msg = 'Cập nhật thành công';
+        } else {
+            ContractWaste::create($data);
+            $msg = 'Tạo mới thành công';
+        }
+
+        $this->showModal = false;
+        $this->dispatch('closeFormModal');
+        $this->dispatch('swal:toast', ['message' => $msg, 'type' => 'success']);
+        $this->resetForm();
+    }
+
+    public function delete($id)
+    {
+        $doc = ContractWaste::findOrFail($id);
+        $doc->delete();
+        $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
+    }
+
+    private function resetForm()
+    {
+        $this->formData = [
+            'shd_cxl' => '',
+            'shd_ad' => '',
+            'customer_id' => '',
+            'handler_id' => '',
+            'staff_id' => auth()->id(),
+            'department_id' => 3, // Default to Waste Department if exists
+            'content' => '',
+            'value' => 0,
+            'commission' => 0,
+            'revenue' => 0,
+            'payment_method' => 'Sau ký',
+            'source' => 'MỚI',
+            'signed_at' => date('Y-m-d'),
+            'effective_at' => '',
+            'end_at' => '',
+            'submitted_at' => '',
+            'billing_address' => '',
+            'execution_address' => '',
+            'mailing_address' => '',
+            'status' => 'ĐANG THỰC HIỆN',
+            'renewal_status' => 'CHƯA ĐẾN HẠN',
+            'voucher_status' => 'CHƯA CÓ',
+            'is_offset' => false,
+            'is_overdue' => false,
+            'note' => '',
+        ];
+        $this->selectedDoc = null;
     }
 
     public function resetFilters()
@@ -132,6 +279,8 @@ class ContractWasteManager extends Component
         return view('livewire.admin.contracts.contract-waste-manager', [
             'docs' => $docs,
             'handlers' => Handler::all(),
+            'customers' => Customer::orderBy('name')->get(),
+            'staffs' => User::all(),
             'departments' => Department::all(),
             // Dynamic filter options
             'service_types' => ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray(),

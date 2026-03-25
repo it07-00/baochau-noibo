@@ -144,7 +144,7 @@
                     <tr class="border-bottom border-light">
                         <td class="ps-4 py-4">
                             <div class="d-flex flex-column">
-                                <span class="small">SHD AD: <span class="fw-bold">{{ $doc->shd_ad }}</span></span>
+                                <span class="small">SHD BC: <span class="fw-bold">{{ $doc->shd_ad }}</span></span>
                                 <span class="small">Ngày ký hợp đồng: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
                                 <span class="small">NVCS: <span class="fw-bold">{{ $doc->staff?->name }}</span></span>
                             </div>
@@ -211,7 +211,7 @@
                     <table class="table table-bordered mb-0">
                         <tbody>
                             <tr>
-                                <th class="bg-light w-30">SHD AD</th>
+                                <th class="bg-light w-30">SHD BC</th>
                                 <td class="fw-bold">{{ $selectedDoc->shd_ad }}</td>
                             </tr>
                             <tr>

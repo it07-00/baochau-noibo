@@ -59,7 +59,35 @@ class ContractConsultingManager extends Component
         'notes' => '',
     ];
 
-    protected $queryString = ['search'];
+    protected $queryString = ['search', 'quotation_id'];
+    public $quotation_id;
+
+    public function mount()
+    {
+        if ($this->quotation_id) {
+            $quotation = \App\Models\Quotation::find($this->quotation_id);
+            if ($quotation) {
+                // Find or create customer
+                $customer = \App\Models\Customer::firstOrCreate(
+                    ['name' => $quotation->company_name],
+                    ['address' => $quotation->address]
+                );
+                
+                $this->formData['customer_id'] = $customer->id;
+                $this->formData['value'] = $quotation->original_value;
+                $this->formData['commission'] = $quotation->commission_value;
+                $this->formData['revenue'] = $quotation->total_value;
+                $this->formData['staff_id'] = $quotation->staff_id;
+                $this->formData['notes'] = $quotation->work_description;
+                $this->formData['info_source'] = 'MỚI';
+                
+                $this->showModal = true;
+                $this->dispatch('openFormModal');
+            }
+        }
+    }
+
+
 
     public function updatedSearch()
     {
@@ -97,12 +125,16 @@ class ContractConsultingManager extends Component
             'formData.value' => 'required|numeric',
         ]);
 
+        $data = collect($this->formData)->map(function ($value) {
+            return $value === '' ? null : $value;
+        })->toArray();
+
         if ($this->isEditing) {
-            $this->selectedDoc->update($this->formData);
+            $this->selectedDoc->update($data);
             $msg = 'Cập nhật thành công';
         } else {
-            $this->formData['workflow_status'] = ContractConsulting::STATUS_DRAFT;
-            ContractConsulting::create($this->formData);
+            $data['workflow_status'] = ContractConsulting::STATUS_DRAFT;
+            ContractConsulting::create($data);
             $msg = 'Tạo mới thành công';
         }
 

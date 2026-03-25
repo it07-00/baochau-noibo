@@ -8,9 +8,8 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ route('app.dashboard') }}" class="app-sidebar-logo">
-                <img class="app-main-logo logo-black" width="105" src="{{ asset('assets/images/logo.png') }}" alt="Conca">
-                <img class="app-main-logo logo-white d-none" width="105" src="{{ asset('assets/images/logo-white.png') }}" alt="Conca">
+            <a href="{{ route('app.dashboard') }}" class="app-sidebar-logo text-decoration-none">
+                <span class="fw-bolder fs-3 text-primary" style="letter-spacing: 2px;">BẢO CHÂU</span>
             </a>
 
             <button type="button" class="app-sidebar-close-btn app-sidebar-mobile-close d-xl-none">
@@ -152,7 +151,7 @@ SVG;
                             'title' => 'Quản lý hóa đơn',
                             'icon' => $stackIcon,
                             'permission' => 'invoices.view',
-                            'children' => ['Hóa đơn Ánh Dương', 'Hóa đơn chủ xử lý'],
+                            'children' => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
                         ],
                         [
                             'title' => 'Chuyển phát thư',
@@ -164,7 +163,7 @@ SVG;
                             'title' => 'Bộ phận kinh doanh',
                             'icon' => $stackIcon,
                             'permission' => 'sales-quotation.view',
-                            'children' => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ'],
+                            'children' => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
                         ],
                         [
                             'title' => 'Bộ phận chất thải',
@@ -212,7 +211,7 @@ SVG;
                             'title' => 'Báo cáo Kinh doanh',
                             'icon' => $usersIcon,
                             'permission' => 'reports.view',
-                            'children' => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi báo giá', 'Bảng theo dõi doanh số'],
+                            'children' => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
                         ],
                         [
                             'title' => 'Báo cáo HC - CTR',
@@ -282,6 +281,9 @@ SVG;
                     } elseif (request()->routeIs('app.postal-deliveries.*')) {
                         $activeGroup = 'Chuyển phát thư';
                         $activeChild = 'Quản lý chuyển phát';
+                    } elseif (request()->routeIs('app.quotation-tracking.*')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng theo dõi báo giá';
                     }
                 @endphp
 
@@ -356,6 +358,8 @@ SVG;
                                             $href = route('app.sales.progressive.index');
                                         } elseif ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát') {
                                             $href = route('app.postal-deliveries.index');
+                                        } elseif ($child === 'Bảng theo dõi báo giá') {
+                                            $href = route('app.quotation-tracking.index');
                                         }
 
                                         $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('app.internal-docs.*')) ||
@@ -368,7 +372,8 @@ SVG;
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số báo giá' && request()->routeIs('app.sales.quotation.*')) ||
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số tái ký' && request()->routeIs('app.sales.renewal.*')) ||
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ' && request()->routeIs('app.sales.progressive.*')) ||
-                                                      ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát' && request()->routeIs('app.app.postal-deliveries.*'));
+                                                      ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát' && request()->routeIs('app.postal-deliveries.*')) ||
+                                                      ($child === 'Bảng theo dõi báo giá' && request()->routeIs('app.quotation-tracking.*'));
                                     @endphp
                                     <li>
                                         <a href="{{ $href }}" class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">

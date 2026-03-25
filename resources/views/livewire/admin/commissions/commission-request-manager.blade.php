@@ -72,7 +72,7 @@
                             <tr>
                                 <td class="ps-4">
                                     <div class="mb-1">
-                                        <small class="text-muted">SHD AD:</small><br>
+                                        <small class="text-muted">SHD BC:</small><br>
                                         <strong>{{ $request->contract->shd_ad ?? 'N/A' }}</strong>
                                     </div>
                                     <div>
