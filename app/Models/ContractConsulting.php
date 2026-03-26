@@ -10,6 +10,12 @@ class ContractConsulting extends Model
 {
     use HasFactory;
 
+    const SERVICE_TYPES = [
+        'Tư vấn, lập ĐTM, GPMT, DKMT',
+        'Quan trắc môi trường',
+        'Quan trắc môi trường lao động và phân loại lao động',
+    ];
+
     const STATUS_DRAFT = 'draft';
     const STATUS_PENDING_ACCOUNTING = 'pending_accounting';
     const STATUS_REJECTED_ACCOUNTING = 'rejected_accounting';
@@ -51,6 +57,7 @@ class ContractConsulting extends Model
         'has_room_fund',
         'is_overdue',
         'notes',
+        'loai_dich_vu',
     ];
 
     protected $casts = [

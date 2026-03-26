@@ -36,6 +36,7 @@ class ContractConsultingManager extends Component
         'is_offset' => false,
         'has_room_fund' => false,
         'is_overdue' => false,
+        'loai_dich_vu' => '',
     ];
 
     public $showDetail = false;
@@ -57,6 +58,7 @@ class ContractConsultingManager extends Component
         'info_source' => '',
         'payment_method' => '',
         'notes' => '',
+        'loai_dich_vu' => '',
     ];
 
     protected $queryString = ['search', 'quotation_id'];
@@ -160,6 +162,7 @@ class ContractConsultingManager extends Component
             'info_source' => 'MỚI',
             'payment_method' => 'Sau ký',
             'notes' => '',
+            'loai_dich_vu' => '',
         ];
         $this->selectedDoc = null;
     }
@@ -180,6 +183,7 @@ class ContractConsultingManager extends Component
             'is_offset' => false,
             'has_room_fund' => false,
             'is_overdue' => false,
+            'loai_dich_vu' => '',
         ];
         $this->resetPage();
     }
@@ -228,15 +232,17 @@ class ContractConsultingManager extends Component
         if ($this->filter['is_offset']) $query->where('is_offset', true);
         if ($this->filter['has_room_fund']) $query->where('has_room_fund', true);
         if ($this->filter['is_overdue']) $query->where('is_overdue', true);
+        if ($this->filter['loai_dich_vu']) $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
 
         $docs = $query->latest()->paginate(10);
-        
+
         return view('livewire.admin.contracts.contract-consulting-manager', [
             'docs' => $docs,
             'departments' => Department::all(),
             'provinces' => ContractConsulting::whereNotNull('province')->where('province', '!=', '')->distinct()->pluck('province')->toArray(),
             'all_statuses' => ContractConsulting::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses' => ContractConsulting::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'loai_dich_vu_options' => ContractConsulting::SERVICE_TYPES,
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng tư vấn']);
     }
 

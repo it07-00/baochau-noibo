@@ -231,6 +231,15 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold custom-filter-label">Hạng mục dịch vụ</label>
+                        <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
+                            <option value="">Chọn hạng mục</option>
+                            @foreach($loai_dich_vu_options as $opt)
+                                <option value="{{ $opt }}">{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <!-- Row 5 -->
                     <div class="col-md-3 d-flex align-items-end gap-3 pb-2">
@@ -632,6 +641,16 @@
                                     <input class="form-check-input" type="checkbox" id="form_overdue" wire:model.defer="formData.is_overdue">
                                     <label class="form-check-label" for="form_overdue">Trễ hạn</label>
                                 </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Hạng mục dịch vụ</label>
+                                <select class="form-select" wire:model.defer="formData.loai_dich_vu">
+                                    <option value="">Chọn hạng mục</option>
+                                    @foreach($loai_dich_vu_options as $opt)
+                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-12">

@@ -2,11 +2,11 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-0">Quản lý Hợp đồng dự án</h4>
+            <h4 class="mb-0">Tư vấn & Báo cáo phát triển bền vững</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Hợp đồng dự án</li>
+                    <li class="breadcrumb-item active">HĐ Phát triển bền vững</li>
                 </ol>
             </nav>
         </div>
@@ -29,10 +29,10 @@
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
-            <h6 class="mb-0 fw-bold">Bộ lọc Hợp đồng dự án</h6>
-            <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#filterBodyProject">−</button>
+            <h6 class="mb-0 fw-bold">Bộ lọc - Tư vấn & Báo cáo PTBV</h6>
+            <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#filterBodySustainability">−</button>
         </div>
-        <div class="collapse show" id="filterBodyProject">
+        <div class="collapse show" id="filterBodySustainability">
             <div class="card-body p-4">
                 <div class="row g-3">
                     <div class="col-md-3">
@@ -60,16 +60,16 @@
                     </div>
                     <div class="col-md-3 d-flex align-items-end gap-3 pb-2">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="pj_offset" wire:model.live="filter.is_offset">
-                            <label class="form-check-label small" for="pj_offset">Có bù trừ</label>
+                            <input class="form-check-input" type="checkbox" id="sus_offset" wire:model.live="filter.is_offset">
+                            <label class="form-check-label small" for="sus_offset">Có bù trừ</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="pj_roomfund" wire:model.live="filter.has_room_fund">
-                            <label class="form-check-label small" for="pj_roomfund">Có quỹ phòng</label>
+                            <input class="form-check-input" type="checkbox" id="sus_roomfund" wire:model.live="filter.has_room_fund">
+                            <label class="form-check-label small" for="sus_roomfund">Có quỹ phòng</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="pj_overdue" wire:model.live="filter.is_overdue">
-                            <label class="form-check-label small" for="pj_overdue">Trễ hạn</label>
+                            <input class="form-check-input" type="checkbox" id="sus_overdue" wire:model.live="filter.is_overdue">
+                            <label class="form-check-label small" for="sus_overdue">Trễ hạn</label>
                         </div>
                     </div>
 
@@ -107,7 +107,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
                             <option value="">Chọn loại dịch vụ</option>
@@ -127,9 +127,6 @@
                         <button class="btn btn-success px-4 btn-filter">
                             <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
                         </button>
-                        <button class="btn btn-primary px-4 btn-filter">
-                            <i class="bi bi-diagram-3 me-1"></i>Quy trình
-                        </button>
                     </div>
                 </div>
             </div>
@@ -139,7 +136,7 @@
     <!-- Table Card -->
     <div class="card border-0 shadow-sm overflow-hidden">
         <div class="card-header bg-white py-3 border-bottom">
-            <h6 class="mb-0 fw-bold">Danh sách Hợp đồng dự án</h6>
+            <h6 class="mb-0 fw-bold">Danh sách HĐ Tư vấn & Báo cáo PTBV</h6>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 table-xs">
@@ -147,6 +144,7 @@
                     <tr class="small text-muted text-uppercase fw-bold">
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
+                        <th>Loại dịch vụ</th>
                         <th class="text-center">Giá trị hợp đồng</th>
                         <th class="text-center">Hoa hồng</th>
                         <th class="text-center">Doanh số</th>
@@ -160,7 +158,7 @@
                         <td class="ps-4 py-4">
                             <div class="d-flex flex-column">
                                 <span class="small">SHD BC: <span class="fw-bold">{{ $doc->shd_ad }}</span></span>
-                                <span class="small">Ngày ký hợp đồng: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
+                                <span class="small">Ngày ký: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
                                 <span class="small">NVCS: <span class="fw-bold">{{ $doc->staff?->name }}</span></span>
                             </div>
                         </td>
@@ -168,9 +166,11 @@
                             <div class="d-flex flex-column">
                                 <span class="fw-bold text-uppercase text-primary">{{ $doc->customer?->name }}</span>
                                 <span class="small">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
-                                <span class="small text-muted">{{ $doc->customer?->email }}</span>
                                 <span class="small text-muted">{{ $doc->customer?->address }}</span>
                             </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle small">{{ $doc->loai_dich_vu ?: '-' }}</span>
                         </td>
                         <td class="text-center">
                             <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
@@ -203,7 +203,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
+                        <td colspan="8" class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -217,11 +217,11 @@
     </div>
 
     <!-- Detail Modal -->
-    <div wire:ignore.self class="modal fade" id="detailModalProject" tabindex="-1">
+    <div wire:ignore.self class="modal fade" id="detailModalSustainability" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">Chi tiết Hợp Đồng Dự Án</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom">Chi tiết HĐ Tư vấn & Báo cáo PTBV</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -274,7 +274,7 @@
                             </tr>
                             <tr>
                                 <th class="bg-light">Loại dịch vụ</th>
-                                <td>{{ $selectedDoc->loai_dich_vu ?: '-' }}</td>
+                                <td><span class="badge bg-success text-white">{{ $selectedDoc->loai_dich_vu ?: '-' }}</span></td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Giá trị hợp đồng</th>
@@ -312,12 +312,14 @@
         </div>
     </div>
 
-    <!-- Form Modal (Create/Edit) -->
-    <div wire:ignore.self class="modal fade" id="formModalProject" tabindex="-1">
+    <!-- Form Modal -->
+    <div wire:ignore.self class="modal fade" id="formModalSustainability" tabindex="-1">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content overflow-hidden border-0 shadow-lg">
+            <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">{{ $isEditing ? 'Chỉnh sửa' : 'Thêm' }} Hợp Đồng Dự Án</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom text-white">
+                        {{ $isEditing ? 'Chỉnh sửa' : 'Thêm' }} HĐ Tư vấn & Báo cáo PTBV
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -334,7 +336,7 @@
                                     <option value="{{ $c->id }}">{{ $c->name }}</option>
                                 @endforeach
                             </select>
-                            @error('formData.customer_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            @error('formData.customer_id') <div class="text-danger small">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">NVCS <span class="text-danger">*</span></label>
@@ -344,7 +346,7 @@
                                     <option value="{{ $s->id }}">{{ $s->name }}</option>
                                 @endforeach
                             </select>
-                            @error('formData.staff_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            @error('formData.staff_id') <div class="text-danger small">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Phòng ban</label>
@@ -365,22 +367,24 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Giá trị HĐ <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" wire:model="formData.value" min="0">
-                            @error('formData.value') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            <input type="number" class="form-control" wire:model="formData.value">
+                            @error('formData.value') <div class="text-danger small">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Hoa hồng</label>
-                            <input type="number" class="form-control" wire:model="formData.commission" min="0">
+                            <input type="number" class="form-control" wire:model="formData.commission">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Doanh số</label>
-                            <input type="number" class="form-control" wire:model="formData.revenue" min="0">
+                            <input type="number" class="form-control" wire:model="formData.revenue">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Tỉnh thành</label>
-                            <input type="text" class="form-control" wire:model="formData.province" list="province-list-project">
-                            <datalist id="province-list-project">
-                                @foreach($provinces as $p) <option value="{{ $p }}"> @endforeach
+                            <input type="text" class="form-control" wire:model="formData.province" list="province-list-sustainability" autocomplete="off">
+                            <datalist id="province-list-sustainability">
+                                @foreach($provinces as $p)
+                                    <option value="{{ $p }}">
+                                @endforeach
                             </datalist>
                         </div>
                         <div class="col-md-6">
@@ -392,14 +396,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-bold">Nguồn thông tin</label>
                             <select class="form-select" wire:model="formData.info_source">
                                 <option value="MỚI">MỚI</option>
                                 <option value="TÁI KÝ">TÁI KÝ</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-bold">PT thanh toán</label>
                             <select class="form-select" wire:model="formData.payment_method">
                                 <option value="Sau ký">Sau ký</option>
@@ -414,21 +418,27 @@
                                 <option value="ĐÃ HỦY">ĐÃ HỦY</option>
                             </select>
                         </div>
-                        <div class="col-md-12 d-flex gap-4 pt-1">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="form_pj_offset" wire:model="formData.is_offset">
-                                <label class="form-check-label" for="form_pj_offset">Có bù trừ</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="form_pj_roomfund" wire:model="formData.has_room_fund">
-                                <label class="form-check-label" for="form_pj_roomfund">Có quỹ phòng</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="form_pj_overdue" wire:model="formData.is_overdue">
-                                <label class="form-check-label" for="form_pj_overdue">Trễ hạn</label>
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Tình trạng tái ký</label>
+                            <input type="text" class="form-control" wire:model="formData.renewal_status">
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="form_sus_offset" wire:model="formData.is_offset">
+                                    <label class="form-check-label" for="form_sus_offset">Có bù trừ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="form_sus_roomfund" wire:model="formData.has_room_fund">
+                                    <label class="form-check-label" for="form_sus_roomfund">Có quỹ phòng</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="form_sus_overdue" wire:model="formData.is_overdue">
+                                    <label class="form-check-label" for="form_sus_overdue">Trễ hạn</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <label class="form-label fw-bold">Ghi chú</label>
                             <textarea class="form-control" rows="3" wire:model="formData.notes"></textarea>
                         </div>
@@ -438,7 +448,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="button" class="btn btn-primary" wire:click="save" wire:loading.attr="disabled">
                         <span wire:loading wire:target="save" class="spinner-border spinner-border-sm me-1"></span>
-                        Lưu Lại
+                        Lưu hợp đồng
                     </button>
                 </div>
             </div>
@@ -448,13 +458,13 @@
     @push('scripts')
     <script>
         window.addEventListener('openDetailModal', () => {
-            new bootstrap.Modal(document.getElementById('detailModalProject')).show();
+            new bootstrap.Modal(document.getElementById('detailModalSustainability')).show();
         });
         Livewire.on('openFormModal', () => {
-            new bootstrap.Modal(document.getElementById('formModalProject')).show();
+            new bootstrap.Modal(document.getElementById('formModalSustainability')).show();
         });
         Livewire.on('closeFormModal', () => {
-            bootstrap.Modal.getInstance(document.getElementById('formModalProject'))?.hide();
+            bootstrap.Modal.getInstance(document.getElementById('formModalSustainability'))?.hide();
         });
     </script>
     @endpush

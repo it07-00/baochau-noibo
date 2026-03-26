@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
-use App\Models\ContractProject;
+use App\Models\ContractEnergy;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\Department;
@@ -10,7 +10,7 @@ use App\Models\Quotation;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ContractProjectManager extends Component
+class ContractEnergyManager extends Component
 {
     use WithPagination;
 
@@ -52,12 +52,12 @@ class ContractProjectManager extends Component
         'department_id'  => '',
         'info_source'    => '',
         'payment_method' => '',
+        'loai_dich_vu'   => '',
         'status'         => '',
         'renewal_status' => '',
         'is_offset'      => false,
         'has_room_fund'  => false,
         'is_overdue'     => false,
-        'loai_dich_vu'   => '',
     ];
 
     protected $queryString = ['search', 'quotation_id'];
@@ -99,7 +99,7 @@ class ContractProjectManager extends Component
 
     public function edit(int $id): void
     {
-        $this->selectedDoc = ContractProject::findOrFail($id);
+        $this->selectedDoc = ContractEnergy::findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
             $this->formData['signed_at'] = $this->selectedDoc->signed_at->format('Y-m-d');
@@ -125,7 +125,7 @@ class ContractProjectManager extends Component
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
         } else {
-            ContractProject::create($data);
+            ContractEnergy::create($data);
         }
 
         $this->dispatch('closeFormModal');
@@ -135,13 +135,13 @@ class ContractProjectManager extends Component
 
     public function delete(int $id): void
     {
-        ContractProject::findOrFail($id)->delete();
+        ContractEnergy::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
     }
 
     public function viewDetail(int $id): void
     {
-        $this->selectedDoc = ContractProject::with(['customer', 'staff', 'department'])->find($id);
+        $this->selectedDoc = ContractEnergy::with(['customer', 'staff', 'department'])->find($id);
         if ($this->selectedDoc) {
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
@@ -159,12 +159,12 @@ class ContractProjectManager extends Component
             'department_id'  => '',
             'info_source'    => '',
             'payment_method' => '',
+            'loai_dich_vu'   => '',
             'status'         => '',
             'renewal_status' => '',
             'is_offset'      => false,
             'has_room_fund'  => false,
             'is_overdue'     => false,
-            'loai_dich_vu'   => '',
         ];
         $this->resetPage();
     }
@@ -197,7 +197,7 @@ class ContractProjectManager extends Component
 
     public function render()
     {
-        $query = ContractProject::with(['customer', 'staff', 'department'])
+        $query = ContractEnergy::with(['customer', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_ad', 'like', '%' . $this->search . '%')
@@ -215,24 +215,24 @@ class ContractProjectManager extends Component
         if ($this->filter['department_id'])  $query->where('department_id', $this->filter['department_id']);
         if ($this->filter['info_source'])    $query->where('info_source', $this->filter['info_source']);
         if ($this->filter['payment_method']) $query->where('payment_method', $this->filter['payment_method']);
+        if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
         if ($this->filter['status'])         $query->where('status', $this->filter['status']);
         if ($this->filter['renewal_status']) $query->where('renewal_status', $this->filter['renewal_status']);
         if ($this->filter['is_offset'])      $query->where('is_offset', true);
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
-        if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
 
         $docs = $query->latest()->paginate(10);
 
-        return view('livewire.admin.contracts.contract-project-manager', [
+        return view('livewire.admin.contracts.contract-energy-manager', [
             'docs'               => $docs,
             'customers'          => Customer::orderBy('name')->get(),
             'staffs'             => User::orderBy('name')->get(),
             'departments'        => Department::all(),
-            'provinces'          => ContractProject::whereNotNull('province')->where('province', '!=', '')->distinct()->pluck('province')->toArray(),
-            'all_statuses'       => ContractProject::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
-            'renewal_statuses'   => ContractProject::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
-            'loai_dich_vu_options' => ContractProject::SERVICE_TYPES,
-        ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng dự án']);
+            'provinces'          => ContractEnergy::whereNotNull('province')->where('province', '!=', '')->distinct()->pluck('province')->toArray(),
+            'all_statuses'       => ContractEnergy::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
+            'renewal_statuses'   => ContractEnergy::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'loai_dich_vu_options' => ContractEnergy::SERVICE_TYPES,
+        ])->layout('admin.layouts.app', ['title' => 'Giảm phát thải & Hiệu quả năng lượng']);
     }
 }

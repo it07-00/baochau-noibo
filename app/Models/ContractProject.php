@@ -10,6 +10,12 @@ class ContractProject extends Model
 {
     use HasFactory;
 
+    const SERVICE_TYPES = [
+        'Tư vấn, thiết kế và thi công hệ thống xử lý khí thải, nước thải',
+        'Ứng phó sự cố hóa chất, tràn dầu',
+        'Tư vấn, thiết kế và thi công hệ thống quan trắc tự động',
+    ];
+
     protected $fillable = [
         'shd_ad',
         'customer_id',
@@ -29,6 +35,7 @@ class ContractProject extends Model
         'has_room_fund',
         'is_overdue',
         'notes',
+        'loai_dich_vu',
     ];
 
     protected $casts = [
@@ -55,5 +62,25 @@ class ContractProject extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match($this->status) {
+            'ĐANG THỰC HIỆN' => 'Đang thực hiện',
+            'HOÀN THÀNH'     => 'Hoàn thành',
+            'ĐÃ HỦY'         => 'Đã hủy',
+            default          => $this->status ?? 'Không xác định',
+        };
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return match($this->status) {
+            'ĐANG THỰC HIỆN' => 'info',
+            'HOÀN THÀNH'     => 'success',
+            'ĐÃ HỦY'         => 'danger',
+            default          => 'secondary',
+        };
     }
 }

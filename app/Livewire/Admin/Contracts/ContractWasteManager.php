@@ -48,6 +48,7 @@ class ContractWasteManager extends Component
         'is_offset' => false,
         'is_overdue' => false,
         'note' => '',
+        'loai_dich_vu' => '',
     ];
     public $filter = [
         'signed_from' => '',
@@ -67,6 +68,7 @@ class ContractWasteManager extends Component
         'payment_method' => '',
         'service_type' => '',
         'waste_type' => '',
+        'loai_dich_vu' => '',
         'status' => '',
         'renewal_status' => '',
         'voucher_status' => '',
@@ -193,6 +195,7 @@ class ContractWasteManager extends Component
             'is_offset' => false,
             'is_overdue' => false,
             'note' => '',
+            'loai_dich_vu' => '',
         ];
         $this->selectedDoc = null;
     }
@@ -217,6 +220,7 @@ class ContractWasteManager extends Component
             'payment_method' => '',
             'service_type' => '',
             'waste_type' => '',
+            'loai_dich_vu' => '',
             'status' => '',
             'renewal_status' => '',
             'voucher_status' => '',
@@ -270,6 +274,7 @@ class ContractWasteManager extends Component
         if ($this->filter['renewal_status'] ?? null) $query->where('renewal_status', $this->filter['renewal_status']);
         if ($this->filter['service_type'] ?? null) $query->where('service_type', $this->filter['service_type']);
         if ($this->filter['waste_type'] ?? null) $query->where('waste_type', $this->filter['waste_type']);
+        if ($this->filter['loai_dich_vu'] ?? null) $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
         if ($this->filter['voucher_status'] ?? null) $query->where('voucher_status', $this->filter['voucher_status']);
         if ($this->filter['source'] ?? null) $query->where('source', $this->filter['source']);
         if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
@@ -285,6 +290,7 @@ class ContractWasteManager extends Component
             // Dynamic filter options
             'service_types' => ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray(),
             'waste_types' => ContractWaste::whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray(),
+            'loai_dich_vu_options' => ContractWaste::SERVICE_TYPES,
             'all_statuses' => ContractWaste::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_statuses' => ContractWaste::whereNotNull('voucher_status')->where('voucher_status', '!=', '')->distinct()->pluck('voucher_status')->toArray(),

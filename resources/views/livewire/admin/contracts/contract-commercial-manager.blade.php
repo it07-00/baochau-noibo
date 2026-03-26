@@ -11,6 +11,9 @@
             </nav>
         </div>
         <div class="d-flex gap-2">
+            <button wire:click="create" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
+            </button>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm theo SHD hoặc Tên KH" wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary">
@@ -104,10 +107,22 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
+                        <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
+                            <option value="">Chọn loại dịch vụ</option>
+                            @foreach($loai_dich_vu_options as $opt)
+                                <option value="{{ $opt }}">{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <div class="col-md-12 d-flex gap-2 mt-2">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
                             <i class="bi bi-search me-1"></i>Lọc
+                        </button>
+                        <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
+                            <i class="bi bi-x-circle me-1"></i>Xóa lọc
                         </button>
                         <button class="btn btn-success px-4 btn-filter">
                             <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
@@ -174,11 +189,14 @@
                         </td>
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm p-0 text-danger" wire:click="viewDetail({{ $doc->id }})">
+                                <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                <button class="btn btn-sm p-0 text-info">
-                                    <i class="bi bi-chat-dots fs-5"></i>
+                                <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $doc->id }})" title="Chỉnh sửa">
+                                    <i class="bi bi-pencil fs-5"></i>
+                                </button>
+                                <button class="btn btn-sm p-0 text-danger" wire:click="delete({{ $doc->id }})" onclick="return confirm('Xóa hợp đồng này?')" title="Xóa">
+                                    <i class="bi bi-trash fs-5"></i>
                                 </button>
                             </div>
                         </td>
@@ -255,6 +273,10 @@
                                 <td>{{ $selectedDoc->info_source }}</td>
                             </tr>
                             <tr>
+                                <th class="bg-light">Loại dịch vụ</th>
+                                <td>{{ $selectedDoc->loai_dich_vu ?: '-' }}</td>
+                            </tr>
+                            <tr>
                                 <th class="bg-light">Giá trị hợp đồng</th>
                                 <td class="text-danger fw-bold">{{ number_format($selectedDoc->value) }}đ</td>
                             </tr>
@@ -290,11 +312,149 @@
         </div>
     </div>
 
+    <!-- Form Modal (Create/Edit) -->
+    <div wire:ignore.self class="modal fade" id="formModalCommercial" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content overflow-hidden border-0 shadow-lg">
+                <div class="modal-header bg-primary py-3">
+                    <h5 class="modal-title fw-bold modal-title-custom">{{ $isEditing ? 'Chỉnh sửa' : 'Thêm' }} Hợp Đồng Thương Mại</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">SHD BC</label>
+                            <input type="text" class="form-control" wire:model="formData.shd_ad">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Khách hàng <span class="text-danger">*</span></label>
+                            <select class="form-select" wire:model="formData.customer_id">
+                                <option value="">-- Chọn khách hàng --</option>
+                                @foreach($customers as $c)
+                                    <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('formData.customer_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">NVCS <span class="text-danger">*</span></label>
+                            <select class="form-select" wire:model="formData.staff_id">
+                                <option value="">-- Chọn nhân viên --</option>
+                                @foreach($staffs as $s)
+                                    <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('formData.staff_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Phòng ban</label>
+                            <select class="form-select" wire:model="formData.department_id">
+                                <option value="">-- Chọn phòng ban --</option>
+                                @foreach($departments as $d)
+                                    <option value="{{ $d->id }}">{{ $d->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Ngày ký HĐ</label>
+                            <input type="date" class="form-control" wire:model="formData.signed_at">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Ngày HĐ về</label>
+                            <input type="date" class="form-control" wire:model="formData.submitted_at">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Giá trị HĐ <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" wire:model="formData.value" min="0">
+                            @error('formData.value') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Hoa hồng</label>
+                            <input type="number" class="form-control" wire:model="formData.commission" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Doanh số</label>
+                            <input type="number" class="form-control" wire:model="formData.revenue" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tỉnh thành</label>
+                            <input type="text" class="form-control" wire:model="formData.province" list="province-list-commercial">
+                            <datalist id="province-list-commercial">
+                                @foreach($provinces as $p) <option value="{{ $p }}"> @endforeach
+                            </datalist>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Loại dịch vụ</label>
+                            <select class="form-select" wire:model="formData.loai_dich_vu">
+                                <option value="">-- Chọn loại dịch vụ --</option>
+                                @foreach($loai_dich_vu_options as $opt)
+                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Nguồn thông tin</label>
+                            <select class="form-select" wire:model="formData.info_source">
+                                <option value="MỚI">MỚI</option>
+                                <option value="TÁI KÝ">TÁI KÝ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">PT thanh toán</label>
+                            <select class="form-select" wire:model="formData.payment_method">
+                                <option value="Sau ký">Sau ký</option>
+                                <option value="Trước ký">Trước ký</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Tình trạng</label>
+                            <select class="form-select" wire:model="formData.status">
+                                <option value="ĐANG THỰC HIỆN">ĐANG THỰC HIỆN</option>
+                                <option value="HOÀN THÀNH">HOÀN THÀNH</option>
+                                <option value="ĐÃ HỦY">ĐÃ HỦY</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 d-flex gap-4 pt-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="form_cm_offset" wire:model="formData.is_offset">
+                                <label class="form-check-label" for="form_cm_offset">Có bù trừ</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="form_cm_roomfund" wire:model="formData.has_room_fund">
+                                <label class="form-check-label" for="form_cm_roomfund">Có quỹ phòng</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="form_cm_overdue" wire:model="formData.is_overdue">
+                                <label class="form-check-label" for="form_cm_overdue">Trễ hạn</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Ghi chú</label>
+                            <textarea class="form-control" rows="3" wire:model="formData.notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" wire:click="save" wire:loading.attr="disabled">
+                        <span wire:loading wire:target="save" class="spinner-border spinner-border-sm me-1"></span>
+                        Lưu Lại
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         window.addEventListener('openDetailModal', () => {
-            let modal = new bootstrap.Modal(document.getElementById('detailModalCommercial'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('detailModalCommercial')).show();
+        });
+        Livewire.on('openFormModal', () => {
+            new bootstrap.Modal(document.getElementById('formModalCommercial')).show();
+        });
+        Livewire.on('closeFormModal', () => {
+            bootstrap.Modal.getInstance(document.getElementById('formModalCommercial'))?.hide();
         });
     </script>
     @endpush

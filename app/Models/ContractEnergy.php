@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ContractCommercial extends Model
+class ContractEnergy extends Model
 {
     use HasFactory;
 
     const SERVICE_TYPES = [
-        'Nghiên cứu khoa học về môi trường',
-        'Cung cấp giải pháp chuyển đổi công nghệ',
+        'Kiểm kê khí nhà kính NĐ 06/2022 và ISO 14064-1',
+        'Kiểm toán năng lượng, giải pháp tiết kiệm năng lượng, và giảm phát thải khí nhà kính',
+        'Tư vấn, thiết kế hệ thống điện mặt trời',
     ];
 
     protected $fillable = [
@@ -28,13 +29,13 @@ class ContractCommercial extends Model
         'province',
         'info_source',
         'payment_method',
+        'loai_dich_vu',
         'status',
         'renewal_status',
         'is_offset',
         'has_room_fund',
         'is_overdue',
         'notes',
-        'loai_dich_vu',
     ];
 
     protected $casts = [

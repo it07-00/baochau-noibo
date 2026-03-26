@@ -8,6 +8,11 @@ class ContractWaste extends Model
 {
     protected $guarded = [];
 
+    const SERVICE_TYPES = [
+        'Thu gom, xử lý chất thải nguy hại và công nghiệp',
+        'Xây dựng bản đồ tiếng ồn',
+    ];
+
     protected $casts = [
         'signed_at' => 'date',
         'effective_at' => 'date',

@@ -27,10 +27,12 @@ class PermissionsSeeder extends Seeder
             'settings'            => ['view', 'edit'],
 
             // Hợp đồng
-            'contracts-waste'     => ['view', 'create', 'edit', 'delete'],
-            'contracts-consulting'=> ['view', 'create', 'edit', 'delete'],
-            'contracts-project'   => ['view', 'create', 'edit', 'delete'],
-            'contracts-commercial'=> ['view', 'create', 'edit', 'delete'],
+            'contracts-waste'         => ['view', 'create', 'edit', 'delete'],
+            'contracts-consulting'    => ['view', 'create', 'edit', 'delete'],
+            'contracts-project'       => ['view', 'create', 'edit', 'delete'],
+            'contracts-commercial'    => ['view', 'create', 'edit', 'delete'],
+            'contracts-sustainability'=> ['view', 'create', 'edit', 'delete'],
+            'contracts-energy'        => ['view', 'create', 'edit', 'delete'],
 
             // Hóa đơn
             'invoices'            => ['view', 'create', 'edit', 'delete'],
@@ -93,6 +95,8 @@ class PermissionsSeeder extends Seeder
             'contracts-consulting.view', 'contracts-consulting.create', 'contracts-consulting.edit', 'contracts-consulting.delete',
             'contracts-project.view', 'contracts-project.create', 'contracts-project.edit', 'contracts-project.delete',
             'contracts-commercial.view', 'contracts-commercial.create', 'contracts-commercial.edit', 'contracts-commercial.delete',
+            'contracts-sustainability.view', 'contracts-sustainability.create', 'contracts-sustainability.edit', 'contracts-sustainability.delete',
+            'contracts-energy.view', 'contracts-energy.create', 'contracts-energy.edit', 'contracts-energy.delete',
             // Hóa đơn: xem
             'invoices.view', 'handler-invoices.view',
             // Kinh doanh: CRUD
@@ -124,6 +128,8 @@ class PermissionsSeeder extends Seeder
             'contracts-consulting.view', 'contracts-consulting.create',
             'contracts-project.view', 'contracts-project.create',
             'contracts-commercial.view', 'contracts-commercial.create',
+            'contracts-sustainability.view', 'contracts-sustainability.create',
+            'contracts-energy.view', 'contracts-energy.create',
             // Kinh doanh: CRUD
             'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
             'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
@@ -150,6 +156,7 @@ class PermissionsSeeder extends Seeder
             // HĐ: xem
             'contracts-waste.view', 'contracts-consulting.view',
             'contracts-project.view', 'contracts-commercial.view',
+            'contracts-sustainability.view', 'contracts-energy.view',
             // Hóa đơn: CRUD
             'invoices.view', 'invoices.create', 'invoices.edit', 'invoices.delete',
             'handler-invoices.view', 'handler-invoices.create', 'handler-invoices.edit', 'handler-invoices.delete',
@@ -171,6 +178,7 @@ class PermissionsSeeder extends Seeder
             // HĐ: xem
             'contracts-waste.view', 'contracts-consulting.view',
             'contracts-project.view', 'contracts-commercial.view',
+            'contracts-sustainability.view', 'contracts-energy.view',
             // Hóa đơn: xem
             'invoices.view',
             // Kinh doanh
@@ -198,6 +206,7 @@ class PermissionsSeeder extends Seeder
             $kyThuat->givePermissionTo([
                 'contracts-waste.view', 'contracts-consulting.view',
                 'contracts-project.view', 'contracts-commercial.view',
+                'contracts-sustainability.view', 'contracts-energy.view',
                 'waste-requests.view', 'waste-requests.create', 'waste-requests.edit',
                 'technical-requests.view', 'technical-requests.create', 'technical-requests.edit', 'technical-requests.delete',
                 'internal-docs.view',

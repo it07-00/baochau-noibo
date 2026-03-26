@@ -116,10 +116,22 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
+                        <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
+                            <option value="">Chọn loại dịch vụ</option>
+                            @foreach($loai_dich_vu_options as $opt)
+                                <option value="{{ $opt }}">{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <div class="col-md-12 d-flex gap-2 mt-2">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
                             <i class="bi bi-search me-1"></i>Lọc
+                        </button>
+                        <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
+                            <i class="bi bi-x-circle me-1"></i>Xóa lọc
                         </button>
                         <button class="btn btn-success px-4 btn-filter">
                             <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
