@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             SampleUsersSeeder::class,
             InternalDocsSeeder::class,
             ContractWasteSeeder::class,
+            ContractSampleSeeder::class,
             DailyReportSeeder::class,
             QuotationSeeder::class,
         ]);

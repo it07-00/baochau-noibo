@@ -6,10 +6,11 @@ use App\Models\RenewalSales;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class RenewalSalesManager extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithPagination, WithFileUploads, CleanMoneyInput;
 
     public $search = '';
     public $filter_month = '';
@@ -24,6 +25,7 @@ class RenewalSalesManager extends Component
 
     public function calculateSales()
     {
+        $this->cleanMoneyProperties(['sales_value', 'commission', 'sales_amount']);
         $this->sales_amount = ($this->sales_value * $this->sales_percentage) / 100;
     }
 
@@ -55,6 +57,8 @@ class RenewalSalesManager extends Component
 
     public function save()
     {
+        $this->cleanMoneyProperties(['sales_value', 'commission', 'sales_amount']);
+
         $this->validate([
             'contract_number' => 'required',
             'sales_month' => 'required',

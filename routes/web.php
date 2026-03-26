@@ -63,6 +63,16 @@ Route::middleware('auth')->name('app.')->group(function () {
         Route::resource('departments', \App\Http\Controllers\Admin\DepartmentController::class)->except(['index']);
     });
 
+    // Handlers CRUD
+    Route::middleware('permission:handlers.view')->group(function () {
+        Route::get('handlers', \App\Livewire\Admin\Handlers\HandlerManager::class)->name('handlers.index');
+    });
+
+    // Customers CRUD
+    Route::middleware('permission:customers.view')->group(function () {
+        Route::get('customers', \App\Livewire\Admin\Customers\CustomerManager::class)->name('customers.index');
+    });
+
     // Settings
     Route::prefix('settings')->name('settings.')->middleware('permission:settings.view')->group(function () {
         Route::get('/', [SettingController::class, 'index'])->name('index');

@@ -7,18 +7,28 @@ use App\Models\Customer;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Quotation;
+use App\Models\ContractAssignment;
+use App\Models\ContractProgressNote;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class ContractCommercialManager extends Component
 {
-    use WithPagination;
+    use WithPagination, CleanMoneyInput;
+
+    protected $paginationTheme = 'bootstrap';
 
     public $search = '';
     public bool $showModal = false;
     public bool $isEditing = false;
     public $showDetail = false;
     public $selectedDoc = null;
+    public bool $showAssignModal = false;
+    public ?int $assignContractId = null;
+    public array $assignUserIds = [];
+    public string $progressNote = '';
+    public $progressNotes = [];
     public ?int $quotation_id = null;
 
     public $formData = [
@@ -62,6 +72,11 @@ class ContractCommercialManager extends Component
 
     protected $queryString = ['search', 'quotation_id'];
 
+    public function paginationView()
+    {
+        return 'livewire.admin.users.pagination';
+    }
+
     public function mount(): void
     {
         if ($this->quotation_id) {
@@ -69,12 +84,12 @@ class ContractCommercialManager extends Component
             if ($quotation) {
                 $customer = Customer::firstOrCreate(
                     ['name' => $quotation->company_name ?? ''],
-                    ['name' => $quotation->company_name ?? '']
+                    ['address' => $quotation->address ?? '']
                 );
                 $this->formData['customer_id']    = $customer->id;
-                $this->formData['value']          = $quotation->value ?? 0;
-                $this->formData['commission']     = $quotation->commission ?? 0;
-                $this->formData['revenue']        = $quotation->revenue ?? 0;
+                $this->formData['value']          = $quotation->original_value ?? 0;
+                $this->formData['commission']     = $quotation->commission_value ?? 0;
+                $this->formData['revenue']        = $quotation->total_value ?? 0;
                 $this->formData['staff_id']       = $quotation->staff_id ?? auth()->id();
                 $this->formData['notes']          = $quotation->notes ?? '';
                 $this->formData['info_source']    = 'MỚI';
@@ -114,6 +129,8 @@ class ContractCommercialManager extends Component
 
     public function save(): void
     {
+        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+
         $this->validate([
             'formData.customer_id' => 'required',
             'formData.staff_id'    => 'required',
@@ -141,11 +158,63 @@ class ContractCommercialManager extends Component
 
     public function viewDetail(int $id): void
     {
-        $this->selectedDoc = ContractCommercial::with(['customer', 'staff', 'department'])->find($id);
+        $this->selectedDoc = ContractCommercial::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
         if ($this->selectedDoc) {
+            $this->progressNotes = ContractProgressNote::where('contract_type', 'commercial')
+                ->where('contract_id', $id)
+                ->with('user')
+                ->latest()
+                ->get();
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
+    }
+
+    public function openAssign(int $id): void
+    {
+        $this->assignContractId = $id;
+        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractCommercial::class)
+            ->where('assignable_id', $id)
+            ->pluck('user_id')
+            ->toArray();
+        $this->dispatch('openAssignModal');
+    }
+
+    public function saveAssign(): void
+    {
+        ContractAssignment::where('assignable_type', ContractCommercial::class)
+            ->where('assignable_id', $this->assignContractId)
+            ->delete();
+        foreach ($this->assignUserIds as $userId) {
+            ContractAssignment::create([
+                'assignable_type' => ContractCommercial::class,
+                'assignable_id'   => $this->assignContractId,
+                'user_id'         => (int) $userId,
+                'assigned_by'     => auth()->id(),
+            ]);
+        }
+        $this->assignContractId = null;
+        $this->assignUserIds = [];
+        $this->dispatch('closeAssignModal');
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
+    }
+
+    public function addProgressNote(int $contractId): void
+    {
+        $this->validate(['progressNote' => 'required|min:1|max:2000']);
+        ContractProgressNote::create([
+            'contract_type' => 'commercial',
+            'contract_id'   => $contractId,
+            'user_id'       => auth()->id(),
+            'note'          => $this->progressNote,
+        ]);
+        $this->progressNote = '';
+        $this->progressNotes = ContractProgressNote::where('contract_type', 'commercial')
+            ->where('contract_id', $contractId)
+            ->with('user')
+            ->latest()
+            ->get();
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
     }
 
     public function resetFilters(): void
@@ -197,7 +266,7 @@ class ContractCommercialManager extends Component
 
     public function render()
     {
-        $query = ContractCommercial::with(['customer', 'staff', 'department'])
+        $query = ContractCommercial::with(['customer', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_ad', 'like', '%' . $this->search . '%')
@@ -205,7 +274,11 @@ class ContractCommercialManager extends Component
                             $csq->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
-            });
+            })
+            ->when(auth()->user()->hasRole('kinh-doanh'),
+                fn($q) => $q->where('staff_id', auth()->id()))
+            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
 
         if ($this->filter['signed_from'])    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
         if ($this->filter['signed_to'])      $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
@@ -229,6 +302,8 @@ class ContractCommercialManager extends Component
             'customers'          => Customer::orderBy('name')->get(),
             'staffs'             => User::orderBy('name')->get(),
             'departments'        => Department::all(),
+            'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
+                $q->whereIn('name', ['tu-van', 'kinh-doanh', 'ky-thuat']))->orderBy('name')->get(),
             'provinces'          => ContractCommercial::whereNotNull('province')->where('province', '!=', '')->distinct()->pluck('province')->toArray(),
             'all_statuses'       => ContractCommercial::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractCommercial::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),

@@ -25,7 +25,7 @@
                             <h5 class="mb-0 fw-bold">Báo cáo ngày của tôi</h5>
                             @if($isEditing)
                                 <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2" style="border-radius: 20px;">
-                                    <i class="bi bi-check-circle-fill me-1"></i> ĐÃ GỬI
+                                    <i class="bi bi-check-circle-fill me-1"></i> Đã gửi
                                 </span>
                             @endif
                         </div>
@@ -34,7 +34,7 @@
                     <div class="card-body p-4 pt-0">
                         <form wire:submit.prevent="save">
                             <div class="mb-3">
-                                <label class="form-label text-uppercase small fw-bold text-muted">Hôm nay đã làm gì *</label>
+                                <label class="form-label small fw-bold text-muted">Hôm nay đã làm gì *</label>
                                 <div wire:ignore class="editor-container">
                                     <div id="content-editor">{!! $content !!}</div>
                                 </div>
@@ -43,7 +43,7 @@
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label text-uppercase small fw-bold text-muted">Kết quả tổng thể hôm nay</label>
+                                    <label class="form-label small fw-bold text-muted">Kết quả tổng thể hôm nay</label>
                                     <select wire:model.live.debounce.500ms="status" class="form-select border-light-subtle" style="background-color: #fcfcfc; border-radius: 8px;">
                                         <option value="Hoàn thành đúng kế hoạch">Hoàn thành đúng kế hoạch</option>
                                         <option value="Hoàn thành một phần">Hoàn thành một phần</option>
@@ -51,7 +51,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-uppercase small fw-bold text-muted">Kế hoạch ngày mai <span class="fw-normal text-muted">(không bắt buộc)</span></label>
+                                    <label class="form-label small fw-bold text-muted">Kế hoạch ngày mai <span class="fw-normal text-muted">(không bắt buộc)</span></label>
                                     <textarea wire:model.live.debounce.500ms="plan" class="form-control border-light-subtle" rows="5" 
                                         style="background-color: #fcfcfc; border-radius: 8px;"
                                         placeholder="Sẽ làm gì tiếp..."></textarea>
@@ -77,7 +77,7 @@
                             </div>
 
                             <div class="mt-4 mb-4">
-                                <label class="form-label text-uppercase small fw-bold text-muted">Vấn đề / Cần hỗ trợ <span class="fw-normal text-muted">(không bắt buộc)</span></label>
+                                <label class="form-label small fw-bold text-muted">Vấn đề / Cần hỗ trợ <span class="fw-normal text-muted">(không bắt buộc)</span></label>
                                 <textarea wire:model.live.debounce.500ms="issues" class="form-control border-light-subtle" rows="3" 
                                     style="background-color: #fcfcfc; border-radius: 8px;"
                                     placeholder="Nếu có vấn đề cần TPKD biết hoặc hỗ trợ, ghi ở đây..."></textarea>
@@ -146,12 +146,12 @@
 
                         @if($viewType === 'day')
                             <div class="d-flex align-items-center gap-2">
-                                <span class="text-muted small fw-bold text-uppercase">Ngày:</span>
+                                <span class="text-muted small fw-bold">Ngày:</span>
                                 <input type="date" wire:model.live="dateFilter" class="form-control form-control-sm border-light-subtle" style="width: auto; border-radius: 6px;">
                             </div>
                         @else
                             <div class="d-flex align-items-center gap-2">
-                                <span class="text-muted small fw-bold text-uppercase">Kỳ báo cáo:</span>
+                                <span class="text-muted small fw-bold">Kỳ báo cáo:</span>
                                 <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle" style="width: auto; border-radius: 6px;">
                                     @for($m = 1; $m <= 12; $m++)
                                         <option value="{{ sprintf('%02d', $m) }}">Tháng {{ $m }}</option>
@@ -166,7 +166,7 @@
                         @endif
 
                         <div class="d-flex align-items-center gap-2">
-                            <span class="text-muted small fw-bold text-uppercase">Bộ lọc:</span>
+                            <span class="text-muted small fw-bold">Bộ lọc:</span>
                             <select wire:model.live="deptIdFilter" class="form-select form-select-sm border-light-subtle" style="width: auto; border-radius: 6px;">
                                 <option value="">Tất cả phòng ban</option>
                                 @foreach($departments as $dept)

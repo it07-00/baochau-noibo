@@ -7,13 +7,18 @@ use App\Models\Customer;
 use App\Models\Handler;
 use App\Models\User;
 use App\Models\Department;
+use App\Models\ContractAssignment;
+use App\Models\ContractProgressNote;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class ContractWasteManager extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithPagination, WithFileUploads, CleanMoneyInput;
+
+    protected $paginationTheme = 'bootstrap';
 
     public $search = '';
     
@@ -21,6 +26,11 @@ class ContractWasteManager extends Component
     public $showModal = false;
     public $isEditing = false;
     public $selectedDoc = null;
+    public bool $showAssignModal = false;
+    public ?int $assignContractId = null;
+    public array $assignUserIds = [];
+    public string $progressNote = '';
+    public $progressNotes = [];
 
     public $formData = [
         'shd_cxl' => '',
@@ -77,6 +87,11 @@ class ContractWasteManager extends Component
     protected $queryString = ['search', 'quotation_id'];
     public $quotation_id;
 
+    public function paginationView()
+    {
+        return 'livewire.admin.users.pagination';
+    }
+
     public function mount()
     {
         if ($this->quotation_id) {
@@ -95,6 +110,7 @@ class ContractWasteManager extends Component
                 $this->formData['revenue'] = $quotation->total_value;
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
+                $this->formData['note'] = $quotation->notes;
                 $this->formData['source'] = 'MỚI';
                 $this->formData['status'] = 'ĐANG THỰC HIỆN';
                 
@@ -135,6 +151,8 @@ class ContractWasteManager extends Component
 
     public function save()
     {
+        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+
         $this->validate([
             'formData.customer_id' => 'required',
             'formData.handler_id' => 'required',
@@ -200,6 +218,53 @@ class ContractWasteManager extends Component
         $this->selectedDoc = null;
     }
 
+    public function openAssign(int $id): void
+    {
+        $this->assignContractId = $id;
+        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractWaste::class)
+            ->where('assignable_id', $id)
+            ->pluck('user_id')
+            ->toArray();
+        $this->dispatch('openAssignModal');
+    }
+
+    public function saveAssign(): void
+    {
+        ContractAssignment::where('assignable_type', ContractWaste::class)
+            ->where('assignable_id', $this->assignContractId)
+            ->delete();
+        foreach ($this->assignUserIds as $userId) {
+            ContractAssignment::create([
+                'assignable_type' => ContractWaste::class,
+                'assignable_id'   => $this->assignContractId,
+                'user_id'         => (int) $userId,
+                'assigned_by'     => auth()->id(),
+            ]);
+        }
+        $this->assignContractId = null;
+        $this->assignUserIds = [];
+        $this->dispatch('closeAssignModal');
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
+    }
+
+    public function addProgressNote(int $contractId): void
+    {
+        $this->validate(['progressNote' => 'required|min:1|max:2000']);
+        ContractProgressNote::create([
+            'contract_type' => 'waste',
+            'contract_id'   => $contractId,
+            'user_id'       => auth()->id(),
+            'note'          => $this->progressNote,
+        ]);
+        $this->progressNote = '';
+        $this->progressNotes = ContractProgressNote::where('contract_type', 'waste')
+            ->where('contract_id', $contractId)
+            ->with('user')
+            ->latest()
+            ->get();
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
+    }
+
     public function resetFilters()
     {
         $this->filter = [
@@ -230,8 +295,13 @@ class ContractWasteManager extends Component
 
     public function viewDetail($id)
     {
-        $this->selectedDoc = ContractWaste::with(['customer', 'handler', 'staff', 'department'])->find($id);
+        $this->selectedDoc = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
         if ($this->selectedDoc) {
+            $this->progressNotes = ContractProgressNote::where('contract_type', 'waste')
+                ->where('contract_id', $id)
+                ->with('user')
+                ->latest()
+                ->get();
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
@@ -245,7 +315,7 @@ class ContractWasteManager extends Component
 
     public function render()
     {
-        $query = ContractWaste::with(['customer', 'handler', 'staff', 'department'])
+        $query = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function($q) {
                 $q->where(function($sq) {
                     $sq->where('shd_cxl', 'like', '%'.$this->search.'%')
@@ -254,7 +324,11 @@ class ContractWasteManager extends Component
                           $csq->where('name', 'like', '%'.$this->search.'%');
                       });
                 });
-            });
+            })
+            ->when(auth()->user()->hasRole('kinh-doanh'),
+                fn($q) => $q->where('staff_id', auth()->id()))
+            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
 
         // Apply filters
         if ($this->filter['signed_from'] ?? null) $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
@@ -283,10 +357,12 @@ class ContractWasteManager extends Component
         
         return view('livewire.admin.contracts.contract-waste-manager', [
             'docs' => $docs,
-            'handlers' => Handler::all(),
+            'handlers' => Handler::orderBy('name')->get(),
             'customers' => Customer::orderBy('name')->get(),
             'staffs' => User::all(),
             'departments' => Department::all(),
+            'assignable_users' => \App\Models\User::whereHas('roles', fn($q) =>
+                $q->whereIn('name', ['tu-van', 'kinh-doanh', 'ky-thuat']))->orderBy('name')->get(),
             // Dynamic filter options
             'service_types' => ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray(),
             'waste_types' => ContractWaste::whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray(),

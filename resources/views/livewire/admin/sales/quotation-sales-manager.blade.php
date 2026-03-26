@@ -96,14 +96,14 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4">THÔNG TIN BÁO GIÁ</th>
-                        <th>KHÁCH HÀNG</th>
-                        <th class="text-center">SỐ BÁO GIÁ</th>
-                        <th class="text-end">GIÁ TRỊ HỢP ĐỒNG</th>
-                        <th class="text-end">HOA HỒNG</th>
-                        <th class="text-end">DOANH SỐ</th>
-                        <th>TÌNH TRẠNG</th>
-                        <th class="text-center pe-4">THAO TÁC</th>
+                        <th class="ps-4">Thông tin báo giá</th>
+                        <th>Khách hàng</th>
+                        <th class="text-center">Số báo giá</th>
+                        <th class="text-end">Giá trị hợp đồng</th>
+                        <th class="text-end">Hoa hồng</th>
+                        <th class="text-end">Doanh số</th>
+                        <th>Tình trạng</th>
+                        <th class="text-center pe-4">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -196,14 +196,14 @@
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Giá trị báo giá (chưa VAT) <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-sm">
-                                    <input type="number" class="form-control" wire:model.blur="value_ext_vat" wire:change="calculateSales">
+                                    <input type="text" class="form-control money-input" wire:model.blur="value_ext_vat" wire:change="calculateSales">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Hoa hồng <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-sm">
-                                    <input type="number" class="form-control" wire:model="commission">
+                                    <input type="text" class="form-control money-input" wire:model="commission">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                             </div>
@@ -218,7 +218,7 @@
                             <div class="col-md-3">
                                 <label class="form-label small fw-bold">Doanh số</label>
                                 <div class="input-group input-group-sm">
-                                    <input type="number" class="form-control bg-light" wire:model="sales_amount" readonly>
+                                    <input type="text" class="form-control bg-light money-input" wire:model="sales_amount" readonly>
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                             </div>

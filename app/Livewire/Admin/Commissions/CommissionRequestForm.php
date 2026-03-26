@@ -5,9 +5,11 @@ namespace App\Livewire\Admin\Commissions;
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
 use Livewire\Component;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class CommissionRequestForm extends Component
 {
+    use CleanMoneyInput;
     public $requestId;
     public $contract_waste_id;
     public $receiver_name;
@@ -34,6 +36,8 @@ class CommissionRequestForm extends Component
 
     public function save($exit = false)
     {
+        $this->cleanMoneyProperties(['amount']);
+
         $this->validate([
             'contract_waste_id' => 'required|exists:contract_wastes,id',
             'receiver_name' => 'required|string|max:255',

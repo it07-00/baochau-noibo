@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ContractCommercial extends Model
 {
@@ -81,5 +82,10 @@ class ContractCommercial extends Model
             'ĐÃ HỦY'         => 'danger',
             default          => 'secondary',
         };
+    }
+
+    public function assignments(): MorphMany
+    {
+        return $this->morphMany(ContractAssignment::class, 'assignable');
     }
 }

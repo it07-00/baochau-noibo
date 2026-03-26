@@ -14,6 +14,7 @@
         'users' => 'Người dùng',
         'roles' => 'Vai trò & Phân quyền',
         'departments' => 'Phòng ban',
+        'handlers' => 'Chủ xử lý',
         'master-data' => 'Dữ liệu chuẩn',
         'settings' => 'Cài đặt hệ thống',
         'contracts-waste' => 'Hợp đồng chất thải',

@@ -7,10 +7,11 @@ use App\Models\User;
 use App\Models\Customer;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class QuotationManager extends Component
 {
-    use WithPagination;
+    use WithPagination, CleanMoneyInput;
 
     public $search = '';
     public $filter_staff = '';
@@ -54,10 +55,12 @@ class QuotationManager extends Component
         $this->formData['staff_id'] = auth()->id();
     }
 
-    public function updatedFormDataOriginalValue() { $this->calculateByExtVat(); }
-    public function updatedFormDataCommissionValue() { $this->calculateTotal(); }
-    public function updatedFormDataCommissionTax() { $this->calculateByVatAmount(); }
-    public function updatedFormDataValueIncVat() { $this->calculateByIncVat(); }
+    private array $moneyFields = ['original_value', 'value_inc_vat', 'commission_value', 'commission_tax', 'total_value'];
+
+    public function updatedFormDataOriginalValue() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateByExtVat(); }
+    public function updatedFormDataCommissionValue() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateTotal(); }
+    public function updatedFormDataCommissionTax() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateByVatAmount(); }
+    public function updatedFormDataValueIncVat() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateByIncVat(); }
 
     public function calculateByExtVat()
     {
@@ -120,11 +123,13 @@ class QuotationManager extends Component
     public function convertTo($type)
     {
         $route = match($type) {
-            'waste' => 'app.contracts.waste.index',
-            'consulting' => 'app.contracts.consulting.index',
-            'project' => 'app.contracts.project.index',
-            'commercial' => 'app.contracts.commercial.index',
-            default => 'app.contracts.waste.index',
+            'waste'          => 'app.contracts.waste.index',
+            'consulting'     => 'app.contracts.consulting.index',
+            'project'        => 'app.contracts.project.index',
+            'commercial'     => 'app.contracts.commercial.index',
+            'sustainability' => 'app.contracts.sustainability.index',
+            'energy'         => 'app.contracts.energy.index',
+            default          => 'app.contracts.waste.index',
         };
 
         return redirect()->route($route, ['quotation_id' => $this->convertingQuotation->id]);
@@ -132,6 +137,8 @@ class QuotationManager extends Component
 
     public function save()
     {
+        $this->cleanMoneyFields($this->formData, $this->moneyFields);
+
         $this->validate();
 
         if ($this->isEditing) {

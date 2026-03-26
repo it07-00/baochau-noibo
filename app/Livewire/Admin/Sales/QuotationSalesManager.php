@@ -8,10 +8,11 @@ use App\Models\Department;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class QuotationSalesManager extends Component
 {
-    use WithPagination;
+    use WithPagination, CleanMoneyInput;
 
     public $search = '';
     public $filter_staff = '';
@@ -37,6 +38,7 @@ class QuotationSalesManager extends Component
 
     public function calculateSales()
     {
+        $this->cleanMoneyProperties(['value_ext_vat', 'commission', 'sales_amount']);
         $this->sales_amount = ($this->value_ext_vat * $this->sales_percentage) / 100;
     }
 
@@ -84,6 +86,8 @@ class QuotationSalesManager extends Component
 
     public function save()
     {
+        $this->cleanMoneyProperties(['value_ext_vat', 'commission', 'sales_amount']);
+
         $this->validate([
             'quotation_number' => 'required',
             'staff_id' => 'required',

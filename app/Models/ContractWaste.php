@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ContractWaste extends Model
 {
@@ -43,5 +44,10 @@ class ContractWaste extends Model
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function assignments(): MorphMany
+    {
+        return $this->morphMany(ContractAssignment::class, 'assignable');
     }
 }

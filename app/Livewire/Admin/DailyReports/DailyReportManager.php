@@ -38,7 +38,7 @@ class DailyReportManager extends Component
         $this->dateFilter = date('Y-m-d');
         $this->monthFilter = (int)date('m');
         $this->yearFilter = (int)date('Y');
-        $this->isManager = auth()->user()->hasRole('Director') || auth()->user()->hasRole('Sales Manager');
+        $this->isManager = auth()->user()->hasAnyRole(['it', 'quan-ly']);
         if (!$this->isManager) {
             $this->userIdFilter = auth()->id();
         }

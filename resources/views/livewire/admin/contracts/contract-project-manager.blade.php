@@ -11,9 +11,11 @@
             </nav>
         </div>
         <div class="d-flex gap-2">
+            @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
             <button wire:click="create" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
             </button>
+            @endunless
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm theo SHD hoặc Tên KH" wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary">
@@ -86,8 +88,8 @@
                         <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.info_source">
                             <option value="">Chọn Nguồn thông...</option>
-                            <option value="MỚI">MỚI</option>
-                            <option value="TÁI KÝ">TÁI KÝ</option>
+                            <option value="MỚI">Mới</option>
+                            <option value="TÁI KÝ">Tái ký</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -144,12 +146,15 @@
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
-                    <tr class="small text-muted text-uppercase fw-bold">
+                    <tr class="small text-muted fw-bold">
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
+                        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <th class="text-center">Giá trị hợp đồng</th>
                         <th class="text-center">Hoa hồng</th>
                         <th class="text-center">Doanh số</th>
+                        @endunless
+                        <th class="text-center">Được giao</th>
                         <th class="text-center">Tình trạng</th>
                         <th class="text-center pe-4">Thao tác</th>
                     </tr>
@@ -159,19 +164,20 @@
                     <tr class="border-bottom border-light">
                         <td class="ps-4 py-4">
                             <div class="d-flex flex-column">
-                                <span class="small">SHD BC: <span class="fw-bold">{{ $doc->shd_ad }}</span></span>
+                                <span class="small">Số HĐ BC:<span class="fw-bold">{{ $doc->shd_ad }}</span></span>
                                 <span class="small">Ngày ký hợp đồng: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
-                                <span class="small">NVCS: <span class="fw-bold">{{ $doc->staff?->name }}</span></span>
+                                <span class="small">Nhân viên CS:<span class="fw-bold">{{ $doc->staff?->name }}</span></span>
                             </div>
                         </td>
                         <td class="py-4">
                             <div class="d-flex flex-column">
-                                <span class="fw-bold text-uppercase text-primary">{{ $doc->customer?->name }}</span>
+                                <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
                                 <span class="small">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
                                 <span class="small text-muted">{{ $doc->customer?->email }}</span>
                                 <span class="small text-muted">{{ $doc->customer?->address }}</span>
                             </div>
                         </td>
+                        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <td class="text-center">
                             <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
                         </td>
@@ -180,6 +186,21 @@
                         </td>
                         <td class="text-center">
                             <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
+                        </td>
+                        @endunless
+                        <td class="text-center">
+                            @if($doc->assignments->count() > 0)
+                            <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                @foreach($doc->assignments->take(3) as $assign)
+                                <span class="badge bg-secondary" style="font-size:0.65rem;" title="{{ $assign->user?->name }}">{{ Str::limit($assign->user?->name ?? '?', 8) }}</span>
+                                @endforeach
+                                @if($doc->assignments->count() > 3)
+                                <span class="badge bg-light text-dark" style="font-size:0.65rem;">+{{ $doc->assignments->count() - 3 }}</span>
+                                @endif
+                            </div>
+                            @else
+                            <span class="text-muted small">—</span>
+                            @endif
                         </td>
                         <td class="text-center">
                             <div class="d-flex flex-column align-items-center">
@@ -192,12 +213,19 @@
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
+                                @if(auth()->user()->hasAnyRole(['quan-ly', 'it']))
+                                <button class="btn btn-sm p-0 text-success" wire:click="openAssign({{ $doc->id }})" title="Giao việc">
+                                    <i class="bi bi-person-check fs-5"></i>
+                                </button>
+                                @endif
+                                @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                                 <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $doc->id }})" title="Chỉnh sửa">
                                     <i class="bi bi-pencil fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-danger" wire:click="delete({{ $doc->id }})" onclick="return confirm('Xóa hợp đồng này?')" title="Xóa">
                                     <i class="bi bi-trash fs-5"></i>
                                 </button>
+                                @endunless
                             </div>
                         </td>
                     </tr>
@@ -211,7 +239,7 @@
         </div>
         @if($docs->hasPages())
         <div class="px-4 py-3 border-top">
-            {{ $docs->links() }}
+            {{ $docs->links('livewire.admin.users.pagination') }}
         </div>
         @endif
     </div>
@@ -229,12 +257,12 @@
                     <table class="table table-bordered mb-0">
                         <tbody>
                             <tr>
-                                <th class="bg-light w-30">SHD BC</th>
+                                <th class="bg-light w-30">Số HĐ BC</th>
                                 <td class="fw-bold">{{ $selectedDoc->shd_ad }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Khách hàng</th>
-                                <td class="text-uppercase fw-bold text-primary">{{ $selectedDoc->customer?->name }}</td>
+                                <td class="fw-bold text-primary">{{ $selectedDoc->customer?->name }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Người đại diện</th>
@@ -245,7 +273,7 @@
                                 <td>{{ $selectedDoc->customer?->address }}</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">NVCS</th>
+                                <th class="bg-light">Nhân viên CS</th>
                                 <td>{{ $selectedDoc->staff?->name }}</td>
                             </tr>
                             <tr>
@@ -276,6 +304,7 @@
                                 <th class="bg-light">Loại dịch vụ</th>
                                 <td>{{ $selectedDoc->loai_dich_vu ?: '-' }}</td>
                             </tr>
+                            @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                             <tr>
                                 <th class="bg-light">Giá trị hợp đồng</th>
                                 <td class="text-danger fw-bold">{{ number_format($selectedDoc->value) }}đ</td>
@@ -288,6 +317,7 @@
                                 <th class="bg-light">Doanh số</th>
                                 <td class="text-danger fw-bold">{{ number_format($selectedDoc->revenue) }}đ</td>
                             </tr>
+                            @endunless
                             <tr>
                                 <th class="bg-light">Tình trạng</th>
                                 <td><span class="badge bg-success">{{ $selectedDoc->status ?: 'Đang thực hiện' }}</span></td>
@@ -301,9 +331,53 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th class="bg-light">Người được giao</th>
+                                <td>
+                                    @if($selectedDoc->assignments && $selectedDoc->assignments->count() > 0)
+                                        @foreach($selectedDoc->assignments as $assign)
+                                        <div class="mb-1">
+                                            <span class="badge bg-primary me-1">{{ $assign->user?->name }}</span>
+                                            <small class="text-muted">— giao bởi {{ $assign->assigner?->name }} lúc {{ $assign->created_at?->format('d/m/Y H:i') }}</small>
+                                        </div>
+                                        @endforeach
+                                    @else
+                                        <span class="text-muted small">Chưa giao việc</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
                                 <th class="bg-light">Ghi chú</th>
                                 <td>{{ $selectedDoc->notes }}</td>
                             </tr>
+                            <tr>
+                                <th class="bg-light align-middle" colspan="2"><i class="bi bi-journal-text me-1"></i> Ghi chú tiến độ</th>
+                            </tr>
+                            @if($progressNotes && count($progressNotes) > 0)
+                                @foreach($progressNotes as $pNote)
+                                <tr>
+                                    <td colspan="2" class="py-2 ps-4">
+                                        <div class="d-flex flex-column">
+                                            <span class="small fw-bold text-primary">{{ $pNote->user?->name }} <span class="text-muted fw-normal">— {{ $pNote->created_at?->format('d/m/Y H:i') }}</span></span>
+                                            <span class="mt-1">{{ $pNote->note }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
+                            <tr><td colspan="2" class="text-muted small ps-4 py-2">Chưa có ghi chú tiến độ nào.</td></tr>
+                            @endif
+                            @if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                            <tr>
+                                <td colspan="2" class="px-4 pb-3 pt-2">
+                                    <textarea class="form-control form-control-sm mb-2" rows="2" wire:model="progressNote" placeholder="Nhập ghi chú tiến độ..."></textarea>
+                                    @error('progressNote') <div class="text-danger small mb-1">{{ $message }}</div> @enderror
+                                    <button class="btn btn-sm btn-primary" wire:click="addProgressNote({{ $selectedDoc->id }})" wire:loading.attr="disabled" wire:target="addProgressNote">
+                                        <span wire:loading wire:target="addProgressNote" class="spinner-border spinner-border-sm me-1"></span>
+                                        <i class="bi bi-plus me-1"></i> Thêm ghi chú
+                                    </button>
+                                </td>
+                            </tr>
+                            @endif
                         </tbody>
                     </table>
                     @endif
@@ -323,7 +397,7 @@
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">SHD BC</label>
+                            <label class="form-label fw-bold">Số HĐ BC</label>
                             <input type="text" class="form-control" wire:model="formData.shd_ad">
                         </div>
                         <div class="col-md-6">
@@ -337,7 +411,7 @@
                             @error('formData.customer_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">NVCS <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Nhân viên CS <span class="text-danger">*</span></label>
                             <select class="form-select" wire:model="formData.staff_id">
                                 <option value="">-- Chọn nhân viên --</option>
                                 @foreach($staffs as $s)
@@ -365,16 +439,16 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Giá trị HĐ <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" wire:model="formData.value" min="0">
+                            <input type="text" class="form-control money-input" wire:model="formData.value">
                             @error('formData.value') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Hoa hồng</label>
-                            <input type="number" class="form-control" wire:model="formData.commission" min="0">
+                            <input type="text" class="form-control money-input" wire:model="formData.commission">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Doanh số</label>
-                            <input type="number" class="form-control" wire:model="formData.revenue" min="0">
+                            <input type="text" class="form-control money-input" wire:model="formData.revenue">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Tỉnh thành</label>
@@ -395,8 +469,8 @@
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Nguồn thông tin</label>
                             <select class="form-select" wire:model="formData.info_source">
-                                <option value="MỚI">MỚI</option>
-                                <option value="TÁI KÝ">TÁI KÝ</option>
+                                <option value="MỚI">Mới</option>
+                                <option value="TÁI KÝ">Tái ký</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -409,9 +483,9 @@
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Tình trạng</label>
                             <select class="form-select" wire:model="formData.status">
-                                <option value="ĐANG THỰC HIỆN">ĐANG THỰC HIỆN</option>
-                                <option value="HOÀN THÀNH">HOÀN THÀNH</option>
-                                <option value="ĐÃ HỦY">ĐÃ HỦY</option>
+                                <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
+                                <option value="HOÀN THÀNH">Hoàn thành</option>
+                                <option value="ĐÃ HỦY">Đã hủy</option>
                             </select>
                         </div>
                         <div class="col-md-12 d-flex gap-4 pt-1">
@@ -445,6 +519,36 @@
         </div>
     </div>
 
+    {{-- Assignment Modal --}}
+    <div wire:ignore.self class="modal fade" id="assignModalProject" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success py-3">
+                    <h5 class="modal-title fw-bold modal-title-custom"><i class="bi bi-person-check me-1"></i> Giao việc hợp đồng</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
+                    <div class="list-group" style="max-height: 320px; overflow-y: auto;">
+                        @foreach($assignable_users as $u)
+                        <label class="list-group-item list-group-item-action d-flex gap-2">
+                            <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" value="{{ $u->id }}" wire:model="assignUserIds">
+                            <span>{{ $u->name }}<small class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
+                        </label>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-success" wire:click="saveAssign" wire:loading.attr="disabled" wire:target="saveAssign">
+                        <span wire:loading wire:target="saveAssign" class="spinner-border spinner-border-sm me-1"></span>
+                        Lưu giao việc
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         window.addEventListener('openDetailModal', () => {
@@ -455,6 +559,12 @@
         });
         Livewire.on('closeFormModal', () => {
             bootstrap.Modal.getInstance(document.getElementById('formModalProject'))?.hide();
+        });
+        window.addEventListener('openAssignModal', () => {
+            new bootstrap.Modal(document.getElementById('assignModalProject')).show();
+        });
+        Livewire.on('closeAssignModal', () => {
+            bootstrap.Modal.getInstance(document.getElementById('assignModalProject'))?.hide();
         });
     </script>
     @endpush

@@ -72,17 +72,17 @@
                             <tr>
                                 <td class="ps-4">
                                     <div class="mb-1">
-                                        <small class="text-muted">SHD BC:</small><br>
+                                        <small class="text-muted">Số HĐ BC:</small><br>
                                         <strong>{{ $request->contract->shd_ad ?? 'N/A' }}</strong>
                                     </div>
                                     <div>
-                                        <small class="text-muted">NVCS:</small>
-                                        <span class="text-uppercase">{{ $request->contract->staff->name ?? 'N/A' }}</span>
+                                        <small class="text-muted">Nhân viên CS:</small>
+                                        <span>{{ $request->contract->staff->name ?? 'N/A' }}</span>
                                     </div>
                                 </td>
                                 <td>
                                     @if($request->contract && $request->contract->customer)
-                                        <div class="fw-bold text-uppercase">{{ $request->contract->customer->name }}</div>
+                                        <div class="fw-bold">{{ $request->contract->customer->name }}</div>
                                         <div class="small text-muted">
                                             {{ $request->contract->customer->contact_person }} - {{ $request->contract->customer->phone }} - {{ $request->contract->customer->email }}
                                         </div>

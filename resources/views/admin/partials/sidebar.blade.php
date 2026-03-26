@@ -83,6 +83,37 @@
                 </li>
                 @endcan
 
+                @can('handlers.view')
+                <li class="app-sidebar-menu-item">
+                    <a href="{{ route('app.handlers.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.handlers.*') ? 'active menu-current' : '' }}">
+                        <span class="menu-icon flex-shrink-0">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M5 20C5 16.6863 8.13401 14 12 14C15.866 14 19 16.6863 19 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19 6V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M21 8H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="menu-title flex-grow-1">Chủ xử lý</span>
+                    </a>
+                </li>
+                @endcan
+
+                @can('customers.view')
+                <li class="app-sidebar-menu-item">
+                    <a href="{{ route('app.customers.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.customers.*') ? 'active menu-current' : '' }}">
+                        <span class="menu-icon flex-shrink-0">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 21V7L12 3L21 7V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 21V13H15V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 7H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="menu-title flex-grow-1">Khách hàng</span>
+                    </a>
+                </li>
+                @endcan
+
 
 
                 <li class="app-sidebar-menu-heading">
@@ -139,109 +170,125 @@ SVG;
 </svg>
 SVG;
 
-                    // Mỗi menu gắn với permission tương ứng
+                    // allow_roles: nếu có thì chỉ các role trong danh sách mới thấy menu
+                    // Không có allow_roles = tất cả role đều thấy (chỉ còn chặn bởi @can)
                     $groupMenus = [
                         [
-                            'title' => 'Quản lý hợp đồng',
-                            'icon' => $stackIcon,
-                            'permission' => 'contracts-waste.view',
-                            'children' => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
+                            'title'       => 'Quản lý hợp đồng',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'contracts-waste.view',
+                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh', 'ke-toan'],
+                            'children'    => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
                         ],
                         [
-                            'title' => 'Quản lý hóa đơn',
-                            'icon' => $stackIcon,
-                            'permission' => 'invoices.view',
-                            'children' => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
+                            'title'       => 'Quản lý hóa đơn',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'invoices.view',
+                            'allow_roles' => ['it', 'quan-ly', 'ke-toan'],
+                            'children'    => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
                         ],
                         [
-                            'title' => 'Chuyển phát thư',
-                            'icon' => $stackIcon,
-                            'permission' => 'mail-delivery.view',
-                            'children' => ['Quản lý chuyển phát'],
+                            'title'       => 'Chuyển phát thư',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'mail-delivery.view',
+                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh', 'tu-van'],
+                            'children'    => ['Quản lý chuyển phát'],
                         ],
                         [
-                            'title' => 'Bộ phận kinh doanh',
-                            'icon' => $stackIcon,
-                            'permission' => 'sales-quotation.view',
-                            'children' => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
+                            'title'       => 'Bộ phận kinh doanh',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'sales-quotation.view',
+                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh'],
+                            'children'    => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
                         ],
                         [
-                            'title' => 'Bộ phận chất thải',
-                            'icon' => $stackIcon,
-                            'permission' => 'waste-requests.view',
-                            'children' => ['Yêu cầu gom rác'],
+                            'title'       => 'Bộ phận chất thải',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'waste-requests.view',
+                            'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
+                            'children'    => ['Yêu cầu gom rác'],
                         ],
                         [
-                            'title' => 'Bộ phận tư vấn',
-                            'icon' => $stackIcon,
-                            'permission' => 'consulting-requests.view',
-                            'children' => ['Yêu cầu báo cáo', 'Yêu cầu đo mẫu', 'Yêu cầu đo mẫu dự án', 'Yêu cầu xuất mẫu', 'Yêu cầu GPMT/ĐTM', 'Yêu cầu ĐKMT', 'Yêu cầu VHTN'],
+                            'title'       => 'Bộ phận tư vấn',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'consulting-requests.view',
+                            'allow_roles' => ['it', 'quan-ly', 'tu-van'],
+                            'children'    => ['Yêu cầu báo cáo', 'Yêu cầu đo mẫu', 'Yêu cầu đo mẫu dự án', 'Yêu cầu xuất mẫu', 'Yêu cầu GPMT/ĐTM', 'Yêu cầu ĐKMT', 'Yêu cầu VHTN', 'Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
                         ],
                         [
-                            'title' => 'Bộ phận dự án',
-                            'icon' => $stackIcon,
-                            'permission' => 'project-requests.view',
-                            'children' => ['Yêu cầu dự án lớn', 'Yêu cầu dự án nhỏ', 'Yêu cầu khảo sát dự án'],
+                            'title'       => 'Bộ phận dự án',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'project-requests.view',
+                            'allow_roles' => ['it', 'quan-ly'],
+                            'children'    => ['Yêu cầu dự án lớn', 'Yêu cầu dự án nhỏ', 'Yêu cầu khảo sát dự án'],
                         ],
                         [
-                            'title' => 'Bộ phận thương mại',
-                            'icon' => $stackIcon,
-                            'permission' => 'commercial-requests.view',
-                            'children' => ['Yêu cầu thực hiện BPTM'],
+                            'title'       => 'Bộ phận thương mại',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'commercial-requests.view',
+                            'allow_roles' => ['it', 'quan-ly'],
+                            'children'    => ['Yêu cầu thực hiện BPTM'],
                         ],
                         [
-                            'title' => 'Bộ phận kế toán',
-                            'icon' => $stackIcon,
-                            'permission' => 'commissions.view',
-                            'children' => ['Yêu cầu chi hoa hồng'],
+                            'title'       => 'Bộ phận kế toán',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'commissions.view',
+                            'allow_roles' => ['it', 'quan-ly', 'ke-toan', 'kinh-doanh', 'tu-van'],
+                            'children'    => ['Yêu cầu chi hoa hồng'],
                         ],
                         [
-                            'title' => 'Bộ phận kỹ thuật',
-                            'icon' => $stackIcon,
-                            'permission' => 'technical-requests.view',
-                            'children' => ['Yêu cầu kỹ thuật', 'Lịch công tác kỹ thuật', 'Phiếu kết quả'],
+                            'title'       => 'Bộ phận kỹ thuật',
+                            'icon'        => $stackIcon,
+                            'permission'  => 'technical-requests.view',
+                            'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
+                            'children'    => ['Yêu cầu kỹ thuật', 'Lịch công tác kỹ thuật', 'Phiếu kết quả', 'Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
                         ],
                         [
-                            'title' => 'Báo cáo Marketing',
-                            'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'children' => ['Bảng tổng kết', 'Bảng mục tiêu cam kết'],
+                            'title'       => 'Báo cáo Marketing',
+                            'icon'        => $usersIcon,
+                            'permission'  => 'reports.view',
+                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh'],
+                            'children'    => ['Bảng tổng kết', 'Bảng mục tiêu cam kết'],
                         ],
                         [
-                            'title' => 'Báo cáo Kinh doanh',
-                            'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'children' => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
+                            'title'       => 'Báo cáo Kinh doanh',
+                            'icon'        => $usersIcon,
+                            'permission'  => 'reports.view',
+                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh'],
+                            'children'    => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
                         ],
                         [
-                            'title' => 'Báo cáo HC - CTR',
-                            'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'children' => ['Hợp đồng', 'Hóa đơn', 'Công nợ', 'Gom rác'],
+                            'title'       => 'Báo cáo HC - CTR',
+                            'icon'        => $usersIcon,
+                            'permission'  => 'reports.view',
+                            'allow_roles' => ['it', 'quan-ly', 'ke-toan'],
+                            'children'    => ['Hợp đồng', 'Hóa đơn', 'Công nợ', 'Gom rác'],
                         ],
                         [
-                            'title' => 'Báo cáo Tư vấn',
-                            'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'children' => ['Báo cáo chung', 'Bảng theo dõi đo mẫu', 'Báo cáo', 'GPMT/ĐTM', 'ĐKMT', 'VHTN'],
+                            'title'       => 'Báo cáo Tư vấn',
+                            'icon'        => $usersIcon,
+                            'permission'  => 'reports.view',
+                            'allow_roles' => ['it', 'quan-ly', 'tu-van'],
+                            'children'    => ['Báo cáo chung', 'Bảng theo dõi đo mẫu', 'Báo cáo', 'GPMT/ĐTM', 'ĐKMT', 'VHTN'],
                         ],
                         [
-                            'title' => 'Báo cáo Kỹ thuật',
-                            'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'children' => ['Báo cáo hiện trường', 'Lịch xe', 'Vật tư'],
+                            'title'       => 'Báo cáo Kỹ thuật',
+                            'icon'        => $usersIcon,
+                            'permission'  => 'reports.view',
+                            'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
+                            'children'    => ['Báo cáo hiện trường', 'Lịch xe', 'Vật tư'],
                         ],
                         [
-                            'title' => 'Nội bộ',
-                            'icon' => $usersIcon,
+                            'title'      => 'Nội bộ',
+                            'icon'       => $usersIcon,
                             'permission' => 'internal-docs.view',
-                            'children' => ['Quy định'],
+                            'children'   => ['Quy định'],
                         ],
                         [
-                            'title' => 'Báo cáo ngày',
-                            'icon' => $reportNodeIcon,
+                            'title'      => 'Báo cáo ngày',
+                            'icon'       => $reportNodeIcon,
                             'permission' => 'daily-reports.view',
-                            'children' => ['Báo cáo ngày'],
+                            'children'   => ['Báo cáo ngày'],
                         ],
                     ];
 
@@ -291,6 +338,11 @@ SVG;
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng theo dõi báo giá';
                     }
+
+                    // TV/KT: redirect activeGroup to their own section when on contract pages
+                    if ($activeGroup === 'Quản lý hợp đồng' && $currentUser->hasAnyRole(['tu-van', 'ky-thuat'])) {
+                        $activeGroup = $currentUser->hasRole('tu-van') ? 'Bộ phận tư vấn' : 'Bộ phận kỹ thuật';
+                    }
                 @endphp
 
                 <li class="app-sidebar-menu-item">
@@ -323,6 +375,7 @@ SVG;
 
                 @foreach ($groupMenus as $menu)
                     @can($menu['permission'])
+                    @if(!isset($menu['allow_roles']) || $currentUser->hasAnyRole($menu['allow_roles']))
                     <li class="app-sidebar-menu-item">
                         <a href="javascript:void(0)" class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
                             <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
@@ -356,6 +409,18 @@ SVG;
                                             $href = route('app.contracts.sustainability.index');
                                         } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'HĐ Năng lượng') {
                                             $href = route('app.contracts.energy.index');
+                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng chất thải') {
+                                            $href = route('app.contracts.waste.index');
+                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng tư vấn') {
+                                            $href = route('app.contracts.consulting.index');
+                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng dự án') {
+                                            $href = route('app.contracts.project.index');
+                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng thương mại') {
+                                            $href = route('app.contracts.commercial.index');
+                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Phát triển bền vững') {
+                                            $href = route('app.contracts.sustainability.index');
+                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Năng lượng') {
+                                            $href = route('app.contracts.energy.index');
                                         } elseif ($menu['title'] === 'Báo cáo ngày' && $child === 'Báo cáo ngày') {
                                             $href = route('app.daily-reports.index');
                                         } elseif (request()->routeIs('app.commissions.*')) {
@@ -385,7 +450,13 @@ SVG;
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số tái ký' && request()->routeIs('app.sales.renewal.*')) ||
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ' && request()->routeIs('app.sales.progressive.*')) ||
                                                       ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát' && request()->routeIs('app.postal-deliveries.*')) ||
-                                                      ($child === 'Bảng theo dõi báo giá' && request()->routeIs('app.quotation-tracking.*'));
+                                                      ($child === 'Bảng theo dõi báo giá' && request()->routeIs('app.quotation-tracking.*')) ||
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng chất thải' && request()->routeIs('app.contracts.waste.*')) ||
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng tư vấn' && request()->routeIs('app.contracts.consulting.*')) ||
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng dự án' && request()->routeIs('app.contracts.project.*')) ||
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng thương mại' && request()->routeIs('app.contracts.commercial.*')) ||
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Phát triển bền vững' && request()->routeIs('app.contracts.sustainability.*')) ||
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Năng lượng' && request()->routeIs('app.contracts.energy.*'));
                                     @endphp
                                     <li>
                                         <a href="{{ $href }}" class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
@@ -396,6 +467,7 @@ SVG;
                             @endforeach
                         </ul>
                     </li>
+                    @endif
                     @endcan
                 @endforeach
             </ul>

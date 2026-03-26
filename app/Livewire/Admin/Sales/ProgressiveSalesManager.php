@@ -5,10 +5,11 @@ namespace App\Livewire\Admin\Sales;
 use App\Models\ProgressiveSales;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class ProgressiveSalesManager extends Component
 {
-    use WithPagination;
+    use WithPagination, CleanMoneyInput;
 
     public $search = '';
     public $filter_month = '';
@@ -46,6 +47,8 @@ class ProgressiveSalesManager extends Component
 
     public function save()
     {
+        $this->cleanMoneyProperties(['amount']);
+
         $this->validate([
             'contract_number' => 'required',
             'sales_month' => 'required',

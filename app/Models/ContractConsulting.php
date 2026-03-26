@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ContractConsulting extends Model
 {
@@ -88,36 +89,21 @@ class ContractConsulting extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match ($this->workflow_status) {
-            self::STATUS_DRAFT => 'Nháp',
-            self::STATUS_PENDING_ACCOUNTING => 'Chờ kế toán duyệt',
-            self::STATUS_REJECTED_ACCOUNTING => 'Kế toán trả về',
-            self::STATUS_PENDING_DIRECTOR => 'Chờ Giám đốc ký',
-            self::STATUS_REJECTED_DIRECTOR => 'Giám đốc trả về',
-            self::STATUS_APPROVED_DIRECTOR => 'Giám đốc đã ký',
-            self::STATUS_CONSULTANT_ASSIGNED => 'Đã gán NV tư vấn',
-            self::STATUS_CONSULTING_RECEIVING => 'Đã tiếp nhận',
-            self::STATUS_CONSULTING_SURVEY => 'Đang khảo sát',
-            self::STATUS_CONSULTING_PROCESSING => 'Đang thực hiện',
-            self::STATUS_WAITING_CLIENT => 'Chờ KH duyệt',
-            self::STATUS_CLIENT_CONFIRMED => 'KH đã xác nhận',
-            self::STATUS_PENDING_FINAL_REVIEW => 'Chờ duyệt hoàn thành',
-            self::STATUS_REJECTED_FINAL_REVIEW => 'Yêu cầu cập nhật lại',
-            self::STATUS_FINISHED => 'Đã hoàn thành',
-            self::STATUS_INCIDENT => 'Sự cố',
-            default => 'Nháp',
+        return match($this->status) {
+            'ĐANG THỰC HIỆN' => 'Đang thực hiện',
+            'HOÀN THÀNH'     => 'Hoàn thành',
+            'ĐÃ HỦY'         => 'Đã hủy',
+            default          => $this->status ?? 'Không xác định',
         };
     }
 
     public function getStatusColorAttribute(): string
     {
-        return match ($this->workflow_status) {
-            self::STATUS_DRAFT => 'secondary',
-            self::STATUS_PENDING_ACCOUNTING, self::STATUS_PENDING_DIRECTOR, self::STATUS_PENDING_FINAL_REVIEW => 'warning',
-            self::STATUS_REJECTED_ACCOUNTING, self::STATUS_REJECTED_DIRECTOR, self::STATUS_REJECTED_FINAL_REVIEW, self::STATUS_INCIDENT => 'danger',
-            self::STATUS_APPROVED_DIRECTOR, self::STATUS_CONSULTANT_ASSIGNED, self::STATUS_CONSULTING_RECEIVING, self::STATUS_CONSULTING_SURVEY, self::STATUS_CONSULTING_PROCESSING, self::STATUS_WAITING_CLIENT, self::STATUS_CLIENT_CONFIRMED => 'info',
-            self::STATUS_FINISHED => 'success',
-            default => 'dark',
+        return match($this->status) {
+            'ĐANG THỰC HIỆN' => 'info',
+            'HOÀN THÀNH'     => 'success',
+            'ĐÃ HỦY'         => 'danger',
+            default          => 'secondary',
         };
     }
 
@@ -139,5 +125,10 @@ class ContractConsulting extends Model
     public function milestoneFiles()
     {
         return $this->hasMany(ConsultingMilestoneFile::class, 'contract_id');
+    }
+
+    public function assignments(): MorphMany
+    {
+        return $this->morphMany(ContractAssignment::class, 'assignable');
     }
 }

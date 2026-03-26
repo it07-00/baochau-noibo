@@ -229,7 +229,7 @@
                                     <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_value) }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">TỔNG TIỀN</th>
+                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Tổng tiền</th>
                                     <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value) }}đ</td>
                                 </tr>
                                 <tr>
@@ -303,35 +303,35 @@
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Giá chưa VAT</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" wire:model.live.debounce.500ms="formData.original_value">
+                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.original_value">
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Tiền thuế</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" wire:model.live.debounce.500ms="formData.commission_tax">
+                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_tax">
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Giá có VAT</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" wire:model.live.debounce.500ms="formData.value_inc_vat">
+                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.value_inc_vat">
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Tiền hoa hồng</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" wire:model.live.debounce.500ms="formData.commission_value">
+                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_value">
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">TỔNG TIỀN</label>
+                                <label class="form-label fw-bold">Tổng tiền</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end fw-bold text-danger bg-light" wire:model="formData.total_value" readonly>
+                                    <input type="text" class="form-control text-end fw-bold text-danger bg-light money-input" wire:model="formData.total_value" readonly>
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
@@ -376,6 +376,12 @@
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('commercial')">
                             <i class="bi bi-cart3 me-2"></i> Hợp đồng Thương mại
+                        </button>
+                        <button class="btn btn-outline-success py-3 fw-bold" wire:click="convertTo('sustainability')">
+                            <i class="bi bi-tree me-2"></i> HĐ Phát triển bền vững
+                        </button>
+                        <button class="btn btn-outline-warning py-3 fw-bold" wire:click="convertTo('energy')">
+                            <i class="bi bi-lightning me-2"></i> HĐ Năng lượng
                         </button>
                     </div>
                 </div>

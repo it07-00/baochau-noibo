@@ -7,10 +7,11 @@ use App\Models\PostalDelivery;
 use App\Services\ViettelPostService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\Concerns\CleanMoneyInput;
 
 class PostalDeliveryManager extends Component
 {
-    use WithPagination;
+    use WithPagination, CleanMoneyInput;
 
     // Filter states
     public $search = '';
@@ -116,6 +117,8 @@ class PostalDeliveryManager extends Component
 
     public function save()
     {
+        $this->cleanMoneyProperties(['vtp_money_collection']);
+
         $this->validate([
             'customer_name' => 'required|string|max:255',
             'sender_name' => 'required|string|max:255',

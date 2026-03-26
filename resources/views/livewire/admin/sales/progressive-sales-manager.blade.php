@@ -49,13 +49,13 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4">SỐ HỢP ĐỒNG</th>
-                        <th>GIAI ĐOẠN / TIẾN ĐỘ</th>
-                        <th class="text-center">THÁNG</th>
-                        <th class="text-center">PHẦN TRĂM (%)</th>
-                        <th class="text-end">SỐ TIỀN</th>
-                        <th class="text-center">TÌNH TRẠNG</th>
-                        <th class="text-center pe-4">THAO TÁC</th>
+                        <th class="ps-4">Số hợp đồng</th>
+                        <th>Giai đoạn / tiến độ</th>
+                        <th class="text-center">Tháng</th>
+                        <th class="text-center">Phần trăm (%)</th>
+                        <th class="text-end">Số tiền</th>
+                        <th class="text-center">Tình trạng</th>
+                        <th class="text-center pe-4">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,7 +121,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Số tiền (VNĐ) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control form-control-sm" wire:model="amount">
+                                <input type="text" class="form-control form-control-sm money-input" wire:model="amount">
                             </div>
 
                             <div class="col-md-12">

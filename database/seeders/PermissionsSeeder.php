@@ -212,6 +212,8 @@ class PermissionsSeeder extends Seeder
                 'internal-docs.view',
                 // Báo cáo ngày
                 'daily-reports.view', 'daily-reports.create',
+                // Báo cáo kỹ thuật
+                'reports.view',
             ]);
         }
     }

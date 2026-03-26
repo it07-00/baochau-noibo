@@ -7,6 +7,64 @@
 <script src="{{ asset('assets/js/ckeditor.js') }}"></script>
 
 <script>
+    // ── Money format helper ─────────────────────────────────────────
+    // Format số tiền VND: 71900000 → 71.900.000
+    // Dùng: <input type="text" class="money-input" wire:model.defer="formData.value">
+    // JS format hiển thị, PHP strip dots khi nhận value
+    (function () {
+        function formatMoney(val) {
+            let num = String(val).replace(/\D/g, '');
+            if (num === '') return '';
+            return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        let isFormatting = false;
+
+        // Format khi user gõ
+        document.addEventListener('input', function (e) {
+            if (!e.target.classList.contains('money-input') || isFormatting) return;
+
+            isFormatting = true;
+            let raw = e.target.value.replace(/\./g, '');
+            let formatted = formatMoney(raw);
+            let pos = e.target.selectionStart;
+            let oldLen = e.target.value.length;
+
+            e.target.value = formatted;
+
+            // Adjust cursor
+            let newLen = formatted.length;
+            pos = pos + (newLen - oldLen);
+            if (pos < 0) pos = 0;
+            e.target.setSelectionRange(pos, pos);
+            isFormatting = false;
+        });
+
+        // Format khi Livewire cập nhật DOM (morph)
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof Livewire !== 'undefined') {
+                Livewire.hook('morph.updated', ({ el }) => {
+                    if (el.classList && el.classList.contains('money-input') && document.activeElement !== el) {
+                        el.value = formatMoney(el.value);
+                    }
+                });
+            }
+
+            // Format các input đã có giá trị sẵn khi trang load
+            document.querySelectorAll('.money-input').forEach(function (el) {
+                if (el.value) el.value = formatMoney(el.value);
+            });
+        });
+
+        // Format khi modal mở (cho giá trị pre-filled từ Livewire)
+        document.addEventListener('shown.bs.modal', function () {
+            setTimeout(function () {
+                document.querySelectorAll('.money-input').forEach(function (el) {
+                    if (el.value) el.value = formatMoney(el.value);
+                });
+            }, 50);
+        });
+    })();
     // Toast configuration
     const Toast = Swal.mixin({
         toast: true,

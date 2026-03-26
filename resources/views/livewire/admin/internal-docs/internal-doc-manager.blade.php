@@ -52,7 +52,7 @@
                         @forelse($docs as $doc)
                         <tr>
                             <td class="ps-4">
-                                <span class="fw-bold text-uppercase">{{ $doc->title }}</span>
+                                <span class="fw-bold">{{ $doc->title }}</span>
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
