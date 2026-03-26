@@ -408,22 +408,56 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Khách hàng <span class="text-danger">*</span></label>
-                            <select class="form-select" wire:model="formData.customer_id">
-                                <option value="">-- Chọn khách hàng --</option>
-                                @foreach($customers as $c)
-                                    <option value="{{ $c->id }}">{{ $c->name }}</option>
-                                @endforeach
-                            </select>
+                            <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                <button class="form-select text-start text-wrap"
+                                        type="button" @click.prevent="open = !open"
+                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                    {{ $customers->find($formData['customer_id'] ?? '')?->name ?? '-- Chọn khách hàng --' }}
+                                </button>
+                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false" x-cloak style="max-height: 300px; overflow-y: auto;">
+                                    <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
+                                    <button class="dropdown-item @if(empty($formData['customer_id'])) active @endif"
+                                            type="button"
+                                            x-show="!search.length"
+                                            wire:click="$set('formData.customer_id', '')" @click="open = false">-- Chọn khách hàng --</button>
+                                    @foreach($customers as $c)
+                                    <button class="dropdown-item text-wrap @if(($formData['customer_id'] ?? '') == $c->id) active @endif"
+                                            type="button"
+                                            x-show="{{ json_encode(mb_strtolower($c->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                            style="white-space: normal !important;"
+                                            wire:click="$set('formData.customer_id', {{ $c->id }})" @click="open = false">
+                                        {{ $c->name }}
+                                    </button>
+                                    @endforeach
+                                </div>
+                            </div>
                             @error('formData.customer_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Nhân viên CS <span class="text-danger">*</span></label>
-                            <select class="form-select" wire:model="formData.staff_id">
-                                <option value="">-- Chọn nhân viên --</option>
-                                @foreach($staffs as $s)
-                                    <option value="{{ $s->id }}">{{ $s->name }}</option>
-                                @endforeach
-                            </select>
+                            <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                <button class="form-select text-start text-wrap"
+                                        type="button" @click.prevent="open = !open"
+                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                    {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? '-- Chọn nhân viên --' }}
+                                </button>
+                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false" x-cloak style="max-height: 300px; overflow-y: auto;">
+                                    <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
+                                    <button class="dropdown-item @if(empty($formData['staff_id'])) active @endif"
+                                            type="button"
+                                            x-show="!search.length"
+                                            wire:click="$set('formData.staff_id', '')" @click="open = false">-- Chọn nhân viên --</button>
+                                    @foreach($staffs as $s)
+                                    <button class="dropdown-item text-wrap @if(($formData['staff_id'] ?? '') == $s->id) active @endif"
+                                            type="button"
+                                            x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                            style="white-space: normal !important;"
+                                            wire:click="$set('formData.staff_id', {{ $s->id }})" @click="open = false">
+                                        {{ $s->name }}
+                                    </button>
+                                    @endforeach
+                                </div>
+                            </div>
                             @error('formData.staff_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
@@ -533,11 +567,13 @@
                     <h5 class="modal-title fw-bold modal-title-custom"><i class="bi bi-person-check me-1"></i> Giao việc hợp đồng</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body p-4" x-data="{ search: '' }">
                     <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
+                    <input type="text" x-model="search" class="form-control form-control-sm mb-3" placeholder="Tìm kiếm nhân viên...">
                     <div class="list-group" style="max-height: 320px; overflow-y: auto;">
                         @foreach($assignable_users as $u)
-                        <label class="list-group-item list-group-item-action d-flex gap-2">
+                        <label class="list-group-item list-group-item-action d-flex gap-2"
+                               x-show="{{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))">
                             <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" value="{{ $u->id }}" wire:model="assignUserIds">
                             <span>{{ $u->name }}<small class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
                         </label>
