@@ -428,6 +428,7 @@ class ContractWasteManager extends Component
             'all_statuses' => ContractWaste::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_statuses' => ContractWaste::whereNotNull('voucher_status')->where('voucher_status', '!=', '')->distinct()->pluck('voucher_status')->toArray(),
+            'payment_methods' => ContractWaste::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng chất thải']);
     }
 }

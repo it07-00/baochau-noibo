@@ -361,6 +361,7 @@ class ContractEnergyManager extends Component
             'all_statuses'       => ContractEnergy::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractEnergy::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractEnergy::SERVICE_TYPES,
+            'payment_methods'    => ContractEnergy::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Giảm phát thải & Hiệu quả năng lượng']);
     }
 }

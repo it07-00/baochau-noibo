@@ -361,6 +361,7 @@ class ContractCommercialManager extends Component
             'all_statuses'       => ContractCommercial::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractCommercial::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractCommercial::SERVICE_TYPES,
+            'payment_methods'    => ContractCommercial::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng thương mại']);
     }
 }

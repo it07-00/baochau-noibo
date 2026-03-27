@@ -361,6 +361,7 @@ class ContractProjectManager extends Component
             'all_statuses'       => ContractProject::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractProject::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractProject::SERVICE_TYPES,
+            'payment_methods'    => ContractProject::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng dự án']);
     }
 }

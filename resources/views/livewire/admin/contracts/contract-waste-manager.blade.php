@@ -128,8 +128,9 @@
                         <label class="form-label fw-bold custom-filter-label">Phương thức thanh toán</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.payment_method">
                             <option value="">Chọn phương thức...</option>
-                            <option value="Sau ký">Sau ký</option>
-                            <option value="Trước ký">Trước ký</option>
+                            @foreach($payment_methods as $pm)
+                                <option value="{{ $pm }}">{{ $pm }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -763,7 +764,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">PT thanh toán</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.payment_method" placeholder="Nhập phương thức thanh toán...">
+                                <select class="form-select" wire:model.defer="formData.payment_method">
+                                    <option value="">Chọn phương thức...</option>
+                                    @foreach($payment_methods as $pm)
+                                        <option value="{{ $pm }}">{{ $pm }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-md-6 d-flex align-items-center gap-4">

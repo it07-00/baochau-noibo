@@ -361,6 +361,7 @@ class ContractSustainabilityManager extends Component
             'all_statuses'       => ContractSustainability::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractSustainability::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractSustainability::SERVICE_TYPES,
+            'payment_methods'    => ContractSustainability::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Tư vấn & Báo cáo phát triển bền vững']);
     }
 }
