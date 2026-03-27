@@ -806,10 +806,23 @@
                     <input type="text" x-model="search" class="form-control form-control-sm mb-3" placeholder="Tìm kiếm nhân viên...">
                     <div class="list-group" style="max-height: 320px; overflow-y: auto;">
                         @foreach($assignable_users as $u)
+                        @php
+                            $roleSlug = $u->roles->first()?->name ?? '';
+                            $roleDisplay = match($roleSlug) {
+                                'it' => 'IT Admin',
+                                'quan-ly' => 'Quản lý',
+                                'kinh-doanh' => 'Kinh doanh',
+                                'ke-toan' => 'Kế toán',
+                                'tu-van' => 'Tư vấn',
+                                'ky-thuat' => 'Kỹ thuật',
+                                default => $roleSlug
+                            };
+                            $searchText = mb_strtolower($u->name . ' ' . $roleDisplay . ' ' . $roleSlug);
+                        @endphp
                         <label class="list-group-item list-group-item-action d-flex gap-2"
-                               x-show="{{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))">
+                               x-show="({{ json_encode($searchText) }}).normalize('NFD').includes(search.toLowerCase().normalize('NFD'))">
                             <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" value="{{ $u->id }}" wire:model="assignUserIds">
-                            <span>{{ $u->name }}<small class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
+                            <span>{{ $u->name }}<small class="text-muted d-block">{{ $roleDisplay }}</small></span>
                         </label>
                         @endforeach
                     </div>
