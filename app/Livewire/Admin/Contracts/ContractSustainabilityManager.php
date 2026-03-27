@@ -29,6 +29,7 @@ class ContractSustainabilityManager extends Component
     public array $assignUserIds = [];
     public string $progressNote = '';
     public $progressNotes = [];
+    public ?int $workflowContractId = null;
     public ?int $quotation_id = null;
 
     public $formData = [
@@ -217,6 +218,17 @@ class ContractSustainabilityManager extends Component
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
     }
 
+    public function openWorkflow(int $id): void
+    {
+        $this->workflowContractId = $id;
+        $this->dispatch('openWorkflowModal');
+    }
+
+    public function closeWorkflow(): void
+    {
+        $this->workflowContractId = null;
+    }
+
     public function resetFilters(): void
     {
         $this->filter = [
@@ -262,6 +274,47 @@ class ContractSustainabilityManager extends Component
             'notes'          => '',
         ];
         $this->selectedDoc = null;
+    }
+
+    public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $query = ContractSustainability::with(['customer', 'staff', 'department'])
+            ->when($this->search, function ($q) {
+                $q->where(function ($sq) {
+                    $sq->where('shd_ad', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('customer', function ($csq) {
+                            $csq->where('name', 'like', '%' . $this->search . '%');
+                        });
+                });
+            })
+            ->when(auth()->user()->hasRole('kinh-doanh'), fn($q) => $q->where('staff_id', auth()->id()))
+            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
+
+        if ($this->filter['signed_from'])    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
+        if ($this->filter['signed_to'])      $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
+        if ($this->filter['submitted_from']) $query->whereDate('submitted_at', '>=', $this->filter['submitted_from']);
+        if ($this->filter['submitted_to'])   $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
+        if ($this->filter['province'])       $query->where('province', $this->filter['province']);
+        if ($this->filter['department_id'])  $query->where('department_id', $this->filter['department_id']);
+        if ($this->filter['info_source'])    $query->where('info_source', $this->filter['info_source']);
+        if ($this->filter['payment_method']) $query->where('payment_method', $this->filter['payment_method']);
+        if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
+        if ($this->filter['status'])         $query->where('status', $this->filter['status']);
+        if ($this->filter['renewal_status']) $query->where('renewal_status', $this->filter['renewal_status']);
+        if ($this->filter['is_offset'])      $query->where('is_offset', true);
+        if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
+        if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
+
+        $docs           = $query->latest()->get();
+        $title          = 'HĐ Phát triển bền vững';
+        $showFinancials = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
+
+        return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
+            echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
+        }, 'HopDong_PhatTrienBenVung_' . now()->format('d_m_Y') . '.xls', [
+            'Content-Type' => 'application/vnd.ms-excel',
+        ]);
     }
 
     public function render()

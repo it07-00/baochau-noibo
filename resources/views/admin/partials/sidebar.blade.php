@@ -213,7 +213,7 @@ SVG;
                             'icon'        => $stackIcon,
                             'permission'  => 'consulting-requests.view',
                             'allow_roles' => ['it', 'quan-ly', 'tu-van'],
-                            'children'    => ['Yêu cầu báo cáo', 'Yêu cầu đo mẫu', 'Yêu cầu đo mẫu dự án', 'Yêu cầu xuất mẫu', 'Yêu cầu GPMT/ĐTM', 'Yêu cầu ĐKMT', 'Yêu cầu VHTN', 'Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
+                            'children'    => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
                         ],
                         [
                             'title'       => 'Bộ phận dự án',
@@ -221,13 +221,6 @@ SVG;
                             'permission'  => 'project-requests.view',
                             'allow_roles' => ['it', 'quan-ly'],
                             'children'    => ['Yêu cầu dự án lớn', 'Yêu cầu dự án nhỏ', 'Yêu cầu khảo sát dự án'],
-                        ],
-                        [
-                            'title'       => 'Bộ phận thương mại',
-                            'icon'        => $stackIcon,
-                            'permission'  => 'commercial-requests.view',
-                            'allow_roles' => ['it', 'quan-ly'],
-                            'children'    => ['Yêu cầu thực hiện BPTM'],
                         ],
                         [
                             'title'       => 'Bộ phận kế toán',
@@ -241,7 +234,7 @@ SVG;
                             'icon'        => $stackIcon,
                             'permission'  => 'technical-requests.view',
                             'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
-                            'children'    => ['Yêu cầu kỹ thuật', 'Lịch công tác kỹ thuật', 'Phiếu kết quả', 'Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
+                            'children'    => ['Yêu cầu quan trắc môi trường', 'Yêu cầu phân loại lao động'],
                         ],
                         [
                             'title'       => 'Báo cáo Marketing',

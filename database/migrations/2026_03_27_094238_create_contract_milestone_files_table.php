@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('contract_milestone_files');
         Schema::create('contract_milestone_files', function (Blueprint $table) {
             $table->id();
             $table->morphs('contract'); // contract_type, contract_id
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('uploader_id')->references('id')->on('users')->onDelete('cascade');
-            $table->index(['contract_type', 'contract_id', 'milestone']);
+            $table->index(['contract_type', 'contract_id', 'milestone'], 'cmf_contract_milestone_idx');
         });
     }
 

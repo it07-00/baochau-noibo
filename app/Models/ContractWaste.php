@@ -50,4 +50,14 @@ class ContractWaste extends Model
     {
         return $this->morphMany(ContractAssignment::class, 'assignable');
     }
+
+    public function workflowSteps(): MorphMany
+    {
+        return $this->morphMany(ContractWorkflowStep::class, 'contract');
+    }
+
+    public function milestoneFiles(): MorphMany
+    {
+        return $this->morphMany(ContractMilestoneFile::class, 'contract');
+    }
 }

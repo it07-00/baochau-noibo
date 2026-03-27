@@ -88,7 +88,8 @@
                         <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.info_source">
                             <option value="">Chọn Nguồn thông...</option>
-                            <option value="MỚI">Mới</option>
+                            <option value="SALE MỚI">Sale mới</option>
+                            <option value="THÔNG TIN CHUYỂN">Thông tin chuyển</option>
                             <option value="TÁI KÝ">Tái ký</option>
                         </select>
                     </div>
@@ -126,8 +127,9 @@
                         <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
                             <i class="bi bi-x-circle me-1"></i>Xóa lọc
                         </button>
-                        <button class="btn btn-success px-4 btn-filter">
-                            <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
+                        <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel" class="btn btn-success px-4 btn-filter">
+                            <span wire:loading wire:target="exportExcel" class="spinner-border spinner-border-sm me-1"></span>
+                            <i wire:loading.remove wire:target="exportExcel" class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
                         </button>
                         <button class="btn btn-primary px-4 btn-filter">
                             <i class="bi bi-diagram-3 me-1"></i>Quy trình
@@ -246,7 +248,7 @@
 
     <!-- Detail Modal -->
     <div wire:ignore.self class="modal fade" id="detailModalProject" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
                     <h5 class="modal-title fw-bold modal-title-custom">Chi tiết Hợp Đồng Dự Án</h5>
@@ -380,6 +382,7 @@
                             @endif
                         </tbody>
                     </table>
+
                     @endif
                 </div>
             </div>
@@ -503,16 +506,14 @@
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Nguồn thông tin</label>
                             <select class="form-select" wire:model="formData.info_source">
-                                <option value="MỚI">Mới</option>
+                                <option value="SALE MỚI">Sale mới</option>
+                                <option value="THÔNG TIN CHUYỂN">Thông tin chuyển</option>
                                 <option value="TÁI KÝ">Tái ký</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">PT thanh toán</label>
-                            <select class="form-select" wire:model="formData.payment_method">
-                                <option value="Sau ký">Sau ký</option>
-                                <option value="Trước ký">Trước ký</option>
-                            </select>
+                            <input type="text" class="form-control" wire:model="formData.payment_method" placeholder="Nhập phương thức thanh toán...">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Tình trạng</label>
@@ -585,6 +586,27 @@
         </div>
     </div>
 
+    {{-- Workflow Modal --}}
+    <div wire:ignore.self class="modal fade" id="workflowModalProject" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-info text-white py-3">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-diagram-3 me-2"></i>Cập nhật tiến độ hợp đồng</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="closeWorkflow"></button>
+                </div>
+                <div class="modal-body p-0">
+                    @if($workflowContractId)
+                    <livewire:admin.contracts.contract-workflow-panel
+                        :contractType="'project'"
+                        :contractId="$workflowContractId"
+                        :key="'wf-modal-project-' . $workflowContractId"
+                    />
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         window.addEventListener('openDetailModal', () => {
@@ -601,6 +623,9 @@
         });
         Livewire.on('closeAssignModal', () => {
             bootstrap.Modal.getInstance(document.getElementById('assignModalProject'))?.hide();
+        });
+        window.addEventListener('openWorkflowModal', () => {
+            new bootstrap.Modal(document.getElementById('workflowModalProject')).show();
         });
     </script>
     @endpush

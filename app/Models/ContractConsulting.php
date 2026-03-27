@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContractConsulting extends Model
 {
@@ -117,14 +118,14 @@ class ContractConsulting extends Model
         return $this->belongsTo(User::class, 'manager_id');
     }
 
-    public function workflowSteps()
+    public function workflowSteps(): MorphMany
     {
-        return $this->hasMany(ConsultingWorkflowStep::class, 'contract_id');
+        return $this->morphMany(ContractWorkflowStep::class, 'contract');
     }
 
-    public function milestoneFiles()
+    public function milestoneFiles(): MorphMany
     {
-        return $this->hasMany(ConsultingMilestoneFile::class, 'contract_id');
+        return $this->morphMany(ContractMilestoneFile::class, 'contract');
     }
 
     public function assignments(): MorphMany
