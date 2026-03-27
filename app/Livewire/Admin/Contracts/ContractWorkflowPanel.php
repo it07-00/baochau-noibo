@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Contracts;
 
 use App\Models\ContractWorkflowStep;
 use App\Models\ContractMilestoneFile;
+use App\Models\User;
+use App\Notifications\ContractWorkflowUpdatedNotification;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -101,6 +103,7 @@ class ContractWorkflowPanel extends Component
         ]);
 
         $stepLabel = ContractWorkflowStep::STEPS[$this->activeStep] ?? $this->activeStep;
+        $completedStep = $this->activeStep;
 
         $this->activeStep  = null;
         $this->uploadFiles = [];
@@ -110,6 +113,24 @@ class ContractWorkflowPanel extends Component
             'type'    => 'success',
             'message' => 'Đã hoàn thành bước: ' . $stepLabel,
         ]);
+
+        // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
+        $contract = $modelClass ? $modelClass::with('customer')->find($this->contractId) : null;
+        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$this->contractId);
+
+        // Map contract type key từ model class
+        $typeKey = array_search($modelClass, $this->modelMap) ?: $this->contractType;
+
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['quan-ly', 'it']))->get();
+        if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
+            $staff = User::find($contract->staff_id);
+            if ($staff) $recipients->push($staff);
+        }
+        foreach ($recipients->unique('id') as $recipient) {
+            if ($recipient->id !== auth()->id()) {
+                $recipient->notify(new ContractWorkflowUpdatedNotification($typeKey, $this->contractId, $contractLabel, $completedStep, auth()->user()->name));
+            }
+        }
     }
 
     public function cancelStep(): void

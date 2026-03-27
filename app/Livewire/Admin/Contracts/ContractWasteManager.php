@@ -13,6 +13,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Livewire\Concerns\CleanMoneyInput;
+use App\Notifications\ContractAssignedNotification;
+use App\Notifications\ContractProgressNoteNotification;
 
 class ContractWasteManager extends Component
 {
@@ -242,6 +244,15 @@ class ContractWasteManager extends Component
                 'assigned_by'     => auth()->id(),
             ]);
         }
+        // Gửi thông báo đến users được giao
+        $contract = ContractWaste::with('customer')->find($this->assignContractId);
+        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
+        foreach ($this->assignUserIds as $userId) {
+            $user = User::find($userId);
+            if ($user && $user->id !== auth()->id()) {
+                $user->notify(new ContractAssignedNotification('waste', $this->assignContractId, $contractLabel, auth()->user()->name));
+            }
+        }
         $this->assignContractId = null;
         $this->assignUserIds = [];
         $this->dispatch('closeAssignModal');
@@ -251,11 +262,12 @@ class ContractWasteManager extends Component
     public function addProgressNote(int $contractId): void
     {
         $this->validate(['progressNote' => 'required|min:1|max:2000']);
+        $noteText = $this->progressNote;
         ContractProgressNote::create([
             'contract_type' => 'waste',
             'contract_id'   => $contractId,
             'user_id'       => auth()->id(),
-            'note'          => $this->progressNote,
+            'note'          => $noteText,
         ]);
         $this->progressNote = '';
         $this->progressNotes = ContractProgressNote::where('contract_type', 'waste')
@@ -264,6 +276,20 @@ class ContractWasteManager extends Component
             ->latest()
             ->get();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
+
+        // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
+        $contract = ContractWaste::with('customer')->find($contractId);
+        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['quan-ly', 'it']))->get();
+        if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
+            $staff = User::find($contract->staff_id);
+            if ($staff) $recipients->push($staff);
+        }
+        foreach ($recipients->unique('id') as $recipient) {
+            if ($recipient->id !== auth()->id()) {
+                $recipient->notify(new ContractProgressNoteNotification('waste', $contractId, $contractLabel, \Illuminate\Support\Str::limit($noteText, 50), auth()->user()->name));
+            }
+        }
     }
 
     public function openWorkflow(int $id): void

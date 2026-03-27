@@ -56,60 +56,7 @@
                 </li>
 
                 <li class="header-nav-item me-4 position-relative">
-                    @php
-                        $issueReportsToday = \App\Models\DailyReport::with('user')
-                            ->whereDate('date', date('Y-m-d'))
-                            ->where(function($q) {
-                                $q->where('status', 'Gặp vấn đề, cần hỗ trợ')
-                                  ->orWhereNotNull('issues');
-                            })
-                            ->latest()
-                            ->get();
-                        $issueCount = $issueReportsToday->count();
-                    @endphp
-                    <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown" title="Thông báo">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
-                            <path d="M10.5 19C10.5 19.8284 11.1716 20.5 12 20.5C12.8284 20.5 13.5 19.8284 13.5 19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                        </svg>
-                        @if($issueCount > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-top: 5px; margin-left: -5px;">{{ $issueCount }}</span>
-                        @endif
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg py-0 shadow-lg border-0" style="width: 300px;">
-                        <div class="dropdown-header d-flex align-items-center justify-content-between border-bottom py-3">
-                            <h6 class="mb-0 fw-bold">Thông báo mới</h6>
-                            @if($issueCount > 0)
-                                <span class="badge bg-danger rounded-pill">{{ $issueCount }} vấn đề</span>
-                            @endif
-                        </div>
-                        <div class="dropdown-body py-1 overflow-auto" style="max-height: 400px;">
-                            @forelse($issueReportsToday as $ir)
-                                <a class="dropdown-item py-3 border-bottom d-flex align-items-start gap-2" href="{{ route('app.daily-reports.index') }}?date={{ date('Y-m-d') }}">
-                                    <div class="bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px;">
-                                        <i class="bi bi-exclamation-triangle-fill small"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <span class="fw-bold small text-dark">{{ $ir->user->name }}</span>
-                                            <span class="text-muted" style="font-size: 0.7rem;">{{ $ir->updated_at->diffForHumans() }}</span>
-                                        </div>
-                                        <div class="text-muted small text-truncate-2" style="font-size: 0.75rem; line-height: 1.3;">
-                                            {{ $ir->issues ?: 'Cần hỗ trợ gấp: '.$ir->status }}
-                                        </div>
-                                    </div>
-                                </a>
-                            @empty
-                                <div class="py-4 text-center text-muted">
-                                    <i class="bi bi-bell-slash d-block fs-3 mb-2 opacity-25"></i>
-                                    <span class="small">Chưa có vấn đề nào phát sinh hôm nay.</span>
-                                </div>
-                            @endforelse
-                        </div>
-                        <div class="dropdown-footer text-center py-2 border-top">
-                            <a href="{{ route('app.daily-reports.index') }}" class="text-primary small fw-bold text-decoration-none">Xem toàn bộ báo cáo</a>
-                        </div>
-                    </div>
+                    <livewire:admin.notification-bell />
                 </li>
 
                 <li class="header-nav-item header-user me-0">
