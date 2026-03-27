@@ -13,6 +13,14 @@ class NotificationBell extends Component
         $notification?->markAsRead();
     }
 
+    public function openNotification(string $id): mixed
+    {
+        $notification = auth()->user()->notifications()->find($id);
+        $url = $notification?->data['url'] ?? '/';
+        $notification?->markAsRead();
+        return $this->redirect($url);
+    }
+
     public function markAllRead(): void
     {
         auth()->user()->unreadNotifications->markAsRead();
