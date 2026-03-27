@@ -82,17 +82,34 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold">
                         File đính kèm <span class="text-danger">*</span>
-                        <small class="text-muted fw-normal">(bắt buộc, tối đa 20MB)</small>
+                        <small class="text-muted fw-normal">(PDF, Word, Excel, JPG, PNG — tối đa 20MB/file)</small>
                     </label>
-                    <input wire:model="uploadFile" type="file" class="form-control">
-                    @error('uploadFile')
+                    <input wire:model="uploadFiles" type="file" class="form-control" multiple
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                    @error('uploadFiles')
+                        <div class="text-danger mt-1"><i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}</div>
+                    @enderror
+                    @error('uploadFiles.*')
                         <div class="text-danger mt-1"><i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}</div>
                     @enderror
 
                     {{-- Upload progress --}}
-                    <div wire:loading wire:target="uploadFile" class="text-muted mt-1">
+                    <div wire:loading wire:target="uploadFiles" class="text-muted mt-1">
                         <div class="spinner-border spinner-border-sm me-1"></div> Đang tải lên...
                     </div>
+
+                    {{-- Preview danh sách file đã chọn --}}
+                    @if(!empty($uploadFiles))
+                    <div class="mt-2">
+                        @foreach($uploadFiles as $f)
+                        <div class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.8rem;">
+                            <i class="bi bi-file-earmark text-primary"></i>
+                            {{ $f->getClientOriginalName() }}
+                            <span class="text-muted">({{ round($f->getSize() / 1024) }} KB)</span>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
                 </div>
 
                 {{-- Comment --}}
@@ -123,15 +140,15 @@
             <h6 class="fw-bold text-muted mb-2"><i class="bi bi-paperclip me-1"></i> File đã đính kèm theo bước</h6>
             @foreach($stepKeys as $key)
                 @if(isset($filesByStep[$key]))
-                <div class="mb-2">
-                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle mb-1" style="font-size: 0.8rem;">
-                        {{ $steps[$key] }}
+                <div class="mb-3">
+                    <span class="badge text-white mb-2 px-2 py-1" style="background:#0d6efd; font-size: 0.78rem; border-radius: 6px;">
+                        <i class="bi bi-check-circle me-1"></i>{{ $steps[$key] }}
                     </span>
                     @foreach($filesByStep[$key] as $f)
-                    <div class="d-flex align-items-center gap-2 ps-2">
-                        <i class="bi bi-file-earmark text-primary"></i>
+                    <div class="d-flex align-items-center gap-2 ps-2 mb-1">
+                        <i class="bi bi-file-earmark-arrow-down text-success" style="font-size: 1rem;"></i>
                         <a href="{{ asset('storage/' . $f->file_path) }}" target="_blank"
-                           class="text-decoration-none">
+                           class="fw-semibold text-decoration-none text-primary" style="font-size: 0.85rem;">
                             {{ $f->original_name ?: 'Xem tệp đính kèm' }}
                         </a>
                         <span class="text-muted" style="font-size: 0.8rem;">

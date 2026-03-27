@@ -383,6 +383,12 @@
                         </tbody>
                     </table>
 
+                    <livewire:admin.contracts.contract-workflow-progress
+                        :contractType="'energy'"
+                        :contractId="$selectedDoc->id"
+                        :key="'progress-energy-' . $selectedDoc->id"
+                    />
+
                     @endif
                 </div>
             </div>

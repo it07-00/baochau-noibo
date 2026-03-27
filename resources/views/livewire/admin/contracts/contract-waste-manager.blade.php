@@ -538,6 +538,12 @@
                         </table>
                     </div>
 
+                    <livewire:admin.contracts.contract-workflow-progress
+                        :contractType="'waste'"
+                        :contractId="$selectedDoc->id"
+                        :key="'progress-waste-' . $selectedDoc->id"
+                    />
+
                     @endif
                 </div>
             </div>

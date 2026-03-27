@@ -24,7 +24,7 @@ class ContractWorkflowPanel extends Component
         'energy'         => \App\Models\ContractEnergy::class,
     ];
 
-    public $uploadFile = null;
+    public array $uploadFiles = [];
     public string $comment = '';
     public ?string $activeStep = null; // step đang mở để confirm
 
@@ -43,7 +43,7 @@ class ContractWorkflowPanel extends Component
             return;
         }
         $this->activeStep  = $step;
-        $this->uploadFile  = null;
+        $this->uploadFiles = [];
         $this->comment     = '';
     }
 
@@ -58,27 +58,31 @@ class ContractWorkflowPanel extends Component
         }
 
         $this->validate([
-            'uploadFile' => 'required|file|max:20480', // max 20MB
-            'comment'    => 'nullable|max:1000',
+            'uploadFiles'   => 'required|array|min:1',
+            'uploadFiles.*' => 'file|max:20480|extensions:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            'comment'       => 'nullable|max:1000',
         ], [
-            'uploadFile.required' => 'Vui lòng đính kèm file trước khi xác nhận bước này.',
+            'uploadFiles.required' => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
+            'uploadFiles.min'      => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
+            'uploadFiles.*.max'        => 'Mỗi file không được vượt quá 20MB.',
+            'uploadFiles.*.extensions' => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
         ]);
 
-        // Lưu file
-        $path = $this->uploadFile->storePublicly(
-            'contract-files/' . $this->contractType . '/' . $this->activeStep,
-            'public'
-        );
+        foreach ($this->uploadFiles as $file) {
+            $path = $file->storePublicly(
+                'contract-files/' . $this->contractType . '/' . $this->activeStep,
+                'public'
+            );
 
-        // Lưu milestone file record
-        ContractMilestoneFile::create([
-            'contract_type' => $this->getModelClass(),
-            'contract_id'   => $this->contractId,
-            'milestone'     => $this->activeStep,
-            'file_path'     => $path,
-            'original_name' => $this->uploadFile->getClientOriginalName(),
-            'uploader_id'   => auth()->id(),
-        ]);
+            ContractMilestoneFile::create([
+                'contract_type' => $this->getModelClass(),
+                'contract_id'   => $this->contractId,
+                'milestone'     => $this->activeStep,
+                'file_path'     => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'uploader_id'   => auth()->id(),
+            ]);
+        }
 
         // Lưu workflow step record
         ContractWorkflowStep::create([
@@ -98,9 +102,9 @@ class ContractWorkflowPanel extends Component
 
         $stepLabel = ContractWorkflowStep::STEPS[$this->activeStep] ?? $this->activeStep;
 
-        $this->activeStep = null;
-        $this->uploadFile = null;
-        $this->comment    = '';
+        $this->activeStep  = null;
+        $this->uploadFiles = [];
+        $this->comment     = '';
 
         $this->dispatch('swal:toast', [
             'type'    => 'success',
@@ -110,9 +114,9 @@ class ContractWorkflowPanel extends Component
 
     public function cancelStep(): void
     {
-        $this->activeStep = null;
-        $this->uploadFile = null;
-        $this->comment    = '';
+        $this->activeStep  = null;
+        $this->uploadFiles = [];
+        $this->comment     = '';
     }
 
     private function getModelClass(): string

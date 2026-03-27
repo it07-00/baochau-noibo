@@ -394,6 +394,12 @@
                         </tbody>
                     </table>
 
+                    <livewire:admin.contracts.contract-workflow-progress
+                        :contractType="'consulting'"
+                        :contractId="$selectedDoc->id"
+                        :key="'progress-consulting-' . $selectedDoc->id"
+                    />
+
                     @endif
                 </div>
             </div>

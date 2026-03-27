@@ -383,6 +383,12 @@
                         </tbody>
                     </table>
 
+                    <livewire:admin.contracts.contract-workflow-progress
+                        :contractType="'project'"
+                        :contractId="$selectedDoc->id"
+                        :key="'progress-project-' . $selectedDoc->id"
+                    />
+
                     @endif
                 </div>
             </div>
