@@ -147,8 +147,8 @@
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-danger" 
-                                        onclick="confirm('Xác nhận xóa báo giá này?') || event.stopImmediatePropagation()"
-                                        wire:click="delete({{ $item->id }})">
+                                        wire:click="delete({{ $item->id }})"
+                                        wire:confirm="Xác nhận xóa báo giá này?">
                                     <i class="bi bi-trash fs-5"></i>
                                 </button>
                             </div>

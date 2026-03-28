@@ -81,15 +81,8 @@
                                             @if($role->users_count > 0)
                                                 onclick="Swal.fire('Không thể xóa', 'Vai trò này đang được gán cho {{ $role->users_count }} người dùng.', 'error')"
                                             @else
-                                                x-on:click="window.dispatchEvent(new CustomEvent('swal:confirm', { 
-                                                    detail: [{ 
-                                                        title: 'Xóa vai trò?', 
-                                                        message: 'Bạn có chắc chắn muốn xóa vai trò {{ $role->name }}?', 
-                                                        component: '{{ $_instance->getId() }}', 
-                                                        method: 'deleteRole', 
-                                                        id: {{ $role->id }} 
-                                                    }] 
-                                                }))"
+                                                wire:click="deleteRole({{ $role->id }})"
+                                                wire:confirm="Bạn có chắc chắn muốn xóa vai trò {{ $role->name }}?"
                                             @endif
                                             class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $role->users_count > 0 ? 'disabled' : '' }}>
                                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">

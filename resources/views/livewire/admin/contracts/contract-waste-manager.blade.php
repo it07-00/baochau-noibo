@@ -401,8 +401,8 @@
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-danger"
-                                        onclick="confirm('Xác nhận xóa hợp đồng này?') || event.stopImmediatePropagation()"
-                                        wire:click="delete({{ $doc->id }})">
+                                        wire:click="delete({{ $doc->id }})"
+                                        wire:confirm="Xác nhận xóa hợp đồng này?">
                                     <i class="bi bi-trash fs-5"></i>
                                 </button>
                                 @endunless

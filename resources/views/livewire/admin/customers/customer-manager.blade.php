@@ -77,8 +77,8 @@
 
                                         @can('customers.delete')
                                         <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
-                                                onclick="confirm('Xác nhận xóa khách hàng này?') || event.stopImmediatePropagation()"
                                                 wire:click="delete({{ $customer->id }})"
+                                                wire:confirm="Xác nhận xóa khách hàng này?"
                                                 title="Xóa" {{ $totalContracts > 0 ? 'disabled' : '' }}>
                                             <i class="bi bi-trash"></i>
                                         </button>

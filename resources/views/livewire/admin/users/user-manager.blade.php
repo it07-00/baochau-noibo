@@ -107,15 +107,8 @@
                                         <div class="d-flex align-items-center justify-content-end gap-1">
                                             <!-- Reset Password -->
                                             <button 
-                                                x-on:click="window.dispatchEvent(new CustomEvent('swal:confirm', { 
-                                                    detail: [{ 
-                                                        title: 'Reset mật khẩu?', 
-                                                        message: 'Mật khẩu của tài khoản {{ $user->username }} sẽ được đưa về mặc định của hệ thống!', 
-                                                        component: '{{ $_instance->getId() }}', 
-                                                        method: 'resetPassword', 
-                                                        id: {{ $user->id }} 
-                                                    }] 
-                                                }))"
+                                                wire:click="resetPassword({{ $user->id }})"
+                                                wire:confirm="Mật khẩu của tài khoản {{ $user->username }} sẽ được đưa về mặc định của hệ thống!"
                                                 class="btn btn-sm btn-icon btn-light text-warning rounded-pill" title="Reset mật khẩu">
                                                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -125,15 +118,8 @@
                                             <!-- Lock/Unlock -->
                                             @if($user->is_active)
                                                 <button 
-                                                    x-on:click="window.dispatchEvent(new CustomEvent('swal:confirm', { 
-                                                        detail: [{ 
-                                                            title: 'Khóa tài khoản?', 
-                                                            message: 'Người dùng {{ $user->name }} sẽ không thể đăng nhập!', 
-                                                            component: '{{ $_instance->getId() }}', 
-                                                            method: 'lockAccount', 
-                                                            id: {{ $user->id }} 
-                                                        }] 
-                                                    }))"
+                                                    wire:click="lockAccount({{ $user->id }})"
+                                                    wire:confirm="Người dùng {{ $user->name }} sẽ không thể đăng nhập!"
                                                     class="btn btn-sm btn-icon btn-light text-secondary rounded-pill" title="Khóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
                                                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -154,15 +140,8 @@
                                             </a>
 
                                             <button 
-                                                x-on:click="window.dispatchEvent(new CustomEvent('swal:confirm', { 
-                                                    detail: [{ 
-                                                        title: 'Xóa người dùng?', 
-                                                        message: 'Bạn có chắc chắn muốn xóa {{ $user->name }}?', 
-                                                        component: '{{ $_instance->getId() }}', 
-                                                        method: 'deleteUser', 
-                                                        id: {{ $user->id }} 
-                                                    }] 
-                                                }))"
+                                                wire:click="deleteUser({{ $user->id }})"
+                                                wire:confirm="Bạn có chắc chắn muốn xóa {{ $user->name }}?"
                                                 class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
                                                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

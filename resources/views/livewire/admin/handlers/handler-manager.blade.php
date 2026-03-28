@@ -63,8 +63,8 @@
 
                                         @can('handlers.delete')
                                         <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
-                                                onclick="confirm('Xác nhận xóa Chủ xử lý này?') || event.stopImmediatePropagation()"
                                                 wire:click="delete({{ $handler->id }})"
+                                                wire:confirm="Xác nhận xóa Chủ xử lý này?"
                                                 title="Xóa" {{ $handler->contracts_count > 0 ? 'disabled' : '' }}>
                                             <i class="bi bi-trash"></i>
                                         </button>

@@ -77,15 +77,8 @@
                                             @if($dept->users_count > 0)
                                                 onclick="Swal.fire('Không thể xóa', 'Phòng ban này đang có {{ $dept->users_count }} nhân viên.', 'error')"
                                             @else
-                                                x-on:click="window.dispatchEvent(new CustomEvent('swal:confirm', { 
-                                                    detail: [{ 
-                                                        title: 'Xóa phòng ban?', 
-                                                        message: 'Bạn có chắc chắn muốn xóa phòng ban {{ $dept->name }}?', 
-                                                        component: '{{ $_instance->getId() }}', 
-                                                        method: 'deleteDepartment', 
-                                                        id: {{ $dept->id }} 
-                                                    }] 
-                                                }))"
+                                                wire:click="deleteDepartment({{ $dept->id }})"
+                                                wire:confirm="Bạn có chắc chắn muốn xóa phòng ban {{ $dept->name }}?"
                                             @endif
                                             class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $dept->users_count > 0 ? 'disabled' : '' }}>
                                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">

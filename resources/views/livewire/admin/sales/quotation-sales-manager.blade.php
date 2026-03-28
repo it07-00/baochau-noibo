@@ -129,7 +129,7 @@
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm btn-outline-primary" wire:click="edit({{ $item->id }})"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="confirm('Xác nhận xóa?') || event.stopImmediatePropagation()" wire:click="delete({{ $item->id }})"><i class="bi bi-trash"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" wire:click="delete({{ $item->id }})" wire:confirm="Xác nhận xóa?"><i class="bi bi-trash"></i></button>
                             </div>
                         </td>
                     </tr>
