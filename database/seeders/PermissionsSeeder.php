@@ -173,8 +173,13 @@ class PermissionsSeeder extends Seeder
             // Dữ liệu nền: xem khách hàng (CSKH cần)
             'customers.view',
             'handlers.view',
-            // Hợp đồng tư vấn: xem + sửa tiến độ
+            // Hợp đồng: xem tất cả + sửa tư vấn
+            'contracts-waste.view',
             'contracts-consulting.view', 'contracts-consulting.edit',
+            'contracts-project.view',
+            'contracts-commercial.view',
+            'contracts-sustainability.view',
+            'contracts-energy.view',
             // Vận hành tư vấn: CRUD
             'consulting-requests.view', 'consulting-requests.create', 'consulting-requests.edit', 'consulting-requests.delete',
             // Tài chính: tạo yêu cầu hoa hồng
