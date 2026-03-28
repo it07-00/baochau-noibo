@@ -75,19 +75,19 @@
                     <div class="col-md-6">
                         <label class="form-label fw-bold custom-filter-label">Chủ xử lý</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap" 
+                            <button class="form-select form-control-xs text-start text-wrap"
                                     type="button" @click.prevent="open = !open"
                                     style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
                                 {{ $handlers->find($filter['handler_id'])?->name ?? 'Chọn chủ xử lý' }}
                             </button>
                             <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false" x-cloak style="max-height: 300px; overflow-y: auto;">
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
-                                <button class="dropdown-item @if(!$filter['handler_id']) active @endif" 
+                                <button class="dropdown-item @if(!$filter['handler_id']) active @endif"
                                         type="button"
                                         x-show="'chọn chủ xử lý'.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
                                         wire:click="$set('filter.handler_id', '')" @click="open = false">Chọn chủ xử lý</button>
                                 @foreach($handlers as $handler)
-                                <button class="dropdown-item text-wrap @if($filter['handler_id'] == $handler->id) active @endif" 
+                                <button class="dropdown-item text-wrap @if($filter['handler_id'] == $handler->id) active @endif"
                                         type="button"
                                         x-show="{{ json_encode(mb_strtolower($handler->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
                                         style="white-space: normal !important; word-break: break-all;"
@@ -100,8 +100,11 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
-                        <select class="form-select form-control-xs" wire:model.live="filter.province_id">
+                        <select class="form-select form-control-xs" wire:model.live="filter.province">
                             <option value="">Chọn tỉnh thành</option>
+                            @foreach($provinces as $p)
+                                <option value="{{ $p }}">{{ $p }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -136,7 +139,7 @@
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap" 
+                            <button class="form-select form-control-xs text-start text-wrap"
                                     type="button" @click.prevent="open = !open"
                                     style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
                                 {{ $filter['status'] ?: 'Chọn tình trạng' }}
@@ -145,7 +148,7 @@
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
                                 <button class="dropdown-item @if(!$filter['status']) active @endif" type="button" wire:click="$set('filter.status', '')" @click="open = false">Chọn tình trạng</button>
                                 @foreach($all_statuses as $status)
-                                <button class="dropdown-item @if($filter['status'] == $status) active @endif" 
+                                <button class="dropdown-item @if($filter['status'] == $status) active @endif"
                                         type="button"
                                         x-show="{{ json_encode(mb_strtolower($status)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
                                         wire:click="$set('filter.status', '{{ $status }}')" @click="open = false">
@@ -160,7 +163,7 @@
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap" 
+                            <button class="form-select form-control-xs text-start text-wrap"
                                     type="button" @click.prevent="open = !open"
                                     style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
                                 {{ $filter['service_type'] ?: 'Chọn Loại dịch vụ' }}
@@ -169,7 +172,7 @@
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
                                 <button class="dropdown-item @if(!$filter['service_type']) active @endif" type="button" wire:click="$set('filter.service_type', '')" @click="open = false">Chọn Loại dịch vụ</button>
                                 @foreach($service_types as $service)
-                                <button class="dropdown-item @if($filter['service_type'] == $service) active @endif" 
+                                <button class="dropdown-item @if($filter['service_type'] == $service) active @endif"
                                         type="button"
                                         x-show="{{ json_encode(mb_strtolower($service)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
                                         wire:click="$set('filter.service_type', '{{ $service }}')" @click="open = false">
@@ -182,7 +185,7 @@
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Loại chất thải</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap" 
+                            <button class="form-select form-control-xs text-start text-wrap"
                                     type="button" @click.prevent="open = !open"
                                     style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
                                 {{ $filter['waste_type'] ?: 'Chọn Loại chất thải' }}
@@ -191,7 +194,7 @@
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
                                 <button class="dropdown-item @if(!$filter['waste_type']) active @endif" type="button" wire:click="$set('filter.waste_type', '')" @click="open = false">Chọn Loại chất thải</button>
                                 @foreach($waste_types as $waste)
-                                <button class="dropdown-item @if($filter['waste_type'] == $waste) active @endif" 
+                                <button class="dropdown-item @if($filter['waste_type'] == $waste) active @endif"
                                         type="button"
                                         x-show="{{ json_encode(mb_strtolower($waste)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
                                         wire:click="$set('filter.waste_type', '{{ $waste }}')" @click="open = false">
@@ -204,7 +207,7 @@
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng tái ký</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap" 
+                            <button class="form-select form-control-xs text-start text-wrap"
                                     type="button" @click.prevent="open = !open"
                                     style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
                                 {{ $filter['renewal_status'] ?: 'Chọn tình trạng' }}
@@ -213,7 +216,7 @@
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
                                 <button class="dropdown-item @if(!$filter['renewal_status']) active @endif" type="button" wire:click="$set('filter.renewal_status', '')" @click="open = false">Chọn tình trạng</button>
                                 @foreach($renewal_statuses as $renewal)
-                                <button class="dropdown-item @if($filter['renewal_status'] == $renewal) active @endif" 
+                                <button class="dropdown-item @if($filter['renewal_status'] == $renewal) active @endif"
                                         type="button"
                                         x-show="{{ json_encode(mb_strtolower($renewal)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
                                         wire:click="$set('filter.renewal_status', '{{ $renewal }}')" @click="open = false">
@@ -275,11 +278,11 @@
     </div>
 
     <!-- Table Card -->
-    <div class="card border-0 shadow-sm overflow-hidden">
+    <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng chất thải</h6>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow:visible; min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class="small text-muted fw-bold">
@@ -348,9 +351,34 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex flex-column align-items-center">
-                                <span class="small">{{ $doc->status }}</span>
-                                <span class="small text-muted">Chủ xử lý</span>
-                                <span class="small text-muted">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
+                                @php
+                                    $statusColor = match($doc->status) {
+                                        'Đã hoàn thành KH ký trước' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+                                        'Hợp đồng hủy' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+                                        'Đã trình ký Chủ xử lý' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+                                        'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+                                        default => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+                                    };
+                                @endphp
+                                <div class="position-relative" x-data="{ open: false }">
+                                    <button type="button" @click="open = !open" class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
+                                        style="font-size:0.7rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
+                                        {{ $doc->status ?: '—' }}
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+                                    </button>
+                                    <div x-show="open" @click.away="open = false" x-cloak
+                                        class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1"
+                                        style="z-index:1050; min-width:200px; right:50%; transform:translateX(50%); max-height:250px; overflow-y:auto;">
+                                        @foreach($all_statuses as $opt)
+                                        <button type="button" class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }}"
+                                            style="font-size:0.8rem;" wire:click="updateStatus({{ $doc->id }}, '{{ $opt }}')" @click="open = false">
+                                            {{ $opt }}
+                                            @if($doc->status === $opt) <i class="bi bi-check2 ms-2"></i> @endif
+                                        </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <span class="small text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                             </div>
                         </td>
                         <td class="text-center pe-4">
@@ -358,7 +386,7 @@
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                @if(auth()->user()->hasAnyRole(['quan-ly', 'it']))
+                                @if(auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'it']))
                                 <button class="btn btn-sm p-0 text-success" wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                     <i class="bi bi-person-check fs-5"></i>
                                 </button>
@@ -764,12 +792,22 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">PT thanh toán</label>
-                                <select class="form-select" wire:model.defer="formData.payment_method">
-                                    <option value="">Chọn phương thức...</option>
+                                <input class="form-control" wire:model.defer="formData.payment_method" list="pm-options" placeholder="VD: Sau ký, Trước ký...">
+                                <datalist id="pm-options">
                                     @foreach($payment_methods as $pm)
-                                        <option value="{{ $pm }}">{{ $pm }}</option>
+                                        <option value="{{ $pm }}">
                                     @endforeach
-                                </select>
+                                </datalist>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tỉnh thành</label>
+                                <input type="text" class="form-control" wire:model="formData.province" list="province-list-waste" autocomplete="off">
+                                <datalist id="province-list-waste">
+                                    @foreach($provinces as $p)
+                                        <option value="{{ $p }}">
+                                    @endforeach
+                                </datalist>
                             </div>
 
                             <div class="col-md-6 d-flex align-items-center gap-4">
@@ -828,11 +866,14 @@
                             $roleSlug = $u->roles->first()?->name ?? '';
                             $roleDisplay = match($roleSlug) {
                                 'it' => 'IT Admin',
+                                'giam-doc' => 'Giám đốc',
+                                'tp-kinh-doanh' => 'Trưởng phòng KD',
                                 'quan-ly' => 'Quản lý',
-                                'kinh-doanh' => 'Kinh doanh',
+                                'kinh-doanh' => 'Nhân viên KD',
                                 'ke-toan' => 'Kế toán',
                                 'tu-van' => 'Tư vấn',
                                 'ky-thuat' => 'Kỹ thuật',
+                                'marketing' => 'Marketing',
                                 default => $roleSlug
                             };
                             $searchText = mb_strtolower($u->name . ' ' . $roleDisplay . ' ' . $roleSlug);

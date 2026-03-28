@@ -23,7 +23,7 @@ class ContractWasteManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    
+
     public $showDetail = false;
     public $showModal = false;
     public $isEditing = false;
@@ -62,6 +62,7 @@ class ContractWasteManager extends Component
         'is_overdue' => false,
         'note' => '',
         'loai_dich_vu' => '',
+        'province' => '',
     ];
     public $filter = [
         'signed_from' => '',
@@ -73,7 +74,7 @@ class ContractWasteManager extends Component
         'submitted_from' => '',
         'submitted_to' => '',
         'handler_id' => '',
-        'province_id' => '',
+        'province' => '',
         'is_offset' => false,
         'is_overdue' => false,
         'department_id' => '',
@@ -105,7 +106,7 @@ class ContractWasteManager extends Component
                     ['name' => $quotation->company_name],
                     ['address' => $quotation->address]
                 );
-                
+
                 $this->formData['customer_id'] = $customer->id;
                 $this->formData['content'] = $quotation->work_description;
                 $this->formData['value'] = $quotation->original_value;
@@ -116,7 +117,7 @@ class ContractWasteManager extends Component
                 $this->formData['note'] = $quotation->notes;
                 $this->formData['source'] = 'MỚI';
                 $this->formData['status'] = 'ĐANG THỰC HIỆN';
-                
+
                 $this->showModal = true;
                 $this->dispatch('openFormModal');
             }
@@ -146,7 +147,7 @@ class ContractWasteManager extends Component
         $this->formData['effective_at'] = $doc->effective_at ? $doc->effective_at->format('Y-m-d') : '';
         $this->formData['end_at'] = $doc->end_at ? $doc->end_at->format('Y-m-d') : '';
         $this->formData['submitted_at'] = $doc->submitted_at ? $doc->submitted_at->format('Y-m-d') : '';
-        
+
         $this->isEditing = true;
         $this->showModal = true;
         $this->dispatch('openFormModal');
@@ -179,6 +180,12 @@ class ContractWasteManager extends Component
         $this->dispatch('closeFormModal');
         $this->dispatch('swal:toast', ['message' => $msg, 'type' => 'success']);
         $this->resetForm();
+    }
+
+    public function updateStatus(int $id, string $status): void
+    {
+        ContractWaste::findOrFail($id)->update(['status' => $status]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
     public function delete($id)
@@ -280,7 +287,7 @@ class ContractWasteManager extends Component
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractWaste::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['quan-ly', 'it']))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'it']))->get();
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
             if ($staff) $recipients->push($staff);
@@ -375,6 +382,7 @@ class ContractWasteManager extends Component
         if ($this->filter['submitted_to'] ?? null)   $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
         if ($this->filter['handler_id'] ?? null)     $query->where('handler_id', $this->filter['handler_id']);
         if ($this->filter['department_id'] ?? null)  $query->where('department_id', $this->filter['department_id']);
+        if ($this->filter['province'] ?? null)       $query->where('province', $this->filter['province']);
         if ($this->filter['is_offset'] ?? null)      $query->where('is_offset', true);
         if ($this->filter['is_overdue'] ?? null)     $query->where('is_overdue', true);
         if ($this->filter['status'] ?? null)         $query->where('status', $this->filter['status']);
@@ -426,6 +434,7 @@ class ContractWasteManager extends Component
 
         if ($this->filter['handler_id'] ?? null) $query->where('handler_id', $this->filter['handler_id']);
         if ($this->filter['department_id'] ?? null) $query->where('department_id', $this->filter['department_id']);
+        if ($this->filter['province'] ?? null) $query->where('province', $this->filter['province']);
         if ($this->filter['is_offset'] ?? null) $query->where('is_offset', true);
         if ($this->filter['is_overdue'] ?? null) $query->where('is_overdue', true);
         if ($this->filter['status'] ?? null) $query->where('status', $this->filter['status']);
@@ -438,7 +447,7 @@ class ContractWasteManager extends Component
         if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
 
         $docs = $query->latest()->paginate(10);
-        
+
         return view('livewire.admin.contracts.contract-waste-manager', [
             'docs' => $docs,
             'handlers' => Handler::orderBy('name')->get(),
@@ -454,7 +463,8 @@ class ContractWasteManager extends Component
             'all_statuses' => ContractWaste::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_statuses' => ContractWaste::whereNotNull('voucher_status')->where('voucher_status', '!=', '')->distinct()->pluck('voucher_status')->toArray(),
-            'payment_methods' => ContractWaste::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
+            'payment_methods' => ['Sau ký', 'Trước ký'],
+            'provinces' => \App\Support\VietnamProvinces::list(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng chất thải']);
     }
 }

@@ -153,6 +153,12 @@ class ContractCommercialManager extends Component
         $this->resetForm();
     }
 
+    public function updateStatus(int $id, string $status): void
+    {
+        ContractCommercial::findOrFail($id)->update(['status' => $status]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
+    }
+
     public function delete(int $id): void
     {
         ContractCommercial::findOrFail($id)->delete();
@@ -231,7 +237,7 @@ class ContractCommercialManager extends Component
 
         $contract = ContractCommercial::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['quan-ly', 'it']))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'it']))->get();
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
             if ($staff) $recipients->push($staff);
@@ -382,11 +388,11 @@ class ContractCommercialManager extends Component
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van', 'kinh-doanh', 'ky-thuat']))->orderBy('name')->get(),
-            'provinces'          => ContractCommercial::whereNotNull('province')->where('province', '!=', '')->distinct()->pluck('province')->toArray(),
+            'provinces' => \App\Support\VietnamProvinces::list(),
             'all_statuses'       => ContractCommercial::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractCommercial::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractCommercial::SERVICE_TYPES,
-            'payment_methods'    => ContractCommercial::whereNotNull('payment_method')->where('payment_method', '!=', '')->distinct()->pluck('payment_method')->sort()->values()->toArray(),
+            'payment_methods' => ['Sau ký', 'Trước ký'],
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng thương mại']);
     }
 }

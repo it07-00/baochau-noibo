@@ -37,7 +37,7 @@ class NotificationBell extends Component
         // DailyReport issues (giữ nguyên logic cũ)
         $issueReports = [];
         $issueCount   = 0;
-        if ($user->hasAnyRole(['quan-ly', 'it'])) {
+        if ($user->hasAnyRole(['giam-doc', 'quan-ly', 'it'])) {
             $issueReports = DailyReport::with('user')
                 ->whereDate('date', date('Y-m-d'))
                 ->where(function ($q) {

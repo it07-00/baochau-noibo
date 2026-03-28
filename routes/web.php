@@ -113,4 +113,46 @@ Route::middleware('auth')->name('app.')->group(function () {
 
     // Quotation Tracking
     Route::get('quotation-tracking', \App\Livewire\Admin\Quotations\QuotationManager::class)->name('quotation-tracking.index')->middleware('permission:quotation-tracking.view');
+
+    // Báo cáo Kinh doanh
+    Route::prefix('reports/sales')->name('reports.sales.')->middleware('permission:reports.view')->group(function () {
+        Route::get('summary',         \App\Livewire\Admin\Reports\Sales\SalesSummaryReport::class)->name('summary');
+        Route::get('target',          \App\Livewire\Admin\Reports\Sales\SalesTargetReport::class)->name('target');
+        Route::get('overview',        \App\Livewire\Admin\Reports\Sales\SalesOverviewReport::class)->name('overview');
+        Route::get('personal',        \App\Livewire\Admin\Reports\Sales\PersonalSalesReport::class)->name('personal');
+        Route::get('renewal-personal',\App\Livewire\Admin\Reports\Sales\PersonalRenewalReport::class)->name('renewal-personal');
+        Route::get('achievement',     \App\Livewire\Admin\Reports\Sales\SalesAchievementReport::class)->name('achievement');
+        Route::get('tracking',        \App\Livewire\Admin\Reports\Sales\SalesTrackingReport::class)->name('tracking');
+    });
+
+    // Quản lý hóa đơn
+    Route::get('invoices/bao-chau',  \App\Livewire\Admin\Invoices\InvoiceBaoChauManager::class)->name('invoices.bao-chau')->middleware('permission:invoices.view');
+    Route::get('invoices/handlers',  \App\Livewire\Admin\Invoices\InvoiceHandlerManager::class)->name('invoices.handlers')->middleware('permission:handler-invoices.view');
+
+    // Báo cáo Tư vấn
+    Route::prefix('reports/consulting')->name('reports.consulting.')->middleware('permission:reports.view')->group(function () {
+        Route::get('general',    \App\Livewire\Admin\Reports\Consulting\ConsultingGeneralReport::class)->name('general');
+        Route::get('monitoring', \App\Livewire\Admin\Reports\Consulting\ConsultingMonitoringReport::class)->name('monitoring');
+        Route::get('all',        \App\Livewire\Admin\Reports\Consulting\ConsultingServiceReport::class)->name('all');
+        Route::get('gpmt',       \App\Livewire\Admin\Reports\Consulting\ConsultingServiceReport::class)->name('gpmt');
+        Route::get('dkmt',       \App\Livewire\Admin\Reports\Consulting\ConsultingServiceReport::class)->name('dkmt');
+        Route::get('vhtn',       \App\Livewire\Admin\Reports\Consulting\ConsultingServiceReport::class)->name('vhtn');
+    });
+
+    // Báo cáo Kỹ thuật
+    Route::prefix('reports/technical')->name('reports.technical.')->middleware('permission:reports.view')->group(function () {
+        Route::get('field',     \App\Livewire\Admin\Reports\Technical\TechnicalFieldReport::class)->name('field');
+        Route::get('vehicle',   \App\Livewire\Admin\Reports\Technical\TechnicalComingSoon::class)->name('vehicle');
+        Route::get('materials', \App\Livewire\Admin\Reports\Technical\TechnicalComingSoon::class)->name('materials');
+    });
+
+    // Báo cáo Marketing
+    Route::prefix('reports/marketing')->name('reports.marketing.')->middleware('permission:reports.view')->group(function () {
+        Route::get('summary', \App\Livewire\Admin\Reports\Marketing\MarketingSummaryReport::class)->name('summary');
+        Route::get('target',  \App\Livewire\Admin\Reports\Marketing\MarketingTargetReport::class)->name('target');
+    });
+
+    // Bảng thống kê & Bảng xếp hạng
+    Route::get('statistics', \App\Livewire\Admin\StatisticsBoard::class)->name('statistics')->middleware('permission:statistics.view');
+    Route::get('rankings',   \App\Livewire\Admin\RankingsBoard::class)->name('rankings')->middleware('permission:rankings.view');
 });

@@ -23,6 +23,7 @@ class CustomerManager extends Component
         'phone' => '',
         'email' => '',
         'address' => '',
+        'province' => '',
         'representative' => '',
     ];
 
@@ -55,6 +56,7 @@ class CustomerManager extends Component
             'phone' => (string) ($customer->phone ?? ''),
             'email' => (string) ($customer->email ?? ''),
             'address' => (string) ($customer->address ?? ''),
+            'province' => (string) ($customer->province ?? ''),
             'representative' => (string) ($customer->representative ?? ''),
         ];
 
@@ -71,6 +73,7 @@ class CustomerManager extends Component
             'formData.phone' => 'nullable|string|max:30',
             'formData.email' => 'nullable|email|max:255',
             'formData.address' => 'nullable|string|max:2000',
+            'formData.province' => 'nullable|string|max:255',
             'formData.representative' => 'nullable|string|max:255',
         ], [], [
             'formData.name' => 'tên khách hàng',
@@ -78,6 +81,7 @@ class CustomerManager extends Component
             'formData.phone' => 'số điện thoại',
             'formData.email' => 'email',
             'formData.address' => 'địa chỉ',
+            'formData.province' => 'tỉnh thành',
             'formData.representative' => 'người đại diện',
         ]);
 
@@ -87,6 +91,7 @@ class CustomerManager extends Component
             'phone' => $this->formData['phone'] !== '' ? trim((string) $this->formData['phone']) : null,
             'email' => $this->formData['email'] !== '' ? trim((string) $this->formData['email']) : null,
             'address' => $this->formData['address'] !== '' ? trim((string) $this->formData['address']) : null,
+            'province' => $this->formData['province'] !== '' ? trim((string) $this->formData['province']) : null,
             'representative' => $this->formData['representative'] !== '' ? trim((string) $this->formData['representative']) : null,
         ];
 
@@ -135,6 +140,7 @@ class CustomerManager extends Component
             'phone' => '',
             'email' => '',
             'address' => '',
+            'province' => '',
             'representative' => '',
         ];
         $this->resetErrorBag();
@@ -158,6 +164,7 @@ class CustomerManager extends Component
 
         return view('livewire.admin.customers.customer-manager', [
             'customers' => $customers,
+            'provinces' => \App\Support\VietnamProvinces::list(),
         ])->layout('admin.layouts.app');
     }
 }

@@ -1,0 +1,272 @@
+<div>
+    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-0">Hóa đơn chủ xử lý</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
+                    <li class="breadcrumb-item active">Hóa đơn chủ xử lý</li>
+                </ol>
+            </nav>
+        </div>
+        @can('handler-invoices.create')
+        <button wire:click="openCreate" class="btn btn-primary d-flex align-items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Thêm hóa đơn
+        </button>
+        @endcan
+    </div>
+
+    {{-- Tóm tắt --}}
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="small text-muted">Tổng hóa đơn</div>
+                    <div class="fw-bold fs-5 text-primary">{{ $summary->cnt ?? 0 }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="small text-muted">Tổng phải trả</div>
+                    <div class="fw-bold text-dark">{{ number_format($summary->total ?? 0, 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="small text-muted">Đã chi</div>
+                    <div class="fw-bold text-success">{{ number_format($summary->paid ?? 0, 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="small text-muted">Còn phải chi</div>
+                    <div class="fw-bold text-warning">{{ number_format($summary->outstanding ?? 0, 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Bộ lọc --}}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <select wire:model.live="year" class="form-select form-select-sm">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1 small">Tháng</label>
+                    <select wire:model.live="filter_month" class="form-select form-select-sm">
+                        <option value="">Tất cả</option>
+                        @for($m=1; $m<=12; $m++)
+                            <option value="{{ $m }}">Tháng {{ $m }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
+                    <select wire:model.live="filter_status" class="form-select form-select-sm">
+                        <option value="">Tất cả</option>
+                        @foreach($statuses as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold mb-1 small">Chủ xử lý</label>
+                    <select wire:model.live="filter_handler" class="form-select form-select-sm">
+                        <option value="">Tất cả</option>
+                        @foreach($handlers as $h)
+                            <option value="{{ $h->id }}">{{ $h->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Bảng danh sách --}}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Số HĐ CXL</th>
+                            <th>Chủ xử lý</th>
+                            <th>Hợp đồng</th>
+                            <th>Ngày lập</th>
+                            <th>Hạn TT</th>
+                            <th class="text-end">Tiền trước VAT</th>
+                            <th class="text-end">VAT</th>
+                            <th class="text-end">Tổng cộng</th>
+                            <th class="text-end">Đã chi</th>
+                            <th>Trạng thái</th>
+                            <th style="width:80px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($items as $item)
+                        <tr>
+                            <td class="fw-semibold small">{{ $item->invoice_number ?: '—' }}</td>
+                            <td>{{ $item->handler?->name ?? '—' }}</td>
+                            <td class="small text-muted">{{ $item->contractWaste?->shd_ad ?? '—' }}</td>
+                            <td class="small text-muted">{{ $item->issue_date?->format('d/m/Y') ?? '—' }}</td>
+                            <td class="small {{ $item->due_date && $item->due_date->isPast() && $item->status !== 'paid' ? 'text-danger fw-semibold' : 'text-muted' }}">
+                                {{ $item->due_date?->format('d/m/Y') ?? '—' }}
+                            </td>
+                            <td class="text-end small">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                            <td class="text-end small text-muted">{{ number_format($item->vat_amount, 0, ',', '.') }}</td>
+                            <td class="text-end fw-semibold">{{ number_format($item->total_amount, 0, ',', '.') }} đ</td>
+                            <td class="text-end small text-success">{{ $item->paid_amount > 0 ? number_format($item->paid_amount, 0, ',', '.') . ' đ' : '—' }}</td>
+                            <td>
+                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} small">
+                                    {{ $item->status_label }}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                @can('handler-invoices.edit')
+                                <button wire:click="openEdit({{ $item->id }})" class="btn btn-sm btn-outline-primary py-0 px-2">Sửa</button>
+                                @endcan
+                                @can('handler-invoices.delete')
+                                <button wire:click="confirmDelete({{ $item->id }})" class="btn btn-sm btn-outline-danger py-0 px-2">Xóa</button>
+                                @endcan
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="11" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if($items->hasPages())
+            <div class="px-4 py-3 border-top">
+                {{ $items->links() }}
+            </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Modal tạo / chỉnh sửa --}}
+    @if($showModal)
+    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,.45)">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ $editingId ? 'Chỉnh sửa hóa đơn CXL' : 'Thêm hóa đơn CXL mới' }}</h5>
+                    <button type="button" class="btn-close" wire:click="$set('showModal',false)"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Chủ xử lý <span class="text-danger">*</span></label>
+                            <select wire:model="form.handler_id" class="form-select form-select-sm @error('form.handler_id') is-invalid @enderror">
+                                <option value="">— Chọn chủ xử lý —</option>
+                                @foreach($handlers as $h)
+                                    <option value="{{ $h->id }}">{{ $h->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('form.handler_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Hợp đồng chất thải</label>
+                            <select wire:model="form.contract_waste_id" class="form-select form-select-sm">
+                                <option value="">— Không liên kết —</option>
+                                @foreach($contractWastes as $cw)
+                                    <option value="{{ $cw->id }}">{{ $cw->shd_ad ?: 'HĐ #'.$cw->id }} — {{ $cw->handler?->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Số hóa đơn CXL</label>
+                            <input wire:model="form.invoice_number" type="text" class="form-control form-control-sm" placeholder="Số HĐ từ chủ xử lý">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Ngày lập</label>
+                            <input wire:model="form.issue_date" type="date" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Hạn thanh toán</label>
+                            <input wire:model="form.due_date" type="date" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Tiền trước VAT (đ) <span class="text-danger">*</span></label>
+                            <input wire:model.live="form.amount" type="number" class="form-control form-control-sm @error('form.amount') is-invalid @enderror" placeholder="0" min="0">
+                            @error('form.amount') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold small">VAT %</label>
+                            <input wire:model.live="form.vat_percent" type="number" class="form-control form-control-sm" value="10" min="0" max="100">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Tiền VAT</label>
+                            <input wire:model="form.vat_amount" type="number" class="form-control form-control-sm bg-light" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Tổng cộng</label>
+                            <input wire:model="form.total_amount" type="number" class="form-control form-control-sm bg-light fw-bold" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Trạng thái</label>
+                            <select wire:model="form.status" class="form-select form-select-sm">
+                                @foreach($statuses as $key => $label)
+                                    <option value="{{ $key }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Đã chi (đ)</label>
+                            <input wire:model="form.paid_amount" type="number" class="form-control form-control-sm" placeholder="0" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Ngày thanh toán</label>
+                            <input wire:model="form.paid_at" type="date" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small">Ghi chú</label>
+                            <textarea wire:model="form.notes" class="form-control form-control-sm" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" wire:click="$set('showModal',false)">Hủy</button>
+                    <button type="button" class="btn btn-primary btn-sm" wire:click="save">
+                        <span wire:loading wire:target="save" class="spinner-border spinner-border-sm me-1"></span>
+                        Lưu hóa đơn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Modal xác nhận xóa --}}
+    @if($showDeleteModal)
+    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,.45)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" wire:click="$set('showDeleteModal',false)"></button>
+                </div>
+                <div class="modal-body">Bạn có chắc chắn muốn xóa hóa đơn này không?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-sm" wire:click="$set('showDeleteModal',false)">Hủy</button>
+                    <button class="btn btn-danger btn-sm" wire:click="delete">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>

@@ -39,6 +39,7 @@
                                     <th width="60">ID</th>
                                     <th>Tên khách hàng</th>
                                     <th>Mã số thuế</th>
+                                    <th>Tỉnh thành</th>
                                     <th>Số điện thoại</th>
                                     <th>Email</th>
                                     <th>Người đại diện</th>
@@ -60,6 +61,7 @@
                                     <td>{{ $customer->id }}</td>
                                     <td class="fw-bold">{{ $customer->name }}</td>
                                     <td>{{ $customer->tax_code ?: '—' }}</td>
+                                    <td>{{ $customer->province ?: '—' }}</td>
                                     <td>{{ $customer->phone ?: '—' }}</td>
                                     <td>{{ $customer->email ?: '—' }}</td>
                                     <td>{{ $customer->representative ?: '—' }}</td>
@@ -85,7 +87,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4 text-muted">Không có dữ liệu khách hàng.</td>
+                                    <td colspan="9" class="text-center py-4 text-muted">Không có dữ liệu khách hàng.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -138,7 +140,16 @@
                                 <input type="text" class="form-control @error('formData.representative') is-invalid @enderror" wire:model.defer="formData.representative" placeholder="Nhập tên người đại diện">
                                 @error('formData.representative') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
-                            <div class="col-md-6">&nbsp;</div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tỉnh thành</label>
+                                <select class="form-select @error('formData.province') is-invalid @enderror" wire:model.defer="formData.province">
+                                    <option value="">-- Chọn tỉnh thành --</option>
+                                    @foreach($provinces as $p)
+                                        <option value="{{ $p }}" {{ $formData['province'] === $p ? 'selected' : '' }}>{{ $p }}</option>
+                                    @endforeach
+                                </select>
+                                @error('formData.province') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
                             <div class="col-12">
                                 <label class="form-label fw-bold">Địa chỉ</label>
                                 <textarea rows="2" class="form-control @error('formData.address') is-invalid @enderror" wire:model.defer="formData.address" placeholder="Nhập địa chỉ"></textarea>

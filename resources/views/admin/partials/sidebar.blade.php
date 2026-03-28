@@ -177,98 +177,98 @@ SVG;
                             'title'       => 'Quản lý hợp đồng',
                             'icon'        => $stackIcon,
                             'permission'  => 'contracts-waste.view',
-                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh', 'ke-toan'],
+                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan'],
                             'children'    => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
                         ],
                         [
                             'title'       => 'Quản lý hóa đơn',
                             'icon'        => $stackIcon,
                             'permission'  => 'invoices.view',
-                            'allow_roles' => ['it', 'quan-ly', 'ke-toan'],
+                            'allow_roles' => ['it', 'giam-doc', 'ke-toan'],
                             'children'    => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
                         ],
                         [
                             'title'       => 'Chuyển phát thư',
                             'icon'        => $stackIcon,
                             'permission'  => 'mail-delivery.view',
-                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh', 'tu-van'],
+                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'tu-van'],
                             'children'    => ['Quản lý chuyển phát'],
                         ],
                         [
                             'title'       => 'Bộ phận kinh doanh',
                             'icon'        => $stackIcon,
                             'permission'  => 'sales-quotation.view',
-                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh'],
+                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
                             'children'    => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
                         ],
                         [
                             'title'       => 'Bộ phận chất thải',
                             'icon'        => $stackIcon,
                             'permission'  => 'waste-requests.view',
-                            'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
+                            'allow_roles' => ['it', 'giam-doc', 'ky-thuat'],
                             'children'    => ['Yêu cầu gom rác'],
                         ],
                         [
                             'title'       => 'Bộ phận tư vấn',
                             'icon'        => $stackIcon,
                             'permission'  => 'consulting-requests.view',
-                            'allow_roles' => ['it', 'quan-ly', 'tu-van'],
+                            'allow_roles' => ['it', 'giam-doc', 'tu-van'],
                             'children'    => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
                         ],
                         [
                             'title'       => 'Bộ phận dự án',
                             'icon'        => $stackIcon,
                             'permission'  => 'project-requests.view',
-                            'allow_roles' => ['it', 'quan-ly'],
+                            'allow_roles' => ['it', 'giam-doc'],
                             'children'    => ['Yêu cầu dự án lớn', 'Yêu cầu dự án nhỏ', 'Yêu cầu khảo sát dự án'],
                         ],
                         [
                             'title'       => 'Bộ phận kế toán',
                             'icon'        => $stackIcon,
                             'permission'  => 'commissions.view',
-                            'allow_roles' => ['it', 'quan-ly', 'ke-toan', 'kinh-doanh', 'tu-van'],
+                            'allow_roles' => ['it', 'giam-doc', 'ke-toan', 'tp-kinh-doanh', 'kinh-doanh', 'tu-van'],
                             'children'    => ['Yêu cầu chi hoa hồng'],
                         ],
                         [
                             'title'       => 'Bộ phận kỹ thuật',
                             'icon'        => $stackIcon,
                             'permission'  => 'technical-requests.view',
-                            'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
+                            'allow_roles' => ['it', 'giam-doc', 'ky-thuat'],
                             'children'    => ['Yêu cầu quan trắc môi trường', 'Yêu cầu phân loại lao động'],
                         ],
                         [
                             'title'       => 'Báo cáo Marketing',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh'],
+                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'marketing'],
                             'children'    => ['Bảng tổng kết', 'Bảng mục tiêu cam kết'],
                         ],
                         [
                             'title'       => 'Báo cáo Kinh doanh',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'quan-ly', 'kinh-doanh'],
+                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
                             'children'    => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
                         ],
                         [
                             'title'       => 'Báo cáo HC - CTR',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'quan-ly', 'ke-toan'],
+                            'allow_roles' => ['it', 'giam-doc', 'ke-toan'],
                             'children'    => ['Hợp đồng', 'Hóa đơn', 'Công nợ', 'Gom rác'],
                         ],
                         [
                             'title'       => 'Báo cáo Tư vấn',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'quan-ly', 'tu-van'],
+                            'allow_roles' => ['it', 'giam-doc', 'tu-van'],
                             'children'    => ['Báo cáo chung', 'Bảng theo dõi đo mẫu', 'Báo cáo', 'GPMT/ĐTM', 'ĐKMT', 'VHTN'],
                         ],
                         [
                             'title'       => 'Báo cáo Kỹ thuật',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'quan-ly', 'ky-thuat'],
+                            'allow_roles' => ['it', 'giam-doc', 'ky-thuat'],
                             'children'    => ['Báo cáo hiện trường', 'Lịch xe', 'Vật tư'],
                         ],
                         [
@@ -330,6 +330,55 @@ SVG;
                     } elseif (request()->routeIs('app.quotation-tracking.*')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng theo dõi báo giá';
+                    } elseif (request()->routeIs('app.reports.sales.summary')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng tổng kết doanh số';
+                    } elseif (request()->routeIs('app.reports.sales.target')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng doanh số cam kết';
+                    } elseif (request()->routeIs('app.reports.sales.overview')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng tổng kết';
+                    } elseif (request()->routeIs('app.reports.sales.personal')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng doanh số cá nhân';
+                    } elseif (request()->routeIs('app.reports.sales.renewal-personal')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng theo dõi tái ký cá nhân';
+                    } elseif (request()->routeIs('app.reports.sales.achievement')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng thành tích';
+                    } elseif (request()->routeIs('app.reports.sales.tracking')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Bảng theo dõi doanh số';
+                    } elseif (request()->routeIs('app.reports.consulting.*')) {
+                        $activeGroup = 'Báo cáo Tư vấn';
+                        $activeChild = match(true) {
+                            request()->routeIs('app.reports.consulting.general')    => 'Báo cáo chung',
+                            request()->routeIs('app.reports.consulting.monitoring') => 'Bảng theo dõi đo mẫu',
+                            request()->routeIs('app.reports.consulting.gpmt')       => 'GPMT/ĐTM',
+                            request()->routeIs('app.reports.consulting.dkmt')       => 'ĐKMT',
+                            request()->routeIs('app.reports.consulting.vhtn')       => 'VHTN',
+                            default                                                 => 'Báo cáo',
+                        };
+                    } elseif (request()->routeIs('app.reports.technical.*')) {
+                        $activeGroup = 'Báo cáo Kỹ thuật';
+                        $activeChild = match(true) {
+                            request()->routeIs('app.reports.technical.field')     => 'Báo cáo hiện trường',
+                            request()->routeIs('app.reports.technical.vehicle')   => 'Lịch xe',
+                            request()->routeIs('app.reports.technical.materials') => 'Vật tư',
+                            default                                               => 'Báo cáo hiện trường',
+                        };
+                    } elseif (request()->routeIs('app.reports.marketing.*')) {
+                        $activeGroup = 'Báo cáo Marketing';
+                        $activeChild = request()->routeIs('app.reports.marketing.target')
+                            ? 'Bảng mục tiêu cam kết' : 'Bảng tổng kết';
+                    } elseif (request()->routeIs('app.invoices.bao-chau')) {
+                        $activeGroup = 'Quản lý hóa đơn';
+                        $activeChild = 'Hóa đơn Bảo Châu';
+                    } elseif (request()->routeIs('app.invoices.handlers')) {
+                        $activeGroup = 'Quản lý hóa đơn';
+                        $activeChild = 'Hóa đơn chủ xử lý';
                     }
 
                     // TV/KT: redirect activeGroup to their own section when on contract pages
@@ -339,7 +388,7 @@ SVG;
                 @endphp
 
                 <li class="app-sidebar-menu-item">
-                    <a href="javascript:void(0)" class="menu-link d-flex align-items-center">
+                    <a href="{{ route('app.rankings') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.rankings') ? 'active' : '' }}">
                         <span class="menu-icon flex-shrink-0">
                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.125 3.54166H4.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -353,7 +402,7 @@ SVG;
                 </li>
 
                 <li class="app-sidebar-menu-item">
-                    <a href="javascript:void(0)" class="menu-link d-flex align-items-center">
+                    <a href="{{ route('app.statistics') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.statistics') ? 'active' : '' }}">
                         <span class="menu-icon flex-shrink-0">
                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="8.5" cy="8.5" r="6.75" stroke="currentColor" stroke-width="1.5"/>
@@ -428,6 +477,46 @@ SVG;
                                             $href = route('app.postal-deliveries.index');
                                         } elseif ($child === 'Bảng theo dõi báo giá') {
                                             $href = route('app.quotation-tracking.index');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết doanh số') {
+                                            $href = route('app.reports.sales.summary');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cam kết') {
+                                            $href = route('app.reports.sales.target');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết') {
+                                            $href = route('app.reports.sales.overview');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cá nhân') {
+                                            $href = route('app.reports.sales.personal');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi tái ký cá nhân') {
+                                            $href = route('app.reports.sales.renewal-personal');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng thành tích') {
+                                            $href = route('app.reports.sales.achievement');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi doanh số') {
+                                            $href = route('app.reports.sales.tracking');
+                                        } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo chung') {
+                                            $href = route('app.reports.consulting.general');
+                                        } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Bảng theo dõi đo mẫu') {
+                                            $href = route('app.reports.consulting.monitoring');
+                                        } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo') {
+                                            $href = route('app.reports.consulting.all');
+                                        } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'GPMT/ĐTM') {
+                                            $href = route('app.reports.consulting.gpmt');
+                                        } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'ĐKMT') {
+                                            $href = route('app.reports.consulting.dkmt');
+                                        } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'VHTN') {
+                                            $href = route('app.reports.consulting.vhtn');
+                                        } elseif ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Báo cáo hiện trường') {
+                                            $href = route('app.reports.technical.field');
+                                        } elseif ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Lịch xe') {
+                                            $href = route('app.reports.technical.vehicle');
+                                        } elseif ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Vật tư') {
+                                            $href = route('app.reports.technical.materials');
+                                        } elseif ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng tổng kết') {
+                                            $href = route('app.reports.marketing.summary');
+                                        } elseif ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng mục tiêu cam kết') {
+                                            $href = route('app.reports.marketing.target');
+                                        } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn Bảo Châu') {
+                                            $href = route('app.invoices.bao-chau');
+                                        } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn chủ xử lý') {
+                                            $href = route('app.invoices.handlers');
                                         }
 
                                         $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('app.internal-docs.*')) ||
@@ -449,7 +538,27 @@ SVG;
                                                       (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng dự án' && request()->routeIs('app.contracts.project.*')) ||
                                                       (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng thương mại' && request()->routeIs('app.contracts.commercial.*')) ||
                                                       (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Phát triển bền vững' && request()->routeIs('app.contracts.sustainability.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Năng lượng' && request()->routeIs('app.contracts.energy.*'));
+                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Năng lượng' && request()->routeIs('app.contracts.energy.*')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết doanh số' && request()->routeIs('app.reports.sales.summary')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cam kết' && request()->routeIs('app.reports.sales.target')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết' && request()->routeIs('app.reports.sales.overview')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cá nhân' && request()->routeIs('app.reports.sales.personal')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi tái ký cá nhân' && request()->routeIs('app.reports.sales.renewal-personal')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng thành tích' && request()->routeIs('app.reports.sales.achievement')) ||
+                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi doanh số' && request()->routeIs('app.reports.sales.tracking')) ||
+                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo chung' && request()->routeIs('app.reports.consulting.general')) ||
+                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Bảng theo dõi đo mẫu' && request()->routeIs('app.reports.consulting.monitoring')) ||
+                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo' && request()->routeIs('app.reports.consulting.all')) ||
+                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'GPMT/ĐTM' && request()->routeIs('app.reports.consulting.gpmt')) ||
+                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'ĐKMT' && request()->routeIs('app.reports.consulting.dkmt')) ||
+                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'VHTN' && request()->routeIs('app.reports.consulting.vhtn')) ||
+                                                      ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Báo cáo hiện trường' && request()->routeIs('app.reports.technical.field')) ||
+                                                      ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Lịch xe' && request()->routeIs('app.reports.technical.vehicle')) ||
+                                                      ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Vật tư' && request()->routeIs('app.reports.technical.materials')) ||
+                                                      ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng tổng kết' && request()->routeIs('app.reports.marketing.summary')) ||
+                                                      ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng mục tiêu cam kết' && request()->routeIs('app.reports.marketing.target')) ||
+                                                      ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn Bảo Châu' && request()->routeIs('app.invoices.bao-chau')) ||
+                                                      ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn chủ xử lý' && request()->routeIs('app.invoices.handlers'));
                                     @endphp
                                     <li>
                                         <a href="{{ $href }}" class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
@@ -473,7 +582,20 @@ SVG;
                 </div>
                 <div>
                     <h6 class="mb-0">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
-                    <span class="text-muted">{{ $currentUser?->roles?->first()?->name === 'it' ? 'IT / Quản trị' : ($currentUser?->roles?->first()?->name === 'quan-ly' ? 'Quản lý' : ($currentUser?->roles?->first()?->name === 'kinh-doanh' ? 'Kinh doanh' : ($currentUser?->roles?->first()?->name === 'ke-toan' ? 'Kế toán' : ($currentUser?->roles?->first()?->name === 'tu-van' ? 'Tư vấn' : ($currentUser?->roles?->first()?->name === 'ky-thuat' ? 'Kỹ thuật' : 'Nhân viên'))))) }}</span>
+                    @php
+                        $roleLabels = [
+                            'it' => 'IT / Quản trị',
+                            'giam-doc' => 'Giám đốc',
+                            'tp-kinh-doanh' => 'Trưởng phòng KD',
+                            'kinh-doanh' => 'Nhân viên KD',
+                            'tu-van' => 'Tư vấn',
+                            'ky-thuat' => 'Kỹ thuật',
+                            'marketing' => 'Marketing',
+                            'ke-toan' => 'Kế toán',
+                            'quan-ly' => 'Quản lý',
+                        ];
+                    @endphp
+                    <span class="text-muted">{{ $roleLabels[$currentUser?->roles?->first()?->name] ?? 'Nhân viên' }}</span>
                 </div>
             </div>
         </div>

@@ -9,28 +9,60 @@
         ['label' => 'Vai trò', 'url' => route('app.roles.index')],
         ['label' => 'Chỉnh sửa'],
     ];
-
     $moduleNames = [
-        'users' => 'Người dùng',
-        'roles' => 'Vai trò & Phân quyền',
-        'departments' => 'Phòng ban',
-        'handlers' => 'Chủ xử lý',
-        'master-data' => 'Dữ liệu chuẩn',
-        'settings' => 'Cài đặt hệ thống',
-        'contracts-waste' => 'Hợp đồng chất thải',
-        'contracts-consulting' => 'Hợp đồng tư vấn',
-        'contracts-project' => 'Hợp đồng dự án',
-        'contracts-commercial' => 'Hợp đồng thương mại',
-        'invoices' => 'Hóa đơn',
-        'mail-delivery' => 'Chuyển phát thư',
-        'quotations' => 'Báo giá',
-        'waste-requests' => 'Yêu cầu rác',
-        'consulting-requests' => 'Yêu cầu tư vấn',
-        'project-requests' => 'Yêu cầu dự án',
-        'commercial-requests' => 'Yêu cầu thương mại',
-        'commissions' => 'Hoa hồng',
-        'reports' => 'Báo cáo',
-        'internal-docs' => 'Tài liệu nội bộ',
+        // Quản trị hệ thống
+        'users'                    => 'Người dùng',
+        'roles'                    => 'Vai trò & Phân quyền',
+        'departments'              => 'Phòng ban',
+        'settings'                 => 'Cài đặt hệ thống',
+        'master-data'              => 'Dữ liệu chuẩn',
+
+        // Dữ liệu nền
+        'handlers'                 => 'Chủ xử lý',
+        'customers'                => 'Khách hàng',
+
+        // Hợp đồng
+        'contracts-waste'          => 'Hợp đồng chất thải',
+        'contracts-consulting'     => 'Hợp đồng tư vấn',
+        'contracts-project'        => 'Hợp đồng dự án',
+        'contracts-commercial'     => 'Hợp đồng thương mại',
+        'contracts-sustainability' => 'HĐ Phát triển bền vững',
+        'contracts-energy'         => 'HĐ Giảm phát thải & NL',
+
+        // Hóa đơn
+        'invoices'                 => 'Hóa đơn Bảo Châu',
+        'handler-invoices'         => 'Hóa đơn chủ xử lý',
+
+        // Kinh doanh
+        'sales-quotation'          => 'Doanh số báo giá',
+        'sales-renewal'            => 'Doanh số tái ký',
+        'sales-progressive'        => 'Doanh số tiến độ',
+        'quotation-tracking'       => 'Theo dõi báo giá',
+        'quotations'               => 'Báo giá',
+
+        // Tài chính
+        'commissions'              => 'Yêu cầu hoa hồng',
+        'advance-requests'         => 'Yêu cầu ứng tiền',
+
+        // Vận hành
+        'waste-requests'           => 'Yêu cầu chất thải',
+        'consulting-requests'      => 'Yêu cầu tư vấn',
+        'project-requests'         => 'Yêu cầu dự án',
+        'commercial-requests'      => 'Yêu cầu thương mại',
+        'technical-requests'       => 'Yêu cầu kỹ thuật',
+
+        // Chuyển phát
+        'mail-delivery'            => 'Chuyển phát thư',
+
+        // Thống kê & Báo cáo
+        'rankings'                 => 'Bảng xếp hạng',
+        'statistics'               => 'Bảng thống kê',
+        'reports'                  => 'Báo cáo',
+        'daily-reports'            => 'Báo cáo ngày',
+
+        // Nội bộ & Marketing
+        'internal-docs'            => 'Tài liệu nội bộ',
+        'articles'                 => 'Bài viết / Marketing',
     ];
 @endphp
 

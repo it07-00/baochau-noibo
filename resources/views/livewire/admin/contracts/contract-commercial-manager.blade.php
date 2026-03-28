@@ -142,11 +142,11 @@
     </div>
 
     <!-- Table Card -->
-    <div class="card border-0 shadow-sm overflow-hidden">
+    <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng thương mại</h6>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow:visible; min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class="small text-muted fw-bold">
@@ -207,8 +207,32 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex flex-column align-items-center">
-                                <span class="small fw-bold">{{ $doc->status ?: 'Đang thực hiện' }}</span>
-                                <span class="small text-muted">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
+                                @php
+                                    $statusColor = match($doc->status) {
+                                        'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+                                        'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+                                        default => ['bg' => '#fff3cd', 'text' => '#b45309'],
+                                    };
+                                @endphp
+                                <div class="position-relative" x-data="{ open: false }">
+                                    <button type="button" @click="open = !open" class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
+                                        style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
+                                        {{ $doc->status ?: 'ĐANG THỰC HIỆN' }}
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+                                    </button>
+                                    <div x-show="open" @click.away="open = false" x-cloak
+                                        class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1"
+                                        style="z-index:1050; min-width:160px; right:50%; transform:translateX(50%);">
+                                        @foreach(['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'] as $opt)
+                                        <button type="button" class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }}"
+                                            style="font-size:0.8rem;" wire:click="updateStatus({{ $doc->id }}, '{{ $opt }}')" @click="open = false">
+                                            {{ $opt }}
+                                            @if($doc->status === $opt) <i class="bi bi-check2 ms-2"></i> @endif
+                                        </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <span class="small text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                             </div>
                         </td>
                         <td class="text-center pe-4">
@@ -216,7 +240,7 @@
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                @if(auth()->user()->hasAnyRole(['quan-ly', 'it']))
+                                @if(auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'it']))
                                 <button class="btn btn-sm p-0 text-success" wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                     <i class="bi bi-person-check fs-5"></i>
                                 </button>
@@ -520,12 +544,12 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">PT thanh toán</label>
-                            <select class="form-select" wire:model="formData.payment_method">
-                                <option value="">Chọn phương thức...</option>
+                            <input class="form-control" wire:model="formData.payment_method" list="pm-options" placeholder="VD: Sau ký, Trước ký...">
+                            <datalist id="pm-options">
                                 @foreach($payment_methods as $pm)
-                                    <option value="{{ $pm }}">{{ $pm }}</option>
+                                    <option value="{{ $pm }}">
                                 @endforeach
-                            </select>
+                            </datalist>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Tình trạng</label>

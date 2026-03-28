@@ -55,11 +55,14 @@ class RoleManager extends Component
         $roles->getCollection()->transform(function($role) {
             $role->display_name = match($role->name) {
                 'it' => 'IT / Quản trị',
-                'quan-ly' => 'Ban Giám đốc',
-                'kinh-doanh' => 'Phòng Kinh doanh',
-                'ke-toan' => 'Phòng Kế toán',
-                'tu-van' => 'Phòng Tư vấn',
-                'ky-thuat' => 'Phòng Kỹ thuật',
+                'giam-doc' => 'Giám đốc',
+                'tp-kinh-doanh' => 'Trưởng phòng KD',
+                'quan-ly' => 'Quản lý (cũ)',
+                'kinh-doanh' => 'Nhân viên KD',
+                'ke-toan' => 'Kế toán',
+                'tu-van' => 'Tư vấn',
+                'ky-thuat' => 'Kỹ thuật',
+                'marketing' => 'Marketing',
                 default => ucfirst($role->name)
             };
             return $role;
