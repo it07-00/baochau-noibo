@@ -1,8 +1,5 @@
 @php
     $currentUser = auth()->user();
-    $avatarUrl = $currentUser && $currentUser->avatar
-        ? asset('storage/' . $currentUser->avatar)
-        : asset('assets/images/10.jpg');
 @endphp
 
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
@@ -578,7 +575,7 @@ SVG;
         <div class="app-sidebar-footer">
             <div class="d-flex align-items-center gap-3">
                 <div class="avatar rounded-pill">
-                    <img src="{{ $avatarUrl }}" alt="Admin" style="object-fit: cover;">
+                    <x-user-avatar :user="$currentUser" :size="36" />
                 </div>
                 <div>
                     <h6 class="mb-0">{{ $currentUser?->name ?? 'Người dùng' }}</h6>

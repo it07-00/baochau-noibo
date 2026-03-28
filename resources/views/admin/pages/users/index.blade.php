@@ -57,13 +57,7 @@
                                     <td>{{ $user->id }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            @if($user->avatar)
-                                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="rounded-circle me-2" width="32" height="32" style="object-fit: cover">
-                                            @else
-                                                <div class="avatar bg-light text-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:32px; height:32px">
-                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                                </div>
-                                            @endif
+                                            <x-user-avatar :user="$user" :size="32" class="me-2" />
                                             <div>
                                                 <h6 class="mb-0">{{ $user->name }}</h6>
                                                 <small class="text-muted">{{ $user->email }}</small>

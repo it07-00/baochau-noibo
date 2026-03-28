@@ -9,9 +9,7 @@
         ['label' => 'Hồ sơ của tôi'],
     ];
 
-    $avatarUrl = auth()->user()->avatar
-        ? asset('storage/' . auth()->user()->avatar)
-        : asset('assets/images/10.jpg');
+    $user = auth()->user();
 @endphp
 
 @section('content')
@@ -43,7 +41,7 @@
                         <div class="mb-4">
                             <label class="form-label" for="avatar">Ảnh đại diện</label>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <img src="{{ $avatarUrl }}" alt="Avatar" width="64" height="64" class="rounded-circle border" style="object-fit: cover;">
+                                <x-user-avatar :user="$user" :size="64" />
                                 <span class="text-muted">JPG, PNG, WEBP. Tối đa 2MB.</span>
                             </div>
                             <input

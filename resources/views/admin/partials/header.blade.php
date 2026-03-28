@@ -1,8 +1,5 @@
 @php
     $currentUser = auth()->user();
-    $avatarUrl = $currentUser && $currentUser->avatar
-        ? asset('storage/' . $currentUser->avatar)
-        : asset('assets/images/10.jpg');
 @endphp
 
 <div class="app-header bg-card py-2 px-4 px-md-6 d-flex align-items-center">
@@ -61,14 +58,12 @@
 
                 <li class="header-nav-item header-user me-0">
                     <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
-                        <img src="{{ $avatarUrl }}" alt="Admin" width="34" height="34" class="rounded-circle" style="object-fit: cover;">
+                        <x-user-avatar :user="$currentUser" :size="34" />
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg py-0">
                         <div class="dropdown-header d-flex align-items-center border-bottom py-4">
                             <div class="me-3 flex-shrink-0">
-                                <div class="avatar avatar-md">
-                                    <img src="{{ $avatarUrl }}" alt="Admin" class="rounded-circle" style="object-fit: cover;">
-                                </div>
+                                <x-user-avatar :user="$currentUser" :size="48" />
                             </div>
                             <div class="flex-grow-1 text-start">
                                 <h6 class="mb-0">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
