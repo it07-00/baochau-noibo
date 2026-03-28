@@ -114,7 +114,7 @@
                                 <label class="form-label small fw-bold">Tên giai đoạn / tiến độ <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control form-control-sm" wire:model="milestone_name" placeholder="Ví dụ: Đợt 1, Giai đoạn 2...">
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Phần trăm (%) <span class="text-danger">*</span></label>
                                 <input type="number" step="0.01" class="form-control form-control-sm" wire:model="percentage">

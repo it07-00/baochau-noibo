@@ -132,7 +132,7 @@
                                 <label class="form-label small fw-bold">Tháng tính doanh số <span class="text-danger">*</span></label>
                                 <input type="month" class="form-control form-control-sm" wire:model="sales_month">
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Giá trị tính doanh số <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-sm">

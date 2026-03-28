@@ -175,7 +175,7 @@
                                 <label class="form-label small fw-bold">Tháng tính doanh số <span class="text-danger">*</span></label>
                                 <input type="month" class="form-control form-control-sm" wire:model="sales_month">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Dịch vụ <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control form-control-sm" wire:model="service" placeholder="Chọn dịch vụ">

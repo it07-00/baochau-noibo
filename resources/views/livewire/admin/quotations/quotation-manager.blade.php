@@ -103,7 +103,7 @@
                                 @endif
                             </div>
                             @if($item->address)
-                            <div class="small text-muted text-wrap opacity-75" 
+                            <div class="small text-muted text-wrap opacity-75"
                                  style="line-height: 1.2; font-size: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                                  title="{{ $item->address }}">
                                 <i class="bi bi-geo-alt-fill me-1"></i>{{ $item->address }}
@@ -146,7 +146,7 @@
                                 <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </button>
-                                <button class="btn btn-sm p-0 text-danger" 
+                                <button class="btn btn-sm p-0 text-danger"
                                         wire:click="delete({{ $item->id }})"
                                         wire:confirm="Xác nhận xóa báo giá này?">
                                     <i class="bi bi-trash fs-5"></i>

@@ -21,7 +21,7 @@
             <div class="pure-card rounded-custom card-bg shadow-custom">
                 <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <h3 class="pure-card-title m-0">Danh sách vai trò</h3>
-                    
+
                     <div class="d-flex align-items-center gap-2">
                         <!-- Ô tìm kiếm realtime -->
                         <div class="input-group input-group-sm" style="width: 250px;">
@@ -30,11 +30,11 @@
                             </span>
                             <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm vai trò...">
                         </div>
-                        
+
                         <a href="{{ route('app.roles.create') }}" class="btn btn-primary btn-sm" wire:navigate>Tạo mới</a>
                     </div>
                 </div>
-                
+
                 <div class="pure-card-body pb-3 position-relative">
                     <div class="table-responsive">
                         <table class="table text-nowrap align-middle table-hover">
@@ -76,8 +76,8 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        
-                                        <button 
+
+                                        <button
                                             @if($role->users_count > 0)
                                                 onclick="Swal.fire('Không thể xóa', 'Vai trò này đang được gán cho {{ $role->users_count }} người dùng.', 'error')"
                                             @else

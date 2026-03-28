@@ -33,7 +33,7 @@
             <div class="pure-card rounded-custom card-bg shadow-custom">
                 <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <h3 class="pure-card-title m-0">Danh sách người dùng</h3>
-                    
+
                     <div class="d-flex align-items-center gap-2">
                         <!-- Ô tìm kiếm realtime -->
                         <div class="input-group input-group-sm" style="width: 250px;">
@@ -42,7 +42,7 @@
                             </span>
                             <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm...">
                         </div>
-                        
+
                         <!-- Lọc số lượng -->
                         <select wire:model.live="perPage" class="form-select form-select-sm w-auto">
                             <option value="10">10 dòng</option>
@@ -53,7 +53,7 @@
                         <a href="{{ route('app.users.create') }}" class="btn btn-primary btn-sm" wire:navigate>Tạo mới</a>
                     </div>
                 </div>
-                
+
                 <div class="pure-card-body pb-3 position-relative">
                     <div class="table-responsive">
                         <table class="table text-nowrap align-middle table-hover">
@@ -106,7 +106,7 @@
                                     <td class="text-end">
                                         <div class="d-flex align-items-center justify-content-end gap-1">
                                             <!-- Reset Password -->
-                                            <button 
+                                            <button
                                                 wire:click="resetPassword({{ $user->id }})"
                                                 wire:confirm="Mật khẩu của tài khoản {{ $user->username }} sẽ được đưa về mặc định của hệ thống!"
                                                 class="btn btn-sm btn-icon btn-light text-warning rounded-pill" title="Reset mật khẩu">
@@ -117,7 +117,7 @@
 
                                             <!-- Lock/Unlock -->
                                             @if($user->is_active)
-                                                <button 
+                                                <button
                                                     wire:click="lockAccount({{ $user->id }})"
                                                     wire:confirm="Người dùng {{ $user->name }} sẽ không thể đăng nhập!"
                                                     class="btn btn-sm btn-icon btn-light text-secondary rounded-pill" title="Khóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
@@ -139,7 +139,7 @@
                                                 </svg>
                                             </a>
 
-                                            <button 
+                                            <button
                                                 wire:click="deleteUser({{ $user->id }})"
                                                 wire:confirm="Bạn có chắc chắn muốn xóa {{ $user->name }}?"
                                                 class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
