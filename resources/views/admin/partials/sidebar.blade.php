@@ -175,7 +175,7 @@ SVG;
                             'icon'        => $stackIcon,
                             'permission'  => 'contracts-waste.view',
                             'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan'],
-                            'children'    => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
+                            'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
                             'title'       => 'Quản lý hóa đơn',
@@ -210,7 +210,7 @@ SVG;
                             'icon'        => $stackIcon,
                             'permission'  => 'consulting-requests.view',
                             'allow_roles' => ['it', 'giam-doc', 'tu-van'],
-                            'children'    => ['Hợp đồng chất thải', 'Hợp đồng tư vấn', 'Hợp đồng dự án', 'Hợp đồng thương mại', 'HĐ Phát triển bền vững', 'HĐ Năng lượng'],
+                            'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
                             'title'       => 'Bộ phận dự án',
@@ -290,22 +290,22 @@ SVG;
                         $activeChild = 'Quy định';
                     } elseif (request()->routeIs('app.contracts.waste.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
-                        $activeChild = 'Hợp đồng chất thải';
+                        $activeChild = 'HĐ Chất thải & Tiếng ồn';
                     } elseif (request()->routeIs('app.contracts.consulting.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
-                        $activeChild = 'Hợp đồng tư vấn';
+                        $activeChild = 'HĐ Pháp lý & Hồ sơ MT';
                     } elseif (request()->routeIs('app.contracts.project.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
-                        $activeChild = 'Hợp đồng dự án';
+                        $activeChild = 'HĐ Kỹ thuật & Ứng phó SC';
                     } elseif (request()->routeIs('app.contracts.commercial.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
-                        $activeChild = 'Hợp đồng thương mại';
+                        $activeChild = 'HĐ NC & CĐ Công nghệ';
                     } elseif (request()->routeIs('app.contracts.sustainability.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
-                        $activeChild = 'HĐ Phát triển bền vững';
+                        $activeChild = 'HĐ TV & BC PTBV';
                     } elseif (request()->routeIs('app.contracts.energy.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
-                        $activeChild = 'HĐ Năng lượng';
+                        $activeChild = 'HĐ Phát thải & Năng lượng';
                     } elseif (request()->routeIs('app.daily-reports.*')) {
                         $activeGroup = 'Báo cáo ngày';
                         $activeChild = 'Báo cáo ngày';
@@ -436,29 +436,17 @@ SVG;
                                         $href = 'javascript:void(0)';
                                         if ($menu['title'] === 'Nội bộ' && $child === 'Quy định') {
                                             $href = route('app.internal-docs.index');
-                                        } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng chất thải') {
+                                        } elseif ($child === 'HĐ Chất thải & Tiếng ồn') {
                                             $href = route('app.contracts.waste.index');
-                                        } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng tư vấn') {
+                                        } elseif ($child === 'HĐ Pháp lý & Hồ sơ MT') {
                                             $href = route('app.contracts.consulting.index');
-                                        } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng dự án') {
+                                        } elseif ($child === 'HĐ Kỹ thuật & Ứng phó SC') {
                                             $href = route('app.contracts.project.index');
-                                        } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng thương mại') {
+                                        } elseif ($child === 'HĐ NC & CĐ Công nghệ') {
                                             $href = route('app.contracts.commercial.index');
-                                        } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'HĐ Phát triển bền vững') {
+                                        } elseif ($child === 'HĐ TV & BC PTBV') {
                                             $href = route('app.contracts.sustainability.index');
-                                        } elseif ($menu['title'] === 'Quản lý hợp đồng' && $child === 'HĐ Năng lượng') {
-                                            $href = route('app.contracts.energy.index');
-                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng chất thải') {
-                                            $href = route('app.contracts.waste.index');
-                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng tư vấn') {
-                                            $href = route('app.contracts.consulting.index');
-                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng dự án') {
-                                            $href = route('app.contracts.project.index');
-                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng thương mại') {
-                                            $href = route('app.contracts.commercial.index');
-                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Phát triển bền vững') {
-                                            $href = route('app.contracts.sustainability.index');
-                                        } elseif (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Năng lượng') {
+                                        } elseif ($child === 'HĐ Phát thải & Năng lượng') {
                                             $href = route('app.contracts.energy.index');
                                         } elseif ($menu['title'] === 'Báo cáo ngày' && $child === 'Báo cáo ngày') {
                                             $href = route('app.daily-reports.index');
@@ -517,12 +505,12 @@ SVG;
                                         }
 
                                         $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('app.internal-docs.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng chất thải' && request()->routeIs('app.contracts.waste.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng tư vấn' && request()->routeIs('app.contracts.consulting.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng dự án' && request()->routeIs('app.contracts.project.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'Hợp đồng thương mại' && request()->routeIs('app.contracts.commercial.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'HĐ Phát triển bền vững' && request()->routeIs('app.contracts.sustainability.*')) ||
-                                                      ($menu['title'] === 'Quản lý hợp đồng' && $child === 'HĐ Năng lượng' && request()->routeIs('app.contracts.energy.*')) ||
+                                                      ($child === 'HĐ Chất thải & Tiếng ồn' && request()->routeIs('app.contracts.waste.*')) ||
+                                                      ($child === 'HĐ Pháp lý & Hồ sơ MT' && request()->routeIs('app.contracts.consulting.*')) ||
+                                                      ($child === 'HĐ Kỹ thuật & Ứng phó SC' && request()->routeIs('app.contracts.project.*')) ||
+                                                      ($child === 'HĐ NC & CĐ Công nghệ' && request()->routeIs('app.contracts.commercial.*')) ||
+                                                      ($child === 'HĐ TV & BC PTBV' && request()->routeIs('app.contracts.sustainability.*')) ||
+                                                      ($child === 'HĐ Phát thải & Năng lượng' && request()->routeIs('app.contracts.energy.*')) ||
                                                       ($menu['title'] === 'Báo cáo ngày' && $child === 'Báo cáo ngày' && request()->routeIs('app.daily-reports.*')) ||
                                                       ($menu['title'] === 'Bộ phận kế toán' && $child === 'Yêu cầu chi hoa hồng' && request()->routeIs('app.commissions.*')) ||
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số báo giá' && request()->routeIs('app.sales.quotation.*')) ||
@@ -530,12 +518,6 @@ SVG;
                                                       ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ' && request()->routeIs('app.sales.progressive.*')) ||
                                                       ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát' && request()->routeIs('app.postal-deliveries.*')) ||
                                                       ($child === 'Bảng theo dõi báo giá' && request()->routeIs('app.quotation-tracking.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng chất thải' && request()->routeIs('app.contracts.waste.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng tư vấn' && request()->routeIs('app.contracts.consulting.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng dự án' && request()->routeIs('app.contracts.project.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'Hợp đồng thương mại' && request()->routeIs('app.contracts.commercial.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Phát triển bền vững' && request()->routeIs('app.contracts.sustainability.*')) ||
-                                                      (in_array($menu['title'], ['Bộ phận tư vấn', 'Bộ phận kỹ thuật']) && $child === 'HĐ Năng lượng' && request()->routeIs('app.contracts.energy.*')) ||
                                                       ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết doanh số' && request()->routeIs('app.reports.sales.summary')) ||
                                                       ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cam kết' && request()->routeIs('app.reports.sales.target')) ||
                                                       ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết' && request()->routeIs('app.reports.sales.overview')) ||
