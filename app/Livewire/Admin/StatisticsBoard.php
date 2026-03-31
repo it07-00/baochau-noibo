@@ -108,7 +108,7 @@ class StatisticsBoard extends Component
 
         // ── Bộ phận kỹ thuật ──────────────────────────
         $currentUser = auth()->user();
-        $canSeeTechnical = $currentUser->hasAnyRole(['it', 'giam-doc', 'ky-thuat']);
+        $canSeeTechnical = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
 
         $technicalStats = collect();
         if ($canSeeTechnical) {

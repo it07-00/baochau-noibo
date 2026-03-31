@@ -30,9 +30,9 @@ class RankingsBoard extends Component
     public function render()
     {
         $currentUser = auth()->user();
-        $canSeeSales      = $currentUser->hasAnyRole(['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan']);
-        $canSeeConsulting = $currentUser->hasAnyRole(['it', 'giam-doc', 'tu-van']);
-        $canSeeTechnical  = $currentUser->hasAnyRole(['it', 'giam-doc', 'ky-thuat']);
+        $canSeeSales      = $currentUser->hasAnyRole(['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan']);
+        $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van']);
+        $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
 
         $salesRankings      = collect();
         $consultingRankings = collect();

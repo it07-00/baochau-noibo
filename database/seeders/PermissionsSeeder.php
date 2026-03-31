@@ -87,9 +87,21 @@ class PermissionsSeeder extends Seeder
         // ============================
 
         // ------------------------------------------------
-        // IT — Toàn quyền (super admin)
+        // IT — Quản trị hệ thống
         // ------------------------------------------------
-        Role::findOrCreate('it')->syncPermissions(Permission::all());
+        Role::findOrCreate('it')->syncPermissions([
+            // Quản trị hệ thống
+            'users.view', 'users.create', 'users.edit', 'users.delete',
+            'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
+            'departments.view', 'departments.create', 'departments.edit', 'departments.delete',
+            'settings.view', 'settings.edit',
+            // Chuyển phát thư
+            'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit', 'mail-delivery.delete',
+            // Nội bộ
+            'internal-docs.view', 'internal-docs.create', 'internal-docs.edit', 'internal-docs.delete',
+            // Báo cáo ngày
+            'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit', 'daily-reports.delete',
+        ]);
 
         // ------------------------------------------------
         // GĐ (Giám đốc) — Xem mọi thứ, không quản trị hệ thống

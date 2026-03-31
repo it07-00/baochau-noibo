@@ -81,6 +81,7 @@
                 @endcan
 
                 @can('handlers.view')
+                @unless($currentUser->hasRole('it'))
                 <li class="app-sidebar-menu-item">
                     <a href="{{ route('app.handlers.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.handlers.*') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
@@ -94,9 +95,11 @@
                         <span class="menu-title flex-grow-1">Chủ xử lý</span>
                     </a>
                 </li>
+                @endunless
                 @endcan
 
                 @can('customers.view')
+                @unless($currentUser->hasRole('it'))
                 <li class="app-sidebar-menu-item">
                     <a href="{{ route('app.customers.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.customers.*') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
@@ -109,6 +112,7 @@
                         <span class="menu-title flex-grow-1">Khách hàng</span>
                     </a>
                 </li>
+                @endunless
                 @endcan
 
 
@@ -174,14 +178,14 @@ SVG;
                             'title'       => 'Quản lý hợp đồng',
                             'icon'        => $stackIcon,
                             'permission'  => 'contracts-waste.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan'],
+                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan'],
                             'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
                             'title'       => 'Quản lý hóa đơn',
                             'icon'        => $stackIcon,
                             'permission'  => 'invoices.view',
-                            'allow_roles' => ['it', 'giam-doc', 'ke-toan'],
+                            'allow_roles' => ['giam-doc', 'ke-toan'],
                             'children'    => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
                         ],
                         [
@@ -195,70 +199,70 @@ SVG;
                             'title'       => 'Bộ phận kinh doanh',
                             'icon'        => $stackIcon,
                             'permission'  => 'sales-quotation.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
+                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
                             'children'    => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
                         ],
                         [
                             'title'       => 'Bộ phận tư vấn',
                             'icon'        => $stackIcon,
                             'permission'  => 'consulting-requests.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tu-van'],
+                            'allow_roles' => ['giam-doc', 'tu-van'],
                             'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
                             'title'       => 'Bộ phận dự án',
                             'icon'        => $stackIcon,
                             'permission'  => 'project-requests.view',
-                            'allow_roles' => ['it', 'giam-doc'],
+                            'allow_roles' => ['giam-doc'],
                             'children'    => ['Yêu cầu dự án lớn', 'Yêu cầu dự án nhỏ', 'Yêu cầu khảo sát dự án'],
                         ],
                         [
                             'title'       => 'Bộ phận kế toán',
                             'icon'        => $stackIcon,
                             'permission'  => 'commissions.view',
-                            'allow_roles' => ['it', 'giam-doc', 'ke-toan', 'tp-kinh-doanh', 'kinh-doanh', 'tu-van'],
+                            'allow_roles' => ['giam-doc', 'ke-toan', 'tp-kinh-doanh', 'kinh-doanh', 'tu-van'],
                             'children'    => ['Yêu cầu chi hoa hồng'],
                         ],
                         [
                             'title'       => 'Bộ phận kỹ thuật',
                             'icon'        => $stackIcon,
                             'permission'  => 'technical-requests.view',
-                            'allow_roles' => ['it', 'giam-doc', 'ky-thuat'],
+                            'allow_roles' => ['giam-doc', 'ky-thuat'],
                             'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
                             'title'       => 'Báo cáo Marketing',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'marketing'],
+                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'marketing'],
                             'children'    => ['Bảng tổng kết', 'Bảng mục tiêu cam kết'],
                         ],
                         [
                             'title'       => 'Báo cáo Kinh doanh',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
+                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
                             'children'    => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
                         ],
                         [
                             'title'       => 'Báo cáo HC - CTR',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'giam-doc', 'ke-toan'],
+                            'allow_roles' => ['giam-doc', 'ke-toan'],
                             'children'    => ['Hợp đồng', 'Hóa đơn', 'Công nợ', 'Gom rác'],
                         ],
                         [
                             'title'       => 'Báo cáo Tư vấn',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tu-van'],
+                            'allow_roles' => ['giam-doc', 'tu-van'],
                             'children'    => ['Báo cáo chung', 'Bảng theo dõi đo mẫu', 'Báo cáo', 'GPMT/ĐTM', 'ĐKMT', 'VHTN'],
                         ],
                         [
                             'title'       => 'Báo cáo Kỹ thuật',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
-                            'allow_roles' => ['it', 'giam-doc', 'ky-thuat'],
+                            'allow_roles' => ['giam-doc', 'ky-thuat'],
                             'children'    => ['BC Chất thải & Tiếng ồn', 'BC Pháp lý & Hồ sơ MT', 'BC Kỹ thuật & Ứng phó SC', 'BC NC & CĐ Công nghệ', 'BC TV & BC PTBV', 'BC Phát thải & Năng lượng'],
                         ],
                         [
@@ -380,6 +384,7 @@ SVG;
                     }
                 @endphp
 
+                @unless($currentUser->hasRole('it'))
                 <li class="app-sidebar-menu-item">
                     <a href="{{ route('app.rankings') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.rankings') ? 'active' : '' }}">
                         <span class="menu-icon flex-shrink-0">
@@ -407,6 +412,7 @@ SVG;
                         <span class="menu-title flex-grow-1">Bảng thống kê</span>
                     </a>
                 </li>
+                @endunless
 
                 @foreach ($groupMenus as $menu)
                     @can($menu['permission'])
