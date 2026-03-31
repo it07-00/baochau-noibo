@@ -8,10 +8,12 @@ use App\Models\ContractEnergy;
 use App\Models\ContractProject;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
+use App\Models\ContractAssignment;
 use App\Models\Customer;
 use App\Models\ProgressiveSales;
 use App\Models\QuotationSales;
 use App\Models\RenewalSales;
+use App\Models\User;
 use Livewire\Component;
 
 class StatisticsBoard extends Component
@@ -60,14 +62,26 @@ class StatisticsBoard extends Component
                     + (float) RenewalSales::whereYear('sales_month', $this->year)->sum('sales_amount')
                     + (float) ProgressiveSales::whereYear('sales_month', $this->year)->sum('amount');
 
-        // ── Theo tháng: HĐ chất thải + tư vấn signed ──
-        $wasteM = ContractWaste::whereYear('signed_at', $this->year)
-            ->selectRaw('MONTH(signed_at) as m, COUNT(*) as cnt, SUM(value) as val')
-            ->groupByRaw('MONTH(signed_at)')->get()->keyBy('m');
+        // ── Theo tháng: tất cả 6 loại HĐ ký ─────────
+        $monthlyModels = [
+            ContractWaste::class,
+            ContractConsulting::class,
+            ContractProject::class,
+            ContractCommercial::class,
+            ContractSustainability::class,
+            ContractEnergy::class,
+        ];
 
-        $consultM = ContractConsulting::whereYear('signed_at', $this->year)
-            ->selectRaw('MONTH(signed_at) as m, COUNT(*) as cnt, SUM(value) as val')
-            ->groupByRaw('MONTH(signed_at)')->get()->keyBy('m');
+        $contractMonthly = [];
+        foreach ($monthlyModels as $model) {
+            $rows = $model::whereYear('signed_at', $this->year)
+                ->selectRaw('MONTH(signed_at) as m, COUNT(*) as cnt, SUM(value) as val')
+                ->groupByRaw('MONTH(signed_at)')->get()->keyBy('m');
+            foreach ($rows as $m => $row) {
+                $contractMonthly[$m]['cnt'] = ($contractMonthly[$m]['cnt'] ?? 0) + $row->cnt;
+                $contractMonthly[$m]['val'] = ($contractMonthly[$m]['val'] ?? 0) + (float) $row->val;
+            }
+        }
 
         $qM = QuotationSales::whereYear('sales_month', $this->year)
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
@@ -84,17 +98,52 @@ class StatisticsBoard extends Component
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
             $monthly[$m] = [
-                'contracts' => ($wasteM->get($m)?->cnt ?? 0) + ($consultM->get($m)?->cnt ?? 0),
-                'value'     => (float) ($wasteM->get($m)?->val ?? 0) + (float) ($consultM->get($m)?->val ?? 0),
+                'contracts' => $contractMonthly[$m]['cnt'] ?? 0,
+                'value'     => (float) ($contractMonthly[$m]['val'] ?? 0),
                 'sales'     => (float) ($qM->get($m)?->val ?? 0)
                              + (float) ($rM->get($m)?->val ?? 0)
                              + (float) ($pM->get($m)?->val ?? 0),
             ];
         }
 
+        // ── Bộ phận kỹ thuật ──────────────────────────
+        $currentUser = auth()->user();
+        $canSeeTechnical = $currentUser->hasAnyRole(['it', 'giam-doc', 'ky-thuat']);
+
+        $technicalStats = collect();
+        if ($canSeeTechnical) {
+            $techUsers = User::role('ky-thuat')->get();
+            $typeLabels = [
+                ContractWaste::class          => 'Chất thải',
+                ContractConsulting::class      => 'Tư vấn',
+                ContractProject::class         => 'Dự án',
+                ContractCommercial::class      => 'Thương mại',
+                ContractSustainability::class  => 'Bền vững',
+                ContractEnergy::class          => 'Năng lượng',
+            ];
+
+            foreach ($typeLabels as $modelClass => $label) {
+                $assignments = ContractAssignment::where('assignable_type', $modelClass)
+                    ->whereHas('assignable', fn ($q) => $q->whereYear('signed_at', $this->year))
+                    ->with('assignable')
+                    ->get();
+
+                $count = $assignments->count();
+                $value = $assignments->sum(fn ($a) => (float) ($a->assignable->value ?? 0));
+                $completed = $assignments->filter(fn ($a) => ($a->assignable->status ?? '') === 'finished')->count();
+
+                $technicalStats->push([
+                    'label'     => $label,
+                    'count'     => $count,
+                    'value'     => $value,
+                    'completed' => $completed,
+                ]);
+            }
+        }
+
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
-            'byType', 'monthly'
+            'byType', 'monthly', 'canSeeTechnical', 'technicalStats'
         ))->layout('admin.layouts.app');
     }
 }

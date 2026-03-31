@@ -2,7 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\ContractAssignment;
 use App\Models\ContractConsulting;
+use App\Models\ContractWaste;
+use App\Models\ContractProject;
+use App\Models\ContractCommercial;
+use App\Models\ContractSustainability;
+use App\Models\ContractEnergy;
 use App\Models\ProgressiveSales;
 use App\Models\QuotationSales;
 use App\Models\RenewalSales;
@@ -26,9 +32,11 @@ class RankingsBoard extends Component
         $currentUser = auth()->user();
         $canSeeSales      = $currentUser->hasAnyRole(['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan']);
         $canSeeConsulting = $currentUser->hasAnyRole(['it', 'giam-doc', 'tu-van']);
+        $canSeeTechnical  = $currentUser->hasAnyRole(['it', 'giam-doc', 'ky-thuat']);
 
         $salesRankings      = collect();
         $consultingRankings = collect();
+        $technicalRankings  = collect();
         $topCustomers       = collect();
         $topProvinces       = collect();
         $topServices        = collect();
@@ -117,9 +125,54 @@ class RankingsBoard extends Component
                 ->values();
         }
 
+        if ($canSeeTechnical) {
+            // ── Xếp hạng nhân viên kỹ thuật ────────────────
+            $contractModels = [
+                'waste'          => ContractWaste::class,
+                'consulting'     => ContractConsulting::class,
+                'project'        => ContractProject::class,
+                'commercial'     => ContractCommercial::class,
+                'sustainability' => ContractSustainability::class,
+                'energy'         => ContractEnergy::class,
+            ];
+
+            $technicalRankings = User::role('ky-thuat')->get()
+                ->map(function ($user) use ($contractModels) {
+                    $totalCount     = 0;
+                    $totalValue     = 0;
+                    $totalCompleted = 0;
+
+                    foreach ($contractModels as $modelClass) {
+                        $assignments = ContractAssignment::where('user_id', $user->id)
+                            ->where('assignable_type', $modelClass)
+                            ->pluck('assignable_id');
+
+                        if ($assignments->isEmpty()) continue;
+
+                        $contracts = $modelClass::whereIn('id', $assignments)
+                            ->whereYear('signed_at', $this->year)
+                            ->get();
+
+                        $totalCount     += $contracts->count();
+                        $totalValue     += (float) $contracts->sum('value');
+                        $totalCompleted += $contracts->where('status', 'HOÀN THÀNH')->count();
+                    }
+
+                    return [
+                        'name'      => $user->name,
+                        'count'     => $totalCount,
+                        'value'     => $totalValue,
+                        'completed' => $totalCompleted,
+                    ];
+                })
+                ->sortByDesc('value')
+                ->values();
+        }
+
         return view('livewire.admin.rankings-board', compact(
-            'canSeeSales', 'canSeeConsulting',
-            'salesRankings', 'consultingRankings', 'topCustomers', 'topProvinces', 'topServices'
+            'canSeeSales', 'canSeeConsulting', 'canSeeTechnical',
+            'salesRankings', 'consultingRankings', 'technicalRankings',
+            'topCustomers', 'topProvinces', 'topServices'
         ))->layout('admin.layouts.app');
     }
 }

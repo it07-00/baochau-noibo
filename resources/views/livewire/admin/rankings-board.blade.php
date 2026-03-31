@@ -129,6 +129,61 @@
         @endif
     </div>
 
+    @if($canSeeTechnical)
+    <div class="row g-4 mb-4">
+        {{-- Xếp hạng nhân viên kỹ thuật --}}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold">Xếp hạng nhân viên Kỹ thuật — Năm {{ $year }}</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width:50px">Hạng</th>
+                                <th>Nhân viên</th>
+                                <th class="text-center">Số HĐ</th>
+                                <th class="text-center">Hoàn thành</th>
+                                <th class="text-end fw-bold">Giá trị HĐ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($technicalRankings as $i => $row)
+                            @php
+                                $rank  = $i + 1;
+                                $medal = match($rank) { 1 => '🥇', 2 => '🥈', 3 => '🥉', default => $rank };
+                            @endphp
+                            <tr class="{{ $row['value'] == 0 ? 'text-muted' : '' }}">
+                                <td class="text-center fw-bold">{{ $medal }}</td>
+                                <td class="fw-semibold">{{ $row['name'] }}</td>
+                                <td class="text-center">{{ $row['count'] > 0 ? $row['count'] : '—' }}</td>
+                                <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
+                                <td class="text-end fw-bold {{ $row['value'] > 0 ? 'text-dark' : '' }}">
+                                    {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') . ' đ' : '—' }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="5" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
+                            @endforelse
+                        </tbody>
+                        @if($technicalRankings->isNotEmpty())
+                        <tfoot class="table-secondary fw-bold">
+                            <tr>
+                                <td colspan="2">Tổng</td>
+                                <td class="text-center">{{ $technicalRankings->sum('count') }}</td>
+                                <td class="text-center text-success">{{ $technicalRankings->sum('completed') }}</td>
+                                <td class="text-end">{{ number_format($technicalRankings->sum('value'), 0, ',', '.') }} đ</td>
+                            </tr>
+                        </tfoot>
+                        @endif
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @if($canSeeSales)
     <div class="row g-4 mb-4">
         {{-- Top tỉnh/TP --}}

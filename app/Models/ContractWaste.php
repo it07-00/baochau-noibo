@@ -60,4 +60,24 @@ class ContractWaste extends Model
     {
         return $this->morphMany(ContractMilestoneFile::class, 'contract');
     }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match($this->status) {
+            'ĐANG THỰC HIỆN' => 'Đang thực hiện',
+            'HOÀN THÀNH'     => 'Hoàn thành',
+            'ĐÃ HỦY'         => 'Đã hủy',
+            default          => $this->status ?? 'Không xác định',
+        };
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return match($this->status) {
+            'ĐANG THỰC HIỆN' => 'info',
+            'HOÀN THÀNH'     => 'success',
+            'ĐÃ HỦY'         => 'danger',
+            default          => 'secondary',
+        };
+    }
 }

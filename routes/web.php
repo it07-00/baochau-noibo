@@ -141,9 +141,12 @@ Route::middleware('auth')->name('app.')->group(function () {
 
     // Báo cáo Kỹ thuật
     Route::prefix('reports/technical')->name('reports.technical.')->middleware('permission:reports.view')->group(function () {
-        Route::get('field',     \App\Livewire\Admin\Reports\Technical\TechnicalFieldReport::class)->name('field');
-        Route::get('vehicle',   \App\Livewire\Admin\Reports\Technical\TechnicalComingSoon::class)->name('vehicle');
-        Route::get('materials', \App\Livewire\Admin\Reports\Technical\TechnicalComingSoon::class)->name('materials');
+        Route::get('waste',          \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('waste');
+        Route::get('consulting',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('consulting');
+        Route::get('project',        \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('project');
+        Route::get('commercial',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('commercial');
+        Route::get('sustainability', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('sustainability');
+        Route::get('energy',         \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('energy');
     });
 
     // Báo cáo Marketing

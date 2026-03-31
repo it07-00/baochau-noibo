@@ -161,4 +161,55 @@
             </div>
         </div>
     </div>
+
+    @if($canSeeTechnical)
+    {{-- Bộ phận kỹ thuật --}}
+    <div class="row g-4 mt-1">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold">Bộ phận Kỹ thuật — HĐ được phân công năm {{ $year }}</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Loại HĐ</th>
+                                <th class="text-center">Số HĐ</th>
+                                <th class="text-center">Hoàn thành</th>
+                                <th class="text-end">Giá trị</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($technicalStats as $row)
+                            <tr class="{{ $row['count'] == 0 ? 'text-muted' : '' }}">
+                                <td class="fw-semibold small">{{ $row['label'] }}</td>
+                                <td class="text-center">
+                                    @if($row['count'] > 0)
+                                        <span class="badge bg-soft-primary text-primary">{{ $row['count'] }}</span>
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                                <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
+                                <td class="text-end small">{{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') . ' đ' : '—' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        @if($technicalStats->sum('count') > 0)
+                        <tfoot class="table-secondary fw-bold">
+                            <tr>
+                                <td>Tổng</td>
+                                <td class="text-center">{{ $technicalStats->sum('count') }}</td>
+                                <td class="text-center text-success">{{ $technicalStats->sum('completed') }}</td>
+                                <td class="text-end">{{ number_format($technicalStats->sum('value'), 0, ',', '.') }} đ</td>
+                            </tr>
+                        </tfoot>
+                        @endif
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

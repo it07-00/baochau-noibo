@@ -210,6 +210,7 @@ class PermissionsSeeder extends Seeder
             'technical-requests.view', 'technical-requests.create', 'technical-requests.edit', 'technical-requests.delete',
             // Báo cáo
             'reports.view',
+            'rankings.view', 'statistics.view',
             // Nội bộ
             'internal-docs.view',
             // Báo cáo ngày
