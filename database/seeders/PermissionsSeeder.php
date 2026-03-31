@@ -34,6 +34,9 @@ class PermissionsSeeder extends Seeder
             'contracts-sustainability' => ['view', 'create', 'edit', 'delete'],
             'contracts-energy'         => ['view', 'create', 'edit', 'delete'],
 
+            // --- Lịch thanh toán ---
+            'payment-schedules'   => ['view', 'create', 'edit', 'delete'],
+
             // --- Hóa đơn ---
             'invoices'            => ['view', 'create', 'edit', 'delete'],
             'handler-invoices'    => ['view', 'create', 'edit', 'delete'],
@@ -128,6 +131,8 @@ class PermissionsSeeder extends Seeder
             'contracts-commercial.view', 'contracts-commercial.create', 'contracts-commercial.edit', 'contracts-commercial.delete',
             'contracts-sustainability.view', 'contracts-sustainability.create', 'contracts-sustainability.edit', 'contracts-sustainability.delete',
             'contracts-energy.view', 'contracts-energy.create', 'contracts-energy.edit', 'contracts-energy.delete',
+            // Lịch thanh toán: CRUD
+            'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit', 'payment-schedules.delete',
             // Kinh doanh: CRUD đầy đủ
             'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
             'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
@@ -160,6 +165,8 @@ class PermissionsSeeder extends Seeder
             'contracts-commercial.view', 'contracts-commercial.create', 'contracts-commercial.edit',
             'contracts-sustainability.view', 'contracts-sustainability.create', 'contracts-sustainability.edit',
             'contracts-energy.view', 'contracts-energy.create', 'contracts-energy.edit',
+            // Lịch thanh toán: xem + tạo/sửa
+            'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit',
             // Kinh doanh: CRUD cá nhân
             'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
             'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
@@ -257,6 +264,8 @@ class PermissionsSeeder extends Seeder
             'contracts-commercial.view',
             'contracts-sustainability.view',
             'contracts-energy.view',
+            // Lịch thanh toán: CRUD
+            'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit', 'payment-schedules.delete',
             // Hóa đơn: CRUD đầy đủ
             'invoices.view', 'invoices.create', 'invoices.edit', 'invoices.delete',
             'handler-invoices.view', 'handler-invoices.create', 'handler-invoices.edit', 'handler-invoices.delete',

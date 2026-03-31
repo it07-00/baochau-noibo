@@ -393,6 +393,7 @@ class ContractCommercialManager extends Component
             'renewal_statuses'   => ContractCommercial::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractCommercial::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
+            'info_sources' => ContractCommercial::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng thương mại']);
     }
 }

@@ -88,9 +88,9 @@
                         <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.info_source">
                             <option value="">Chọn Nguồn thông...</option>
-                            <option value="SALE MỚI">Sale mới</option>
-                            <option value="THÔNG TIN CHUYỂN">Thông tin chuyển</option>
-                            <option value="TÁI KÝ">Tái ký</option>
+                            @foreach($info_sources as $src)
+                                <option value="{{ $src }}">{{ $src }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -281,6 +281,27 @@
                 </div>
                 <div class="modal-body p-0">
                     @if($selectedDoc)
+                    {{-- Tabs --}}
+                    <ul class="nav nav-tabs px-4 pt-3 bg-white" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-info-energy-{{ $selectedDoc->id }}" type="button">
+                                <i class="bi bi-info-circle me-1"></i>Thông tin HĐ
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-progress-energy-{{ $selectedDoc->id }}" type="button">
+                                <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-payment-energy-{{ $selectedDoc->id }}" type="button">
+                                <i class="bi bi-cash-stack me-1"></i>Lịch thanh toán
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                    {{-- Tab 1: Thông tin HĐ --}}
+                    <div class="tab-pane fade show active" id="tab-info-energy-{{ $selectedDoc->id }}" role="tabpanel">
                     <table class="table table-bordered mb-0">
                         <tbody>
                             <tr>
@@ -407,12 +428,26 @@
                             @endif
                         </tbody>
                     </table>
+                    </div>
 
-                    <livewire:admin.contracts.contract-workflow-progress
-                        :contractType="'energy'"
-                        :contractId="$selectedDoc->id"
-                        :key="'progress-energy-' . $selectedDoc->id"
-                    />
+                    {{-- Tab 2: Tiến độ --}}
+                    <div class="tab-pane fade" id="tab-progress-energy-{{ $selectedDoc->id }}" role="tabpanel">
+                        <livewire:admin.contracts.contract-workflow-progress
+                            :contractType="'energy'"
+                            :contractId="$selectedDoc->id"
+                            :key="'progress-energy-' . $selectedDoc->id"
+                        />
+                    </div>
+
+                    {{-- Tab 3: Lịch thanh toán --}}
+                    <div class="tab-pane fade" id="tab-payment-energy-{{ $selectedDoc->id }}" role="tabpanel">
+                        <livewire:admin.contracts.contract-payment-schedule-manager
+                            :contractType="'energy'"
+                            :contractId="$selectedDoc->id"
+                            :key="'payment-energy-' . $selectedDoc->id"
+                        />
+                    </div>
+                    </div>
 
                     @endif
                 </div>
@@ -540,11 +575,12 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Nguồn thông tin</label>
-                            <select class="form-select" wire:model="formData.info_source">
-                                <option value="SALE MỚI">Sale mới</option>
-                                <option value="THÔNG TIN CHUYỂN">Thông tin chuyển</option>
-                                <option value="TÁI KÝ">Tái ký</option>
-                            </select>
+                            <input type="text" class="form-control" wire:model="formData.info_source" list="info-source-list-energy" placeholder="Nhập hoặc chọn nguồn...">
+                            <datalist id="info-source-list-energy">
+                                @foreach($info_sources as $src)
+                                    <option value="{{ $src }}">
+                                @endforeach
+                            </datalist>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">PT thanh toán</label>

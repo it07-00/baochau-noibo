@@ -465,6 +465,7 @@ class ContractWasteManager extends Component
             'voucher_statuses' => ContractWaste::whereNotNull('voucher_status')->where('voucher_status', '!=', '')->distinct()->pluck('voucher_status')->toArray(),
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'provinces' => \App\Support\VietnamProvinces::list(),
+            'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng chất thải']);
     }
 }

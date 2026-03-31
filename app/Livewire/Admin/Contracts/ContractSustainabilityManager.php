@@ -393,6 +393,7 @@ class ContractSustainabilityManager extends Component
             'renewal_statuses'   => ContractSustainability::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractSustainability::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
+            'info_sources' => ContractSustainability::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Tư vấn & Báo cáo phát triển bền vững']);
     }
 }

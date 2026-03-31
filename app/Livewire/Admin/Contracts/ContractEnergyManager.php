@@ -393,6 +393,7 @@ class ContractEnergyManager extends Component
             'renewal_statuses'   => ContractEnergy::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'loai_dich_vu_options' => ContractEnergy::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
+            'info_sources' => ContractEnergy::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
         ])->layout('admin.layouts.app', ['title' => 'Giảm phát thải & Hiệu quả năng lượng']);
     }
 }

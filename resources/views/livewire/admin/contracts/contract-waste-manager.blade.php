@@ -122,9 +122,9 @@
                         <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.source">
                             <option value="">Chọn Nguồn...</option>
-                            <option value="SALE MỚI">Sale mới</option>
-                            <option value="THÔNG TIN CHUYỂN">Thông tin chuyển</option>
-                            <option value="TÁI KÝ">Tái ký</option>
+                            @foreach($source_options as $src)
+                                <option value="{{ $src }}">{{ $src }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -434,6 +434,27 @@
                 </div>
                 <div class="modal-body p-0">
                     @if($selectedDoc)
+                    {{-- Tabs Navigation --}}
+                    <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-info-waste-{{ $selectedDoc->id }}" type="button">
+                                <i class="bi bi-info-circle me-1"></i>Thông tin HĐ
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-progress-waste-{{ $selectedDoc->id }}" type="button">
+                                <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-payment-waste-{{ $selectedDoc->id }}" type="button">
+                                <i class="bi bi-cash-stack me-1"></i>Lịch thanh toán
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                    {{-- Tab 1: Thông tin HĐ --}}
+                    <div class="tab-pane fade show active" id="tab-info-waste-{{ $selectedDoc->id }}" role="tabpanel">
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0">
                             <tbody>
@@ -566,12 +587,26 @@
                             </tbody>
                         </table>
                     </div>
+                    </div>
 
-                    <livewire:admin.contracts.contract-workflow-progress
-                        :contractType="'waste'"
-                        :contractId="$selectedDoc->id"
-                        :key="'progress-waste-' . $selectedDoc->id"
-                    />
+                    {{-- Tab 2: Tiến độ --}}
+                    <div class="tab-pane fade" id="tab-progress-waste-{{ $selectedDoc->id }}" role="tabpanel">
+                        <livewire:admin.contracts.contract-workflow-progress
+                            :contractType="'waste'"
+                            :contractId="$selectedDoc->id"
+                            :key="'progress-waste-' . $selectedDoc->id"
+                        />
+                    </div>
+
+                    {{-- Tab 3: Lịch thanh toán --}}
+                    <div class="tab-pane fade" id="tab-payment-waste-{{ $selectedDoc->id }}" role="tabpanel">
+                        <livewire:admin.contracts.contract-payment-schedule-manager
+                            :contractType="'waste'"
+                            :contractId="$selectedDoc->id"
+                            :key="'payment-waste-' . $selectedDoc->id"
+                        />
+                    </div>
+                    </div>
 
                     @endif
                 </div>
@@ -784,11 +819,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Nguồn thông tin</label>
-                                <select class="form-select" wire:model.defer="formData.source">
-                                    <option value="SALE MỚI">Sale mới</option>
-                                    <option value="THÔNG TIN CHUYỂN">Thông tin chuyển</option>
-                                    <option value="TÁI KÝ">Tái ký</option>
-                                </select>
+                                <input type="text" class="form-control" wire:model.defer="formData.source" list="source-list-waste" placeholder="Nhập hoặc chọn nguồn...">
+                                <datalist id="source-list-waste">
+                                    @foreach($source_options as $src)
+                                        <option value="{{ $src }}">
+                                    @endforeach
+                                </datalist>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">PT thanh toán</label>
