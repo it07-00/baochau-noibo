@@ -64,6 +64,8 @@ class ContractWasteManager extends Component
         'note' => '',
         'loai_dich_vu' => '',
         'province' => '',
+        'is_renewal' => false,
+        'parent_contract_id' => '',
     ];
     public $filter = [
         'signed_from' => '',
@@ -220,6 +222,8 @@ class ContractWasteManager extends Component
             'is_overdue' => false,
             'note' => '',
             'loai_dich_vu' => '',
+            'is_renewal' => false,
+            'parent_contract_id' => '',
         ];
         $this->selectedDoc = null;
     }
@@ -462,6 +466,7 @@ class ContractWasteManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'provinces' => \App\Support\VietnamProvinces::list(),
             'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
+            'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng chất thải']);
     }
 }

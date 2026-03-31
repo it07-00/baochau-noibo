@@ -23,7 +23,7 @@ class ContractWasteSeeder extends Seeder
         if (!$dept) {
             $dept = Department::create(['name' => 'Phòng Kinh doanh', 'slug' => 'kinh-doanh', 'is_active' => true]);
         }
-        
+
         $staff = User::where('username', 'kinhdoanh')->first();
         if (!$staff) {
             $staff = User::create([
@@ -56,6 +56,7 @@ class ContractWasteSeeder extends Seeder
             'revenue' => 6500400,
             'payment_method' => 'Sau ký',
             'source' => 'TÁI KÝ',
+            'is_renewal' => true,
             'signed_at' => '2026-03-19',
             'effective_at' => '2026-03-19',
             'end_at' => '2027-03-19',
@@ -123,7 +124,7 @@ class ContractWasteSeeder extends Seeder
             'service_type' => 'Chất thải',
             'voucher_status' => 'Chưa chọn',
         ]);
-        
+
         // 4. THANH BÌNH ĐỒNG THÁP (Xí nghiệp)
         ContractWaste::create([
             'shd_cxl' => 'THANH BÌNH ĐỒNG THÁP (Xí nghiệp)',

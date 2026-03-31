@@ -72,6 +72,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Thực thu năm {{ $year }}</div>
+                        <div class="fw-bold text-success">{{ number_format($totalRevenue, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Thu tiền Cards --}}
@@ -133,6 +146,7 @@
                                     <th class="text-center">Số HĐ ký</th>
                                     <th class="text-end">Giá trị HĐ</th>
                                     <th class="text-end">Doanh số</th>
+                                    <th class="text-end">Thực thu</th>
                                     <th class="text-end">Phải thu</th>
                                     <th class="text-end">Đã thu</th>
                                 </tr>
@@ -146,6 +160,9 @@
                                     <td class="text-end small">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') . ' đ' : '—' }}</td>
                                     <td class="text-end fw-semibold {{ $data['sales'] > 0 ? 'text-info' : '' }}">
                                         {{ $data['sales'] > 0 ? number_format($data['sales'], 0, ',', '.') . ' đ' : '—' }}
+                                    </td>
+                                    <td class="text-end fw-semibold {{ $data['revenue'] > 0 ? 'text-success' : '' }}">
+                                        {{ $data['revenue'] > 0 ? number_format($data['revenue'], 0, ',', '.') . ' đ' : '—' }}
                                     </td>
                                     <td class="text-end small {{ $data['payment_due'] > 0 ? 'text-danger' : '' }}">
                                         {{ $data['payment_due'] > 0 ? number_format($data['payment_due'], 0, ',', '.') . ' đ' : '—' }}
@@ -162,6 +179,7 @@
                                     <td class="text-center">{{ $totalContracts }}</td>
                                     <td class="text-end">{{ number_format($totalContractValue, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-info">{{ number_format($totalSales, 0, ',', '.') }} đ</td>
+                                    <td class="text-end text-success">{{ number_format($totalRevenue, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-danger">{{ number_format($totalPaymentDue, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-success">{{ number_format($totalPaymentPaid, 0, ',', '.') }} đ</td>
                                 </tr>

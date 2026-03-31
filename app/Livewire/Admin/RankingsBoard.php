@@ -41,6 +41,7 @@ class RankingsBoard extends Component
         $topCustomers       = collect();
         $topProvinces       = collect();
         $topServices        = collect();
+        $revenueRankings    = collect();
         $paymentStats       = ['due' => 0, 'paid' => 0, 'pending' => 0, 'partial' => 0, 'overdue' => 0];
 
         if ($canSeeSales) {
@@ -123,6 +124,28 @@ class RankingsBoard extends Component
             $paymentStats['partial_count'] = (int) ($statusCounts->get('partial')?->cnt ?? 0);
             $paymentStats['paid_count']    = (int) ($statusCounts->get('paid')?->cnt ?? 0);
             $paymentStats['overdue_count'] = (int) ($statusCounts->get('overdue')?->cnt ?? 0);
+
+            // ── Xếp hạng nhân viên theo doanh số thực thu ──
+            $contractModelsMap = [
+                ContractWaste::class, ContractConsulting::class, ContractProject::class,
+                ContractCommercial::class, ContractSustainability::class, ContractEnergy::class,
+            ];
+            $revenuePayments = ContractPaymentSchedule::whereYear('paid_date', $this->year)
+                ->whereIn('status', ['paid', 'partial'])->get();
+
+            $staffTotals = [];
+            foreach ($revenuePayments->groupBy('contract_type') as $type => $items) {
+                if (!class_exists($type)) continue;
+                $ids = $items->pluck('contract_id')->unique();
+                $contracts = $type::whereIn('id', $ids)->with('staff')->get()->keyBy('id');
+                foreach ($items as $item) {
+                    $contract = $contracts->get($item->contract_id);
+                    if (!$contract || !$contract->staff) continue;
+                    $staffTotals[$contract->staff->name] = ($staffTotals[$contract->staff->name] ?? 0) + (float) $item->paid_amount;
+                }
+            }
+            $revenueRankings = collect($staffTotals)->sortDesc()->take(15)
+                ->map(fn($total, $name) => ['name' => $name, 'total' => $total])->values();
         }
 
         if ($canSeeConsulting) {
@@ -192,7 +215,7 @@ class RankingsBoard extends Component
         return view('livewire.admin.rankings-board', compact(
             'canSeeSales', 'canSeeConsulting', 'canSeeTechnical',
             'salesRankings', 'consultingRankings', 'technicalRankings',
-            'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
+            'revenueRankings', 'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
         ))->layout('admin.layouts.app');
     }
 }

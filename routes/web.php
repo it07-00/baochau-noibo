@@ -123,6 +123,7 @@ Route::middleware('auth')->name('app.')->group(function () {
         Route::get('renewal-personal',\App\Livewire\Admin\Reports\Sales\PersonalRenewalReport::class)->name('renewal-personal');
         Route::get('achievement',     \App\Livewire\Admin\Reports\Sales\SalesAchievementReport::class)->name('achievement');
         Route::get('tracking',        \App\Livewire\Admin\Reports\Sales\SalesTrackingReport::class)->name('tracking');
+        Route::get('revenue',         \App\Livewire\Admin\Reports\Sales\SalesRevenueReport::class)->name('revenue');
     });
 
     // Quản lý hóa đơn

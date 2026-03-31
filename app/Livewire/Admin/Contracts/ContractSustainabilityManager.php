@@ -55,6 +55,8 @@ class ContractSustainabilityManager extends Component
         'has_room_fund'  => false,
         'is_overdue'     => false,
         'notes'          => '',
+        'is_renewal'     => false,
+        'parent_contract_id' => '',
     ];
 
     public $filter = [
@@ -300,6 +302,8 @@ class ContractSustainabilityManager extends Component
             'has_room_fund'  => false,
             'is_overdue'     => false,
             'notes'          => '',
+            'is_renewal'     => false,
+            'parent_contract_id' => '',
         ];
         $this->selectedDoc = null;
     }
@@ -391,6 +395,7 @@ class ContractSustainabilityManager extends Component
             'loai_dich_vu_options' => ContractSustainability::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractSustainability::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
+            'parentContracts' => ContractSustainability::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Tư vấn & Báo cáo phát triển bền vững']);
     }
 }

@@ -73,6 +73,37 @@
                 </div>
             </div>
         </div>
+
+        @if($revenueRankings->isNotEmpty())
+        {{-- Xếp hạng nhân viên theo thực thu --}}
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="mb-0 fw-bold">Xếp hạng theo doanh số thực thu</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width:40px">#</th>
+                                <th>Nhân viên</th>
+                                <th class="text-end">Thực thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($revenueRankings as $i => $row)
+                            <tr>
+                                <td class="fw-semibold text-muted">{{ $i + 1 }}</td>
+                                <td>{{ $row['name'] }}</td>
+                                <td class="text-end fw-bold text-success">{{ number_format($row['total'], 0, ',', '.') }} đ</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
         @endif
 
         @if($canSeeConsulting)

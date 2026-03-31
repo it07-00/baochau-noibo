@@ -50,6 +50,8 @@ class ContractWaste extends Model
         'note',
         'waste_type',
         'service_type',
+        'is_renewal',
+        'parent_contract_id',
     ];
 
     const SERVICE_TYPES = [
@@ -64,6 +66,7 @@ class ContractWaste extends Model
         'submitted_at' => 'date',
         'is_offset' => 'boolean',
         'is_overdue' => 'boolean',
+        'is_renewal' => 'boolean',
         'value' => 'decimal:0',
         'commission' => 'decimal:0',
         'revenue' => 'decimal:0',
@@ -122,5 +125,20 @@ class ContractWaste extends Model
             'ĐÃ HỦY'         => 'danger',
             default          => 'secondary',
         };
+    }
+
+    public function parentContract()
+    {
+        return $this->belongsTo(self::class, 'parent_contract_id');
+    }
+
+    public function renewalContracts()
+    {
+        return $this->hasMany(self::class, 'parent_contract_id');
+    }
+
+    public function paymentSchedules(): MorphMany
+    {
+        return $this->morphMany(ContractPaymentSchedule::class, 'contract');
     }
 }

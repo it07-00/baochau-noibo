@@ -869,7 +869,23 @@
                                     <input class="form-check-input" type="checkbox" id="form_overdue" wire:model.defer="formData.is_overdue">
                                     <label class="form-check-label" for="form_overdue">Trễ hạn</label>
                                 </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="form_wt_renewal" wire:model="formData.is_renewal">
+                                    <label class="form-check-label" for="form_wt_renewal">Tái ký</label>
+                                </div>
                             </div>
+
+                            @if($formData['is_renewal'])
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">HĐ gốc (tái ký từ)</label>
+                                <select class="form-select" wire:model.defer="formData.parent_contract_id">
+                                    <option value="">-- Chọn HĐ gốc --</option>
+                                    @foreach($parentContracts as $pc)
+                                        <option value="{{ $pc->id }}">{{ $pc->so_hop_dong }} - {{ $pc->customer->name ?? '' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Hạng mục dịch vụ</label>

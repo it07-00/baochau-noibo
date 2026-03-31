@@ -47,6 +47,8 @@ class ContractEnergy extends Model
         'has_room_fund',
         'is_overdue',
         'notes',
+        'is_renewal',
+        'parent_contract_id',
     ];
 
     protected $casts = [
@@ -58,6 +60,7 @@ class ContractEnergy extends Model
         'is_offset' => 'boolean',
         'has_room_fund' => 'boolean',
         'is_overdue' => 'boolean',
+        'is_renewal' => 'boolean',
     ];
 
     public function customer(): BelongsTo
@@ -108,5 +111,20 @@ class ContractEnergy extends Model
     public function milestoneFiles(): MorphMany
     {
         return $this->morphMany(ContractMilestoneFile::class, 'contract');
+    }
+
+    public function parentContract(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_contract_id');
+    }
+
+    public function renewalContracts()
+    {
+        return $this->hasMany(self::class, 'parent_contract_id');
+    }
+
+    public function paymentSchedules(): MorphMany
+    {
+        return $this->morphMany(ContractPaymentSchedule::class, 'contract');
     }
 }

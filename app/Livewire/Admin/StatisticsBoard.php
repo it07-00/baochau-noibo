@@ -63,6 +63,15 @@ class StatisticsBoard extends Component
                     + (float) RenewalSales::whereYear('sales_month', $this->year)->sum('sales_amount')
                     + (float) ProgressiveSales::whereYear('sales_month', $this->year)->sum('amount');
 
+        // ── Doanh số thực thu (từ lịch thanh toán) ────
+        $totalRevenue = (float) ContractPaymentSchedule::whereYear('paid_date', $this->year)
+            ->whereIn('status', ['paid', 'partial'])->sum('paid_amount');
+
+        $revenueByMonth = ContractPaymentSchedule::whereYear('paid_date', $this->year)
+            ->whereIn('status', ['paid', 'partial'])
+            ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
+            ->groupByRaw('MONTH(paid_date)')->get()->keyBy('m');
+
         // ── Theo tháng: tất cả 6 loại HĐ ký ─────────
         $monthlyModels = [
             ContractWaste::class,
@@ -116,6 +125,7 @@ class StatisticsBoard extends Component
                 'sales'        => (float) ($qM->get($m)?->val ?? 0)
                                + (float) ($rM->get($m)?->val ?? 0)
                                + (float) ($pM->get($m)?->val ?? 0),
+                'revenue'      => (float) ($revenueByMonth->get($m)?->total ?? 0),
                 'payment_due'  => (float) ($paymentDueByMonth->get($m)?->total ?? 0),
                 'payment_paid' => (float) ($paymentPaidByMonth->get($m)?->total ?? 0),
             ];
@@ -158,7 +168,7 @@ class StatisticsBoard extends Component
 
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
-            'totalPaymentDue', 'totalPaymentPaid',
+            'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
             'byType', 'monthly', 'canSeeTechnical', 'technicalStats'
         ))->layout('admin.layouts.app');
     }

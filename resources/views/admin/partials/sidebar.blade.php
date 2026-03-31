@@ -249,7 +249,7 @@ SVG;
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
                             'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
-                            'children'    => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
+                            'children'    => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số', 'Doanh số thực thu'],
                         ],
                         [
                             'title'       => 'Báo cáo Tư vấn',
@@ -345,6 +345,9 @@ SVG;
                     } elseif (request()->routeIs('app.reports.sales.tracking')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng theo dõi doanh số';
+                    } elseif (request()->routeIs('app.reports.sales.revenue')) {
+                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeChild = 'Doanh số thực thu';
                     } elseif (request()->routeIs('app.reports.consulting.*')) {
                         $activeGroup = 'Báo cáo Tư vấn';
                         $activeChild = match(true) {
@@ -478,6 +481,8 @@ SVG;
                                             $href = route('app.reports.sales.achievement');
                                         } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi doanh số') {
                                             $href = route('app.reports.sales.tracking');
+                                        } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Doanh số thực thu') {
+                                            $href = route('app.reports.sales.revenue');
                                         } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo chung') {
                                             $href = route('app.reports.consulting.general');
                                         } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Bảng theo dõi đo mẫu') {

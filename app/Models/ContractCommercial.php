@@ -46,6 +46,8 @@ class ContractCommercial extends Model
         'is_overdue',
         'notes',
         'loai_dich_vu',
+        'is_renewal',
+        'parent_contract_id',
     ];
 
     protected $casts = [
@@ -57,6 +59,7 @@ class ContractCommercial extends Model
         'is_offset' => 'boolean',
         'has_room_fund' => 'boolean',
         'is_overdue' => 'boolean',
+        'is_renewal' => 'boolean',
     ];
 
     public function customer(): BelongsTo
@@ -107,5 +110,20 @@ class ContractCommercial extends Model
     public function milestoneFiles(): MorphMany
     {
         return $this->morphMany(ContractMilestoneFile::class, 'contract');
+    }
+
+    public function parentContract(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_contract_id');
+    }
+
+    public function renewalContracts()
+    {
+        return $this->hasMany(self::class, 'parent_contract_id');
+    }
+
+    public function paymentSchedules(): MorphMany
+    {
+        return $this->morphMany(ContractPaymentSchedule::class, 'contract');
     }
 }

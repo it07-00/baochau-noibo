@@ -74,4 +74,9 @@ class ContractPaymentSchedule extends Model
     {
         return max(0, $this->amount - $this->paid_amount);
     }
+
+    public function getIsRevenueRecognizedAttribute(): bool
+    {
+        return in_array($this->status, ['paid', 'partial']);
+    }
 }
