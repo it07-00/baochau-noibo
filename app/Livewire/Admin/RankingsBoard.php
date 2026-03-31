@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\ContractAssignment;
 use App\Models\ContractConsulting;
+use App\Models\ContractPaymentSchedule;
 use App\Models\ContractWaste;
 use App\Models\ContractProject;
 use App\Models\ContractCommercial;
@@ -40,6 +41,7 @@ class RankingsBoard extends Component
         $topCustomers       = collect();
         $topProvinces       = collect();
         $topServices        = collect();
+        $paymentStats       = ['due' => 0, 'paid' => 0, 'pending' => 0, 'partial' => 0, 'overdue' => 0];
 
         if ($canSeeSales) {
             // ── Xếp hạng nhân viên kinh doanh ──────────────
@@ -103,6 +105,24 @@ class RankingsBoard extends Component
                 ->orderByDesc('total')
                 ->limit(10)
                 ->get();
+
+            // ── Tiến độ thu tiền ─────────────────────────────
+            $paymentStats['due']  = (float) ContractPaymentSchedule::whereYear('due_date', $this->year)->sum('amount');
+            $paymentStats['paid'] = (float) ContractPaymentSchedule::whereYear('due_date', $this->year)->sum('paid_amount');
+
+            $statusCounts = ContractPaymentSchedule::whereYear('due_date', $this->year)
+                ->selectRaw("status, COUNT(*) as cnt, SUM(amount) as total")
+                ->groupBy('status')->get()->keyBy('status');
+
+            $paymentStats['pending_amount'] = (float) ($statusCounts->get('pending')?->total ?? 0);
+            $paymentStats['partial_amount'] = (float) ($statusCounts->get('partial')?->total ?? 0);
+            $paymentStats['paid_amount']    = (float) ($statusCounts->get('paid')?->total ?? 0);
+            $paymentStats['overdue_amount'] = (float) ($statusCounts->get('overdue')?->total ?? 0);
+
+            $paymentStats['pending_count'] = (int) ($statusCounts->get('pending')?->cnt ?? 0);
+            $paymentStats['partial_count'] = (int) ($statusCounts->get('partial')?->cnt ?? 0);
+            $paymentStats['paid_count']    = (int) ($statusCounts->get('paid')?->cnt ?? 0);
+            $paymentStats['overdue_count'] = (int) ($statusCounts->get('overdue')?->cnt ?? 0);
         }
 
         if ($canSeeConsulting) {
@@ -172,7 +192,7 @@ class RankingsBoard extends Component
         return view('livewire.admin.rankings-board', compact(
             'canSeeSales', 'canSeeConsulting', 'canSeeTechnical',
             'salesRankings', 'consultingRankings', 'technicalRankings',
-            'topCustomers', 'topProvinces', 'topServices'
+            'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
         ))->layout('admin.layouts.app');
     }
 }

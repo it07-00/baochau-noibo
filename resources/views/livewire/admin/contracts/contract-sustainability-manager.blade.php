@@ -37,6 +37,7 @@
         <div class="collapse show" id="filterBodySustainability">
             <div class="card-body p-4">
                 <div class="row g-3">
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
                         <div class="d-flex gap-2">
@@ -102,6 +103,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @endunless
                     <div class="col-md-2">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.status">
@@ -111,6 +113,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
                     <div class="col-md-4">
                         <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
@@ -120,6 +123,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @endunless
 
                     <div class="col-md-12 d-flex gap-2 mt-2">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
@@ -240,7 +244,7 @@
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                @if(auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'it']))
+                                @if(auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))
                                 <button class="btn btn-sm p-0 text-success" wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                     <i class="bi bi-person-check fs-5"></i>
                                 </button>

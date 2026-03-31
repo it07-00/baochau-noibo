@@ -158,4 +158,7 @@ Route::middleware('auth')->name('app.')->group(function () {
     // Bảng thống kê & Bảng xếp hạng
     Route::get('statistics', \App\Livewire\Admin\StatisticsBoard::class)->name('statistics')->middleware('permission:statistics.view');
     Route::get('rankings',   \App\Livewire\Admin\RankingsBoard::class)->name('rankings')->middleware('permission:rankings.view');
+
+    // Nhật ký hoạt động (Activity Log)
+    Route::get('activity-log', \App\Livewire\Admin\ActivityLogViewer::class)->name('activity-log')->middleware('permission:activity-log.view');
 });

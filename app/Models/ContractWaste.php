@@ -4,10 +4,53 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ContractWaste extends Model
 {
-    protected $guarded = [];
+    use SoftDeletes, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
+    }
+    protected $fillable = [
+        'shd_cxl',
+        'shd_ad',
+        'customer_id',
+        'handler_id',
+        'staff_id',
+        'department_id',
+        'content',
+        'loai_dich_vu',
+        'value',
+        'commission',
+        'revenue',
+        'payment_method',
+        'source',
+        'province',
+        'signed_at',
+        'effective_at',
+        'end_at',
+        'submitted_at',
+        'billing_address',
+        'execution_address',
+        'mailing_address',
+        'status',
+        'workflow_status',
+        'renewal_status',
+        'voucher_status',
+        'is_offset',
+        'is_overdue',
+        'has_room_fund',
+        'note',
+        'waste_type',
+        'service_type',
+    ];
 
     const SERVICE_TYPES = [
         'Thu gom, xử lý chất thải nguy hại và công nghiệp',

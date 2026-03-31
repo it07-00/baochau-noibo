@@ -4,6 +4,11 @@ namespace App\Livewire\Admin\Commissions;
 
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
+use App\Models\ContractConsulting;
+use App\Models\ContractProject;
+use App\Models\ContractCommercial;
+use App\Models\ContractSustainability;
+use App\Models\ContractEnergy;
 use Livewire\Component;
 use App\Livewire\Concerns\CleanMoneyInput;
 
@@ -11,7 +16,8 @@ class CommissionRequestForm extends Component
 {
     use CleanMoneyInput;
     public $requestId;
-    public $contract_waste_id;
+    public $contract_type = '';
+    public $contract_id = '';
     public $receiver_name;
     public $receiver_phone;
     public $bank_account;
@@ -24,7 +30,8 @@ class CommissionRequestForm extends Component
         if ($id) {
             $request = CommissionRequest::findOrFail($id);
             $this->requestId = $request->id;
-            $this->contract_waste_id = $request->contract_waste_id;
+            $this->contract_type = $request->contract_type;
+            $this->contract_id = $request->contract_id;
             $this->receiver_name = $request->receiver_name;
             $this->receiver_phone = $request->receiver_phone;
             $this->bank_account = $request->bank_account;
@@ -34,18 +41,25 @@ class CommissionRequestForm extends Component
         }
     }
 
+    public function updatedContractType()
+    {
+        $this->contract_id = '';
+    }
+
     public function save($exit = false)
     {
         $this->cleanMoneyProperties(['amount']);
 
         $this->validate([
-            'contract_waste_id' => 'required|exists:contract_wastes,id',
+            'contract_type' => 'required|string',
+            'contract_id'   => 'required|integer',
             'receiver_name' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0',
+            'amount'        => 'required|numeric|min:0',
         ]);
 
         $data = [
-            'contract_waste_id' => $this->contract_waste_id,
+            'contract_type' => $this->contract_type,
+            'contract_id'   => $this->contract_id,
             'receiver_name' => $this->receiver_name,
             'receiver_phone' => $this->receiver_phone,
             'bank_account' => $this->bank_account,
@@ -74,10 +88,17 @@ class CommissionRequestForm extends Component
 
     public function render()
     {
-        $contracts = ContractWaste::with('customer')->orderBy('shd_ad', 'desc')->get();
+        $contracts = collect();
+        if ($this->contract_type) {
+            $modelClass = $this->contract_type;
+            if (class_exists($modelClass)) {
+                $contracts = $modelClass::with('customer')->orderBy('shd_ad', 'desc')->get();
+            }
+        }
 
         return view('livewire.admin.commissions.commission-request-form', [
-            'contracts' => $contracts
+            'contracts'     => $contracts,
+            'contractTypes' => CommissionRequest::CONTRACT_TYPE_LABELS,
         ])->layout('admin.layouts.app', ['title' => $this->requestId ? 'Chỉnh sửa Yêu cầu chi hoa hồng' : 'Thêm mới Yêu cầu chi hoa hồng']);
     }
 }

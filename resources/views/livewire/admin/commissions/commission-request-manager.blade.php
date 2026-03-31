@@ -23,13 +23,15 @@
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label">Phòng ban</label>
-                    <select wire:model.live="departmentFilter" class="form-select">
-                        <option value="">Chọn phòng ban</option>
-                        {{-- Add departments here --}}
+                    <label class="form-label">Loại hợp đồng</label>
+                    <select wire:model.live="contractTypeFilter" class="form-select">
+                        <option value="">Tất cả loại HĐ</option>
+                        @foreach($contractTypes as $class => $label)
+                            <option value="{{ $class }}">{{ $label }}</option>
+                        @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Tình trạng</label>
                     <select wire:model.live="statusFilter" class="form-select">
                         <option value="">Chọn tình trạng</option>
@@ -37,7 +39,7 @@
                         <option value="Đã chi">Đã chi</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <label class="form-label">Tìm kiếm</label>
                     <div class="input-group">
                         <input type="text" wire:model.live.debounce.300ms="search" class="form-control" placeholder="Tìm hợp đồng, khách hàng, người nhận...">
@@ -62,6 +64,7 @@
                         <tr>
                             <th class="ps-4">Thông tin hợp đồng</th>
                             <th>Khách hàng</th>
+                            <th class="text-center">Loại HĐ</th>
                             <th class="text-center">Tình trạng thực hiện</th>
                             <th class="text-center">Ngày gửi yêu cầu</th>
                             <th class="text-end pe-4">Thao tác</th>
@@ -94,6 +97,11 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
+                                    <span class="badge bg-soft-primary text-primary px-2 py-1">
+                                        {{ $request->contract_type_label }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
                                     @if($request->status === 'Đã chi')
                                         <span class="badge bg-soft-success text-success px-3 py-2">
                                             Đã chi<br>
@@ -119,7 +127,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">Không tìm thấy yêu cầu nào.</td>
+                                <td colspan="6" class="text-center py-5 text-muted">Không tìm thấy yêu cầu nào.</td>
                             </tr>
                         @endforelse
                     </tbody>

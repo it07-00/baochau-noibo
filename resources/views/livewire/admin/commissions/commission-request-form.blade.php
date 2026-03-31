@@ -33,15 +33,26 @@
         </div>
         <div class="card-body p-4">
             <div class="row g-4">
-                <div class="col-12">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Loại hợp đồng: <span class="text-danger">*</span></label>
+                    <select wire:model.live="contract_type" class="form-select @error('contract_type') is-invalid @enderror">
+                        <option value="">Chọn loại hợp đồng</option>
+                        @foreach($contractTypes as $class => $label)
+                            <option value="{{ $class }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('contract_type') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="col-md-6">
                     <label class="form-label fw-bold">Số hợp đồng BC: <span class="text-danger">*</span></label>
-                    <select wire:model="contract_waste_id" class="form-select @error('contract_waste_id') is-invalid @enderror">
-                        <option value="">Chọn số hợp đồng</option>
+                    <select wire:model="contract_id" class="form-select @error('contract_id') is-invalid @enderror" @if(!$contract_type) disabled @endif>
+                        <option value="">{{ $contract_type ? 'Chọn số hợp đồng' : 'Vui lòng chọn loại HĐ trước' }}</option>
                         @foreach($contracts as $contract)
                             <option value="{{ $contract->id }}">BC {{ $contract->shd_ad }} - {{ $contract->customer->name ?? 'N/A' }}</option>
                         @endforeach
                     </select>
-                    @error('contract_waste_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    @error('contract_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="col-md-4">

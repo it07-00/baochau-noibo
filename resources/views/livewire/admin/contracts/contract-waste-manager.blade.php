@@ -392,7 +392,7 @@
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $doc->id }})">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                @if(auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'it']))
+                                @if(auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))
                                 <button class="btn btn-sm p-0 text-success" wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                     <i class="bi bi-person-check fs-5"></i>
                                 </button>

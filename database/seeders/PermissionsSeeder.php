@@ -74,6 +74,9 @@ class PermissionsSeeder extends Seeder
 
             // --- Báo cáo ngày ---
             'daily-reports'       => ['view', 'view-all', 'create', 'edit', 'delete'],
+
+            // --- Nhật ký hoạt động (chỉ IT) ---
+            'activity-log'        => ['view'],
         ];
 
         foreach ($modules as $module => $actions) {
@@ -104,6 +107,8 @@ class PermissionsSeeder extends Seeder
             'internal-docs.view', 'internal-docs.create', 'internal-docs.edit', 'internal-docs.delete',
             // Báo cáo ngày
             'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit', 'daily-reports.delete',
+            // Nhật ký hoạt động
+            'activity-log.view',
         ]);
 
         // ------------------------------------------------

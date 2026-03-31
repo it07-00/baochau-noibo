@@ -9,6 +9,7 @@ use App\Models\ContractProject;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\ContractAssignment;
+use App\Models\ContractPaymentSchedule;
 use App\Models\Customer;
 use App\Models\ProgressiveSales;
 use App\Models\QuotationSales;
@@ -95,14 +96,28 @@ class StatisticsBoard extends Component
             ->selectRaw('MONTH(sales_month) as m, SUM(amount) as val')
             ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
 
+        // ── Tiến độ thu tiền ────────────────────────
+        $paymentDueByMonth = ContractPaymentSchedule::whereYear('due_date', $this->year)
+            ->selectRaw('MONTH(due_date) as m, SUM(amount) as total')
+            ->groupByRaw('MONTH(due_date)')->get()->keyBy('m');
+
+        $paymentPaidByMonth = ContractPaymentSchedule::whereYear('paid_date', $this->year)
+            ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
+            ->groupByRaw('MONTH(paid_date)')->get()->keyBy('m');
+
+        $totalPaymentDue  = (float) ContractPaymentSchedule::whereYear('due_date', $this->year)->sum('amount');
+        $totalPaymentPaid = (float) ContractPaymentSchedule::whereYear('paid_date', $this->year)->sum('paid_amount');
+
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
             $monthly[$m] = [
-                'contracts' => $contractMonthly[$m]['cnt'] ?? 0,
-                'value'     => (float) ($contractMonthly[$m]['val'] ?? 0),
-                'sales'     => (float) ($qM->get($m)?->val ?? 0)
-                             + (float) ($rM->get($m)?->val ?? 0)
-                             + (float) ($pM->get($m)?->val ?? 0),
+                'contracts'    => $contractMonthly[$m]['cnt'] ?? 0,
+                'value'        => (float) ($contractMonthly[$m]['val'] ?? 0),
+                'sales'        => (float) ($qM->get($m)?->val ?? 0)
+                               + (float) ($rM->get($m)?->val ?? 0)
+                               + (float) ($pM->get($m)?->val ?? 0),
+                'payment_due'  => (float) ($paymentDueByMonth->get($m)?->total ?? 0),
+                'payment_paid' => (float) ($paymentPaidByMonth->get($m)?->total ?? 0),
             ];
         }
 
@@ -143,6 +158,7 @@ class StatisticsBoard extends Component
 
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
+            'totalPaymentDue', 'totalPaymentPaid',
             'byType', 'monthly', 'canSeeTechnical', 'technicalStats'
         ))->layout('admin.layouts.app');
     }

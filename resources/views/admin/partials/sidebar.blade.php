@@ -66,6 +66,20 @@
                 </li>
                 @endcan
 
+                @can('activity-log.view')
+                <li class="app-sidebar-menu-item">
+                    <a href="{{ route('app.activity-log') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.activity-log') ? 'active menu-current' : '' }}">
+                        <span class="menu-icon flex-shrink-0">
+                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8.5" cy="8.5" r="7" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8.5 4.5V8.5L11.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="menu-title flex-grow-1">Nhật ký hoạt động</span>
+                    </a>
+                </li>
+                @endcan
+
                 @can('departments.view')
                 <li class="app-sidebar-menu-item">
                     <a href="{{ route('app.departments.index') }}" class="menu-link d-flex align-items-center {{ request()->routeIs('app.departments.*') ? 'active menu-current' : '' }}">
@@ -210,13 +224,6 @@ SVG;
                             'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
-                            'title'       => 'Bộ phận dự án',
-                            'icon'        => $stackIcon,
-                            'permission'  => 'project-requests.view',
-                            'allow_roles' => ['giam-doc'],
-                            'children'    => ['Yêu cầu dự án lớn', 'Yêu cầu dự án nhỏ', 'Yêu cầu khảo sát dự án'],
-                        ],
-                        [
                             'title'       => 'Bộ phận kế toán',
                             'icon'        => $stackIcon,
                             'permission'  => 'commissions.view',
@@ -243,13 +250,6 @@ SVG;
                             'permission'  => 'reports.view',
                             'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
                             'children'    => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng tổng kết', 'Bảng doanh số cá nhân', 'Bảng theo dõi tái ký cá nhân', 'Bảng thành tích', 'Bảng theo dõi doanh số'],
-                        ],
-                        [
-                            'title'       => 'Báo cáo HC - CTR',
-                            'icon'        => $usersIcon,
-                            'permission'  => 'reports.view',
-                            'allow_roles' => ['giam-doc', 'ke-toan'],
-                            'children'    => ['Hợp đồng', 'Hóa đơn', 'Công nợ', 'Gom rác'],
                         ],
                         [
                             'title'       => 'Báo cáo Tư vấn',

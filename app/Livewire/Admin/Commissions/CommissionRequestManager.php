@@ -12,7 +12,7 @@ class CommissionRequestManager extends Component
 
     public $search = '';
     public $statusFilter = '';
-    public $departmentFilter = '';
+    public $contractTypeFilter = '';
     public $perPage = 10;
 
     protected $listeners = ['deleteConfirmed' => 'delete'];
@@ -22,11 +22,14 @@ class CommissionRequestManager extends Component
         $this->resetPage();
     }
 
+    public function updatingContractTypeFilter()
+    {
+        $this->resetPage();
+    }
+
     public function delete($id)
     {
         $request = CommissionRequest::findOrFail($id);
-        
-        // Authorization check if needed
         $request->delete();
         $this->dispatch('swal:success', ['message' => 'Xóa yêu cầu thành công!']);
     }
@@ -51,10 +54,15 @@ class CommissionRequestManager extends Component
             $query->where('status', $this->statusFilter);
         }
 
+        if ($this->contractTypeFilter) {
+            $query->where('contract_type', $this->contractTypeFilter);
+        }
+
         $requests = $query->orderBy('created_at', 'desc')->paginate($this->perPage);
 
         return view('livewire.admin.commissions.commission-request-manager', [
-            'requests' => $requests
+            'requests'      => $requests,
+            'contractTypes' => CommissionRequest::CONTRACT_TYPE_LABELS,
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Yêu cầu chi hoa hồng']);
     }
 }

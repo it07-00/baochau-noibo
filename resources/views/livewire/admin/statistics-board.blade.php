@@ -20,7 +20,7 @@
 
     {{-- KPI Cards --}}
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
@@ -59,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-info d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
@@ -68,6 +68,49 @@
                     <div>
                         <div class="small text-muted">Doanh số năm {{ $year }}</div>
                         <div class="fw-bold text-info">{{ number_format($totalSales, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Thu tiền Cards --}}
+    <div class="row g-3 mb-4">
+        <div class="col-md-4 col-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-soft-danger d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-danger" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Phải thu năm {{ $year }}</div>
+                        <div class="fw-bold text-danger">{{ number_format($totalPaymentDue, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Đã thu năm {{ $year }}</div>
+                        <div class="fw-bold text-success">{{ number_format($totalPaymentPaid, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-soft-secondary d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Còn phải thu</div>
+                        <div class="fw-bold text-secondary">{{ number_format($totalPaymentDue - $totalPaymentPaid, 0, ',', '.') }} đ</div>
                     </div>
                 </div>
             </div>
@@ -90,17 +133,25 @@
                                     <th class="text-center">Số HĐ ký</th>
                                     <th class="text-end">Giá trị HĐ</th>
                                     <th class="text-end">Doanh số</th>
+                                    <th class="text-end">Phải thu</th>
+                                    <th class="text-end">Đã thu</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($monthly as $m => $data)
-                                @php $hasData = $data['contracts'] > 0 || $data['sales'] > 0; @endphp
+                                @php $hasData = $data['contracts'] > 0 || $data['sales'] > 0 || $data['payment_due'] > 0; @endphp
                                 <tr class="{{ !$hasData ? 'text-muted' : '' }}">
                                     <td class="fw-semibold">Tháng {{ $m }}</td>
                                     <td class="text-center">{{ $data['contracts'] > 0 ? $data['contracts'] : '—' }}</td>
                                     <td class="text-end small">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') . ' đ' : '—' }}</td>
                                     <td class="text-end fw-semibold {{ $data['sales'] > 0 ? 'text-info' : '' }}">
                                         {{ $data['sales'] > 0 ? number_format($data['sales'], 0, ',', '.') . ' đ' : '—' }}
+                                    </td>
+                                    <td class="text-end small {{ $data['payment_due'] > 0 ? 'text-danger' : '' }}">
+                                        {{ $data['payment_due'] > 0 ? number_format($data['payment_due'], 0, ',', '.') . ' đ' : '—' }}
+                                    </td>
+                                    <td class="text-end small {{ $data['payment_paid'] > 0 ? 'text-success' : '' }}">
+                                        {{ $data['payment_paid'] > 0 ? number_format($data['payment_paid'], 0, ',', '.') . ' đ' : '—' }}
                                     </td>
                                 </tr>
                                 @endforeach
@@ -111,6 +162,8 @@
                                     <td class="text-center">{{ $totalContracts }}</td>
                                     <td class="text-end">{{ number_format($totalContractValue, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-info">{{ number_format($totalSales, 0, ',', '.') }} đ</td>
+                                    <td class="text-end text-danger">{{ number_format($totalPaymentDue, 0, ',', '.') }} đ</td>
+                                    <td class="text-end text-success">{{ number_format($totalPaymentPaid, 0, ',', '.') }} đ</td>
                                 </tr>
                             </tfoot>
                         </table>

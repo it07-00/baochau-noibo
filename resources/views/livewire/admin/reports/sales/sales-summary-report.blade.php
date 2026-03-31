@@ -51,6 +51,8 @@
                             <th class="text-end">DS Tái ký</th>
                             <th class="text-end">DS Theo tiến độ</th>
                             <th class="text-end fw-bold">Tổng tháng</th>
+                            <th class="text-end">Phải thu</th>
+                            <th class="text-end">Đã thu</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,6 +81,18 @@
                                 <td class="text-end fw-bold">
                                     {{ $rowTotal > 0 ? number_format($rowTotal, 0, ',', '.') . ' đ' : '—' }}
                                 </td>
+                                <td class="text-end">
+                                    @if($data['payment_due'] > 0)
+                                        <span class="text-danger">{{ number_format($data['payment_due'], 0, ',', '.') }}</span>
+                                    @else —
+                                    @endif
+                                </td>
+                                <td class="text-end">
+                                    @if($data['payment_paid'] > 0)
+                                        <span class="text-success">{{ number_format($data['payment_paid'], 0, ',', '.') }}</span>
+                                    @else —
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -89,6 +103,8 @@
                             <td class="text-end text-success">{{ number_format($totals['renewal'], 0, ',', '.') }} đ</td>
                             <td class="text-end text-warning">{{ number_format($totals['progressive'], 0, ',', '.') }} đ</td>
                             <td class="text-end fs-6">{{ number_format($totals['grand'], 0, ',', '.') }} đ</td>
+                            <td class="text-end text-danger">{{ number_format($totals['payment_due'], 0, ',', '.') }} đ</td>
+                            <td class="text-end text-success">{{ number_format($totals['payment_paid'], 0, ',', '.') }} đ</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -98,7 +114,7 @@
 
     {{-- Tóm tắt card --}}
     <div class="row g-3 mt-2">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card border-0 bg-soft-primary text-primary h-100">
                 <div class="card-body">
                     <div class="small fw-semibold mb-1">DS Báo giá</div>
@@ -106,7 +122,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card border-0 bg-soft-success text-success h-100">
                 <div class="card-body">
                     <div class="small fw-semibold mb-1">DS Tái ký</div>
@@ -114,7 +130,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card border-0 bg-soft-warning text-warning h-100">
                 <div class="card-body">
                     <div class="small fw-semibold mb-1">DS Theo tiến độ</div>
@@ -122,11 +138,27 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card border-0 bg-soft-dark text-dark h-100">
                 <div class="card-body">
                     <div class="small fw-semibold mb-1">Tổng doanh số</div>
                     <div class="fw-bold fs-6">{{ number_format($totals['grand'], 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 bg-soft-danger text-danger h-100">
+                <div class="card-body">
+                    <div class="small fw-semibold mb-1">Phải thu</div>
+                    <div class="fw-bold fs-6">{{ number_format($totals['payment_due'], 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 bg-soft-success text-success h-100">
+                <div class="card-body">
+                    <div class="small fw-semibold mb-1">Đã thu</div>
+                    <div class="fw-bold fs-6">{{ number_format($totals['payment_paid'], 0, ',', '.') }} đ</div>
                 </div>
             </div>
         </div>

@@ -186,6 +186,67 @@
 
     @if($canSeeSales)
     <div class="row g-4 mb-4">
+        {{-- Tiến độ thu tiền - Donut Chart --}}
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold">Tiến độ thu tiền — Năm {{ $year }}</h6>
+                </div>
+                <div class="card-body">
+                    @if($paymentStats['due'] > 0)
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div id="paymentDonutChart" wire:ignore></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-muted">Tổng phải thu</span>
+                                    <span class="fw-bold text-danger">{{ number_format($paymentStats['due'], 0, ',', '.') }} đ</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-muted">Đã thu</span>
+                                    <span class="fw-bold text-success">{{ number_format($paymentStats['paid'], 0, ',', '.') }} đ</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted">Còn phải thu</span>
+                                    <span class="fw-bold text-secondary">{{ number_format($paymentStats['due'] - $paymentStats['paid'], 0, ',', '.') }} đ</span>
+                                </div>
+                            </div>
+                            <hr>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge bg-success">&nbsp;</span> Đã thanh toán</td>
+                                        <td class="text-end small">{{ $paymentStats['paid_count'] }} đợt</td>
+                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['paid_amount'], 0, ',', '.') }} đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-secondary">&nbsp;</span> Chờ thanh toán</td>
+                                        <td class="text-end small">{{ $paymentStats['pending_count'] }} đợt</td>
+                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['pending_amount'], 0, ',', '.') }} đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-warning">&nbsp;</span> Thanh toán 1 phần</td>
+                                        <td class="text-end small">{{ $paymentStats['partial_count'] }} đợt</td>
+                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['partial_amount'], 0, ',', '.') }} đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-danger">&nbsp;</span> Quá hạn</td>
+                                        <td class="text-end small">{{ $paymentStats['overdue_count'] }} đợt</td>
+                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['overdue_amount'], 0, ',', '.') }} đ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @else
+                    <div class="text-center text-muted py-4">Không có dữ liệu thu tiền</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         {{-- Top tỉnh/TP --}}
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm h-100">
@@ -297,3 +358,57 @@
     </div>
     @endif
 </div>
+
+@push('scripts')
+<script src="{{ asset('assets/js/apexcharts.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var el = document.querySelector('#paymentDonutChart');
+    if (!el) return;
+
+    var paid    = {{ $paymentStats['paid_amount'] ?? 0 }};
+    var pending = {{ $paymentStats['pending_amount'] ?? 0 }};
+    var partial = {{ $paymentStats['partial_amount'] ?? 0 }};
+    var overdue = {{ $paymentStats['overdue_amount'] ?? 0 }};
+
+    if (paid + pending + partial + overdue === 0) return;
+
+    new ApexCharts(el, {
+        chart: { type: 'donut', height: 280 },
+        series: [paid, pending, partial, overdue],
+        labels: ['Đã thanh toán', 'Chờ thanh toán', 'TT 1 phần', 'Quá hạn'],
+        colors: ['#198754', '#6c757d', '#ffc107', '#dc3545'],
+        legend: { position: 'bottom', fontSize: '12px' },
+        dataLabels: {
+            enabled: true,
+            formatter: function(val) { return val.toFixed(1) + '%'; }
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return new Intl.NumberFormat('vi-VN').format(val) + ' đ';
+                }
+            }
+        },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '55%',
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true,
+                            label: 'Tổng phải thu',
+                            formatter: function(w) {
+                                var sum = w.globals.seriesTotals.reduce(function(a, b) { return a + b; }, 0);
+                                return new Intl.NumberFormat('vi-VN').format(sum) + ' đ';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }).render();
+});
+</script>
+@endpush
