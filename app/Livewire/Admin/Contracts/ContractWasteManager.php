@@ -13,12 +13,13 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Livewire\Concerns\CleanMoneyInput;
+use App\Livewire\Concerns\ContractValidation;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
 
 class ContractWasteManager extends Component
 {
-    use WithPagination, WithFileUploads, CleanMoneyInput;
+    use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -157,12 +158,7 @@ class ContractWasteManager extends Component
     {
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
 
-        $this->validate([
-            'formData.customer_id' => 'required',
-            'formData.handler_id' => 'required',
-            'formData.staff_id' => 'required',
-            'formData.value' => 'required|numeric',
-        ]);
+        $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
 
         $data = collect($this->formData)->map(function ($value) {
             return $value === '' ? null : $value;

@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             SalesTargetSeeder::class,
 
             // 4. Hóa đơn & Tài chính
+            ContractPaymentScheduleSeeder::class,
             InvoiceSeeder::class,
             CommissionRequestSeeder::class,
 

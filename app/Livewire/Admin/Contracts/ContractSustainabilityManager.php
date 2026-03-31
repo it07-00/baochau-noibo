@@ -12,12 +12,13 @@ use App\Models\ContractProgressNote;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Livewire\Concerns\CleanMoneyInput;
+use App\Livewire\Concerns\ContractValidation;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
 
 class ContractSustainabilityManager extends Component
 {
-    use WithPagination, CleanMoneyInput;
+    use WithPagination, CleanMoneyInput, ContractValidation;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -134,11 +135,7 @@ class ContractSustainabilityManager extends Component
     {
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
 
-        $this->validate([
-            'formData.customer_id' => 'required',
-            'formData.staff_id'    => 'required',
-            'formData.value'       => 'required|numeric',
-        ]);
+        $this->validate($this->baseContractRules(), $this->contractValidationMessages());
 
         $data = collect($this->formData)->map(fn($v) => $v === '' ? null : $v)->toArray();
 

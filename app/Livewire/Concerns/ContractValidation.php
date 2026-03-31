@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Livewire\Concerns;
+
+trait ContractValidation
+{
+    /**
+     * Rules chung cho 5 loại HĐ: consulting, commercial, project, sustainability, energy.
+     */
+    protected function baseContractRules(): array
+    {
+        return [
+            'formData.shd_ad'          => 'nullable|string|max:255',
+            'formData.customer_id'     => 'required|exists:customers,id',
+            'formData.staff_id'        => 'required|exists:users,id',
+            'formData.department_id'   => 'nullable|exists:departments,id',
+            'formData.signed_at'       => 'nullable|date',
+            'formData.submitted_at'    => 'nullable|date',
+            'formData.value'           => 'required|numeric|min:0',
+            'formData.commission'      => 'nullable|numeric|min:0',
+            'formData.revenue'         => 'nullable|numeric|min:0',
+            'formData.province'        => 'nullable|string|max:100',
+            'formData.info_source'     => 'nullable|string|max:255',
+            'formData.payment_method'  => 'nullable|string|max:100',
+            'formData.loai_dich_vu'    => 'nullable|string|max:255',
+            'formData.status'          => 'nullable|string|max:100',
+            'formData.renewal_status'  => 'nullable|string|max:100',
+            'formData.notes'           => 'nullable|string|max:2000',
+        ];
+    }
+
+    /**
+     * Rules riêng cho HĐ chất thải (waste) – thêm nhiều field.
+     */
+    protected function wasteContractRules(): array
+    {
+        return [
+            'formData.shd_cxl'           => 'nullable|string|max:255',
+            'formData.shd_ad'            => 'nullable|string|max:255',
+            'formData.customer_id'       => 'required|exists:customers,id',
+            'formData.handler_id'        => 'required|exists:handlers,id',
+            'formData.staff_id'          => 'required|exists:users,id',
+            'formData.department_id'     => 'nullable|exists:departments,id',
+            'formData.content'           => 'nullable|string|max:2000',
+            'formData.value'             => 'required|numeric|min:0',
+            'formData.commission'        => 'nullable|numeric|min:0',
+            'formData.revenue'           => 'nullable|numeric|min:0',
+            'formData.payment_method'    => 'nullable|string|max:100',
+            'formData.source'            => 'nullable|string|max:255',
+            'formData.signed_at'         => 'nullable|date',
+            'formData.effective_at'      => 'nullable|date|after_or_equal:formData.signed_at',
+            'formData.end_at'            => 'nullable|date|after_or_equal:formData.effective_at',
+            'formData.submitted_at'      => 'nullable|date',
+            'formData.billing_address'   => 'nullable|string|max:500',
+            'formData.execution_address' => 'nullable|string|max:500',
+            'formData.mailing_address'   => 'nullable|string|max:500',
+            'formData.status'            => 'nullable|string|max:100',
+            'formData.renewal_status'    => 'nullable|string|max:100',
+            'formData.voucher_status'    => 'nullable|string|max:100',
+            'formData.province'          => 'nullable|string|max:100',
+            'formData.loai_dich_vu'      => 'nullable|string|max:255',
+            'formData.note'              => 'nullable|string|max:2000',
+        ];
+    }
+
+    /**
+     * Messages tiếng Việt dùng chung.
+     */
+    protected function contractValidationMessages(): array
+    {
+        return [
+            'formData.customer_id.required'     => 'Vui lòng chọn khách hàng.',
+            'formData.customer_id.exists'        => 'Khách hàng không tồn tại.',
+            'formData.handler_id.required'       => 'Vui lòng chọn chủ xử lý.',
+            'formData.handler_id.exists'          => 'Chủ xử lý không tồn tại.',
+            'formData.staff_id.required'          => 'Vui lòng chọn nhân viên phụ trách.',
+            'formData.staff_id.exists'            => 'Nhân viên không tồn tại.',
+            'formData.department_id.exists'        => 'Phòng ban không tồn tại.',
+            'formData.value.required'             => 'Vui lòng nhập giá trị hợp đồng.',
+            'formData.value.numeric'              => 'Giá trị hợp đồng phải là số.',
+            'formData.value.min'                  => 'Giá trị hợp đồng không được âm.',
+            'formData.commission.numeric'          => 'Hoa hồng phải là số.',
+            'formData.commission.min'              => 'Hoa hồng không được âm.',
+            'formData.revenue.numeric'             => 'Doanh số phải là số.',
+            'formData.revenue.min'                 => 'Doanh số không được âm.',
+            'formData.effective_at.after_or_equal' => 'Ngày hiệu lực phải sau hoặc bằng ngày ký.',
+            'formData.end_at.after_or_equal'       => 'Ngày kết thúc phải sau hoặc bằng ngày hiệu lực.',
+            'formData.content.max'                 => 'Nội dung không được vượt quá 2000 ký tự.',
+            'formData.note.max'                    => 'Ghi chú không được vượt quá 2000 ký tự.',
+            'formData.notes.max'                   => 'Ghi chú không được vượt quá 2000 ký tự.',
+            'formData.billing_address.max'         => 'Địa chỉ xuất HĐ không được vượt quá 500 ký tự.',
+            'formData.execution_address.max'       => 'Địa chỉ thực hiện không được vượt quá 500 ký tự.',
+            'formData.mailing_address.max'         => 'Địa chỉ gửi thư không được vượt quá 500 ký tự.',
+        ];
+    }
+}

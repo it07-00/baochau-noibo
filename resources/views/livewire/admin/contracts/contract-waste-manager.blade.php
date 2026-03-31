@@ -41,6 +41,7 @@
         <div class="collapse show" id="filterCollapse">
             <div class="card-body p-4">
                 <div class="row g-4">
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
                     <!-- Row 1 -->
                     <div class="col-md-4">
                         <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
@@ -136,6 +137,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @endunless
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
@@ -159,6 +161,7 @@
                         </div>
                     </div>
 
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
                     <!-- Row 4 -->
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
@@ -204,6 +207,7 @@
                             </div>
                         </div>
                     </div>
+                    @endunless
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng tái ký</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
@@ -226,6 +230,7 @@
                             </div>
                         </div>
                     </div>
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng phản hồi chứng từ</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.voucher_status">
@@ -256,6 +261,7 @@
                             <label class="form-check-label small" for="overdue">Trễ hạn</label>
                         </div>
                     </div>
+                    @endunless
 
                     <div class="col-md-9 d-flex align-items-end gap-2 justify-content-start">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
@@ -728,7 +734,8 @@
 
                             <div class="col-12">
                                 <label class="form-label fw-bold">Nội dung</label>
-                                <textarea class="form-control" rows="2" wire:model.defer="formData.content"></textarea>
+                                <textarea class="form-control @error('formData.content') is-invalid @enderror" rows="2" wire:model.defer="formData.content"></textarea>
+                                @error('formData.content') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
 
                             <!-- Values -->
@@ -738,21 +745,23 @@
                                     <input type="text" class="form-control money-input @error('formData.value') is-invalid @enderror" wire:model.defer="formData.value">
                                     <span class="input-group-text">đ</span>
                                 </div>
-                                @error('formData.value') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                @error('formData.value') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Hoa hồng</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control money-input" wire:model.defer="formData.commission">
+                                    <input type="text" class="form-control money-input @error('formData.commission') is-invalid @enderror" wire:model.defer="formData.commission">
                                     <span class="input-group-text">đ</span>
                                 </div>
+                                @error('formData.commission') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Doanh số thực</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control money-input" wire:model.defer="formData.revenue">
+                                    <input type="text" class="form-control money-input @error('formData.revenue') is-invalid @enderror" wire:model.defer="formData.revenue">
                                     <span class="input-group-text">đ</span>
                                 </div>
+                                @error('formData.revenue') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
 
                             <!-- Dates -->
@@ -762,11 +771,13 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Ngày hiệu lực</label>
-                                <input type="date" class="form-control" wire:model.defer="formData.effective_at">
+                                <input type="date" class="form-control @error('formData.effective_at') is-invalid @enderror" wire:model.defer="formData.effective_at">
+                                @error('formData.effective_at') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Ngày kết thúc</label>
-                                <input type="date" class="form-control" wire:model.defer="formData.end_at">
+                                <input type="date" class="form-control @error('formData.end_at') is-invalid @enderror" wire:model.defer="formData.end_at">
+                                @error('formData.end_at') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Ngày trình ký</label>
@@ -776,15 +787,18 @@
                             <!-- Addresses -->
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Địa chỉ xuất HĐ</label>
-                                <textarea class="form-control" rows="2" wire:model.defer="formData.billing_address"></textarea>
+                                <textarea class="form-control @error('formData.billing_address') is-invalid @enderror" rows="2" wire:model.defer="formData.billing_address"></textarea>
+                                @error('formData.billing_address') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Địa chỉ thực hiện</label>
-                                <textarea class="form-control" rows="2" wire:model.defer="formData.execution_address"></textarea>
+                                <textarea class="form-control @error('formData.execution_address') is-invalid @enderror" rows="2" wire:model.defer="formData.execution_address"></textarea>
+                                @error('formData.execution_address') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Địa chỉ gửi thư</label>
-                                <textarea class="form-control" rows="2" wire:model.defer="formData.mailing_address"></textarea>
+                                <textarea class="form-control @error('formData.mailing_address') is-invalid @enderror" rows="2" wire:model.defer="formData.mailing_address"></textarea>
+                                @error('formData.mailing_address') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
 
                             <!-- Statuses -->
@@ -869,7 +883,8 @@
 
                             <div class="col-12">
                                 <label class="form-label fw-bold">Ghi chú</label>
-                                <textarea class="form-control" rows="2" wire:model.defer="formData.note"></textarea>
+                                <textarea class="form-control @error('formData.note') is-invalid @enderror" rows="2" wire:model.defer="formData.note"></textarea>
+                                @error('formData.note') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                         </div>
                     </div>
