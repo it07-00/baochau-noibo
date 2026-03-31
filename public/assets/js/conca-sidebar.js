@@ -2,21 +2,21 @@
     'use strict';
 
     window.addEventListener('DOMContentLoaded', function(){
-        
-    
+
+
         const mainPath = window.location.pathname;
         let url = window.location.origin + mainPath;
         let allLinks = document.querySelectorAll('.app-sidebar-menu a');
         allLinks.forEach(link => {
-            let linkArr = link.href.split('/');
-            let lastPath = linkArr[linkArr.length - 1];
-            let isHomePage = lastPath.includes('index.html') && mainPath === '/';
-            if (mainPath.includes(lastPath) || isHomePage) {
+            if (link.href === '#' || link.href === 'javascript:void(0)') return;
+            let linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/+$/, '');
+            let currentPath = mainPath.replace(/\/+$/, '');
+            if (linkPath && currentPath === linkPath) {
                 link.classList.add('menu-current');
             }
         });
-    
-    
+
+
         // update sidebar menu height
         function update_sidebar_menu_height() {
             let headerHeight = 60;
@@ -24,18 +24,18 @@
             let menuHeight = $(window).height() - (headerHeight + footerHeight)
             $('.app-sidebar-menu').css('height',  menuHeight + 'px');
         }
-    
+
         $(window).on('resize', function(){
             update_sidebar_menu_height()
         });
-    
-    
+
+
         // initialize
         (function() {
             update_sidebar_menu_height();
         })();
-    
-    
+
+
         // add scrollbar to sidebar menu
         if(document.querySelector('.app-sidebar-menu')){
             new PerfectScrollbar(document.querySelector('.app-sidebar-menu'), {
@@ -51,13 +51,13 @@
                 $this.parent().parent().children('.menu-link').addClass('active')
             }
         });
-    
+
         // list open hidden
         $('.menu-link').on('click', function() {
             $(this).toggleClass('active');
             $(this).next('.app-sidebar-submenu').slideToggle(300);
         });
-        
+
     })
 
     $('.app-sidebar-open-btn').on('click', function(e){
@@ -88,5 +88,5 @@
         $('#app-sidebar').removeClass('open');
         $(this).removeClass('show');
     });
-    
-}(jQuery) ) 
+
+}(jQuery) )

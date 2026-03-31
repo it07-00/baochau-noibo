@@ -199,13 +199,6 @@ SVG;
                             'children'    => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
                         ],
                         [
-                            'title'       => 'Bộ phận chất thải',
-                            'icon'        => $stackIcon,
-                            'permission'  => 'waste-requests.view',
-                            'allow_roles' => ['it', 'giam-doc', 'ky-thuat'],
-                            'children'    => ['Yêu cầu gom rác'],
-                        ],
-                        [
                             'title'       => 'Bộ phận tư vấn',
                             'icon'        => $stackIcon,
                             'permission'  => 'consulting-requests.view',
@@ -325,7 +318,7 @@ SVG;
                         $activeGroup = 'Chuyển phát thư';
                         $activeChild = 'Quản lý chuyển phát';
                     } elseif (request()->routeIs('app.quotation-tracking.*')) {
-                        $activeGroup = 'Báo cáo Kinh doanh';
+                        $activeGroup = 'Bộ phận kinh doanh';
                         $activeChild = 'Bảng theo dõi báo giá';
                     } elseif (request()->routeIs('app.reports.sales.summary')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
@@ -450,7 +443,7 @@ SVG;
                                             $href = route('app.contracts.energy.index');
                                         } elseif ($menu['title'] === 'Báo cáo ngày' && $child === 'Báo cáo ngày') {
                                             $href = route('app.daily-reports.index');
-                                        } elseif (request()->routeIs('app.commissions.*')) {
+                                        } elseif ($menu['title'] === 'Bộ phận kế toán' && $child === 'Yêu cầu chi hoa hồng') {
                                             $href = route('app.commissions.index');
                                         } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số báo giá') {
                                             $href = route('app.sales.quotation.index');
@@ -503,41 +496,6 @@ SVG;
                                         } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn chủ xử lý') {
                                             $href = route('app.invoices.handlers');
                                         }
-
-                                        $childActive = ($menu['title'] === 'Nội bộ' && $child === 'Quy định' && request()->routeIs('app.internal-docs.*')) ||
-                                                      ($child === 'HĐ Chất thải & Tiếng ồn' && request()->routeIs('app.contracts.waste.*')) ||
-                                                      ($child === 'HĐ Pháp lý & Hồ sơ MT' && request()->routeIs('app.contracts.consulting.*')) ||
-                                                      ($child === 'HĐ Kỹ thuật & Ứng phó SC' && request()->routeIs('app.contracts.project.*')) ||
-                                                      ($child === 'HĐ NC & CĐ Công nghệ' && request()->routeIs('app.contracts.commercial.*')) ||
-                                                      ($child === 'HĐ TV & BC PTBV' && request()->routeIs('app.contracts.sustainability.*')) ||
-                                                      ($child === 'HĐ Phát thải & Năng lượng' && request()->routeIs('app.contracts.energy.*')) ||
-                                                      ($menu['title'] === 'Báo cáo ngày' && $child === 'Báo cáo ngày' && request()->routeIs('app.daily-reports.*')) ||
-                                                      ($menu['title'] === 'Bộ phận kế toán' && $child === 'Yêu cầu chi hoa hồng' && request()->routeIs('app.commissions.*')) ||
-                                                      ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số báo giá' && request()->routeIs('app.sales.quotation.*')) ||
-                                                      ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số tái ký' && request()->routeIs('app.sales.renewal.*')) ||
-                                                      ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ' && request()->routeIs('app.sales.progressive.*')) ||
-                                                      ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát' && request()->routeIs('app.postal-deliveries.*')) ||
-                                                      ($child === 'Bảng theo dõi báo giá' && request()->routeIs('app.quotation-tracking.*')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết doanh số' && request()->routeIs('app.reports.sales.summary')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cam kết' && request()->routeIs('app.reports.sales.target')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết' && request()->routeIs('app.reports.sales.overview')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cá nhân' && request()->routeIs('app.reports.sales.personal')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi tái ký cá nhân' && request()->routeIs('app.reports.sales.renewal-personal')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng thành tích' && request()->routeIs('app.reports.sales.achievement')) ||
-                                                      ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi doanh số' && request()->routeIs('app.reports.sales.tracking')) ||
-                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo chung' && request()->routeIs('app.reports.consulting.general')) ||
-                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Bảng theo dõi đo mẫu' && request()->routeIs('app.reports.consulting.monitoring')) ||
-                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Báo cáo' && request()->routeIs('app.reports.consulting.all')) ||
-                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'GPMT/ĐTM' && request()->routeIs('app.reports.consulting.gpmt')) ||
-                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'ĐKMT' && request()->routeIs('app.reports.consulting.dkmt')) ||
-                                                      ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'VHTN' && request()->routeIs('app.reports.consulting.vhtn')) ||
-                                                      ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Báo cáo hiện trường' && request()->routeIs('app.reports.technical.field')) ||
-                                                      ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Lịch xe' && request()->routeIs('app.reports.technical.vehicle')) ||
-                                                      ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Vật tư' && request()->routeIs('app.reports.technical.materials')) ||
-                                                      ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng tổng kết' && request()->routeIs('app.reports.marketing.summary')) ||
-                                                      ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng mục tiêu cam kết' && request()->routeIs('app.reports.marketing.target')) ||
-                                                      ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn Bảo Châu' && request()->routeIs('app.invoices.bao-chau')) ||
-                                                      ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn chủ xử lý' && request()->routeIs('app.invoices.handlers'));
                                     @endphp
                                     <li>
                                         <a href="{{ $href }}" class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
