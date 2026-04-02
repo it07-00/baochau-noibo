@@ -32,10 +32,10 @@
                             <tr>
                                 <th class="text-center" style="width:50px">Hạng</th>
                                 <th>Nhân viên</th>
-                                <th class="text-end">DS Báo giá</th>
                                 <th class="text-end">DS Tái ký</th>
                                 <th class="text-end">DS Tiến độ</th>
-                                <th class="text-end fw-bold">Tổng DS</th>
+                                <th class="text-end">Tổng DS</th>
+                                <th class="text-end fw-bold">Thực thu</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,14 +44,14 @@
                                 $rank  = $i + 1;
                                 $medal = match($rank) { 1 => '🥇', 2 => '🥈', 3 => '🥉', default => $rank };
                             @endphp
-                            <tr class="{{ $row['total'] == 0 ? 'text-muted' : '' }}">
+                            <tr class="{{ $row['total'] == 0 && $row['revenue'] == 0 ? 'text-muted' : '' }}">
                                 <td class="text-center fw-bold">{{ $medal }}</td>
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
-                                <td class="text-end small text-primary">{{ $row['quotation'] > 0 ? number_format($row['quotation'], 0, ',', '.') : '—' }}</td>
                                 <td class="text-end small text-success">{{ $row['renewal'] > 0 ? number_format($row['renewal'], 0, ',', '.') : '—' }}</td>
                                 <td class="text-end small text-warning">{{ $row['progressive'] > 0 ? number_format($row['progressive'], 0, ',', '.') : '—' }}</td>
-                                <td class="text-end fw-bold {{ $row['total'] > 0 ? 'text-dark' : '' }}">
-                                    {{ $row['total'] > 0 ? number_format($row['total'], 0, ',', '.') . ' đ' : '—' }}
+                                <td class="text-end">{{ $row['total'] > 0 ? number_format($row['total'], 0, ',', '.') . ' đ' : '—' }}</td>
+                                <td class="text-end fw-bold {{ $row['revenue'] > 0 ? 'text-success' : '' }}">
+                                    {{ $row['revenue'] > 0 ? number_format($row['revenue'], 0, ',', '.') . ' đ' : '—' }}
                                 </td>
                             </tr>
                             @empty
@@ -62,10 +62,10 @@
                         <tfoot class="table-secondary fw-bold">
                             <tr>
                                 <td colspan="2">Tổng</td>
-                                <td class="text-end text-primary">{{ number_format($salesRankings->sum('quotation'), 0, ',', '.') }} đ</td>
                                 <td class="text-end text-success">{{ number_format($salesRankings->sum('renewal'), 0, ',', '.') }} đ</td>
                                 <td class="text-end text-warning">{{ number_format($salesRankings->sum('progressive'), 0, ',', '.') }} đ</td>
                                 <td class="text-end">{{ number_format($salesRankings->sum('total'), 0, ',', '.') }} đ</td>
+                                <td class="text-end text-success">{{ number_format($salesRankings->sum('revenue'), 0, ',', '.') }} đ</td>
                             </tr>
                         </tfoot>
                         @endif
@@ -74,36 +74,7 @@
             </div>
         </div>
 
-        @if($revenueRankings->isNotEmpty())
-        {{-- Xếp hạng nhân viên theo thực thu --}}
-        <div class="col-lg-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="mb-0 fw-bold">Xếp hạng theo doanh số thực thu</h6>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th style="width:40px">#</th>
-                                <th>Nhân viên</th>
-                                <th class="text-end">Thực thu</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($revenueRankings as $i => $row)
-                            <tr>
-                                <td class="fw-semibold text-muted">{{ $i + 1 }}</td>
-                                <td>{{ $row['name'] }}</td>
-                                <td class="text-end fw-bold text-success">{{ number_format($row['total'], 0, ',', '.') }} đ</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        @endif
+
         @endif
 
         @if($canSeeConsulting)
@@ -282,16 +253,21 @@
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="mb-0 fw-bold">Top tỉnh/TP theo doanh số — {{ $year }}</h6>
+                    <h6 class="mb-0 fw-bold">Top tỉnh/TP theo tiền thu HĐ — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
+                    @if($topProvinces->count())
+                    <div class="p-3">
+                        <div id="provincePieChart"></div>
+                    </div>
+                    @endif
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center" style="width:40px">#</th>
                                 <th>Tỉnh / TP</th>
-                                <th class="text-center">Số BG</th>
-                                <th class="text-end">Doanh số</th>
+                                <th class="text-center">Số HĐ</th>
+                                <th class="text-end">Tiền thu</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -440,6 +416,52 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }).render();
+
+    // ── Province Pie Chart ──
+    var provinceEl = document.querySelector('#provincePieChart');
+    if (provinceEl) {
+        var provinceSeries = [@foreach($topProvinces as $row){{ (float)$row->total }},@endforeach];
+        var provinceLabels = [@foreach($topProvinces as $row)'{{ $row->province }}',@endforeach];
+
+        if (provinceSeries.length > 0) {
+            new ApexCharts(provinceEl, {
+                chart: { type: 'donut', height: 300 },
+                series: provinceSeries,
+                labels: provinceLabels,
+                colors: ['#0d6efd','#6610f2','#6f42c1','#d63384','#dc3545','#fd7e14','#ffc107','#198754','#20c997','#0dcaf0'],
+                legend: { position: 'bottom', fontSize: '11px' },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function(val) { return val.toFixed(1) + '%'; }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(val) {
+                            return new Intl.NumberFormat('vi-VN').format(val) + ' đ';
+                        }
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '50%',
+                            labels: {
+                                show: true,
+                                total: {
+                                    show: true,
+                                    label: 'Tổng DS',
+                                    formatter: function(w) {
+                                        var sum = w.globals.seriesTotals.reduce(function(a, b) { return a + b; }, 0);
+                                        return new Intl.NumberFormat('vi-VN').format(sum) + ' đ';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }).render();
+        }
+    }
 });
 </script>
 @endpush

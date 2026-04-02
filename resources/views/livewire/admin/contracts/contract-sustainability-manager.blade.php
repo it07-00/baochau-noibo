@@ -2,11 +2,11 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-0">Tư vấn & Báo cáo phát triển bền vững</h4>
+            <h4 class="mb-0">HĐ TV & BC PTBV</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">HĐ Phát triển bền vững</li>
+                    <li class="breadcrumb-item active">HĐ TV & BC PTBV</li>
                 </ol>
             </nav>
         </div>

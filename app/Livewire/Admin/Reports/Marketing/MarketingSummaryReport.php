@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Marketing;
 
-use App\Models\QuotationSales;
+use App\Models\Quotation;
 use Livewire\Component;
 
 class MarketingSummaryReport extends Component
@@ -19,11 +19,11 @@ class MarketingSummaryReport extends Component
 
     public function render()
     {
-        $monthRows = QuotationSales::whereYear('sales_month', $this->year)
-            ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month))
-            ->selectRaw('MONTH(sales_month) as m, COUNT(*) as count,
-                SUM(value_ext_vat) as total_value, SUM(sales_amount) as total_sales')
-            ->groupByRaw('MONTH(sales_month)')
+        $monthRows = Quotation::whereYear('date', $this->year)
+            ->when($this->filter_month, fn($q) => $q->whereMonth('date', $this->filter_month))
+            ->selectRaw('MONTH(date) as m, COUNT(*) as count,
+                SUM(original_value) as total_value, SUM(total_value) as total_sales')
+            ->groupByRaw('MONTH(date)')
             ->get()->keyBy('m');
 
         $monthly = [];
@@ -36,12 +36,12 @@ class MarketingSummaryReport extends Component
             ];
         }
 
-        $byService = QuotationSales::whereYear('sales_month', $this->year)
-            ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month))
-            ->whereNotNull('service')
-            ->where('service', '!=', '')
-            ->selectRaw('service, COUNT(*) as count, SUM(sales_amount) as total_sales')
-            ->groupBy('service')
+        $byService = Quotation::whereYear('date', $this->year)
+            ->when($this->filter_month, fn($q) => $q->whereMonth('date', $this->filter_month))
+            ->whereNotNull('work_description')
+            ->where('work_description', '!=', '')
+            ->selectRaw('work_description as service, COUNT(*) as count, SUM(total_value) as total_sales')
+            ->groupBy('work_description')
             ->orderByDesc('total_sales')
             ->get();
 

@@ -42,7 +42,6 @@ class PermissionsSeeder extends Seeder
             'handler-invoices'    => ['view', 'create', 'edit', 'delete'],
 
             // --- Kinh doanh ---
-            'sales-quotation'     => ['view', 'create', 'edit', 'delete'],
             'sales-renewal'       => ['view', 'create', 'edit', 'delete'],
             'sales-progressive'   => ['view', 'create', 'edit', 'delete'],
             'quotation-tracking'  => ['view', 'create', 'edit', 'delete'],
@@ -139,7 +138,6 @@ class PermissionsSeeder extends Seeder
             // Lịch thanh toán: CRUD
             'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit', 'payment-schedules.delete',
             // Kinh doanh: CRUD đầy đủ
-            'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
             'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
             'sales-progressive.view', 'sales-progressive.create', 'sales-progressive.edit', 'sales-progressive.delete',
             'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
@@ -173,7 +171,6 @@ class PermissionsSeeder extends Seeder
             // Lịch thanh toán: xem + tạo/sửa
             'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit',
             // Kinh doanh: CRUD cá nhân
-            'sales-quotation.view', 'sales-quotation.create', 'sales-quotation.edit', 'sales-quotation.delete',
             'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
             'sales-progressive.view', 'sales-progressive.create', 'sales-progressive.edit', 'sales-progressive.delete',
             'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',

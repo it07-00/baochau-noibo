@@ -34,7 +34,6 @@
         'handler-invoices'         => 'Hóa đơn chủ xử lý',
 
         // Kinh doanh
-        'sales-quotation'          => 'Doanh số báo giá',
         'sales-renewal'            => 'Doanh số tái ký',
         'sales-progressive'        => 'Doanh số tiến độ',
         'quotation-tracking'       => 'Theo dõi báo giá',
@@ -69,7 +68,7 @@
 @section('content')
     <form action="{{ route('app.roles.store') }}" method="POST">
         @csrf
-        
+
         <div class="row g-4 mt-1">
             <div class="col-12 col-xl-4">
                 <div class="pure-card rounded-custom card-bg shadow-custom mb-4 position-sticky" style="top: 100px;">
@@ -124,9 +123,9 @@
                                     @endphp
                                     <div class="col-md-4 col-sm-6">
                                         <div class="form-check custom-checkbox">
-                                            <input class="form-check-input perm-check" type="checkbox" 
-                                                name="permissions[]" 
-                                                value="{{ $permission->name }}" 
+                                            <input class="form-check-input perm-check" type="checkbox"
+                                                name="permissions[]"
+                                                value="{{ $permission->name }}"
                                                 id="perm_{{ $permission->id }}"
                                                 {{ (is_array(old('permissions')) && in_array($permission->name, old('permissions'))) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="perm_{{ $permission->id }}">

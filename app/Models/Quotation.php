@@ -11,6 +11,7 @@ class Quotation extends Model
         'staff_id',
         'company_name',
         'address',
+        'province',
         'industry',
         'contact_person',
         'work_description',

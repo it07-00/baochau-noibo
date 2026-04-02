@@ -107,6 +107,9 @@
                                  style="line-height: 1.2; font-size: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                                  title="{{ $item->address }}">
                                 <i class="bi bi-geo-alt-fill me-1"></i>{{ $item->address }}
+                                @if($item->province)
+                                    <span class="badge bg-info bg-opacity-10 text-info ms-1" style="font-size: 0.65rem;">{{ $item->province }}</span>
+                                @endif
                             </div>
                             @endif
                         </td>
@@ -189,6 +192,10 @@
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Địa chỉ</th>
                                     <td class="px-4 py-3">{{ $selectedQuotation->address }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3">Tỉnh thành</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->province }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Ngành nghề</th>
@@ -274,16 +281,25 @@
                                 <input type="text" class="form-control @error('formData.company_name') is-invalid @enderror" wire:model.defer="formData.company_name" placeholder="Tên công ty niêm yết">
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tỉnh thành</label>
+                                <select class="form-select" wire:model.defer="formData.province">
+                                    <option value="">-- Chọn tỉnh/TP --</option>
+                                    @foreach(\App\Support\VietnamProvinces::list() as $p)
+                                        <option value="{{ $p }}">{{ $p }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-5">
                                 <label class="form-label fw-bold">Địa chỉ xuất hóa đơn</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.address">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label fw-bold">Ngành nghề</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.industry">
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Khách hàng (Người liên hệ)</label>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Người liên hệ</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.contact_person">
                             </div>
 

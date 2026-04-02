@@ -51,7 +51,6 @@
                         <tr>
                             <th style="width:60px" class="text-center">Hạng</th>
                             <th>Nhân viên</th>
-                            <th class="text-end">DS Báo giá</th>
                             <th class="text-end">DS Tái ký</th>
                             <th class="text-end">DS Tiến độ</th>
                             <th class="text-end fw-bold">Tổng doanh số</th>
@@ -66,9 +65,6 @@
                         <tr class="{{ $row['total'] == 0 ? 'text-muted' : '' }}">
                             <td class="text-center fw-bold fs-6">{{ $medal }}</td>
                             <td class="fw-semibold">{{ $row['name'] }}</td>
-                            <td class="text-end text-primary">
-                                {{ $row['quotation'] > 0 ? number_format($row['quotation'], 0, ',', '.') : '—' }}
-                            </td>
                             <td class="text-end text-success">
                                 {{ $row['renewal'] > 0 ? number_format($row['renewal'], 0, ',', '.') : '—' }}
                             </td>
@@ -80,14 +76,13 @@
                             </td>
                         </tr>
                         @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
                         @endforelse
                     </tbody>
                     @if($rankings->isNotEmpty())
                     <tfoot class="table-secondary fw-bold">
                         <tr>
                             <td colspan="2">Tổng</td>
-                            <td class="text-end text-primary">{{ number_format($rankings->sum('quotation'), 0, ',', '.') }} đ</td>
                             <td class="text-end text-success">{{ number_format($rankings->sum('renewal'), 0, ',', '.') }} đ</td>
                             <td class="text-end text-warning">{{ number_format($rankings->sum('progressive'), 0, ',', '.') }} đ</td>
                             <td class="text-end">{{ number_format($rankings->sum('total'), 0, ',', '.') }} đ</td>

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\ProgressiveSales;
 use App\Models\SalesTarget;
@@ -63,12 +62,6 @@ class SalesTargetReport extends Component
         }
 
         $staffFilter = $this->filter_staff;
-
-        QuotationSales::whereYear('sales_month', $this->year)
-            ->when($staffFilter, fn($q) => $q->where('staff_id', $staffFilter))
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['actual'] += (float) $r->total);
 
         RenewalSales::whereYear('sales_month', $this->year)
             ->when($staffFilter, fn($q) => $q->where('user_id', $staffFilter))

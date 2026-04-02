@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Marketing;
 
-use App\Models\QuotationSales;
+use App\Models\Quotation;
 use App\Models\SalesTarget;
 use Livewire\Component;
 
@@ -59,9 +59,9 @@ class MarketingTargetReport extends Component
 
     public function render()
     {
-        $actualRows = QuotationSales::whereYear('sales_month', $this->year)
-            ->selectRaw('MONTH(sales_month) as m, COUNT(*) as count, SUM(sales_amount) as total_sales')
-            ->groupByRaw('MONTH(sales_month)')
+        $actualRows = Quotation::whereYear('date', $this->year)
+            ->selectRaw('MONTH(date) as m, COUNT(*) as count, SUM(total_value) as total_sales')
+            ->groupByRaw('MONTH(date)')
             ->get()->keyBy('m');
 
         $targetRecords = SalesTarget::where('year', $this->year)

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\ProgressiveSales;
 use App\Models\User;
@@ -23,10 +22,6 @@ class SalesAchievementReport extends Component
         $staffs = User::role('kinh-doanh')->orderBy('name')->get();
 
         $rankings = $staffs->map(function ($user) {
-            $qBase = QuotationSales::where('staff_id', $user->id)
-                ->whereYear('sales_month', $this->year)
-                ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
-
             $rBase = RenewalSales::where('user_id', $user->id)
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
@@ -35,15 +30,13 @@ class SalesAchievementReport extends Component
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
 
-            $quotation   = (float) (clone $qBase)->sum('sales_amount');
             $renewal     = (float) (clone $rBase)->sum('sales_amount');
             $progressive = (float) (clone $pBase)->sum('amount');
-            $total       = $quotation + $renewal + $progressive;
+            $total       = $renewal + $progressive;
 
             return [
                 'id'          => $user->id,
                 'name'        => $user->name,
-                'quotation'   => $quotation,
                 'renewal'     => $renewal,
                 'progressive' => $progressive,
                 'total'       => $total,

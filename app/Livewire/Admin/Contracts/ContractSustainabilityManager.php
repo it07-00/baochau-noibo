@@ -396,6 +396,6 @@ class ContractSustainabilityManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractSustainability::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractSustainability::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'Tư vấn & Báo cáo phát triển bền vững']);
+        ])->layout('admin.layouts.app', ['title' => 'HĐ TV & BC PTBV']);
     }
 }

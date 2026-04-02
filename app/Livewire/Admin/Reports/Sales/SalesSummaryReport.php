@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\Reports\Sales;
 
 use App\Models\ContractPaymentSchedule;
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\ProgressiveSales;
 use App\Models\User;
@@ -23,14 +22,8 @@ class SalesSummaryReport extends Component
     {
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
-            $months[$m] = ['quotation' => 0, 'renewal' => 0, 'progressive' => 0, 'payment_due' => 0, 'payment_paid' => 0];
+            $months[$m] = ['renewal' => 0, 'progressive' => 0, 'payment_due' => 0, 'payment_paid' => 0];
         }
-
-        QuotationSales::whereYear('sales_month', $this->year)
-            ->when($this->filter_staff, fn($q) => $q->where('staff_id', $this->filter_staff))
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['quotation'] = (float) $r->total);
 
         RenewalSales::whereYear('sales_month', $this->year)
             ->when($this->filter_staff, fn($q) => $q->where('user_id', $this->filter_staff))
@@ -56,13 +49,12 @@ class SalesSummaryReport extends Component
             ->each(fn($r) => $months[$r->m]['payment_paid'] = (float) $r->total);
 
         $totals = [
-            'quotation'    => array_sum(array_column($months, 'quotation')),
             'renewal'      => array_sum(array_column($months, 'renewal')),
             'progressive'  => array_sum(array_column($months, 'progressive')),
             'payment_due'  => array_sum(array_column($months, 'payment_due')),
             'payment_paid' => array_sum(array_column($months, 'payment_paid')),
         ];
-        $totals['grand'] = $totals['quotation'] + $totals['renewal'] + $totals['progressive'];
+        $totals['grand'] = $totals['renewal'] + $totals['progressive'];
 
         $staffs = User::role('kinh-doanh')->orderBy('name')->get();
 

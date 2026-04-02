@@ -7,7 +7,6 @@ use App\Models\ContractConsulting;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\ProgressiveSales;
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\User;
 
@@ -21,21 +20,16 @@ class DashboardController extends Controller
         // ── KPI ────────────────────────────────────────
         $totalCustomers = Customer::count();
 
-        $salesThisMonth = (float) QuotationSales::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('sales_amount')
-                        + (float) RenewalSales::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('sales_amount')
+        $salesThisMonth = (float) RenewalSales::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('sales_amount')
                         + (float) ProgressiveSales::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('amount');
 
-        $salesThisYear = (float) QuotationSales::whereYear('sales_month', $year)->sum('sales_amount')
-                       + (float) RenewalSales::whereYear('sales_month', $year)->sum('sales_amount')
+        $salesThisYear = (float) RenewalSales::whereYear('sales_month', $year)->sum('sales_amount')
                        + (float) ProgressiveSales::whereYear('sales_month', $year)->sum('amount');
 
         $contractsThisYear = ContractWaste::whereYear('signed_at', $year)->count()
                            + ContractConsulting::whereYear('signed_at', $year)->count();
 
         // ── Doanh số theo tháng ─────────────────────────
-        $qM = QuotationSales::whereYear('sales_month', $year)
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
-            ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
         $rM = RenewalSales::whereYear('sales_month', $year)
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
             ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
@@ -45,8 +39,7 @@ class DashboardController extends Controller
 
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
-            $monthly[$m] = (float) ($qM->get($m)?->val ?? 0)
-                         + (float) ($rM->get($m)?->val ?? 0)
+            $monthly[$m] = (float) ($rM->get($m)?->val ?? 0)
                          + (float) ($pM->get($m)?->val ?? 0);
         }
         $filtered = array_filter($monthly);
@@ -55,8 +48,7 @@ class DashboardController extends Controller
         // ── Top 5 nhân viên kinh doanh ───────────────────
         $topStaff = User::role('kinh-doanh')->get()
             ->map(function ($user) use ($year) {
-                $total = (float) QuotationSales::whereYear('sales_month', $year)->where('staff_id', $user->id)->sum('sales_amount')
-                       + (float) RenewalSales::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('sales_amount')
+                $total = (float) RenewalSales::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('sales_amount')
                        + (float) ProgressiveSales::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('amount');
                 return ['name' => $user->name, 'total' => $total];
             })

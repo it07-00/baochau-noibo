@@ -30,6 +30,7 @@ class QuotationManager extends Component
         'staff_id' => '',
         'company_name' => '',
         'address' => '',
+        'province' => '',
         'industry' => '',
         'contact_person' => '',
         'work_description' => '',
@@ -87,7 +88,7 @@ class QuotationManager extends Component
 
     public function calculateTotal()
     {
-        $this->formData['total_value'] = (float)$this->formData['value_inc_vat'] - 
+        $this->formData['total_value'] = (float)$this->formData['value_inc_vat'] -
                                          (float)$this->formData['commission_value'];
     }
 
@@ -167,6 +168,7 @@ class QuotationManager extends Component
             'staff_id' => auth()->id(),
             'company_name' => '',
             'address' => '',
+            'province' => '',
             'industry' => '',
             'contact_person' => '',
             'work_description' => '',

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\QuotationSales;
+use App\Models\Quotation;
 use App\Models\User;
 use Livewire\Component;
 
@@ -37,9 +37,9 @@ class PersonalSalesReport extends Component
 
         if ($staffId) {
             // Chế độ 1 nhân viên: breakdown theo tháng
-            QuotationSales::whereYear('sales_month', $this->year)
+            Quotation::whereYear('date', $this->year)
                 ->where('staff_id', $staffId)
-                ->selectRaw('MONTH(sales_month) as m, COUNT(*) as cnt, SUM(value_ext_vat) as val, SUM(sales_amount) as sa')
+                ->selectRaw('MONTH(date) as m, COUNT(*) as cnt, SUM(original_value) as val, SUM(total_value) as sa')
                 ->groupBy('m')->get()
                 ->each(function ($r) use (&$months) {
                     $months[$r->m] = ['count' => $r->cnt, 'value' => (float) $r->val, 'sales_amount' => (float) $r->sa];
@@ -51,9 +51,9 @@ class PersonalSalesReport extends Component
             // Chế độ tất cả: breakdown theo nhân viên
             $staffDetail = null;
             $allStaff    = User::role('kinh-doanh')->orderBy('name')->get()->map(function ($user) {
-                $rows = QuotationSales::whereYear('sales_month', $this->year)
+                $rows = Quotation::whereYear('date', $this->year)
                     ->where('staff_id', $user->id)
-                    ->selectRaw('COUNT(*) as cnt, SUM(value_ext_vat) as val, SUM(sales_amount) as sa')
+                    ->selectRaw('COUNT(*) as cnt, SUM(original_value) as val, SUM(total_value) as sa')
                     ->first();
                 return [
                     'id'           => $user->id,

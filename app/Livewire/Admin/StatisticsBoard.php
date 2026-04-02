@@ -12,7 +12,6 @@ use App\Models\ContractAssignment;
 use App\Models\ContractPaymentSchedule;
 use App\Models\Customer;
 use App\Models\ProgressiveSales;
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\User;
 use Livewire\Component;
@@ -59,8 +58,7 @@ class StatisticsBoard extends Component
         }
 
         // ── Tổng doanh số từ sales tracking ────────────
-        $totalSales = (float) QuotationSales::whereYear('sales_month', $this->year)->sum('sales_amount')
-                    + (float) RenewalSales::whereYear('sales_month', $this->year)->sum('sales_amount')
+        $totalSales = (float) RenewalSales::whereYear('sales_month', $this->year)->sum('sales_amount')
                     + (float) ProgressiveSales::whereYear('sales_month', $this->year)->sum('amount');
 
         // ── Doanh số thực thu (từ lịch thanh toán) ────
@@ -93,10 +91,6 @@ class StatisticsBoard extends Component
             }
         }
 
-        $qM = QuotationSales::whereYear('sales_month', $this->year)
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
-            ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
-
         $rM = RenewalSales::whereYear('sales_month', $this->year)
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
             ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
@@ -122,8 +116,7 @@ class StatisticsBoard extends Component
             $monthly[$m] = [
                 'contracts'    => $contractMonthly[$m]['cnt'] ?? 0,
                 'value'        => (float) ($contractMonthly[$m]['val'] ?? 0),
-                'sales'        => (float) ($qM->get($m)?->val ?? 0)
-                               + (float) ($rM->get($m)?->val ?? 0)
+                'sales'        => (float) ($rM->get($m)?->val ?? 0)
                                + (float) ($pM->get($m)?->val ?? 0),
                 'revenue'      => (float) ($revenueByMonth->get($m)?->total ?? 0),
                 'payment_due'  => (float) ($paymentDueByMonth->get($m)?->total ?? 0),

@@ -396,6 +396,6 @@ class ContractEnergyManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractEnergy::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractEnergy::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'Giảm phát thải & Hiệu quả năng lượng']);
+        ])->layout('admin.layouts.app', ['title' => 'HĐ Phát thải & Năng lượng']);
     }
 }

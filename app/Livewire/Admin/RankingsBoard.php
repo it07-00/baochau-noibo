@@ -11,7 +11,6 @@ use App\Models\ContractCommercial;
 use App\Models\ContractSustainability;
 use App\Models\ContractEnergy;
 use App\Models\ProgressiveSales;
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -45,11 +44,25 @@ class RankingsBoard extends Component
         $paymentStats       = ['due' => 0, 'paid' => 0, 'pending' => 0, 'partial' => 0, 'overdue' => 0];
 
         if ($canSeeSales) {
+            // ── Thực thu theo nhân viên (tính trước để dùng trong salesRankings) ──
+            $revenuePayments = ContractPaymentSchedule::whereYear('paid_date', $this->year)
+                ->whereIn('status', ['paid', 'partial'])->get();
+
+            $staffTotals = [];
+            foreach ($revenuePayments->groupBy('contract_type') as $type => $items) {
+                if (!class_exists($type)) continue;
+                $ids = $items->pluck('contract_id')->unique();
+                $contracts = $type::whereIn('id', $ids)->with('staff')->get()->keyBy('id');
+                foreach ($items as $item) {
+                    $contract = $contracts->get($item->contract_id);
+                    if (!$contract || !$contract->staff) continue;
+                    $staffTotals[$contract->staff->name] = ($staffTotals[$contract->staff->name] ?? 0) + (float) $item->paid_amount;
+                }
+            }
+
             // ── Xếp hạng nhân viên kinh doanh ──────────────
             $salesRankings = User::role('kinh-doanh')->get()
-                ->map(function ($user) {
-                    $q = (float) QuotationSales::whereYear('sales_month', $this->year)
-                        ->where('staff_id', $user->id)->sum('sales_amount');
+                ->map(function ($user) use ($staffTotals) {
                     $r = (float) RenewalSales::whereYear('sales_month', $this->year)
                         ->where('user_id', $user->id)->sum('sales_amount');
                     $p = (float) ProgressiveSales::whereYear('sales_month', $this->year)
@@ -57,10 +70,10 @@ class RankingsBoard extends Component
 
                     return [
                         'name'        => $user->name,
-                        'quotation'   => $q,
                         'renewal'     => $r,
                         'progressive' => $p,
-                        'total'       => $q + $r + $p,
+                        'total'       => $r + $p,
+                        'revenue'     => $staffTotals[$user->name] ?? 0,
                     ];
                 })
                 ->sortByDesc('total')
@@ -87,22 +100,51 @@ class RankingsBoard extends Component
                 ->limit(15)
                 ->get();
 
-            // ── Top tỉnh/TP theo doanh số báo giá ───────────
-            $topProvinces = QuotationSales::whereYear('sales_month', $this->year)
-                ->whereNotNull('province')
-                ->where('province', '!=', '')
-                ->selectRaw('province, COUNT(*) as cnt, SUM(sales_amount) as total')
-                ->groupBy('province')
-                ->orderByDesc('total')
-                ->limit(10)
-                ->get();
+            // ── Top tỉnh/TP theo tiền thu từ các giai đoạn HĐ ───────────
+            $contractTables = [
+                \App\Models\ContractWaste::class          => 'contract_wastes',
+                \App\Models\ContractConsulting::class     => 'contract_consultings',
+                \App\Models\ContractProject::class        => 'contract_projects',
+                \App\Models\ContractCommercial::class     => 'contract_commercials',
+                \App\Models\ContractSustainability::class => 'contract_sustainabilities',
+                \App\Models\ContractEnergy::class         => 'contract_energies',
+            ];
 
-            // ── Top dịch vụ theo doanh số báo giá ───────────
-            $topServices = QuotationSales::whereYear('sales_month', $this->year)
-                ->whereNotNull('service')
-                ->where('service', '!=', '')
-                ->selectRaw('service, COUNT(*) as cnt, SUM(sales_amount) as total')
-                ->groupBy('service')
+            $parts    = [];
+            $bindings = [];
+            foreach ($contractTables as $type => $table) {
+                // Use COALESCE(contract.province, customer.province) so contracts
+                // without a province set fall back to the linked customer's province.
+                // Filter by paid_date year + paid_amount > 0 = money actually collected.
+                $parts[] = "SELECT COALESCE(NULLIF(c.province,''), cust.province) AS province,
+                    COUNT(DISTINCT cps.contract_id) AS cnt,
+                    COALESCE(SUM(cps.paid_amount), 0) AS total
+                FROM contract_payment_schedules cps
+                INNER JOIN `{$table}` c ON cps.contract_id = c.id AND cps.contract_type = ?
+                LEFT JOIN customers cust ON cust.id = c.customer_id
+                WHERE YEAR(cps.paid_date) = ?
+                  AND cps.paid_amount > 0
+                  AND c.deleted_at IS NULL
+                GROUP BY COALESCE(NULLIF(c.province,''), cust.province)";
+                $bindings[] = $type;
+                $bindings[] = $this->year;
+            }
+
+            $sql = "SELECT province, SUM(cnt) AS cnt, SUM(total) AS total
+                    FROM (" . implode(' UNION ALL ', $parts) . ") sub
+                    WHERE province IS NOT NULL AND province != ''
+                    GROUP BY province
+                    ORDER BY total DESC
+                    LIMIT 10";
+
+            $topProvinces = collect(DB::select($sql, $bindings));
+
+            // ── Top dịch vụ theo báo giá ───────────
+            $topServices = \App\Models\Quotation::whereYear('date', $this->year)
+                ->whereNotNull('work_description')
+                ->where('work_description', '!=', '')
+                ->selectRaw('work_description as service, COUNT(*) as cnt, SUM(total_value) as total')
+                ->groupBy('work_description')
                 ->orderByDesc('total')
                 ->limit(10)
                 ->get();
@@ -125,27 +167,7 @@ class RankingsBoard extends Component
             $paymentStats['paid_count']    = (int) ($statusCounts->get('paid')?->cnt ?? 0);
             $paymentStats['overdue_count'] = (int) ($statusCounts->get('overdue')?->cnt ?? 0);
 
-            // ── Xếp hạng nhân viên theo doanh số thực thu ──
-            $contractModelsMap = [
-                ContractWaste::class, ContractConsulting::class, ContractProject::class,
-                ContractCommercial::class, ContractSustainability::class, ContractEnergy::class,
-            ];
-            $revenuePayments = ContractPaymentSchedule::whereYear('paid_date', $this->year)
-                ->whereIn('status', ['paid', 'partial'])->get();
-
-            $staffTotals = [];
-            foreach ($revenuePayments->groupBy('contract_type') as $type => $items) {
-                if (!class_exists($type)) continue;
-                $ids = $items->pluck('contract_id')->unique();
-                $contracts = $type::whereIn('id', $ids)->with('staff')->get()->keyBy('id');
-                foreach ($items as $item) {
-                    $contract = $contracts->get($item->contract_id);
-                    if (!$contract || !$contract->staff) continue;
-                    $staffTotals[$contract->staff->name] = ($staffTotals[$contract->staff->name] ?? 0) + (float) $item->paid_amount;
-                }
-            }
-            $revenueRankings = collect($staffTotals)->sortDesc()->take(15)
-                ->map(fn($total, $name) => ['name' => $name, 'total' => $total])->values();
+            $revenueRankings = collect();
         }
 
         if ($canSeeConsulting) {

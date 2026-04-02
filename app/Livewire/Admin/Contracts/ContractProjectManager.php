@@ -396,6 +396,6 @@ class ContractProjectManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractProject::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractProject::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'Quản lý Hợp đồng dự án']);
+        ])->layout('admin.layouts.app', ['title' => 'HĐ Kỹ thuật & Ứng phó SC']);
     }
 }

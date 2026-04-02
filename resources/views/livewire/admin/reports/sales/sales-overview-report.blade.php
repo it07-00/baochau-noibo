@@ -30,9 +30,6 @@
     {{-- YoY Summary Cards --}}
     <div class="row g-3 mb-4">
         @php
-            $changeQ = $prevTotals['quotation'] > 0
-                ? (($currentTotals['quotation'] - $prevTotals['quotation']) / $prevTotals['quotation'] * 100)
-                : null;
             $changeR = $prevTotals['renewal'] > 0
                 ? (($currentTotals['renewal'] - $prevTotals['renewal']) / $prevTotals['renewal'] * 100)
                 : null;
@@ -44,12 +41,11 @@
                 : null;
         @endphp
         @foreach([
-            ['label' => 'DS Báo giá', 'current' => $currentTotals['quotation'], 'prev' => $prevTotals['quotation'], 'change' => $changeQ, 'color' => 'primary'],
             ['label' => 'DS Tái ký', 'current' => $currentTotals['renewal'], 'prev' => $prevTotals['renewal'], 'change' => $changeR, 'color' => 'success'],
             ['label' => 'DS Tiến độ', 'current' => $currentTotals['progressive'], 'prev' => $prevTotals['progressive'], 'change' => $changeP, 'color' => 'warning'],
             ['label' => 'Tổng', 'current' => $currentTotals['grand'], 'prev' => $prevTotals['grand'], 'change' => $changeG, 'color' => 'dark'],
         ] as $card)
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class="small text-muted mb-1">{{ $card['label'] }}</div>
@@ -79,7 +75,6 @@
                     <thead class="table-light">
                         <tr>
                             <th>Quý</th>
-                            <th class="text-end">DS Báo giá</th>
                             <th class="text-end">DS Tái ký</th>
                             <th class="text-end">DS Tiến độ</th>
                             <th class="text-end fw-bold">Tổng quý</th>
@@ -87,10 +82,9 @@
                     </thead>
                     <tbody>
                         @foreach($quarters as $q => $data)
-                            @php $qTotal = $data['quotation'] + $data['renewal'] + $data['progressive']; @endphp
+                            @php $qTotal = $data['renewal'] + $data['progressive']; @endphp
                             <tr>
                                 <td class="fw-semibold">Quý {{ $q }} <small class="text-muted">(T{{ ($q-1)*3+1 }}–T{{ $q*3 }})</small></td>
-                                <td class="text-end text-primary">{{ $data['quotation'] > 0 ? number_format($data['quotation'], 0, ',', '.') : '—' }}</td>
                                 <td class="text-end text-success">{{ $data['renewal'] > 0 ? number_format($data['renewal'], 0, ',', '.') : '—' }}</td>
                                 <td class="text-end text-warning">{{ $data['progressive'] > 0 ? number_format($data['progressive'], 0, ',', '.') : '—' }}</td>
                                 <td class="text-end fw-bold">{{ $qTotal > 0 ? number_format($qTotal, 0, ',', '.') . ' đ' : '—' }}</td>
@@ -100,7 +94,6 @@
                     <tfoot class="table-secondary fw-bold">
                         <tr>
                             <td>Tổng năm {{ $year }}</td>
-                            <td class="text-end text-primary">{{ number_format($currentTotals['quotation'], 0, ',', '.') }} đ</td>
                             <td class="text-end text-success">{{ number_format($currentTotals['renewal'], 0, ',', '.') }} đ</td>
                             <td class="text-end text-warning">{{ number_format($currentTotals['progressive'], 0, ',', '.') }} đ</td>
                             <td class="text-end fs-6">{{ number_format($currentTotals['grand'], 0, ',', '.') }} đ</td>

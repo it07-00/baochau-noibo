@@ -2,11 +2,11 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-0">Quản lý Hợp đồng thương mại</h4>
+            <h4 class="mb-0">HĐ NC & CĐ Công nghệ</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Hợp đồng thương mại</li>
+                    <li class="breadcrumb-item active">HĐ NC & CĐ Công nghệ</li>
                 </ol>
             </nav>
         </div>

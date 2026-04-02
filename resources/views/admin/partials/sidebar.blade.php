@@ -212,9 +212,9 @@ SVG;
                         [
                             'title'       => 'Bộ phận kinh doanh',
                             'icon'        => $stackIcon,
-                            'permission'  => 'sales-quotation.view',
+                            'permission'  => 'sales-renewal.view',
                             'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
-                            'children'    => ['Doanh số báo giá', 'Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
+                            'children'    => ['Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
                         ],
                         [
                             'title'       => 'Bộ phận tư vấn',
@@ -309,9 +309,6 @@ SVG;
                     } elseif (request()->routeIs('app.commissions.*')) {
                         $activeGroup = 'Bộ phận kế toán';
                         $activeChild = 'Yêu cầu chi hoa hồng';
-                    } elseif (request()->routeIs('app.sales.quotation.*')) {
-                        $activeGroup = 'Bộ phận kinh doanh';
-                        $activeChild = 'Doanh số báo giá';
                     } elseif (request()->routeIs('app.sales.renewal.*')) {
                         $activeGroup = 'Bộ phận kinh doanh';
                         $activeChild = 'Doanh số tái ký';
@@ -457,8 +454,6 @@ SVG;
                                             $href = route('app.daily-reports.index');
                                         } elseif ($menu['title'] === 'Bộ phận kế toán' && $child === 'Yêu cầu chi hoa hồng') {
                                             $href = route('app.commissions.index');
-                                        } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số báo giá') {
-                                            $href = route('app.sales.quotation.index');
                                         } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số tái ký') {
                                             $href = route('app.sales.renewal.index');
                                         } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ') {

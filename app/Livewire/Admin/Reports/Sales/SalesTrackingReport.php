@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\QuotationSales;
 use App\Models\RenewalSales;
 use App\Models\ProgressiveSales;
 use App\Models\User;
@@ -17,7 +16,7 @@ class SalesTrackingReport extends Component
     public string $filter_month  = '';
     public string $filter_staff  = '';
     public string $filter_status = '';
-    public string $active_tab    = 'quotation'; // quotation | renewal | progressive
+    public string $active_tab    = 'renewal'; // renewal | progressive
 
     public function mount(): void
     {
@@ -39,14 +38,6 @@ class SalesTrackingReport extends Component
         $staffFilter  = $this->filter_staff ?: ($isKinhDoanh ? (string) auth()->id() : '');
 
         $items = match ($this->active_tab) {
-            'quotation' => QuotationSales::with('staff')
-                ->whereYear('sales_month', $this->year)
-                ->when($this->filter_month,  fn($q) => $q->whereMonth('sales_month', $this->filter_month))
-                ->when($staffFilter,         fn($q) => $q->where('staff_id', $staffFilter))
-                ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
-                ->orderByDesc('sales_month')
-                ->paginate(20),
-
             'renewal' => RenewalSales::with('creator')
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month,  fn($q) => $q->whereMonth('sales_month', $this->filter_month))
@@ -67,9 +58,6 @@ class SalesTrackingReport extends Component
         };
 
         // Tab totals (without pagination)
-        $qTotal = QuotationSales::whereYear('sales_month', $this->year)
-            ->when($staffFilter, fn($q) => $q->where('staff_id', $staffFilter))
-            ->sum('sales_amount');
         $rTotal = RenewalSales::whereYear('sales_month', $this->year)
             ->when($staffFilter, fn($q) => $q->where('user_id', $staffFilter))
             ->sum('sales_amount');
@@ -79,7 +67,6 @@ class SalesTrackingReport extends Component
 
         return view('livewire.admin.reports.sales.sales-tracking-report', [
             'items'   => $items,
-            'qTotal'  => (float) $qTotal,
             'rTotal'  => (float) $rTotal,
             'pTotal'  => (float) $pTotal,
             'staffs'  => User::role('kinh-doanh')->orderBy('name')->get(),
