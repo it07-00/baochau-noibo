@@ -84,6 +84,9 @@ Route::middleware('auth')->name('app.')->group(function () {
     // Daily Reports
     Route::get('daily-reports', \App\Livewire\Admin\DailyReports\DailyReportManager::class)->name('daily-reports.index')->middleware('permission:daily-reports.view');
 
+    // Marketing Daily Reports
+    Route::get('marketing/bao-cao-hang-ngay', \App\Livewire\Admin\Marketing\MarketingReportManager::class)->name('marketing.daily-report.index')->middleware('permission:marketing-reports.view');
+
     // Commissions
     Route::prefix('commissions')->name('commissions.')->middleware('permission:commissions.view')->group(function () {
         Route::get('/', \App\Livewire\Admin\Commissions\CommissionRequestManager::class)->name('index');

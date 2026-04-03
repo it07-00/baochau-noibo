@@ -74,6 +74,9 @@ class PermissionsSeeder extends Seeder
             // --- Báo cáo ngày ---
             'daily-reports'       => ['view', 'view-all', 'create', 'edit', 'delete'],
 
+            // --- Báo cáo Marketing hàng ngày ---
+            'marketing-reports'   => ['view', 'view-all', 'create', 'edit', 'delete'],
+
             // --- Nhật ký hoạt động (chỉ IT) ---
             'activity-log'        => ['view'],
         ];
@@ -152,6 +155,8 @@ class PermissionsSeeder extends Seeder
             'internal-docs.view',
             // Báo cáo ngày: xem tất cả + tạo/sửa
             'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit',
+            // Báo cáo Marketing hàng ngày: chỉ xem
+            'marketing-reports.view', 'marketing-reports.view-all',
         ]);
 
         // ------------------------------------------------
@@ -250,6 +255,8 @@ class PermissionsSeeder extends Seeder
             'internal-docs.view',
             // Báo cáo ngày
             'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            // Báo cáo Marketing hàng ngày
+            'marketing-reports.view', 'marketing-reports.create', 'marketing-reports.edit',
         ]);
 
         // ------------------------------------------------

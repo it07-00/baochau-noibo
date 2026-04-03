@@ -65,8 +65,8 @@
                             <div class="me-3 flex-shrink-0">
                                 <x-user-avatar :user="$currentUser" :size="48" />
                             </div>
-                            <div class="flex-grow-1 text-start">
-                                <h6 class="mb-0">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
+                            <div class="flex-grow-1 text-start overflow-hidden">
+                                <h6 class="mb-0 text-truncate" style="max-width:180px;" title="{{ $currentUser?->name }}">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
                                 <span class="text-muted">Quản trị viên</span>
                             </div>
                         </div>

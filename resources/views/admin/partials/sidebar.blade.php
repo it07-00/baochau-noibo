@@ -238,6 +238,13 @@ SVG;
                             'children'    => ['HĐ Chất thải & Tiếng ồn', 'HĐ Pháp lý & Hồ sơ MT', 'HĐ Kỹ thuật & Ứng phó SC', 'HĐ NC & CĐ Công nghệ', 'HĐ TV & BC PTBV', 'HĐ Phát thải & Năng lượng'],
                         ],
                         [
+                            'title'       => 'Bộ phận Marketing',
+                            'icon'        => $usersIcon,
+                            'permission'  => 'marketing-reports.view',
+                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'marketing', 'quan-ly'],
+                            'children'    => ['Báo cáo hàng ngày'],
+                        ],
+                        [
                             'title'       => 'Báo cáo Marketing',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
@@ -303,6 +310,9 @@ SVG;
                     } elseif (request()->routeIs('app.contracts.energy.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
                         $activeChild = 'HĐ Phát thải & Năng lượng';
+                    } elseif (request()->routeIs('app.marketing.daily-report.*')) {
+                        $activeGroup = 'Bộ phận Marketing';
+                        $activeChild = 'Báo cáo hàng ngày';
                     } elseif (request()->routeIs('app.daily-reports.*')) {
                         $activeGroup = 'Báo cáo ngày';
                         $activeChild = 'Báo cáo ngày';
@@ -502,6 +512,8 @@ SVG;
                                             $href = route('app.reports.technical.sustainability');
                                         } elseif ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'BC Phát thải & Năng lượng') {
                                             $href = route('app.reports.technical.energy');
+                                        } elseif ($menu['title'] === 'Bộ phận Marketing' && $child === 'Báo cáo hàng ngày') {
+                                            $href = route('app.marketing.daily-report.index');
                                         } elseif ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng tổng kết') {
                                             $href = route('app.reports.marketing.summary');
                                         } elseif ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng mục tiêu cam kết') {
