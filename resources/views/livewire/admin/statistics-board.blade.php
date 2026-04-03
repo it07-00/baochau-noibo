@@ -46,6 +46,7 @@
                 </div>
             </div>
         </div>
+        @if($canSeeFinance)
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
@@ -59,6 +60,8 @@
                 </div>
             </div>
         </div>
+        @endif
+        @if($canSeeFinance)
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
@@ -85,8 +88,10 @@
                 </div>
             </div>
         </div>
+        @endif {{-- canSeeFinance --}}
     </div>
 
+    @if($canSeeFinance)
     {{-- Thu tiền Cards --}}
     <div class="row g-3 mb-4">
         <div class="col-md-4 col-6">
@@ -129,6 +134,7 @@
             </div>
         </div>
     </div>
+    @endif {{-- canSeeFinance row thu tiền --}}
 
     <div class="row g-4">
         {{-- Bảng theo tháng --}}
@@ -144,11 +150,15 @@
                                 <tr>
                                     <th>Tháng</th>
                                     <th class="text-center">Số HĐ ký</th>
+                                    @if($canSeeFinance)
                                     <th class="text-end">Giá trị HĐ</th>
+                                    @endif
+                                    @if($canSeeFinance)
                                     <th class="text-end">Doanh số</th>
                                     <th class="text-end">Thực thu</th>
                                     <th class="text-end">Phải thu</th>
                                     <th class="text-end">Đã thu</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -157,7 +167,10 @@
                                 <tr class="{{ !$hasData ? 'text-muted' : '' }}">
                                     <td class="fw-semibold">Tháng {{ $m }}</td>
                                     <td class="text-center">{{ $data['contracts'] > 0 ? $data['contracts'] : '—' }}</td>
+                                    @if($canSeeFinance)
                                     <td class="text-end small">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') . ' đ' : '—' }}</td>
+                                    @endif
+                                    @if($canSeeFinance)
                                     <td class="text-end fw-semibold {{ $data['sales'] > 0 ? 'text-info' : '' }}">
                                         {{ $data['sales'] > 0 ? number_format($data['sales'], 0, ',', '.') . ' đ' : '—' }}
                                     </td>
@@ -170,6 +183,7 @@
                                     <td class="text-end small {{ $data['payment_paid'] > 0 ? 'text-success' : '' }}">
                                         {{ $data['payment_paid'] > 0 ? number_format($data['payment_paid'], 0, ',', '.') . ' đ' : '—' }}
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -177,11 +191,15 @@
                                 <tr>
                                     <td>Tổng năm {{ $year }}</td>
                                     <td class="text-center">{{ $totalContracts }}</td>
+                                    @if($canSeeFinance)
                                     <td class="text-end">{{ number_format($totalContractValue, 0, ',', '.') }} đ</td>
+                                    @endif
+                                    @if($canSeeFinance)
                                     <td class="text-end text-info">{{ number_format($totalSales, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-success">{{ number_format($totalRevenue, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-danger">{{ number_format($totalPaymentDue, 0, ',', '.') }} đ</td>
                                     <td class="text-end text-success">{{ number_format($totalPaymentPaid, 0, ',', '.') }} đ</td>
+                                    @endif
                                 </tr>
                             </tfoot>
                         </table>
@@ -190,8 +208,24 @@
             </div>
         </div>
 
-        {{-- Bảng theo loại HĐ --}}
+        {{-- Biểu đồ tư vấn / Bảng theo loại HĐ --}}
         <div class="col-lg-4">
+            @if($canSeeConsulting)
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="mb-0 fw-bold">Dự án tư vấn theo loại</h6>
+                    <div class="btn-group btn-group-sm">
+                        <button wire:click="$set('chartMode','quarter')"
+                            class="btn {{ $chartMode === 'quarter' ? 'btn-primary' : 'btn-outline-secondary' }}">Theo quý</button>
+                        <button wire:click="$set('chartMode','year')"
+                            class="btn {{ $chartMode === 'year' ? 'btn-primary' : 'btn-outline-secondary' }}">Theo năm</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="consultingChart" height="260" wire:ignore></canvas>
+                </div>
+            </div>
+            @else
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-bottom py-3">
                     <h6 class="mb-0 fw-bold">Hợp đồng theo loại — {{ $year }}</h6>
@@ -212,8 +246,7 @@
                                 <td class="text-center">
                                     @if($data['count'] > 0)
                                         <span class="badge bg-soft-primary text-primary">{{ $data['count'] }}</span>
-                                    @else
-                                        —
+                                    @else —
                                     @endif
                                 </td>
                                 <td class="text-end small">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') . ' đ' : '—' }}</td>
@@ -230,8 +263,103 @@
                     </table>
                 </div>
             </div>
+            @endif
         </div>
     </div>
+
+    @if($canSeeConsulting)
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+    (function () {
+        const colors = ['#4361ee','#3a0ca3','#7209b7','#f72585','#4cc9f0'];
+        const chartData  = @json($consultingChartData);
+        const chartMode  = @json($chartMode);
+        const year       = @json($year);
+        const years      = @json(array_reverse($years));
+
+        const labels = chartMode === 'quarter'
+            ? ['Quý 1','Quý 2','Quý 3','Quý 4']
+            : years.map(y => 'Năm ' + y);
+
+        const datasets = Object.entries(chartData).map(([label, data], i) => ({
+            label,
+            data,
+            backgroundColor: colors[i % colors.length] + 'cc',
+            borderColor: colors[i % colors.length],
+            borderWidth: 1,
+            borderRadius: 4,
+        }));
+
+        const el = document.getElementById('consultingChart');
+        if (!el) return;
+        if (el._chartInstance) el._chartInstance.destroy();
+
+        el._chartInstance = new Chart(el, {
+            type: 'bar',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                    title: {
+                        display: true,
+                        text: chartMode === 'quarter' ? 'Số dự án theo quý — Năm ' + year : 'Số dự án theo năm',
+                        font: { size: 13 }
+                    },
+                    tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + ' dự án' } }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
+                }
+            }
+        });
+
+        // Re-render khi Livewire update
+        document.addEventListener('livewire:update', () => {
+            setTimeout(() => {
+                const newEl = document.getElementById('consultingChart');
+                if (!newEl) return;
+                if (newEl._chartInstance) newEl._chartInstance.destroy();
+
+                const newData   = @json($consultingChartData);
+                const newMode   = @json($chartMode);
+                const newLabels = newMode === 'quarter'
+                    ? ['Quý 1','Quý 2','Quý 3','Quý 4']
+                    : years.map(y => 'Năm ' + y);
+
+                const newDatasets = Object.entries(newData).map(([label, data], i) => ({
+                    label, data,
+                    backgroundColor: colors[i % colors.length] + 'cc',
+                    borderColor: colors[i % colors.length],
+                    borderWidth: 1, borderRadius: 4,
+                }));
+
+                newEl._chartInstance = new Chart(newEl, {
+                    type: 'bar',
+                    data: { labels: newLabels, datasets: newDatasets },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                            title: {
+                                display: true,
+                                text: newMode === 'quarter' ? 'Số dự án theo quý — Năm ' + year : 'Số dự án theo năm',
+                                font: { size: 13 }
+                            },
+                            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + ' dự án' } }
+                        },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } } }
+                    }
+                });
+            }, 50);
+        });
+    })();
+    </script>
+    @endpush
+    @endif
+
+
 
     @if($canSeeTechnical)
     {{-- Bộ phận kỹ thuật --}}

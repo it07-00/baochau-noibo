@@ -20,6 +20,7 @@ class StatisticsBoard extends Component
 {
     public int $year;
     public array $years = [];
+    public string $chartMode = 'quarter'; // 'quarter' | 'year'
 
     public function mount(): void
     {
@@ -46,7 +47,7 @@ class StatisticsBoard extends Component
         $totalContractValue = 0;
 
         foreach ($contractTypes as $label => $model) {
-            $row = $model::whereYear('created_at', $this->year)
+            $row = $model::whereYear('signed_at', $this->year)
                 ->selectRaw('COUNT(*) as cnt, COALESCE(SUM(value),0) as val')
                 ->first();
             $byType[$label] = [
@@ -124,9 +125,45 @@ class StatisticsBoard extends Component
             ];
         }
 
-        // ── Bộ phận kỹ thuật ──────────────────────────
         $currentUser = auth()->user();
-        $canSeeTechnical = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
+        $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
+        $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van', 'tp-kinh-doanh']);
+        $canSeeFinance    = !$currentUser->hasRole('tu-van');
+
+        // ── Biểu đồ tư vấn: số dự án theo loại / quý hoặc cả năm ──
+        $consultingTypes = [
+            'Tư vấn'    => ContractConsulting::class,
+            'Dự án'     => ContractProject::class,
+            'Thương mại'=> ContractCommercial::class,
+            'Bền vững'  => ContractSustainability::class,
+            'Năng lượng'=> ContractEnergy::class,
+        ];
+        $consultingChartData = [];
+        if ($canSeeConsulting) {
+            if ($this->chartMode === 'quarter') {
+                foreach ($consultingTypes as $label => $model) {
+                    $qData = [];
+                    for ($q = 1; $q <= 4; $q++) {
+                        $startMonth = ($q - 1) * 3 + 1;
+                        $endMonth   = $startMonth + 2;
+                        $qData[] = (int) $model::whereYear('signed_at', $this->year)
+                            ->whereMonth('signed_at', '>=', $startMonth)
+                            ->whereMonth('signed_at', '<=', $endMonth)
+                            ->count();
+                    }
+                    $consultingChartData[$label] = $qData;
+                }
+            } else {
+                // year mode: so sánh 5 năm gần nhất
+                foreach ($consultingTypes as $label => $model) {
+                    $yData = [];
+                    foreach (array_reverse($this->years) as $y) {
+                        $yData[] = (int) $model::whereYear('signed_at', $y)->count();
+                    }
+                    $consultingChartData[$label] = $yData;
+                }
+            }
+        }
 
         $technicalStats = collect();
         if ($canSeeTechnical) {
@@ -162,7 +199,8 @@ class StatisticsBoard extends Component
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
-            'byType', 'monthly', 'canSeeTechnical', 'technicalStats'
+            'byType', 'monthly', 'canSeeTechnical', 'technicalStats',
+            'canSeeConsulting', 'consultingChartData', 'canSeeFinance'
         ))->layout('admin.layouts.app');
     }
 }
