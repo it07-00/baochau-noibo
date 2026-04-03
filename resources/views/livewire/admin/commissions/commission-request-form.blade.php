@@ -49,7 +49,7 @@
                     <select wire:model="contract_id" class="form-select @error('contract_id') is-invalid @enderror" @if(!$contract_type) disabled @endif>
                         <option value="">{{ $contract_type ? 'Chọn số hợp đồng' : 'Vui lòng chọn loại HĐ trước' }}</option>
                         @foreach($contracts as $contract)
-                            <option value="{{ $contract->id }}">BC {{ $contract->shd_ad }} - {{ $contract->customer->name ?? 'N/A' }}</option>
+                            <option value="{{ $contract->id }}">BC {{ $contract->shd_bc }} - {{ $contract->customer->name ?? 'N/A' }}</option>
                         @endforeach
                     </select>
                     @error('contract_id') <div class="invalid-feedback">{{ $message }}</div> @enderror

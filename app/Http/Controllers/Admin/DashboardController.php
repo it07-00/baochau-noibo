@@ -65,7 +65,7 @@ class DashboardController extends Controller
             ->map(fn($c) => [
                 'type'        => 'Chất thải',
                 'badge'       => 'bg-label-primary',
-                'contract_no' => $c->shd_cxl ?: ($c->shd_ad ?: '—'),
+                'contract_no' => $c->shd_cxl ?: ($c->shd_bc ?: '—'),
                 'customer'    => $c->customer?->name ?? '—',
                 'staff'       => $c->staff?->name ?? '—',
                 'value'       => (float) $c->value,
@@ -80,7 +80,7 @@ class DashboardController extends Controller
             ->map(fn($c) => [
                 'type'        => 'Tư vấn',
                 'badge'       => 'bg-label-success',
-                'contract_no' => $c->shd_ad ?: '—',
+                'contract_no' => $c->shd_bc ?: '—',
                 'customer'    => $c->customer?->name ?? '—',
                 'staff'       => $c->staff?->name ?? '—',
                 'value'       => (float) $c->value,

@@ -20,7 +20,7 @@ class ContractWaste extends Model
     }
     protected $fillable = [
         'shd_cxl',
-        'shd_ad',
+        'shd_bc',
         'customer_id',
         'handler_id',
         'staff_id',

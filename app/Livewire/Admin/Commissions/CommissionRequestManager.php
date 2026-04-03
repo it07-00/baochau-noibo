@@ -42,7 +42,7 @@ class CommissionRequestManager extends Component
             $query->where(function($q) {
                 $q->where('receiver_name', 'like', '%' . $this->search . '%')
                   ->orWhereHas('contract', function($qc) {
-                      $qc->where('shd_ad', 'like', '%' . $this->search . '%')
+                      $qc->where('shd_bc', 'like', '%' . $this->search . '%')
                          ->orWhereHas('customer', function($qcust) {
                              $qcust->where('name', 'like', '%' . $this->search . '%');
                          });

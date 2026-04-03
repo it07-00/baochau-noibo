@@ -28,7 +28,7 @@ class ContractProject extends Model
     ];
 
     protected $fillable = [
-        'shd_ad',
+        'shd_bc',
         'customer_id',
         'staff_id',
         'department_id',

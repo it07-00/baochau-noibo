@@ -11,6 +11,7 @@ class ProgressiveSales extends Model
     use HasFactory;
 
     protected $fillable = [
+        'payment_schedule_id',
         'contract_number',
         'sales_month',
         'milestone_name',

@@ -478,7 +478,7 @@
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Số hợp đồng AD</th>
-                                    <td class="px-4 py-3">{{ $selectedDoc->shd_ad }}</td>
+                                    <td class="px-4 py-3">{{ $selectedDoc->shd_bc }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Nội dung</th>
@@ -638,7 +638,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Số HĐ BC</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.shd_ad">
+                                <input type="text" class="form-control" wire:model.defer="formData.shd_bc">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Khách hàng <span class="text-danger">*</span></label>

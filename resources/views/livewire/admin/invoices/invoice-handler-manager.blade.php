@@ -121,7 +121,7 @@
                         <tr>
                             <td class="fw-semibold small">{{ $item->invoice_number ?: '—' }}</td>
                             <td>{{ $item->handler?->name ?? '—' }}</td>
-                            <td class="small text-muted">{{ $item->contractWaste?->shd_ad ?? '—' }}</td>
+                            <td class="small text-muted">{{ $item->contractWaste?->shd_bc ?? '—' }}</td>
                             <td class="small text-muted">{{ $item->issue_date?->format('d/m/Y') ?? '—' }}</td>
                             <td class="small {{ $item->due_date && $item->due_date->isPast() && $item->status !== 'paid' ? 'text-danger fw-semibold' : 'text-muted' }}">
                                 {{ $item->due_date?->format('d/m/Y') ?? '—' }}
@@ -184,7 +184,7 @@
                             <select wire:model="form.contract_waste_id" class="form-select form-select-sm">
                                 <option value="">— Không liên kết —</option>
                                 @foreach($contractWastes as $cw)
-                                    <option value="{{ $cw->id }}">{{ $cw->shd_ad ?: 'HĐ #'.$cw->id }} — {{ $cw->handler?->name }}</option>
+                                    <option value="{{ $cw->id }}">{{ $cw->shd_bc ?: 'HĐ #'.$cw->id }} — {{ $cw->handler?->name }}</option>
                                 @endforeach
                             </select>
                         </div>

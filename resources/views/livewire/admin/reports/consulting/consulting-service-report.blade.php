@@ -120,7 +120,7 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
-                            <td class="fw-semibold small">{{ $item->shd_ad ?: '—' }}</td>
+                            <td class="fw-semibold small">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
                             <td class="small text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
                             <td class="small">{{ $item->staff?->name ?? '—' }}</td>

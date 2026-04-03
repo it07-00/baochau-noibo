@@ -7,11 +7,14 @@ use App\Models\User;
 use App\Models\Customer;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use App\Livewire\Concerns\CleanMoneyInput;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class QuotationManager extends Component
 {
-    use WithPagination, CleanMoneyInput;
+    use WithPagination, CleanMoneyInput, WithFileUploads;
 
     public $search = '';
     public $filter_staff = '';
@@ -25,21 +28,54 @@ class QuotationManager extends Component
     public $selectedQuotation = null;
     public $convertingQuotation = null;
 
+    // Import
+    public $importFile = null;
+    public $importPreview = [];
+    public $importHeaders = [];
+    public $importColumnMap = [];
+    public $importErrors = [];
+    public $importSuccess = null;
+
+    private array $availableFields = [
+        ''                  => '-- Bỏ qua --',
+        'date'              => 'Ngày',
+        'staff_name'        => 'Nhân viên sale',
+        'source'            => 'Nguồn',
+        'company_name'      => 'Công ty',
+        'address'           => 'Địa chỉ XHĐ',
+        'work_address'      => 'Địa chỉ làm',
+        'province'          => 'Tỉnh thành',
+        'industry'          => 'Ngành nghề',
+        'service'           => 'Dịch vụ',
+        'contact_person'    => 'Khách hàng',
+        'work_description'  => 'Tình hình làm việc',
+        'status'            => 'Tình hình',
+        'original_value'    => 'Giá trị gốc',
+        'value_inc_vat'     => 'Giá có VAT',
+        'commission_value'  => 'Hoa hồng KH',
+        'commission_tax'    => 'Thuế HH',
+        'total_value'       => 'Giá trị HĐ (chưa VAT)',
+        'notes'             => 'Ghi chú',
+    ];
+
     public $formData = [
         'date' => '',
         'staff_id' => '',
+        'source' => '',
         'company_name' => '',
         'address' => '',
+        'work_address' => '',
         'province' => '',
         'industry' => '',
+        'service' => '',
         'contact_person' => '',
         'work_description' => '',
         'status' => 'Đang theo dõi',
-        'original_value' => 0,   // Giá chưa VAT
+        'original_value' => 0,   // GIÁ TRỊ GÓC
         'value_inc_vat' => 0,    // Giá có VAT
-        'commission_value' => 0, // Tiền hoa hồng
-        'commission_tax' => 0,   // Tiền thuế
-        'total_value' => 0,      // Tổng cộng
+        'commission_value' => 0, // Hoa hồng KH
+        'commission_tax' => 0,   // Thuế HH
+        'total_value' => 0,      // Giá trị HĐ (chưa VAT)
         'notes' => '',
     ];
 
@@ -151,14 +187,14 @@ class QuotationManager extends Component
         }
 
         $this->dispatch('close-quotation-modal');
-        $this->dispatch('swal:toast', ['icon' => 'success', 'title' => $msg]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => $msg]);
         $this->resetForm();
     }
 
     public function delete($id)
     {
         Quotation::find($id)->delete();
-        $this->dispatch('swal:toast', ['icon' => 'success', 'title' => 'Đã xóa báo giá']);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa báo giá']);
     }
 
     private function resetForm()
@@ -166,10 +202,13 @@ class QuotationManager extends Component
         $this->formData = [
             'date' => now()->format('Y-m-d'),
             'staff_id' => auth()->id(),
+            'source' => '',
             'company_name' => '',
             'address' => '',
+            'work_address' => '',
             'province' => '',
             'industry' => '',
+            'service' => '',
             'contact_person' => '',
             'work_description' => '',
             'status' => 'Đang theo dõi',
@@ -181,6 +220,225 @@ class QuotationManager extends Component
             'notes' => '',
         ];
         $this->selectedId = null;
+    }
+
+    // ── IMPORT ──────────────────────────────────────────────────────────────
+
+    private array $headerMap = [
+        'ngày'                      => 'date',
+        'ngay'                      => 'date',
+        'nhân viên'                 => 'staff_name',
+        'nhan vien'                 => 'staff_name',
+        'nhân viên sale'            => 'staff_name',
+        'sale'                      => 'staff_name',
+        'nguồn'                     => 'source',
+        'nguon'                     => 'source',
+        'công ty'                   => 'company_name',
+        'cong ty'                   => 'company_name',
+        'tên công ty'               => 'company_name',
+        'ten cong ty'               => 'company_name',
+        'địa chỉ xhđ'              => 'address',
+        'địa chỉ xuất hóa đơn'     => 'address',
+        'dia chi xhd'               => 'address',
+        'địa chỉ làm'              => 'work_address',
+        'dia chi lam'               => 'work_address',
+        'địa chỉ làm việc'         => 'work_address',
+        'tỉnh thành'               => 'province',
+        'tinh thanh'                => 'province',
+        'tỉnh/thành'               => 'province',
+        'ngành nghề'               => 'industry',
+        'nganh nghe'                => 'industry',
+        'ngành'                    => 'industry',
+        'dịch vụ'                  => 'service',
+        'dich vu'                   => 'service',
+        'khách hàng'               => 'contact_person',
+        'khach hang'                => 'contact_person',
+        'người liên hệ'            => 'contact_person',
+        'nguoi lien he'             => 'contact_person',
+        'tình hình làm việc'       => 'work_description',
+        'tinh hinh lam viec'        => 'work_description',
+        'nội dung công việc'       => 'work_description',
+        'noi dung'                  => 'work_description',
+        'tình hình'                => 'status',
+        'tinh hinh'                 => 'status',
+        'tình trạng'               => 'status',
+        'tinh trang'                => 'status',
+        'giá trị gốc'              => 'original_value',
+        'gia tri goc'               => 'original_value',
+        'giá chưa vat'             => 'original_value',
+        'giá có vat'               => 'value_inc_vat',
+        'gia co vat'                => 'value_inc_vat',
+        'hoa hồng kh'              => 'commission_value',
+        'hoa hong kh'               => 'commission_value',
+        'hoa hồng'                 => 'commission_value',
+        'thuế hh'                  => 'commission_tax',
+        'thue hh'                   => 'commission_tax',
+        'tiền thuế'                => 'commission_tax',
+        'giá trị hđ (chưa vat)'   => 'total_value',
+        'giá trị hd (chua vat)'    => 'total_value',
+        'giá trị hđ'               => 'total_value',
+        'tổng tiền'                => 'total_value',
+        'tong tien'                 => 'total_value',
+        'ghi chú'                  => 'notes',
+        'ghi chu'                   => 'notes',
+    ];
+
+    public function updatedImportFile()
+    {
+        $this->importErrors = [];
+        $this->importSuccess = null;
+        $this->importPreview = [];
+        $this->importHeaders = [];
+        $this->importColumnMap = [];
+
+        if (!$this->importFile) return;
+
+        $this->validate(['importFile' => 'file|mimes:xlsx,xls,csv|max:5120']);
+
+        try {
+            $path = $this->importFile->getRealPath();
+            $spreadsheet = IOFactory::load($path);
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray(null, true, true, false);
+
+            // First non-empty row = headers
+            $headerRow = null;
+            $dataRows = [];
+            foreach ($rows as $i => $row) {
+                $nonEmpty = array_filter($row, fn($v) => $v !== null && $v !== '');
+                if (empty($nonEmpty)) continue;
+                if ($headerRow === null) {
+                    $headerRow = $row;
+                } else {
+                    $dataRows[] = $row;
+                    if (count($dataRows) >= 5) break;
+                }
+            }
+
+            if (!$headerRow) {
+                $this->importErrors[] = 'File không có dữ liệu.';
+                return;
+            }
+
+            $this->importHeaders = array_values(array_filter($headerRow, fn($v) => $v !== null && $v !== ''));
+            $numCols = count($headerRow); // full column count incl. empty
+
+            // Auto-map headers
+            foreach ($headerRow as $colIdx => $header) {
+                if ($header === null || $header === '') continue;
+                $normalized = mb_strtolower(trim((string)$header));
+                $this->importColumnMap[$colIdx] = $this->headerMap[$normalized] ?? '';
+            }
+
+            // Preview rows
+            foreach ($dataRows as $row) {
+                $this->importPreview[] = array_slice($row, 0, $numCols);
+            }
+        } catch (\Throwable $e) {
+            $this->importErrors[] = 'Không thể đọc file: ' . $e->getMessage();
+        }
+    }
+
+    public function runImport()
+    {
+        $this->importErrors = [];
+        $this->importSuccess = null;
+
+        if (!$this->importFile) {
+            $this->importErrors[] = 'Chưa chọn file.';
+            return;
+        }
+
+        try {
+            $path = $this->importFile->getRealPath();
+            $spreadsheet = IOFactory::load($path);
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray(null, true, true, false);
+
+            // Find header row index
+            $headerRowIdx = null;
+            foreach ($rows as $i => $row) {
+                $nonEmpty = array_filter($row, fn($v) => $v !== null && $v !== '');
+                if (!empty($nonEmpty)) { $headerRowIdx = $i; break; }
+            }
+
+            if ($headerRowIdx === null) {
+                $this->importErrors[] = 'File trống.';
+                return;
+            }
+
+            $staffLookup = User::pluck('id', 'name')->toArray();
+            $imported = 0;
+            $skipped = 0;
+
+            foreach ($rows as $i => $row) {
+                if ($i <= $headerRowIdx) continue;
+                $nonEmpty = array_filter($row, fn($v) => $v !== null && $v !== '');
+                if (empty($nonEmpty)) continue;
+
+                $data = [
+                    'status' => 'Đang theo dõi',
+                    'staff_id' => auth()->id(),
+                    'source' => null,
+                    'service' => null,
+                    'work_address' => null,
+                    'original_value' => 0,
+                    'value_inc_vat' => 0,
+                    'commission_tax' => 0,
+                    'commission_value' => 0,
+                    'total_value' => 0,
+                ];
+
+                foreach ($this->importColumnMap as $colIdx => $field) {
+                    if ($field === '' || !isset($row[$colIdx])) continue;
+                    $val = $row[$colIdx];
+
+                    if ($field === 'date') {
+                        if (is_numeric($val)) {
+                            $data['date'] = ExcelDate::excelToDateTimeObject($val)->format('Y-m-d');
+                        } else {
+                            $parsed = \DateTime::createFromFormat('d/m/Y', (string)$val)
+                                   ?: \DateTime::createFromFormat('Y-m-d', (string)$val)
+                                   ?: \DateTime::createFromFormat('d-m-Y', (string)$val);
+                            $data['date'] = $parsed ? $parsed->format('Y-m-d') : null;
+                        }
+                    } elseif ($field === 'staff_name') {
+                        $staffName = trim((string)$val);
+                        $data['staff_id'] = $staffLookup[$staffName] ?? auth()->id();
+                    } elseif (in_array($field, ['original_value', 'value_inc_vat', 'commission_tax', 'commission_value', 'total_value'])) {
+                        $data[$field] = (float) str_replace([',', '.', ' '], ['', '', ''], (string)$val);
+                    } else {
+                        $data[$field] = $val !== null ? trim((string)$val) : null;
+                    }
+                }
+
+                if (empty($data['company_name'])) { $skipped++; continue; }
+                if (empty($data['date'])) $data['date'] = now()->format('Y-m-d');
+
+                Quotation::create($data);
+                $imported++;
+            }
+
+            $this->importFile = null;
+            $this->importPreview = [];
+            $this->importHeaders = [];
+            $this->importColumnMap = [];
+            $this->importSuccess = "Import thành công {$imported} dòng" . ($skipped ? ", bỏ qua {$skipped} dòng trống/thiếu tên công ty." : '.');
+            $this->dispatch('close-import-modal');
+            $this->dispatch('swal:toast', ['type' => 'success', 'message' => $this->importSuccess]);
+        } catch (\Throwable $e) {
+            $this->importErrors[] = 'Lỗi khi import: ' . $e->getMessage();
+        }
+    }
+
+    public function resetImport()
+    {
+        $this->importFile = null;
+        $this->importPreview = [];
+        $this->importHeaders = [];
+        $this->importColumnMap = [];
+        $this->importErrors = [];
+        $this->importSuccess = null;
     }
 
     public function render()
@@ -207,7 +465,8 @@ class QuotationManager extends Component
                 'Rớt báo giá',
                 'Ký hợp đồng',
                 'Tham khảo'
-            ]
+            ],
+            'availableFields' => $this->availableFields,
         ])->layout('admin.layouts.app', ['title' => 'Theo dõi Báo giá']);
     }
 }

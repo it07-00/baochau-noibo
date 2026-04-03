@@ -2,13 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\ContractPaymentSchedule;
+use App\Observers\ContractPaymentScheduleObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
@@ -20,5 +19,7 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
         \Illuminate\Pagination\Paginator::useBootstrapFive();
+
+        ContractPaymentSchedule::observe(ContractPaymentScheduleObserver::class);
     }
 }

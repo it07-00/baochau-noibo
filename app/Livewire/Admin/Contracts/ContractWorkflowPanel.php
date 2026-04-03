@@ -116,7 +116,7 @@ class ContractWorkflowPanel extends Component
 
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = $modelClass ? $modelClass::with('customer')->find($this->contractId) : null;
-        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$this->contractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->contractId);
 
         // Map contract type key từ model class
         $typeKey = array_search($modelClass, $this->modelMap) ?: $this->contractType;

@@ -45,7 +45,7 @@ class ContractWasteSeeder extends Seeder
 
         ContractWaste::create([
             'shd_cxl' => 'HOÀN LỘC',
-            'shd_ad' => 'HOÀN LỘC',
+            'shd_bc' => 'HOÀN LỘC',
             'customer_id' => $cus1->id,
             'handler_id' => $handler->id,
             'staff_id' => $staff->id,

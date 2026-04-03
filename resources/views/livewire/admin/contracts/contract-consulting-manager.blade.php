@@ -177,7 +177,7 @@
                     <tr class="border-bottom border-light">
                         <td class="ps-4 py-4">
                             <div class="d-flex flex-column">
-                                <span class="small">Số HĐ BC:<span class="fw-bold">{{ $doc->shd_ad }}</span></span>
+                                <span class="small">Số HĐ BC:<span class="fw-bold">{{ $doc->shd_bc }}</span></span>
                                 <span class="small">Ngày ký hợp đồng: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
                                 <span class="small">Nhân viên CS:<span class="fw-bold">{{ $doc->staff?->name }}</span></span>
                             </div>
@@ -321,7 +321,7 @@
                         <tbody>
                             <tr>
                                 <th class="bg-light w-30">Số HĐ BC</th>
-                                <td class="fw-bold">{{ $selectedDoc->shd_ad }}</td>
+                                <td class="fw-bold">{{ $selectedDoc->shd_bc }}</td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Khách hàng</th>
@@ -482,7 +482,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Số HĐ BC</label>
-                            <input type="text" class="form-control" wire:model="formData.shd_ad">
+                            <input type="text" class="form-control" wire:model="formData.shd_bc">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Khách hàng <span class="text-danger">*</span></label>

@@ -13,6 +13,11 @@
             <button class="btn btn-success d-flex align-items-center gap-2" wire:click="create">
                 <i class="bi bi-plus-lg"></i> Thêm mới
             </button>
+            <button class="btn btn-outline-primary d-flex align-items-center gap-2"
+                    wire:click="resetImport"
+                    data-bs-toggle="modal" data-bs-target="#importModal">
+                <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
+            </button>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary">
@@ -62,21 +67,21 @@
 
     <!-- Table Card -->
     <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem;">
+        <div class="table-responsive" style="overflow-x: auto;">
+            <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem; min-width: 1400px;">
                 <thead class="bg-light bg-opacity-50">
                     <tr class="text-muted fw-bold">
-                        <th class="ps-3" style="width: 50px;">STT</th>
-                        <th style="width: 100px;">Sale</th>
-                        <th style="width: 100px;">Ngày</th>
-                        <th style="width: 400px;">Thông tin khách hàng / Đối tác</th>
-                        <th>Nội dung công việc</th>
-                        <th class="text-center" style="width: 150px;">Tình trạng</th>
-                        <th class="text-end" style="width: 120px;">Giá chưa VAT</th>
-                        <th class="text-end" style="width: 120px;">Giá có VAT</th>
-                        <th class="text-end" style="width: 100px;">Tiền thuế</th>
-                        <th class="text-end" style="width: 120px;">Tiền hoa hồng</th>
-                        <th class="text-end fw-bold" style="width: 130px;">Tổng tiền</th>
+                        <th class="ps-3" style="width: 40px;">STT</th>
+                        <th style="width: 130px;">Sale</th>
+                        <th style="width: 220px;">Công ty / Khách hàng</th>
+                        <th style="width: 130px;">Dịch vụ</th>
+                        <th style="width: 100px;">Ngành nghề</th>
+                        <th>Tình hình làm việc</th>
+                        <th class="text-center" style="width: 130px;">Tình hình</th>
+                        <th class="text-end" style="width: 110px;">Giá trị gốc</th>
+                        <th class="text-end" style="width: 100px;">Hoa hồng KH</th>
+                        <th class="text-end" style="width: 85px;">Thuế HH</th>
+                        <th class="text-end fw-bold" style="width: 120px;">Giá trị HĐ</th>
                         <th class="text-center pe-3" style="width: 80px;">#</th>
                     </tr>
                 </thead>
@@ -84,38 +89,35 @@
                     @forelse($quotations as $index => $item)
                     <tr class="border-bottom border-light">
                         <td class="ps-3">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
-                        <td>{{ $item->staff?->name }}</td>
-                        <td>{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</td>
+                        <td class="small" style="width: 130px;">
+                            <div class="fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
+                            @if($item->source)
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border mt-1" style="font-size: 0.68rem;">{{ $item->source }}</span>
+                            @endif
+                            <div class="text-muted mt-1" style="font-size: 0.75rem; white-space: nowrap;">{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</div>
+                        </td>
                         <td>
-                            <div class="fw-bold text-primary mb-1 text-capitalize" style="font-size: 0.9rem; line-height: 1.3;">
-                                {{ $item->company_name }}
-                            </div>
-                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                                @if($item->industry)
-                                <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.7rem; font-weight: 500;">
-                                    <i class="bi bi-tag-fill me-1 text-muted"></i>{{ $item->industry }}
-                                </span>
-                                @endif
-                                @if($item->contact_person)
-                                <span class="small text-muted fw-medium">
-                                    <i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}
-                                </span>
-                                @endif
-                            </div>
-                            @if($item->address)
-                            <div class="small text-muted text-wrap opacity-75"
-                                 style="line-height: 1.2; font-size: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
-                                 title="{{ $item->address }}">
-                                <i class="bi bi-geo-alt-fill me-1"></i>{{ $item->address }}
-                                @if($item->province)
-                                    <span class="badge bg-info bg-opacity-10 text-info ms-1" style="font-size: 0.65rem;">{{ $item->province }}</span>
-                                @endif
-                            </div>
+                            <div class="fw-bold text-primary text-capitalize" style="font-size: 0.85rem; line-height: 1.3;">{{ $item->company_name }}</div>
+                            @if($item->contact_person)
+                            <div class="small text-muted mt-1"><i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}</div>
+                            @endif
+                            @if($item->province)
+                            <span class="badge bg-info bg-opacity-10 text-info mt-1" style="font-size: 0.65rem;">{{ $item->province }}</span>
                             @endif
                         </td>
-                        <td class="text-wrap" style="max-width: 300px;">
+                        <td class="small text-wrap" style="max-width: 130px;">
+                            <div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->service }}">
+                                {{ $item->service ?: '-' }}
+                            </div>
+                        </td>
+                        <td class="small">
+                            @if($item->industry)
+                            <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.7rem;">{{ $item->industry }}</span>
+                            @else <span class="text-muted">-</span> @endif
+                        </td>
+                        <td class="text-wrap small" style="max-width: 200px;">
                             <div style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->work_description }}">
-                                {{ $item->work_description }}
+                                {{ $item->work_description ?: '-' }}
                             </div>
                         </td>
                         <td class="text-center">
@@ -129,15 +131,14 @@
                                     default => 'bg-secondary bg-opacity-10 text-secondary'
                                 };
                             @endphp
-                            <span class="badge rounded-pill {{ $colorClass }} px-3 py-2" style="font-size: 0.75rem;">
+                            <span class="badge rounded-pill {{ $colorClass }} px-2 py-1" style="font-size: 0.72rem;">
                                 {{ $item->status }}
                             </span>
                         </td>
-                        <td class="text-end">{{ number_format($item->original_value) }}</td>
-                        <td class="text-end">{{ number_format($item->value_inc_vat) }}</td>
-                        <td class="text-end">{{ number_format($item->commission_tax) }}</td>
-                        <td class="text-end">{{ number_format($item->commission_value) }}</td>
-                        <td class="text-end fw-bold text-danger">{{ number_format($item->total_value) }}</td>
+                        <td class="text-end small">{{ $item->original_value ? number_format($item->original_value) : '-' }}</td>
+                        <td class="text-end small">{{ $item->commission_value ? number_format($item->commission_value) : '-' }}</td>
+                        <td class="text-end small">{{ $item->commission_tax ? number_format($item->commission_tax) : '-' }}</td>
+                        <td class="text-end fw-bold text-danger small">{{ $item->total_value ? number_format($item->total_value) : '-' }}</td>
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
@@ -159,7 +160,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="11" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
+                        <td colspan="12" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -167,7 +168,7 @@
         </div>
         @if($quotations->hasPages())
         <div class="px-3 py-3 border-top">
-            {{ $quotations->links() }}
+            {{ $quotations->links('livewire.admin.users.pagination') }}
         </div>
         @endif
     </div>
@@ -186,62 +187,70 @@
                         <table class="table table-bordered mb-0">
                             <tbody>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3" style="width: 30%;">Công ty / Khách hàng</th>
+                                    <th class="bg-light fw-bold px-4 py-3" style="width: 30%;">Nhân viên sale</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->staff?->name }} ({{ $selectedQuotation->date?->format('d/m/Y') }})</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3">Nguồn</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->source ?: '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3">Công ty / Khách hàng</th>
                                     <td class="px-4 py-3 fw-bold text-primary text-capitalize">{{ $selectedQuotation->company_name }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3">Địa chỉ</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->address }}</td>
+                                    <th class="bg-light fw-bold px-4 py-3">Địa chỉ XHĐ</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->address ?: '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3">Địa chỉ làm việc</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->work_address ?: '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Tỉnh thành</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->province }}</td>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->province ?: '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3">Dịch vụ</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->service ?: '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Ngành nghề</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->industry }}</td>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->industry ?: '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3">Người liên hệ</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->contact_person }}</td>
+                                    <th class="bg-light fw-bold px-4 py-3">Khách hàng</th>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->contact_person ?: '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Tình hình làm việc</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->work_description }}</td>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->work_description ?: '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3">Tình trạng</th>
+                                    <th class="bg-light fw-bold px-4 py-3">Tình hình</th>
                                     <td class="px-4 py-3">
                                         <span class="badge bg-primary px-3 py-2">{{ $selectedQuotation->status }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Ghi chú</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->notes }}</td>
+                                    <td class="px-4 py-3">{{ $selectedQuotation->notes ?: '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Giá chưa VAT</th>
+                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị gốc</th>
                                     <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->original_value) }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Giá có VAT</th>
-                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->value_inc_vat) }}đ</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Tiền thuế</th>
-                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_tax) }}đ</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Tiền hoa hồng</th>
+                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Hoa hồng KH</th>
                                     <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_value) }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Tổng tiền</th>
-                                    <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value) }}đ</td>
+                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Thuế HH</th>
+                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_tax) }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3">Nhân viên sale</th>
-                                    <td class="px-4 py-3">{{ $selectedQuotation->staff?->name }} ({{ $selectedQuotation->date?->format('d/m/Y') }})</td>
+                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị HĐ (chưa VAT)</th>
+                                    <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value) }}đ</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -280,6 +289,10 @@
                                 <label class="form-label fw-bold">Công ty <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('formData.company_name') is-invalid @enderror" wire:model.defer="formData.company_name" placeholder="Tên công ty niêm yết">
                             </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Nguồn</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.source" placeholder="VD: Referral, Zalo...">
+                            </div>
 
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Tỉnh thành</label>
@@ -290,41 +303,58 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">Địa chỉ xuất hóa đơn</label>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Địa chỉ xuất hóa đơn (XHĐ)</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.address">
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold">Địa chỉ làm việc</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.work_address">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Dịch vụ</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.service" placeholder="VD: Xử lý chất thải...">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Ngành nghề</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.industry">
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">Người liên hệ</label>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Khách hàng</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.contact_person">
                             </div>
-
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold">Tình hình làm việc / Nội dung BG</label>
-                                <textarea class="form-control" rows="3" wire:model.defer="formData.work_description"></textarea>
-                            </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Tình trạng <span class="text-danger">*</span></label>
-                                <select class="form-select" wire:model.defer="formData.status" style="height: auto; min-height: 45px;">
+                                <label class="form-label fw-bold">Tình hình <span class="text-danger">*</span></label>
+                                <select class="form-select" wire:model.defer="formData.status">
                                     @foreach($statuses as $st)
                                         <option value="{{ $st }}">{{ $st }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Tình hình làm việc / Nội dung BG</label>
+                                <textarea class="form-control" rows="3" wire:model.defer="formData.work_description"></textarea>
+                            </div>
+
+                            <hr class="my-1">
                             <div class="col-md-2">
-                                <label class="form-label fw-bold">Giá chưa VAT</label>
+                                <label class="form-label fw-bold">Giá trị gốc</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.original_value">
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-bold">Tiền thuế</label>
+                                <label class="form-label fw-bold">Hoa hồng KH</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_value">
+                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Thuế HH</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_tax">
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
@@ -337,15 +367,8 @@
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">Tiền hoa hồng</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_value">
-                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
-                                </div>
-                            </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Tổng tiền</label>
+                                <label class="form-label fw-bold">Giá trị HĐ (chưa VAT)</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end fw-bold text-danger bg-light money-input" wire:model="formData.total_value" readonly>
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
@@ -405,17 +428,120 @@
         </div>
     </div>
 
+    <!-- Import Modal -->
+    <div wire:ignore.self class="modal fade" id="importModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg overflow-hidden">
+                <div class="modal-header bg-primary py-3">
+                    <h5 class="modal-title fw-bold text-white"><i class="bi bi-file-earmark-arrow-up me-2"></i>Import Báo giá từ Excel</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="resetImport"></button>
+                </div>
+                <div class="modal-body p-4">
+                    {{-- Errors --}}
+                    @if($importErrors)
+                    <div class="alert alert-danger py-2">
+                        <ul class="mb-0 ps-3">
+                            @foreach($importErrors as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    {{-- Step 1: Upload --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">1. Chọn file Excel (.xlsx / .xls / .csv)</label>
+                        <input type="file" class="form-control" wire:model="importFile" accept=".xlsx,.xls,.csv">
+                        <div wire:loading wire:target="importFile" class="text-primary mt-1 small">
+                            <span class="spinner-border spinner-border-sm me-1"></span> Đang đọc file...
+                        </div>
+                        <div class="form-text">Hàng đầu tiên của file sẽ được dùng làm tên cột. Hệ thống tự động nhận diện tên cột tiếng Việt phổ biến.</div>
+                    </div>
+
+                    {{-- Step 2: Column mapping --}}
+                    @if(count($importHeaders) > 0)
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">2. Kiểm tra & điều chỉnh mapping cột</label>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:50%">Tên cột trong file</th>
+                                        <th>Tương ứng với trường dữ liệu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($importColumnMap as $colIdx => $fieldKey)
+                                    <tr>
+                                        <td class="fw-semibold">{{ $importHeaders[array_search($colIdx, array_keys($importColumnMap))] ?? $colIdx }}</td>
+                                        <td>
+                                            <select class="form-select form-select-sm" wire:model.live="importColumnMap.{{ $colIdx }}">
+                                                @foreach($availableFields as $val => $label)
+                                                    <option value="{{ $val }}">{{ $label }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {{-- Step 3: Preview --}}
+                    @if(count($importPreview) > 0)
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">3. Xem trước dữ liệu (5 dòng đầu)</label>
+                        <div class="table-responsive border rounded">
+                            <table class="table table-sm table-striped align-middle mb-0" style="font-size: 0.78rem;">
+                                <thead class="table-dark">
+                                    <tr>
+                                        @foreach($importColumnMap as $colIdx => $fieldKey)
+                                        <th>{{ $availableFields[$fieldKey] ?? $importHeaders[array_search($colIdx, array_keys($importColumnMap))] ?? $colIdx }}</th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($importPreview as $row)
+                                    <tr>
+                                        @foreach($importColumnMap as $colIdx => $fieldKey)
+                                        <td>{{ $row[$colIdx] ?? '' }}</td>
+                                        @endforeach
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @endif
+                    @endif
+                </div>
+                <div class="modal-footer bg-light px-4 py-3 d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="resetImport">Hủy</button>
+                    @if(count($importHeaders) > 0)
+                    <button type="button" class="btn btn-primary px-4 fw-bold" wire:click="runImport">
+                        <span wire:loading wire:target="runImport" class="spinner-border spinner-border-sm me-2"></span>
+                        <i class="bi bi-cloud-upload me-1"></i> Thực hiện Import
+                    </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         document.addEventListener('livewire:init', () => {
             let formModal = new bootstrap.Modal(document.getElementById('quotationModal'));
             let detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
             let convertModal = new bootstrap.Modal(document.getElementById('convertModal'));
+            let importModal = new bootstrap.Modal(document.getElementById('importModal'));
 
             Livewire.on('open-quotation-modal', () => formModal.show());
             Livewire.on('close-quotation-modal', () => formModal.hide());
             Livewire.on('open-detail-modal', () => detailModal.show());
             Livewire.on('open-convert-modal', () => convertModal.show());
+            Livewire.on('close-import-modal', () => importModal.hide());
         });
     </script>
     @endpush

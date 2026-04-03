@@ -9,18 +9,21 @@ class Quotation extends Model
     protected $fillable = [
         'date',
         'staff_id',
+        'source',           // Nguồn
         'company_name',
-        'address',
+        'address',          // Địa chỉ xuất hóa đơn
+        'work_address',     // Địa chỉ làm việc
         'province',
         'industry',
+        'service',          // Dịch vụ
         'contact_person',
         'work_description',
         'status',
-        'original_value',   // Giá chưa VAT
+        'original_value',   // Giá trị gốc (GIÁ TRỊ GÓC)
         'value_inc_vat',    // Giá có VAT
-        'commission_value', // Tiền hoa hồng
-        'commission_tax',   // Tiền thuế
-        'total_value',      // Tổng tiền (Giá có VAT - Hoa hồng)
+        'commission_value', // Hoa hồng KH
+        'commission_tax',   // Thuế HH
+        'total_value',      // Giá trị hợp đồng (chưa VAT)
         'notes',
     ];
 

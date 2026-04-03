@@ -45,7 +45,7 @@
         @foreach($docs as $i => $doc)
         <tr>
             <td class="cell text-center">{{ $i + 1 }}</td>
-            <td class="cell">{{ $doc->shd_ad ?? '-' }}</td>
+            <td class="cell">{{ $doc->shd_bc ?? '-' }}</td>
             <td class="cell">{{ $doc->shd_cxl ?? '-' }}</td>
             <td class="cell">{{ $doc->customer?->name ?? '-' }}</td>
             <td class="cell">{{ $doc->staff?->name ?? '-' }}</td>

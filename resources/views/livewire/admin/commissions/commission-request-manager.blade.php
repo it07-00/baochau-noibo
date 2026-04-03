@@ -76,7 +76,7 @@
                                 <td class="ps-4">
                                     <div class="mb-1">
                                         <small class="text-muted">Số HĐ BC:</small><br>
-                                        <strong>{{ $request->contract->shd_ad ?? 'N/A' }}</strong>
+                                        <strong>{{ $request->contract->shd_bc ?? 'N/A' }}</strong>
                                     </div>
                                     <div>
                                         <small class="text-muted">Nhân viên CS:</small>

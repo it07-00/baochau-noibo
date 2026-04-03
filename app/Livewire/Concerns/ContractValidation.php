@@ -10,7 +10,7 @@ trait ContractValidation
     protected function baseContractRules(): array
     {
         return [
-            'formData.shd_ad'          => 'nullable|string|max:255',
+            'formData.shd_bc'          => 'nullable|string|max:255',
             'formData.customer_id'     => 'required|exists:customers,id',
             'formData.staff_id'        => 'required|exists:users,id',
             'formData.department_id'   => 'nullable|exists:departments,id',
@@ -36,7 +36,7 @@ trait ContractValidation
     {
         return [
             'formData.shd_cxl'           => 'nullable|string|max:255',
-            'formData.shd_ad'            => 'nullable|string|max:255',
+            'formData.shd_bc'            => 'nullable|string|max:255',
             'formData.customer_id'       => 'required|exists:customers,id',
             'formData.handler_id'        => 'required|exists:handlers,id',
             'formData.staff_id'          => 'required|exists:users,id',

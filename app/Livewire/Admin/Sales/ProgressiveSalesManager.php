@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Sales;
 
-use App\Models\ProgressiveSales;
+use App\Models\ContractPaymentSchedule;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Livewire\Concerns\CleanMoneyInput;
@@ -13,90 +13,92 @@ class ProgressiveSalesManager extends Component
 
     public $search = '';
     public $filter_month = '';
-    
-    // Form fields
-    public $isEditing = false;
-    public $selectedId = null;
-    public $contract_number, $sales_month, $milestone_name, $percentage = 0, $amount = 0, $status, $notes;
+    public $filter_status = '';
 
-    protected $queryString = ['search', 'filter_month'];
+    // Edit form fields
+    public $selectedId = null;
+    public $installment_name, $percentage = 0, $amount = 0, $due_date, $paid_date, $paid_amount = 0, $status, $notes;
+
+    protected $queryString = ['search', 'filter_month', 'filter_status'];
+
+    public function paginationView()
+    {
+        return 'livewire.admin.users.pagination';
+    }
 
     public function render()
     {
-        $query = ProgressiveSales::query()
-            ->when($this->search, fn($q) => $q->where('contract_number', 'like', '%' . $this->search . '%'))
-            ->when($this->filter_month, fn($q) => $q->whereDate('sales_month', $this->filter_month . '-01'))
-            ->orderBy('created_at', 'desc');
+        $query = ContractPaymentSchedule::with('contract')
+            ->when($this->search, function ($q, $search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('installment_name', 'like', "%$search%")
+                        ->orWhereHasMorph('contract', array_values(ContractPaymentSchedule::MODEL_MAP), function ($cq, $type) use ($search) {
+                            $cq->where('shd_bc', 'like', "%$search%");
+                            if ($type === \App\Models\ContractWaste::class) {
+                                $cq->orWhere('shd_cxl', 'like', "%$search%");
+                            }
+                        });
+                });
+            })
+            ->when($this->filter_month, fn($q) => $q->whereYear('due_date', substr($this->filter_month, 0, 4))
+                ->whereMonth('due_date', substr($this->filter_month, 5, 2)))
+            ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
+            ->orderBy('due_date', 'desc');
+
+        $total = (clone $query)->sum('amount');
 
         return view('livewire.admin.sales.progressive-sales-manager', [
-            'items' => $query->paginate(15),
-        ])->layout('admin.layouts.app');
-    }
-
-    public function openCreateModal()
-    {
-        $this->resetForm();
-        $this->dispatch('open-modal', 'progressive-modal');
-    }
-
-    public function resetForm()
-    {
-        $this->reset(['selectedId', 'contract_number', 'sales_month', 'milestone_name', 'percentage', 'amount', 'status', 'notes', 'isEditing']);
-        $this->sales_month = now()->format('Y-m');
-    }
-
-    public function save()
-    {
-        $this->cleanMoneyProperties(['amount']);
-
-        $this->validate([
-            'contract_number' => 'required',
-            'sales_month' => 'required',
-            'milestone_name' => 'required',
-        ]);
-
-        $data = [
-            'contract_number' => $this->contract_number,
-            'sales_month' => $this->sales_month . '-01',
-            'milestone_name' => $this->milestone_name,
-            'percentage' => $this->percentage,
-            'amount' => $this->amount,
-            'status' => $this->status,
-            'notes' => $this->notes,
-            'user_id' => auth()->id(),
-        ];
-
-        if ($this->selectedId) {
-            ProgressiveSales::find($this->selectedId)->update($data);
-            $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Cập nhật thành công!']]);
-        } else {
-            ProgressiveSales::create($data);
-            $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Lưu thành công!']]);
-        }
-
-        $this->dispatch('close-modal', 'progressive-modal');
-        $this->resetPage();
+            'items'    => $query->paginate(20),
+            'total'    => $total,
+            'statuses' => ContractPaymentSchedule::STATUSES,
+        ])->layout('admin.layouts.app', ['title' => 'Doanh số theo tiến độ']);
     }
 
     public function edit($id)
     {
-        $item = ProgressiveSales::findOrFail($id);
+        $item = ContractPaymentSchedule::findOrFail($id);
         $this->selectedId = $id;
-        $this->contract_number = $item->contract_number;
-        $this->sales_month = $item->sales_month->format('Y-m');
-        $this->milestone_name = $item->milestone_name;
-        $this->percentage = $item->percentage;
-        $this->amount = $item->amount;
-        $this->status = $item->status;
-        $this->notes = $item->notes;
-        
-        $this->isEditing = true;
+        $this->installment_name = $item->installment_name;
+        $this->percentage       = $item->percentage;
+        $this->amount           = $item->amount;
+        $this->due_date         = $item->due_date?->format('Y-m-d');
+        $this->paid_date        = $item->paid_date?->format('Y-m-d');
+        $this->paid_amount      = $item->paid_amount;
+        $this->status           = $item->status;
+        $this->notes            = $item->notes;
         $this->dispatch('open-modal', 'progressive-modal');
+    }
+
+    public function save()
+    {
+        $this->cleanMoneyProperties(['amount', 'paid_amount']);
+
+        $this->validate([
+            'installment_name' => 'required',
+            'amount'           => 'required|numeric|min:0',
+            'status'           => 'required',
+        ]);
+
+        ContractPaymentSchedule::find($this->selectedId)->update([
+            'installment_name' => $this->installment_name,
+            'percentage'       => $this->percentage,
+            'amount'           => $this->amount,
+            'due_date'         => $this->due_date ?: null,
+            'paid_date'        => $this->paid_date ?: null,
+            'paid_amount'      => $this->paid_amount,
+            'status'           => $this->status,
+            'notes'            => $this->notes,
+        ]);
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Cập nhật thành công!']);
+        $this->dispatch('close-modal', 'progressive-modal');
+        $this->reset(['selectedId', 'installment_name', 'percentage', 'amount', 'due_date', 'paid_date', 'paid_amount', 'status', 'notes']);
     }
 
     public function delete($id)
     {
-        ProgressiveSales::find($id)->delete();
-        $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Xóa thành công!']]);
+        ContractPaymentSchedule::find($id)->delete();
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Xóa thành công!']);
+        $this->resetPage();
     }
 }

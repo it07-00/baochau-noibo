@@ -60,6 +60,14 @@ class ContractPaymentSchedule extends Model
         return self::STATUSES[$this->status] ?? $this->status;
     }
 
+    public function getContractNumberAttribute(): ?string
+    {
+        $contract = $this->contract;
+        if (!$contract) return null;
+        // ContractWaste has shd_cxl as primary, others use shd_bc
+        return $contract->shd_cxl ?? $contract->shd_bc ?? null;
+    }
+
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {

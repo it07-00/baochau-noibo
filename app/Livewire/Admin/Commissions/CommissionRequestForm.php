@@ -92,7 +92,7 @@ class CommissionRequestForm extends Component
         if ($this->contract_type) {
             $modelClass = $this->contract_type;
             if (class_exists($modelClass)) {
-                $contracts = $modelClass::with('customer')->orderBy('shd_ad', 'desc')->get();
+                $contracts = $modelClass::with('customer')->orderBy('shd_bc', 'desc')->get();
             }
         }
 

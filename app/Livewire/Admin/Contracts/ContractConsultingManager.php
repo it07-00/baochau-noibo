@@ -36,7 +36,7 @@ class ContractConsultingManager extends Component
     public ?int $quotation_id = null;
 
     public $formData = [
-        'shd_ad'         => '',
+        'shd_bc'         => '',
         'customer_id'    => '',
         'staff_id'       => '',
         'department_id'  => '',
@@ -203,7 +203,7 @@ class ContractConsultingManager extends Component
         }
         // Gửi thông báo đến users được giao
         $contract = ContractConsulting::with('customer')->find($this->assignContractId);
-        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
         foreach ($this->assignUserIds as $userId) {
             $user = User::find($userId);
             if ($user && $user->id !== auth()->id()) {
@@ -236,7 +236,7 @@ class ContractConsultingManager extends Component
 
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractConsulting::with('customer')->find($contractId);
-        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
         $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'it']))->get();
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
@@ -284,7 +284,7 @@ class ContractConsultingManager extends Component
     private function resetForm(): void
     {
         $this->formData = [
-            'shd_ad'         => '',
+            'shd_bc'         => '',
             'customer_id'    => '',
             'staff_id'       => auth()->id(),
             'department_id'  => auth()->user()->department_id ?? '',
@@ -314,7 +314,7 @@ class ContractConsultingManager extends Component
         $query = ContractConsulting::with(['customer', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
-                    $sq->where('shd_ad', 'like', '%' . $this->search . '%')
+                    $sq->where('shd_bc', 'like', '%' . $this->search . '%')
                         ->orWhereHas('customer', function ($csq) {
                             $csq->where('name', 'like', '%' . $this->search . '%');
                         });
@@ -355,7 +355,7 @@ class ContractConsultingManager extends Component
         $query = ContractConsulting::with(['customer', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
-                    $sq->where('shd_ad', 'like', '%' . $this->search . '%')
+                    $sq->where('shd_bc', 'like', '%' . $this->search . '%')
                         ->orWhereHas('customer', function ($csq) {
                             $csq->where('name', 'like', '%' . $this->search . '%');
                         });

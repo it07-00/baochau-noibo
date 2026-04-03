@@ -38,7 +38,7 @@ class ContractWasteManager extends Component
 
     public $formData = [
         'shd_cxl' => '',
-        'shd_ad' => '',
+        'shd_bc' => '',
         'customer_id' => '',
         'handler_id' => '',
         'staff_id' => '',
@@ -197,7 +197,7 @@ class ContractWasteManager extends Component
     {
         $this->formData = [
             'shd_cxl' => '',
-            'shd_ad' => '',
+            'shd_bc' => '',
             'customer_id' => '',
             'handler_id' => '',
             'staff_id' => auth()->id(),
@@ -253,7 +253,7 @@ class ContractWasteManager extends Component
         }
         // Gửi thông báo đến users được giao
         $contract = ContractWaste::with('customer')->find($this->assignContractId);
-        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
         foreach ($this->assignUserIds as $userId) {
             $user = User::find($userId);
             if ($user && $user->id !== auth()->id()) {
@@ -286,7 +286,7 @@ class ContractWasteManager extends Component
 
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractWaste::with('customer')->find($contractId);
-        $contractLabel = $contract?->shd_ad ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
         $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'it']))->get();
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
@@ -364,7 +364,7 @@ class ContractWasteManager extends Component
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_cxl', 'like', '%' . $this->search . '%')
-                        ->orWhere('shd_ad', 'like', '%' . $this->search . '%')
+                        ->orWhere('shd_bc', 'like', '%' . $this->search . '%')
                         ->orWhereHas('customer', function ($csq) {
                             $csq->where('name', 'like', '%' . $this->search . '%');
                         });
@@ -411,7 +411,7 @@ class ContractWasteManager extends Component
             ->when($this->search, function($q) {
                 $q->where(function($sq) {
                     $sq->where('shd_cxl', 'like', '%'.$this->search.'%')
-                      ->orWhere('shd_ad', 'like', '%'.$this->search.'%')
+                      ->orWhere('shd_bc', 'like', '%'.$this->search.'%')
                       ->orWhereHas('customer', function($csq) {
                           $csq->where('name', 'like', '%'.$this->search.'%');
                       });
