@@ -12,6 +12,8 @@
 /.vscode
 /.zed
 /auth.json
+/bootstrap/cache/config.php
+/bootstrap/cache/routes*.php
 /node_modules
 /public/build
 /public/hot
