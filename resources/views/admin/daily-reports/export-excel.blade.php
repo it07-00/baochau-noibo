@@ -50,7 +50,7 @@
         <thead>
             <tr>
                 <th colspan="7" style="font-size: 16pt; text-align: center; font-weight: bold; height: 40px;">
-                    BÁO CÁO NHẬT KÝ CÔNG VIỆC 
+                    BÁO CÁO NHẬT KÝ CÔNG VIỆC
                     @if($viewType == 'day')
                         NGÀY {{ \Carbon\Carbon::parse($dateFilter)->format('d/m/Y') }}
                     @else
@@ -85,7 +85,7 @@
                             if ($report->status == 'Hoàn thành đúng kế hoạch') $color = '#198754';
                             elseif ($report->status == 'Gặp vấn đề, cần hỗ trợ') $color = '#dc3545';
                             elseif ($report->status == 'Hoàn thành một phần') $color = '#ffc107';
-                            if ($isSunday && !$report->content) $color = '#6c757d'; 
+                            if ($isSunday && !$report->content) $color = '#6c757d';
                         @endphp
                         <span style="color: {{ $color }}; font-weight: bold;">{{ $report->status }}</span>
                     </td>
