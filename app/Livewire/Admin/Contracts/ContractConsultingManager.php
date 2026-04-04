@@ -389,7 +389,7 @@ class ContractConsultingManager extends Component
             'staffs'               => User::orderBy('name')->get(),
             'departments'          => Department::all(),
             'assignable_users'     => User::whereHas('roles', fn($q) =>
-                $q->whereIn('name', ['tu-van', 'kinh-doanh', 'ky-thuat']))->orderBy('name')->get(),
+                $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),
             'provinces' => \App\Support\VietnamProvinces::list(),
             'all_statuses'         => ContractConsulting::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'     => ContractConsulting::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),

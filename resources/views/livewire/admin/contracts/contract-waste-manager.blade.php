@@ -85,12 +85,12 @@
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
                                 <button class="dropdown-item @if(!$filter['handler_id']) active @endif"
                                         type="button"
-                                        x-show="'chọn chủ xử lý'.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                        x-show="'chọn chủ xử lý'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         wire:click="$set('filter.handler_id', '')" @click="open = false">Chọn chủ xử lý</button>
                                 @foreach($handlers as $handler)
                                 <button class="dropdown-item text-wrap @if($filter['handler_id'] == $handler->id) active @endif"
                                         type="button"
-                                        x-show="{{ json_encode(mb_strtolower($handler->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                        x-show="{{ json_encode(mb_strtolower($handler->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         style="white-space: normal !important; word-break: break-all;"
                                         wire:click="$set('filter.handler_id', {{ $handler->id }})" @click="open = false">
                                     {{ $handler->name }}
@@ -152,7 +152,7 @@
                                 @foreach($all_statuses as $status)
                                 <button class="dropdown-item @if($filter['status'] == $status) active @endif"
                                         type="button"
-                                        x-show="{{ json_encode(mb_strtolower($status)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                        x-show="{{ json_encode(mb_strtolower($status)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         wire:click="$set('filter.status', '{{ $status }}')" @click="open = false">
                                     {{ $status }}
                                 </button>
@@ -177,7 +177,7 @@
                                 @foreach($service_types as $service)
                                 <button class="dropdown-item @if($filter['service_type'] == $service) active @endif"
                                         type="button"
-                                        x-show="{{ json_encode(mb_strtolower($service)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                        x-show="{{ json_encode(mb_strtolower($service)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         wire:click="$set('filter.service_type', '{{ $service }}')" @click="open = false">
                                     {{ $service }}
                                 </button>
@@ -199,7 +199,7 @@
                                 @foreach($waste_types as $waste)
                                 <button class="dropdown-item @if($filter['waste_type'] == $waste) active @endif"
                                         type="button"
-                                        x-show="{{ json_encode(mb_strtolower($waste)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                        x-show="{{ json_encode(mb_strtolower($waste)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         wire:click="$set('filter.waste_type', '{{ $waste }}')" @click="open = false">
                                     {{ $waste }}
                                 </button>
@@ -222,7 +222,7 @@
                                 @foreach($renewal_statuses as $renewal)
                                 <button class="dropdown-item @if($filter['renewal_status'] == $renewal) active @endif"
                                         type="button"
-                                        x-show="{{ json_encode(mb_strtolower($renewal)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                        x-show="{{ json_encode(mb_strtolower($renewal)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         wire:click="$set('filter.renewal_status', '{{ $renewal }}')" @click="open = false">
                                     {{ $renewal }}
                                 </button>
@@ -657,7 +657,7 @@
                                         @foreach($customers as $customer)
                                         <button class="dropdown-item text-wrap @if(($formData['customer_id'] ?? '') == $customer->id) active @endif"
                                                 type="button"
-                                                x-show="{{ json_encode(mb_strtolower($customer->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                                x-show="{{ json_encode(mb_strtolower($customer->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                                 style="white-space: normal !important;"
                                                 wire:click="$set('formData.customer_id', {{ $customer->id }})" @click="open = false">
                                             {{ $customer->name }}
@@ -685,7 +685,7 @@
                                         @foreach($handlers as $h)
                                         <button class="dropdown-item text-wrap @if(($formData['handler_id'] ?? '') == $h->id) active @endif"
                                                 type="button"
-                                                x-show="{{ json_encode(mb_strtolower($h->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                                x-show="{{ json_encode(mb_strtolower($h->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                                 style="white-space: normal !important;"
                                                 wire:click="$set('formData.handler_id', {{ $h->id }})" @click="open = false">
                                             {{ $h->name }}
@@ -712,7 +712,7 @@
                                         @foreach($staffs as $s)
                                         <button class="dropdown-item text-wrap @if(($formData['staff_id'] ?? '') == $s->id) active @endif"
                                                 type="button"
-                                                x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                                x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                                 style="white-space: normal !important;"
                                                 wire:click="$set('formData.staff_id', {{ $s->id }})" @click="open = false">
                                             {{ $s->name }}
@@ -943,10 +943,10 @@
                                 'marketing' => 'Marketing',
                                 default => $roleSlug
                             };
-                            $searchText = mb_strtolower($u->name . ' ' . $roleDisplay . ' ' . $roleSlug);
+                            $searchText = $u->name . ' ' . $roleDisplay . ' ' . $roleSlug;
                         @endphp
                         <label class="list-group-item list-group-item-action d-flex gap-2"
-                               x-show="({{ json_encode($searchText) }}).normalize('NFD').includes(search.toLowerCase().normalize('NFD'))">
+                               x-show="!search || window.__strip({{ json_encode($searchText) }}).includes(window.__strip(search))">
                             <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" value="{{ $u->id }}" wire:model="assignUserIds">
                             <span>{{ $u->name }}<small class="text-muted d-block">{{ $roleDisplay }}</small></span>
                         </label>

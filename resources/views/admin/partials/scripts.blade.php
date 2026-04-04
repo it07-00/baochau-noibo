@@ -7,6 +7,10 @@
 <script src="{{ asset('assets/js/ckeditor.js') }}"></script>
 
 <script>
+    // ── Strip diacritics helper (dùng cho Alpine x-show search) ──
+    window.__strip = function(s) {
+        return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    };
     // ── Money format helper ─────────────────────────────────────────
     // Format số tiền VND: 71900000 → 71.900.000
     // Dùng: <input type="text" class="money-input" wire:model.defer="formData.value">

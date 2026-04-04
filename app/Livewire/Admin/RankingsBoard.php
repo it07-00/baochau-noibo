@@ -141,10 +141,10 @@ class RankingsBoard extends Component
 
             // ── Top dịch vụ theo báo giá ───────────
             $topServices = \App\Models\Quotation::whereYear('date', $this->year)
-                ->whereNotNull('work_description')
-                ->where('work_description', '!=', '')
-                ->selectRaw('work_description as service, COUNT(*) as cnt, SUM(total_value) as total')
-                ->groupBy('work_description')
+                ->whereNotNull('service')
+                ->where('service', '!=', '')
+                ->selectRaw('service, COUNT(*) as cnt, SUM(total_value) as total')
+                ->groupBy('service')
                 ->orderByDesc('total')
                 ->limit(10)
                 ->get();

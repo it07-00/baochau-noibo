@@ -388,7 +388,7 @@ class ContractSustainabilityManager extends Component
             'staffs'             => User::orderBy('name')->get(),
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
-                $q->whereIn('name', ['tu-van', 'kinh-doanh', 'ky-thuat']))->orderBy('name')->get(),
+                $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),
             'provinces' => \App\Support\VietnamProvinces::list(),
             'all_statuses'       => ContractSustainability::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractSustainability::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),

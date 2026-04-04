@@ -455,7 +455,7 @@ class ContractWasteManager extends Component
             'staffs' => User::all(),
             'departments' => Department::all(),
             'assignable_users' => \App\Models\User::whereHas('roles', fn($q) =>
-                $q->whereIn('name', ['tu-van', 'kinh-doanh', 'ky-thuat']))->orderBy('name')->get(),
+                $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),
             // Dynamic filter options
             'service_types' => ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray(),
             'waste_types' => ContractWaste::whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray(),

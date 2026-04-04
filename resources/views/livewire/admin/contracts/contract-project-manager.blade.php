@@ -490,7 +490,7 @@
                                     @foreach($customers as $c)
                                     <button class="dropdown-item text-wrap @if(($formData['customer_id'] ?? '') == $c->id) active @endif"
                                             type="button"
-                                            x-show="{{ json_encode(mb_strtolower($c->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                            x-show="{{ json_encode(mb_strtolower($c->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                             style="white-space: normal !important;"
                                             wire:click="$set('formData.customer_id', {{ $c->id }})" @click="open = false">
                                         {{ $c->name }}
@@ -517,7 +517,7 @@
                                     @foreach($staffs as $s)
                                     <button class="dropdown-item text-wrap @if(($formData['staff_id'] ?? '') == $s->id) active @endif"
                                             type="button"
-                                            x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').includes(search.toLowerCase().normalize('NFD'))"
+                                            x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                             style="white-space: normal !important;"
                                             wire:click="$set('formData.staff_id', {{ $s->id }})" @click="open = false">
                                         {{ $s->name }}
@@ -659,7 +659,7 @@
                     <div class="list-group" style="max-height: 320px; overflow-y: auto;">
                         @foreach($assignable_users as $u)
                         <label class="list-group-item list-group-item-action d-flex gap-2"
-                               x-show="({{ json_encode(mb_strtolower($u->name)) }}).normalize('NFD').includes(search.toLowerCase().normalize('NFD'))">
+                               x-show="!search || window.__strip({{ json_encode($u->name . ' ' . ($u->roles->first()?->name ?? '')) }}).includes(window.__strip(search))">
                             <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" value="{{ $u->id }}" wire:model="assignUserIds">
                             <span>{{ $u->name }}<small class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
                         </label>
