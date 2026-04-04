@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <!--[if gte mso 9]>
     <xml>
+        @verbatim
         <x:ExcelWorkbook>
             <x:ExcelWorksheets>
                 <x:ExcelWorksheet>
@@ -13,6 +14,7 @@
                 </x:ExcelWorksheet>
             </x:ExcelWorksheets>
         </x:ExcelWorkbook>
+        @endverbatim
     </xml>
     <![endif]-->
     <style>
