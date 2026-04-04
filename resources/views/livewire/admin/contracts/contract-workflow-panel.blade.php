@@ -81,7 +81,12 @@
                 {{-- File upload --}}
                 <div class="mb-3">
                     <label class="form-label fw-bold">
-                        File đính kèm <span class="text-danger">*</span>
+                        File đính kèm
+                        @if($activeStep === 'receiving')
+                            <small class="text-muted fw-normal">(Tùy chọn)</small>
+                        @else
+                            <span class="text-danger">*</span>
+                        @endif
                         <small class="text-muted fw-normal">(PDF, Word, Excel, JPG, PNG — tối đa 20MB/file)</small>
                     </label>
                     <input wire:model="uploadFiles" type="file" class="form-control" multiple

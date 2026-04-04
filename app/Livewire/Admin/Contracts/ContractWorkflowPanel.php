@@ -59,31 +59,37 @@ class ContractWorkflowPanel extends Component
             return;
         }
 
-        $this->validate([
-            'uploadFiles'   => 'required|array|min:1',
+        $rules = [
+            'uploadFiles'   => ($this->activeStep === 'receiving' ? 'nullable' : 'required') . '|array' . ($this->activeStep === 'receiving' ? '' : '|min:1'),
             'uploadFiles.*' => 'file|max:20480|extensions:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
             'comment'       => 'nullable|max:1000',
-        ], [
+        ];
+
+        $messages = [
             'uploadFiles.required' => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
             'uploadFiles.min'      => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
             'uploadFiles.*.max'        => 'Mỗi file không được vượt quá 20MB.',
             'uploadFiles.*.extensions' => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
-        ]);
+        ];
 
-        foreach ($this->uploadFiles as $file) {
-            $path = $file->storePublicly(
-                'contract-files/' . $this->contractType . '/' . $this->activeStep,
-                'public'
-            );
+        $this->validate($rules, $messages);
 
-            ContractMilestoneFile::create([
-                'contract_type' => $this->getModelClass(),
-                'contract_id'   => $this->contractId,
-                'milestone'     => $this->activeStep,
-                'file_path'     => $path,
-                'original_name' => $file->getClientOriginalName(),
-                'uploader_id'   => auth()->id(),
-            ]);
+        if (!empty($this->uploadFiles)) {
+            foreach ($this->uploadFiles as $file) {
+                $path = $file->storePublicly(
+                    'contract-files/' . $this->contractType . '/' . $this->activeStep,
+                    'public'
+                );
+
+                ContractMilestoneFile::create([
+                    'contract_type' => $this->getModelClass(),
+                    'contract_id'   => $this->contractId,
+                    'milestone'     => $this->activeStep,
+                    'file_path'     => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'uploader_id'   => auth()->id(),
+                ]);
+            }
         }
 
         // Lưu workflow step record

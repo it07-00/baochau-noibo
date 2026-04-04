@@ -5,7 +5,7 @@
             <h4 class="mb-0">HĐ Chất thải & Tiếng ồn</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng thống kê</a></li>
                     <li class="breadcrumb-item active">HĐ Chất thải & Tiếng ồn</li>
                 </ol>
             </nav>
@@ -452,11 +452,13 @@
                                 <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
                             </button>
                         </li>
+                        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <li class="nav-item">
                             <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-payment-waste-{{ $selectedDoc->id }}" type="button">
                                 <i class="bi bi-cash-stack me-1"></i>Lịch thanh toán
                             </button>
                         </li>
+                        @endunless
                     </ul>
                     <div class="tab-content">
                     {{-- Tab 1: Thông tin HĐ --}}
@@ -604,6 +606,7 @@
                         />
                     </div>
 
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                     {{-- Tab 3: Lịch thanh toán --}}
                     <div class="tab-pane fade" id="tab-payment-waste-{{ $selectedDoc->id }}" role="tabpanel">
                         <livewire:admin.contracts.contract-payment-schedule-manager
@@ -612,6 +615,7 @@
                             :key="'payment-waste-' . $selectedDoc->id"
                         />
                     </div>
+                    @endunless
                     </div>
 
                     @endif
@@ -924,9 +928,8 @@
                     <h5 class="modal-title fw-bold modal-title-custom"><i class="bi bi-person-check me-1"></i> Giao việc hợp đồng</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4" x-data="{ search: '' }">
+                <div class="modal-body p-4">
                     <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
-                    <input type="text" x-model="search" class="form-control form-control-sm mb-3" placeholder="Tìm kiếm nhân viên...">
                     <div class="list-group" style="max-height: 320px; overflow-y: auto;">
                         @foreach($assignable_users as $u)
                         @php
@@ -943,10 +946,8 @@
                                 'marketing' => 'Marketing',
                                 default => $roleSlug
                             };
-                            $searchText = $u->name . ' ' . $roleDisplay . ' ' . $roleSlug;
                         @endphp
-                        <label class="list-group-item list-group-item-action d-flex gap-2"
-                               x-show="!search || window.__strip({{ json_encode($searchText) }}).includes(window.__strip(search))">
+                        <label class="list-group-item list-group-item-action d-flex gap-2">
                             <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" value="{{ $u->id }}" wire:model="assignUserIds">
                             <span>{{ $u->name }}<small class="text-muted d-block">{{ $roleDisplay }}</small></span>
                         </label>

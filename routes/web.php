@@ -35,7 +35,7 @@ Route::middleware('auth')->get('/admin/{path?}', function (Request $request, ?st
 })->where('path', '.*');
 
 Route::middleware('auth')->name('app.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', \App\Livewire\Admin\StatisticsBoard::class)->name('dashboard');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [SettingController::class, 'profile'])->name('index');

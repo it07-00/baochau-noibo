@@ -4,8 +4,8 @@
             <h4 class="mb-0">Bảng thống kê</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Bảng thống kê tổng quan</li>
+                    <li class="breadcrumb-item">Hệ thống</li>
+                    <li class="breadcrumb-item active">Bảng thống kê</li>
                 </ol>
             </nav>
         </div>
