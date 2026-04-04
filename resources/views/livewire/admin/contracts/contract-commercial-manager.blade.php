@@ -531,7 +531,7 @@
                             </div>
                             @error('formData.staff_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-none">
                             <label class="form-label fw-bold">Phòng ban</label>
                             <select class="form-select" wire:model="formData.department_id">
                                 <option value="">-- Chọn phòng ban --</option>

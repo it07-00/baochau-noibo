@@ -28,6 +28,16 @@ class StatisticsBoard extends Component
         $this->years = range(now()->year, now()->year - 4);
     }
 
+    public function updatedChartMode(): void
+    {
+        $this->dispatch('chart-updated');
+    }
+
+    public function updatedYear(): void
+    {
+        $this->dispatch('chart-updated');
+    }
+
     public function render()
     {
         // ── KPI tổng quan ──────────────────────────────

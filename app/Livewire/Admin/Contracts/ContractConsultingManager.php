@@ -287,7 +287,7 @@ class ContractConsultingManager extends Component
             'shd_bc'         => '',
             'customer_id'    => '',
             'staff_id'       => auth()->id(),
-            'department_id'  => auth()->user()->department_id ?? '',
+            'department_id'  => 3, // Phòng Kinh doanh
             'signed_at'      => date('Y-m-d'),
             'submitted_at'   => '',
             'value'          => 0,
@@ -386,7 +386,7 @@ class ContractConsultingManager extends Component
         return view('livewire.admin.contracts.contract-consulting-manager', [
             'docs'                 => $docs,
             'customers'            => Customer::orderBy('name')->get(),
-            'staffs'               => User::orderBy('name')->get(),
+            'staffs'               => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'departments'          => Department::all(),
             'assignable_users'     => User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),

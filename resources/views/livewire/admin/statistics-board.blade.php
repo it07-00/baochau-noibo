@@ -221,7 +221,15 @@
                             class="btn {{ $chartMode === 'year' ? 'btn-primary' : 'btn-outline-secondary' }}">Theo năm</button>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" 
+                     x-data="{ render() { if(window.renderConsultingChart) window.renderConsultingChart(); } }"
+                     x-init="setTimeout(() => render(), 100)"
+                     @chart-updated.window="render()">
+                    <div id="consultingChartConfig" class="d-none"
+                         data-chart-data='@json($consultingChartData)'
+                         data-chart-mode="{{ $chartMode }}"
+                         data-year="{{ $year }}"
+                         data-years='@json(array_reverse($years))'></div>
                     <canvas id="consultingChart" height="260" wire:ignore></canvas>
                 </div>
             </div>
@@ -236,7 +244,9 @@
                             <tr>
                                 <th>Loại HĐ</th>
                                 <th class="text-center">Số lượng</th>
+                                @if($canSeeFinance)
                                 <th class="text-end">Giá trị</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -249,7 +259,9 @@
                                     @else —
                                     @endif
                                 </td>
+                                @if($canSeeFinance)
                                 <td class="text-end small">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') . ' đ' : '—' }}</td>
+                                @endif
                             </tr>
                             @endforeach
                         </tbody>
@@ -257,7 +269,9 @@
                             <tr>
                                 <td>Tổng</td>
                                 <td class="text-center">{{ $totalContracts }}</td>
+                                @if($canSeeFinance)
                                 <td class="text-end">{{ number_format($totalContractValue, 0, ',', '.') }} đ</td>
+                                @endif
                             </tr>
                         </tfoot>
                     </table>
@@ -273,86 +287,62 @@
     <script>
     (function () {
         const colors = ['#4361ee','#3a0ca3','#7209b7','#f72585','#4cc9f0'];
-        const chartData  = @json($consultingChartData);
-        const chartMode  = @json($chartMode);
-        const year       = @json($year);
-        const years      = @json(array_reverse($years));
 
-        const labels = chartMode === 'quarter'
-            ? ['Quý 1','Quý 2','Quý 3','Quý 4']
-            : years.map(y => 'Năm ' + y);
+        window.renderConsultingChart = function() {
+            console.log('Rendering chart...');
+            const configEl = document.getElementById('consultingChartConfig');
+            if (!configEl) return;
 
-        const datasets = Object.entries(chartData).map(([label, data], i) => ({
-            label,
-            data,
-            backgroundColor: colors[i % colors.length] + 'cc',
-            borderColor: colors[i % colors.length],
-            borderWidth: 1,
-            borderRadius: 4,
-        }));
+            try {
+                const chartData  = JSON.parse(configEl.dataset.chartData);
+                const chartMode  = configEl.dataset.chartMode;
+                const year       = configEl.dataset.year;
+                const years      = JSON.parse(configEl.dataset.years);
 
-        const el = document.getElementById('consultingChart');
-        if (!el) return;
-        if (el._chartInstance) el._chartInstance.destroy();
-
-        el._chartInstance = new Chart(el, {
-            type: 'bar',
-            data: { labels, datasets },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
-                    title: {
-                        display: true,
-                        text: chartMode === 'quarter' ? 'Số dự án theo quý — Năm ' + year : 'Số dự án theo năm',
-                        font: { size: 13 }
-                    },
-                    tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + ' dự án' } }
-                },
-                scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
-                }
-            }
-        });
-
-        // Re-render khi Livewire update
-        document.addEventListener('livewire:update', () => {
-            setTimeout(() => {
-                const newEl = document.getElementById('consultingChart');
-                if (!newEl) return;
-                if (newEl._chartInstance) newEl._chartInstance.destroy();
-
-                const newData   = @json($consultingChartData);
-                const newMode   = @json($chartMode);
-                const newLabels = newMode === 'quarter'
+                const labels = chartMode === 'quarter'
                     ? ['Quý 1','Quý 2','Quý 3','Quý 4']
                     : years.map(y => 'Năm ' + y);
 
-                const newDatasets = Object.entries(newData).map(([label, data], i) => ({
-                    label, data,
+                const datasets = Object.entries(chartData).map(([label, data], i) => ({
+                    label,
+                    data,
                     backgroundColor: colors[i % colors.length] + 'cc',
                     borderColor: colors[i % colors.length],
-                    borderWidth: 1, borderRadius: 4,
+                    borderWidth: 1,
+                    borderRadius: 4,
                 }));
 
-                newEl._chartInstance = new Chart(newEl, {
+                const el = document.getElementById('consultingChart');
+                if (!el) return;
+                if (el._chartInstance) el._chartInstance.destroy();
+
+                el._chartInstance = new Chart(el, {
                     type: 'bar',
-                    data: { labels: newLabels, datasets: newDatasets },
+                    data: { labels, datasets },
                     options: {
                         responsive: true,
                         plugins: {
                             legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
                             title: {
                                 display: true,
-                                text: newMode === 'quarter' ? 'Số dự án theo quý — Năm ' + year : 'Số dự án theo năm',
+                                text: chartMode === 'quarter' ? 'Số dự án theo quý — Năm ' + year : 'Số dự án theo năm',
                                 font: { size: 13 }
                             },
                             tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + ' dự án' } }
                         },
-                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } } }
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
+                        }
                     }
                 });
-            }, 50);
+            } catch (e) {
+                console.error('Chart.js render error:', e);
+            }
+        };
+
+        // Re-render khi Livewire update cũng vẫn giữ nhé nếu cần
+        document.addEventListener('livewire:update', () => {
+            setTimeout(() => { if(window.renderConsultingChart) window.renderConsultingChart(); }, 100);
         });
     })();
     </script>
@@ -376,7 +366,9 @@
                                 <th>Loại HĐ</th>
                                 <th class="text-center">Số HĐ</th>
                                 <th class="text-center">Hoàn thành</th>
+                                @if($canSeeFinance)
                                 <th class="text-end">Giá trị</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -391,7 +383,9 @@
                                     @endif
                                 </td>
                                 <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
+                                @if($canSeeFinance)
                                 <td class="text-end small">{{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') . ' đ' : '—' }}</td>
+                                @endif
                             </tr>
                             @endforeach
                         </tbody>
@@ -401,7 +395,9 @@
                                 <td>Tổng</td>
                                 <td class="text-center">{{ $technicalStats->sum('count') }}</td>
                                 <td class="text-center text-success">{{ $technicalStats->sum('completed') }}</td>
+                                @if($canSeeFinance)
                                 <td class="text-end">{{ number_format($technicalStats->sum('value'), 0, ',', '.') }} đ</td>
+                                @endif
                             </tr>
                         </tfoot>
                         @endif

@@ -30,6 +30,7 @@ class RankingsBoard extends Component
     public function render()
     {
         $currentUser = auth()->user();
+        $canSeeFinance    = $currentUser->hasAnyRole(['admin', 'ke-toan', 'giam-doc', 'quan-ly']);
         $canSeeSales      = $currentUser->hasAnyRole(['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan']);
         $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van']);
         $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
@@ -235,7 +236,7 @@ class RankingsBoard extends Component
         }
 
         return view('livewire.admin.rankings-board', compact(
-            'canSeeSales', 'canSeeConsulting', 'canSeeTechnical',
+            'canSeeSales', 'canSeeConsulting', 'canSeeTechnical', 'canSeeFinance',
             'salesRankings', 'consultingRankings', 'technicalRankings',
             'revenueRankings', 'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
         ))->layout('admin.layouts.app');

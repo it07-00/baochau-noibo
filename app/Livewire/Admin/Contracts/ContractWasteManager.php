@@ -201,7 +201,7 @@ class ContractWasteManager extends Component
             'customer_id' => '',
             'handler_id' => '',
             'staff_id' => auth()->id(),
-            'department_id' => 3, // Default to Waste Department if exists
+            'department_id' => 3, // Phòng Kinh doanh
             'content' => '',
             'value' => 0,
             'commission' => 0,
@@ -452,7 +452,7 @@ class ContractWasteManager extends Component
             'docs' => $docs,
             'handlers' => Handler::orderBy('name')->get(),
             'customers' => Customer::orderBy('name')->get(),
-            'staffs' => User::all(),
+            'staffs' => User::role(['kinh-doanh', 'tp-kinh-doanh', 'tp-kd-du-an', 'kd-du-an'])->orderBy('name')->get(),
             'departments' => Department::all(),
             'assignable_users' => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),
