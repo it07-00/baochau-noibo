@@ -19,23 +19,23 @@ class DatabaseSeeder extends Seeder
             SampleUsersSeeder::class,
 
             // 2. Dữ liệu nền
-            InternalDocsSeeder::class,
-            ContractWasteSeeder::class,
-            ContractSampleSeeder::class,
+            // InternalDocsSeeder::class,
+            // ContractWasteSeeder::class,
+            // ContractSampleSeeder::class,
 
             // 3. Kinh doanh & Sales
-            QuotationSeeder::class,
-            SalesDataSeeder::class,
-            SalesTargetSeeder::class,
+            // QuotationSeeder::class,
+            // SalesDataSeeder::class,
+            // SalesTargetSeeder::class,
 
             // 4. Hóa đơn & Tài chính
-            ContractPaymentScheduleSeeder::class,
-            InvoiceSeeder::class,
-            CommissionRequestSeeder::class,
+            // ContractPaymentScheduleSeeder::class,
+            // InvoiceSeeder::class,
+            // CommissionRequestSeeder::class,
 
             // 5. Vận hành
-            PostalDeliverySeeder::class,
-            DailyReportSeeder::class,
+            // PostalDeliverySeeder::class,
+            // DailyReportSeeder::class,
         ]);
     }
 }

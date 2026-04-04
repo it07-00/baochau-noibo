@@ -245,13 +245,6 @@ SVG;
                             'children'    => ['Báo cáo hàng ngày'],
                         ],
                         [
-                            'title'       => 'Báo cáo Marketing',
-                            'icon'        => $usersIcon,
-                            'permission'  => 'reports.view',
-                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'marketing'],
-                            'children'    => ['Bảng tổng kết', 'Bảng mục tiêu cam kết'],
-                        ],
-                        [
                             'title'       => 'Báo cáo Kinh doanh',
                             'icon'        => $usersIcon,
                             'permission'  => 'reports.view',
@@ -376,10 +369,6 @@ SVG;
                             request()->routeIs('app.reports.technical.energy')         => 'BC Phát thải & Năng lượng',
                             default                                                    => 'BC Chất thải & Tiếng ồn',
                         };
-                    } elseif (request()->routeIs('app.reports.marketing.*')) {
-                        $activeGroup = 'Báo cáo Marketing';
-                        $activeChild = request()->routeIs('app.reports.marketing.target')
-                            ? 'Bảng mục tiêu cam kết' : 'Bảng tổng kết';
                     } elseif (request()->routeIs('app.invoices.bao-chau')) {
                         $activeGroup = 'Quản lý hóa đơn';
                         $activeChild = 'Hóa đơn Bảo Châu';
@@ -514,10 +503,6 @@ SVG;
                                             $href = route('app.reports.technical.energy');
                                         } elseif ($menu['title'] === 'Bộ phận Marketing' && $child === 'Báo cáo hàng ngày') {
                                             $href = route('app.marketing.daily-report.index');
-                                        } elseif ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng tổng kết') {
-                                            $href = route('app.reports.marketing.summary');
-                                        } elseif ($menu['title'] === 'Báo cáo Marketing' && $child === 'Bảng mục tiêu cam kết') {
-                                            $href = route('app.reports.marketing.target');
                                         } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn Bảo Châu') {
                                             $href = route('app.invoices.bao-chau');
                                         } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn chủ xử lý') {
