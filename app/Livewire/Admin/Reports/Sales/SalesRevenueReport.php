@@ -175,7 +175,7 @@ class SalesRevenueReport extends Component
             'contractTypeOptions' => collect($this->contractTypeMap)
                 ->mapWithKeys(fn($class, $key) => [$key => ($this->contractTypeLabels[$class] ?? ucfirst($key))])
                 ->toArray(),
-            'staffs'          => User::role('kinh-doanh')->orderBy('name')->get(),
+            'staffs'          => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'departments'     => Department::orderBy('name')->get(),
             'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'contractTypes'   => $this->contractTypeMap,

@@ -56,7 +56,7 @@ class SalesSummaryReport extends Component
         ];
         $totals['grand'] = $totals['renewal'] + $totals['progressive'];
 
-        $staffs = User::role('kinh-doanh')->orderBy('name')->get();
+        $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
 
         return view('livewire.admin.reports.sales.sales-summary-report', [
             'months'  => $months,

@@ -50,7 +50,7 @@ class PersonalSalesReport extends Component
         } else {
             // Chế độ tất cả: breakdown theo nhân viên
             $staffDetail = null;
-            $allStaff    = User::role('kinh-doanh')->orderBy('name')->get()->map(function ($user) {
+            $allStaff    = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get()->map(function ($user) {
                 $rows = Quotation::whereYear('date', $this->year)
                     ->where('staff_id', $user->id)
                     ->selectRaw('COUNT(*) as cnt, SUM(original_value) as val, SUM(total_value) as sa')
@@ -77,7 +77,7 @@ class PersonalSalesReport extends Component
             'totals'      => $totals,
             'allStaff'    => $allStaff,
             'staffDetail' => $staffDetail,
-            'staffs'      => User::role('kinh-doanh')->orderBy('name')->get(),
+            'staffs'      => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'years'       => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'isSingle'    => (bool) $staffId,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cá nhân']);

@@ -62,7 +62,7 @@ class RankingsBoard extends Component
             }
 
             // ── Xếp hạng nhân viên kinh doanh ──────────────
-            $salesRankings = User::role('kinh-doanh')->get()
+            $salesRankings = User::role(['kinh-doanh', 'tp-kinh-doanh'])->get()
                 ->map(function ($user) use ($staffTotals) {
                     $r = (float) RenewalSales::whereYear('sales_month', $this->year)
                         ->where('user_id', $user->id)->sum('sales_amount');

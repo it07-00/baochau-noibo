@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\DailyReports;
 
 use Livewire\Component;
 use App\Models\DailyReport;
+use App\Models\Department;
+use App\Models\User;
 use Carbon\Carbon;
 
 class DailyReportManager extends Component
@@ -40,11 +42,27 @@ class DailyReportManager extends Component
         $this->dateFilter = date('Y-m-d');
         $this->monthFilter = (int)date('m');
         $this->yearFilter = (int)date('Y');
-        $this->isManager = auth()->user()->hasRole('giam-doc');
+        $this->isManager = $this->canManageReports();
         if (!$this->isManager) {
             $this->userIdFilter = auth()->id();
         }
         $this->loadReportByDate();
+    }
+
+    private function canManageReports(): bool
+    {
+        return auth()->user()->hasAnyRole(['giam-doc', 'tp-kinh-doanh']);
+    }
+
+    private function scopedUsersQuery()
+    {
+        $query = User::query();
+
+        if (auth()->user()->hasRole('tp-kinh-doanh') && !auth()->user()->hasRole('giam-doc')) {
+            $query->role(['kinh-doanh', 'tp-kinh-doanh']);
+        }
+
+        return $query;
     }
 
     public function updatedReportDate()
@@ -114,6 +132,11 @@ class DailyReportManager extends Component
             abort(403);
         }
 
+        if ($this->isManager && auth()->user()->hasRole('tp-kinh-doanh') && !auth()->user()->hasRole('giam-doc')) {
+            $canManageThisUser = $this->scopedUsersQuery()->whereKey($report->user_id)->exists();
+            abort_unless($canManageThisUser, 403);
+        }
+
         $report->delete();
         $this->dispatch('swal:success', ['message' => 'Xóa báo cáo thành công!']);
     }
@@ -128,7 +151,7 @@ class DailyReportManager extends Component
             $filename = "Bao_cao_thang_" . str_pad($this->monthFilter, 2, '0', STR_PAD_LEFT) . "_" . $this->yearFilter . ".xls";
         }
 
-        $allUsers = \App\Models\User::query();
+        $allUsers = $this->scopedUsersQuery();
         if ($this->deptIdFilter) $allUsers->where('department_id', $this->deptIdFilter);
         if ($this->userIdFilter) $allUsers->where('id', $this->userIdFilter);
         $userIds = $allUsers->pluck('id');
@@ -159,13 +182,24 @@ class DailyReportManager extends Component
 
     public function render()
     {
-        $allUsers = $this->isManager ? \App\Models\User::with('department')->orderBy('name')->get() : collect();
-        $departments = $this->isManager ? \App\Models\Department::orderBy('name')->get() : collect();
+        $allUsers = collect();
+        $departments = collect();
+
+        if ($this->isManager) {
+            $allUsers = $this->scopedUsersQuery()->with('department')->orderBy('name')->get();
+
+            $departmentIds = $this->scopedUsersQuery()
+                ->whereNotNull('department_id')
+                ->distinct()
+                ->pluck('department_id');
+
+            $departments = Department::whereIn('id', $departmentIds)->orderBy('name')->get();
+        }
 
         if ($this->activeTab === 'history') {
             $userIds = [auth()->id()];
         } elseif ($this->isManager) {
-            $scopedUsers = \App\Models\User::query();
+            $scopedUsers = $this->scopedUsersQuery();
             if ($this->deptIdFilter) $scopedUsers->where('department_id', $this->deptIdFilter);
             if ($this->userIdFilter) $scopedUsers->where('id', $this->userIdFilter);
             $userIds = $scopedUsers->pluck('id');
@@ -194,7 +228,7 @@ class DailyReportManager extends Component
                     ->get()
                     ->keyBy('user_id');
 
-                $usersToDisplay = \App\Models\User::whereIn('id', $userIds)->get();
+                $usersToDisplay = $this->scopedUsersQuery()->whereIn('id', $userIds)->get();
                 foreach ($usersToDisplay as $user) {
                     $report = $dailyReports->get($user->id);
                     $reports->push((object)['user' => $user, 'report' => $report]);

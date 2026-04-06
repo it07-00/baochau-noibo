@@ -84,7 +84,7 @@ class SalesTargetReport extends Component
         return view('livewire.admin.reports.sales.sales-target-report', [
             'months'    => $months,
             'totals'    => $totals,
-            'staffs'    => User::role('kinh-doanh')->orderBy('name')->get(),
+            'staffs'    => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'years'     => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'canEdit'   => auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly']),
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);

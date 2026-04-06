@@ -69,7 +69,7 @@ class SalesTrackingReport extends Component
             'items'   => $items,
             'rTotal'  => (float) $rTotal,
             'pTotal'  => (float) $pTotal,
-            'staffs'  => User::role('kinh-doanh')->orderBy('name')->get(),
+            'staffs'  => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'years'   => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
         ])->layout('admin.layouts.app', ['title' => 'Bảng theo dõi doanh số']);
     }

@@ -19,7 +19,7 @@ class SalesAchievementReport extends Component
 
     public function render()
     {
-        $staffs = User::role('kinh-doanh')->orderBy('name')->get();
+        $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
 
         $rankings = $staffs->map(function ($user) {
             $rBase = RenewalSales::where('user_id', $user->id)
