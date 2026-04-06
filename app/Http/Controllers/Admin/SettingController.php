@@ -67,6 +67,18 @@ class SettingController extends Controller
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', 'string', 'min:8', 'max:255', 'confirmed', 'different:current_password'],
+        ], [
+            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
+            'current_password.current_password' => 'Mật khẩu hiện tại không chính xác.',
+            'password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'password.min' => 'Mật khẩu mới phải có ít nhất :min ký tự.',
+            'password.max' => 'Mật khẩu mới không được vượt quá :max ký tự.',
+            'password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
+            'password.different' => 'Mật khẩu mới phải khác mật khẩu hiện tại.',
+        ], [
+            'current_password' => 'mật khẩu hiện tại',
+            'password' => 'mật khẩu mới',
+            'password_confirmation' => 'xác nhận mật khẩu mới',
         ]);
 
         $user = $request->user();

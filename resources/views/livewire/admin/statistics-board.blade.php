@@ -420,80 +420,34 @@
         <div class="row g-4 mb-4">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-bottom py-3">
-                        <h6 class="mb-0 fw-bold">Diễn biến theo tháng — Năm {{ $year }}</h6>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Tháng</th>
-                                        <th class="text-center">Hợp đồng</th>
-                                        @if($canSeeFinance)
-                                        <th class="text-end">Doanh số (đ)</th>
-                                        <th class="text-end">Thực thu (đ)</th>
-                                        @endif
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($monthly as $m => $data)
-                                    <tr>
-                                        <td class="fw-semibold">Tháng {{ $m }}</td>
-                                        <td class="text-center">{{ $data['contracts'] ?: '—' }}</td>
-                                        @if($canSeeFinance)
-                                        <td class="text-end small">{{ $data['sales'] > 0 ? number_format($data['sales']) : '—' }}</td>
-                                        <td class="text-end small text-success fw-bold">{{ $data['revenue'] > 0 ? number_format($data['revenue']) : '—' }}</td>
-                                        @endif
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-0 fw-bold">Employee Overview Style</h6>
+                            <small class="text-muted">Xu hướng theo tháng trong năm {{ $year }}</small>
                         </div>
+                        <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
+                    </div>
+                    <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
+                        <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
+                        <canvas id="monthlyOverviewChart" height="250" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                @if($canSeeConsulting)
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
-                            <h6 class="mb-0 fw-bold">Dự án tư vấn theo loại</h6>
-                            <div class="btn-group btn-group-sm">
-                                <button wire:click="$set('chartMode','quarter')" class="btn {{ $chartMode === 'quarter' ? 'btn-primary' : 'btn-outline-secondary' }}">Quý</button>
-                                <button wire:click="$set('chartMode','year')" class="btn {{ $chartMode === 'year' ? 'btn-primary' : 'btn-outline-secondary' }}">Năm</button>
-                            </div>
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-0 fw-bold">Team Work Load Style</h6>
+                            <small class="text-muted">Cơ cấu theo loại hợp đồng</small>
                         </div>
-                        <div class="card-body" x-data="{ render() { if(window.renderConsultingChart) window.renderConsultingChart(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
-                            <div id="consultingChartConfig" class="d-none" data-chart-data='@json($consultingChartData)' data-chart-mode="{{ $chartMode }}" data-year="{{ $year }}" data-years='@json(array_reverse($years))'></div>
-                            <canvas id="consultingChart" height="260" wire:ignore></canvas>
-                        </div>
+                        <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
-                @else
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-bottom py-3">
-                            <h6 class="mb-0 fw-bold">Hợp đồng theo loại — {{ $year }}</h6>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Loại HĐ</th>
-                                        <th class="text-center">Số lượng</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($byType as $label => $data)
-                                    <tr>
-                                        <td class="small">{{ $label }}</td>
-                                        <td class="text-center font-monospace">{{ $data['count'] }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
+                        <div id="workloadChartConfig" class="d-none" data-by-type='@json($byType)'></div>
+                        <canvas id="teamWorkloadChart" height="250" wire:ignore></canvas>
                     </div>
-                @endif
+                </div>
             </div>
         </div>
         @endunless
@@ -533,38 +487,171 @@
     @endif
 
     {{-- ── SHARED FOOTER / SCRIPTS ────────────────────────────────── --}}
-    @if($canSeeConsulting && !$isIT)
-        @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-        <script>
-        (function () {
-            const colors = ['#4361ee','#3a0ca3','#7209b7','#f72585','#4cc9f0'];
-            window.renderConsultingChart = function() {
-                const configEl = document.getElementById('consultingChartConfig');
-                if (!configEl) return;
-                try {
-                    const chartData = JSON.parse(configEl.dataset.chartData);
-                    const chartMode = configEl.dataset.chartMode;
-                    const el = document.getElementById('consultingChart');
-                    if (!el) return;
-                    if (el._chartInstance) el._chartInstance.destroy();
-                    const labels = chartMode === 'quarter' ? ['Q1','Q2','Q3','Q4'] : JSON.parse(configEl.dataset.years).map(y => 'Năm ' + y);
-                    const datasets = Object.entries(chartData).map(([label, data], i) => ({
-                        label, data, backgroundColor: colors[i % colors.length] + 'cc', borderColor: colors[i % colors.length], borderWidth: 1, borderRadius: 4
-                    }));
-                    el._chartInstance = new Chart(el, {
-                        type: 'bar',
-                        data: { labels, datasets },
-                        options: {
-                            responsive: true,
-                            plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+    (function () {
+        const workloadPalette = ['#4f7cff', '#2ec27e', '#f5a524', '#f05252', '#7c3aed', '#0ea5e9'];
+
+        function compactCurrency(value) {
+            if (value >= 1000000000) return (value / 1000000000).toFixed(1) + 'B';
+            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+            if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+            return value;
+        }
+
+        function renderMonthlyOverviewChart() {
+            const configEl = document.getElementById('monthlyOverviewConfig');
+            const canvas = document.getElementById('monthlyOverviewChart');
+            if (!configEl || !canvas) return;
+
+            const monthly = JSON.parse(configEl.dataset.monthly || '{}');
+            const canSeeFinance = String(configEl.dataset.canSeeFinance) === '1';
+            const labels = Object.keys(monthly).map((m) => 'Th' + m);
+            const contractData = Object.values(monthly).map((item) => Number(item.contracts || 0));
+            const salesData = Object.values(monthly).map((item) => Number(item.sales || 0));
+            const revenueData = Object.values(monthly).map((item) => Number(item.revenue || 0));
+
+            if (canvas._chartInstance) canvas._chartInstance.destroy();
+
+            const datasets = [
+                {
+                    type: 'bar',
+                    label: 'Hợp đồng mới',
+                    data: contractData,
+                    yAxisID: 'y',
+                    backgroundColor: '#4f7cff',
+                    borderRadius: 6,
+                    maxBarThickness: 22,
+                    order: 2
+                }
+            ];
+
+            if (canSeeFinance) {
+                datasets.push({
+                    type: 'bar',
+                    label: 'Doanh số',
+                    data: salesData,
+                    yAxisID: 'y1',
+                    backgroundColor: '#f05252',
+                    borderRadius: 6,
+                    maxBarThickness: 22,
+                    order: 3
+                });
+
+                datasets.push({
+                    type: 'line',
+                    label: 'Thực thu',
+                    data: revenueData,
+                    yAxisID: 'y1',
+                    borderColor: '#2ec27e',
+                    backgroundColor: 'rgba(46, 194, 126, 0.2)',
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#2ec27e',
+                    fill: false,
+                    order: 1
+                });
+            }
+
+            canvas._chartInstance = new Chart(canvas, {
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Số lượng hợp đồng' },
+                            grid: { color: 'rgba(15, 23, 42, 0.08)' }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            display: canSeeFinance,
+                            title: { display: canSeeFinance, text: 'Giá trị (VND)' },
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                callback: function(value) {
+                                    return compactCurrency(Number(value));
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
                         }
-                    });
-                } catch (e) { console.error('Chart error:', e); }
-            };
-            document.addEventListener('livewire:update', () => setTimeout(() => window.renderConsultingChart(), 100));
-        })();
-        </script>
-        @endpush
-    @endif
+                    }
+                }
+            });
+        }
+
+        function renderWorkloadChart() {
+            const configEl = document.getElementById('workloadChartConfig');
+            const canvas = document.getElementById('teamWorkloadChart');
+            if (!configEl || !canvas) return;
+
+            const byType = JSON.parse(configEl.dataset.byType || '{}');
+            const entries = Object.entries(byType);
+            if (!entries.length) return;
+
+            const labels = entries.map(([label]) => label);
+            const values = entries.map(([, item]) => Number(item.count || 0));
+            const colors = labels.map((_, idx) => workloadPalette[idx % workloadPalette.length]);
+
+            if (canvas._chartInstance) canvas._chartInstance.destroy();
+
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'polarArea',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Khối lượng công việc',
+                        data: values,
+                        backgroundColor: colors.map((c) => c + 'cc'),
+                        borderColor: colors,
+                        borderWidth: 1.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8 } }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            ticks: { backdropColor: 'transparent' },
+                            grid: { color: 'rgba(15, 23, 42, 0.12)' },
+                            angleLines: { color: 'rgba(15, 23, 42, 0.12)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.renderStatisticsBoardCharts = function() {
+            renderMonthlyOverviewChart();
+            renderWorkloadChart();
+        };
+
+        document.addEventListener('livewire:update', function () {
+            setTimeout(function() {
+                window.renderStatisticsBoardCharts();
+            }, 100);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function() {
+                window.renderStatisticsBoardCharts();
+            }, 100);
+        });
+    })();
+    </script>
+    @endpush
 </div>

@@ -18,11 +18,11 @@
                 <div class="pure-card-header border-bottom">
                     <h4 class="pure-card-title m-0">Thông tin người dùng</h4>
                 </div>
-                
+
                 <div class="pure-card-body p-4">
                     <form action="{{ route('app.users.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="row g-4">
                             <!-- Cột trái -->
                             <div class="col-md-6">
@@ -31,7 +31,7 @@
                                     <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required placeholder="Nhập họ và tên">
                                     @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
-                                
+
                                 <div class="mb-3">
                                     <label class="form-label fw-medium">Tên đăng nhập <span class="text-danger">*</span></label>
                                     <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" required placeholder="Ví dụ: nva">
@@ -40,8 +40,14 @@
 
                                 <div class="mb-3">
                                     <label class="form-label fw-medium">Mật khẩu <span class="text-danger">*</span></label>
-                                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required placeholder="Ít nhất 6 ký tự">
+                                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required placeholder="Ít nhất 8 ký tự">
                                     @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-medium">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                    <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required placeholder="Nhập lại mật khẩu">
+                                    @error('password_confirmation') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
 
                                 <div class="mb-3">
@@ -50,7 +56,7 @@
                                     @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                             </div>
-                            
+
                             <!-- Cột phải -->
                             <div class="col-md-6">
                                 <div class="mb-3">
