@@ -6,7 +6,9 @@
 
     <title>Đăng nhập | {{ config('app.name', 'Môi trường Bảo Châu') }}</title>
 
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/images/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+    <link rel="icon" href="{{ asset('assets/images/favicon-192x192.png') }}" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="{{ asset('assets/images/apple-touch-icon.png') }}">
 
     <link id="bootstrap-css" rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/perfect-scrollbar.css') }}">
@@ -21,8 +23,7 @@
                         <div class="card-body py-9 px-6 px-sm-12">
                             <div class="mb-7">
                                 <div class="d-flex align-items-center justify-content-center mb-5">
-                                    <img class="app-main-logo logo-black" width="120" src="{{ asset('assets/images/logo.png') }}" alt="Conca">
-                                    <img class="app-main-logo logo-white d-none" width="120" src="{{ asset('assets/images/logo-white.png') }}" alt="Conca">
+                                    <img class="app-main-logo" width="120" src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment">
                                 </div>
                                 <div class="text-center">
                                     <h4 class="mb-1 fw-semibold">Chào mừng bạn</h4>

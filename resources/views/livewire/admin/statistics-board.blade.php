@@ -356,6 +356,7 @@
         {{-- ── BUSINESS DASHBOARD VIEW ──────────────────────────────── --}}
 
         {{-- KPI Cards --}}
+        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
         <div class="row g-3 mb-4">
             <div class="col-md-3 col-6">
                 <div class="card border-0 shadow-sm h-100">
@@ -412,8 +413,10 @@
             </div>
             @endif
         </div>
+        @endunless
 
         {{-- Trends & Charts Row --}}
+        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
         <div class="row g-4 mb-4">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm h-100">
@@ -493,6 +496,7 @@
                 @endif
             </div>
         </div>
+        @endunless
 
         @if($canSeeTechnical)
         {{-- Technical Dept Row --}}

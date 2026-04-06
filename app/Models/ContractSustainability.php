@@ -44,6 +44,7 @@ class ContractSustainability extends Model
         'payment_method',
         'loai_dich_vu',
         'status',
+        'workflow_status',
         'renewal_status',
         'is_offset',
         'has_room_fund',

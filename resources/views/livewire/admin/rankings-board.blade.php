@@ -92,9 +92,6 @@
                                 <th>Nhân viên</th>
                                 <th class="text-center">Số HĐ</th>
                                 <th class="text-center">Hoàn thành</th>
-                                @if($canSeeFinance)
-                                <th class="text-end fw-bold">Giá trị HĐ</th>
-                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -103,19 +100,14 @@
                                 $rank  = $i + 1;
                                 $medal = match($rank) { 1 => '🥇', 2 => '🥈', 3 => '🥉', default => $rank };
                             @endphp
-                            <tr class="{{ ($canSeeFinance && $row['value'] == 0) || (!$canSeeFinance && $row['count'] == 0) ? 'text-muted' : '' }}">
+                            <tr class="{{ $row['count'] == 0 ? 'text-muted' : '' }}">
                                 <td class="text-center fw-bold">{{ $medal }}</td>
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
                                 <td class="text-center">{{ $row['count'] > 0 ? $row['count'] : '—' }}</td>
                                 <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
-                                @if($canSeeFinance)
-                                <td class="text-end fw-bold {{ $row['value'] > 0 ? 'text-dark' : '' }}">
-                                    {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') . ' đ' : '—' }}
-                                </td>
-                                @endif
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
+                            <tr><td colspan="4" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
                             @endforelse
                         </tbody>
                         @if($consultingRankings->isNotEmpty())
@@ -124,9 +116,6 @@
                                 <td colspan="2">Tổng</td>
                                 <td class="text-center">{{ $consultingRankings->sum('count') }}</td>
                                 <td class="text-center text-success">{{ $consultingRankings->sum('completed') }}</td>
-                                @if($canSeeFinance)
-                                <td class="text-end">{{ number_format($consultingRankings->sum('value'), 0, ',', '.') }} đ</td>
-                                @endif
                             </tr>
                         </tfoot>
                         @endif

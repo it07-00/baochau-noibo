@@ -159,6 +159,7 @@ class ContractProjectManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
+        abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
         abort_unless(auth()->user()->can('contracts-project.edit'), 403);
 
         if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
@@ -401,7 +402,7 @@ class ContractProjectManager extends Component
             'staffs'             => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
-                $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),
+                $q->whereIn('name', ['tu-van']))->orderBy('name')->get(),
             'provinces' => \App\Support\VietnamProvinces::list(),
             'all_statuses'       => ContractProject::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'   => ContractProject::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),

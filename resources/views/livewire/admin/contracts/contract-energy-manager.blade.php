@@ -37,7 +37,7 @@
         <div class="collapse show" id="filterBodyEnergy">
             <div class="card-body p-4">
                 <div class="row g-3">
-                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
+                    @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
                         <div class="d-flex gap-2">
@@ -77,15 +77,6 @@
                     </div>
 
                     <div class="col-md-2">
-                        <label class="form-label fw-bold custom-filter-label">Phòng ban</label>
-                        <select class="form-select form-control-xs" wire:model.live="filter.department_id">
-                            <option value="">Chọn phòng ban</option>
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
                         <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.info_source">
                             <option value="">Chọn Nguồn thông...</option>
@@ -103,6 +94,30 @@
                             @endforeach
                         </select>
                     </div>
+                    @else
+                    {{-- Bộ lọc cho tư vấn / kỹ thuật --}}
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
+                        <div class="d-flex gap-2">
+                            <input type="date" class="form-control form-control-xs" wire:model.live="filter.signed_from">
+                            <input type="date" class="form-control form-control-xs" wire:model.live="filter.signed_to">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
+                        <select class="form-select form-control-xs" wire:model.live="filter.province">
+                            <option value="">Chọn tỉnh thành</option>
+                            @foreach($provinces as $p)
+                                <option value="{{ $p }}">{{ $p }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end pb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="en_overdue" wire:model.live="filter.is_overdue">
+                            <label class="form-check-label small" for="en_overdue">Trễ hạn</label>
+                        </div>
+                    </div>
                     @endunless
                     <div class="col-md-2">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
@@ -113,7 +128,6 @@
                             @endforeach
                         </select>
                     </div>
-                    @unless(auth()->user()->hasAnyRole(['tu-van', 'kinh-doanh']))
                     <div class="col-md-4">
                         <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
@@ -123,7 +137,6 @@
                             @endforeach
                         </select>
                     </div>
-                    @endunless
 
                     <div class="col-md-12 d-flex gap-2 mt-2">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
@@ -132,10 +145,12 @@
                         <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
                             <i class="bi bi-x-circle me-1"></i>Xóa lọc
                         </button>
+                        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel" class="btn btn-success px-4 btn-filter">
                             <span wire:loading wire:target="exportExcel" class="spinner-border spinner-border-sm me-1"></span>
                             <i wire:loading.remove wire:target="exportExcel" class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
                         </button>
+                        @endunless
                     </div>
                 </div>
             </div>
@@ -218,6 +233,12 @@
                                         default => ['bg' => '#fff3cd', 'text' => '#b45309'],
                                     };
                                 @endphp
+                                @if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0"
+                                    style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
+                                    {{ $doc->status ?: 'ĐANG THỰC HIỆN' }}
+                                </span>
+                                @else
                                 <div class="position-relative" x-data="{ open: false }">
                                     <button type="button" @click="open = !open" class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
                                         style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
@@ -236,6 +257,7 @@
                                         @endforeach
                                     </div>
                                 </div>
+                                @endif
                                 <span class="small text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                             </div>
                         </td>

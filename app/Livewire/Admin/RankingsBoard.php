@@ -172,10 +172,70 @@ class RankingsBoard extends Component
         }
 
         if ($canSeeConsulting) {
-            // ── Xếp hạng nhân viên tư vấn ──────────────────
+            // ── Xếp hạng nhân viên tư vấn (qua ContractAssignment, tất cả loại HĐ) ──
+            $allContractTypes = [
+                ContractWaste::class,
+                ContractConsulting::class,
+                ContractProject::class,
+                ContractCommercial::class,
+                ContractSustainability::class,
+                ContractEnergy::class,
+            ];
+
             $consultingRankings = User::role('tu-van')->get()
+                ->map(function ($user) use ($allContractTypes) {
+                    $assignments = ContractAssignment::where('user_id', $user->id)
+                        ->whereIn('assignable_type', $allContractTypes)
+                        ->get();
+
+                    if ($assignments->isEmpty()) {
+                        return [
+                            'name'      => $user->name,
+                            'count'     => 0,
+                            'completed' => 0,
+                        ];
+                    }
+
+                    $totalCount = 0;
+                    $totalCompleted = 0;
+
+                    foreach ($assignments->groupBy('assignable_type') as $type => $group) {
+                        $contracts = $type::whereIn('id', $group->pluck('assignable_id'))
+                            ->whereYear('signed_at', $this->year)
+                            ->get();
+
+                        $totalCount += $contracts->count();
+                        $totalCompleted += $contracts->where('workflow_status', 'finished')->count();
+                    }
+
+                    return [
+                        'name'      => $user->name,
+                        'count'     => $totalCount,
+                        'completed' => $totalCompleted,
+                    ];
+                })
+                ->sortByDesc('count')
+                ->values();
+        }
+
+        if ($canSeeTechnical) {
+            // ── Xếp hạng nhân viên kỹ thuật (chỉ HĐ Pháp lý & Hồ sơ MT) ──
+            $technicalRankings = User::role('ky-thuat')->get()
                 ->map(function ($user) {
-                    $contracts = ContractConsulting::where('consultant_id', $user->id)
+                    $assignments = ContractAssignment::where('user_id', $user->id)
+                        ->where('assignable_type', ContractConsulting::class)
+                        ->pluck('assignable_id');
+
+                    if ($assignments->isEmpty()) {
+                        return [
+                            'name'      => $user->name,
+                            'count'     => 0,
+                            'value'     => 0,
+                            'completed' => 0,
+                        ];
+                    }
+
+                    $contracts = ContractConsulting::whereIn('id', $assignments)
                         ->whereYear('signed_at', $this->year)
                         ->get();
 
@@ -184,54 +244,9 @@ class RankingsBoard extends Component
                         'count'     => $contracts->count(),
                         'value'     => (float) $contracts->sum('value'),
                         'completed' => $contracts->where('workflow_status', 'finished')->count(),
-                        'revenue'   => (float) $contracts->sum('revenue'),
                     ];
                 })
-                ->sortByDesc('value')
-                ->values();
-        }
-
-        if ($canSeeTechnical) {
-            // ── Xếp hạng nhân viên kỹ thuật ────────────────
-            $contractModels = [
-                'waste'          => ContractWaste::class,
-                'consulting'     => ContractConsulting::class,
-                'project'        => ContractProject::class,
-                'commercial'     => ContractCommercial::class,
-                'sustainability' => ContractSustainability::class,
-                'energy'         => ContractEnergy::class,
-            ];
-
-            $technicalRankings = User::role('ky-thuat')->get()
-                ->map(function ($user) use ($contractModels) {
-                    $totalCount     = 0;
-                    $totalValue     = 0;
-                    $totalCompleted = 0;
-
-                    foreach ($contractModels as $modelClass) {
-                        $assignments = ContractAssignment::where('user_id', $user->id)
-                            ->where('assignable_type', $modelClass)
-                            ->pluck('assignable_id');
-
-                        if ($assignments->isEmpty()) continue;
-
-                        $contracts = $modelClass::whereIn('id', $assignments)
-                            ->whereYear('signed_at', $this->year)
-                            ->get();
-
-                        $totalCount     += $contracts->count();
-                        $totalValue     += (float) $contracts->sum('value');
-                        $totalCompleted += $contracts->where('status', 'HOÀN THÀNH')->count();
-                    }
-
-                    return [
-                        'name'      => $user->name,
-                        'count'     => $totalCount,
-                        'value'     => $totalValue,
-                        'completed' => $totalCompleted,
-                    ];
-                })
-                ->sortByDesc('value')
+                ->sortByDesc('count')
                 ->values();
         }
 

@@ -224,13 +224,8 @@ class PermissionsSeeder extends Seeder
         // KT (Kỹ thuật)
         // ------------------------------------------------
         Role::findOrCreate('ky-thuat')->syncPermissions([
-            // Hợp đồng: chỉ xem
-            'contracts-waste.view',
+            // Hợp đồng: chỉ xem HĐ Pháp lý & Hồ sơ MT
             'contracts-consulting.view',
-            'contracts-project.view',
-            'contracts-commercial.view',
-            'contracts-sustainability.view',
-            'contracts-energy.view',
             // Vận hành kỹ thuật: CRUD
             'waste-requests.view', 'waste-requests.create', 'waste-requests.edit',
             'technical-requests.view', 'technical-requests.create', 'technical-requests.edit', 'technical-requests.delete',

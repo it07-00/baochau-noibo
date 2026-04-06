@@ -159,6 +159,7 @@ class ContractConsultingManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
+        abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
         abort_unless(auth()->user()->can('contracts-consulting.edit'), 403);
 
         if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {

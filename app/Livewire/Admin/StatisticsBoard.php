@@ -253,7 +253,7 @@ class StatisticsBoard extends Component
 
         $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
         $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van', 'tp-kinh-doanh']);
-        $canSeeFinance    = !$currentUser->hasRole('tu-van');
+        $canSeeFinance    = !$currentUser->hasAnyRole(['tu-van', 'ky-thuat']);
 
         // ── Biểu đồ tư vấn: số dự án theo loại / quý hoặc cả năm ──
         $consultingTypes = [
@@ -294,12 +294,7 @@ class StatisticsBoard extends Component
         if ($canSeeTechnical) {
             $techUsers = User::role('ky-thuat')->get();
             $typeLabels = [
-                ContractWaste::class          => 'Chất thải',
-                ContractConsulting::class      => 'Tư vấn',
-                ContractProject::class         => 'Dự án',
-                ContractCommercial::class      => 'Thương mại',
-                ContractSustainability::class  => 'Bền vững',
-                ContractEnergy::class          => 'Năng lượng',
+                ContractConsulting::class      => 'Pháp lý & Hồ sơ MT',
             ];
 
             foreach ($typeLabels as $modelClass => $label) {
@@ -310,7 +305,7 @@ class StatisticsBoard extends Component
 
                 $count = $assignments->count();
                 $value = $assignments->sum(fn ($a) => (float) ($a->assignable->value ?? 0));
-                $completed = $assignments->filter(fn ($a) => ($a->assignable->status ?? '') === 'finished')->count();
+                $completed = $assignments->filter(fn ($a) => ($a->assignable->workflow_status ?? '') === 'finished')->count();
 
                 $technicalStats->push([
                     'label'     => $label,

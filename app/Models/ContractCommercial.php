@@ -40,6 +40,7 @@ class ContractCommercial extends Model
         'info_source',
         'payment_method',
         'status',
+        'workflow_status',
         'renewal_status',
         'is_offset',
         'has_room_fund',

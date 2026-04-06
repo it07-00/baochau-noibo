@@ -5,8 +5,9 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ route('app.dashboard') }}" class="app-sidebar-logo text-decoration-none">
-                <span class="fw-bolder fs-3 text-primary" style="letter-spacing: 2px;">BẢO CHÂU</span>
+            <a href="{{ route('app.dashboard') }}" class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment" style="height: 40px; width: auto;">
+                <span class="fw-bolder fs-5 text-primary" style="letter-spacing: 1px;">BẢO CHÂU</span>
             </a>
 
             <button type="button" class="app-sidebar-close-btn app-sidebar-mobile-close d-xl-none">
@@ -270,12 +271,7 @@
                             'permission' => 'technical-requests.view',
                             'allow_roles' => ['giam-doc', 'ky-thuat'],
                             'children' => [
-                                'HĐ Chất thải & Tiếng ồn',
                                 'HĐ Pháp lý & Hồ sơ MT',
-                                'HĐ Kỹ thuật & Ứng phó SC',
-                                'HĐ NC & CĐ Công nghệ',
-                                'HĐ TV & BC PTBV',
-                                'HĐ Phát thải & Năng lượng',
                             ],
                         ],
                         [

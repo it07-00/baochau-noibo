@@ -12,7 +12,7 @@
                 <div class="{{ $fullWidth ?? false ? 'w-100 p-0' : 'container-fluid' }}">
                     @if(!($fullWidth ?? false))
                     <div class="page-header pb-7">
-                        <h2 class="fw-semibold fs-7">@yield('page_title', 'Bao Chau Cargo')</h2>
+                        <h2 class="fw-semibold fs-7">@yield('page_title', config('app.name', 'Môi trường Bảo Châu'))</h2>
                         @include('admin.partials.breadcrumb')
                     </div>
                     @endif
