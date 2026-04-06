@@ -58,7 +58,7 @@
                                 <div class="d-flex flex-column gap-1">
                                     @if($doc->files)
                                         @foreach($doc->files as $file)
-                                        <a href="{{ $file['url'] }}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 text-primary">
+                                        <a href="{{ $file['resolved_url'] ?? ($file['url'] ?? '#') }}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 text-primary">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M12 15V3M12 15L8 11M12 15L16 11M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
@@ -139,7 +139,7 @@
                             @error('newFiles.*') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             @error('newFiles') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        
+
                         <div wire:loading wire:target="newFiles" class="mt-2 text-primary small">
                             Đang chuẩn bị tệp...
                         </div>

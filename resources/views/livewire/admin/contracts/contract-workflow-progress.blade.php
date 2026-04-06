@@ -54,7 +54,7 @@
                 @foreach($filesByStep[$key] as $f)
                 <div class="d-flex align-items-center gap-2 ps-2 mb-1">
                     <i class="bi bi-file-earmark-arrow-down text-success" style="font-size: 1rem;"></i>
-                    <a href="{{ asset('storage/' . $f->file_path) }}" target="_blank"
+                          <a href="{{ $f->file_url }}" target="_blank"
                        class="fw-semibold text-decoration-none text-primary" style="font-size: 0.85rem;">
                         {{ $f->original_name ?: 'Xem tệp đính kèm' }}
                     </a>

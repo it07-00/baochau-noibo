@@ -74,11 +74,13 @@ class ContractWorkflowPanel extends Component
 
         $this->validate($rules, $messages);
 
+        $uploadDisk = config('filesystems.upload_disk', 'public');
+
         if (!empty($this->uploadFiles)) {
             foreach ($this->uploadFiles as $file) {
                 $path = $file->storePublicly(
                     'contract-files/' . $this->contractType . '/' . $this->activeStep,
-                    'public'
+                    $uploadDisk
                 );
 
                 ContractMilestoneFile::create([

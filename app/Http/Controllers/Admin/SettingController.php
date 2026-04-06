@@ -27,6 +27,7 @@ class SettingController extends Controller
     public function updateProfile(Request $request)
     {
         $user = $request->user();
+        $avatarDisk = config('filesystems.avatar_disk', 'public');
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -49,10 +50,10 @@ class SettingController extends Controller
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+                Storage::disk($avatarDisk)->delete($user->avatar);
             }
 
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $request->file('avatar')->store('avatars', $avatarDisk);
         }
 
         $user->save();

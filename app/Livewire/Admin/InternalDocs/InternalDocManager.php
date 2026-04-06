@@ -62,16 +62,18 @@ class InternalDocManager extends Component
 
         try {
             $filesData = $this->existingFiles;
+            $uploadDisk = config('filesystems.upload_disk', 'public');
 
             if ($this->newFiles) {
                 foreach ($this->newFiles as $file) {
-                    $path = $file->store('internal-docs', 'public');
+                    $path = $file->store('internal-docs', $uploadDisk);
                     \Log::info('InternalDocManager: Stored file', ['path' => $path]);
 
                     $filesData[] = [
                         'name' => $file->getClientOriginalName(),
-                        'url' => Storage::url($path),
-                        'path' => $path
+                        'url' => Storage::disk($uploadDisk)->url($path),
+                        'path' => $path,
+                        'disk' => $uploadDisk,
                     ];
                 }
             }
@@ -130,7 +132,13 @@ class InternalDocManager extends Component
         if ($doc->files) {
             foreach ($doc->files as $file) {
                 if (isset($file['path'])) {
-                    Storage::disk('public')->delete($file['path']);
+                    $disk = $file['disk'] ?? config('filesystems.upload_disk', 'public');
+
+                    if (Storage::disk($disk)->exists($file['path'])) {
+                        Storage::disk($disk)->delete($file['path']);
+                    } elseif ($disk !== 'public' && Storage::disk('public')->exists($file['path'])) {
+                        Storage::disk('public')->delete($file['path']);
+                    }
                 }
             }
         }
@@ -147,6 +155,27 @@ class InternalDocManager extends Component
             })
             ->orderBy('id', 'desc')
             ->paginate($this->perPage);
+
+        $uploadDisk = config('filesystems.upload_disk', 'public');
+
+        $docs->getCollection()->transform(function ($doc) use ($uploadDisk) {
+            $doc->files = collect($doc->files ?? [])->map(function ($file) use ($uploadDisk) {
+                $path = $file['path'] ?? null;
+                $disk = $file['disk'] ?? $uploadDisk;
+
+                if ($path && Storage::disk($disk)->exists($path)) {
+                    $file['resolved_url'] = Storage::disk($disk)->url($path);
+                } elseif ($path && $disk !== 'public' && Storage::disk('public')->exists($path)) {
+                    $file['resolved_url'] = Storage::disk('public')->url($path);
+                } else {
+                    $file['resolved_url'] = $file['url'] ?? null;
+                }
+
+                return $file;
+            })->values()->all();
+
+            return $doc;
+        });
 
         return view('livewire.admin.internal-docs.internal-doc-manager', [
             'docs' => $docs

@@ -97,7 +97,8 @@ class RenewalSalesManager extends Component
         ];
 
         if ($this->file) {
-            $data['file_path'] = $this->file->store('sales/renewal', 'public');
+            $uploadDisk = config('filesystems.upload_disk', 'public');
+            $data['file_path'] = $this->file->store('sales/renewal', $uploadDisk);
         }
 
         if ($this->selectedId) {

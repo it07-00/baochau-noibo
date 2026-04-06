@@ -16,8 +16,8 @@
     $fontSize = (int) round($size * 0.38);
 @endphp
 
-@if($user?->avatar)
-    <img src="{{ asset('storage/' . $user->avatar) }}"
+@if($user?->avatar_url)
+    <img src="{{ $user->avatar_url }}"
          alt="{{ $name }}"
          width="{{ $size }}" height="{{ $size }}"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"

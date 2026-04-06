@@ -4,6 +4,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Avatar Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | This disk is used for user avatar uploads. Keep it as "public" locally,
+    | and switch to "s3" (or "spaces") in production for durable storage.
+    |
+    */
+
+    'avatar_disk' => env('AVATAR_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Upload Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | This disk is used for document uploads (internal docs, workflow files,
+    | and other attachments). Switch to "spaces" in production.
+    |
+    */
+
+    'upload_disk' => env('UPLOAD_DISK', env('AVATAR_DISK', 'public')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
@@ -61,6 +85,20 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'spaces' => [
+            'driver' => 's3',
+            'key' => env('DO_SPACES_KEY', env('AWS_ACCESS_KEY_ID')),
+            'secret' => env('DO_SPACES_SECRET', env('AWS_SECRET_ACCESS_KEY')),
+            'region' => env('DO_SPACES_REGION', env('AWS_DEFAULT_REGION', 'sgp1')),
+            'bucket' => env('DO_SPACES_BUCKET', env('AWS_BUCKET')),
+            'endpoint' => env('DO_SPACES_ENDPOINT', env('AWS_ENDPOINT')),
+            'url' => env('DO_SPACES_URL', env('AWS_URL')),
+            'use_path_style_endpoint' => false,
+            'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],
