@@ -117,6 +117,11 @@ class PostalDeliveryManager extends Component
 
     public function save()
     {
+        abort_unless(
+            auth()->user()->can($this->deliveryId ? 'postal-deliveries.edit' : 'postal-deliveries.create'),
+            403
+        );
+
         $this->cleanMoneyProperties(['vtp_money_collection']);
 
         $this->validate([
@@ -125,17 +130,20 @@ class PostalDeliveryManager extends Component
             'department_id' => 'required|exists:departments,id',
             'bill_viettel' => 'nullable|string|max:50',
             'bill_247' => 'nullable|string|max:50',
+            'content' => 'nullable|string|max:2000',
+            'customer_email' => 'nullable|email|max:255',
             'receiver_province' => $this->create_vtp_order ? 'required|integer' : 'nullable|integer',
             'receiver_district' => $this->create_vtp_order ? 'required|integer' : 'nullable|integer',
             'receiver_ward' => $this->create_vtp_order ? 'required|integer' : 'nullable|integer',
-            'address' => $this->create_vtp_order ? 'required|string' : 'nullable|string',
-            'customer_phone' => $this->create_vtp_order ? 'required|string' : 'nullable|string',
+            'address' => $this->create_vtp_order ? 'required|string|max:500' : 'nullable|string|max:500',
+            'customer_phone' => $this->create_vtp_order ? 'required|string|regex:/^0[0-9]{9}$/' : 'nullable|string|max:30',
         ], [
             'receiver_province.required' => 'Vui lòng chọn Tỉnh/TP để tạo đơn VTP.',
             'receiver_district.required' => 'Vui lòng chọn Quận/Huyện để tạo đơn VTP.',
             'receiver_ward.required' => 'Vui lòng chọn Phường/Xã để tạo đơn VTP.',
             'address.required' => 'Vui lòng nhập địa chỉ để tạo đơn VTP.',
             'customer_phone.required' => 'Vui lòng nhập SĐT khách để tạo đơn VTP.',
+            'customer_phone.regex' => 'Số điện thoại không hợp lệ (VD: 0912345678).',
         ]);
 
         $data = [

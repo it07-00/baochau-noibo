@@ -81,9 +81,23 @@ class QuotationManager extends Component
 
     protected $rules = [
         'formData.date' => 'required|date',
-        'formData.staff_id' => 'required',
-        'formData.company_name' => 'required',
-        'formData.status' => 'required',
+        'formData.staff_id' => 'required|exists:users,id',
+        'formData.company_name' => 'required|string|max:255',
+        'formData.status' => 'required|string|max:100',
+        'formData.source' => 'nullable|string|max:255',
+        'formData.address' => 'nullable|string|max:500',
+        'formData.work_address' => 'nullable|string|max:500',
+        'formData.province' => 'nullable|string|max:100',
+        'formData.industry' => 'nullable|string|max:255',
+        'formData.service' => 'nullable|string|max:255',
+        'formData.contact_person' => 'nullable|string|max:255',
+        'formData.work_description' => 'nullable|string|max:2000',
+        'formData.original_value' => 'nullable|numeric|min:0',
+        'formData.value_inc_vat' => 'nullable|numeric|min:0',
+        'formData.commission_value' => 'nullable|numeric|min:0',
+        'formData.commission_tax' => 'nullable|numeric|min:0',
+        'formData.total_value' => 'nullable|numeric|min:0',
+        'formData.notes' => 'nullable|string|max:2000',
     ];
 
     public function mount()
@@ -174,6 +188,11 @@ class QuotationManager extends Component
 
     public function save()
     {
+        abort_unless(
+            auth()->user()->can($this->isEditing ? 'quotations.edit' : 'quotations.create'),
+            403
+        );
+
         $this->cleanMoneyFields($this->formData, $this->moneyFields);
 
         $this->validate();
@@ -193,7 +212,9 @@ class QuotationManager extends Component
 
     public function delete($id)
     {
-        Quotation::find($id)->delete();
+        abort_unless(auth()->user()->can('quotations.delete'), 403);
+
+        Quotation::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa báo giá']);
     }
 
@@ -341,6 +362,8 @@ class QuotationManager extends Component
 
     public function runImport()
     {
+        abort_unless(auth()->user()->can('quotations.create'), 403);
+
         $this->importErrors = [];
         $this->importSuccess = null;
 
@@ -371,6 +394,7 @@ class QuotationManager extends Component
             $imported = 0;
             $skipped = 0;
 
+            \Illuminate\Support\Facades\DB::transaction(function () use ($rows, $headerRowIdx, $staffLookup, &$imported, &$skipped) {
             foreach ($rows as $i => $row) {
                 if ($i <= $headerRowIdx) continue;
                 $nonEmpty = array_filter($row, fn($v) => $v !== null && $v !== '');
@@ -418,6 +442,7 @@ class QuotationManager extends Component
                 Quotation::create($data);
                 $imported++;
             }
+            });
 
             $this->importFile = null;
             $this->importPreview = [];

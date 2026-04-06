@@ -73,11 +73,22 @@ class MarketingReportManager extends Component
     public function save()
     {
         $this->validate([
-            'report_date'     => 'required|date',
-            'content_details' => 'required|min:5',
+            'report_date'        => 'required|date',
+            'facebook_count'     => 'nullable|integer|min:0|max:1000000',
+            'zalo_count'         => 'nullable|integer|min:0|max:1000000',
+            'website_count'      => 'nullable|integer|min:0|max:1000000',
+            'tiktok_count'       => 'nullable|integer|min:0|max:1000000',
+            'youtube_count'      => 'nullable|integer|min:0|max:1000000',
+            'other_count'        => 'nullable|integer|min:0|max:1000000',
+            'other_channel_name' => 'nullable|string|max:255',
+            'content_details'    => 'required|min:5|max:5000',
+            'banners'            => 'nullable|string|max:2000',
+            'targets_achieved'   => 'nullable|string|max:2000',
+            'notes'              => 'nullable|string|max:2000',
         ], [
             'content_details.required' => 'Vui lòng nhập mô tả công việc đã làm.',
             'content_details.min'      => 'Nội dung quá ngắn.',
+            'content_details.max'      => 'Nội dung không được vượt quá 5,000 ký tự.',
         ]);
 
         MarketingDailyReport::updateOrCreate(

@@ -71,15 +71,29 @@ class ProgressiveSalesManager extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()->can('progressive-sales.edit'), 403);
+
         $this->cleanMoneyProperties(['amount', 'paid_amount']);
 
         $this->validate([
-            'installment_name' => 'required',
-            'amount'           => 'required|numeric|min:0',
-            'status'           => 'required',
+            'installment_name' => 'required|string|max:255',
+            'amount'           => 'required|numeric|min:0|max:999999999999999',
+            'paid_amount'      => 'nullable|numeric|min:0|max:999999999999999',
+            'percentage'       => 'nullable|numeric|min:0|max:100',
+            'due_date'         => 'nullable|date',
+            'paid_date'        => 'nullable|date',
+            'status'           => 'required|in:pending,partial,paid,overdue',
+            'notes'            => 'nullable|string|max:1000',
+        ], [
+            'installment_name.required' => 'Vui lòng nhập tên đợt.',
+            'amount.required'           => 'Vui lòng nhập số tiền.',
+            'amount.min'                => 'Số tiền không được âm.',
+            'status.in'                 => 'Trạng thái không hợp lệ.',
         ]);
 
-        ContractPaymentSchedule::find($this->selectedId)->update([
+        $schedule = ContractPaymentSchedule::findOrFail($this->selectedId);
+
+        $schedule->update([
             'installment_name' => $this->installment_name,
             'percentage'       => $this->percentage,
             'amount'           => $this->amount,
@@ -97,7 +111,9 @@ class ProgressiveSalesManager extends Component
 
     public function delete($id)
     {
-        ContractPaymentSchedule::find($id)->delete();
+        abort_unless(auth()->user()->can('progressive-sales.delete'), 403);
+
+        ContractPaymentSchedule::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Xóa thành công!']);
         $this->resetPage();
     }

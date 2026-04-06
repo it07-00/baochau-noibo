@@ -31,14 +31,24 @@ class ContractPaymentScheduleManager extends Component
     protected function rules(): array
     {
         return [
-            'form.installment_name' => 'required|max:255',
-            'form.amount'           => 'required|numeric|min:0',
+            'form.installment_name' => 'required|string|max:255',
+            'form.amount'           => 'required|numeric|min:0|max:999999999999999',
             'form.percentage'       => 'nullable|numeric|min:0|max:100',
             'form.due_date'         => 'nullable|date',
             'form.paid_date'        => 'nullable|date',
-            'form.paid_amount'      => 'nullable|numeric|min:0',
+            'form.paid_amount'      => 'nullable|numeric|min:0|max:999999999999999',
             'form.status'           => 'required|in:pending,partial,paid,overdue',
-            'form.notes'            => 'nullable|max:1000',
+            'form.notes'            => 'nullable|string|max:1000',
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'form.installment_name.required' => 'Vui lòng nhập tên đợt thanh toán.',
+            'form.amount.required'           => 'Vui lòng nhập số tiền.',
+            'form.amount.min'                => 'Số tiền không được âm.',
+            'form.status.in'                 => 'Trạng thái không hợp lệ.',
         ];
     }
 
@@ -75,6 +85,11 @@ class ContractPaymentScheduleManager extends Component
 
     public function save(): void
     {
+        abort_unless(
+            auth()->user()->can($this->isEditing ? 'payment-schedules.edit' : 'payment-schedules.create'),
+            403
+        );
+
         $this->cleanMoneyFields($this->form, ['amount', 'paid_amount']);
         $this->validate();
 
@@ -100,12 +115,16 @@ class ContractPaymentScheduleManager extends Component
 
     public function delete(int $id): void
     {
+        abort_unless(auth()->user()->can('payment-schedules.delete'), 403);
+
         ContractPaymentSchedule::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa đợt thanh toán!']);
     }
 
     public function markPaid(int $id): void
     {
+        abort_unless(auth()->user()->can('payment-schedules.edit'), 403);
+
         $schedule = ContractPaymentSchedule::findOrFail($id);
         $schedule->update([
             'status'      => 'paid',

@@ -43,13 +43,30 @@ class InvoiceBaoChauManager extends Component
     protected function rules(): array
     {
         return [
-            'form.customer_id'  => 'required|exists:customers,id',
-            'form.issue_date'   => 'nullable|date',
-            'form.due_date'     => 'nullable|date',
-            'form.amount'       => 'required|numeric|min:0',
-            'form.vat_percent'  => 'required|integer|min:0|max:100',
-            'form.status'       => 'required|string',
-            'form.paid_amount'  => 'nullable|numeric|min:0',
+            'form.customer_id'         => 'required|exists:customers,id',
+            'form.contract_waste_id'   => 'nullable|exists:contract_wastes,id',
+            'form.invoice_number'      => 'nullable|string|max:100',
+            'form.issue_date'          => 'nullable|date',
+            'form.due_date'            => 'nullable|date|after_or_equal:form.issue_date',
+            'form.amount'              => 'required|numeric|min:0|max:999999999999999',
+            'form.vat_percent'         => 'required|integer|min:0|max:100',
+            'form.status'              => 'required|in:unpaid,partial,paid,overdue,cancelled',
+            'form.paid_amount'         => 'nullable|numeric|min:0|max:999999999999999',
+            'form.service_description' => 'nullable|string|max:2000',
+            'form.notes'               => 'nullable|string|max:2000',
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'form.customer_id.required'    => 'Vui lòng chọn khách hàng.',
+            'form.customer_id.exists'      => 'Khách hàng không tồn tại.',
+            'form.amount.required'         => 'Vui lòng nhập số tiền.',
+            'form.amount.numeric'          => 'Số tiền phải là số.',
+            'form.amount.min'              => 'Số tiền không được âm.',
+            'form.status.in'               => 'Trạng thái không hợp lệ.',
+            'form.due_date.after_or_equal' => 'Ngày đến hạn phải sau hoặc bằng ngày phát hành.',
         ];
     }
 

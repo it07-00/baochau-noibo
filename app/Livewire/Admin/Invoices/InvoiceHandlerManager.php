@@ -42,13 +42,29 @@ class InvoiceHandlerManager extends Component
     protected function rules(): array
     {
         return [
-            'form.handler_id'  => 'required|exists:handlers,id',
-            'form.issue_date'  => 'nullable|date',
-            'form.due_date'    => 'nullable|date',
-            'form.amount'      => 'required|numeric|min:0',
-            'form.vat_percent' => 'required|integer|min:0|max:100',
-            'form.status'      => 'required|string',
-            'form.paid_amount' => 'nullable|numeric|min:0',
+            'form.handler_id'       => 'required|exists:handlers,id',
+            'form.contract_waste_id' => 'nullable|exists:contract_wastes,id',
+            'form.invoice_number'   => 'nullable|string|max:100',
+            'form.issue_date'       => 'nullable|date',
+            'form.due_date'         => 'nullable|date|after_or_equal:form.issue_date',
+            'form.amount'           => 'required|numeric|min:0|max:999999999999999',
+            'form.vat_percent'      => 'required|integer|min:0|max:100',
+            'form.status'           => 'required|in:unpaid,partial,paid,overdue,cancelled',
+            'form.paid_amount'      => 'nullable|numeric|min:0|max:999999999999999',
+            'form.notes'            => 'nullable|string|max:2000',
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'form.handler_id.required'   => 'Vui lòng chọn chủ xử lý.',
+            'form.handler_id.exists'     => 'Chủ xử lý không tồn tại.',
+            'form.amount.required'       => 'Vui lòng nhập số tiền.',
+            'form.amount.numeric'        => 'Số tiền phải là số.',
+            'form.amount.min'            => 'Số tiền không được âm.',
+            'form.status.in'             => 'Trạng thái không hợp lệ.',
+            'form.due_date.after_or_equal' => 'Ngày đến hạn phải sau hoặc bằng ngày phát hành.',
         ];
     }
 

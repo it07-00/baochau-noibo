@@ -14,7 +14,7 @@ class InternalDocManager extends Component
 
     public $search = '';
     public $perPage = 10;
-    
+
     // For Create/Edit
     public $docId;
     public $title;
@@ -38,6 +38,11 @@ class InternalDocManager extends Component
 
     public function save()
     {
+        abort_unless(
+            auth()->user()->can($this->docId ? 'internal-docs.edit' : 'internal-docs.create'),
+            403
+        );
+
         \Log::info('InternalDocManager: Starting save process', [
             'title' => $this->title,
             'docId' => $this->docId,
@@ -46,7 +51,13 @@ class InternalDocManager extends Component
 
         $this->validate([
             'title' => 'required|string|max:255',
-            'newFiles.*' => 'nullable|file|max:20480', // 20MB max
+            'newFiles' => ($this->docId ? 'nullable' : 'required') . '|array|max:10',
+            'newFiles.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png|max:20480',
+        ], [
+            'newFiles.required' => 'Vui lòng đính kèm ít nhất 1 file.',
+            'newFiles.max' => 'Tối đa 10 file mỗi lần.',
+            'newFiles.*.mimes' => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
+            'newFiles.*.max' => 'Mỗi file không được vượt quá 20MB.',
         ]);
 
         try {
@@ -56,7 +67,7 @@ class InternalDocManager extends Component
                 foreach ($this->newFiles as $file) {
                     $path = $file->store('internal-docs', 'public');
                     \Log::info('InternalDocManager: Stored file', ['path' => $path]);
-                    
+
                     $filesData[] = [
                         'name' => $file->getClientOriginalName(),
                         'url' => Storage::url($path),
@@ -82,7 +93,7 @@ class InternalDocManager extends Component
 
             $this->resetFields();
             $this->dispatch('closeModal');
-            
+
             \Log::info('InternalDocManager: Save process completed successfully');
         } catch (\Exception $e) {
             \Log::error('InternalDocManager: Save failed', [
@@ -111,8 +122,10 @@ class InternalDocManager extends Component
 
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('internal-docs.delete'), 403);
+
         $doc = InternalDoc::findOrFail($id);
-        
+
         // Delete physical files
         if ($doc->files) {
             foreach ($doc->files as $file) {
@@ -121,7 +134,7 @@ class InternalDocManager extends Component
                 }
             }
         }
-        
+
         $doc->delete();
         $this->dispatch('swal:success', ['message' => 'Xóa thành công!']);
     }

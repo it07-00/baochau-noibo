@@ -66,13 +66,15 @@ class DailyReportManager extends Component
     public function save()
     {
         $this->validate([
-            'content' => 'required|min:10',
-            'status' => 'required',
-            'plan' => 'nullable',
+            'content' => 'required|min:10|max:10000',
+            'status' => 'required|in:Hoàn thành đúng kế hoạch,Hoàn thành trước kế hoạch,Chưa hoàn thành,Gặp vấn đề cần hỗ trợ',
+            'plan' => 'nullable|string|max:5000',
+            'issues' => 'nullable|string|max:5000',
         ], [
             'content.required' => 'Vui lòng nhập nội dung công việc.',
             'content.min' => 'Nội dung công việc quá ngắn.',
-            'plan.required' => 'Vui lòng nhập kế hoạch ngày mai.',
+            'content.max' => 'Nội dung công việc không được vượt quá 10,000 ký tự.',
+            'status.in' => 'Trạng thái không hợp lệ.',
         ]);
 
         DailyReport::updateOrCreate(

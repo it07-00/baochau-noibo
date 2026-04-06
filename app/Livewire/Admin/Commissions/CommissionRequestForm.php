@@ -48,13 +48,29 @@ class CommissionRequestForm extends Component
 
     public function save($exit = false)
     {
+        abort_unless(
+            auth()->user()->can($this->requestId ? 'commissions.edit' : 'commissions.create'),
+            403
+        );
+
         $this->cleanMoneyProperties(['amount']);
 
+        $allowedTypes = implode(',', array_keys(CommissionRequest::CONTRACT_TYPES));
+
         $this->validate([
-            'contract_type' => 'required|string',
+            'contract_type' => 'required|string|in:' . $allowedTypes,
             'contract_id'   => 'required|integer',
             'receiver_name' => 'required|string|max:255',
+            'receiver_phone' => 'nullable|string|max:30',
+            'bank_account'  => 'nullable|string|max:50',
             'amount'        => 'required|numeric|min:0',
+            'referrer_info' => 'nullable|string|max:500',
+            'notes'         => 'nullable|string|max:2000',
+        ], [
+            'contract_type.in' => 'Loại hợp đồng không hợp lệ.',
+            'receiver_name.required' => 'Vui lòng nhập tên người nhận.',
+            'amount.required' => 'Vui lòng nhập số tiền.',
+            'amount.min' => 'Số tiền không được âm.',
         ]);
 
         $data = [

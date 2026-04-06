@@ -15,7 +15,7 @@ class RenewalSalesManager extends Component
     public $search = '';
     public $filter_month = '';
     public $filter_status = '';
-    
+
     // Form fields
     public $isEditing = false;
     public $selectedId = null;
@@ -57,11 +57,31 @@ class RenewalSalesManager extends Component
 
     public function save()
     {
+        abort_unless(
+            auth()->user()->can($this->selectedId ? 'renewal-sales.edit' : 'renewal-sales.create'),
+            403
+        );
+
         $this->cleanMoneyProperties(['sales_value', 'commission', 'sales_amount']);
 
         $this->validate([
-            'contract_number' => 'required',
-            'sales_month' => 'required',
+            'contract_number' => 'required|string|max:255',
+            'sales_month' => 'required|date_format:Y-m',
+            'sales_value' => 'nullable|numeric|min:0|max:999999999999999',
+            'commission' => 'nullable|numeric|min:0|max:999999999999999',
+            'sales_percentage' => 'nullable|numeric|min:0|max:100',
+            'sales_amount' => 'nullable|numeric|min:0|max:999999999999999',
+            'status' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:2000',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png|max:10240',
+        ], [
+            'contract_number.required' => 'Vui lòng nhập số hợp đồng.',
+            'sales_month.required'     => 'Vui lòng chọn tháng doanh số.',
+            'sales_month.date_format'  => 'Tháng doanh số không đúng định dạng (YYYY-MM).',
+            'sales_value.min'          => 'Giá trị doanh số không được âm.',
+            'commission.min'           => 'Hoa hồng không được âm.',
+            'file.mimes'               => 'File phải có định dạng: pdf, doc, docx, xls, xlsx, jpg, jpeg, png.',
+            'file.max'                 => 'File không được vượt quá 10MB.',
         ]);
 
         $data = [
@@ -81,7 +101,7 @@ class RenewalSalesManager extends Component
         }
 
         if ($this->selectedId) {
-            RenewalSales::find($this->selectedId)->update($data);
+            RenewalSales::findOrFail($this->selectedId)->update($data);
             $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Cập nhật thành công!']]);
         } else {
             RenewalSales::create($data);
@@ -104,14 +124,16 @@ class RenewalSalesManager extends Component
         $this->sales_amount = $item->sales_amount;
         $this->status = $item->status;
         $this->notes = $item->notes;
-        
+
         $this->isEditing = true;
         $this->dispatch('open-modal', 'renewal-modal');
     }
 
     public function delete($id)
     {
-        RenewalSales::find($id)->delete();
+        abort_unless(auth()->user()->can('renewal-sales.delete'), 403);
+
+        RenewalSales::findOrFail($id)->delete();
         $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Xóa thành công!']]);
     }
 }

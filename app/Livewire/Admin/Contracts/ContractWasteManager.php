@@ -102,6 +102,8 @@ class ContractWasteManager extends Component
     public function mount()
     {
         if ($this->quotation_id) {
+            abort_unless(auth()->user()->can('contracts-waste.create'), 403);
+
             $quotation = \App\Models\Quotation::find($this->quotation_id);
             if ($quotation) {
                 // Find or create customer
@@ -158,6 +160,11 @@ class ContractWasteManager extends Component
 
     public function save()
     {
+        abort_unless(
+            auth()->user()->can($this->isEditing ? 'contracts-waste.edit' : 'contracts-waste.create'),
+            403
+        );
+
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
 
         $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
@@ -182,12 +189,20 @@ class ContractWasteManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
+        abort_unless(auth()->user()->can('contracts-waste.edit'), 403);
+
+        if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
+            return;
+        }
+
         ContractWaste::findOrFail($id)->update(['status' => $status]);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
     public function delete($id)
     {
+        abort_unless(auth()->user()->can('contracts-waste.delete'), 403);
+
         $doc = ContractWaste::findOrFail($id);
         $doc->delete();
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
@@ -452,7 +467,7 @@ class ContractWasteManager extends Component
             'docs' => $docs,
             'handlers' => Handler::orderBy('name')->get(),
             'customers' => Customer::orderBy('name')->get(),
-            'staffs' => User::role(['kinh-doanh', 'tp-kinh-doanh', 'tp-kd-du-an', 'kd-du-an'])->orderBy('name')->get(),
+            'staffs' => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'departments' => Department::all(),
             'assignable_users' => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van', 'ky-thuat']))->orderBy('name')->get(),

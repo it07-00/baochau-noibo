@@ -135,6 +135,11 @@ class ContractConsultingManager extends Component
 
     public function save(): void
     {
+        abort_unless(
+            auth()->user()->can($this->isEditing ? 'contracts-consulting.edit' : 'contracts-consulting.create'),
+            403
+        );
+
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
 
         $this->validate($this->baseContractRules(), $this->contractValidationMessages());
@@ -154,12 +159,20 @@ class ContractConsultingManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
+        abort_unless(auth()->user()->can('contracts-consulting.edit'), 403);
+
+        if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
+            return;
+        }
+
         ContractConsulting::findOrFail($id)->update(['status' => $status]);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
     public function delete(int $id): void
     {
+        abort_unless(auth()->user()->can('contracts-consulting.delete'), 403);
+
         ContractConsulting::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
     }

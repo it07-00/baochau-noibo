@@ -67,6 +67,11 @@ class CustomerManager extends Component
 
     public function save(): void
     {
+        abort_unless(
+            auth()->user()->can($this->isEditing ? 'customers.edit' : 'customers.create'),
+            403
+        );
+
         $this->validate([
             'formData.name' => 'required|string|max:255|unique:customers,name' . ($this->editingId ? ',' . $this->editingId : ''),
             'formData.tax_code' => 'nullable|string|max:50',
@@ -110,6 +115,8 @@ class CustomerManager extends Component
 
     public function delete(int $id): void
     {
+        abort_unless(auth()->user()->can('customers.delete'), 403);
+
         $customer = Customer::findOrFail($id);
 
         $contractCount = $customer->contracts()->count()

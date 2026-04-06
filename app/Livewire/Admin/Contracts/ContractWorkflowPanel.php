@@ -60,9 +60,9 @@ class ContractWorkflowPanel extends Component
         }
 
         $rules = [
-            'uploadFiles'   => ($this->activeStep === 'receiving' ? 'nullable' : 'required') . '|array' . ($this->activeStep === 'receiving' ? '' : '|min:1'),
-            'uploadFiles.*' => 'file|max:20480|extensions:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
-            'comment'       => 'nullable|max:1000',
+            'uploadFiles'   => ($this->activeStep === 'receiving' ? 'nullable' : 'required') . '|array|max:10' . ($this->activeStep === 'receiving' ? '' : '|min:1'),
+            'uploadFiles.*' => 'file|max:20480|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            'comment'       => 'nullable|string|max:1000',
         ];
 
         $messages = [

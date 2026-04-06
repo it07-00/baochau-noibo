@@ -60,6 +60,11 @@ class HandlerManager extends Component
 
     public function save(): void
     {
+        abort_unless(
+            auth()->user()->can($this->isEditing ? 'handlers.edit' : 'handlers.create'),
+            403
+        );
+
         $this->validate([
             'formData.name' => 'required|string|max:255|unique:handlers,name' . ($this->editingId ? ',' . $this->editingId : ''),
             'formData.phone' => 'nullable|string|max:30',
@@ -91,6 +96,8 @@ class HandlerManager extends Component
 
     public function delete(int $id): void
     {
+        abort_unless(auth()->user()->can('handlers.delete'), 403);
+
         $handler = Handler::findOrFail($id);
         $usedContracts = ContractWaste::where('handler_id', $id)->count();
 
