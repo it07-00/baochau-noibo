@@ -11,6 +11,7 @@ use App\Models\ContractWaste;
 use App\Models\ContractAssignment;
 use App\Models\ContractPaymentSchedule;
 use App\Models\Customer;
+use App\Models\Quotation;
 use App\Models\DailyReport;
 use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
@@ -144,6 +145,11 @@ class StatisticsBoard extends Component
 
     public function setTab($tab)
     {
+        if (!in_array($tab, ['overview', 'security'], true)) {
+            $this->activeTab = 'overview';
+            return;
+        }
+
         $this->activeTab = $tab;
     }
 
@@ -275,6 +281,78 @@ class StatisticsBoard extends Component
         $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
         $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van', 'tp-kinh-doanh']);
         $canSeeFinance    = !$currentUser->hasAnyRole(['tu-van', 'ky-thuat']);
+
+        // ── Insight theo tháng: báo giá vs ký hợp đồng theo dịch vụ/khu vực ──
+        $insightMonth = $selectedMonth ?? (int) now()->month;
+
+        $quotedByService = Quotation::whereYear('date', $this->year)
+            ->whereMonth('date', $insightMonth)
+            ->selectRaw("COALESCE(NULLIF(TRIM(service), ''), 'Khác') as label, COUNT(*) as cnt")
+            ->groupByRaw("COALESCE(NULLIF(TRIM(service), ''), 'Khác')")
+            ->pluck('cnt', 'label')
+            ->toArray();
+
+        $quotedByProvince = Quotation::whereYear('date', $this->year)
+            ->whereMonth('date', $insightMonth)
+            ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt")
+            ->groupByRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ')")
+            ->pluck('cnt', 'label')
+            ->toArray();
+
+        $signedContractByService = [];
+        $signedContractByProvince = [];
+        $revenueByProvinceFromContracts = [];
+
+        foreach (array_values($contractTypes) as $modelClass) {
+            $serviceRows = $modelClass::whereYear('signed_at', $this->year)
+                ->whereMonth('signed_at', $insightMonth)
+                ->selectRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác') as label, COUNT(*) as cnt")
+                ->groupByRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác')")
+                ->get();
+
+            foreach ($serviceRows as $row) {
+                $label = (string) $row->label;
+                $signedContractByService[$label] = ($signedContractByService[$label] ?? 0) + (int) $row->cnt;
+            }
+
+            $provinceRows = $modelClass::whereYear('signed_at', $this->year)
+                ->whereMonth('signed_at', $insightMonth)
+                ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt, COALESCE(SUM(revenue), 0) as rev")
+                ->groupByRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ')")
+                ->get();
+
+            foreach ($provinceRows as $row) {
+                $label = (string) $row->label;
+                $signedContractByProvince[$label] = ($signedContractByProvince[$label] ?? 0) + (int) $row->cnt;
+                $revenueByProvinceFromContracts[$label] = ($revenueByProvinceFromContracts[$label] ?? 0) + (float) $row->rev;
+            }
+        }
+
+        $serviceLabels = collect(array_keys($quotedByService))
+            ->merge(array_keys($signedContractByService))
+            ->unique()
+            ->sort()
+            ->values();
+
+        $serviceInsightChart = [
+            'labels' => $serviceLabels->all(),
+            'quoted' => $serviceLabels->map(fn ($label) => (int) ($quotedByService[$label] ?? 0))->all(),
+            'signed' => $serviceLabels->map(fn ($label) => (int) ($signedContractByService[$label] ?? 0))->all(),
+        ];
+
+        $regionLabels = collect(array_keys($quotedByProvince))
+            ->merge(array_keys($signedContractByProvince))
+            ->unique()
+            ->sortByDesc(fn ($label) => (int) ($quotedByProvince[$label] ?? 0) + (int) ($signedContractByProvince[$label] ?? 0))
+            ->take(10)
+            ->values();
+
+        $regionInsightChart = [
+            'labels' => $regionLabels->all(),
+            'quoted' => $regionLabels->map(fn ($label) => (int) ($quotedByProvince[$label] ?? 0))->all(),
+            'signed' => $regionLabels->map(fn ($label) => (int) ($signedContractByProvince[$label] ?? 0))->all(),
+            'revenue' => $regionLabels->map(fn ($label) => (float) ($revenueByProvinceFromContracts[$label] ?? 0))->all(),
+        ];
 
         // ── Biểu đồ tư vấn: số dự án theo loại / quý hoặc cả năm ──
         $consultingTypes = [
@@ -429,7 +507,8 @@ class StatisticsBoard extends Component
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
             'byType', 'monthly', 'canSeeTechnical', 'technicalStats',
             'canSeeConsulting', 'consultingChartData', 'canSeeFinance',
-            'isIT', 'itStats', 'envData', 'dailyReportReminder'
+            'isIT', 'itStats', 'envData', 'dailyReportReminder',
+            'insightMonth', 'serviceInsightChart', 'regionInsightChart'
         ))->layout('admin.layouts.app');
     }
 }

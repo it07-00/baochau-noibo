@@ -53,9 +53,6 @@
                 <li class="nav-item">
                     <button wire:click="setTab('security')" class="nav-link {{ $activeTab === 'security' ? 'active shadow-sm' : 'text-dark' }} px-4 fw-bold" style="font-size: 13px;">An ninh & Log</button>
                 </li>
-                <li class="nav-item">
-                    <button wire:click="setTab('env')" class="nav-link {{ $activeTab === 'env' ? 'active shadow-sm' : 'text-dark' }} px-4 fw-bold" style="font-size: 13px;">Cấu hình (.env)</button>
-                </li>
             </ul>
         </div>
 
@@ -322,41 +319,6 @@
                 </div>
             </div>
 
-        @elseif($activeTab === 'env')
-            {{-- ── IT DASHBOARD ENV MANAGER ──────────────────────────── --}}
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="mb-0 fw-bold">Quản trị cấu hình (.env)</h6>
-                        <small class="text-muted">Chỉnh sửa trực tiếp tệp môi trường của hệ thống</small>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button wire:click="loadEnv" class="btn btn-sm btn-outline-secondary">Làm mới</button>
-                        <button wire:click="saveEnv" onclick="return confirm('Bạn có chắc chắn muốn lưu thay đổi? Hệ thống sẽ khởi động lại cấu hình.')" class="btn btn-sm btn-primary px-3">Lưu cấu hình</button>
-                    </div>
-                </div>
-                <div class="card-body bg-light-subtle">
-                    <div class="alert alert-warning border-0 shadow-sm small py-2 d-flex align-items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        <b>Thận trọng:</b> Thay đổi sai thông số .env có thể làm ngừng hoạt động toàn bộ hệ thống.
-                    </div>
-
-                    <div class="row g-3">
-                        @foreach($envData as $key => $value)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="p-2 bg-white rounded border shadow-sm">
-                                <label class="small fw-bold text-muted mb-1 d-block" style="font-size: 10px">{{ $key }}</label>
-                                @if(Str::contains($key, ['PASSWORD', 'SECRET', 'KEY', 'TOKEN']))
-                                    <input type="password" wire:model="envData.{{ $key }}" class="form-control form-control-sm border-0 bg-light" style="font-family: monospace" placeholder="********">
-                                @else
-                                    <input type="text" wire:model="envData.{{ $key }}" class="form-control form-control-sm border-0 bg-light" style="font-family: monospace">
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
         @endif
     @else
         {{-- ── BUSINESS DASHBOARD VIEW ──────────────────────────────── --}}
@@ -476,6 +438,40 @@
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="workloadChartConfig" class="d-none" data-by-type='@json($byType)'></div>
                         <canvas id="teamWorkloadChart" height="250" wire:ignore></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endunless
+
+        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-0 fw-bold">Dịch vụ: báo giá vs ký hợp đồng</h6>
+                            <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
+                        <div id="serviceInsightConfig" class="d-none" data-chart='@json($serviceInsightChart)'></div>
+                        <canvas id="serviceInsightChart" height="250" wire:ignore></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-0 fw-bold">Khu vực: báo giá, ký hợp đồng, doanh số</h6>
+                            <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
+                        <div id="regionInsightConfig" class="d-none" data-chart='@json($regionInsightChart)'></div>
+                        <canvas id="regionInsightChart" height="250" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -665,9 +661,140 @@
             });
         }
 
+        function renderServiceInsightChart() {
+            const configEl = document.getElementById('serviceInsightConfig');
+            const canvas = document.getElementById('serviceInsightChart');
+            if (!configEl || !canvas) return;
+
+            const payload = JSON.parse(configEl.dataset.chart || '{}');
+            const labels = payload.labels || [];
+            const quoted = payload.quoted || [];
+            const signed = payload.signed || [];
+
+            if (canvas._chartInstance) canvas._chartInstance.destroy();
+
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Đã báo giá',
+                            data: quoted,
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 6,
+                            maxBarThickness: 30
+                        },
+                        {
+                            label: 'Đã ký hợp đồng',
+                            data: signed,
+                            backgroundColor: '#2563eb',
+                            borderRadius: 6,
+                            maxBarThickness: 30
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            title: { display: true, text: 'Số lượng hồ sơ' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderRegionInsightChart() {
+            const configEl = document.getElementById('regionInsightConfig');
+            const canvas = document.getElementById('regionInsightChart');
+            if (!configEl || !canvas) return;
+
+            const payload = JSON.parse(configEl.dataset.chart || '{}');
+            const labels = payload.labels || [];
+            const quoted = payload.quoted || [];
+            const signed = payload.signed || [];
+            const revenue = payload.revenue || [];
+
+            if (canvas._chartInstance) canvas._chartInstance.destroy();
+
+            canvas._chartInstance = new Chart(canvas, {
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'Báo giá',
+                            data: quoted,
+                            yAxisID: 'y',
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 6,
+                            maxBarThickness: 26,
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Ký hợp đồng',
+                            data: signed,
+                            yAxisID: 'y',
+                            backgroundColor: '#2563eb',
+                            borderRadius: 6,
+                            maxBarThickness: 26,
+                        },
+                        {
+                            type: 'line',
+                            label: 'Doanh số (hợp đồng)',
+                            data: revenue,
+                            yAxisID: 'y1',
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.2)',
+                            tension: 0.35,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#16a34a',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            title: { display: true, text: 'Số lượng hồ sơ' }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'VND' },
+                            ticks: {
+                                callback: function(value) {
+                                    return compactCurrency(Number(value));
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
         window.renderStatisticsBoardCharts = function() {
             renderMonthlyOverviewChart();
             renderWorkloadChart();
+            renderServiceInsightChart();
+            renderRegionInsightChart();
         };
 
         document.addEventListener('livewire:update', function () {
