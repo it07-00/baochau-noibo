@@ -21,5 +21,14 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Pagination\Paginator::useBootstrapFive();
 
         ContractPaymentSchedule::observe(ContractPaymentScheduleObserver::class);
+
+        \Illuminate\Support\Facades\Event::listen(
+            [
+                \Illuminate\Auth\Events\Login::class,
+                \Illuminate\Auth\Events\Logout::class,
+                \Illuminate\Auth\Events\Failed::class,
+            ],
+            [\App\Listeners\LogAuthActivity::class, 'handle']
+        );
     }
 }
