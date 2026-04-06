@@ -104,6 +104,22 @@ class QuotationManager extends Component
     {
         $this->formData['date'] = now()->format('Y-m-d');
         $this->formData['staff_id'] = auth()->id();
+
+        if ($this->isKinhDoanh()) {
+            $this->filter_staff = (string) auth()->id();
+        }
+    }
+
+    private function isKinhDoanh(): bool
+    {
+        return auth()->user()->hasRole('kinh-doanh');
+    }
+
+    private function authorizeQuotationAccess(Quotation $quotation): void
+    {
+        if ($this->isKinhDoanh()) {
+            abort_unless((int) $quotation->staff_id === (int) auth()->id(), 403);
+        }
     }
 
     private array $moneyFields = ['original_value', 'value_inc_vat', 'commission_value', 'commission_tax', 'total_value'];
@@ -152,6 +168,8 @@ class QuotationManager extends Component
     public function edit($id)
     {
         $quotation = Quotation::findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
         $this->selectedId = $id;
         $this->formData = $quotation->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
@@ -161,13 +179,19 @@ class QuotationManager extends Component
 
     public function viewDetail($id)
     {
-        $this->selectedQuotation = Quotation::with('staff')->findOrFail($id);
+        $quotation = Quotation::with('staff')->findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
+        $this->selectedQuotation = $quotation;
         $this->dispatch('open-detail-modal');
     }
 
     public function selectContractType($id)
     {
-        $this->convertingQuotation = Quotation::findOrFail($id);
+        $quotation = Quotation::findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
+        $this->convertingQuotation = $quotation;
         $this->dispatch('open-convert-modal');
     }
 
@@ -198,9 +222,16 @@ class QuotationManager extends Component
         $this->validate();
 
         if ($this->isEditing) {
-            Quotation::find($this->selectedId)->update($this->formData);
+            $quotation = Quotation::findOrFail($this->selectedId);
+            $this->authorizeQuotationAccess($quotation);
+
+            $quotation->update($this->formData);
             $msg = 'Cập nhật thành công';
         } else {
+            if ($this->isKinhDoanh()) {
+                $this->formData['staff_id'] = auth()->id();
+            }
+
             Quotation::create($this->formData);
             $msg = 'Tạo mới thành công';
         }
@@ -214,7 +245,10 @@ class QuotationManager extends Component
     {
         abort_unless(auth()->user()->can('quotations.delete'), 403);
 
-        Quotation::findOrFail($id)->delete();
+        $quotation = Quotation::findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
+        $quotation->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa báo giá']);
     }
 
@@ -469,6 +503,7 @@ class QuotationManager extends Component
     public function render()
     {
         $query = Quotation::with('staff')
+            ->when($this->isKinhDoanh(), fn($q) => $q->where('staff_id', auth()->id()))
             ->when($this->search, function($q) {
                 $q->where(function($sq) {
                     $sq->where('company_name', 'like', '%'.$this->search.'%')
@@ -483,7 +518,9 @@ class QuotationManager extends Component
 
         return view('livewire.admin.quotations.quotation-manager', [
             'quotations' => $query->latest()->paginate(15),
-            'staffs' => User::all(),
+            'staffs' => $this->isKinhDoanh()
+                ? User::where('id', auth()->id())->get()
+                : User::all(),
             'statuses' => [
                 'hẹn báo giá thời gian sau',
                 'Đang theo dõi',
