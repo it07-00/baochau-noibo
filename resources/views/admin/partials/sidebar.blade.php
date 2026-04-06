@@ -234,7 +234,7 @@
                             'title' => 'Chuyển phát thư',
                             'icon' => $stackIcon,
                             'permission' => 'mail-delivery.view',
-                            'allow_roles' => ['it', 'giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'tu-van'],
+                            'allow_roles' => ['it'],
                             'children' => ['Quản lý chuyển phát'],
                         ],
                         [
