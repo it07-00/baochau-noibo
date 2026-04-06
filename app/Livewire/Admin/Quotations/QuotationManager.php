@@ -213,7 +213,7 @@ class QuotationManager extends Component
     public function save()
     {
         abort_unless(
-            auth()->user()->can($this->isEditing ? 'quotations.edit' : 'quotations.create'),
+            auth()->user()->can($this->isEditing ? 'quotation-tracking.edit' : 'quotation-tracking.create'),
             403
         );
 
@@ -243,7 +243,7 @@ class QuotationManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->user()->can('quotations.delete'), 403);
+        abort_unless(auth()->user()->can('quotation-tracking.delete'), 403);
 
         $quotation = Quotation::findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
@@ -396,7 +396,7 @@ class QuotationManager extends Component
 
     public function runImport()
     {
-        abort_unless(auth()->user()->can('quotations.create'), 403);
+        abort_unless(auth()->user()->can('quotation-tracking.create'), 403);
 
         $this->importErrors = [];
         $this->importSuccess = null;
