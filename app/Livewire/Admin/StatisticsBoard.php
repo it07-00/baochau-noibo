@@ -11,8 +11,6 @@ use App\Models\ContractWaste;
 use App\Models\ContractAssignment;
 use App\Models\ContractPaymentSchedule;
 use App\Models\Customer;
-use App\Models\ProgressiveSales;
-use App\Models\RenewalSales;
 use App\Models\DailyReport;
 use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
@@ -28,6 +26,7 @@ class StatisticsBoard extends Component
 {
     public int $year;
     public array $years = [];
+    public string $month = '';
     public string $chartMode = 'quarter'; // 'quarter' | 'year'
     public array $itStats = [];
     public array $envData = [];
@@ -48,6 +47,11 @@ class StatisticsBoard extends Component
     }
 
     public function updatedYear(): void
+    {
+        $this->dispatch('chart-updated');
+    }
+
+    public function updatedMonth(): void
     {
         $this->dispatch('chart-updated');
     }
@@ -145,8 +149,14 @@ class StatisticsBoard extends Component
 
     public function render()
     {
+        $selectedMonth = $this->month !== '' ? (int) $this->month : null;
+
         // ── KPI tổng quan ──────────────────────────────
-        $totalCustomers = Customer::count();
+        $customerQuery = Customer::whereYear('created_at', $this->year);
+        if ($selectedMonth !== null) {
+            $customerQuery->whereMonth('created_at', $selectedMonth);
+        }
+        $totalCustomers = (int) $customerQuery->count();
 
         $contractTypes = [
             'Chất thải'   => ContractWaste::class,
@@ -169,13 +179,32 @@ class StatisticsBoard extends Component
                 'count' => (int) ($row->cnt ?? 0),
                 'value' => (float) ($row->val ?? 0),
             ];
-            $totalContracts      += $byType[$label]['count'];
-            $totalContractValue  += $byType[$label]['value'];
+            if ($selectedMonth !== null) {
+                $totalContracts += (int) $model::whereYear('signed_at', $this->year)
+                    ->whereMonth('signed_at', $selectedMonth)
+                    ->count();
+            } else {
+                $totalContracts += $byType[$label]['count'];
+            }
+
+            if ($selectedMonth !== null) {
+                $totalContractValue += (float) $model::whereYear('signed_at', $this->year)
+                    ->whereMonth('signed_at', $selectedMonth)
+                    ->sum('value');
+            } else {
+                $totalContractValue += $byType[$label]['value'];
+            }
         }
 
-        // ── Tổng doanh số từ sales tracking ────────────
-        $totalSales = (float) RenewalSales::whereYear('sales_month', $this->year)->sum('sales_amount')
-                    + (float) ProgressiveSales::whereYear('sales_month', $this->year)->sum('amount');
+        // ── Doanh số ghi nhận từ cột doanh số (revenue) trong hợp đồng ──────
+        $totalSales = 0;
+        foreach ($contractTypes as $model) {
+            $modelQuery = $model::whereYear('signed_at', $this->year);
+            if ($selectedMonth !== null) {
+                $modelQuery->whereMonth('signed_at', $selectedMonth);
+            }
+            $totalSales += (float) $modelQuery->sum('revenue');
+        }
 
         // ── Doanh số thực thu (từ lịch thanh toán) ────
         $totalRevenue = (float) ContractPaymentSchedule::whereYear('paid_date', $this->year)
@@ -199,21 +228,14 @@ class StatisticsBoard extends Component
         $contractMonthly = [];
         foreach ($monthlyModels as $model) {
             $rows = $model::whereYear('signed_at', $this->year)
-                ->selectRaw('MONTH(signed_at) as m, COUNT(*) as cnt, SUM(value) as val')
+                ->selectRaw('MONTH(signed_at) as m, COUNT(*) as cnt, SUM(value) as val, SUM(revenue) as rev')
                 ->groupByRaw('MONTH(signed_at)')->get()->keyBy('m');
             foreach ($rows as $m => $row) {
                 $contractMonthly[$m]['cnt'] = ($contractMonthly[$m]['cnt'] ?? 0) + $row->cnt;
                 $contractMonthly[$m]['val'] = ($contractMonthly[$m]['val'] ?? 0) + (float) $row->val;
+                $contractMonthly[$m]['rev'] = ($contractMonthly[$m]['rev'] ?? 0) + (float) $row->rev;
             }
         }
-
-        $rM = RenewalSales::whereYear('sales_month', $this->year)
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
-            ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
-
-        $pM = ProgressiveSales::whereYear('sales_month', $this->year)
-            ->selectRaw('MONTH(sales_month) as m, SUM(amount) as val')
-            ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
 
         // ── Tiến độ thu tiền ────────────────────────
         $paymentDueByMonth = ContractPaymentSchedule::whereYear('due_date', $this->year)
@@ -232,8 +254,7 @@ class StatisticsBoard extends Component
             $monthly[$m] = [
                 'contracts'    => $contractMonthly[$m]['cnt'] ?? 0,
                 'value'        => (float) ($contractMonthly[$m]['val'] ?? 0),
-                'sales'        => (float) ($rM->get($m)?->val ?? 0)
-                               + (float) ($pM->get($m)?->val ?? 0),
+                'sales'        => (float) ($contractMonthly[$m]['rev'] ?? 0),
                 'revenue'      => (float) ($revenueByMonth->get($m)?->total ?? 0),
                 'payment_due'  => (float) ($paymentDueByMonth->get($m)?->total ?? 0),
                 'payment_paid' => (float) ($paymentPaidByMonth->get($m)?->total ?? 0),

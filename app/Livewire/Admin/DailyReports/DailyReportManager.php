@@ -9,6 +9,7 @@ use Carbon\Carbon;
 class DailyReportManager extends Component
 {
     // Form fields
+    public $reportDate;
     public $status = 'Hoàn thành đúng kế hoạch';
     public $content;
     public $plan;
@@ -35,6 +36,7 @@ class DailyReportManager extends Component
 
     public function mount($userId = null)
     {
+        $this->reportDate = date('Y-m-d');
         $this->dateFilter = date('Y-m-d');
         $this->monthFilter = (int)date('m');
         $this->yearFilter = (int)date('Y');
@@ -42,12 +44,20 @@ class DailyReportManager extends Component
         if (!$this->isManager) {
             $this->userIdFilter = auth()->id();
         }
-        $this->loadTodayReport();
+        $this->loadReportByDate();
     }
 
-    public function loadTodayReport()
+    public function updatedReportDate()
     {
-        $report = DailyReport::where('user_id', auth()->id())->whereDate('date', date('Y-m-d'))->first();
+        $this->loadReportByDate();
+    }
+
+    public function loadReportByDate()
+    {
+        $report = DailyReport::where('user_id', auth()->id())
+            ->whereDate('date', $this->reportDate)
+            ->first();
+
         if ($report) {
             $this->content = $report->content;
             $this->status = $report->status;
@@ -61,16 +71,22 @@ class DailyReportManager extends Component
             $this->issues = '';
             $this->isEditing = false;
         }
+
+        $this->dispatch('editor:set-content', content: (string) ($this->content ?? ''));
     }
 
     public function save()
     {
         $this->validate([
+            'reportDate' => 'required|date|before_or_equal:today',
             'content' => 'required|min:10|max:10000',
-            'status' => 'required|in:Hoàn thành đúng kế hoạch,Hoàn thành trước kế hoạch,Chưa hoàn thành,Gặp vấn đề cần hỗ trợ',
+            'status' => 'required|in:Hoàn thành đúng kế hoạch,Hoàn thành một phần,Gặp vấn đề, cần hỗ trợ',
             'plan' => 'nullable|string|max:5000',
             'issues' => 'nullable|string|max:5000',
         ], [
+            'reportDate.required' => 'Vui lòng chọn ngày báo cáo.',
+            'reportDate.date' => 'Ngày báo cáo không hợp lệ.',
+            'reportDate.before_or_equal' => 'Chỉ được cập nhật báo cáo ở thời điểm hiện tại hoặc trước đó.',
             'content.required' => 'Vui lòng nhập nội dung công việc.',
             'content.min' => 'Nội dung công việc quá ngắn.',
             'content.max' => 'Nội dung công việc không được vượt quá 10,000 ký tự.',
@@ -78,7 +94,7 @@ class DailyReportManager extends Component
         ]);
 
         DailyReport::updateOrCreate(
-            ['user_id' => auth()->id(), 'date' => date('Y-m-d')],
+            ['user_id' => auth()->id(), 'date' => $this->reportDate],
             [
                 'content' => $this->content,
                 'status' => $this->status,
@@ -88,8 +104,7 @@ class DailyReportManager extends Component
         );
 
         $this->dispatch('swal:success', ['message' => 'Gửi báo cáo thành công!']);
-        $this->dispatch('editor:reset');
-        $this->loadTodayReport();
+        $this->loadReportByDate();
     }
 
     public function delete($id)

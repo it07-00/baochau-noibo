@@ -42,11 +42,11 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Loại HĐ</label>
+                    <label class="form-label fw-semibold mb-1 small">Loại HĐ (6 nhóm)</label>
                     <select wire:model.live="filter_contract_type" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
-                        @foreach($contractTypes as $key => $class)
-                            <option value="{{ $key }}">{{ $typeLabels[array_search($class, array_keys($totals['by_type']))] ?? ucfirst($key) }}</option>
+                        @foreach($contractTypeOptions as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -142,7 +142,7 @@
     {{-- Bảng chi tiết theo loại HĐ --}}
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 border-bottom">
-            <h6 class="mb-0 fw-bold">Chi tiết theo loại hợp đồng – Năm {{ $year }}</h6>
+            <h6 class="mb-0 fw-bold">Chi tiết theo 6 loại hợp đồng – Năm {{ $year }}</h6>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -205,9 +205,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($staffRevenue as $i => $sr)
+                        @foreach($staffRevenue as $sr)
                             <tr>
-                                <td class="fw-semibold">{{ $i + 1 }}</td>
+                                <td class="fw-semibold">{{ $loop->iteration }}</td>
                                 <td>{{ $sr['name'] }}</td>
                                 <td class="text-end fw-bold text-success">{{ number_format($sr['total'], 0, ',', '.') }} đ</td>
                             </tr>

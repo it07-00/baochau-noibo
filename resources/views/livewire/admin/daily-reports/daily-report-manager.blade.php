@@ -42,7 +42,16 @@
                                 </span>
                             @endif
                         </div>
-                        <span class="text-muted small">{{ \Carbon\Carbon::now()->translatedFormat('l · d/m/Y') }}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="text-muted small fw-bold mb-0">Ngày báo cáo:</label>
+                            <input
+                                type="date"
+                                wire:model.live="reportDate"
+                                max="{{ now()->format('Y-m-d') }}"
+                                class="form-control form-control-sm border-light-subtle"
+                                style="width: auto; border-radius: 8px;"
+                            >
+                        </div>
                     </div>
                     <div class="card-body p-4 pt-0">
                         <form wire:submit.prevent="save">
@@ -108,8 +117,7 @@
                                     {{ $isEditing ? 'Cập nhật báo cáo' : 'Gửi báo cáo ngày' }}
                                 </button>
                                 @if($isEditing)
-                                    <span class="text-success small fw-bold"><i class="bi bi-info-circle me-1"></i> Bạn có thể
-                                        chỉnh sửa báo cáo trước 20:00 hôm nay</span>
+                                    <span class="text-success small fw-bold"><i class="bi bi-info-circle me-1"></i> Bạn đang chỉnh sửa báo cáo ngày {{ \Carbon\Carbon::parse($reportDate)->format('d/m/Y') }}</span>
                                 @else
                                     <span class="text-muted small">Nội dung sẽ tự động lưu khi bạn nhập</span>
                                 @endif
@@ -610,10 +618,10 @@
                         @this.set('content', editor.getData());
                     });
 
-                    // Sync from Livewire (on external changes)
-                    document.addEventListener('editor:reset', () => {
-                        editor.setData('');
-                    });
+                    // Apply buffered content when editor is initialized.
+                    if (window.__dailyReportContentBuffer !== undefined) {
+                        editor.setData(window.__dailyReportContentBuffer || '');
+                    }
 
                     contentEl.classList.add('ck-editor-initialized');
                     window.contentEditor = editor;
@@ -626,6 +634,16 @@
         // Handle Livewire Navigation/Morphing
         document.addEventListener('livewire:navigated', initAllEditors);
         document.addEventListener('livewire:init', initAllEditors);
+
+        // Sync content from Livewire after save/load without forcing full page refresh.
+        window.addEventListener('editor:set-content', (event) => {
+            const nextContent = event.detail?.content ?? '';
+            window.__dailyReportContentBuffer = nextContent;
+
+            if (window.contentEditor && window.contentEditor.getData() !== nextContent) {
+                window.contentEditor.setData(nextContent);
+            }
+        });
 
         // Polling-style check for tab changes (robust)
         setInterval(() => {

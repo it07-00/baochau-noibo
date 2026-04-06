@@ -172,6 +172,9 @@ class SalesRevenueReport extends Component
             'months'          => $months,
             'totals'          => $totals,
             'typeLabels'      => array_values($this->contractTypeLabels),
+            'contractTypeOptions' => collect($this->contractTypeMap)
+                ->mapWithKeys(fn($class, $key) => [$key => ($this->contractTypeLabels[$class] ?? ucfirst($key))])
+                ->toArray(),
             'staffs'          => User::role('kinh-doanh')->orderBy('name')->get(),
             'departments'     => Department::orderBy('name')->get(),
             'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),

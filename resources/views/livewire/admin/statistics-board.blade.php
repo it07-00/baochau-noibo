@@ -9,8 +9,14 @@
                 </ol>
             </nav>
         </div>
-        <div>
-            <select wire:model.live="year" class="form-select form-select-sm" style="width:auto">
+        <div class="d-flex gap-2">
+            <select wire:model.live="month" class="form-select form-select-sm" style="width:auto; min-width: 140px;">
+                <option value="">Cả năm</option>
+                @for($m = 1; $m <= 12; $m++)
+                    <option value="{{ $m }}">Tháng {{ $m }}</option>
+                @endfor
+            </select>
+            <select wire:model.live="year" class="form-select form-select-sm" style="width:auto; min-width: 140px;">
                 @foreach($years as $y)
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
@@ -365,7 +371,14 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
                         </div>
                         <div>
-                            <div class="small text-muted">Tổng KH</div>
+                            <div class="small text-muted">
+                                Tổng KH
+                                @if($month !== '')
+                                    - Tháng {{ $month }}/{{ $year }}
+                                @else
+                                    - Năm {{ $year }}
+                                @endif
+                            </div>
                             <div class="fw-bold fs-5 text-primary">{{ number_format($totalCustomers) }}</div>
                         </div>
                     </div>
@@ -378,7 +391,14 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                         </div>
                         <div>
-                            <div class="small text-muted">Hợp đồng {{ $year }}</div>
+                            <div class="small text-muted">
+                                Hợp đồng
+                                @if($month !== '')
+                                    - Tháng {{ $month }}/{{ $year }}
+                                @else
+                                    - Năm {{ $year }}
+                                @endif
+                            </div>
                             <div class="fw-bold fs-5 text-success">{{ number_format($totalContracts) }}</div>
                         </div>
                     </div>
@@ -392,8 +412,13 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                         </div>
                         <div>
-                            <div class="small text-muted">Giá trị HĐ (Tỷ)</div>
-                            <div class="fw-bold fs-5 text-warning">{{ number_format($totalContractValue/1000000000, 2) }} B</div>
+                            <div class="small text-muted">
+                                Giá trị HĐ (Triệu)
+                                @if($month !== '')
+                                    - Tháng {{ $month }}/{{ $year }}
+                                @endif
+                            </div>
+                            <div class="fw-bold fs-5 text-warning">{{ number_format($totalContractValue/1000000, 2) }} Tr</div>
                         </div>
                     </div>
                 </div>
@@ -405,8 +430,13 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-info" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>
                         </div>
                         <div>
-                            <div class="small text-muted">Doanh số (Tỷ)</div>
-                            <div class="fw-bold fs-5 text-info">{{ number_format($totalSales/1000000000, 2) }} B</div>
+                            <div class="small text-muted">
+                                Doanh số ghi nhận (Triệu)
+                                @if($month !== '')
+                                    - Tháng {{ $month }}/{{ $year }}
+                                @endif
+                            </div>
+                            <div class="fw-bold fs-5 text-info">{{ number_format($totalSales/1000000, 2) }} Tr</div>
                         </div>
                     </div>
                 </div>
@@ -422,8 +452,8 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="mb-0 fw-bold">Employee Overview Style</h6>
-                            <small class="text-muted">Xu hướng theo tháng trong năm {{ $year }}</small>
+                            <h6 class="mb-0 fw-bold">Tổng quan vận hành theo tháng</h6>
+                            <small class="text-muted">Biến động hợp đồng, doanh số và thực thu trong năm {{ $year }}</small>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -438,8 +468,8 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="mb-0 fw-bold">Team Work Load Style</h6>
-                            <small class="text-muted">Cơ cấu theo loại hợp đồng</small>
+                            <h6 class="mb-0 fw-bold">Cơ cấu hợp đồng theo dịch vụ</h6>
+                            <small class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</small>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -517,7 +547,7 @@
             const datasets = [
                 {
                     type: 'bar',
-                    label: 'Hợp đồng mới',
+                    label: 'Hợp đồng ký mới',
                     data: contractData,
                     yAxisID: 'y',
                     backgroundColor: '#4f7cff',
@@ -530,7 +560,7 @@
             if (canSeeFinance) {
                 datasets.push({
                     type: 'bar',
-                    label: 'Doanh số',
+                    label: 'Doanh số ghi nhận',
                     data: salesData,
                     yAxisID: 'y1',
                     backgroundColor: '#f05252',
@@ -567,7 +597,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: { display: true, text: 'Số lượng hợp đồng' },
+                            title: { display: true, text: 'Số lượng hợp đồng ký' },
                             grid: { color: 'rgba(15, 23, 42, 0.08)' }
                         },
                         y1: {
@@ -610,7 +640,7 @@
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Khối lượng công việc',
+                        label: 'Số hợp đồng theo loại',
                         data: values,
                         backgroundColor: colors.map((c) => c + 'cc'),
                         borderColor: colors,
