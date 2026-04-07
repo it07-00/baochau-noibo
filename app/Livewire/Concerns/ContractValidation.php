@@ -2,8 +2,37 @@
 
 namespace App\Livewire\Concerns;
 
+use App\Models\Department;
+
 trait ContractValidation
 {
+    /**
+     * Đảm bảo luôn có phòng ban mặc định cho form hợp đồng
+     * (đặc biệt khi mở form từ báo giá với department_id đang rỗng).
+     */
+    protected function ensureDepartmentId(): void
+    {
+        if (!property_exists($this, 'formData') || !is_array($this->formData)) {
+            return;
+        }
+
+        if (!empty($this->formData['department_id'])) {
+            return;
+        }
+
+        $defaultDepartmentId = Department::query()
+            ->where('slug', 'kinh-doanh')
+            ->value('id');
+
+        if (!$defaultDepartmentId) {
+            $defaultDepartmentId = Department::query()->value('id');
+        }
+
+        if ($defaultDepartmentId) {
+            $this->formData['department_id'] = $defaultDepartmentId;
+        }
+    }
+
     /**
      * Rules chung cho 5 loại HĐ: consulting, commercial, project, sustainability, energy.
      */

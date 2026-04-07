@@ -16,6 +16,7 @@ class ContractPaymentScheduleManager extends Component
     public bool $showForm = false;
     public bool $isEditing = false;
     public ?int $editingId = null;
+    public bool $canManage = false;
 
     public array $form = [
         'installment_name' => '',
@@ -57,6 +58,24 @@ class ContractPaymentScheduleManager extends Component
         $this->contractType       = $contractType;
         $this->contractId         = $contractId;
         $this->contractModelClass = ContractPaymentSchedule::MODEL_MAP[$contractType] ?? '';
+        $this->calculatePermissions();
+    }
+
+    private function calculatePermissions(): void
+    {
+        $user = auth()->user();
+        if ($user->hasAnyRole(['tu-van', 'ky-thuat'])) {
+            $this->canManage = false;
+            return;
+        }
+
+        if ($user->hasRole('tp-kinh-doanh')) {
+            $parent = $this->contractModelClass::find($this->contractId);
+            $this->canManage = $parent && $parent->staff_id === $user->id;
+            return;
+        }
+
+        $this->canManage = true;
     }
 
     public function openForm(): void
@@ -85,6 +104,11 @@ class ContractPaymentScheduleManager extends Component
 
     public function save(): void
     {
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            $parent = $this->contractModelClass::find($this->contractId);
+            abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
+        }
+
         abort_unless(
             auth()->user()->can($this->isEditing ? 'payment-schedules.edit' : 'payment-schedules.create'),
             403
@@ -115,6 +139,10 @@ class ContractPaymentScheduleManager extends Component
 
     public function delete(int $id): void
     {
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            $parent = $this->contractModelClass::find($this->contractId);
+            abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
+        }
         abort_unless(auth()->user()->can('payment-schedules.delete'), 403);
 
         ContractPaymentSchedule::findOrFail($id)->delete();
@@ -123,6 +151,10 @@ class ContractPaymentScheduleManager extends Component
 
     public function markPaid(int $id): void
     {
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            $parent = $this->contractModelClass::find($this->contractId);
+            abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
+        }
         abort_unless(auth()->user()->can('payment-schedules.edit'), 403);
 
         $schedule = ContractPaymentSchedule::findOrFail($id);

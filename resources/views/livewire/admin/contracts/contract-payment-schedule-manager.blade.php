@@ -7,11 +7,11 @@
                 <span class="badge bg-primary ms-1">{{ $schedules->count() }} đợt</span>
             @endif
         </h6>
-        @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+        @if ($canManage)
             <button class="btn btn-sm btn-primary" wire:click="openForm">
                 <i class="bi bi-plus-circle me-1"></i>Thêm đợt
             </button>
-        @endunless
+        @endif
     </div>
 
     {{-- Summary bar --}}
@@ -46,9 +46,9 @@
                         <th class="text-center">Hạn TT</th>
                         <th class="text-end">Đã trả</th>
                         <th class="text-center">Trạng thái</th>
-                        @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                        @if ($canManage)
                             <th class="text-center pe-4">Thao tác</th>
-                        @endunless
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -92,7 +92,7 @@
                             <td class="text-center">
                                 <span class="badge bg-{{ $s->status_color }}">{{ $s->status_label }}</span>
                             </td>
-                            @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                            @if ($canManage)
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center gap-1">
                                         @if ($s->status !== 'paid')
@@ -112,7 +112,7 @@
                                         </button>
                                     </div>
                                 </td>
-                            @endunless
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

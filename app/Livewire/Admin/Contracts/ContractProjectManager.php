@@ -99,6 +99,7 @@ class ContractProjectManager extends Component
                 $this->formData['staff_id']       = $quotation->staff_id ?? auth()->id();
                 $this->formData['notes']          = $quotation->notes ?? '';
                 $this->formData['info_source']    = 'MỚI';
+                $this->ensureDepartmentId();
                 $this->showModal = true;
                 $this->dispatch('openFormModal');
             }
@@ -140,7 +141,12 @@ class ContractProjectManager extends Component
             403
         );
 
+        if ($this->isEditing && auth()->user()->hasRole('tp-kinh-doanh')) {
+            abort_if($this->selectedDoc->staff_id !== auth()->id(), 403);
+        }
+
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+        $this->ensureDepartmentId();
 
         $this->validate($this->baseContractRules(), $this->contractValidationMessages());
 
@@ -159,7 +165,12 @@ class ContractProjectManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
-        abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+        $doc = ContractProject::findOrFail($id);
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            abort_if($doc->staff_id !== auth()->id(), 403);
+        } else {
+            abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+        }
         abort_unless(auth()->user()->can('contracts-project.edit'), 403);
 
         if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
@@ -172,9 +183,13 @@ class ContractProjectManager extends Component
 
     public function delete(int $id): void
     {
+        $doc = ContractProject::findOrFail($id);
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            abort_if($doc->staff_id !== auth()->id(), 403);
+        }
         abort_unless(auth()->user()->can('contracts-project.delete'), 403);
 
-        ContractProject::findOrFail($id)->delete();
+        $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
     }
 

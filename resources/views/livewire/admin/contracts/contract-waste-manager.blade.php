@@ -433,7 +433,12 @@
                                             default => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
                                         };
                                     @endphp
-                                    @if (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                    @php
+                                        $canUpdateStatus = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) &&
+                                            (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id());
+                                    @endphp
+
+                                    @if (!$canUpdateStatus)
                                         <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0"
                                             style="font-size:0.7rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
                                             {{ $doc->status ?: '—' }}
@@ -491,15 +496,20 @@
                                         </button>
                                     @endif
                                     @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                                        <button class="btn btn-sm p-0 text-warning"
-                                            wire:click="edit({{ $doc->id }})">
-                                            <i class="bi bi-pencil-square fs-5"></i>
-                                        </button>
-                                        <button class="btn btn-sm p-0 text-danger"
-                                            wire:click="delete({{ $doc->id }})"
-                                            wire:confirm="Xác nhận xóa hợp đồng này?">
-                                            <i class="bi bi-trash fs-5"></i>
-                                        </button>
+                                        @php
+                                            $canEditDelete = !auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id();
+                                        @endphp
+                                        @if ($canEditDelete)
+                                            <button class="btn btn-sm p-0 text-warning"
+                                                wire:click="edit({{ $doc->id }})">
+                                                <i class="bi bi-pencil-square fs-5"></i>
+                                            </button>
+                                            <button class="btn btn-sm p-0 text-danger"
+                                                wire:click="delete({{ $doc->id }})"
+                                                wire:confirm="Xác nhận xóa hợp đồng này?">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                        @endif
                                     @endunless
                                 </div>
                             </td>

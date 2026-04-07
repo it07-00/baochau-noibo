@@ -122,6 +122,7 @@ class ContractWasteManager extends Component
                 $this->formData['note'] = $quotation->notes;
                 $this->formData['source'] = 'MỚI';
                 $this->formData['status'] = 'ĐANG THỰC HIỆN';
+                $this->ensureDepartmentId();
 
                 $this->showModal = true;
                 $this->dispatch('openFormModal');
@@ -165,7 +166,12 @@ class ContractWasteManager extends Component
             403
         );
 
+        if ($this->isEditing && auth()->user()->hasRole('tp-kinh-doanh')) {
+            abort_if($this->selectedDoc->staff_id !== auth()->id(), 403);
+        }
+
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+        $this->ensureDepartmentId();
 
         $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
 
@@ -189,7 +195,12 @@ class ContractWasteManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
-        abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+        $doc = ContractWaste::findOrFail($id);
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            abort_if($doc->staff_id !== auth()->id(), 403);
+        } else {
+            abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+        }
         abort_unless(auth()->user()->can('contracts-waste.edit'), 403);
 
         if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
@@ -202,9 +213,12 @@ class ContractWasteManager extends Component
 
     public function delete($id)
     {
+        $doc = ContractWaste::findOrFail($id);
+        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+            abort_if($doc->staff_id !== auth()->id(), 403);
+        }
         abort_unless(auth()->user()->can('contracts-waste.delete'), 403);
 
-        $doc = ContractWaste::findOrFail($id);
         $doc->delete();
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
     }
