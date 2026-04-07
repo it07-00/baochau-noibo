@@ -450,6 +450,23 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
+                            <h6 class="mb-0 fw-bold">TỈ LỆ DOANH SỐ THEO NGUỒN THÔNG TIN</h6>
+                            <small class="text-muted">Dựa trên doanh số ghi nhận của tất cả loại hợp đồng</small>
+                        </div>
+                    </div>
+                    <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
+                        <div id="sourceSalesConfig" class="d-none" data-chart='@json($sourceSalesChart)'></div>
+                        <div style="height: 300px; width: 100%;">
+                            <canvas id="sourceSalesChart" wire:ignore></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                        <div>
                             <h6 class="mb-0 fw-bold">Dịch vụ: báo giá vs ký hợp đồng</h6>
                             <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
                         </div>
@@ -460,8 +477,10 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-lg-6">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-12">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
@@ -790,9 +809,80 @@
             });
         }
 
+        function renderSourceSalesChart() {
+            const configEl = document.getElementById('sourceSalesConfig');
+            const canvas = document.getElementById('sourceSalesChart');
+            if (!configEl || !canvas) return;
+
+            const payload = JSON.parse(configEl.dataset.chart || '{}');
+            const labels = payload.labels || [];
+            const data = payload.datasets || [];
+
+            if (canvas._chartInstance) canvas._chartInstance.destroy();
+
+            // Bảng màu kết hợp giữa cố định và linh hoạt
+            const colorMap = {
+                'SALE': '#007bff',
+                'KHAI THÁC': '#c084fc',
+                'TÁI KÝ': '#facc15',
+                'MARKETING': '#b91c1c',
+                'CHUYỂN THÔNG TIN': '#15803d',
+                'CÔNG TY': '#f43f5e',
+                'MỚI': '#0ea5e9'
+            };
+            
+            const palette = [
+                '#007bff', '#c084fc', '#facc15', '#b91c1c', '#15803d', '#f43f5e', '#0ea5e9',
+                '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e', '#f97316', '#fbbf24', '#84cc16', '#10b981', '#06b6d4'
+            ];
+
+            const backgroundColors = labels.map((label, i) => {
+                const upper = label.toUpperCase();
+                return colorMap[upper] || palette[i % palette.length];
+            });
+
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 12, weight: '600' }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = context.raw;
+                                    const percentage = ((value / total) * 100).toFixed(1) + '%';
+                                    return ` ${context.label}: ${compactCurrency(value)} (${percentage})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         window.renderStatisticsBoardCharts = function() {
             renderMonthlyOverviewChart();
             renderWorkloadChart();
+            renderSourceSalesChart();
             renderServiceInsightChart();
             renderRegionInsightChart();
         };

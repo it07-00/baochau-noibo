@@ -502,13 +502,48 @@ class StatisticsBoard extends Component
             }
         }
 
+        // ── Doanh số theo nguồn thông tin (Dynamic) ──────────
+        $sourceSalesMap = [];
+
+        foreach ($contractTypes as $modelClass) {
+            $sourceField = ($modelClass === ContractWaste::class) ? 'source' : 'info_source';
+
+            $modelQuery = $modelClass::whereYear('signed_at', $this->year);
+            if ($selectedMonth !== null) {
+                $modelQuery->whereMonth('signed_at', $selectedMonth);
+            }
+
+            $contractsOnSource = $modelQuery->select($sourceField, 'is_renewal', 'revenue')->get();
+
+            foreach ($contractsOnSource as $c) {
+                $val = (float) $c->revenue;
+                if ($c->is_renewal) {
+                    $label = 'TÁI KÝ';
+                } else {
+                    $label = mb_convert_case(trim($c->$sourceField ?? 'KHÁC'), MB_CASE_UPPER, "UTF-8");
+                    if ($label === '') $label = 'KHÁC';
+                }
+
+                $sourceSalesMap[$label] = ($sourceSalesMap[$label] ?? 0) + $val;
+            }
+        }
+
+        // Sắp xếp theo doanh số giảm dần
+        arsort($sourceSalesMap);
+
+        $sourceSalesChart = [
+            'labels' => array_keys($sourceSalesMap),
+            'datasets' => array_values($sourceSalesMap),
+        ];
+
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
             'byType', 'monthly', 'canSeeTechnical', 'technicalStats',
             'canSeeConsulting', 'consultingChartData', 'canSeeFinance',
             'isIT', 'itStats', 'envData', 'dailyReportReminder',
-            'insightMonth', 'serviceInsightChart', 'regionInsightChart'
+            'insightMonth', 'serviceInsightChart', 'regionInsightChart',
+            'sourceSalesChart'
         ))->layout('admin.layouts.app');
     }
 }
