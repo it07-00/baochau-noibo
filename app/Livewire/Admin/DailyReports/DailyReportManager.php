@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\DailyReport;
 use App\Models\Department;
 use App\Models\User;
+use App\Notifications\DailyReportSubmittedNotification;
 use Carbon\Carbon;
 
 class DailyReportManager extends Component
@@ -34,6 +35,11 @@ class DailyReportManager extends Component
         'total' => 0,
         'missing' => 0,
         'issues' => 0,
+    ];
+
+    protected $queryString = [
+        'dateFilter' => ['except' => ''],
+        'viewType'   => ['except' => 'day'],
     ];
 
     public function mount($userId = null)
@@ -123,6 +129,25 @@ class DailyReportManager extends Component
 
         $this->dispatch('swal:success', ['message' => 'Gửi báo cáo thành công!']);
         $this->loadReportByDate();
+
+        // Gửi thông báo cho Giám đốc & TPKD
+        $reporter = auth()->user();
+        $isSales = $reporter->hasRole('kinh-doanh');
+
+        // Giám đốc luôn nhận được
+        $recipients = User::role('giam-doc')->get();
+
+        // TPKD nhận được báo cáo từ nhân viên kinh doanh
+        if ($isSales) {
+            $recipients = $recipients->merge(User::role('tp-kinh-doanh')->get());
+        }
+
+        foreach ($recipients->unique('id') as $recipient) {
+            /** @var User $recipient */
+            if ($recipient->id !== $reporter->id) {
+                $recipient->notify(new DailyReportSubmittedNotification($reporter->name, $this->reportDate));
+            }
+        }
     }
 
     public function delete($id)
