@@ -425,6 +425,6 @@ class ContractCommercialManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractCommercial::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractCommercial::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'HĐ NC & CĐ Công nghệ']);
+        ])->layout('admin.layouts.app', ['title' => 'NC & CĐ Công nghệ']);
     }
 }

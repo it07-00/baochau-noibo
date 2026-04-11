@@ -114,7 +114,9 @@ Route::middleware('auth')->name('app.')->group(function () {
     Route::get('chuyen-phat-nhanh', \App\Livewire\Admin\PostalDeliveries\PostalDeliveryManager::class)->name('postal-deliveries.index')->middleware('permission:mail-delivery.view');
 
     // Theo dõi báo giá
-    Route::get('theo-doi-bao-gia', \App\Livewire\Admin\Quotations\QuotationManager::class)->name('quotation-tracking.index')->middleware('permission:quotation-tracking.view');
+    Route::get('theo-doi-bao-gia', \App\Livewire\Admin\Quotations\QuotationManager::class)
+        ->name('quotation-tracking.index')
+        ->middleware(['permission:quotation-tracking.view', 'role:kinh-doanh,tp-kinh-doanh,giam-doc']);
 
     // Báo cáo Kinh doanh
     Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware('permission:reports.view')->group(function () {

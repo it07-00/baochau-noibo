@@ -426,6 +426,6 @@ class ContractConsultingManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractConsulting::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractConsulting::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'HĐ Pháp lý & Hồ sơ MT']);
+        ])->layout('admin.layouts.app', ['title' => 'Hồ sơ môi trường']);
     }
 }

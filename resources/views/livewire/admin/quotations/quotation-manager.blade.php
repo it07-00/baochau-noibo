@@ -405,22 +405,22 @@
                     <p class="mb-4">Hệ thống sẽ chuyển dữ liệu từ báo giá này sang trang tạo hợp đồng mới.</p>
                     <div class="d-grid gap-3">
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('waste')">
-                            <i class="bi bi-trash3 me-2"></i> Hợp đồng Chất thải
+                            <i class="bi bi-trash3 me-2"></i> Chất thải & Tiếng ồn
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('consulting')">
-                            <i class="bi bi-chat-dots me-2"></i> Hợp đồng Tư vấn
+                            <i class="bi bi-chat-dots me-2"></i> Hồ sơ môi trường
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('project')">
-                            <i class="bi bi-building me-2"></i> Hợp đồng Dự án
+                            <i class="bi bi-building me-2"></i> Kỹ thuật & Ứng phó SC
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('commercial')">
-                            <i class="bi bi-cart3 me-2"></i> Hợp đồng Thương mại
+                            <i class="bi bi-cart3 me-2"></i> NC & CĐ Công nghệ
                         </button>
                         <button class="btn btn-outline-success py-3 fw-bold" wire:click="convertTo('sustainability')">
-                            <i class="bi bi-tree me-2"></i> HĐ Phát triển bền vững
+                            <i class="bi bi-tree me-2"></i> TV & BC PTBV
                         </button>
                         <button class="btn btn-outline-warning py-3 fw-bold" wire:click="convertTo('energy')">
-                            <i class="bi bi-lightning me-2"></i> HĐ Năng lượng
+                            <i class="bi bi-lightning me-2"></i> Phát thải & Năng lượng
                         </button>
                     </div>
                 </div>

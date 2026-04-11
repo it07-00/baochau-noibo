@@ -497,6 +497,6 @@ class ContractWasteManager extends Component
             'provinces' => \App\Support\VietnamProvinces::list(),
             'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
             'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'HĐ Chất thải & Tiếng ồn']);
+        ])->layout('admin.layouts.app', ['title' => 'Chất thải & Tiếng ồn']);
     }
 }

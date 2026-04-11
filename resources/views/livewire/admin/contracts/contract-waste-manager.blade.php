@@ -2,11 +2,11 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-0">HĐ Chất thải & Tiếng ồn</h4>
+            <h4 class="mb-0">Chất thải & Tiếng ồn</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng thống kê</a></li>
-                    <li class="breadcrumb-item active">HĐ Chất thải & Tiếng ồn</li>
+                    <li class="breadcrumb-item active">Chất thải & Tiếng ồn</li>
                 </ol>
             </nav>
         </div>

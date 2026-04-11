@@ -484,6 +484,11 @@
                                 <ul class="app-sidebar-submenu"
                                     style="display: {{ $menu['title'] === $activeGroup ? 'block' : 'none' }};">
                                     @foreach ($menu['children'] as $child)
+                                        @continue(
+                                            $child === 'Bảng theo dõi báo giá' &&
+                                            !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc'])
+                                        )
+
                                         @php
                                             $childActive = $menu['title'] === $activeGroup && $child === $activeChild;
                                             $childIcon =
@@ -492,6 +497,19 @@
                                                     : (str_starts_with($menu['title'], 'Báo cáo')
                                                         ? $reportNodeIcon
                                                         : $docIcon);
+                                            $childLabel = $child;
+
+                                            if ($menu['title'] === 'Quản lý hợp đồng') {
+                                                $childLabel = match ($child) {
+                                                    'HĐ Chất thải & Tiếng ồn' => 'Chất thải & Tiếng ồn',
+                                                    'HĐ Pháp lý & Hồ sơ MT' => 'Hồ sơ môi trường',
+                                                    'HĐ Kỹ thuật & Ứng phó SC' => 'Kỹ thuật & Ứng phó SC',
+                                                    'HĐ NC & CĐ Công nghệ' => 'NC & CĐ Công nghệ',
+                                                    'HĐ TV & BC PTBV' => 'TV & BC PTBV',
+                                                    'HĐ Phát thải & Năng lượng' => 'Phát thải & Năng lượng',
+                                                    default => $child,
+                                                };
+                                            }
                                         @endphp
                                         @php
                                             $href = 'javascript:void(0)';
@@ -654,7 +672,7 @@
                                             <a href="{{ $href }}"
                                                 class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
                                                 <span class="menu-icon flex-shrink-0">{!! $childIcon !!}</span>
-                                                <span class="menu-title flex-grow-1">{{ $child }}</span>
+                                                <span class="menu-title flex-grow-1">{{ $childLabel }}</span>
                                             </a>
                                         </li>
                                     @endforeach

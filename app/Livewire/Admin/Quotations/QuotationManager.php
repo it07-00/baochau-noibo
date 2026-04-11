@@ -102,6 +102,12 @@ class QuotationManager extends Component
 
     public function mount()
     {
+        abort_unless(
+            auth()->user()->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc']),
+            403,
+            'Bạn không có quyền truy cập chức năng này.'
+        );
+
         $this->formData['date'] = now()->format('Y-m-d');
         $this->formData['staff_id'] = auth()->id();
 
@@ -517,7 +523,7 @@ class QuotationManager extends Component
             ->when($this->date_to, fn($q) => $q->whereDate('date', '<=', $this->date_to));
 
         return view('livewire.admin.quotations.quotation-manager', [
-            'quotations' => $query->latest()->paginate(15),
+            'quotations' => $query->orderByDesc('date')->orderByDesc('id')->paginate(15),
             'staffs' => $this->isKinhDoanh()
                 ? User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('id', auth()->id())->orderBy('name')->get()
                 : User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
