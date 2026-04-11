@@ -150,14 +150,15 @@ class ContractProjectManager extends Component
     {
         $user = auth()->user();
 
-        abort_unless(
-            $user->can($this->isEditing ? 'contracts-project.edit' : 'contracts-project.create'),
-            403
-        );
+        if (!$user->can($this->isEditing ? 'contracts-project.edit' : 'contracts-project.create')) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
+            return;
+        }
 
         $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
-        if ($this->isEditing && $isRestrictedTpKd) {
-            abort_if($this->selectedDoc->staff_id !== $user->id, 403);
+        if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
+            return;
         }
 
         if (!$user->hasAnyRole(['tp-kinh-doanh', 'giam-doc'])) {
@@ -169,7 +170,15 @@ class ContractProjectManager extends Component
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
         $this->ensureDepartmentId();
 
-        $this->validate($this->baseContractRules(), $this->contractValidationMessages());
+        try {
+            $this->validate($this->baseContractRules(), $this->contractValidationMessages());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $firstError = $e->validator->errors()->first();
+            if ($firstError) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => $firstError]);
+            }
+            throw $e;
+        }
 
         $data = collect($this->formData)->map(fn($v) => $v === '' ? null : $v)->toArray();
 
