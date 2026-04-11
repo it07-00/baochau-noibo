@@ -1,5 +1,5 @@
 @include('errors.layout', [
     'code' => 500,
-    'title' => 'Server Error',
-    'message' => 'He thong dang gap su co tam thoi. Vui long thu lai sau it phut.',
+    'title' => 'Lỗi hệ thống',
+    'message' => 'Hệ thống đang gặp sự cố tạm thời. Vui lòng thử lại sau ít phút.',
 ])

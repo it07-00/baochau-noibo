@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Error 404 | Conca - Bootstrap Admin Template</title>
+    <title>Lỗi 404 | Conca</title>
 
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
@@ -45,9 +45,9 @@
                         <path d="M471.224 91.6058C465.206 89.928 460.692 85.1527 458.435 79.7967C455.7 73.2792 456.11 66.1163 458.093 59.4697C459.324 55.2753 461.102 51.2744 463.154 47.338C463.496 46.6282 463.359 45.7248 462.607 45.2731C461.923 44.8859 460.829 45.0795 460.419 45.7893C456.589 53.2103 453.375 61.212 453.306 69.5364C453.238 76.4412 455.631 83.4104 460.555 88.5729C463.223 91.3477 466.574 93.4126 470.335 94.4451C472.318 95.0259 473.139 92.122 471.224 91.6058Z" fill="#191822" />
                     </svg>
                 </div>
-                <h2 class="display-7 fw-semibold text-uppercase">Something went Wrong...</h2>
-                <p class="lead mb-7">Sorry, we couldn't find your page.</p>
-                <a href="{{ url('/') }}" class="btn btn-primary">Back To Home</a>
+                <h2 class="display-7 fw-semibold">Không tìm thấy trang</h2>
+                <p class="lead mb-7">Xin lỗi, trang bạn đang tìm không tồn tại hoặc đã được chuyển.</p>
+                <a href="{{ url('/') }}" class="btn btn-primary">Quay về trang chủ</a>
             </div>
         </div>
     </div>
