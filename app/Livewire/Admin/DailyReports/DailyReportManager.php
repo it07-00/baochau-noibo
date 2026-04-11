@@ -125,7 +125,7 @@ class DailyReportManager extends Component
             [
                 'content' => $this->content,
                 'status' => $this->status,
-                'plan' => $normalizedPlan === '' ? null : $normalizedPlan,
+                'plan' => $normalizedPlan,
                 'issues' => $normalizedIssues === '' ? null : $normalizedIssues,
             ]
         );
