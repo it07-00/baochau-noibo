@@ -1,4 +1,4 @@
-<div x-data x-on:hidden.bs.dropdown="$wire.markViewedAsRead()">
+<div x-data wire:poll.15s x-on:hidden.bs.dropdown="$wire.markViewedAsRead()">
     <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Thông báo">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
@@ -17,14 +17,12 @@
                     <span class="badge bg-danger rounded-pill">{{ $totalBadge }}</span>
                 @endif
                 <button
+                    type="button"
                     wire:click.stop="markAllRead"
-                    class="btn btn-sm btn-link text-decoration-none p-0 small {{ $unreadCount === 0 ? 'text-muted' : '' }}"
-                    @disabled($unreadCount === 0)
+                    class="btn btn-sm btn-link text-decoration-none p-0 small"
                 >
                     Đọc tất cả
-                    @if($unreadCount > 0)
-                        ({{ $unreadCount }})
-                    @endif
+                    ({{ $unreadCount }})
                 </button>
             </div>
         </div>
@@ -105,3 +103,51 @@
         </div>
     </div>
 </div>
+
+@once
+    <script>
+        (function () {
+            if (window.__bcBrowserNotificationHooked) {
+                return;
+            }
+            window.__bcBrowserNotificationHooked = true;
+
+            window.addEventListener('browser-notification', function (event) {
+                if (typeof Notification === 'undefined') {
+                    return;
+                }
+
+                const detail = event.detail || {};
+                const title = String(detail.title || 'Thông báo mới');
+                const bodyRaw = String(detail.body || '');
+                const body = bodyRaw.length > 180 ? bodyRaw.slice(0, 180) + '...' : bodyRaw;
+                const url = String(detail.url || '');
+
+                const showBrowserNotification = function () {
+                    const notification = new Notification(title, { body });
+
+                    notification.onclick = function () {
+                        window.focus();
+                        if (url) {
+                            window.location.href = url;
+                        }
+                        notification.close();
+                    };
+                };
+
+                if (Notification.permission === 'granted') {
+                    showBrowserNotification();
+                    return;
+                }
+
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(function (permission) {
+                        if (permission === 'granted') {
+                            showBrowserNotification();
+                        }
+                    });
+                }
+            });
+        })();
+    </script>
+@endonce

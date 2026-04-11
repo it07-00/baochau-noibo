@@ -403,10 +403,30 @@
                                 </td>
                             @endunless
                             <td class="text-center">
-                                <span class="badge bg-light text-dark border">{{ $doc->renewal_status }}</span>
+                                @php
+                                    $renewalStatusKey = mb_strtolower(trim((string) ($doc->renewal_status ?? '')));
+                                    $renewalBadgeClass = match ($renewalStatusKey) {
+                                        'đã tái ký' => 'bg-success text-white',
+                                        'chưa tái ký' => 'bg-danger text-white',
+                                        'chưa đến hạn' => 'bg-warning text-dark',
+                                        '', 'chưa chọn' => 'bg-light text-dark border',
+                                        default => 'bg-secondary text-white',
+                                    };
+
+                                    $voucherStatusKey = mb_strtolower(trim((string) ($doc->voucher_status ?? '')));
+                                    $voucherBadgeClass = match ($voucherStatusKey) {
+                                        'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
+                                        'đã xuất hóa đơn' => 'bg-warning text-dark',
+                                        'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
+                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
+                                        '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
+                                        default => 'bg-secondary text-white',
+                                    };
+                                @endphp
+                                <span class="badge {{ $renewalBadgeClass }}">{{ $doc->renewal_status ?: 'Chưa chọn' }}</span>
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-light text-dark border">{{ $doc->voucher_status }}</span>
+                                <span class="badge {{ $voucherBadgeClass }}">{{ $doc->voucher_status ?: 'Chưa chọn' }}</span>
                             </td>
                             <td class="text-center">
                                 @if ($doc->assignments->count() > 0)

@@ -316,7 +316,18 @@
                                 </div>
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-light text-dark border">{{ $doc->voucher_status ?: '-' }}</span>
+                                @php
+                                    $voucherStatusKey = mb_strtolower(trim((string) ($doc->voucher_status ?? '')));
+                                    $voucherBadgeClass = match ($voucherStatusKey) {
+                                        'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
+                                        'đã xuất hóa đơn' => 'bg-warning text-dark',
+                                        'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
+                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
+                                        '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
+                                        default => 'bg-secondary text-white',
+                                    };
+                                @endphp
+                                <span class="badge {{ $voucherBadgeClass }}">{{ $doc->voucher_status ?: 'Chưa chọn' }}</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">

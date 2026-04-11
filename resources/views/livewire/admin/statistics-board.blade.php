@@ -10,13 +10,13 @@
             </nav>
         </div>
         <div class="d-flex gap-2 flex-wrap justify-content-end">
-            <select wire:model.live="month" class="form-select form-select-sm" style="width:auto; min-width: 140px;">
+            <select wire:model.live="month" class="form-select" style="width:auto; min-width: 170px; min-height: 42px;">
                 <option value="">Cả năm</option>
                 @for($m = 1; $m <= 12; $m++)
                     <option value="{{ $m }}">Tháng {{ $m }}</option>
                 @endfor
             </select>
-            <select wire:model.live="year" class="form-select form-select-sm" style="width:auto; min-width: 140px;">
+            <select wire:model.live="year" class="form-select" style="width:auto; min-width: 170px; min-height: 42px;">
                 @foreach($years as $y)
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
@@ -24,21 +24,22 @@
             <input
                 type="date"
                 wire:model.live="contractDateFrom"
-                class="form-control form-control-sm"
-                style="width:auto; min-width: 165px;"
+                class="form-control"
+                style="width:auto; min-width: 195px; min-height: 42px;"
                 title="Lọc hợp đồng từ ngày ký"
             >
             <input
                 type="date"
                 wire:model.live="contractDateTo"
-                class="form-control form-control-sm"
-                style="width:auto; min-width: 165px;"
+                class="form-control"
+                style="width:auto; min-width: 195px; min-height: 42px;"
                 title="Lọc hợp đồng đến ngày ký"
             >
             <button
                 type="button"
                 wire:click="clearContractDateFilter"
-                class="btn btn-sm btn-outline-secondary"
+                class="btn btn-outline-secondary px-3"
+                style="min-height: 42px;"
                 @disabled($contractDateFrom === '' && $contractDateTo === '')
             >
                 Xóa ngày

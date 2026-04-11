@@ -117,13 +117,16 @@ class DailyReportManager extends Component
             'status.in' => 'Trạng thái không hợp lệ.',
         ]);
 
+        $normalizedPlan = trim((string) ($this->plan ?? ''));
+        $normalizedIssues = trim((string) ($this->issues ?? ''));
+
         DailyReport::updateOrCreate(
             ['user_id' => auth()->id(), 'date' => $this->reportDate],
             [
                 'content' => $this->content,
                 'status' => $this->status,
-                'plan' => $this->plan,
-                'issues' => $this->issues,
+                'plan' => $normalizedPlan === '' ? null : $normalizedPlan,
+                'issues' => $normalizedIssues === '' ? null : $normalizedIssues,
             ]
         );
 

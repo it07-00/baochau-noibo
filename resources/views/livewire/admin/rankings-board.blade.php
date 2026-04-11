@@ -26,50 +26,26 @@
                 <div class="card-header bg-white border-bottom py-3">
                     <h6 class="mb-0 fw-bold">Xếp hạng doanh số nhân viên Kinh doanh — Năm {{ $year }}</h6>
                 </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="text-center" style="width:50px">Hạng</th>
-                                <th>Nhân viên</th>
-                                <th class="text-end">DS Tái ký</th>
-                                <th class="text-end">DS Tiến độ</th>
-                                <th class="text-end">Tổng DS</th>
-                                <th class="text-end fw-bold">Thực thu</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($salesRankings as $i => $row)
-                            @php
-                                $rank  = $i + 1;
-                                $medal = match($rank) { 1 => '🥇', 2 => '🥈', 3 => '🥉', default => $rank };
-                            @endphp
-                            <tr class="{{ $row['total'] == 0 && $row['revenue'] == 0 ? 'text-muted' : '' }}">
-                                <td class="text-center fw-bold">{{ $medal }}</td>
-                                <td class="fw-semibold">{{ $row['name'] }}</td>
-                                <td class="text-end small text-success">{{ $row['renewal'] > 0 ? number_format($row['renewal'], 0, ',', '.') : '—' }}</td>
-                                <td class="text-end small text-warning">{{ $row['progressive'] > 0 ? number_format($row['progressive'], 0, ',', '.') : '—' }}</td>
-                                <td class="text-end">{{ $row['total'] > 0 ? number_format($row['total'], 0, ',', '.') . ' đ' : '—' }}</td>
-                                <td class="text-end fw-bold {{ $row['revenue'] > 0 ? 'text-success' : '' }}">
-                                    {{ $row['revenue'] > 0 ? number_format($row['revenue'], 0, ',', '.') . ' đ' : '—' }}
-                                </td>
-                            </tr>
-                            @empty
-                            <tr><td colspan="6" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
-                            @endforelse
-                        </tbody>
-                        @if($salesRankings->isNotEmpty())
-                        <tfoot class="table-secondary fw-bold">
-                            <tr>
-                                <td colspan="2">Tổng</td>
-                                <td class="text-end text-success">{{ number_format($salesRankings->sum('renewal'), 0, ',', '.') }} đ</td>
-                                <td class="text-end text-warning">{{ number_format($salesRankings->sum('progressive'), 0, ',', '.') }} đ</td>
-                                <td class="text-end">{{ number_format($salesRankings->sum('total'), 0, ',', '.') }} đ</td>
-                                <td class="text-end text-success">{{ number_format($salesRankings->sum('revenue'), 0, ',', '.') }} đ</td>
-                            </tr>
-                        </tfoot>
-                        @endif
-                    </table>
+                <div class="card-body p-3"
+                    x-data="{ render() { if (window.renderRankingsBoardCharts) window.renderRankingsBoardCharts(); } }"
+                    x-init="setTimeout(() => render(), 100)">
+                    @if($salesRankings->isNotEmpty())
+                    <div id="salesRankingChartConfig" class="d-none"
+                        data-labels='@json($salesRankings->pluck("name")->values())'
+                        data-totals='@json($salesRankings->pluck("total")->map(fn ($v) => (float) $v)->values())'>
+                    </div>
+
+                    <div id="salesRankingBarChart" wire:ignore style="min-height: 360px;"></div>
+
+                    <div class="mt-2">
+                        <div class="border rounded-3 px-3 py-2 bg-light-subtle">
+                            <div class="small text-muted">Tổng doanh số 6 loại hợp đồng (theo nhân viên)</div>
+                            <div class="fw-semibold text-primary">{{ number_format($salesRankings->sum('total'), 0, ',', '.') }} đ</div>
+                        </div>
+                    </div>
+                    @else
+                    <div class="text-center text-muted py-4">Không có dữ liệu</div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -254,7 +230,7 @@
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="mb-0 fw-bold">Top tỉnh/TP theo tiền thu HĐ — {{ $year }}</h6>
+                    <h6 class="mb-0 fw-bold">Top khu vực theo giá trị HĐ (6 hạng mục) — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     @if($topProvinces->count())
@@ -266,9 +242,9 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center" style="width:40px">#</th>
-                                <th>Tỉnh / TP</th>
+                                <th>Khu vực</th>
                                 <th class="text-center">Số HĐ</th>
-                                <th class="text-end">Tiền thu</th>
+                                <th class="text-end">Giá trị HĐ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -371,98 +347,195 @@
 <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var el = document.querySelector('#paymentDonutChart');
-    if (!el) return;
+    window.rankingsBoardCharts = window.rankingsBoardCharts || {};
 
-    var paid    = {{ $paymentStats['paid_amount'] ?? 0 }};
-    var pending = {{ $paymentStats['pending_amount'] ?? 0 }};
-    var partial = {{ $paymentStats['partial_amount'] ?? 0 }};
-    var overdue = {{ $paymentStats['overdue_amount'] ?? 0 }};
+    function parseJsonData(el, key) {
+        if (!el || !el.dataset || !el.dataset[key]) return [];
+        try {
+            return JSON.parse(el.dataset[key]);
+        } catch (e) {
+            return [];
+        }
+    }
 
-    if (paid + pending + partial + overdue === 0) return;
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('vi-VN').format(value || 0) + ' đ';
+    }
 
-    new ApexCharts(el, {
-        chart: { type: 'donut', height: 280 },
-        series: [paid, pending, partial, overdue],
-        labels: ['Đã thanh toán', 'Chờ thanh toán', 'TT 1 phần', 'Quá hạn'],
-        colors: ['#198754', '#6c757d', '#ffc107', '#dc3545'],
-        legend: { position: 'bottom', fontSize: '12px' },
-        dataLabels: {
-            enabled: true,
-            formatter: function(val) { return val.toFixed(1) + '%'; }
-        },
-        tooltip: {
-            y: {
-                formatter: function(val) {
-                    return new Intl.NumberFormat('vi-VN').format(val) + ' đ';
-                }
-            }
-        },
-        plotOptions: {
-            pie: {
-                donut: {
-                    size: '55%',
-                    labels: {
-                        show: true,
-                        total: {
-                            show: true,
-                            label: 'Tổng phải thu',
-                            formatter: function(w) {
-                                var sum = w.globals.seriesTotals.reduce(function(a, b) { return a + b; }, 0);
-                                return new Intl.NumberFormat('vi-VN').format(sum) + ' đ';
-                            }
+    function destroyChart(chartKey) {
+        if (window.rankingsBoardCharts[chartKey]) {
+            window.rankingsBoardCharts[chartKey].destroy();
+            window.rankingsBoardCharts[chartKey] = null;
+        }
+    }
+
+    window.renderRankingsBoardCharts = function () {
+        if (typeof ApexCharts === 'undefined') return;
+
+        var salesConfig = document.querySelector('#salesRankingChartConfig');
+        var salesChartEl = document.querySelector('#salesRankingBarChart');
+
+        if (salesConfig && salesChartEl) {
+            var labels = parseJsonData(salesConfig, 'labels');
+            var totals = parseJsonData(salesConfig, 'totals');
+
+            destroyChart('salesRanking');
+            salesChartEl.innerHTML = '';
+
+            if (labels.length) {
+                window.rankingsBoardCharts.salesRanking = new ApexCharts(salesChartEl, {
+                    chart: {
+                        type: 'bar',
+                        height: 360,
+                        toolbar: { show: false }
+                    },
+                    series: [
+                        { name: 'Tổng doanh số', data: totals }
+                    ],
+                    xaxis: {
+                        categories: labels,
+                        labels: {
+                            rotate: -15,
+                            trim: true,
+                            style: { fontSize: '12px' }
                         }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function (val) { return formatCurrency(val); }
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '44%',
+                            borderRadius: 4
+                        }
+                    },
+                    colors: ['#0d6efd'],
+                    stroke: {
+                        show: true,
+                        width: 1,
+                        colors: ['transparent']
+                    },
+                    dataLabels: { enabled: false },
+                    legend: {
+                        show: false
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) { return formatCurrency(val); }
+                        }
+                    },
+                    grid: {
+                        borderColor: '#e9ecef'
                     }
-                }
+                });
+
+                window.rankingsBoardCharts.salesRanking.render();
             }
         }
-    }).render();
 
-    // ── Province Pie Chart ──
-    var provinceEl = document.querySelector('#provincePieChart');
-    if (provinceEl) {
-        var provinceSeries = [@foreach($topProvinces as $row){{ (float)$row->total }},@endforeach];
-        var provinceLabels = [@foreach($topProvinces as $row)'{{ $row->province }}',@endforeach];
+        var paymentEl = document.querySelector('#paymentDonutChart');
+        if (paymentEl) {
+            var paid = {{ $paymentStats['paid_amount'] ?? 0 }};
+            var pending = {{ $paymentStats['pending_amount'] ?? 0 }};
+            var partial = {{ $paymentStats['partial_amount'] ?? 0 }};
+            var overdue = {{ $paymentStats['overdue_amount'] ?? 0 }};
 
-        if (provinceSeries.length > 0) {
-            new ApexCharts(provinceEl, {
-                chart: { type: 'donut', height: 300 },
-                series: provinceSeries,
-                labels: provinceLabels,
-                colors: ['#0d6efd','#6610f2','#6f42c1','#d63384','#dc3545','#fd7e14','#ffc107','#198754','#20c997','#0dcaf0'],
-                legend: { position: 'bottom', fontSize: '11px' },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function(val) { return val.toFixed(1) + '%'; }
-                },
-                tooltip: {
-                    y: {
-                        formatter: function(val) {
-                            return new Intl.NumberFormat('vi-VN').format(val) + ' đ';
+            destroyChart('paymentDonut');
+            paymentEl.innerHTML = '';
+
+            if (paid + pending + partial + overdue > 0) {
+                window.rankingsBoardCharts.paymentDonut = new ApexCharts(paymentEl, {
+                    chart: { type: 'donut', height: 280 },
+                    series: [paid, pending, partial, overdue],
+                    labels: ['Đã thanh toán', 'Chờ thanh toán', 'TT 1 phần', 'Quá hạn'],
+                    colors: ['#198754', '#6c757d', '#ffc107', '#dc3545'],
+                    legend: { position: 'bottom', fontSize: '12px' },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function (val) { return val.toFixed(1) + '%'; }
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) { return formatCurrency(val); }
                         }
-                    }
-                },
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '50%',
-                            labels: {
-                                show: true,
-                                total: {
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '55%',
+                                labels: {
                                     show: true,
-                                    label: 'Tổng DS',
-                                    formatter: function(w) {
-                                        var sum = w.globals.seriesTotals.reduce(function(a, b) { return a + b; }, 0);
-                                        return new Intl.NumberFormat('vi-VN').format(sum) + ' đ';
+                                    total: {
+                                        show: true,
+                                        label: 'Tổng phải thu',
+                                        formatter: function (w) {
+                                            var sum = w.globals.seriesTotals.reduce(function (a, b) { return a + b; }, 0);
+                                            return formatCurrency(sum);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            }).render();
+                });
+
+                window.rankingsBoardCharts.paymentDonut.render();
+            }
         }
-    }
+
+        var provinceEl = document.querySelector('#provincePieChart');
+        if (provinceEl) {
+            var provinceSeries = [@foreach($topProvinces as $row){{ (float)$row->total }},@endforeach];
+            var provinceLabels = [@foreach($topProvinces as $row)'{{ $row->province }}',@endforeach];
+
+            destroyChart('provinceDonut');
+            provinceEl.innerHTML = '';
+
+            if (provinceSeries.length > 0) {
+                window.rankingsBoardCharts.provinceDonut = new ApexCharts(provinceEl, {
+                    chart: { type: 'donut', height: 300 },
+                    series: provinceSeries,
+                    labels: provinceLabels,
+                    colors: ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0'],
+                    legend: { position: 'bottom', fontSize: '11px' },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function (val) { return val.toFixed(1) + '%'; }
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) { return formatCurrency(val); }
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '50%',
+                                labels: {
+                                    show: true,
+                                    total: {
+                                        show: true,
+                                        label: 'Tổng GT HĐ',
+                                        formatter: function (w) {
+                                            var sum = w.globals.seriesTotals.reduce(function (a, b) { return a + b; }, 0);
+                                            return formatCurrency(sum);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                window.rankingsBoardCharts.provinceDonut.render();
+            }
+        }
+    };
+
+    window.renderRankingsBoardCharts();
 });
 </script>
 @endpush

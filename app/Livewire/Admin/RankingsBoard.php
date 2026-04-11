@@ -10,8 +10,6 @@ use App\Models\ContractProject;
 use App\Models\ContractCommercial;
 use App\Models\ContractSustainability;
 use App\Models\ContractEnergy;
-use App\Models\ProgressiveSales;
-use App\Models\RenewalSales;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -41,40 +39,38 @@ class RankingsBoard extends Component
         $topCustomers       = collect();
         $topProvinces       = collect();
         $topServices        = collect();
-        $revenueRankings    = collect();
         $paymentStats       = ['due' => 0, 'paid' => 0, 'pending' => 0, 'partial' => 0, 'overdue' => 0];
 
         if ($canSeeSales) {
-            // ── Thực thu theo nhân viên (tính trước để dùng trong salesRankings) ──
-            $revenuePayments = ContractPaymentSchedule::whereYear('paid_date', $this->year)
-                ->whereIn('status', ['paid', 'partial'])->get();
+            // ── Xếp hạng nhân viên kinh doanh theo tổng tiền của 6 loại HĐ ──
+            $contractModels = [
+                ContractWaste::class,
+                ContractConsulting::class,
+                ContractProject::class,
+                ContractCommercial::class,
+                ContractSustainability::class,
+                ContractEnergy::class,
+            ];
 
-            $staffTotals = [];
-            foreach ($revenuePayments->groupBy('contract_type') as $type => $items) {
-                if (!class_exists($type)) continue;
-                $ids = $items->pluck('contract_id')->unique();
-                $contracts = $type::whereIn('id', $ids)->with('staff')->get()->keyBy('id');
-                foreach ($items as $item) {
-                    $contract = $contracts->get($item->contract_id);
-                    if (!$contract || !$contract->staff) continue;
-                    $staffTotals[$contract->staff->name] = ($staffTotals[$contract->staff->name] ?? 0) + (float) $item->paid_amount;
+            $totalsByStaff = [];
+            foreach ($contractModels as $modelClass) {
+                $rows = $modelClass::whereYear('signed_at', $this->year)
+                    ->whereNotNull('staff_id')
+                    ->selectRaw('staff_id, COALESCE(SUM(value), 0) as total')
+                    ->groupBy('staff_id')
+                    ->pluck('total', 'staff_id');
+
+                foreach ($rows as $staffId => $total) {
+                    $staffId = (int) $staffId;
+                    $totalsByStaff[$staffId] = ($totalsByStaff[$staffId] ?? 0) + (float) $total;
                 }
             }
 
-            // ── Xếp hạng nhân viên kinh doanh ──────────────
             $salesRankings = User::role(['kinh-doanh', 'tp-kinh-doanh'])->get()
-                ->map(function ($user) use ($staffTotals) {
-                    $r = (float) RenewalSales::whereYear('sales_month', $this->year)
-                        ->where('user_id', $user->id)->sum('sales_amount');
-                    $p = (float) ProgressiveSales::whereYear('sales_month', $this->year)
-                        ->where('user_id', $user->id)->sum('amount');
-
+                ->map(function ($user) use ($totalsByStaff) {
                     return [
-                        'name'        => $user->name,
-                        'renewal'     => $r,
-                        'progressive' => $p,
-                        'total'       => $r + $p,
-                        'revenue'     => $staffTotals[$user->name] ?? 0,
+                        'name'  => $user->name,
+                        'total' => (float) ($totalsByStaff[$user->id] ?? 0),
                     ];
                 })
                 ->sortByDesc('total')
@@ -101,33 +97,30 @@ class RankingsBoard extends Component
                 ->limit(15)
                 ->get();
 
-            // ── Top tỉnh/TP theo tiền thu từ các giai đoạn HĐ ───────────
+            // ── Top khu vực theo giá trị hợp đồng (6 loại HĐ) ───────────
             $contractTables = [
-                \App\Models\ContractWaste::class          => 'contract_wastes',
-                \App\Models\ContractConsulting::class     => 'contract_consultings',
-                \App\Models\ContractProject::class        => 'contract_projects',
-                \App\Models\ContractCommercial::class     => 'contract_commercials',
-                \App\Models\ContractSustainability::class => 'contract_sustainabilities',
-                \App\Models\ContractEnergy::class         => 'contract_energies',
+                'contract_wastes',
+                'contract_consultings',
+                'contract_projects',
+                'contract_commercials',
+                'contract_sustainabilities',
+                'contract_energies',
             ];
 
             $parts    = [];
             $bindings = [];
-            foreach ($contractTables as $type => $table) {
+            foreach ($contractTables as $table) {
                 // Use COALESCE(contract.province, customer.province) so contracts
                 // without a province set fall back to the linked customer's province.
-                // Filter by paid_date year + paid_amount > 0 = money actually collected.
+                // Aggregate by signed year and contract value.
                 $parts[] = "SELECT COALESCE(NULLIF(c.province,''), cust.province) AS province,
-                    COUNT(DISTINCT cps.contract_id) AS cnt,
-                    COALESCE(SUM(cps.paid_amount), 0) AS total
-                FROM contract_payment_schedules cps
-                INNER JOIN `{$table}` c ON cps.contract_id = c.id AND cps.contract_type = ?
+                    COUNT(DISTINCT c.id) AS cnt,
+                    COALESCE(SUM(c.value), 0) AS total
+                FROM `{$table}` c
                 LEFT JOIN customers cust ON cust.id = c.customer_id
-                WHERE YEAR(cps.paid_date) = ?
-                  AND cps.paid_amount > 0
+                WHERE YEAR(c.signed_at) = ?
                   AND c.deleted_at IS NULL
                 GROUP BY COALESCE(NULLIF(c.province,''), cust.province)";
-                $bindings[] = $type;
                 $bindings[] = $this->year;
             }
 
@@ -168,7 +161,6 @@ class RankingsBoard extends Component
             $paymentStats['paid_count']    = (int) ($statusCounts->get('paid')?->cnt ?? 0);
             $paymentStats['overdue_count'] = (int) ($statusCounts->get('overdue')?->cnt ?? 0);
 
-            $revenueRankings = collect();
         }
 
         if ($canSeeConsulting) {
@@ -253,7 +245,7 @@ class RankingsBoard extends Component
         return view('livewire.admin.rankings-board', compact(
             'canSeeSales', 'canSeeConsulting', 'canSeeTechnical', 'canSeeFinance',
             'salesRankings', 'consultingRankings', 'technicalRankings',
-            'revenueRankings', 'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
+            'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
         ))->layout('admin.layouts.app');
     }
 }
