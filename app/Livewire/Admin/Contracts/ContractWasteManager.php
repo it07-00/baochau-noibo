@@ -21,6 +21,15 @@ class ContractWasteManager extends Component
 {
     use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation;
 
+    private const ALLOWED_STATUSES = [
+        'Đã trình ký Chủ xử lý',
+        'Chủ xử lý đã gửi về',
+        'Đã gửi khách hàng',
+        'Đã hoàn thành KH ký trước',
+        'Đã hoàn thành',
+        'Hợp đồng hủy',
+    ];
+
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
@@ -77,6 +86,7 @@ class ContractWasteManager extends Component
         'submitted_from' => '',
         'submitted_to' => '',
         'handler_id' => '',
+        'staff_id' => '',
         'province' => '',
         'is_offset' => false,
         'is_overdue' => false,
@@ -121,7 +131,7 @@ class ContractWasteManager extends Component
                 $this->formData['billing_address'] = $quotation->address;
                 $this->formData['note'] = $quotation->notes;
                 $this->formData['source'] = 'MỚI';
-                $this->formData['status'] = 'ĐANG THỰC HIỆN';
+                $this->formData['status'] = self::ALLOWED_STATUSES[0];
                 $this->ensureDepartmentId();
 
                 $this->showModal = true;
@@ -207,18 +217,27 @@ class ContractWasteManager extends Component
     public function updateStatus(int $id, string $status): void
     {
         $doc = ContractWaste::findOrFail($id);
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
-            abort_if($doc->staff_id !== auth()->id(), 403);
-        } else {
-            abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
-        }
-        abort_unless(auth()->user()->can('contracts-waste.edit'), 403);
+        $user = auth()->user();
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
 
-        if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
+        if ($isRestrictedTpKd) {
+            abort_if($doc->staff_id !== $user->id, 403);
+        } else {
+            abort_if($user->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+        }
+        abort_unless($user->can('contracts-waste.edit'), 403);
+
+        if (!in_array($status, self::ALLOWED_STATUSES, true)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Trạng thái không hợp lệ!']);
             return;
         }
 
-        ContractWaste::findOrFail($id)->update(['status' => $status]);
+        $updateData = ['status' => $status];
+        if (in_array($status, ['Đã hoàn thành', 'Đã hoàn thành KH ký trước'], true)) {
+            $updateData['submitted_at'] = now()->toDateString();
+        }
+
+        ContractWaste::findOrFail($id)->update($updateData);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
@@ -256,7 +275,7 @@ class ContractWasteManager extends Component
             'billing_address' => '',
             'execution_address' => '',
             'mailing_address' => '',
-            'status' => 'ĐANG THỰC HIỆN',
+            'status' => self::ALLOWED_STATUSES[0],
             'renewal_status' => 'CHƯA ĐẾN HẠN',
             'voucher_status' => '',
             'is_offset' => false,
@@ -375,7 +394,8 @@ class ContractWasteManager extends Component
             'submitted_from' => '',
             'submitted_to' => '',
             'handler_id' => '',
-            'province_id' => '',
+            'staff_id' => '',
+            'province' => '',
             'is_offset' => false,
             'is_overdue' => false,
             'department_id' => '',
@@ -436,6 +456,7 @@ class ContractWasteManager extends Component
         if ($this->filter['handler_id'] ?? null)     $query->where('handler_id', $this->filter['handler_id']);
         if ($this->filter['department_id'] ?? null)  $query->where('department_id', $this->filter['department_id']);
         if ($this->filter['province'] ?? null)       $query->where('province', $this->filter['province']);
+        if ($this->filter['staff_id'] ?? null)       $query->where('staff_id', $this->filter['staff_id']);
         if ($this->filter['is_offset'] ?? null)      $query->where('is_offset', true);
         if ($this->filter['is_overdue'] ?? null)     $query->where('is_overdue', true);
         if ($this->filter['status'] ?? null)         $query->where('status', $this->filter['status']);
@@ -488,6 +509,7 @@ class ContractWasteManager extends Component
         if ($this->filter['handler_id'] ?? null) $query->where('handler_id', $this->filter['handler_id']);
         if ($this->filter['department_id'] ?? null) $query->where('department_id', $this->filter['department_id']);
         if ($this->filter['province'] ?? null) $query->where('province', $this->filter['province']);
+        if ($this->filter['staff_id'] ?? null) $query->where('staff_id', $this->filter['staff_id']);
         if ($this->filter['is_offset'] ?? null) $query->where('is_offset', true);
         if ($this->filter['is_overdue'] ?? null) $query->where('is_overdue', true);
         if ($this->filter['status'] ?? null) $query->where('status', $this->filter['status']);
@@ -524,7 +546,7 @@ class ContractWasteManager extends Component
             'service_types' => ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray(),
             'waste_types' => ContractWaste::whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray(),
             'loai_dich_vu_options' => ContractWaste::SERVICE_TYPES,
-            'all_statuses' => ContractWaste::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
+            'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_statuses' => $voucherStatuses,
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,

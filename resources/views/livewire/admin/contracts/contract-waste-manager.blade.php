@@ -10,7 +10,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 ms-auto justify-content-end">
             @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                 <button wire:click="create" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
@@ -85,7 +85,7 @@
                                     wire:model.live="filter.submitted_to">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Chủ xử lý</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                 <button class="form-select form-control-xs text-start text-wrap" type="button"
@@ -111,6 +111,37 @@
                                             wire:click="$set('filter.handler_id', {{ $handler->id }})"
                                             @click="open = false">
                                             {{ $handler->name }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
+                            <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                    @click.prevent="open = !open"
+                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                    {{ $staffs->find($filter['staff_id'])?->name ?? 'Chọn nhân viên' }}
+                                </button>
+                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
+                                    x-cloak style="max-height: 300px; overflow-y: auto;">
+                                    <input type="text" x-model="search" class="form-control form-control-sm mb-2"
+                                        placeholder="Tìm kiếm..." @click.stop>
+                                    <button class="dropdown-item @if (!$filter['staff_id']) active @endif"
+                                        type="button"
+                                        x-show="'chọn nhân viên'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                        wire:click="$set('filter.staff_id', '')" @click="open = false">Chọn nhân
+                                        viên</button>
+                                    @foreach ($staffs as $staff)
+                                        <button
+                                            class="dropdown-item text-wrap @if ($filter['staff_id'] == $staff->id) active @endif"
+                                            type="button"
+                                            x-show="{{ json_encode(mb_strtolower($staff->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                            style="white-space: normal !important; word-break: break-all;"
+                                            wire:click="$set('filter.staff_id', {{ $staff->id }})"
+                                            @click="open = false">
+                                            {{ $staff->name }}
                                         </button>
                                     @endforeach
                                 </div>
@@ -369,7 +400,7 @@
                 </thead>
                 <tbody>
                     @forelse($docs as $doc)
-                        <tr class="border-bottom border-light">
+                        <tr class="border-bottom border-light" wire:key="waste-row-{{ $doc->id }}">
                             <td class="ps-4 py-4" style="max-width: 250px;">
                                 <div class="d-flex flex-column">
                                     <span class="small">Số HĐ CXL: <span
@@ -447,17 +478,24 @@
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center">
                                     @php
-                                        $statusColor = match ($doc->status) {
-                                            'Đã hoàn thành KH ký trước' => ['bg' => '#d1e7dd', 'text' => '#198754'],
-                                            'Hợp đồng hủy' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
-                                            'Đã trình ký Chủ xử lý' => ['bg' => '#fff3cd', 'text' => '#b45309'],
-                                            'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
-                                            default => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+                                        $statusKey = mb_strtolower(trim((string) ($doc->status ?? '')));
+                                        $statusColor = match ($statusKey) {
+                                            'hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+                                            'đã hủy', 'hợp đồng hủy', 'hủy bỏ' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+                                            'đã trình ký chủ xử lý' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+                                            'chủ xử lý đã gửi về' => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
+                                            'đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+                                            'đang thực hiện', '' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+                                            default => ['bg' => '#e9ecef', 'text' => '#495057'],
                                         };
                                     @endphp
                                     @php
-                                        $canUpdateStatus = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) &&
-                                            (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id());
+                                        $currentUser = auth()->user();
+                                        $isRestrictedTpKd = $currentUser->hasRole('tp-kinh-doanh') &&
+                                            !$currentUser->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+
+                                        $canUpdateStatus = !$currentUser->hasAnyRole(['tu-van', 'ky-thuat']) &&
+                                            (!$isRestrictedTpKd || $doc->staff_id === $currentUser->id);
                                     @endphp
 
                                     @if (!$canUpdateStatus)
@@ -1025,10 +1063,9 @@
                                 <label class="form-label fw-bold">Tình trạng</label>
                                 <select class="form-select" wire:model.defer="formData.status">
                                     <option value="">Chọn tình trạng</option>
-                                    <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
-                                    <option value="HOÀN THÀNH">Hoàn thành</option>
-                                    <option value="TẠM DỪNG">Tạm dừng</option>
-                                    <option value="HỦY BỎ">Hủy bỏ</option>
+                                    @foreach ($all_statuses as $status)
+                                        <option value="{{ $status }}">{{ $status }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3">

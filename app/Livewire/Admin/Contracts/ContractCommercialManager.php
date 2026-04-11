@@ -21,6 +21,14 @@ class ContractCommercialManager extends Component
 {
     use WithPagination, CleanMoneyInput, ContractValidation;
 
+    private const ALLOWED_STATUSES = [
+        'PTH đang kiểm tra',
+        'Đang trình BGĐ ký',
+        'Đã gửi khách hàng',
+        'Đã hoàn thành',
+        'Hợp đồng hủy',
+    ];
+
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
@@ -50,7 +58,7 @@ class ContractCommercialManager extends Component
         'info_source'    => 'MỚI',
         'payment_method' => 'Sau ký',
         'loai_dich_vu'   => '',
-        'status'         => 'ĐANG THỰC HIỆN',
+        'status'         => 'PTH đang kiểm tra',
         'renewal_status' => '',
         'voucher_status' => '',
         'is_offset'      => false,
@@ -68,6 +76,7 @@ class ContractCommercialManager extends Component
         'submitted_to'   => '',
         'province'       => '',
         'department_id'  => '',
+        'staff_id'       => '',
         'info_source'    => '',
         'payment_method' => '',
         'status'         => '',
@@ -184,11 +193,16 @@ class ContractCommercialManager extends Component
         }
         abort_unless(auth()->user()->can('contracts-commercial.edit'), 403);
 
-        if (!in_array($status, ['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'])) {
+        if (!in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
         }
 
-        ContractCommercial::findOrFail($id)->update(['status' => $status]);
+        $updateData = ['status' => $status];
+        if ($status === 'Đã hoàn thành') {
+            $updateData['submitted_at'] = now()->toDateString();
+        }
+
+        ContractCommercial::findOrFail($id)->update($updateData);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
@@ -320,6 +334,7 @@ class ContractCommercialManager extends Component
             'submitted_to'   => '',
             'province'       => '',
             'department_id'  => '',
+            'staff_id'       => '',
             'info_source'    => '',
             'payment_method' => '',
             'status'         => '',
@@ -349,7 +364,7 @@ class ContractCommercialManager extends Component
             'info_source'    => 'MỚI',
             'payment_method' => 'Sau ký',
             'loai_dich_vu'   => '',
-            'status'         => 'ĐANG THỰC HIỆN',
+            'status'         => 'PTH đang kiểm tra',
             'renewal_status' => '',
             'voucher_status' => '',
             'is_offset'      => false,
@@ -383,6 +398,7 @@ class ContractCommercialManager extends Component
         if ($this->filter['submitted_to'])   $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
         if ($this->filter['province'])       $query->where('province', $this->filter['province']);
         if ($this->filter['department_id'])  $query->where('department_id', $this->filter['department_id']);
+        if ($this->filter['staff_id'])       $query->where('staff_id', $this->filter['staff_id']);
         if ($this->filter['info_source'])    $query->where('info_source', $this->filter['info_source']);
         if ($this->filter['payment_method']) $query->where('payment_method', $this->filter['payment_method']);
         if ($this->filter['status'])         $query->where('status', $this->filter['status']);
@@ -426,6 +442,7 @@ class ContractCommercialManager extends Component
         if ($this->filter['submitted_to'])   $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
         if ($this->filter['province'])       $query->where('province', $this->filter['province']);
         if ($this->filter['department_id'])  $query->where('department_id', $this->filter['department_id']);
+        if ($this->filter['staff_id'])       $query->where('staff_id', $this->filter['staff_id']);
         if ($this->filter['info_source'])    $query->where('info_source', $this->filter['info_source']);
         if ($this->filter['payment_method']) $query->where('payment_method', $this->filter['payment_method']);
         if ($this->filter['status'])         $query->where('status', $this->filter['status']);
@@ -446,7 +463,7 @@ class ContractCommercialManager extends Component
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van']))->orderBy('name')->get(),
             'provinces' => \App\Support\VietnamProvinces::list(),
-            'all_statuses'       => ContractCommercial::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
+            'all_statuses'       => self::ALLOWED_STATUSES,
             'renewal_statuses'   => ContractCommercial::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
             'loai_dich_vu_options' => ContractCommercial::SERVICE_TYPES,

@@ -10,7 +10,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 ms-auto justify-content-end">
             @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                 <button wire:click="create" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
@@ -101,6 +101,15 @@
                                 <option value="">Chọn phương thức...</option>
                                 @foreach ($payment_methods as $pm)
                                     <option value="{{ $pm }}">{{ $pm }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
+                            <select class="form-select form-control-xs" wire:model.live="filter.staff_id">
+                                <option value="">Chọn nhân viên</option>
+                                @foreach ($staffs as $staff)
+                                    <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -263,9 +272,12 @@
                                 <div class="d-flex flex-column align-items-center">
                                     @php
                                         $statusColor = match ($doc->status) {
-                                            'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
-                                            'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
-                                            default => ['bg' => '#fff3cd', 'text' => '#b45309'],
+                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+                                            'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+                                            'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+                                            'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+                                            'Hợp đồng hủy', 'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+                                            default => ['bg' => '#e9ecef', 'text' => '#6c757d'],
                                         };
                                     @endphp
                                     @php
@@ -276,14 +288,14 @@
                                     @if (!$canUpdateStatus)
                                         <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0"
                                             style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
-                                            {{ $doc->status ?: 'ĐANG THỰC HIỆN' }}
+                                            {{ $doc->status ?: 'PTH đang kiểm tra' }}
                                         </span>
                                     @else
                                         <div class="position-relative" x-data="{ open: false }">
                                             <button type="button" @click="open = !open"
                                                 class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
                                                 style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
-                                                {{ $doc->status ?: 'ĐANG THỰC HIỆN' }}
+                                                {{ $doc->status ?: 'PTH đang kiểm tra' }}
                                                 <svg width="12" height="12" viewBox="0 0 12 12"
                                                     fill="currentColor">
                                                     <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor"
@@ -293,7 +305,7 @@
                                             <div x-show="open" @click.away="open = false" x-cloak
                                                 class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1"
                                                 style="z-index:1050; min-width:160px; right:50%; transform:translateX(50%);">
-                                                @foreach (['ĐANG THỰC HIỆN', 'HOÀN THÀNH', 'ĐÃ HỦY'] as $opt)
+                                                @foreach ($all_statuses as $opt)
                                                     <button type="button"
                                                         class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }}"
                                                         style="font-size:0.8rem;"
@@ -482,7 +494,7 @@
                                         <tr>
                                             <th class="bg-light">Tình trạng</th>
                                             <td><span
-                                                    class="badge bg-success">{{ $selectedDoc->status ?: 'Đang thực hiện' }}</span>
+                                                    class="badge bg-success">{{ $selectedDoc->status ?: 'PTH đang kiểm tra' }}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -752,9 +764,9 @@
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Tình trạng</label>
                             <select class="form-select" wire:model="formData.status">
-                                <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
-                                <option value="HOÀN THÀNH">Hoàn thành</option>
-                                <option value="ĐÃ HỦY">Đã hủy</option>
+                                @foreach ($all_statuses as $status)
+                                    <option value="{{ $status }}">{{ $status }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
