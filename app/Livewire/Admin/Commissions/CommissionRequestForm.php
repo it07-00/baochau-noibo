@@ -9,6 +9,8 @@ use App\Models\ContractProject;
 use App\Models\ContractCommercial;
 use App\Models\ContractSustainability;
 use App\Models\ContractEnergy;
+use App\Models\User;
+use App\Notifications\CommissionRequestSubmittedNotification;
 use Livewire\Component;
 use Illuminate\Validation\Rule;
 use App\Livewire\Concerns\CleanMoneyInput;
@@ -74,6 +76,32 @@ class CommissionRequestForm extends Component
         return $normalizedType && class_exists($normalizedType) ? $normalizedType : null;
     }
 
+    private function notifyAccountantsForNewRequest(CommissionRequest $request): void
+    {
+        $creator = auth()->user();
+        if (!$creator) {
+            return;
+        }
+
+        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#' . $request->id));
+
+        $recipients = User::role('ke-toan')->get()->unique('id');
+
+        foreach ($recipients as $recipient) {
+            /** @var User $recipient */
+            if ($recipient->id === $creator->id) {
+                continue;
+            }
+
+            $recipient->notify(new CommissionRequestSubmittedNotification(
+                requesterName: (string) $creator->name,
+                contractLabel: $contractLabel,
+                amount: (string) $request->amount,
+                requestId: (int) $request->id,
+            ));
+        }
+    }
+
     public function save($exit = false)
     {
         if ($this->requestId && auth()->check() && auth()->user()->hasRole('ke-toan')) {
@@ -128,7 +156,8 @@ class CommissionRequestForm extends Component
             CommissionRequest::findOrFail($this->requestId)->update($data);
             $this->dispatch('swal:success', ['message' => 'Cập nhật yêu cầu thành công!']);
         } else {
-            CommissionRequest::create($data);
+            $createdRequest = CommissionRequest::create($data);
+            $this->notifyAccountantsForNewRequest($createdRequest);
             $this->dispatch('swal:success', ['message' => 'Thêm mới yêu cầu thành công!']);
         }
 
