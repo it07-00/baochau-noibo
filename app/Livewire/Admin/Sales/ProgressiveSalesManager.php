@@ -71,7 +71,7 @@ class ProgressiveSalesManager extends Component
 
     public function save()
     {
-        abort_unless(auth()->user()->can('progressive-sales.edit'), 403);
+        abort_unless(auth()->user()->can('sales-progressive.edit'), 403);
 
         $this->cleanMoneyProperties(['amount', 'paid_amount']);
 
@@ -111,7 +111,7 @@ class ProgressiveSalesManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->user()->can('progressive-sales.delete'), 403);
+        abort_unless(auth()->user()->can('sales-progressive.delete'), 403);
 
         ContractPaymentSchedule::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Xóa thành công!']);

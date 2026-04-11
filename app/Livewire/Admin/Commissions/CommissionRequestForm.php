@@ -10,6 +10,7 @@ use App\Models\ContractCommercial;
 use App\Models\ContractSustainability;
 use App\Models\ContractEnergy;
 use Livewire\Component;
+use Illuminate\Validation\Rule;
 use App\Livewire\Concerns\CleanMoneyInput;
 
 class CommissionRequestForm extends Component
@@ -28,9 +29,11 @@ class CommissionRequestForm extends Component
     public function mount($id = null)
     {
         if ($id) {
+            abort_if(auth()->check() && auth()->user()->hasRole('ke-toan'), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
+
             $request = CommissionRequest::findOrFail($id);
             $this->requestId = $request->id;
-            $this->contract_type = $request->contract_type;
+            $this->contract_type = $this->normalizeContractType($request->contract_type);
             $this->contract_id = $request->contract_id;
             $this->receiver_name = $request->receiver_name;
             $this->receiver_phone = $request->receiver_phone;
@@ -43,11 +46,41 @@ class CommissionRequestForm extends Component
 
     public function updatedContractType()
     {
+        $this->contract_type = $this->normalizeContractType($this->contract_type);
         $this->contract_id = '';
+    }
+
+    private function normalizeContractType(?string $type): string
+    {
+        if (!$type) {
+            return '';
+        }
+
+        if (isset(CommissionRequest::CONTRACT_TYPES[$type])) {
+            return CommissionRequest::CONTRACT_TYPES[$type];
+        }
+
+        if (array_key_exists($type, CommissionRequest::CONTRACT_TYPE_LABELS)) {
+            return $type;
+        }
+
+        return '';
+    }
+
+    private function getSelectedContractModelClass(): ?string
+    {
+        $normalizedType = $this->normalizeContractType($this->contract_type);
+
+        return $normalizedType && class_exists($normalizedType) ? $normalizedType : null;
     }
 
     public function save($exit = false)
     {
+        if ($this->requestId && auth()->check() && auth()->user()->hasRole('ke-toan')) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Kế toán không được sửa yêu cầu chi hoa hồng.']);
+            return;
+        }
+
         abort_unless(
             auth()->user()->can($this->requestId ? 'commissions.edit' : 'commissions.create'),
             403
@@ -55,10 +88,10 @@ class CommissionRequestForm extends Component
 
         $this->cleanMoneyProperties(['amount']);
 
-        $allowedTypes = implode(',', array_keys(CommissionRequest::CONTRACT_TYPES));
+        $allowedTypes = array_keys(CommissionRequest::CONTRACT_TYPE_LABELS);
 
         $this->validate([
-            'contract_type' => 'required|string|in:' . $allowedTypes,
+            'contract_type' => ['required', 'string', Rule::in($allowedTypes)],
             'contract_id'   => 'required|integer',
             'receiver_name' => 'required|string|max:255',
             'receiver_phone' => 'nullable|string|max:30',
@@ -72,6 +105,12 @@ class CommissionRequestForm extends Component
             'amount.required' => 'Vui lòng nhập số tiền.',
             'amount.min' => 'Số tiền không được âm.',
         ]);
+
+        $modelClass = $this->getSelectedContractModelClass();
+        if (!$modelClass || !$modelClass::query()->whereKey($this->contract_id)->exists()) {
+            $this->addError('contract_id', 'Số hợp đồng không thuộc loại hợp đồng đã chọn.');
+            return;
+        }
 
         $data = [
             'contract_type' => $this->contract_type,
@@ -105,11 +144,14 @@ class CommissionRequestForm extends Component
     public function render()
     {
         $contracts = collect();
-        if ($this->contract_type) {
-            $modelClass = $this->contract_type;
-            if (class_exists($modelClass)) {
-                $contracts = $modelClass::with('customer')->orderBy('shd_bc', 'desc')->get();
-            }
+        $modelClass = $this->getSelectedContractModelClass();
+        if ($modelClass) {
+            $contracts = $modelClass::query()
+                ->with('customer')
+                ->whereNotNull('shd_bc')
+                ->where('shd_bc', '!=', '')
+                ->orderBy('shd_bc', 'desc')
+                ->get();
         }
 
         return view('livewire.admin.commissions.commission-request-form', [
