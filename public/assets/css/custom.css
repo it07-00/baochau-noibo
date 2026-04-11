@@ -196,3 +196,307 @@
     font-size: 10px;
     padding: 2px 5px;
 }
+
+/* ================================================
+   Statistics Board
+   ================================================ */
+.kpi-modern-card {
+    --kpi-accent: #7aa2ff;
+    --kpi-accent-rgb: 122, 162, 255;
+    position: relative;
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background:
+        radial-gradient(120% 160% at 100% 0%, rgba(var(--kpi-accent-rgb), 0.2) 0%, rgba(var(--kpi-accent-rgb), 0) 55%),
+        linear-gradient(135deg, #181f2b 0%, #0f141d 100%);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-modern-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.kpi-modern-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(15, 23, 42, 0.34);
+}
+
+.kpi-modern-title {
+    color: rgba(226, 232, 240, 0.85);
+    font-size: 13px;
+    line-height: 1.45;
+    min-height: 38px;
+}
+
+.kpi-modern-value {
+    color: var(--kpi-accent);
+    font-size: clamp(1.45rem, 2.4vw, 1.95rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-top: 6px;
+    letter-spacing: 0.2px;
+}
+
+.kpi-modern-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--kpi-accent);
+    background: rgba(var(--kpi-accent-rgb), 0.22);
+    box-shadow: inset 0 0 0 1px rgba(var(--kpi-accent-rgb), 0.45);
+}
+
+.kpi-modern-sparkline {
+    color: var(--kpi-accent);
+    opacity: 0.95;
+    margin-top: auto;
+}
+
+.kpi-modern-sparkline svg {
+    width: 100%;
+    height: 36px;
+    display: block;
+}
+
+.kpi-modern-sparkline path {
+    stroke: currentColor;
+    stroke-width: 2.2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 4px rgba(var(--kpi-accent-rgb), 0.35));
+}
+
+.kpi-modern-card.kpi-contracts {
+    --kpi-accent: #4fd3a4;
+    --kpi-accent-rgb: 79, 211, 164;
+}
+
+.kpi-modern-card.kpi-value {
+    --kpi-accent: #f6c65b;
+    --kpi-accent-rgb: 246, 198, 91;
+}
+
+.kpi-modern-card.kpi-sales {
+    --kpi-accent: #53b8ff;
+    --kpi-accent-rgb: 83, 184, 255;
+}
+
+.it-dashboard-tabs {
+    border: 1px solid #dde5f1;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+
+.it-dashboard-tabs .nav-link {
+    border-radius: 10px;
+    border: 0;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0.55rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.it-dashboard-tabs .nav-link.active {
+    color: #fff;
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    box-shadow: 0 8px 14px rgba(67, 56, 202, 0.28);
+}
+
+.it-stat-card {
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+}
+
+.it-stat-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+}
+
+.it-stat-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+}
+
+.it-stat-success {
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+}
+
+.it-stat-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+}
+
+.it-stat-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #c2410c 100%);
+}
+
+.it-stat-body {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.95rem 1rem;
+}
+
+.it-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+.it-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.55px;
+    color: rgba(241, 245, 249, 0.88);
+    font-weight: 700;
+}
+
+.it-stat-value {
+    font-size: 1.75rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 3px;
+}
+
+.it-stat-primary .it-stat-icon {
+    color: #4f46e5;
+}
+
+.it-stat-success .it-stat-icon {
+    color: #059669;
+}
+
+.it-stat-danger .it-stat-icon {
+    color: #dc2626;
+}
+
+.it-stat-warning .it-stat-icon {
+    color: #d97706;
+}
+
+.it-panel-card {
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.it-panel-title {
+    font-size: 12px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.it-disk-progress {
+    height: 10px;
+    background-color: #ebeff5;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.it-disk-progress .progress-bar {
+    border-radius: 999px;
+}
+
+.it-panel-badge {
+    font-size: 10px;
+    border-radius: 999px;
+    padding: 0.25rem 0.55rem;
+    font-weight: 700;
+}
+
+.it-activity-card {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.it-activity-card .card-header {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.it-activity-table thead th {
+    background: #f8fafc;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 11px;
+    font-weight: 700;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.8rem 0.9rem;
+}
+
+.it-activity-table tbody td {
+    padding: 0.85rem 0.9rem;
+    font-size: 13px;
+    border-color: #eef2f7;
+}
+
+.it-activity-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.it-user-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+@media (max-width: 575.98px) {
+    .kpi-modern-title {
+        min-height: 34px;
+        font-size: 12px;
+    }
+
+    .kpi-modern-value {
+        font-size: 1.4rem;
+    }
+
+    .kpi-modern-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .it-stat-value {
+        font-size: 1.45rem;
+    }
+
+    .it-stat-icon {
+        width: 40px;
+        height: 40px;
+    }
+}

@@ -27,120 +27,6 @@
     @php
         $isIT = auth()->user()->hasRole('it');
     @endphp
-
-    @push('styles')
-    <style>
-        .kpi-modern-card {
-            --kpi-accent: #7aa2ff;
-            --kpi-accent-rgb: 122, 162, 255;
-            position: relative;
-            border: 0;
-            border-radius: 16px;
-            overflow: hidden;
-            background:
-                radial-gradient(120% 160% at 100% 0%, rgba(var(--kpi-accent-rgb), 0.2) 0%, rgba(var(--kpi-accent-rgb), 0) 55%),
-                linear-gradient(135deg, #181f2b 0%, #0f141d 100%);
-            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.28);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .kpi-modern-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            pointer-events: none;
-        }
-
-        .kpi-modern-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.34);
-        }
-
-        .kpi-modern-title {
-            color: rgba(226, 232, 240, 0.85);
-            font-size: 13px;
-            line-height: 1.45;
-            min-height: 38px;
-        }
-
-        .kpi-modern-value {
-            color: var(--kpi-accent);
-            font-size: clamp(1.45rem, 2.4vw, 1.95rem);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-top: 6px;
-            letter-spacing: 0.2px;
-        }
-
-        .kpi-modern-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: var(--kpi-accent);
-            background: rgba(var(--kpi-accent-rgb), 0.22);
-            box-shadow: inset 0 0 0 1px rgba(var(--kpi-accent-rgb), 0.45);
-        }
-
-        .kpi-modern-sparkline {
-            color: var(--kpi-accent);
-            opacity: 0.95;
-            margin-top: auto;
-        }
-
-        .kpi-modern-sparkline svg {
-            width: 100%;
-            height: 36px;
-            display: block;
-        }
-
-        .kpi-modern-sparkline path {
-            stroke: currentColor;
-            stroke-width: 2.2;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            filter: drop-shadow(0 0 4px rgba(var(--kpi-accent-rgb), 0.35));
-        }
-
-        .kpi-modern-card.kpi-contracts {
-            --kpi-accent: #4fd3a4;
-            --kpi-accent-rgb: 79, 211, 164;
-        }
-
-        .kpi-modern-card.kpi-value {
-            --kpi-accent: #f6c65b;
-            --kpi-accent-rgb: 246, 198, 91;
-        }
-
-        .kpi-modern-card.kpi-sales {
-            --kpi-accent: #53b8ff;
-            --kpi-accent-rgb: 83, 184, 255;
-        }
-
-        @media (max-width: 575.98px) {
-            .kpi-modern-title {
-                min-height: 34px;
-                font-size: 12px;
-            }
-
-            .kpi-modern-value {
-                font-size: 1.4rem;
-            }
-
-            .kpi-modern-icon {
-                width: 42px;
-                height: 42px;
-            }
-        }
-    </style>
-    @endpush
-
     @if($dailyReportReminder)
         <div class="alert border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 12px; border-left: 4px solid #f59e0b !important;">
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
@@ -159,12 +45,12 @@
     @if($isIT && $itStats)
         {{-- IT Tab Navigation --}}
         <div class="mb-4">
-            <ul class="nav nav-pills gap-2 p-1 bg-white rounded shadow-sm d-inline-flex" style="border: 1px solid #edf2f7;">
+            <ul class="nav nav-pills gap-2 p-1 d-inline-flex it-dashboard-tabs">
                 <li class="nav-item">
-                    <button wire:click="setTab('overview')" class="nav-link {{ $activeTab === 'overview' ? 'active shadow-sm' : 'text-dark' }} px-4 fw-bold" style="font-size: 13px;">Tổng quan</button>
+                    <button wire:click="setTab('overview')" class="nav-link {{ $activeTab === 'overview' ? 'active' : '' }}">Tổng quan</button>
                 </li>
                 <li class="nav-item">
-                    <button wire:click="setTab('security')" class="nav-link {{ $activeTab === 'security' ? 'active shadow-sm' : 'text-dark' }} px-4 fw-bold" style="font-size: 13px;">An ninh & Log</button>
+                    <button wire:click="setTab('security')" class="nav-link {{ $activeTab === 'security' ? 'active' : '' }}">An ninh & Log</button>
                 </li>
             </ul>
         </div>
@@ -174,53 +60,53 @@
             {{-- Row 1: User & Session Stats --}}
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
-                    <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);">
-                        <div class="card-body d-flex align-items-center gap-3 py-3">
-                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4361ee" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                    <div class="card border-0 text-white h-100 it-stat-card it-stat-primary">
+                        <div class="card-body it-stat-body">
+                            <div class="it-stat-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
                             </div>
                             <div>
-                                <div class="small fw-medium text-white-50 text-uppercase" style="letter-spacing: 0.5px; font-size: 10px;">Tổng người dùng</div>
-                                <div class="fw-bold fs-4">{{ number_format($itStats['total_users']) }}</div>
+                                <div class="it-stat-label">Tổng người dùng</div>
+                                <div class="it-stat-value">{{ number_format($itStats['total_users']) }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                        <div class="card-body d-flex align-items-center gap-3 py-3">
-                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <div class="card border-0 text-white h-100 it-stat-card it-stat-success">
+                        <div class="card-body it-stat-body">
+                            <div class="it-stat-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                             </div>
                             <div>
-                                <div class="small fw-medium text-white-50 text-uppercase" style="letter-spacing: 0.5px; font-size: 10px;">Đang kích hoạt</div>
-                                <div class="fw-bold fs-4">{{ number_format($itStats['active_users']) }}</div>
+                                <div class="it-stat-label">Đang kích hoạt</div>
+                                <div class="it-stat-value">{{ number_format($itStats['active_users']) }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-                        <div class="card-body d-flex align-items-center gap-3 py-3">
-                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <div class="card border-0 text-white h-100 it-stat-card it-stat-danger">
+                        <div class="card-body it-stat-body">
+                            <div class="it-stat-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                             </div>
                             <div>
-                                <div class="small fw-medium text-white-50 text-uppercase" style="letter-spacing: 0.5px; font-size: 10px;">Bị khóa</div>
-                                <div class="fw-bold fs-4">{{ number_format($itStats['locked_users']) }}</div>
+                                <div class="it-stat-label">Bị khóa</div>
+                                <div class="it-stat-value">{{ number_format($itStats['locked_users']) }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                        <div class="card-body d-flex align-items-center gap-3 py-3">
-                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <div class="card border-0 text-white h-100 it-stat-card it-stat-warning">
+                        <div class="card-body it-stat-body">
+                            <div class="it-stat-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                             </div>
                             <div>
-                                <div class="small fw-medium text-white-50 text-uppercase" style="letter-spacing: 0.5px; font-size: 10px;">Phiên truy cập</div>
-                                <div class="fw-bold fs-4">{{ number_format($itStats['system']['active_sessions']) }}</div>
+                                <div class="it-stat-label">Phiên truy cập</div>
+                                <div class="it-stat-value">{{ number_format($itStats['system']['active_sessions']) }}</div>
                             </div>
                         </div>
                     </div>
@@ -230,17 +116,17 @@
             {{-- Row 2: System Health & Control --}}
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100 it-panel-card">
                         <div class="card-body p-3">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <div class="small fw-bold text-muted text-uppercase">Tài nguyên ổ đĩa</div>
+                                <div class="it-panel-title">Tài nguyên ổ đĩa</div>
                                 <div class="small fw-bold {{ $itStats['system']['disk_percent'] > 80 ? 'text-danger' : 'text-success' }}">
                                     {{ $itStats['system']['disk_percent'] }}%
                                 </div>
                             </div>
-                            <div class="progress mb-2" style="height: 8px; background-color: #f0f0f0; border-radius: 10px;">
+                            <div class="progress it-disk-progress mb-2">
                                 <div class="progress-bar progress-bar-striped progress-bar-animated {{ $itStats['system']['disk_percent'] > 80 ? 'bg-danger' : 'bg-primary' }}"
-                                     role="progressbar" style="width: {{ $itStats['system']['disk_percent'] }}%; border-radius: 10px;"></div>
+                                     role="progressbar" style="width: {{ $itStats['system']['disk_percent'] }}%;"></div>
                             </div>
                             <div class="d-flex justify-content-between small text-muted">
                                 <span>Sử dụng: <b>{{ $itStats['system']['disk_used'] }} GB</b></span>
@@ -250,9 +136,9 @@
                     </div>
                 </div>
                 <div class="col-md-5">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100 it-panel-card">
                         <div class="card-body p-3">
-                            <div class="small fw-bold text-muted text-uppercase mb-3">Trung tâm điều hành</div>
+                            <div class="it-panel-title mb-3">Trung tâm điều hành</div>
                             <div class="d-flex flex-wrap gap-2">
                                 <button wire:click="clearCache" wire:loading.attr="disabled" class="btn btn-sm btn-outline-primary fw-semibold d-flex align-items-center gap-1">
                                     <span wire:loading wire:target="clearCache" class="spinner-border spinner-border-sm me-1"></span>
@@ -266,11 +152,11 @@
                                 </button>
                                 <div class="d-flex align-items-center gap-3 ms-2">
                                     <div class="text-center">
-                                        <div class="badge bg-soft-info text-info rounded-pill px-2" style="font-size: 10px;">DB SIZE</div>
+                                        <div class="badge bg-soft-info text-info it-panel-badge">DB SIZE</div>
                                         <div class="small fw-bold">{{ number_format($itStats['system']['db_size_mb'], 1) }} MB</div>
                                     </div>
                                     <div class="text-center">
-                                        <div class="badge bg-soft-warning text-warning rounded-pill px-2" style="font-size: 10px;">QUEUE</div>
+                                        <div class="badge bg-soft-warning text-warning it-panel-badge">QUEUE</div>
                                         <div class="small fw-bold">{{ number_format($itStats['system']['pending_jobs']) }}</div>
                                     </div>
                                 </div>
@@ -279,9 +165,9 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100 it-panel-card">
                         <div class="card-body p-3">
-                            <div class="small fw-bold text-muted text-uppercase mb-2">Môi trường</div>
+                            <div class="it-panel-title mb-2">Môi trường</div>
                             <div class="d-flex flex-column gap-1">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="small text-muted">Laravel</span>
@@ -300,15 +186,15 @@
             {{-- Row 3: Activity Log --}}
             <div class="row g-4 mb-4">
                 <div class="col-md-12">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                    <div class="card border-0 shadow-sm h-100 it-activity-card">
+                        <div class="card-header py-3 d-flex align-items-center justify-content-between">
                             <h6 class="mb-0 fw-bold">Hoạt động hệ thống mới nhất</h6>
                             <a href="{{ route('app.activity-log') }}" class="btn btn-sm btn-link text-decoration-none">Xem tất cả</a>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light text-nowrap">
+                                <table class="table table-hover align-middle mb-0 it-activity-table">
+                                    <thead class="text-nowrap">
                                         <tr>
                                             <th>Người dùng</th>
                                             <th>Hành động</th>
@@ -320,7 +206,7 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <div class="rounded-circle bg-soft-secondary d-flex align-items-center justify-content-center" style="width:32px;height:32px;font-size:12px;flex-shrink:0">
+                                                    <div class="it-user-badge">
                                                         {{ $activity->causer ? strtoupper(substr($activity->causer->name, 0, 1)) : 'S' }}
                                                     </div>
                                                     <div class="small fw-semibold">{{ $activity->causer ? $activity->causer->name : 'Hệ thống' }}</div>
@@ -352,7 +238,7 @@
             {{-- ── IT DASHBOARD SECURITY ──────────────────────────────── --}}
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm border-start border-4 border-danger h-100">
+                    <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 it-panel-card">
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <div class="rounded-circle bg-soft-danger p-2">
@@ -366,15 +252,15 @@
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white py-3">
+                    <div class="card border-0 shadow-sm h-100 it-panel-card">
+                        <div class="card-header py-3">
                             <h6 class="mb-0 fw-bold">Người dùng hoạt động tích cực (7 ngày qua)</h6>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
                                 @foreach($itStats['top_users'] as $stat)
                                 <div class="col-md-6">
-                                    <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded">
+                                    <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded border">
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:30px;height:30px;font-size:11px">
                                                 {{ $stat->causer ? strtoupper(substr($stat->causer->name, 0, 1)) : '?' }}
@@ -391,14 +277,14 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
+            <div class="card border-0 shadow-sm it-activity-card">
+                <div class="card-header py-3">
                     <h6 class="mb-0 fw-bold">Nhật ký truy cập chi tiết</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light text-nowrap">
+                        <table class="table table-hover align-middle mb-0 it-activity-table">
+                            <thead class="text-nowrap">
                                 <tr>
                                     <th>Thời gian</th>
                                     <th>Người dùng</th>
