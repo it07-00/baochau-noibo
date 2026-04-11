@@ -2,8 +2,12 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\RenewalSales;
-use App\Models\ProgressiveSales;
+use App\Models\ContractCommercial;
+use App\Models\ContractConsulting;
+use App\Models\ContractEnergy;
+use App\Models\ContractProject;
+use App\Models\ContractSustainability;
+use App\Models\ContractWaste;
 use App\Models\SalesTarget;
 use App\Models\User;
 use Livewire\Component;
@@ -12,68 +16,63 @@ class SalesTargetReport extends Component
 {
     public int $year;
     public string $filter_staff = '';
-    public array $targets = [];
+
+    protected array $contractModels = [
+        ContractWaste::class,
+        ContractConsulting::class,
+        ContractProject::class,
+        ContractCommercial::class,
+        ContractSustainability::class,
+        ContractEnergy::class,
+    ];
 
     public function mount(): void
     {
         $this->year = (int) now()->format('Y');
-        $this->loadTargets();
-    }
-
-    public function updatedYear(): void       { $this->loadTargets(); }
-    public function updatedFilterStaff(): void { $this->loadTargets(); }
-
-    private function loadTargets(): void
-    {
-        $this->targets = array_fill(1, 12, 0);
-        SalesTarget::where('year', $this->year)
-            ->when(
-                $this->filter_staff,
-                fn($q) => $q->where('staff_id', $this->filter_staff),
-                fn($q) => $q->whereNull('staff_id')
-            )
-            ->get()
-            ->each(fn($t) => $this->targets[$t->month] = (int) $t->target_amount);
-    }
-
-    public function saveTargets(): void
-    {
-        if (! auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly'])) {
-            abort(403);
-        }
-        for ($m = 1; $m <= 12; $m++) {
-            SalesTarget::updateOrCreate(
-                [
-                    'year'     => $this->year,
-                    'month'    => $m,
-                    'staff_id' => $this->filter_staff ?: null,
-                ],
-                ['target_amount' => (int) ($this->targets[$m] ?? 0)]
-            );
-        }
-        $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Đã lưu mục tiêu!']]);
+        // Default to all sales staff so report totals are not accidentally scoped to one person.
+        $this->filter_staff = '';
     }
 
     public function render()
     {
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
-            $months[$m] = ['target' => $this->targets[$m] ?? 0, 'actual' => 0];
+            $months[$m] = ['target' => 0, 'actual' => 0];
         }
 
-        $staffFilter = $this->filter_staff;
+        $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
 
-        RenewalSales::whereYear('sales_month', $this->year)
-            ->when($staffFilter, fn($q) => $q->where('user_id', $staffFilter))
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['actual'] += (float) $r->total);
+        if (!empty($salesStaffIds)) {
+            foreach (SalesTarget::query()
+                ->where('year', $this->year)
+                ->when(
+                    $this->filter_staff !== '',
+                    fn($q) => $q->where('staff_id', $this->filter_staff),
+                    fn($q) => $q->whereIn('staff_id', $salesStaffIds)
+                )
+                ->selectRaw('month, SUM(target_amount) as total_target')
+                ->groupBy('month')
+                ->get() as $r) {
+                $months[(int) $r->month]['target'] = (float) $r->total_target;
+            }
 
-        ProgressiveSales::whereYear('sales_month', $this->year)
-            ->when($staffFilter, fn($q) => $q->where('user_id', $staffFilter))
-            ->selectRaw('MONTH(sales_month) as m, SUM(amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['actual'] += (float) $r->total);
+            foreach ($this->contractModels as $modelClass) {
+                $rows = $modelClass::query()
+                    ->whereYear('signed_at', $this->year)
+                    ->when(
+                        $this->filter_staff !== '',
+                        fn($q) => $q->where('staff_id', $this->filter_staff),
+                        fn($q) => $q->whereIn('staff_id', $salesStaffIds)
+                    )
+                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->groupBy('m')
+                    ->get();
+
+                foreach ($rows as $r) {
+                    $months[(int) $r->m]['actual'] += (float) $r->total;
+                }
+            }
+        }
 
         $totals = ['target' => 0, 'actual' => 0];
         foreach ($months as $m) {
@@ -86,7 +85,6 @@ class SalesTargetReport extends Component
             'totals'    => $totals,
             'staffs'    => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
             'years'     => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'canEdit'   => auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly']),
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }
 }

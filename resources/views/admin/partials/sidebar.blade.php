@@ -242,7 +242,7 @@
                             'icon' => $stackIcon,
                             'permission' => 'sales-renewal.view',
                             'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
-                            'children' => ['Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá'],
+                            'children' => ['Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá', 'Đăng ký mục tiêu doanh số'],
                         ],
                         [
                             'title' => 'Bộ phận tư vấn',
@@ -389,6 +389,9 @@
                     } elseif (request()->routeIs('app.reports.sales.summary')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng tổng kết doanh số';
+                    } elseif (request()->routeIs('app.sales.target-registration')) {
+                        $activeGroup = 'Bộ phận kinh doanh';
+                        $activeChild = 'Đăng ký mục tiêu doanh số';
                     } elseif (request()->routeIs('app.reports.sales.target')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng doanh số cam kết';
@@ -488,6 +491,10 @@
                                             $child === 'Bảng theo dõi báo giá' &&
                                             !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc'])
                                         )
+                                        @continue(
+                                            $child === 'Đăng ký mục tiêu doanh số' &&
+                                            !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh'])
+                                        )
 
                                         @php
                                             $childActive = $menu['title'] === $activeGroup && $child === $activeChild;
@@ -544,6 +551,11 @@
                                                 $child === 'Doanh số theo tiến độ'
                                             ) {
                                                 $href = route('app.sales.progressive.index');
+                                            } elseif (
+                                                $menu['title'] === 'Bộ phận kinh doanh' &&
+                                                $child === 'Đăng ký mục tiêu doanh số'
+                                            ) {
+                                                $href = route('app.sales.target-registration');
                                             } elseif (
                                                 $menu['title'] === 'Chuyển phát thư' &&
                                                 $child === 'Quản lý chuyển phát'

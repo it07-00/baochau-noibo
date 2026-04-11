@@ -108,6 +108,9 @@ Route::middleware('auth')->name('app.')->group(function () {
     Route::prefix('doanh-so')->name('sales.')->group(function () {
         Route::get('tai-ky', \App\Livewire\Admin\Sales\RenewalSalesManager::class)->name('renewal.index')->middleware('permission:sales-renewal.view');
         Route::get('tien-do-thanh-toan', \App\Livewire\Admin\Sales\ProgressiveSalesManager::class)->name('progressive.index')->middleware('permission:sales-progressive.view');
+        Route::get('dang-ky-muc-tieu', \App\Livewire\Admin\Sales\SalesTargetRegistration::class)
+            ->name('target-registration')
+            ->middleware(['permission:sales-renewal.view', 'role:kinh-doanh,tp-kinh-doanh']);
     });
 
     // Chuyển phát

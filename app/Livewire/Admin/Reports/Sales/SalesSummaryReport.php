@@ -25,28 +25,32 @@ class SalesSummaryReport extends Component
             $months[$m] = ['renewal' => 0, 'progressive' => 0, 'payment_due' => 0, 'payment_paid' => 0];
         }
 
-        RenewalSales::whereYear('sales_month', $this->year)
+        foreach (RenewalSales::whereYear('sales_month', $this->year)
             ->when($this->filter_staff, fn($q) => $q->where('user_id', $this->filter_staff))
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['renewal'] = (float) $r->total);
+            ->groupBy('m')->get() as $r) {
+            $months[$r->m]['renewal'] = (float) $r->total;
+        }
 
-        ProgressiveSales::whereYear('sales_month', $this->year)
+        foreach (ProgressiveSales::whereYear('sales_month', $this->year)
             ->when($this->filter_staff, fn($q) => $q->where('user_id', $this->filter_staff))
             ->selectRaw('MONTH(sales_month) as m, SUM(amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['progressive'] = (float) $r->total);
+            ->groupBy('m')->get() as $r) {
+            $months[$r->m]['progressive'] = (float) $r->total;
+        }
 
         // ── Tiến độ thu tiền ────────────────────────
-        ContractPaymentSchedule::whereYear('due_date', $this->year)
+        foreach (ContractPaymentSchedule::whereYear('due_date', $this->year)
             ->selectRaw('MONTH(due_date) as m, SUM(amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['payment_due'] = (float) $r->total);
+            ->groupBy('m')->get() as $r) {
+            $months[$r->m]['payment_due'] = (float) $r->total;
+        }
 
-        ContractPaymentSchedule::whereYear('paid_date', $this->year)
+        foreach (ContractPaymentSchedule::whereYear('paid_date', $this->year)
             ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
-            ->groupBy('m')->get()
-            ->each(fn($r) => $months[$r->m]['payment_paid'] = (float) $r->total);
+            ->groupBy('m')->get() as $r) {
+            $months[$r->m]['payment_paid'] = (float) $r->total;
+        }
 
         $totals = [
             'renewal'      => array_sum(array_column($months, 'renewal')),

@@ -22,15 +22,17 @@ class SalesOverviewReport extends Component
             $quarters[$q] = ['renewal' => 0, 'progressive' => 0];
         }
 
-        RenewalSales::whereYear('sales_month', $this->year)
+        foreach (RenewalSales::whereYear('sales_month', $this->year)
             ->selectRaw('QUARTER(sales_month) as q, SUM(sales_amount) as total')
-            ->groupBy('q')->get()
-            ->each(fn($r) => $quarters[$r->q]['renewal'] = (float) $r->total);
+            ->groupBy('q')->get() as $r) {
+            $quarters[$r->q]['renewal'] = (float) $r->total;
+        }
 
-        ProgressiveSales::whereYear('sales_month', $this->year)
+        foreach (ProgressiveSales::whereYear('sales_month', $this->year)
             ->selectRaw('QUARTER(sales_month) as q, SUM(amount) as total')
-            ->groupBy('q')->get()
-            ->each(fn($r) => $quarters[$r->q]['progressive'] = (float) $r->total);
+            ->groupBy('q')->get() as $r) {
+            $quarters[$r->q]['progressive'] = (float) $r->total;
+        }
 
         $prevYear    = $this->year - 1;
         $prevTotals  = [

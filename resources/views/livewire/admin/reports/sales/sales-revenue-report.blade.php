@@ -33,15 +33,6 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Phòng ban</label>
-                    <select wire:model.live="filter_department" class="form-select form-select-sm">
-                        <option value="">Tất cả</option>
-                        @foreach($departments as $d)
-                            <option value="{{ $d->id }}">{{ $d->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 small">Loại HĐ (6 nhóm)</label>
                     <select wire:model.live="filter_contract_type" class="form-select form-select-sm">
                         <option value="">Tất cả</option>

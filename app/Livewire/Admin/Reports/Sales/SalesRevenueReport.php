@@ -9,7 +9,6 @@ use App\Models\ContractPaymentSchedule;
 use App\Models\ContractProject;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
-use App\Models\Department;
 use App\Models\User;
 use Livewire\Component;
 
@@ -17,7 +16,6 @@ class SalesRevenueReport extends Component
 {
     public int $year;
     public string $filter_staff = '';
-    public string $filter_department = '';
     public string $filter_contract_type = '';
     public string $filter_renewal = '';
 
@@ -64,18 +62,6 @@ class SalesRevenueReport extends Component
                     $q->orWhere(function ($sub) use ($modelClass) {
                         $sub->where('contract_type', $modelClass)
                             ->whereIn('contract_id', $modelClass::where('staff_id', $this->filter_staff)->pluck('id'));
-                    });
-                }
-            });
-        }
-
-        // Filter by department
-        if ($this->filter_department) {
-            $query->where(function ($q) {
-                foreach ($this->contractTypeMap as $modelClass) {
-                    $q->orWhere(function ($sub) use ($modelClass) {
-                        $sub->where('contract_type', $modelClass)
-                            ->whereIn('contract_id', $modelClass::where('department_id', $this->filter_department)->pluck('id'));
                     });
                 }
             });
@@ -176,7 +162,6 @@ class SalesRevenueReport extends Component
                 ->mapWithKeys(fn($class, $key) => [$key => ($this->contractTypeLabels[$class] ?? ucfirst($key))])
                 ->toArray(),
             'staffs'          => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
-            'departments'     => Department::orderBy('name')->get(),
             'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'contractTypes'   => $this->contractTypeMap,
             'staffRevenue'    => $staffRevenue,
