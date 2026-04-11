@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Commissions;
 
 use App\Models\CommissionRequest;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,6 +14,8 @@ class CommissionRequestManager extends Component
     public $search = '';
     public $statusFilter = '';
     public $contractTypeFilter = '';
+    public $requestMonthFilter = '';
+    public $requesterFilter = '';
     public $perPage = 10;
     public ?int $rejectingId = null;
     public string $rejectReason = '';
@@ -40,6 +43,16 @@ class CommissionRequestManager extends Component
         if ($this->contractTypeFilter) {
             $query->where('contract_type', $this->contractTypeFilter);
         }
+
+        if ($this->requestMonthFilter && preg_match('/^\d{4}-\d{2}$/', $this->requestMonthFilter)) {
+            [$year, $month] = explode('-', $this->requestMonthFilter);
+            $query->whereYear('created_at', (int) $year)
+                ->whereMonth('created_at', (int) $month);
+        }
+
+        if ($this->requesterFilter) {
+            $query->where('user_id', (int) $this->requesterFilter);
+        }
     }
 
     private function ensureAccountantApprovalAccess(): void
@@ -60,6 +73,16 @@ class CommissionRequestManager extends Component
     }
 
     public function updatingContractTypeFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingRequestMonthFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingRequesterFilter()
     {
         $this->resetPage();
     }
@@ -165,12 +188,18 @@ class CommissionRequestManager extends Component
             'amount'   => (clone $summaryQuery)->sum('amount'),
         ];
 
+        $requesters = User::query()
+            ->whereIn('id', CommissionRequest::query()->select('user_id')->distinct())
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         $requests = $query->orderBy('created_at', 'desc')->paginate($this->perPage);
 
         return view('livewire.admin.commissions.commission-request-manager', [
             'requests'      => $requests,
             'contractTypes' => CommissionRequest::CONTRACT_TYPE_LABELS,
             'summary'       => $summary,
+            'requesters'    => $requesters,
             'canApprove'    => auth()->check() && auth()->user()->hasRole('ke-toan'),
             'canEdit'       => auth()->check()
                 && auth()->user()->can('commissions.edit')

@@ -63,7 +63,7 @@
         </div>
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-12 col-lg-3">
                     <label class="form-label">Loại hợp đồng</label>
                     <select wire:model.live="contractTypeFilter" class="form-select">
                         <option value="">Tất cả loại hợp đồng</option>
@@ -72,7 +72,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-lg-2">
                     <label class="form-label">Tình trạng</label>
                     <select wire:model.live="statusFilter" class="form-select">
                         <option value="">Tất cả tình trạng</option>
@@ -81,7 +81,20 @@
                         <option value="Từ chối">Từ chối</option>
                     </select>
                 </div>
-                <div class="col-md-5">
+                <div class="col-12 col-lg-2">
+                    <label class="form-label">Tháng yêu cầu</label>
+                    <input type="month" wire:model.live="requestMonthFilter" class="form-control">
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="form-label">Người yêu cầu</label>
+                    <select wire:model.live="requesterFilter" class="form-select">
+                        <option value="">Tất cả người yêu cầu</option>
+                        @foreach($requesters as $requester)
+                            <option value="{{ $requester->id }}">{{ $requester->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-lg-3">
                     <label class="form-label">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
@@ -145,11 +158,22 @@
                                             <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
                                     @elseif($request->status === 'Từ chối')
+                                        @php
+                                            $rejectionReason = '';
+                                            if (!empty($request->notes) && str_contains($request->notes, 'Lý do từ chối (kế toán):')) {
+                                                $rejectionReason = trim(\Illuminate\Support\Str::afterLast($request->notes, 'Lý do từ chối (kế toán):'));
+                                            }
+                                        @endphp
                                         <span class="badge bg-soft-danger text-danger px-3 py-2">
                                             Từ chối
                                             <br>
                                             <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
+                                        @if($rejectionReason)
+                                            <div class="small text-muted mt-1" style="max-width: 190px;" title="{{ $rejectionReason }}">
+                                                Lý do: {{ \Illuminate\Support\Str::limit($rejectionReason, 70) }}
+                                            </div>
+                                        @endif
                                     @else
                                         <span class="badge bg-soft-warning text-warning px-3 py-2">Chờ chi</span>
                                     @endif
