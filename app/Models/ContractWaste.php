@@ -59,6 +59,13 @@ class ContractWaste extends Model
         'Xây dựng bản đồ tiếng ồn',
     ];
 
+    const VOUCHER_STATUSES = [
+        'Đã đề nghị thanh toán/tạm ứng',
+        'Đã xuất hóa đơn',
+        'Đã làm biên bản bàn giao hồ sơ',
+        'Đã làm BB bàn giao và nghiệm thu kết thúc hợp đồng',
+    ];
+
     protected $casts = [
         'signed_at' => 'date',
         'effective_at' => 'date',

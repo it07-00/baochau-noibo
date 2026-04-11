@@ -179,6 +179,17 @@ class ContractWasteManager extends Component
             return $value === '' ? null : $value;
         })->toArray();
 
+        $isAccountant = auth()->user()->hasRole('ke-toan');
+
+        if (!$this->isEditing) {
+            // Số HĐ chỉ do kế toán cập nhật sau khi tạo.
+            $data['shd_cxl'] = null;
+            $data['shd_bc'] = null;
+        } elseif (!$isAccountant && $this->selectedDoc) {
+            $data['shd_cxl'] = $this->selectedDoc->shd_cxl;
+            $data['shd_bc'] = $this->selectedDoc->shd_bc;
+        }
+
         if ($this->isEditing) {
             $this->selectedDoc->update($data);
             $msg = 'Cập nhật thành công';
@@ -247,7 +258,7 @@ class ContractWasteManager extends Component
             'mailing_address' => '',
             'status' => 'ĐANG THỰC HIỆN',
             'renewal_status' => 'CHƯA ĐẾN HẠN',
-            'voucher_status' => 'CHƯA CÓ',
+            'voucher_status' => '',
             'is_offset' => false,
             'is_overdue' => false,
             'note' => '',
@@ -477,6 +488,17 @@ class ContractWasteManager extends Component
         if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
 
         $docs = $query->latest()->paginate(10);
+        $voucherStatuses = collect(ContractWaste::VOUCHER_STATUSES)
+            ->merge(
+                ContractWaste::whereNotNull('voucher_status')
+                    ->where('voucher_status', '!=', '')
+                    ->distinct()
+                    ->pluck('voucher_status')
+                    ->toArray()
+            )
+            ->unique()
+            ->values()
+            ->toArray();
 
         return view('livewire.admin.contracts.contract-waste-manager', [
             'docs' => $docs,
@@ -492,7 +514,8 @@ class ContractWasteManager extends Component
             'loai_dich_vu_options' => ContractWaste::SERVICE_TYPES,
             'all_statuses' => ContractWaste::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
-            'voucher_statuses' => ContractWaste::whereNotNull('voucher_status')->where('voucher_status', '!=', '')->distinct()->pluck('voucher_status')->toArray(),
+            'voucher_statuses' => $voucherStatuses,
+            'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'provinces' => \App\Support\VietnamProvinces::list(),
             'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),

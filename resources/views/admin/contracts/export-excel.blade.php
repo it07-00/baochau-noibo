@@ -25,7 +25,7 @@
         </tr>
         <tr>
             <th class="header" style="width:40px;">STT</th>
-            <th class="header" style="width:110px;">Số HĐ AD</th>
+            <th class="header" style="width:110px;">Số HĐ BC</th>
             <th class="header" style="width:110px;">Số HĐ CXL</th>
             <th class="header" style="width:220px;">Khách hàng</th>
             <th class="header" style="width:160px;">Nhân viên CS</th>

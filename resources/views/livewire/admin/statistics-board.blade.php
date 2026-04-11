@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
             <h4 class="mb-0">Bảng thống kê</h4>
             <nav aria-label="breadcrumb">
@@ -9,7 +9,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap justify-content-end">
             <select wire:model.live="month" class="form-select form-select-sm" style="width:auto; min-width: 140px;">
                 <option value="">Cả năm</option>
                 @for($m = 1; $m <= 12; $m++)
@@ -21,6 +21,28 @@
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
             </select>
+            <input
+                type="date"
+                wire:model.live="contractDateFrom"
+                class="form-control form-control-sm"
+                style="width:auto; min-width: 165px;"
+                title="Lọc hợp đồng từ ngày ký"
+            >
+            <input
+                type="date"
+                wire:model.live="contractDateTo"
+                class="form-control form-control-sm"
+                style="width:auto; min-width: 165px;"
+                title="Lọc hợp đồng đến ngày ký"
+            >
+            <button
+                type="button"
+                wire:click="clearContractDateFilter"
+                class="btn btn-sm btn-outline-secondary"
+                @disabled($contractDateFrom === '' && $contractDateTo === '')
+            >
+                Xóa ngày
+            </button>
         </div>
     </div>
 

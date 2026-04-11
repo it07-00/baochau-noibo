@@ -54,6 +54,7 @@ trait ContractValidation
             'formData.loai_dich_vu'    => 'nullable|string|max:255',
             'formData.status'          => 'nullable|in:ĐANG THỰC HIỆN,HOÀN THÀNH,ĐÃ HỦY',
             'formData.renewal_status'  => 'nullable|in:CHƯA ĐẾN HẠN,ĐẾN HẠN,ĐÃ TÁI KÝ,KHÔNG TÁI KÝ',
+            'formData.voucher_status'  => 'nullable|in:' . implode(',', \App\Models\ContractWaste::VOUCHER_STATUSES),
             'formData.notes'           => 'nullable|string|max:2000',
         ];
     }
@@ -85,7 +86,7 @@ trait ContractValidation
             'formData.mailing_address'   => 'nullable|string|max:500',
             'formData.status'            => 'nullable|in:ĐANG THỰC HIỆN,HOÀN THÀNH,ĐÃ HỦY',
             'formData.renewal_status'    => 'nullable|in:CHƯA ĐẾN HẠN,ĐẾN HẠN,ĐÃ TÁI KÝ,KHÔNG TÁI KÝ',
-            'formData.voucher_status'    => 'nullable|in:CHƯA CÓ,ĐÃ LÀM,ĐÃ GỬI',
+            'formData.voucher_status'    => 'nullable|in:' . implode(',', \App\Models\ContractWaste::VOUCHER_STATUSES),
             'formData.province'          => 'nullable|string|max:100',
             'formData.loai_dich_vu'      => 'nullable|string|max:255',
             'formData.note'              => 'nullable|string|max:2000',

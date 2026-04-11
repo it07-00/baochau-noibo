@@ -18,6 +18,7 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 
 use Illuminate\Support\Facades\Artisan;
@@ -28,6 +29,8 @@ class StatisticsBoard extends Component
     public int $year;
     public array $years = [];
     public string $month = '';
+    public string $contractDateFrom = '';
+    public string $contractDateTo = '';
     public string $chartMode = 'quarter'; // 'quarter' | 'year'
     public array $itStats = [];
     public array $envData = [];
@@ -54,6 +57,23 @@ class StatisticsBoard extends Component
 
     public function updatedMonth(): void
     {
+        $this->dispatch('chart-updated');
+    }
+
+    public function updatedContractDateFrom(): void
+    {
+        $this->dispatch('chart-updated');
+    }
+
+    public function updatedContractDateTo(): void
+    {
+        $this->dispatch('chart-updated');
+    }
+
+    public function clearContractDateFilter(): void
+    {
+        $this->contractDateFrom = '';
+        $this->contractDateTo = '';
         $this->dispatch('chart-updated');
     }
 
@@ -157,6 +177,53 @@ class StatisticsBoard extends Component
     {
         $selectedMonth = $this->month !== '' ? (int) $this->month : null;
 
+        $contractDateFrom = preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->contractDateFrom) ? $this->contractDateFrom : null;
+        $contractDateTo = preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->contractDateTo) ? $this->contractDateTo : null;
+
+        if ($contractDateFrom !== null && $contractDateTo !== null && $contractDateFrom > $contractDateTo) {
+            [$contractDateFrom, $contractDateTo] = [$contractDateTo, $contractDateFrom];
+        }
+
+        $applyContractDateFilter = function ($query, ?int $monthForFallback = null, string $dateColumn = 'signed_at') use ($contractDateFrom, $contractDateTo) {
+            if ($contractDateFrom !== null || $contractDateTo !== null) {
+                if ($contractDateFrom !== null) {
+                    $query->whereDate($dateColumn, '>=', $contractDateFrom);
+                }
+                if ($contractDateTo !== null) {
+                    $query->whereDate($dateColumn, '<=', $contractDateTo);
+                }
+
+                return $query;
+            }
+
+            $query->whereYear($dateColumn, $this->year);
+            if ($monthForFallback !== null) {
+                $query->whereMonth($dateColumn, $monthForFallback);
+            }
+
+            return $query;
+        };
+
+        $resolveContractDateColumn = function (string $modelClass): string {
+            static $dateColumnCache = [];
+
+            if (isset($dateColumnCache[$modelClass])) {
+                return $dateColumnCache[$modelClass];
+            }
+
+            $table = (new $modelClass())->getTable();
+
+            if (Schema::hasColumn($table, 'date')) {
+                return $dateColumnCache[$modelClass] = 'date';
+            }
+
+            if (Schema::hasColumn($table, 'signed_at')) {
+                return $dateColumnCache[$modelClass] = 'signed_at';
+            }
+
+            return $dateColumnCache[$modelClass] = 'created_at';
+        };
+
         // ── KPI tổng quan ──────────────────────────────
         $customerQuery = Customer::whereYear('created_at', $this->year);
         if ($selectedMonth !== null) {
@@ -178,37 +245,35 @@ class StatisticsBoard extends Component
         $totalContractValue = 0;
 
         foreach ($contractTypes as $label => $model) {
-            $row = $model::whereYear('signed_at', $this->year)
+            $dateColumn = $resolveContractDateColumn($model);
+
+            $yearOrDateQuery = $model::query();
+            $applyContractDateFilter($yearOrDateQuery, null, $dateColumn);
+            $row = $yearOrDateQuery
                 ->selectRaw('COUNT(*) as cnt, COALESCE(SUM(value),0) as val')
                 ->first();
+
             $byType[$label] = [
                 'count' => (int) ($row->cnt ?? 0),
                 'value' => (float) ($row->val ?? 0),
             ];
-            if ($selectedMonth !== null) {
-                $totalContracts += (int) $model::whereYear('signed_at', $this->year)
-                    ->whereMonth('signed_at', $selectedMonth)
-                    ->count();
-            } else {
-                $totalContracts += $byType[$label]['count'];
-            }
 
-            if ($selectedMonth !== null) {
-                $totalContractValue += (float) $model::whereYear('signed_at', $this->year)
-                    ->whereMonth('signed_at', $selectedMonth)
-                    ->sum('value');
-            } else {
-                $totalContractValue += $byType[$label]['value'];
-            }
+            $kpiContractQuery = $model::query();
+            $applyContractDateFilter($kpiContractQuery, $selectedMonth, $dateColumn);
+            $totalContracts += (int) $kpiContractQuery->count();
+
+            $kpiContractValueQuery = $model::query();
+            $applyContractDateFilter($kpiContractValueQuery, $selectedMonth, $dateColumn);
+            $totalContractValue += (float) $kpiContractValueQuery->sum('value');
         }
 
         // ── Doanh số ghi nhận từ cột doanh số (revenue) trong hợp đồng ──────
         $totalSales = 0;
-        foreach ($contractTypes as $model) {
-            $modelQuery = $model::whereYear('signed_at', $this->year);
-            if ($selectedMonth !== null) {
-                $modelQuery->whereMonth('signed_at', $selectedMonth);
-            }
+        foreach ($contractTypes as $modelClass) {
+            $dateColumn = $resolveContractDateColumn($modelClass);
+
+            $modelQuery = $modelClass::query();
+            $applyContractDateFilter($modelQuery, $selectedMonth, $dateColumn);
             $totalSales += (float) $modelQuery->sum('revenue');
         }
 
@@ -233,9 +298,15 @@ class StatisticsBoard extends Component
 
         $contractMonthly = [];
         foreach ($monthlyModels as $model) {
-            $rows = $model::whereYear('signed_at', $this->year)
-                ->selectRaw('MONTH(signed_at) as m, COUNT(*) as cnt, SUM(value) as val, SUM(revenue) as rev')
-                ->groupByRaw('MONTH(signed_at)')->get()->keyBy('m');
+            $dateColumn = $resolveContractDateColumn($model);
+
+            $monthlyQuery = $model::query();
+            $applyContractDateFilter($monthlyQuery, null, $dateColumn);
+            $rows = $monthlyQuery
+                ->selectRaw("MONTH({$dateColumn}) as m, COUNT(*) as cnt, SUM(value) as val, SUM(revenue) as rev")
+                ->groupByRaw("MONTH({$dateColumn})")
+                ->get()
+                ->keyBy('m');
             foreach ($rows as $m => $row) {
                 $contractMonthly[$m]['cnt'] = ($contractMonthly[$m]['cnt'] ?? 0) + $row->cnt;
                 $contractMonthly[$m]['val'] = ($contractMonthly[$m]['val'] ?? 0) + (float) $row->val;
@@ -304,8 +375,11 @@ class StatisticsBoard extends Component
         $revenueByProvinceFromContracts = [];
 
         foreach (array_values($contractTypes) as $modelClass) {
-            $serviceRows = $modelClass::whereYear('signed_at', $this->year)
-                ->whereMonth('signed_at', $insightMonth)
+            $dateColumn = $resolveContractDateColumn($modelClass);
+
+            $serviceQuery = $modelClass::query();
+            $applyContractDateFilter($serviceQuery, $insightMonth, $dateColumn);
+            $serviceRows = $serviceQuery
                 ->selectRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác') as label, COUNT(*) as cnt")
                 ->groupByRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác')")
                 ->get();
@@ -315,8 +389,9 @@ class StatisticsBoard extends Component
                 $signedContractByService[$label] = ($signedContractByService[$label] ?? 0) + (int) $row->cnt;
             }
 
-            $provinceRows = $modelClass::whereYear('signed_at', $this->year)
-                ->whereMonth('signed_at', $insightMonth)
+            $provinceQuery = $modelClass::query();
+            $applyContractDateFilter($provinceQuery, $insightMonth, $dateColumn);
+            $provinceRows = $provinceQuery
                 ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt, COALESCE(SUM(revenue), 0) as rev")
                 ->groupByRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ')")
                 ->get();
@@ -366,23 +441,35 @@ class StatisticsBoard extends Component
         if ($canSeeConsulting) {
             if ($this->chartMode === 'quarter') {
                 foreach ($consultingTypes as $label => $model) {
+                    $dateColumn = $resolveContractDateColumn($model);
+
                     $qData = [];
                     for ($q = 1; $q <= 4; $q++) {
                         $startMonth = ($q - 1) * 3 + 1;
                         $endMonth   = $startMonth + 2;
-                        $qData[] = (int) $model::whereYear('signed_at', $this->year)
-                            ->whereMonth('signed_at', '>=', $startMonth)
-                            ->whereMonth('signed_at', '<=', $endMonth)
-                            ->count();
+                        $quarterQuery = $model::query();
+                        $applyContractDateFilter($quarterQuery, null, $dateColumn);
+                        $quarterQuery->whereMonth($dateColumn, '>=', $startMonth)
+                            ->whereMonth($dateColumn, '<=', $endMonth);
+                        $qData[] = (int) $quarterQuery->count();
                     }
                     $consultingChartData[$label] = $qData;
                 }
             } else {
                 // year mode: so sánh 5 năm gần nhất
                 foreach ($consultingTypes as $label => $model) {
+                    $dateColumn = $resolveContractDateColumn($model);
+
                     $yData = [];
                     foreach (array_reverse($this->years) as $y) {
-                        $yData[] = (int) $model::whereYear('signed_at', $y)->count();
+                        if ($contractDateFrom !== null || $contractDateTo !== null) {
+                            $yearModeQuery = $model::query();
+                            $applyContractDateFilter($yearModeQuery, null, $dateColumn);
+                            $yearModeQuery->whereYear($dateColumn, $y);
+                            $yData[] = (int) $yearModeQuery->count();
+                        } else {
+                            $yData[] = (int) $model::whereYear($dateColumn, $y)->count();
+                        }
                     }
                     $consultingChartData[$label] = $yData;
                 }
@@ -397,8 +484,10 @@ class StatisticsBoard extends Component
             ];
 
             foreach ($typeLabels as $modelClass => $label) {
+                $dateColumn = $resolveContractDateColumn($modelClass);
+
                 $assignments = ContractAssignment::where('assignable_type', $modelClass)
-                    ->whereHas('assignable', fn ($q) => $q->whereYear('signed_at', $this->year))
+                    ->whereHas('assignable', fn ($q) => $applyContractDateFilter($q, null, $dateColumn))
                     ->with('assignable')
                     ->get();
 
@@ -507,11 +596,10 @@ class StatisticsBoard extends Component
 
         foreach ($contractTypes as $modelClass) {
             $sourceField = ($modelClass === ContractWaste::class) ? 'source' : 'info_source';
+            $dateColumn = $resolveContractDateColumn($modelClass);
 
-            $modelQuery = $modelClass::whereYear('signed_at', $this->year);
-            if ($selectedMonth !== null) {
-                $modelQuery->whereMonth('signed_at', $selectedMonth);
-            }
+            $modelQuery = $modelClass::query();
+            $applyContractDateFilter($modelQuery, $selectedMonth, $dateColumn);
 
             $contractsOnSource = $modelQuery->select($sourceField, 'is_renewal', 'revenue')->get();
 

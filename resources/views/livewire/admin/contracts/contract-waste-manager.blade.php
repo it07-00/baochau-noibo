@@ -374,6 +374,8 @@
                                 <div class="d-flex flex-column">
                                     <span class="small">Số HĐ CXL: <span
                                             class="fw-bold">{{ $doc->shd_cxl }}</span></span>
+                                    <span class="small">Số HĐ BC: <span
+                                            class="fw-bold">{{ $doc->shd_bc ?: '-' }}</span></span>
                                     <span class="small">Ngày ký hợp đồng:</span>
                                     <span
                                         class="small fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span>
@@ -584,7 +586,7 @@
                                                 <td class="px-4 py-3">{{ $selectedDoc->handler?->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th class="bg-light fw-bold px-4 py-3">Số hợp đồng AD</th>
+                                                <th class="bg-light fw-bold px-4 py-3">Số hợp đồng BC</th>
                                                 <td class="px-4 py-3">{{ $selectedDoc->shd_bc }}</td>
                                             </tr>
                                             <tr>
@@ -766,14 +768,16 @@
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <!-- Info -->
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Số HĐ CXL</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Số HĐ BC</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.shd_bc">
-                            </div>
+                            @if ($isEditing && auth()->user()->hasRole('ke-toan'))
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Số HĐ CXL</label>
+                                    <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Số HĐ BC</label>
+                                    <input type="text" class="form-control" wire:model.defer="formData.shd_bc">
+                                </div>
+                            @endif
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Khách hàng <span
                                         class="text-danger">*</span></label>
@@ -1021,9 +1025,9 @@
                                 <label class="form-label fw-bold">Tình trạng chứng từ</label>
                                 <select class="form-select" wire:model.defer="formData.voucher_status">
                                     <option value="">Chọn tình trạng</option>
-                                    <option value="CHƯA CÓ">Chưa có</option>
-                                    <option value="ĐÃ CÓ">Đã có</option>
-                                    <option value="THIẾU">Thiếu</option>
+                                    @foreach ($voucher_status_options as $voucherStatus)
+                                        <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3">

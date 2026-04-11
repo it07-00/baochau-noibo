@@ -42,6 +42,7 @@ class ContractCommercial extends Model
         'status',
         'workflow_status',
         'renewal_status',
+        'voucher_status',
         'is_offset',
         'has_room_fund',
         'is_overdue',

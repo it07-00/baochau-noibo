@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Contracts;
 
 use App\Models\ContractConsulting;
+use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\Department;
@@ -51,6 +52,7 @@ class ContractConsultingManager extends Component
         'loai_dich_vu'   => '',
         'status'         => 'ĐANG THỰC HIỆN',
         'renewal_status' => '',
+        'voucher_status' => '',
         'is_offset'      => false,
         'has_room_fund'  => false,
         'is_overdue'     => false,
@@ -70,6 +72,7 @@ class ContractConsultingManager extends Component
         'payment_method' => '',
         'status'         => '',
         'renewal_status' => '',
+        'voucher_status' => '',
         'is_offset'      => false,
         'has_room_fund'  => false,
         'is_overdue'     => false,
@@ -151,6 +154,14 @@ class ContractConsultingManager extends Component
         $this->validate($this->baseContractRules(), $this->contractValidationMessages());
 
         $data = collect($this->formData)->map(fn($v) => $v === '' ? null : $v)->toArray();
+
+        $isAccountant = auth()->user()->hasRole('ke-toan');
+        if (!$this->isEditing) {
+            // Số HĐ BC do kế toán bổ sung sau khi tạo.
+            $data['shd_bc'] = null;
+        } elseif (!$isAccountant && $this->selectedDoc) {
+            $data['shd_bc'] = $this->selectedDoc->shd_bc;
+        }
 
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
@@ -302,6 +313,7 @@ class ContractConsultingManager extends Component
             'payment_method' => '',
             'status'         => '',
             'renewal_status' => '',
+            'voucher_status' => '',
             'is_offset'      => false,
             'has_room_fund'  => false,
             'is_overdue'     => false,
@@ -328,6 +340,7 @@ class ContractConsultingManager extends Component
             'loai_dich_vu'   => '',
             'status'         => 'ĐANG THỰC HIỆN',
             'renewal_status' => '',
+            'voucher_status' => '',
             'is_offset'      => false,
             'has_room_fund'  => false,
             'is_overdue'     => false,
@@ -363,6 +376,7 @@ class ContractConsultingManager extends Component
         if ($this->filter['payment_method']) $query->where('payment_method', $this->filter['payment_method']);
         if ($this->filter['status'])         $query->where('status', $this->filter['status']);
         if ($this->filter['renewal_status']) $query->where('renewal_status', $this->filter['renewal_status']);
+        if ($this->filter['voucher_status']) $query->where('voucher_status', $this->filter['voucher_status']);
         if ($this->filter['is_offset'])      $query->where('is_offset', true);
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
@@ -405,6 +419,7 @@ class ContractConsultingManager extends Component
         if ($this->filter['payment_method']) $query->where('payment_method', $this->filter['payment_method']);
         if ($this->filter['status'])         $query->where('status', $this->filter['status']);
         if ($this->filter['renewal_status']) $query->where('renewal_status', $this->filter['renewal_status']);
+        if ($this->filter['voucher_status']) $query->where('voucher_status', $this->filter['voucher_status']);
         if ($this->filter['is_offset'])      $query->where('is_offset', true);
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
@@ -422,6 +437,7 @@ class ContractConsultingManager extends Component
             'provinces' => \App\Support\VietnamProvinces::list(),
             'all_statuses'         => ContractConsulting::whereNotNull('status')->where('status', '!=', '')->distinct()->pluck('status')->toArray(),
             'renewal_statuses'     => ContractConsulting::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
             'loai_dich_vu_options' => ContractConsulting::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractConsulting::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),

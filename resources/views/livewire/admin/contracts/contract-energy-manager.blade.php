@@ -141,6 +141,15 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold custom-filter-label">Tình trạng chứng từ</label>
+                        <select class="form-select form-control-xs" wire:model.live="filter.voucher_status">
+                            <option value="">Chọn tình trạng</option>
+                            @foreach ($voucher_status_options as $voucherStatus)
+                                <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
                         <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
@@ -192,6 +201,7 @@
                         @endunless
                         <th class="text-center">Được giao</th>
                         <th class="text-center">Tình trạng</th>
+                        <th class="text-center">Tình trạng chứng từ</th>
                         <th class="text-center pe-4">Thao tác</th>
                     </tr>
                 </thead>
@@ -301,6 +311,9 @@
                                     <span
                                         class="small text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                                 </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border">{{ $doc->voucher_status ?: '-' }}</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
@@ -462,6 +475,10 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <th class="bg-light">Tình trạng chứng từ</th>
+                                            <td>{{ $selectedDoc->voucher_status ?: '-' }}</td>
+                                        </tr>
+                                        <tr>
                                             <th class="bg-light">Bù trừ / Quỹ phòng</th>
                                             <td>
                                                 @if ($selectedDoc->is_offset)
@@ -578,10 +595,12 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Số HĐ BC</label>
-                            <input type="text" class="form-control" wire:model="formData.shd_bc">
-                        </div>
+                        @if ($isEditing && auth()->user()->hasRole('ke-toan'))
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Số HĐ BC</label>
+                                <input type="text" class="form-control" wire:model="formData.shd_bc">
+                            </div>
+                        @endif
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Khách hàng <span class="text-danger">*</span></label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
@@ -727,7 +746,16 @@
                                 <option value="ĐÃ HỦY">Đã hủy</option>
                             </select>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Tình trạng chứng từ</label>
+                            <select class="form-select" wire:model="formData.voucher_status">
+                                <option value="">Chọn tình trạng</option>
+                                @foreach ($voucher_status_options as $voucherStatus)
+                                    <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label fw-bold">Tình trạng tái ký</label>
                             <input type="text" class="form-control" wire:model="formData.renewal_status">
                         </div>
