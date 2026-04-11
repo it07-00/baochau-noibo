@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
         <div>
             <h4 class="mb-0">Theo dõi Báo giá</h4>
             <nav aria-label="breadcrumb">
@@ -9,7 +9,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end">
             <button class="btn btn-success d-flex align-items-center gap-2" wire:click="create">
                 <i class="bi bi-plus-lg"></i> Thêm mới
             </button>

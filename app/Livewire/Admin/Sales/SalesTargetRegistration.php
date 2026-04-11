@@ -38,6 +38,17 @@ class SalesTargetRegistration extends Component
         $this->loadTargets();
     }
 
+    public function updatedTargets(mixed $value, mixed $key): void
+    {
+        $month = (int) $key;
+        if ($month < 1 || $month > 12) {
+            return;
+        }
+
+        $normalized = $this->normalizeTargetValue($value);
+        $this->targets[$month] = number_format($normalized, 0, ',', '.');
+    }
+
     private function normalizeTargetValue(mixed $value): int
     {
         if (is_numeric($value)) {
@@ -51,12 +62,12 @@ class SalesTargetRegistration extends Component
 
     private function loadTargets(): void
     {
-        $this->targets = array_fill(1, 12, 0);
+        $this->targets = array_fill(1, 12, '0');
 
         SalesTarget::where('year', $this->year)
             ->where('staff_id', auth()->id())
             ->get()
-            ->each(fn($t) => $this->targets[(int) $t->month] = (int) $t->target_amount);
+            ->each(fn($t) => $this->targets[(int) $t->month] = number_format((int) $t->target_amount, 0, ',', '.'));
     }
 
     public function saveTargets(): void
@@ -73,17 +84,20 @@ class SalesTargetRegistration extends Component
                 ['target_amount' => $normalizedTarget]
             );
 
-            $this->targets[$m] = $normalizedTarget;
+            $this->targets[$m] = number_format($normalizedTarget, 0, ',', '.');
         }
 
-        $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Đã lưu cam kết doanh số theo tháng!']]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã lưu cam kết doanh số theo tháng!']);
     }
 
     public function render()
     {
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
-            $months[$m] = ['target' => $this->targets[$m] ?? 0, 'actual' => 0];
+            $months[$m] = [
+                'target' => $this->normalizeTargetValue($this->targets[$m] ?? 0),
+                'actual' => 0,
+            ];
         }
 
         foreach ($this->contractModels as $modelClass) {

@@ -100,6 +100,74 @@ class QuotationManager extends Component
         'formData.notes' => 'nullable|string|max:2000',
     ];
 
+    protected function quotationValidationMessages(): array
+    {
+        return [
+            'formData.date.required' => 'Vui lòng chọn ngày báo giá.',
+            'formData.date.date' => 'Ngày báo giá không hợp lệ.',
+            'formData.staff_id.required' => 'Vui lòng chọn nhân viên sale.',
+            'formData.staff_id.exists' => 'Nhân viên sale không tồn tại.',
+            'formData.company_name.required' => 'Vui lòng nhập tên công ty.',
+            'formData.company_name.string' => 'Tên công ty không hợp lệ.',
+            'formData.company_name.max' => 'Tên công ty không được vượt quá 255 ký tự.',
+            'formData.status.required' => 'Vui lòng chọn tình hình.',
+            'formData.status.string' => 'Tình hình không hợp lệ.',
+            'formData.status.max' => 'Tình hình không được vượt quá 100 ký tự.',
+            'formData.source.string' => 'Nguồn không hợp lệ.',
+            'formData.source.max' => 'Nguồn không được vượt quá 255 ký tự.',
+            'formData.address.string' => 'Địa chỉ xuất hóa đơn không hợp lệ.',
+            'formData.address.max' => 'Địa chỉ xuất hóa đơn không được vượt quá 500 ký tự.',
+            'formData.work_address.string' => 'Địa chỉ làm việc không hợp lệ.',
+            'formData.work_address.max' => 'Địa chỉ làm việc không được vượt quá 500 ký tự.',
+            'formData.province.string' => 'Tỉnh thành không hợp lệ.',
+            'formData.province.max' => 'Tỉnh thành không được vượt quá 100 ký tự.',
+            'formData.industry.string' => 'Ngành nghề không hợp lệ.',
+            'formData.industry.max' => 'Ngành nghề không được vượt quá 255 ký tự.',
+            'formData.service.string' => 'Dịch vụ không hợp lệ.',
+            'formData.service.max' => 'Dịch vụ không được vượt quá 255 ký tự.',
+            'formData.contact_person.string' => 'Khách hàng không hợp lệ.',
+            'formData.contact_person.max' => 'Tên khách hàng không được vượt quá 255 ký tự.',
+            'formData.work_description.string' => 'Nội dung làm việc không hợp lệ.',
+            'formData.work_description.max' => 'Nội dung làm việc không được vượt quá 2000 ký tự.',
+            'formData.original_value.numeric' => 'Giá trị gốc phải là số.',
+            'formData.original_value.min' => 'Giá trị gốc không được âm.',
+            'formData.value_inc_vat.numeric' => 'Giá có VAT phải là số.',
+            'formData.value_inc_vat.min' => 'Giá có VAT không được âm.',
+            'formData.commission_value.numeric' => 'Hoa hồng khách hàng phải là số.',
+            'formData.commission_value.min' => 'Hoa hồng khách hàng không được âm.',
+            'formData.commission_tax.numeric' => 'Thuế hoa hồng phải là số.',
+            'formData.commission_tax.min' => 'Thuế hoa hồng không được âm.',
+            'formData.total_value.numeric' => 'Giá trị hợp đồng phải là số.',
+            'formData.total_value.min' => 'Giá trị hợp đồng không được âm.',
+            'formData.notes.string' => 'Ghi chú không hợp lệ.',
+            'formData.notes.max' => 'Ghi chú không được vượt quá 2000 ký tự.',
+        ];
+    }
+
+    protected function quotationValidationAttributes(): array
+    {
+        return [
+            'formData.date' => 'ngày báo giá',
+            'formData.staff_id' => 'nhân viên sale',
+            'formData.company_name' => 'công ty',
+            'formData.status' => 'tình hình',
+            'formData.source' => 'nguồn',
+            'formData.address' => 'địa chỉ xuất hóa đơn',
+            'formData.work_address' => 'địa chỉ làm việc',
+            'formData.province' => 'tỉnh thành',
+            'formData.industry' => 'ngành nghề',
+            'formData.service' => 'dịch vụ',
+            'formData.contact_person' => 'khách hàng',
+            'formData.work_description' => 'tình hình làm việc',
+            'formData.original_value' => 'giá trị gốc',
+            'formData.value_inc_vat' => 'giá có VAT',
+            'formData.commission_value' => 'hoa hồng khách hàng',
+            'formData.commission_tax' => 'thuế hoa hồng',
+            'formData.total_value' => 'giá trị hợp đồng',
+            'formData.notes' => 'ghi chú',
+        ];
+    }
+
     public function mount()
     {
         abort_unless(
@@ -218,18 +286,35 @@ class QuotationManager extends Component
 
     public function save()
     {
-        abort_unless(
-            auth()->user()->can($this->isEditing ? 'quotation-tracking.edit' : 'quotation-tracking.create'),
-            403
-        );
+        $user = auth()->user();
 
-        $this->cleanMoneyFields($this->formData, $this->moneyFields);
-
-        $this->validate();
+        if (!$user->can($this->isEditing ? 'quotation-tracking.edit' : 'quotation-tracking.create')) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu báo giá này.']);
+            return;
+        }
 
         if ($this->isEditing) {
             $quotation = Quotation::findOrFail($this->selectedId);
-            $this->authorizeQuotationAccess($quotation);
+            if ($this->isKinhDoanh() && (int) $quotation->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật báo giá do bạn phụ trách.']);
+                return;
+            }
+        }
+
+        $this->cleanMoneyFields($this->formData, $this->moneyFields);
+
+        try {
+            $this->validate($this->rules, $this->quotationValidationMessages(), $this->quotationValidationAttributes());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $firstError = $e->validator->errors()->first();
+            if ($firstError) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => $firstError]);
+            }
+            throw $e;
+        }
+
+        if ($this->isEditing) {
+            $quotation = Quotation::findOrFail($this->selectedId);
 
             $quotation->update($this->formData);
             $msg = 'Cập nhật thành công';
