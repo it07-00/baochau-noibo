@@ -1,74 +1,135 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="mb-0">Bảng doanh số cam kết</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Bảng doanh số cam kết</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
+    @php
+        $totalPct = $totals['target'] > 0 ? round(($totals['actual'] / $totals['target']) * 100, 1) : null;
+        $totalDelta = $totals['actual'] - $totals['target'];
+    @endphp
 
     {{-- Bộ lọc --}}
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body py-3">
-            <div class="row g-2 align-items-end">
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
-                    <select wire:model.live="year" class="form-select form-select-sm">
+        <div class="card-body py-3 px-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3 col-lg-2">
+                    <label class="form-label fw-semibold mb-1 small text-muted">Năm báo cáo</label>
+                    <select wire:model.live="year" class="form-select">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
-                    <select wire:model.live="filter_staff" class="form-select form-select-sm">
+                <div class="col-md-4 col-lg-3">
+                    <label class="form-label fw-semibold mb-1 small text-muted">Nhân viên kinh doanh</label>
+                    <select wire:model.live="filter_staff" class="form-select">
                         <option value="">Tất cả nhân viên KD</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
                 </div>
+                <div class="col-md-3 col-lg-2 ms-lg-auto">
+                    <button type="button" wire:click="$refresh" class="btn btn-light border w-100">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Tổng quan nhanh --}}
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted fw-semibold mb-2">Mục tiêu năm</div>
+                    <div class="fs-5 fw-bold text-dark">{{ number_format($totals['target'], 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted fw-semibold mb-2">Thực tế năm</div>
+                    <div class="fs-5 fw-bold text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted fw-semibold mb-2">Chênh lệch</div>
+                    <div class="fs-5 fw-bold {{ $totalDelta >= 0 ? 'text-success' : 'text-danger' }}">
+                        {{ $totalDelta >= 0 ? '+' : '−' }}{{ number_format(abs($totalDelta), 0, ',', '.') }} đ
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted fw-semibold mb-2">Tỷ lệ hoàn thành</div>
+                    <div class="fs-5 fw-bold {{ ($totalPct ?? 0) >= 100 ? 'text-success' : (($totalPct ?? 0) >= 70 ? 'text-warning' : 'text-danger') }}">
+                        {{ $totalPct !== null ? $totalPct . '%' : '—' }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     {{-- Bảng mục tiêu --}}
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
+            <h6 class="mb-0 fw-bold">Tiến độ cam kết theo tháng</h6>
+            <span class="badge bg-soft-primary text-primary">Năm {{ $year }}</span>
+        </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th style="width:120px">Tháng</th>
-                            <th class="text-end" style="width:200px">Mục tiêu (đ)</th>
-                            <th class="text-end">Thực tế (Tổng giá trị HĐ ký) (đ)</th>
-                            <th class="text-end">% Đạt</th>
-                            <th class="text-center">Trạng thái</th>
+                            <th class="text-end" style="width:220px">Mục tiêu (đ)</th>
+                            <th class="text-end" style="width:230px">Thực tế (Tổng giá trị HĐ ký) (đ)</th>
+                            <th class="text-end" style="width:220px">Chênh lệch (đ)</th>
+                            <th style="min-width:220px">Tiến độ</th>
+                            <th class="text-center" style="width:140px">Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($months as $m => $data)
                             @php
-                                $pct = $data['target'] > 0 ? round($data['actual'] / $data['target'] * 100, 1) : null;
+                                $target = (float) $data['target'];
+                                $actual = (float) $data['actual'];
+                                $pct = $target > 0 ? round($actual / $target * 100, 1) : null;
+                                $delta = $actual - $target;
+                                $progressWidth = $pct !== null ? max(0, min(100, $pct)) : 0;
+                                $progressClass = $pct === null
+                                    ? 'bg-secondary'
+                                    : ($pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger'));
                             @endphp
-                            <tr>
-                                <td class="fw-semibold">Tháng {{ $m }}</td>
-                                <td class="text-end">
-                                    {{ number_format($data['target'], 0, ',', '.') }}
+                            <tr class="{{ $target == 0 ? 'table-light' : '' }}">
+                                <td>
+                                    <span class="fw-semibold">Tháng {{ $m }}</span>
                                 </td>
-                                <td class="text-end fw-semibold {{ $data['actual'] > 0 ? 'text-success' : 'text-muted' }}">
-                                    {{ $data['actual'] > 0 ? number_format($data['actual'], 0, ',', '.') : '—' }}
+                                <td class="text-end fw-semibold {{ $target > 0 ? 'text-dark' : 'text-muted' }}">
+                                    {{ $target > 0 ? number_format($target, 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="text-end">
+                                <td class="text-end fw-semibold {{ $actual > 0 ? 'text-success' : 'text-muted' }}">
+                                    {{ $actual > 0 ? number_format($actual, 0, ',', '.') : '—' }}
+                                </td>
+                                <td class="text-end fw-semibold {{ $delta >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ $target > 0 || $actual > 0 ? ($delta >= 0 ? '+' : '−') . number_format(abs($delta), 0, ',', '.') : '—' }}
+                                </td>
+                                <td>
                                     @if($pct !== null)
-                                        <span class="{{ $pct >= 100 ? 'text-success fw-bold' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}">
-                                            {{ $pct }}%
-                                        </span>
-                                    @else —
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                <div class="progress-bar {{ $progressClass }}" role="progressbar" style="width: {{ $progressWidth }}%"></div>
+                                            </div>
+                                            <span class="small fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
+                                                {{ $pct }}%
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-muted small">Chưa đặt mục tiêu</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
@@ -90,16 +151,38 @@
                             <td>Tổng năm {{ $year }}</td>
                             <td class="text-end">{{ number_format($totals['target'], 0, ',', '.') }} đ</td>
                             <td class="text-end text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</td>
-                            <td class="text-end">
-                                @if($totals['target'] > 0)
-                                    @php $totalPct = round($totals['actual'] / $totals['target'] * 100, 1); @endphp
-                                    <span class="{{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
-                                        {{ $totalPct }}%
-                                    </span>
-                                @else —
+                            <td class="text-end {{ $totalDelta >= 0 ? 'text-success' : 'text-danger' }}">
+                                {{ $totalDelta >= 0 ? '+' : '−' }}{{ number_format(abs($totalDelta), 0, ',', '.') }} đ
+                            </td>
+                            <td>
+                                @if($totalPct !== null)
+                                    @php
+                                        $totalProgressClass = $totalPct >= 100 ? 'bg-success' : ($totalPct >= 70 ? 'bg-warning' : 'bg-danger');
+                                        $totalProgressWidth = max(0, min(100, $totalPct));
+                                    @endphp
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar {{ $totalProgressClass }}" role="progressbar" style="width: {{ $totalProgressWidth }}%"></div>
+                                        </div>
+                                        <span class="small fw-semibold {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
+                                            {{ $totalPct }}%
+                                        </span>
+                                    </div>
+                                @else
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
-                            <td></td>
+                            <td class="text-center">
+                                @if($totalPct === null)
+                                    <span class="badge bg-soft-secondary text-secondary small">Chưa có mục tiêu</span>
+                                @elseif($totalPct >= 100)
+                                    <span class="badge bg-soft-success text-success small">Đạt</span>
+                                @elseif($totalPct >= 70)
+                                    <span class="badge bg-soft-warning text-warning small">Gần đạt</span>
+                                @else
+                                    <span class="badge bg-soft-danger text-danger small">Chưa đạt</span>
+                                @endif
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

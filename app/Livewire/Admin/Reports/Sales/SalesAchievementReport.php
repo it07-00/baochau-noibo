@@ -17,6 +17,16 @@ class SalesAchievementReport extends Component
         $this->year = (int) now()->format('Y');
     }
 
+    public function updatedYear(): void
+    {
+        $this->dispatch('achievement-chart-updated');
+    }
+
+    public function updatedFilterMonth(): void
+    {
+        $this->dispatch('achievement-chart-updated');
+    }
+
     public function render()
     {
         $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
@@ -45,10 +55,17 @@ class SalesAchievementReport extends Component
         ->sortByDesc('total')
         ->values();
 
+        $chartLabels = $rankings->pluck('name')->values();
+        $chartValues = $rankings->pluck('total')->map(fn($v) => (float) $v)->values();
+        $chartHasData = $chartValues->sum() > 0;
+
         return view('livewire.admin.reports.sales.sales-achievement-report', [
-            'rankings' => $rankings,
-            'years'    => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'months'   => range(1, 12),
+            'rankings'     => $rankings,
+            'chartLabels'  => $chartLabels,
+            'chartValues'  => $chartValues,
+            'chartHasData' => $chartHasData,
+            'years'        => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'months'       => range(1, 12),
         ])->layout('admin.layouts.app', ['title' => 'Bảng thành tích']);
     }
 }

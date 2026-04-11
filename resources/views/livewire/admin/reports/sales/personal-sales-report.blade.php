@@ -1,112 +1,118 @@
-<div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="mb-0">Bảng doanh số cá nhân</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Bảng doanh số cá nhân</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
+<div class="personal-sales-board">
+    <style>
+        .personal-sales-board .board-title {
+            color: #0f172a;
+            letter-spacing: .2px;
+        }
+
+        .personal-sales-board .board-title-kpi { border-left: 4px solid #ec4899; padding-left: 12px; }
+
+        .personal-sales-board .board-table thead th {
+            color: #fff;
+            font-weight: 700;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .personal-sales-board .table-kpi thead th {
+            background: linear-gradient(90deg, #ec4899 0%, #f43f5e 100%);
+        }
+
+        .personal-sales-board .board-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .personal-sales-board .board-table tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        .personal-sales-board .board-table tfoot tr {
+            background: linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%);
+            color: #fff;
+        }
+    </style>
+
+    @php
+        $scopeLabel = $staffDetail?->name ?? 'Tất cả nhân viên';
+    @endphp
 
     {{-- Bộ lọc --}}
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body py-3">
-            <div class="row g-2 align-items-end">
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
-                    <select wire:model.live="year" class="form-select form-select-sm">
-                        @foreach($years as $y)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @can('roles.view')
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
-                    <select wire:model.live="filter_staff" class="form-select form-select-sm">
+        <div class="card-body py-3 px-4">
+            <div class="row g-3 align-items-end">
+                @if(auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh']) || auth()->user()->can('roles.view'))
+                <div class="col-md-4 col-lg-4">
+                    <label class="form-label fw-semibold mb-1 small text-muted">Nhân viên</label>
+                    <select wire:model.live="filter_staff" class="form-select">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                @endcan
+                @endif
+                <div class="col-md-3 col-lg-2">
+                    <label class="form-label fw-semibold mb-1 small text-muted">Năm</label>
+                    <select wire:model.live="year" class="form-select">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}">Năm {{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <button type="button" wire:click="$refresh" class="btn btn-success w-100 fw-semibold">Thống Kê</button>
+                </div>
             </div>
         </div>
     </div>
 
-    @if($isSingle && $staffDetail)
-    {{-- Breakdown theo tháng của 1 nhân viên --}}
-    <div class="card border-0 shadow-sm mb-3">
+    <div class="mb-4 small text-muted fw-semibold">
+        Dữ liệu theo: <span class="text-dark">{{ $scopeLabel }}</span> - Năm {{ $year }}
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-bottom py-3">
-            <h6 class="mb-0 fw-bold">Doanh số báo giá của <span class="text-primary">{{ $staffDetail->name }}</span> — Năm {{ $year }}</h6>
+            <h5 class="mb-0 fw-bold text-uppercase board-title board-title-kpi">Bảng doanh số cá nhân</h5>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table class="table board-table table-kpi align-middle mb-0">
+                <thead>
                     <tr>
-                        <th>Tháng</th>
-                        <th class="text-center">Số báo giá</th>
-                        <th class="text-end">Giá trị (chưa VAT)</th>
-                        <th class="text-end">Doanh số</th>
+                        <th class="text-center" style="width:80px">Tháng</th>
+                        <th class="text-end">DS cam kết</th>
+                        <th class="text-end">DS cam kết lũy kế</th>
+                        <th class="text-end">Doanh số đã về</th>
+                        <th class="text-end">DS thực hiện lũy kế</th>
+                        <th class="text-end">Doanh số còn lại</th>
+                        <th class="text-center" style="width:140px">% hoàn thành KPI</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($months as $m => $data)
-                    <tr class="{{ $data['count'] == 0 ? 'text-muted' : '' }}">
-                        <td class="fw-semibold">Tháng {{ $m }}</td>
-                        <td class="text-center">{{ $data['count'] > 0 ? $data['count'] : '—' }}</td>
-                        <td class="text-end">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') : '—' }}</td>
-                        <td class="text-end fw-semibold text-primary">{{ $data['sales_amount'] > 0 ? number_format($data['sales_amount'], 0, ',', '.') . ' đ' : '—' }}</td>
-                    </tr>
+                    @foreach($personalRows as $row)
+                        <tr>
+                            <td class="text-center fw-semibold">{{ $row['month'] }}</td>
+                            <td class="text-end fw-semibold">{{ number_format($row['target'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-danger">{{ number_format($row['target_cumulative'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-dark">{{ number_format($row['actual'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-danger">{{ number_format($row['actual_cumulative'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-primary">{{ number_format($row['remaining'], 0, ',', '.') }}đ</td>
+                            <td class="text-center fw-bold {{ ($row['kpi_pct'] ?? 0) >= 100 ? 'text-success' : 'text-danger' }}">
+                                {{ $row['kpi_pct'] !== null ? $row['kpi_pct'] . '%' : '—' }}
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
-                <tfoot class="table-secondary fw-bold">
+                <tfoot class="fw-bold">
                     <tr>
-                        <td>Tổng</td>
-                        <td class="text-center">{{ $totals['count'] }}</td>
-                        <td class="text-end">{{ number_format($totals['value'], 0, ',', '.') }} đ</td>
-                        <td class="text-end text-primary">{{ number_format($totals['sales_amount'], 0, ',', '.') }} đ</td>
+                        <td class="text-center">Tổng cộng</td>
+                        <td class="text-end">{{ number_format($personalTotals['target'], 0, ',', '.') }}đ</td>
+                        <td class="text-end">{{ number_format($personalTotals['target_cumulative'], 0, ',', '.') }}đ</td>
+                        <td class="text-end">{{ number_format($personalTotals['actual'], 0, ',', '.') }}đ</td>
+                        <td class="text-end">{{ number_format($personalTotals['actual_cumulative'], 0, ',', '.') }}đ</td>
+                        <td class="text-end">{{ number_format($personalTotals['remaining'], 0, ',', '.') }}đ</td>
+                        <td class="text-center">{{ $personalTotals['kpi_pct'] !== null ? $personalTotals['kpi_pct'] . '%' : '—' }}</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
-    @else
-    {{-- Tổng hợp tất cả nhân viên --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom py-3">
-            <h6 class="mb-0 fw-bold">Doanh số báo giá tất cả nhân viên — Năm {{ $year }}</h6>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Nhân viên</th>
-                        <th class="text-center">Số báo giá</th>
-                        <th class="text-end">Giá trị (chưa VAT)</th>
-                        <th class="text-end">Doanh số</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($allStaff as $i => $row)
-                    <tr>
-                        <td class="text-muted small">{{ $i + 1 }}</td>
-                        <td class="fw-semibold">{{ $row['name'] }}</td>
-                        <td class="text-center">{{ $row['count'] }}</td>
-                        <td class="text-end">{{ number_format($row['value'], 0, ',', '.') }}</td>
-                        <td class="text-end fw-bold text-primary">{{ number_format($row['sales_amount'], 0, ',', '.') }} đ</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    @endif
 </div>

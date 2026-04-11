@@ -28,6 +28,119 @@
         $isIT = auth()->user()->hasRole('it');
     @endphp
 
+    @push('styles')
+    <style>
+        .kpi-modern-card {
+            --kpi-accent: #7aa2ff;
+            --kpi-accent-rgb: 122, 162, 255;
+            position: relative;
+            border: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            background:
+                radial-gradient(120% 160% at 100% 0%, rgba(var(--kpi-accent-rgb), 0.2) 0%, rgba(var(--kpi-accent-rgb), 0) 55%),
+                linear-gradient(135deg, #181f2b 0%, #0f141d 100%);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.28);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .kpi-modern-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .kpi-modern-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.34);
+        }
+
+        .kpi-modern-title {
+            color: rgba(226, 232, 240, 0.85);
+            font-size: 13px;
+            line-height: 1.45;
+            min-height: 38px;
+        }
+
+        .kpi-modern-value {
+            color: var(--kpi-accent);
+            font-size: clamp(1.45rem, 2.4vw, 1.95rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-top: 6px;
+            letter-spacing: 0.2px;
+        }
+
+        .kpi-modern-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--kpi-accent);
+            background: rgba(var(--kpi-accent-rgb), 0.22);
+            box-shadow: inset 0 0 0 1px rgba(var(--kpi-accent-rgb), 0.45);
+        }
+
+        .kpi-modern-sparkline {
+            color: var(--kpi-accent);
+            opacity: 0.95;
+            margin-top: auto;
+        }
+
+        .kpi-modern-sparkline svg {
+            width: 100%;
+            height: 36px;
+            display: block;
+        }
+
+        .kpi-modern-sparkline path {
+            stroke: currentColor;
+            stroke-width: 2.2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 4px rgba(var(--kpi-accent-rgb), 0.35));
+        }
+
+        .kpi-modern-card.kpi-contracts {
+            --kpi-accent: #4fd3a4;
+            --kpi-accent-rgb: 79, 211, 164;
+        }
+
+        .kpi-modern-card.kpi-value {
+            --kpi-accent: #f6c65b;
+            --kpi-accent-rgb: 246, 198, 91;
+        }
+
+        .kpi-modern-card.kpi-sales {
+            --kpi-accent: #53b8ff;
+            --kpi-accent-rgb: 83, 184, 255;
+        }
+
+        @media (max-width: 575.98px) {
+            .kpi-modern-title {
+                min-height: 34px;
+                font-size: 12px;
+            }
+
+            .kpi-modern-value {
+                font-size: 1.4rem;
+            }
+
+            .kpi-modern-icon {
+                width: 42px;
+                height: 42px;
+            }
+        }
+    </style>
+    @endpush
+
     @if($dailyReportReminder)
         <div class="alert border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 12px; border-left: 4px solid #f59e0b !important;">
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
@@ -327,13 +440,10 @@
         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
         <div class="row g-3 mb-4">
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center" style="width:40px;height:40px;flex-shrink:0">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                        </div>
-                        <div>
-                            <div class="small text-muted">
+                <div class="card kpi-modern-card h-100">
+                    <div class="card-body p-3 p-md-4 d-flex flex-column gap-2">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                            <div class="kpi-modern-title">
                                 Tổng KH
                                 @if($month !== '')
                                     - Tháng {{ $month }}/{{ $year }}
@@ -341,19 +451,24 @@
                                     - Năm {{ $year }}
                                 @endif
                             </div>
-                            <div class="fw-bold fs-5 text-primary">{{ number_format($totalCustomers) }}</div>
+                            <div class="kpi-modern-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                            </div>
+                        </div>
+                        <div class="kpi-modern-value">{{ number_format($totalCustomers) }}</div>
+                        <div class="kpi-modern-sparkline" aria-hidden="true">
+                            <svg viewBox="0 0 180 36" preserveAspectRatio="none">
+                                <path d="M2 28 C10 30, 14 14, 24 16 C32 17, 36 28, 46 26 C57 24, 62 10, 72 12 C83 14, 89 30, 98 28 C108 26, 112 16, 122 17 C132 18, 137 31, 147 26 C156 22, 162 14, 178 18"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center" style="width:40px;height:40px;flex-shrink:0">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                        </div>
-                        <div>
-                            <div class="small text-muted">
+                <div class="card kpi-modern-card kpi-contracts h-100">
+                    <div class="card-body p-3 p-md-4 d-flex flex-column gap-2">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                            <div class="kpi-modern-title">
                                 Hợp đồng
                                 @if($month !== '')
                                     - Tháng {{ $month }}/{{ $year }}
@@ -361,44 +476,62 @@
                                     - Năm {{ $year }}
                                 @endif
                             </div>
-                            <div class="fw-bold fs-5 text-success">{{ number_format($totalContracts) }}</div>
+                            <div class="kpi-modern-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            </div>
+                        </div>
+                        <div class="kpi-modern-value">{{ number_format($totalContracts) }}</div>
+                        <div class="kpi-modern-sparkline" aria-hidden="true">
+                            <svg viewBox="0 0 180 36" preserveAspectRatio="none">
+                                <path d="M2 27 C11 24, 16 30, 26 27 C35 24, 40 14, 50 16 C60 18, 64 31, 74 29 C84 27, 89 19, 98 21 C108 23, 114 31, 124 27 C134 23, 138 12, 148 14 C158 17, 164 27, 178 23"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
             </div>
             @if($canSeeFinance)
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center" style="width:40px;height:40px;flex-shrink:0">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                        </div>
-                        <div>
-                            <div class="small text-muted">
+                <div class="card kpi-modern-card kpi-value h-100">
+                    <div class="card-body p-3 p-md-4 d-flex flex-column gap-2">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                            <div class="kpi-modern-title">
                                 Giá trị HĐ (Triệu)
                                 @if($month !== '')
                                     - Tháng {{ $month }}/{{ $year }}
                                 @endif
                             </div>
-                            <div class="fw-bold fs-5 text-warning">{{ number_format($totalContractValue/1000000, 2) }} Tr</div>
+                            <div class="kpi-modern-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                        </div>
+                        <div class="kpi-modern-value">{{ number_format($totalContractValue/1000000, 2) }} Tr</div>
+                        <div class="kpi-modern-sparkline" aria-hidden="true">
+                            <svg viewBox="0 0 180 36" preserveAspectRatio="none">
+                                <path d="M2 29 C12 27, 18 22, 28 24 C38 27, 42 33, 52 30 C62 26, 67 17, 78 18 C88 19, 92 28, 102 27 C112 26, 117 14, 128 15 C139 16, 144 25, 154 24 C163 23, 168 18, 178 20"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-soft-info d-flex align-items-center justify-content-center" style="width:40px;height:40px;flex-shrink:0">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-info" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>
-                        </div>
-                        <div>
-                            <div class="small text-muted">
+                <div class="card kpi-modern-card kpi-sales h-100">
+                    <div class="card-body p-3 p-md-4 d-flex flex-column gap-2">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                            <div class="kpi-modern-title">
                                 Doanh số ghi nhận (Triệu)
                                 @if($month !== '')
                                     - Tháng {{ $month }}/{{ $year }}
                                 @endif
                             </div>
-                            <div class="fw-bold fs-5 text-info">{{ number_format($totalSales/1000000, 2) }} Tr</div>
+                            <div class="kpi-modern-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>
+                            </div>
+                        </div>
+                        <div class="kpi-modern-value">{{ number_format($totalSales/1000000, 2) }} Tr</div>
+                        <div class="kpi-modern-sparkline" aria-hidden="true">
+                            <svg viewBox="0 0 180 36" preserveAspectRatio="none">
+                                <path d="M2 30 C11 33, 15 19, 25 20 C34 20, 39 27, 49 26 C59 25, 64 13, 74 14 C84 14, 89 22, 99 24 C109 26, 113 15, 123 16 C133 17, 138 27, 148 27 C158 27, 163 15, 178 12"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
@@ -830,7 +963,7 @@
                 'CÔNG TY': '#f43f5e',
                 'MỚI': '#0ea5e9'
             };
-            
+
             const palette = [
                 '#007bff', '#c084fc', '#facc15', '#b91c1c', '#15803d', '#f43f5e', '#0ea5e9',
                 '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e', '#f97316', '#fbbf24', '#84cc16', '#10b981', '#06b6d4'

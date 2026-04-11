@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
+use App\Models\ContractCommercial;
+use App\Models\ContractConsulting;
+use App\Models\ContractEnergy;
 use App\Models\ContractPaymentSchedule;
-use App\Models\RenewalSales;
-use App\Models\ProgressiveSales;
+use App\Models\ContractProject;
+use App\Models\ContractSustainability;
+use App\Models\ContractWaste;
 use App\Models\User;
 use Livewire\Component;
 
@@ -12,6 +16,15 @@ class SalesSummaryReport extends Component
 {
     public int $year;
     public string $filter_staff = '';
+
+    protected array $contractModelClasses = [
+        ContractWaste::class,
+        ContractConsulting::class,
+        ContractProject::class,
+        ContractCommercial::class,
+        ContractSustainability::class,
+        ContractEnergy::class,
+    ];
 
     public function mount(): void
     {
@@ -22,45 +35,87 @@ class SalesSummaryReport extends Component
     {
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
-            $months[$m] = ['renewal' => 0, 'progressive' => 0, 'payment_due' => 0, 'payment_paid' => 0];
+            $months[$m] = [
+                'renewal' => 0,
+                'progressive' => 0,
+                'contract_total' => 0,
+                'payment_due' => 0,
+                'payment_paid' => 0,
+            ];
         }
 
-        foreach (RenewalSales::whereYear('sales_month', $this->year)
-            ->when($this->filter_staff, fn($q) => $q->where('user_id', $this->filter_staff))
-            ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
-            ->groupBy('m')->get() as $r) {
-            $months[$r->m]['renewal'] = (float) $r->total;
+        $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+        $targetStaffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+
+        if (!empty($targetStaffIds)) {
+            foreach ($this->contractModelClasses as $modelClass) {
+                foreach ($modelClass::query()
+                    ->whereYear('signed_at', $this->year)
+                    ->whereIn('staff_id', $targetStaffIds)
+                    ->where('is_renewal', true)
+                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->groupBy('m')
+                    ->get() as $r) {
+                    $months[(int) $r->m]['renewal'] += (float) $r->total;
+                }
+
+                foreach ($modelClass::query()
+                    ->whereYear('signed_at', $this->year)
+                    ->whereIn('staff_id', $targetStaffIds)
+                    ->where(function ($q) {
+                        $q->where('is_renewal', false)->orWhereNull('is_renewal');
+                    })
+                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->groupBy('m')
+                    ->get() as $r) {
+                    $months[(int) $r->m]['progressive'] += (float) $r->total;
+                }
+            }
         }
 
-        foreach (ProgressiveSales::whereYear('sales_month', $this->year)
-            ->when($this->filter_staff, fn($q) => $q->where('user_id', $this->filter_staff))
-            ->selectRaw('MONTH(sales_month) as m, SUM(amount) as total')
-            ->groupBy('m')->get() as $r) {
-            $months[$r->m]['progressive'] = (float) $r->total;
+        $paymentScheduleQuery = ContractPaymentSchedule::query();
+        if (!empty($targetStaffIds)) {
+            $paymentScheduleQuery->where(function ($q) use ($targetStaffIds) {
+                foreach ($this->contractModelClasses as $modelClass) {
+                    $q->orWhere(function ($sub) use ($modelClass, $targetStaffIds) {
+                        $sub->where('contract_type', $modelClass)
+                            ->whereIn('contract_id', $modelClass::query()
+                                ->whereIn('staff_id', $targetStaffIds)
+                                ->select('id'));
+                    });
+                }
+            });
+        } else {
+            $paymentScheduleQuery->whereRaw('1 = 0');
         }
 
         // ── Tiến độ thu tiền ────────────────────────
-        foreach (ContractPaymentSchedule::whereYear('due_date', $this->year)
+        foreach ((clone $paymentScheduleQuery)->whereYear('due_date', $this->year)
             ->selectRaw('MONTH(due_date) as m, SUM(amount) as total')
             ->groupBy('m')->get() as $r) {
             $months[$r->m]['payment_due'] = (float) $r->total;
         }
 
-        foreach (ContractPaymentSchedule::whereYear('paid_date', $this->year)
+        foreach ((clone $paymentScheduleQuery)->whereYear('paid_date', $this->year)
             ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
             ->groupBy('m')->get() as $r) {
             $months[$r->m]['payment_paid'] = (float) $r->total;
         }
 
+        for ($m = 1; $m <= 12; $m++) {
+            $months[$m]['contract_total'] = $months[$m]['renewal'] + $months[$m]['progressive'];
+        }
+
         $totals = [
-            'renewal'      => array_sum(array_column($months, 'renewal')),
-            'progressive'  => array_sum(array_column($months, 'progressive')),
-            'payment_due'  => array_sum(array_column($months, 'payment_due')),
+            'renewal' => array_sum(array_column($months, 'renewal')),
+            'progressive' => array_sum(array_column($months, 'progressive')),
+            'contract_total' => array_sum(array_column($months, 'contract_total')),
+            'payment_due' => array_sum(array_column($months, 'payment_due')),
             'payment_paid' => array_sum(array_column($months, 'payment_paid')),
         ];
-        $totals['grand'] = $totals['renewal'] + $totals['progressive'];
+        $totals['grand'] = $totals['contract_total'];
 
-        $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
+        $staffs = User::query()->whereIn('id', $salesStaffIds)->orderBy('name')->get();
 
         return view('livewire.admin.reports.sales.sales-summary-report', [
             'months'  => $months,
