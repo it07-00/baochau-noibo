@@ -116,37 +116,39 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
-                            <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap" type="button"
-                                    @click.prevent="open = !open"
-                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
-                                    {{ $staffs->find($filter['staff_id'])?->name ?? 'Chọn nhân viên' }}
-                                </button>
-                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                    x-cloak style="max-height: 300px; overflow-y: auto;">
-                                    <input type="text" x-model="search" class="form-control form-control-sm mb-2"
-                                        placeholder="Tìm kiếm..." @click.stop>
-                                    <button class="dropdown-item @if (!$filter['staff_id']) active @endif"
-                                        type="button"
-                                        x-show="'chọn nhân viên'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                        wire:click="$set('filter.staff_id', '')" @click="open = false">Chọn nhân
-                                        viên</button>
-                                    @foreach ($staffs as $staff)
-                                        <button
-                                            class="dropdown-item text-wrap @if ($filter['staff_id'] == $staff->id) active @endif"
+                        @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
+                                <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                    <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                        @click.prevent="open = !open"
+                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                        {{ $staffs->find($filter['staff_id'])?->name ?? 'Chọn nhân viên' }}
+                                    </button>
+                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
+                                        x-cloak style="max-height: 300px; overflow-y: auto;">
+                                        <input type="text" x-model="search" class="form-control form-control-sm mb-2"
+                                            placeholder="Tìm kiếm..." @click.stop>
+                                        <button class="dropdown-item @if (!$filter['staff_id']) active @endif"
                                             type="button"
-                                            x-show="{{ json_encode(mb_strtolower($staff->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                            style="white-space: normal !important; word-break: break-all;"
-                                            wire:click="$set('filter.staff_id', {{ $staff->id }})"
-                                            @click="open = false">
-                                            {{ $staff->name }}
-                                        </button>
-                                    @endforeach
+                                            x-show="'chọn nhân viên'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                            wire:click="$set('filter.staff_id', '')" @click="open = false">Chọn nhân
+                                            viên</button>
+                                        @foreach ($staffs as $staff)
+                                            <button
+                                                class="dropdown-item text-wrap @if ($filter['staff_id'] == $staff->id) active @endif"
+                                                type="button"
+                                                x-show="{{ json_encode(mb_strtolower($staff->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                                style="white-space: normal !important; word-break: break-all;"
+                                                wire:click="$set('filter.staff_id', {{ $staff->id }})"
+                                                @click="open = false">
+                                                {{ $staff->name }}
+                                            </button>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
                             <select class="form-select form-control-xs" wire:model.live="filter.province">
@@ -910,42 +912,44 @@
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Nhân viên <span class="text-danger">*</span></label>
-                                <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                    <button
-                                        class="form-select text-start text-wrap @error('formData.staff_id') is-invalid @enderror"
-                                        type="button" @click.prevent="open = !open"
-                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
-                                        {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? 'Chọn nhân viên' }}
-                                    </button>
-                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open"
-                                        @click.away="open = false" x-cloak
-                                        style="max-height: 300px; overflow-y: auto;">
-                                        <input type="text" x-model="search"
-                                            class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
-                                            @click.stop>
-                                        <button class="dropdown-item @if (empty($formData['staff_id'])) active @endif"
-                                            type="button" x-show="!search.length"
-                                            wire:click="$set('formData.staff_id', '')" @click="open = false">Chọn nhân
-                                            viên</button>
-                                        @foreach ($staffs as $s)
-                                            <button
-                                                class="dropdown-item text-wrap @if (($formData['staff_id'] ?? '') == $s->id) active @endif"
-                                                type="button"
-                                                x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                style="white-space: normal !important;"
-                                                wire:click="$set('formData.staff_id', {{ $s->id }})"
-                                                @click="open = false">
-                                                {{ $s->name }}
-                                            </button>
-                                        @endforeach
+                            @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Nhân viên <span class="text-danger">*</span></label>
+                                    <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                        <button
+                                            class="form-select text-start text-wrap @error('formData.staff_id') is-invalid @enderror"
+                                            type="button" @click.prevent="open = !open"
+                                            style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                            {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? 'Chọn nhân viên' }}
+                                        </button>
+                                        <div class="dropdown-menu-custom w-100 p-2" x-show="open"
+                                            @click.away="open = false" x-cloak
+                                            style="max-height: 300px; overflow-y: auto;">
+                                            <input type="text" x-model="search"
+                                                class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
+                                                @click.stop>
+                                            <button class="dropdown-item @if (empty($formData['staff_id'])) active @endif"
+                                                type="button" x-show="!search.length"
+                                                wire:click="$set('formData.staff_id', '')" @click="open = false">Chọn nhân
+                                                viên</button>
+                                            @foreach ($staffs as $s)
+                                                <button
+                                                    class="dropdown-item text-wrap @if (($formData['staff_id'] ?? '') == $s->id) active @endif"
+                                                    type="button"
+                                                    x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                                    style="white-space: normal !important;"
+                                                    wire:click="$set('formData.staff_id', {{ $s->id }})"
+                                                    @click="open = false">
+                                                    {{ $s->name }}
+                                                </button>
+                                            @endforeach
+                                        </div>
                                     </div>
+                                    @error('formData.staff_id')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                @error('formData.staff_id')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            @endif
                             <div class="col-md-3 d-none">
                                 <label class="form-label fw-bold">Phòng ban</label>
                                 <select class="form-select" wire:model.defer="formData.department_id">

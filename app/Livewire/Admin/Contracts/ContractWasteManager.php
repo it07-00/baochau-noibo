@@ -171,25 +171,43 @@ class ContractWasteManager extends Component
 
     public function save()
     {
-        abort_unless(
-            auth()->user()->can($this->isEditing ? 'contracts-waste.edit' : 'contracts-waste.create'),
-            403
-        );
+        $user = auth()->user();
 
-        if ($this->isEditing && auth()->user()->hasRole('tp-kinh-doanh')) {
-            abort_if($this->selectedDoc->staff_id !== auth()->id(), 403);
+        if (!$user->can($this->isEditing ? 'contracts-waste.edit' : 'contracts-waste.create')) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
+            return;
+        }
+
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
+            return;
+        }
+
+        if (!$user->hasAnyRole(['tp-kinh-doanh', 'giam-doc'])) {
+            $this->formData['staff_id'] = ($this->isEditing && $this->selectedDoc)
+                ? ($this->selectedDoc->staff_id ?: $user->id)
+                : $user->id;
         }
 
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
         $this->ensureDepartmentId();
 
-        $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
+        try {
+            $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $firstError = $e->validator->errors()->first();
+            if ($firstError) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => $firstError]);
+            }
+            throw $e;
+        }
 
         $data = collect($this->formData)->map(function ($value) {
             return $value === '' ? null : $value;
         })->toArray();
 
-        $isAccountant = auth()->user()->hasRole('ke-toan');
+        $isAccountant = $user->hasRole('ke-toan');
 
         if (!$this->isEditing) {
             // Số HĐ chỉ do kế toán cập nhật sau khi tạo.
@@ -244,10 +262,13 @@ class ContractWasteManager extends Component
     public function delete($id)
     {
         $doc = ContractWaste::findOrFail($id);
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
-            abort_if($doc->staff_id !== auth()->id(), 403);
+        $user = auth()->user();
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+
+        if ($isRestrictedTpKd) {
+            abort_if($doc->staff_id !== $user->id, 403);
         }
-        abort_unless(auth()->user()->can('contracts-waste.delete'), 403);
+        abort_unless($user->can('contracts-waste.delete'), 403);
 
         $doc->delete();
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
@@ -433,6 +454,10 @@ class ContractWasteManager extends Component
 
     public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole('kinh-doanh')
+            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+
         $query = ContractWaste::with(['customer', 'handler', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
@@ -443,9 +468,9 @@ class ContractWasteManager extends Component
                         });
                 });
             })
-            ->when(auth()->user()->hasRole('kinh-doanh'), fn($q) => $q->where('staff_id', auth()->id()))
-            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
+            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         if ($this->filter['signed_from'] ?? null)    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
         if ($this->filter['signed_to'] ?? null)      $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
@@ -481,6 +506,10 @@ class ContractWasteManager extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole('kinh-doanh')
+            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+
         $query = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function($q) {
                 $q->where(function($sq) {
@@ -491,10 +520,10 @@ class ContractWasteManager extends Component
                       });
                 });
             })
-            ->when(auth()->user()->hasRole('kinh-doanh'),
-                fn($q) => $q->where('staff_id', auth()->id()))
-            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
+            ->when($isRestrictedSales,
+                fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         // Apply filters
         if ($this->filter['signed_from'] ?? null) $query->whereDate('signed_at', '>=', $this->filter['signed_from']);

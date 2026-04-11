@@ -148,13 +148,22 @@ class ContractCommercialManager extends Component
 
     public function save(): void
     {
+        $user = auth()->user();
+
         abort_unless(
-            auth()->user()->can($this->isEditing ? 'contracts-commercial.edit' : 'contracts-commercial.create'),
+            $user->can($this->isEditing ? 'contracts-commercial.edit' : 'contracts-commercial.create'),
             403
         );
 
-        if ($this->isEditing && auth()->user()->hasRole('tp-kinh-doanh')) {
-            abort_if($this->selectedDoc->staff_id !== auth()->id(), 403);
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        if ($this->isEditing && $isRestrictedTpKd) {
+            abort_if($this->selectedDoc->staff_id !== $user->id, 403);
+        }
+
+        if (!$user->hasAnyRole(['tp-kinh-doanh', 'giam-doc'])) {
+            $this->formData['staff_id'] = ($this->isEditing && $this->selectedDoc)
+                ? ($this->selectedDoc->staff_id ?: $user->id)
+                : $user->id;
         }
 
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
@@ -164,7 +173,7 @@ class ContractCommercialManager extends Component
 
         $data = collect($this->formData)->map(fn($v) => $v === '' ? null : $v)->toArray();
 
-        $isAccountant = auth()->user()->hasRole('ke-toan');
+        $isAccountant = $user->hasRole('ke-toan');
         if (!$this->isEditing) {
             // Số HĐ BC do kế toán bổ sung sau khi tạo.
             $data['shd_bc'] = null;
@@ -186,12 +195,15 @@ class ContractCommercialManager extends Component
     public function updateStatus(int $id, string $status): void
     {
         $doc = ContractCommercial::findOrFail($id);
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
-            abort_if($doc->staff_id !== auth()->id(), 403);
+        $user = auth()->user();
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+
+        if ($isRestrictedTpKd) {
+            abort_if($doc->staff_id !== $user->id, 403);
         } else {
-            abort_if(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+            abort_if($user->hasAnyRole(['tu-van', 'ky-thuat']), 403);
         }
-        abort_unless(auth()->user()->can('contracts-commercial.edit'), 403);
+        abort_unless($user->can('contracts-commercial.edit'), 403);
 
         if (!in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
@@ -209,10 +221,13 @@ class ContractCommercialManager extends Component
     public function delete(int $id): void
     {
         $doc = ContractCommercial::findOrFail($id);
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
-            abort_if($doc->staff_id !== auth()->id(), 403);
+        $user = auth()->user();
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+
+        if ($isRestrictedTpKd) {
+            abort_if($doc->staff_id !== $user->id, 403);
         }
-        abort_unless(auth()->user()->can('contracts-commercial.delete'), 403);
+        abort_unless($user->can('contracts-commercial.delete'), 403);
 
         $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
@@ -379,6 +394,10 @@ class ContractCommercialManager extends Component
 
     public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole('kinh-doanh')
+            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+
         $query = ContractCommercial::with(['customer', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
@@ -388,9 +407,9 @@ class ContractCommercialManager extends Component
                         });
                 });
             })
-            ->when(auth()->user()->hasRole('kinh-doanh'), fn($q) => $q->where('staff_id', auth()->id()))
-            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
+            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         if ($this->filter['signed_from'])    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
         if ($this->filter['signed_to'])      $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
@@ -422,6 +441,10 @@ class ContractCommercialManager extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole('kinh-doanh')
+            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+
         $query = ContractCommercial::with(['customer', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
@@ -431,10 +454,10 @@ class ContractCommercialManager extends Component
                         });
                 });
             })
-            ->when(auth()->user()->hasRole('kinh-doanh'),
-                fn($q) => $q->where('staff_id', auth()->id()))
-            ->when(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', auth()->id())));
+            ->when($isRestrictedSales,
+                fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         if ($this->filter['signed_from'])    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
         if ($this->filter['signed_to'])      $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
