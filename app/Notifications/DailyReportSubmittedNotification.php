@@ -26,10 +26,11 @@ class DailyReportSubmittedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'icon'    => 'bi-file-earmark-text-fill',
-            'color'   => 'primary',
-            'message' => "Báo cáo ngày: {$this->reporterName} đã gửi báo cáo ngày " . date('d/m/Y', strtotime($this->reportDate)),
-            'url'     => route('app.daily-reports.index', ['dateFilter' => $this->reportDate, 'viewType' => 'day']),
+            'icon'           => 'bi-file-earmark-text-fill',
+            'color'          => 'primary',
+            'contract_label' => 'Báo cáo ngày',
+            'message'        => "{$this->reporterName} đã gửi báo cáo ngày " . date('d/m/Y', strtotime($this->reportDate)),
+            'url'            => route('app.daily-reports.index', ['dateFilter' => $this->reportDate, 'viewType' => 'day']),
         ];
     }
 }

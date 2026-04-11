@@ -277,7 +277,19 @@ class ContractConsultingManager extends Component
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractConsulting::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'it']))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))->get();
+
+        $assignmentUserIds = ContractAssignment::where('assignable_type', ContractConsulting::class)
+            ->where('assignable_id', $contractId)
+            ->get(['user_id', 'assigned_by'])
+            ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
+            ->filter()
+            ->unique()
+            ->values();
+        if ($assignmentUserIds->isNotEmpty()) {
+            $recipients = $recipients->merge(User::whereIn('id', $assignmentUserIds)->get());
+        }
+
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
             if ($staff) $recipients->push($staff);

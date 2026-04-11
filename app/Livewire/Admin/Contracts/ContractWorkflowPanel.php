@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Contracts;
 
 use App\Models\ContractWorkflowStep;
 use App\Models\ContractMilestoneFile;
+use App\Models\ContractAssignment;
 use App\Models\User;
 use App\Notifications\ContractWorkflowUpdatedNotification;
 use Livewire\Component;
@@ -129,7 +130,20 @@ class ContractWorkflowPanel extends Component
         // Map contract type key từ model class
         $typeKey = array_search($modelClass, $this->modelMap) ?: $this->contractType;
 
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'it']))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))->get();
+
+        $assignmentUserIds = ContractAssignment::where('assignable_type', $modelClass)
+            ->where('assignable_id', $this->contractId)
+            ->get(['user_id', 'assigned_by'])
+            ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($assignmentUserIds->isNotEmpty()) {
+            $recipients = $recipients->merge(User::whereIn('id', $assignmentUserIds)->get());
+        }
+
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
             if ($staff) $recipients->push($staff);
