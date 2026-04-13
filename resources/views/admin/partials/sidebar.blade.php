@@ -715,9 +715,16 @@
                             'ke-toan' => 'Kế toán',
                             'quan-ly' => 'Quản lý',
                         ];
+
+                        $rolePriority = ['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'ke-toan', 'marketing', 'tu-van', 'ky-thuat', 'kinh-doanh'];
+                        $primaryRole = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
+
+                        if (!$primaryRole) {
+                            $primaryRole = $currentUser?->roles?->first()?->name;
+                        }
                     @endphp
                     <span
-                        class="text-muted">{{ $roleLabels[$currentUser?->roles?->first()?->name] ?? 'Nhân viên' }}</span>
+                        class="text-muted">{{ $roleLabels[$primaryRole] ?? 'Nhân viên' }}</span>
                 </div>
             </div>
         </div>

@@ -1,5 +1,26 @@
 @php
     $currentUser = auth()->user();
+
+    $roleLabels = [
+        'it' => 'IT / Quản trị',
+        'giam-doc' => 'Giám đốc',
+        'tp-kinh-doanh' => 'Trưởng phòng KD',
+        'quan-ly' => 'Quản lý',
+        'kinh-doanh' => 'Nhân viên KD',
+        'tu-van' => 'Tư vấn',
+        'ky-thuat' => 'Kỹ thuật',
+        'marketing' => 'Marketing',
+        'ke-toan' => 'Kế toán',
+    ];
+
+    $rolePriority = ['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'ke-toan', 'marketing', 'tu-van', 'ky-thuat', 'kinh-doanh'];
+    $primaryRole = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
+
+    if (!$primaryRole) {
+        $primaryRole = $currentUser?->roles?->first()?->name;
+    }
+
+    $roleLabel = $roleLabels[$primaryRole] ?? 'Nhân viên';
 @endphp
 
 <div class="app-header bg-card py-2 px-4 px-md-6 d-flex align-items-center">
@@ -67,7 +88,7 @@
                             </div>
                             <div class="flex-grow-1 text-start overflow-hidden">
                                 <h6 class="mb-0 text-truncate" style="max-width:180px;" title="{{ $currentUser?->name }}">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
-                                <span class="text-muted">Quản trị viên</span>
+                                <span class="text-muted">{{ $roleLabel }}</span>
                             </div>
                         </div>
                         <div class="dropdown-body py-2">
