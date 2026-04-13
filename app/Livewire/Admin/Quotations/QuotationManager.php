@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Livewire\Concerns\CleanMoneyInput;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
@@ -21,6 +22,7 @@ class QuotationManager extends Component
     public $filter_status = '';
     public $date_from = '';
     public $date_to = '';
+    public $sortDirection = 'desc';
 
     public $showModal = false;
     public $isEditing = false;
@@ -202,6 +204,12 @@ class QuotationManager extends Component
     public function updatedFormDataCommissionValue() { $this->recalculateTotals(); }
     public function updatedFormDataCommissionTax() { $this->recalculateTotals(); }
 
+    public function updatedSortDirection($value): void
+    {
+        $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
+        $this->resetPage();
+    }
+
     private function parseMoneyValue(mixed $value): float
     {
         if (is_int($value) || is_float($value)) {
@@ -224,6 +232,152 @@ class QuotationManager extends Component
 
         $this->formData['value_inc_vat'] = round($preVatValue);
         $this->formData['total_value'] = round($preVatValue * 1.08);
+    }
+
+    private function normalizeImportHeader(string $header): string
+    {
+        return Str::of($header)
+            ->lower()
+            ->ascii()
+            ->replaceMatches('/[^a-z0-9]+/', ' ')
+            ->trim()
+            ->value();
+    }
+
+    private function parseImportedDate(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+
+        if (is_numeric($value)) {
+            $raw = trim((string) $value);
+            $digits = preg_replace('/\D+/', '', $raw) ?? '';
+
+            if (strlen($digits) === 8) {
+                $ymd = $this->parseDateByFormatStrict('Ymd', $digits);
+                if ($ymd) {
+                    return $ymd->format('Y-m-d');
+                }
+
+                $dmy = $this->parseDateByFormatStrict('dmY', $digits);
+                if ($dmy) {
+                    return $dmy->format('Y-m-d');
+                }
+
+                $mdy = $this->parseDateByFormatStrict('mdY', $digits);
+                if ($mdy) {
+                    return $mdy->format('Y-m-d');
+                }
+            }
+
+            $serial = (float) $value;
+            if ($serial >= 1 && $serial <= 100000) {
+                try {
+                    return ExcelDate::excelToDateTimeObject($serial)->format('Y-m-d');
+                } catch (\Throwable $e) {
+                    // Fall through to string parsing below.
+                }
+            }
+        }
+
+        $raw = trim((string) $value);
+        if ($raw === '') {
+            return null;
+        }
+
+        $formats = [
+            'd/m/Y',
+            'j/n/Y',
+            'd-m-Y',
+            'j-n-Y',
+            'd.m.Y',
+            'j.n.Y',
+            'm/d/Y',
+            'n/j/Y',
+            'm-d-Y',
+            'n-j-Y',
+            'm.d.Y',
+            'n.j.Y',
+            'Y-m-d',
+            'Y/m/d',
+            'Y.m.d',
+            'd/m/y',
+            'j/n/y',
+            'd-m-y',
+            'j-n-y',
+            'd.m.y',
+            'j.n.y',
+            'm/d/y',
+            'n/j/y',
+            'm-d-y',
+            'n-j-y',
+            'm.d.y',
+            'n.j.y',
+            'd/m/Y H:i',
+            'd/m/Y H:i:s',
+            'd-m-Y H:i',
+            'd-m-Y H:i:s',
+            'm/d/Y H:i',
+            'm/d/Y H:i:s',
+            'n/j/Y H:i',
+            'n/j/Y H:i:s',
+            'Y-m-d H:i',
+            'Y-m-d H:i:s',
+            'Y/m/d H:i',
+            'Y/m/d H:i:s',
+        ];
+
+        foreach ($formats as $format) {
+            $parsed = $this->parseDateByFormatStrict($format, $raw);
+            if ($parsed instanceof \DateTimeInterface) {
+                return $parsed->format('Y-m-d');
+            }
+        }
+
+        $timestamp = strtotime($raw);
+        if ($timestamp !== false) {
+            return date('Y-m-d', $timestamp);
+        }
+
+        return null;
+    }
+
+    private function parseDateByFormatStrict(string $format, string $value): ?\DateTimeInterface
+    {
+        $parsed = \DateTime::createFromFormat('!' . $format, $value);
+        if (!$parsed) {
+            return null;
+        }
+
+        $errors = \DateTime::getLastErrors();
+        if (($errors['warning_count'] ?? 0) > 0 || ($errors['error_count'] ?? 0) > 0) {
+            return null;
+        }
+
+        return $parsed;
+    }
+
+    private function isDuplicateImportedQuotation(array $data): bool
+    {
+        $companyName = trim((string) ($data['company_name'] ?? ''));
+        $contactPerson = trim((string) ($data['contact_person'] ?? ''));
+        $service = trim((string) ($data['service'] ?? ''));
+
+        return Quotation::query()
+            ->whereDate('date', $data['date'])
+            ->where('staff_id', (int) ($data['staff_id'] ?? 0))
+            ->whereRaw('TRIM(COALESCE(company_name, "")) = ?', [$companyName])
+            ->whereRaw('TRIM(COALESCE(contact_person, "")) = ?', [$contactPerson])
+            ->whereRaw('TRIM(COALESCE(service, "")) = ?', [$service])
+            ->where('original_value', round((float) ($data['original_value'] ?? 0)))
+            ->where('commission_value', round((float) ($data['commission_value'] ?? 0)))
+            ->where('commission_tax', round((float) ($data['commission_tax'] ?? 0)))
+            ->exists();
     }
 
     public function create()
@@ -369,6 +523,12 @@ class QuotationManager extends Component
     private array $headerMap = [
         'ngày'                      => 'date',
         'ngay'                      => 'date',
+        'ngày báo giá'              => 'date',
+        'ngay bao gia'              => 'date',
+        'ngày tạo'                  => 'date',
+        'ngay tao'                  => 'date',
+        'date'                      => 'date',
+        'quotation date'            => 'date',
         'nhân viên'                 => 'staff_name',
         'nhan vien'                 => 'staff_name',
         'nhân viên sale'            => 'staff_name',
@@ -474,8 +634,11 @@ class QuotationManager extends Component
             // Auto-map headers
             foreach ($headerRow as $colIdx => $header) {
                 if ($header === null || $header === '') continue;
-                $normalized = mb_strtolower(trim((string)$header));
-                $this->importColumnMap[$colIdx] = $this->headerMap[$normalized] ?? '';
+                $normalized = mb_strtolower(trim((string) $header));
+                $normalizedAscii = $this->normalizeImportHeader((string) $header);
+                $this->importColumnMap[$colIdx] = $this->headerMap[$normalized]
+                    ?? $this->headerMap[$normalizedAscii]
+                    ?? '';
             }
 
             // Preview rows
@@ -519,9 +682,10 @@ class QuotationManager extends Component
 
             $staffLookup = User::pluck('id', 'name')->toArray();
             $imported = 0;
-            $skipped = 0;
+            $skippedMissingCompany = 0;
+            $skippedDuplicates = 0;
 
-            \Illuminate\Support\Facades\DB::transaction(function () use ($rows, $headerRowIdx, $staffLookup, &$imported, &$skipped) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($rows, $headerRowIdx, $staffLookup, &$imported, &$skippedMissingCompany, &$skippedDuplicates) {
             foreach ($rows as $i => $row) {
                 if ($i <= $headerRowIdx) continue;
                 $nonEmpty = array_filter($row, fn($v) => $v !== null && $v !== '');
@@ -545,26 +709,43 @@ class QuotationManager extends Component
                     $val = $row[$colIdx];
 
                     if ($field === 'date') {
-                        if (is_numeric($val)) {
-                            $data['date'] = ExcelDate::excelToDateTimeObject($val)->format('Y-m-d');
-                        } else {
-                            $parsed = \DateTime::createFromFormat('d/m/Y', (string)$val)
-                                   ?: \DateTime::createFromFormat('Y-m-d', (string)$val)
-                                   ?: \DateTime::createFromFormat('d-m-Y', (string)$val);
-                            $data['date'] = $parsed ? $parsed->format('Y-m-d') : null;
-                        }
+                        $data['date'] = $this->parseImportedDate($val);
                     } elseif ($field === 'staff_name') {
                         $staffName = trim((string)$val);
                         $data['staff_id'] = $staffLookup[$staffName] ?? auth()->id();
                     } elseif (in_array($field, ['original_value', 'value_inc_vat', 'commission_tax', 'commission_value', 'total_value'])) {
                         $data[$field] = (float) str_replace([',', '.', ' '], ['', '', ''], (string)$val);
                     } else {
-                        $data[$field] = $val !== null ? trim((string)$val) : null;
+                        $cleanValue = $val !== null ? trim((string) $val) : null;
+                        $data[$field] = $cleanValue === '' ? null : $cleanValue;
                     }
                 }
 
-                if (empty($data['company_name'])) { $skipped++; continue; }
+                if (empty($data['company_name'])) { $skippedMissingCompany++; continue; }
                 if (empty($data['date'])) $data['date'] = now()->format('Y-m-d');
+
+                $originalValue = round((float) ($data['original_value'] ?? 0));
+                $commissionValue = round((float) ($data['commission_value'] ?? 0));
+                $commissionTax = round((float) ($data['commission_tax'] ?? 0));
+                $preVatValue = round($originalValue + $commissionValue + $commissionTax);
+
+                $data['original_value'] = $originalValue;
+                $data['commission_value'] = $commissionValue;
+                $data['commission_tax'] = $commissionTax;
+                $data['value_inc_vat'] = round((float) ($data['value_inc_vat'] ?? 0));
+                $data['total_value'] = round((float) ($data['total_value'] ?? 0));
+
+                if ($data['value_inc_vat'] <= 0 && $preVatValue > 0) {
+                    $data['value_inc_vat'] = $preVatValue;
+                }
+                if ($data['total_value'] <= 0 && $preVatValue > 0) {
+                    $data['total_value'] = round($preVatValue * 1.08);
+                }
+
+                if ($this->isDuplicateImportedQuotation($data)) {
+                    $skippedDuplicates++;
+                    continue;
+                }
 
                 Quotation::create($data);
                 $imported++;
@@ -575,7 +756,16 @@ class QuotationManager extends Component
             $this->importPreview = [];
             $this->importHeaders = [];
             $this->importColumnMap = [];
-            $this->importSuccess = "Import thành công {$imported} dòng" . ($skipped ? ", bỏ qua {$skipped} dòng trống/thiếu tên công ty." : '.');
+
+            $messageParts = ["Import thành công {$imported} dòng"];
+            if ($skippedMissingCompany > 0) {
+                $messageParts[] = "bỏ qua {$skippedMissingCompany} dòng thiếu tên công ty";
+            }
+            if ($skippedDuplicates > 0) {
+                $messageParts[] = "bỏ qua {$skippedDuplicates} dòng trùng dữ liệu";
+            }
+            $this->importSuccess = implode(', ', $messageParts) . '.';
+
             $this->dispatch('close-import-modal');
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => $this->importSuccess]);
         } catch (\Throwable $e) {
@@ -595,6 +785,8 @@ class QuotationManager extends Component
 
     public function render()
     {
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+
         $query = Quotation::with('staff')
             ->when($this->isKinhDoanh(), fn($q) => $q->where('staff_id', auth()->id()))
             ->when($this->search, function($q) {
@@ -610,7 +802,7 @@ class QuotationManager extends Component
             ->when($this->date_to, fn($q) => $q->whereDate('date', '<=', $this->date_to));
 
         return view('livewire.admin.quotations.quotation-manager', [
-            'quotations' => $query->orderByDesc('date')->orderByDesc('id')->paginate(15),
+            'quotations' => $query->orderBy('date', $orderDirection)->orderBy('id', $orderDirection)->paginate(15),
             'staffs' => $this->isKinhDoanh()
                 ? User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('id', auth()->id())->orderBy('name')->get()
                 : User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),

@@ -32,6 +32,7 @@ class ContractSustainabilityManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
+    public $sortDirection = 'desc';
     public bool $showModal = false;
     public bool $isEditing = false;
     public $showDetail = false;
@@ -120,6 +121,12 @@ class ContractSustainabilityManager extends Component
 
     public function updatedSearch(): void
     {
+        $this->resetPage();
+    }
+
+    public function updatedSortDirection($value): void
+    {
+        $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
         $this->resetPage();
     }
 
@@ -369,6 +376,7 @@ class ContractSustainabilityManager extends Component
             'has_room_fund'  => false,
             'is_overdue'     => false,
         ];
+        $this->sortDirection = 'desc';
         $this->resetPage();
     }
 
@@ -437,7 +445,8 @@ class ContractSustainabilityManager extends Component
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
 
-        $docs           = $query->latest()->get();
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        $docs           = $query->orderBy('id', $orderDirection)->get();
         $title          = 'HĐ Phát triển bền vững';
         $showFinancials = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
 
@@ -485,7 +494,8 @@ class ContractSustainabilityManager extends Component
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
 
-        $docs = $query->latest()->paginate(10);
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        $docs = $query->orderBy('id', $orderDirection)->paginate(10);
 
         return view('livewire.admin.contracts.contract-sustainability-manager', [
             'docs'               => $docs,

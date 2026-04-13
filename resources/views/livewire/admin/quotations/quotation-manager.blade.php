@@ -56,7 +56,14 @@
                         <input type="date" class="form-control form-control-sm" wire:model.live="date_to">
                     </div>
                 </div>
-                <div class="col-md-3 d-flex align-items-end justify-content-end">
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Sắp xếp</label>
+                    <select class="form-select form-select-sm" wire:model.live="sortDirection">
+                        <option value="desc">Từ trên xuống</option>
+                        <option value="asc">Từ dưới lên</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end justify-content-end">
                     <button class="btn btn-sm btn-outline-secondary" wire:click="$refresh">
                         <i class="bi bi-arrow-clockwise"></i> Làm mới
                     </button>

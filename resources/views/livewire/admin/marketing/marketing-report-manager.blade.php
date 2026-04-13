@@ -131,7 +131,7 @@
                 </div>
                 @endif
                 <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-sm btn-outline-secondary" wire:click="$refresh"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
+                    <button class="btn btn-sm btn-outline-danger" wire:click="clearFilters"><i class="bi bi-trash me-1"></i>Xóa</button>
                 </div>
             </div>
         </div>

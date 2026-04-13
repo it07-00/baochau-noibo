@@ -33,6 +33,7 @@ class ContractWasteManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
+    public $sortDirection = 'desc';
 
     public $showDetail = false;
     public $showModal = false;
@@ -142,6 +143,12 @@ class ContractWasteManager extends Component
 
     public function updatedSearch()
     {
+        $this->resetPage();
+    }
+
+    public function updatedSortDirection($value)
+    {
+        $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
         $this->resetPage();
     }
 
@@ -429,6 +436,7 @@ class ContractWasteManager extends Component
             'renewal_status' => '',
             'voucher_status' => '',
         ];
+        $this->sortDirection = 'desc';
         $this->resetPage();
     }
 
@@ -493,7 +501,8 @@ class ContractWasteManager extends Component
         if ($this->filter['source'] ?? null)         $query->where('source', $this->filter['source']);
         if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
 
-        $docs           = $query->latest()->get();
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        $docs           = $query->orderBy('id', $orderDirection)->get();
         $title          = 'Hợp đồng chất thải';
         $showFinancials = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
 
@@ -550,7 +559,8 @@ class ContractWasteManager extends Component
         if ($this->filter['source'] ?? null) $query->where('source', $this->filter['source']);
         if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
 
-        $docs = $query->latest()->paginate(10);
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        $docs = $query->orderBy('id', $orderDirection)->paginate(10);
         $voucherStatuses = collect(ContractWaste::VOUCHER_STATUSES)
             ->merge(
                 ContractWaste::whereNotNull('voucher_status')

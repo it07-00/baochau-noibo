@@ -352,7 +352,15 @@
                         </div>
                     @endunless
 
-                    <div class="col-md-9 d-flex align-items-end gap-2 justify-content-start">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
+                        <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                            <option value="desc">Từ trên xuống</option>
+                            <option value="asc">Từ dưới lên</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-end gap-2 justify-content-start">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
                             <i class="bi bi-search me-1"></i>Lọc
                         </button>

@@ -117,6 +117,13 @@ class MarketingReportManager extends Component
         return 'livewire.admin.users.pagination';
     }
 
+    public function clearFilters(): void
+    {
+        $this->filterUser = '';
+        $this->filterMonth = '';
+        $this->resetPage();
+    }
+
     public function render()
     {
         $history = MarketingDailyReport::with('user')

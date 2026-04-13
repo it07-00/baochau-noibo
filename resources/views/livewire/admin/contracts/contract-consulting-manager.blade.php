@@ -179,6 +179,13 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
+                        <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                            <option value="desc">Từ trên xuống</option>
+                            <option value="asc">Từ dưới lên</option>
+                        </select>
+                    </div>
 
                     <div class="col-md-12 d-flex gap-2 mt-2">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">

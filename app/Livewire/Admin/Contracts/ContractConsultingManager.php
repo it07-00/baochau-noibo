@@ -32,6 +32,7 @@ class ContractConsultingManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
+    public $sortDirection = 'desc';
     public bool $showModal = false;
     public bool $isEditing = false;
     public $showDetail = false;
@@ -120,6 +121,12 @@ class ContractConsultingManager extends Component
 
     public function updatedSearch(): void
     {
+        $this->resetPage();
+    }
+
+    public function updatedSortDirection($value): void
+    {
+        $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
         $this->resetPage();
     }
 
@@ -371,6 +378,7 @@ class ContractConsultingManager extends Component
             'is_overdue'     => false,
             'loai_dich_vu'   => '',
         ];
+        $this->sortDirection = 'desc';
         $this->resetPage();
     }
 
@@ -439,7 +447,8 @@ class ContractConsultingManager extends Component
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
         if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
 
-        $docs           = $query->latest()->get();
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        $docs           = $query->orderBy('id', $orderDirection)->get();
         $title          = 'Hợp đồng tư vấn';
         $showFinancials = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
 
@@ -487,7 +496,8 @@ class ContractConsultingManager extends Component
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
         if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
 
-        $docs = $query->latest()->paginate(10);
+        $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        $docs = $query->orderBy('id', $orderDirection)->paginate(10);
 
         return view('livewire.admin.contracts.contract-consulting-manager', [
             'docs'                 => $docs,
