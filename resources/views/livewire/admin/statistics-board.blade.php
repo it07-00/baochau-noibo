@@ -51,12 +51,12 @@
         $isIT = auth()->user()->hasRole('it');
     @endphp
     @if($dailyReportReminder)
-        <div class="alert border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 12px; border-left: 4px solid #f59e0b !important;">
+        <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
                 <i class="bi bi-clock-fill text-warning fs-5"></i>
             </div>
             <div class="flex-grow-1">
-                <h6 class="mb-0 fw-bold text-dark">Bạn chưa gửi báo cáo ngày hôm nay</h6>
+                <h6 class="mb-0 fw-bold text-body">Bạn chưa gửi báo cáo ngày hôm nay</h6>
                 <p class="mb-0 small text-muted">Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</p>
             </div>
             <a href="{{ route('app.daily-reports.index') }}" class="btn btn-warning btn-sm px-3 fw-bold shadow-sm" style="border-radius: 8px;">

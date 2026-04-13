@@ -1,4 +1,4 @@
-<div class="{{ ($activeTab === 'management' || $activeTab === 'history') ? 'w-100 px-3' : 'container-fluid' }} pb-5"
+<div class="daily-report-manager {{ ($activeTab === 'management' || $activeTab === 'history') ? 'w-100 px-3' : 'container-fluid' }} pb-5"
     x-data="{ activeTab: @entangle('activeTab') }">
     <div class="row">
         <div class="{{ ($activeTab === 'management' || $activeTab === 'history') ? 'col-12' : 'col-lg-8 mx-auto' }}">
@@ -67,7 +67,7 @@
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold text-muted">Kết quả tổng thể hôm nay</label>
                                     <select wire:model.live.debounce.500ms="status" class="form-select border-light-subtle"
-                                        style="background-color: #fcfcfc; border-radius: 8px;">
+                                        style="border-radius: 8px;">
                                         <option value="Hoàn thành đúng kế hoạch">Hoàn thành đúng kế hoạch</option>
                                         <option value="Hoàn thành một phần">Hoàn thành một phần</option>
                                         <option value="Gặp vấn đề, cần hỗ trợ">Gặp vấn đề, cần hỗ trợ</option>
@@ -77,21 +77,21 @@
                                     <label class="form-label small fw-bold text-muted">Kế hoạch ngày mai <span
                                             class="fw-normal text-muted">(không bắt buộc)</span></label>
                                     <textarea wire:model.live.debounce.500ms="plan" class="form-control border-light-subtle"
-                                        rows="5" style="background-color: #fcfcfc; border-radius: 8px;"
+                                        rows="5" style="border-radius: 8px;"
                                         placeholder="Sẽ làm gì tiếp..."></textarea>
                                     @error('plan') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 
                             <!-- Formatting Tips -->
-                            <div class="mt-4 p-3 border-0 bg-light-subtle"
+                            <div class="daily-report-tip-box mt-4 p-3 border-0 bg-light-subtle"
                                 style="border-radius: 12px; border: 1px dashed #e2e8f0 !important;">
                                 <div class="d-flex gap-3">
                                     <div class="text-primary mt-1">
                                         <i class="bi bi-lightbulb fs-4"></i>
                                     </div>
                                     <div>
-                                        <h6 class="fw-bold mb-1 small text-dark">Mẹo viết báo cáo chuyên nghiệp:</h6>
+                                        <h6 class="fw-bold mb-1 small text-body">Mẹo viết báo cáo chuyên nghiệp:</h6>
                                         <ul class="mb-0 small text-muted ps-3">
                                             <li>Sử dụng <strong>Dấu đầu dòng (Bullet points)</strong> để liệt kê các công
                                                 việc cụ thể.</li>
@@ -107,7 +107,7 @@
                                 <label class="form-label small fw-bold text-muted">Vấn đề / Cần hỗ trợ <span
                                         class="fw-normal text-muted">(không bắt buộc)</span></label>
                                 <textarea wire:model.live.debounce.500ms="issues" class="form-control border-light-subtle"
-                                    rows="3" style="background-color: #fcfcfc; border-radius: 8px;"
+                                    rows="3" style="border-radius: 8px;"
                                     placeholder="Nếu có vấn đề cần TPKD biết hoặc hỗ trợ, ghi ở đây..."></textarea>
                             </div>
 
@@ -126,9 +126,9 @@
                     </div>
                 </div>
 
-                <div class="alert alert-warning border-0 shadow-sm py-3"
+                <div class="daily-report-help-alert alert alert-warning border-0 shadow-sm py-3"
                     style="background-color: #fdf5ea; border-radius: 12px;">
-                    <p class="mb-0 small text-dark">
+                    <p class="mb-0 small text-body">
                         <i class="bi bi-info-circle me-1"></i> Nếu chọn <strong>"Gặp vấn đề, cần hỗ trợ"</strong> &rarr;
                         TPKD nhận thông báo ngay sau khi bạn gửi.
                     </p>
@@ -295,7 +295,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 ps-5 ms-3">
-                                                    <div class="text-dark riched-content" :class="expanded ? '' : 'limit-height'">
+                                                    <div class="text-body riched-content" :class="expanded ? '' : 'limit-height'">
                                                         {!! $item->report->content !!}
                                                     </div>
                                                     <button @click="expanded = !expanded"
@@ -429,7 +429,7 @@
          style="position: fixed; inset: 0; z-index: 9999;"
          @keydown.escape.window="open = false">
         <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.4);" @click="open = false"></div>
-        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; background: #fff; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; background: var(--daily-report-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
              @click.stop>
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
                 <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-event me-2"></i> Báo cáo ngày <span x-text="date"></span></h5>
@@ -437,15 +437,18 @@
             </div>
             <div class="p-4">
                 <template x-for="(r, idx) in reports" :key="idx">
-                    <div class="mb-4 p-3 rounded-3 border" :style="'background-color:' + (r.status === 'Gặp vấn đề, cần hỗ trợ' ? '#fff5f5' : (r.status === 'Hoàn thành một phần' ? '#fffbeb' : '#f0fdf4'))">
+                    <div
+                        class="daily-report-modal-item mb-4 p-3 rounded-3 border"
+                        :class="r.status === 'Gặp vấn đề, cần hỗ trợ' ? 'status-issue' : (r.status === 'Hoàn thành một phần' ? 'status-partial' : 'status-done')"
+                        :style="'background-color:' + (r.status === 'Gặp vấn đề, cần hỗ trợ' ? '#fff5f5' : (r.status === 'Hoàn thành một phần' ? '#fffbeb' : '#f0fdf4'))">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
-                                <span class="fw-bold text-dark" x-text="r.name"></span>
-                                <span class="badge bg-light text-muted ms-2 fw-normal small" x-text="r.department"></span>
+                                <span class="fw-bold text-body" x-text="r.name"></span>
+                                <span class="daily-report-dept-badge badge ms-2 fw-normal small" x-text="r.department"></span>
                             </div>
                             <span class="small fw-bold" :class="r.status === 'Gặp vấn đề, cần hỗ trợ' ? 'text-danger' : (r.status === 'Hoàn thành một phần' ? 'text-warning' : 'text-success')" x-text="r.status"></span>
                         </div>
-                        <div class="riched-content small text-dark" style="word-break: break-word; overflow-wrap: break-word;" x-html="r.content"></div>
+                        <div class="riched-content small text-body" style="word-break: break-word; overflow-wrap: break-word;" x-html="r.content"></div>
                         <template x-if="r.plan">
                             <div class="mt-2 small text-muted"><span class="text-danger opacity-75 fw-bold">Kế hoạch mai:</span> <span x-text="r.plan"></span></div>
                         </template>
@@ -589,6 +592,16 @@
             font-size: 0.95rem;
         }
 
+        .daily-report-dept-badge {
+            background-color: #edf2f7;
+            color: #475569;
+            border: 1px solid #d5dee9;
+        }
+
+        .daily-report-modal-item {
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
         .ck-toolbar {
             border-radius: 8px 8px 0 0 !important;
             border-color: #e2e8f0 !important;
@@ -597,6 +610,156 @@
 
         #plan-editor+.ck-editor .ck-editor__editable {
             min-height: 120px !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager {
+            --daily-report-modal-bg: #1b222c;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .nav.nav-pills,
+        [data-bs-theme="dark"] .daily-report-manager .card-header.bg-white,
+        [data-bs-theme="dark"] .daily-report-manager .calendar-container,
+        [data-bs-theme="dark"] .daily-report-manager .calendar-header-grid.bg-white {
+            background-color: #1f2631 !important;
+            color: var(--bs-body-color) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .calendar-container,
+        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell,
+        [data-bs-theme="dark"] .daily-report-manager .calendar-header-grid {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell.bg-white {
+            background-color: #1a2029 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell.bg-light {
+            background-color: #131820 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .bg-sunday {
+            background-color: #212938 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell:hover {
+            background-color: #253041 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell.cursor-pointer:hover {
+            background-color: #29405f !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-tip-box {
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-help-alert {
+            background-color: rgba(245, 158, 11, 0.16) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .form-control.border-light-subtle,
+        [data-bs-theme="dark"] .daily-report-manager .form-select.border-light-subtle {
+            background-color: #141b24 !important;
+            border-color: rgba(255, 255, 255, 0.16) !important;
+            color: var(--bs-body-color) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .riched-content-mini {
+            color: #c5d0df !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .riched-content-mini strong,
+        [data-bs-theme="dark"] .daily-report-manager .riched-content-mini b {
+            color: #e5ecf8 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .limit-height::after {
+            background: linear-gradient(transparent, rgba(27, 34, 44, 0.94));
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .ck-toolbar {
+            border-color: rgba(255, 255, 255, 0.16) !important;
+            background-color: #1f2631 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button,
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button .ck-icon,
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-icon {
+            color: #dbe7f9 !important;
+            fill: #dbe7f9 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button:hover:not(.ck-disabled),
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button:focus:not(.ck-disabled) {
+            background-color: rgba(148, 163, 184, 0.2) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button.ck-on {
+            background-color: rgba(59, 130, 246, 0.3) !important;
+            color: #f8fbff !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button.ck-disabled .ck-icon {
+            opacity: 0.45;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .ck-editor__editable {
+            background-color: #121821 !important;
+            color: var(--bs-body-color) !important;
+            border-color: rgba(255, 255, 255, 0.16) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-dept-badge {
+            background-color: #2a3545;
+            color: #dbe7f6;
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item {
+            color: var(--bs-body-color);
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item.status-done {
+            background-color: rgba(16, 185, 129, 0.11) !important;
+            border-color: rgba(16, 185, 129, 0.34) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item.status-partial {
+            background-color: rgba(245, 158, 11, 0.12) !important;
+            border-color: rgba(245, 158, 11, 0.34) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item.status-issue {
+            background-color: rgba(239, 68, 68, 0.12) !important;
+            border-color: rgba(239, 68, 68, 0.34) !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .text-muted {
+            color: #b9c6d8 !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content,
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content * {
+            color: #e4edf9 !important;
+            border-color: rgba(255, 255, 255, 0.24) !important;
+            background: transparent !important;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content a {
+            color: #8ab4ff !important;
+            text-decoration: underline;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content li::marker {
+            color: #9fb4cf;
+        }
+
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content .text-muted,
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content .text-secondary,
+        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content .text-dark {
+            color: #d6e2f1 !important;
+            opacity: 1 !important;
         }
     </style>
 
