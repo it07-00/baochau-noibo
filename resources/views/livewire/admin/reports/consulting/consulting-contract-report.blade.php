@@ -74,7 +74,9 @@
                 <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1 small">NV Tư vấn</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
-                        <option value="">Tất cả</option>
+                        @unless($isRestrictedConsultant)
+                            <option value="">Tất cả</option>
+                        @endunless
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach

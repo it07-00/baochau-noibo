@@ -1,4 +1,4 @@
-<div>
+<div class="internal-doc-manager">
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
             <h4 class="mb-0">Danh sách Quy định</h4>
@@ -19,27 +19,27 @@
         @endcan
     </div>
 
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm internal-doc-card">
         <div class="card-body p-0">
             <div class="p-4 border-bottom">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0">
+                        <div class="input-group internal-doc-search">
+                            <span class="input-group-text border-end-0">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </span>
-                            <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm quy định..." wire:model.live.debounce.300ms="search">
+                            <input type="text" class="form-control border-start-0 ps-0 internal-doc-search-input" placeholder="Tìm kiếm quy định..." wire:model.live.debounce.300ms="search">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
+                <table class="table table-hover align-middle mb-0 internal-doc-table">
+                    <thead class="internal-doc-table-head">
                         <tr>
                             <th class="ps-4" style="width: 50%;">Thông tin quy định</th>
                             <th style="width: 35%;">Tập tin</th>
@@ -58,7 +58,7 @@
                                 <div class="d-flex flex-column gap-1">
                                     @if($doc->files)
                                         @foreach($doc->files as $file)
-                                        <a href="{{ $file['resolved_url'] ?? ($file['url'] ?? '#') }}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 text-primary">
+                                        <a href="{{ $file['resolved_url'] ?? ($file['url'] ?? '#') }}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 text-primary internal-doc-file-link">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M12 15V3M12 15L8 11M12 15L16 11M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
@@ -66,7 +66,7 @@
                                         </a>
                                         @endforeach
                                     @else
-                                        <span class="text-muted small">Không có tập tin</span>
+                                        <span class="text-muted small internal-doc-empty-file">Không có tập tin</span>
                                     @endif
                                 </div>
                             </td>
@@ -89,7 +89,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="text-center py-5 text-muted">Không tìm thấy quy định nào</td>
+                            <td colspan="3" class="text-center py-5 text-muted internal-doc-empty-row">Không tìm thấy quy định nào</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -106,7 +106,7 @@
     <div wire:ignore.self class="modal fade" id="docModal" tabindex="-1" aria-labelledby="docModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <form wire:submit.prevent="save">
-                <div class="modal-content border-0">
+                <div class="modal-content border-0 internal-doc-modal-content">
                     <div class="modal-header border-bottom">
                         <h5 class="modal-title" id="docModalLabel">{{ $docId ? 'Cập nhật Quy định' : 'Thêm Quy định mới' }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -120,9 +120,9 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tập tin hiện tại</label>
-                            <div class="list-group">
+                            <div class="list-group internal-doc-file-list">
                                 @foreach($existingFiles as $index => $file)
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="list-group-item d-flex justify-content-between align-items-center internal-doc-file-item">
                                     <span class="small text-truncate" style="max-width: 80%;">{{ $file['name'] }}</span>
                                     <button type="button" class="btn btn-sm btn-outline-danger border-0" wire:click="removeExistingFile({{ $index }})">
                                         &times;
@@ -140,7 +140,7 @@
                             @error('newFiles') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div wire:loading wire:target="newFiles" class="mt-2 text-primary small">
+                        <div wire:loading wire:target="newFiles" class="mt-2 text-primary small internal-doc-uploading">
                             Đang chuẩn bị tệp...
                         </div>
                     </div>

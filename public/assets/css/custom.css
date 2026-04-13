@@ -500,3 +500,133 @@
         height: 40px;
     }
 }
+
+/* ================================================
+   Internal Docs Manager
+   ================================================ */
+.internal-doc-manager .internal-doc-card {
+    border-radius: 0.9rem;
+}
+
+.internal-doc-manager .internal-doc-table th {
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+
+.internal-doc-manager .internal-doc-table td {
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+}
+
+.internal-doc-manager .internal-doc-file-link small {
+    font-weight: 500;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager {
+    --internal-doc-surface: #141b26;
+    --internal-doc-surface-soft: #1a2332;
+    --internal-doc-border: #2c3850;
+    --internal-doc-text: #e8eefb;
+    --internal-doc-muted: #aeb9cf;
+    --internal-doc-accent: #8eb7ff;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .card,
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-modal-content {
+    background: var(--internal-doc-surface) !important;
+    border: 1px solid var(--internal-doc-border) !important;
+    box-shadow: none !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .border-top,
+[data-bs-theme="dark"] .internal-doc-manager .border-bottom {
+    border-color: var(--internal-doc-border) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .page-header h4,
+[data-bs-theme="dark"] .internal-doc-manager .modal-title,
+[data-bs-theme="dark"] .internal-doc-manager .table th,
+[data-bs-theme="dark"] .internal-doc-manager .table td,
+[data-bs-theme="dark"] .internal-doc-manager .form-label {
+    color: var(--internal-doc-text) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .breadcrumb-item,
+[data-bs-theme="dark"] .internal-doc-manager .breadcrumb-item a,
+[data-bs-theme="dark"] .internal-doc-manager .text-muted,
+[data-bs-theme="dark"] .internal-doc-manager .form-text {
+    color: var(--internal-doc-muted) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-search .input-group-text,
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-search .form-control,
+[data-bs-theme="dark"] .internal-doc-manager .modal-body .form-control,
+[data-bs-theme="dark"] .internal-doc-manager .modal-body .form-select {
+    background: var(--internal-doc-surface-soft) !important;
+    border-color: var(--internal-doc-border) !important;
+    color: var(--internal-doc-text) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-search .form-control::placeholder,
+[data-bs-theme="dark"] .internal-doc-manager .modal-body .form-control::placeholder {
+    color: #8d99b2 !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .form-control:focus,
+[data-bs-theme="dark"] .internal-doc-manager .form-select:focus {
+    border-color: #5f86d8 !important;
+    box-shadow: 0 0 0 0.2rem rgba(95, 134, 216, 0.22) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-table thead {
+    background: rgba(142, 183, 255, 0.08) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-table > :not(caption) > * > * {
+    border-color: var(--internal-doc-border) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-table tbody tr:hover {
+    background: rgba(142, 183, 255, 0.06) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-file-link,
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-file-link small,
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-uploading {
+    color: var(--internal-doc-accent) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-empty-row,
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-empty-file {
+    color: var(--internal-doc-muted) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .list-group,
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-file-item {
+    background: transparent !important;
+    border-color: var(--internal-doc-border) !important;
+    color: var(--internal-doc-text) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .modal-header,
+[data-bs-theme="dark"] .internal-doc-manager .modal-footer {
+    background: var(--internal-doc-surface) !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .btn-light {
+    background: #253046 !important;
+    border-color: #334361 !important;
+    color: #e8eefb !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .btn-light:hover {
+    background: #2c3953 !important;
+    border-color: #405275 !important;
+}
+
+[data-bs-theme="dark"] .internal-doc-manager .btn-close {
+    filter: invert(1) grayscale(100%);
+    opacity: 0.85;
+}

@@ -41,6 +41,10 @@ class ConsultingContractReport extends Component
         $this->year = now()->year;
         $this->years = range(now()->year, now()->year - 4);
 
+        if ($this->isRestrictedConsultant()) {
+            $this->filter_staff = (string) auth()->id();
+        }
+
         $routeName = Route::currentRouteName();
         $this->contract_type = match ($routeName) {
             'app.reports.consulting-work.waste'          => 'waste',
@@ -58,17 +62,34 @@ class ConsultingContractReport extends Component
     public function updatedYear(): void          { $this->resetPage(); }
     public function updatedFilterService(): void { $this->resetPage(); }
     public function updatedFilterStatus(): void  { $this->resetPage(); }
-    public function updatedFilterStaff(): void   { $this->resetPage(); }
+    public function updatedFilterStaff(): void
+    {
+        if ($this->isRestrictedConsultant()) {
+            $this->filter_staff = (string) auth()->id();
+        }
+
+        $this->resetPage();
+    }
 
     private function getModelClass(): string
     {
         return self::TYPE_MAP[$this->contract_type]['model'];
     }
 
+    private function isRestrictedConsultant(?User $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        return $user->hasRole('tu-van')
+            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+    }
+
     private function baseQuery()
     {
         $modelClass = $this->getModelClass();
         $user = auth()->user();
+        $isRestrictedConsultant = $this->isRestrictedConsultant($user);
+        $effectiveStaffFilter = $isRestrictedConsultant ? (string) $user->id : (string) $this->filter_staff;
 
         $query = $modelClass::whereYear('signed_at', $this->year)
             ->when($this->filter_service, fn ($q) => $q->where('loai_dich_vu', $this->filter_service))
@@ -78,15 +99,15 @@ class ConsultingContractReport extends Component
         $query->whereHas('assignments', function ($q) use ($user) {
             $q->whereHas('user', fn ($u) => $u->role('tu-van'));
 
-            // If current user is tu-van (not giam-doc), show only their own assignments
-            if ($user->hasRole('tu-van')) {
+            // Restrict pure tu-van users to their own assignments.
+            if ($this->isRestrictedConsultant($user)) {
                 $q->where('user_id', $user->id);
             }
         });
 
         // Filter by specific tu-van staff
-        if ($this->filter_staff) {
-            $query->whereHas('assignments', fn ($q) => $q->where('user_id', $this->filter_staff));
+        if ($effectiveStaffFilter !== '') {
+            $query->whereHas('assignments', fn ($q) => $q->where('user_id', $effectiveStaffFilter));
         }
 
         return $query;
@@ -134,6 +155,9 @@ class ConsultingContractReport extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        $isRestrictedConsultant = $this->isRestrictedConsultant($user);
+
         $items = $this->baseQuery()
             ->with(['customer', 'staff', 'assignments.user'])
             ->orderByDesc('signed_at')
@@ -148,12 +172,15 @@ class ConsultingContractReport extends Component
         $workflowProgress = $this->getWorkflowProgress($items);
         $stepLabels = ContractWorkflowStep::STEPS;
 
-        $staffs = User::role('tu-van')->orderBy('name')->get();
+        $staffs = User::role('tu-van')
+            ->when($isRestrictedConsultant, fn ($q) => $q->where('id', $user->id))
+            ->orderBy('name')
+            ->get();
         $modelClass = $this->getModelClass();
         $serviceTypes = defined("$modelClass::SERVICE_TYPES") ? $modelClass::SERVICE_TYPES : [];
 
         return view('livewire.admin.reports.consulting.consulting-contract-report',
-            compact('items', 'summary', 'staffs', 'serviceTypes', 'workflowProgress', 'stepLabels'))
+            compact('items', 'summary', 'staffs', 'serviceTypes', 'workflowProgress', 'stepLabels', 'isRestrictedConsultant'))
             ->layout('admin.layouts.app');
     }
 }
