@@ -49,7 +49,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label small fw-bold">Khoảng thời gian</label>
                     <div class="d-flex gap-2">
                         <input type="date" class="form-control form-control-sm" wire:model.live="date_from">
@@ -64,8 +64,8 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end justify-content-end">
-                    <button class="btn btn-sm btn-outline-secondary" wire:click="$refresh">
-                        <i class="bi bi-arrow-clockwise"></i> Làm mới
+                    <button class="btn btn-sm btn-outline-secondary" wire:click="resetFilters">
+                        <i class="bi bi-x-circle"></i> Xóa lọc
                     </button>
                 </div>
             </div>

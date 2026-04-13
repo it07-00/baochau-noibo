@@ -210,6 +210,22 @@ class QuotationManager extends Component
         $this->resetPage();
     }
 
+    public function resetFilters(): void
+    {
+        $this->filter_status = '';
+        $this->date_from = '';
+        $this->date_to = '';
+        $this->sortDirection = 'desc';
+
+        if ($this->isKinhDoanh()) {
+            $this->filter_staff = (string) auth()->id();
+        } else {
+            $this->filter_staff = '';
+        }
+
+        $this->resetPage();
+    }
+
     private function parseMoneyValue(mixed $value): float
     {
         if (is_int($value) || is_float($value)) {
