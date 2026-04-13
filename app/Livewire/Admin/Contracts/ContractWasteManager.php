@@ -34,6 +34,7 @@ class ContractWasteManager extends Component
 
     public $search = '';
     public $sortDirection = 'desc';
+    public array $selectedDocIds = [];
 
     public $showDetail = false;
     public $showModal = false;
@@ -281,6 +282,53 @@ class ContractWasteManager extends Component
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
     }
 
+    public function bulkDeleteSelected()
+    {
+        $user = auth()->user();
+        abort_unless($user->can('contracts-waste.delete'), 403);
+
+        $selectedIds = collect($this->selectedDocIds)
+            ->map(static fn($id) => (int) $id)
+            ->filter(static fn($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($selectedIds->isEmpty()) {
+            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng chọn ít nhất 1 hợp đồng để xóa.']);
+            return;
+        }
+
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        $deletedCount = 0;
+        $skippedCount = 0;
+
+        $docs = ContractWaste::whereIn('id', $selectedIds)->get();
+        foreach ($docs as $doc) {
+            if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
+                $skippedCount++;
+                continue;
+            }
+
+            $doc->delete();
+            $deletedCount++;
+        }
+
+        $this->selectedDocIds = [];
+
+        if ($deletedCount === 0) {
+            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có hợp đồng nào được xóa.']);
+            return;
+        }
+
+        $message = "Đã xóa {$deletedCount} hợp đồng.";
+        if ($skippedCount > 0) {
+            $message .= " Bỏ qua {$skippedCount} hợp đồng không thuộc quyền.";
+        }
+
+        $this->resetPage();
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => $message]);
+    }
+
     private function resetForm()
     {
         $this->formData = [
@@ -436,6 +484,7 @@ class ContractWasteManager extends Component
             'renewal_status' => '',
             'voucher_status' => '',
         ];
+        $this->selectedDocIds = [];
         $this->sortDirection = 'desc';
         $this->resetPage();
     }

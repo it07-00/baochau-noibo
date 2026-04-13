@@ -30,6 +30,10 @@
         </div>
     </div>
 
+    @php
+        $canBulkDelete = auth()->user()->can('contracts-consulting.delete') && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
+    @endphp
+
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
@@ -194,6 +198,13 @@
                         <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
                             <i class="bi bi-x-circle me-1"></i>Xóa lọc
                         </button>
+                        @if ($canBulkDelete)
+                            <button class="btn btn-danger px-4 btn-filter" wire:click="bulkDeleteSelected"
+                                wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
+                                @if (empty($selectedDocIds)) disabled @endif>
+                                <i class="bi bi-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
+                            </button>
+                        @endif
                         @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                             <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
                                 class="btn btn-success px-4 btn-filter">
@@ -218,6 +229,9 @@
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class="small text-muted fw-bold">
+                        @if ($canBulkDelete)
+                            <th class="text-center" style="width:42px;">Chọn</th>
+                        @endif
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
@@ -234,6 +248,14 @@
                 <tbody>
                     @forelse($docs as $doc)
                         <tr class="border-bottom border-light">
+                            @if ($canBulkDelete)
+                                <td class="text-center">
+                                    @if (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id())
+                                        <input class="form-check-input" type="checkbox"
+                                            wire:model.live="selectedDocIds" value="{{ $doc->id }}">
+                                    @endif
+                                </td>
+                            @endif
                             <td class="ps-4 py-4">
                                 <div class="d-flex flex-column">
                                     <span class="small">Số HĐ BC:<span
@@ -389,7 +411,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
+                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) ? 6 : 9) + ($canBulkDelete ? 1 : 0) }}"
+                                class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
                 </tbody>

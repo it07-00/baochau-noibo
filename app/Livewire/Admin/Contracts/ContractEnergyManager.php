@@ -33,6 +33,7 @@ class ContractEnergyManager extends Component
 
     public $search = '';
     public $sortDirection = 'desc';
+    public array $selectedDocIds = [];
     public bool $showModal = false;
     public bool $isEditing = false;
     public $showDetail = false;
@@ -249,6 +250,53 @@ class ContractEnergyManager extends Component
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
     }
 
+    public function bulkDeleteSelected(): void
+    {
+        $user = auth()->user();
+        abort_unless($user->can('contracts-energy.delete'), 403);
+
+        $selectedIds = collect($this->selectedDocIds)
+            ->map(static fn($id) => (int) $id)
+            ->filter(static fn($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($selectedIds->isEmpty()) {
+            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng chọn ít nhất 1 hợp đồng để xóa.']);
+            return;
+        }
+
+        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        $deletedCount = 0;
+        $skippedCount = 0;
+
+        $docs = ContractEnergy::whereIn('id', $selectedIds)->get();
+        foreach ($docs as $doc) {
+            if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
+                $skippedCount++;
+                continue;
+            }
+
+            $doc->delete();
+            $deletedCount++;
+        }
+
+        $this->selectedDocIds = [];
+
+        if ($deletedCount === 0) {
+            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có hợp đồng nào được xóa.']);
+            return;
+        }
+
+        $message = "Đã xóa {$deletedCount} hợp đồng.";
+        if ($skippedCount > 0) {
+            $message .= " Bỏ qua {$skippedCount} hợp đồng không thuộc quyền.";
+        }
+
+        $this->resetPage();
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => $message]);
+    }
+
     public function viewDetail(int $id): void
     {
         $this->selectedDoc = ContractEnergy::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
@@ -376,6 +424,7 @@ class ContractEnergyManager extends Component
             'has_room_fund'  => false,
             'is_overdue'     => false,
         ];
+        $this->selectedDocIds = [];
         $this->sortDirection = 'desc';
         $this->resetPage();
     }
