@@ -135,7 +135,7 @@
                                 <td class="text-center">{{ $row['count'] > 0 ? $row['count'] : '—' }}</td>
                                 <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
                                 @if($canSeeFinance)
-                                <td class="text-end fw-bold {{ $row['value'] > 0 ? 'text-dark' : '' }}">
+                                <td class="text-end fw-bold {{ $row['value'] > 0 ? 'text-body' : '' }}">
                                     {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') . ' đ' : '—' }}
                                 </td>
                                 @endif
@@ -295,7 +295,7 @@
                                     <td class="text-end small">{{ $row->waste_value > 0 ? number_format($row->waste_value, 0, ',', '.') : '—' }}</td>
                                     <td class="text-center">{{ $row->consult_count > 0 ? $row->consult_count : '—' }}</td>
                                     <td class="text-end small">{{ $row->consult_value > 0 ? number_format($row->consult_value, 0, ',', '.') : '—' }}</td>
-                                    <td class="text-end fw-bold text-dark">{{ number_format($row->waste_value + $row->consult_value, 0, ',', '.') }} đ</td>
+                                    <td class="text-end fw-bold text-body">{{ number_format($row->waste_value + $row->consult_value, 0, ',', '.') }} đ</td>
                                 </tr>
                                 @empty
                                 <tr><td colspan="7" class="text-center text-muted py-4">Không có dữ liệu</td></tr>

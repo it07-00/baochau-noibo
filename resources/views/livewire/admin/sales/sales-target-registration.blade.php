@@ -169,7 +169,7 @@
                                 </td>
                                 <td class="text-center pe-3">
                                     @if($pct === null)
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">Chưa có cam kết</span>
+                                        <span class="badge bg-secondary-subtle text-body border border-secondary-subtle">Chưa có cam kết</span>
                                     @elseif($pct >= 100)
                                         <span class="badge bg-success bg-opacity-10 text-success">Đạt</span>
                                     @elseif($pct >= 70)
