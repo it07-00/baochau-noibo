@@ -20,10 +20,10 @@ class Quotation extends Model
         'work_description',
         'status',
         'original_value',   // Giá trị gốc (GIÁ TRỊ GÓC)
-        'value_inc_vat',    // Giá có VAT
+        'value_inc_vat',    // Giá trị chưa VAT
         'commission_value', // Hoa hồng KH
         'commission_tax',   // Thuế HH
-        'total_value',      // Giá trị hợp đồng (chưa VAT)
+        'total_value',      // Giá trị hợp đồng (có VAT)
         'notes',
     ];
 

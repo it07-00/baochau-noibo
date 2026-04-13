@@ -249,7 +249,7 @@
                                     <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_tax) }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị HĐ (chưa VAT)</th>
+                                    <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị HĐ (có VAT)</th>
                                     <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value) }}đ</td>
                                 </tr>
                             </tbody>
@@ -361,16 +361,24 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Giá có VAT</label>
+                                <label class="form-label fw-bold">Giá trị chưa VAT</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.value_inc_vat">
+                                    <input
+                                        type="text"
+                                        class="form-control text-end fw-bold bg-light money-input"
+                                        value="{{ number_format((float) ($formData['value_inc_vat'] ?? 0), 0, ',', '.') }}"
+                                        readonly>
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Giá trị HĐ (chưa VAT)</label>
+                                <label class="form-label fw-bold">Giá trị HĐ (có VAT)</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-end fw-bold text-danger bg-light money-input" wire:model="formData.total_value" readonly>
+                                    <input
+                                        type="text"
+                                        class="form-control text-end fw-bold text-danger bg-light money-input"
+                                        value="{{ number_format((float) ($formData['total_value'] ?? 0), 0, ',', '.') }}"
+                                        readonly>
                                     <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
                                 </div>
                             </div>

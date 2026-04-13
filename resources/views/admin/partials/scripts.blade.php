@@ -22,6 +22,56 @@
             return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
 
+        function formatMoneyInput(el, preserveCursor = false) {
+            if (!el || !el.classList || !el.classList.contains('money-input')) return;
+
+            let currentValue = el.value ?? '';
+            let formatted = formatMoney(currentValue);
+            if (formatted === currentValue) return;
+
+            if (preserveCursor && document.activeElement === el) {
+                let cursor = el.selectionStart ?? currentValue.length;
+                let digitsBeforeCursor = String(currentValue).slice(0, cursor).replace(/\D/g, '').length;
+
+                el.value = formatted;
+
+                let newCursor = formatted.length;
+                if (digitsBeforeCursor > 0) {
+                    let seen = 0;
+                    for (let i = 0; i < formatted.length; i++) {
+                        if (/\d/.test(formatted[i])) {
+                            seen++;
+                        }
+                        if (seen >= digitsBeforeCursor) {
+                            newCursor = i + 1;
+                            break;
+                        }
+                    }
+                }
+
+                if (typeof el.setSelectionRange === 'function') {
+                    el.setSelectionRange(newCursor, newCursor);
+                }
+                return;
+            }
+
+            el.value = formatted;
+        }
+
+        function formatMoneyInputs(root) {
+            if (!root) return;
+
+            if (root.classList && root.classList.contains('money-input')) {
+                formatMoneyInput(root, document.activeElement === root);
+            }
+
+            if (typeof root.querySelectorAll === 'function') {
+                root.querySelectorAll('.money-input').forEach(function (el) {
+                    formatMoneyInput(el, document.activeElement === el);
+                });
+            }
+        }
+
         let isFormatting = false;
 
         // Format khi user gõ
@@ -29,43 +79,32 @@
             if (!e.target.classList.contains('money-input') || isFormatting) return;
 
             isFormatting = true;
-            let raw = e.target.value.replace(/\./g, '');
-            let formatted = formatMoney(raw);
-            let pos = e.target.selectionStart;
-            let oldLen = e.target.value.length;
-
-            e.target.value = formatted;
-
-            // Adjust cursor
-            let newLen = formatted.length;
-            pos = pos + (newLen - oldLen);
-            if (pos < 0) pos = 0;
-            e.target.setSelectionRange(pos, pos);
+            formatMoneyInput(e.target, true);
             isFormatting = false;
         });
+
+        // Đảm bảo field đang focus được format lại khi blur
+        document.addEventListener('blur', function (e) {
+            if (!e.target.classList.contains('money-input')) return;
+            formatMoneyInput(e.target, false);
+        }, true);
 
         // Format khi Livewire cập nhật DOM (morph)
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof Livewire !== 'undefined') {
                 Livewire.hook('morph.updated', ({ el }) => {
-                    if (el.classList && el.classList.contains('money-input') && document.activeElement !== el) {
-                        el.value = formatMoney(el.value);
-                    }
+                    formatMoneyInputs(el);
                 });
             }
 
             // Format các input đã có giá trị sẵn khi trang load
-            document.querySelectorAll('.money-input').forEach(function (el) {
-                if (el.value) el.value = formatMoney(el.value);
-            });
+            formatMoneyInputs(document);
         });
 
         // Format khi modal mở (cho giá trị pre-filled từ Livewire)
         document.addEventListener('shown.bs.modal', function () {
             setTimeout(function () {
-                document.querySelectorAll('.money-input').forEach(function (el) {
-                    if (el.value) el.value = formatMoney(el.value);
-                });
+                formatMoneyInputs(document);
             }, 50);
         });
     })();

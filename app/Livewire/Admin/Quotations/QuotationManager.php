@@ -51,10 +51,10 @@ class QuotationManager extends Component
         'work_description'  => 'Tình hình làm việc',
         'status'            => 'Tình hình',
         'original_value'    => 'Giá trị gốc',
-        'value_inc_vat'     => 'Giá có VAT',
+        'value_inc_vat'     => 'Giá trị chưa VAT',
         'commission_value'  => 'Hoa hồng KH',
         'commission_tax'    => 'Thuế HH',
-        'total_value'       => 'Giá trị HĐ (chưa VAT)',
+        'total_value'       => 'Giá trị HĐ (có VAT)',
         'notes'             => 'Ghi chú',
     ];
 
@@ -72,10 +72,10 @@ class QuotationManager extends Component
         'work_description' => '',
         'status' => 'Đang theo dõi',
         'original_value' => 0,   // GIÁ TRỊ GÓC
-        'value_inc_vat' => 0,    // Giá có VAT
+        'value_inc_vat' => 0,    // Giá trị chưa VAT
         'commission_value' => 0, // Hoa hồng KH
         'commission_tax' => 0,   // Thuế HH
-        'total_value' => 0,      // Giá trị HĐ (chưa VAT)
+        'total_value' => 0,      // Giá trị HĐ (có VAT)
         'notes' => '',
     ];
 
@@ -131,14 +131,14 @@ class QuotationManager extends Component
             'formData.work_description.max' => 'Nội dung làm việc không được vượt quá 2000 ký tự.',
             'formData.original_value.numeric' => 'Giá trị gốc phải là số.',
             'formData.original_value.min' => 'Giá trị gốc không được âm.',
-            'formData.value_inc_vat.numeric' => 'Giá có VAT phải là số.',
-            'formData.value_inc_vat.min' => 'Giá có VAT không được âm.',
+            'formData.value_inc_vat.numeric' => 'Giá trị chưa VAT phải là số.',
+            'formData.value_inc_vat.min' => 'Giá trị chưa VAT không được âm.',
             'formData.commission_value.numeric' => 'Hoa hồng khách hàng phải là số.',
             'formData.commission_value.min' => 'Hoa hồng khách hàng không được âm.',
             'formData.commission_tax.numeric' => 'Thuế hoa hồng phải là số.',
             'formData.commission_tax.min' => 'Thuế hoa hồng không được âm.',
-            'formData.total_value.numeric' => 'Giá trị hợp đồng phải là số.',
-            'formData.total_value.min' => 'Giá trị hợp đồng không được âm.',
+            'formData.total_value.numeric' => 'Giá trị hợp đồng có VAT phải là số.',
+            'formData.total_value.min' => 'Giá trị hợp đồng có VAT không được âm.',
             'formData.notes.string' => 'Ghi chú không hợp lệ.',
             'formData.notes.max' => 'Ghi chú không được vượt quá 2000 ký tự.',
         ];
@@ -160,10 +160,10 @@ class QuotationManager extends Component
             'formData.contact_person' => 'khách hàng',
             'formData.work_description' => 'tình hình làm việc',
             'formData.original_value' => 'giá trị gốc',
-            'formData.value_inc_vat' => 'giá có VAT',
+            'formData.value_inc_vat' => 'giá trị chưa VAT',
             'formData.commission_value' => 'hoa hồng khách hàng',
             'formData.commission_tax' => 'thuế hoa hồng',
-            'formData.total_value' => 'giá trị hợp đồng',
+            'formData.total_value' => 'giá trị hợp đồng có VAT',
             'formData.notes' => 'ghi chú',
         ];
     }
@@ -198,38 +198,32 @@ class QuotationManager extends Component
 
     private array $moneyFields = ['original_value', 'value_inc_vat', 'commission_value', 'commission_tax', 'total_value'];
 
-    public function updatedFormDataOriginalValue() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateByExtVat(); }
-    public function updatedFormDataCommissionValue() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateTotal(); }
-    public function updatedFormDataCommissionTax() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateByVatAmount(); }
-    public function updatedFormDataValueIncVat() { $this->cleanMoneyFields($this->formData, $this->moneyFields); $this->calculateByIncVat(); }
+    public function updatedFormDataOriginalValue() { $this->recalculateTotals(); }
+    public function updatedFormDataCommissionValue() { $this->recalculateTotals(); }
+    public function updatedFormDataCommissionTax() { $this->recalculateTotals(); }
 
-    public function calculateByExtVat()
+    private function parseMoneyValue(mixed $value): float
     {
-        $val = (float)$this->formData['original_value'];
-        $this->formData['commission_tax'] = $val * 0.1;
-        $this->formData['value_inc_vat'] = $val + $this->formData['commission_tax'];
-        $this->calculateTotal();
+        if (is_int($value) || is_float($value)) {
+            return (float) $value;
+        }
+
+        if (is_string($value)) {
+            $normalized = preg_replace('/\D+/', '', $value);
+            return $normalized !== '' ? (float) $normalized : 0.0;
+        }
+
+        return 0.0;
     }
 
-    public function calculateByVatAmount()
+    public function recalculateTotals(): void
     {
-        $val = (float)$this->formData['original_value'];
-        $this->formData['value_inc_vat'] = $val + (float)$this->formData['commission_tax'];
-        $this->calculateTotal();
-    }
+        $preVatValue = $this->parseMoneyValue($this->formData['original_value'] ?? 0)
+            + $this->parseMoneyValue($this->formData['commission_value'] ?? 0)
+            + $this->parseMoneyValue($this->formData['commission_tax'] ?? 0);
 
-    public function calculateByIncVat()
-    {
-        $inc = (float)$this->formData['value_inc_vat'];
-        $this->formData['original_value'] = round($inc / 1.1);
-        $this->formData['commission_tax'] = $inc - $this->formData['original_value'];
-        $this->calculateTotal();
-    }
-
-    public function calculateTotal()
-    {
-        $this->formData['total_value'] = (float)$this->formData['value_inc_vat'] -
-                                         (float)$this->formData['commission_value'];
+        $this->formData['value_inc_vat'] = round($preVatValue);
+        $this->formData['total_value'] = round($preVatValue * 1.08);
     }
 
     public function create()
@@ -247,6 +241,7 @@ class QuotationManager extends Component
         $this->selectedId = $id;
         $this->formData = $quotation->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
+        $this->recalculateTotals();
         $this->isEditing = true;
         $this->dispatch('open-quotation-modal');
     }
@@ -302,6 +297,7 @@ class QuotationManager extends Component
         }
 
         $this->cleanMoneyFields($this->formData, $this->moneyFields);
+        $this->recalculateTotals();
 
         try {
             $this->validate($this->rules, $this->quotationValidationMessages(), $this->quotationValidationAttributes());
@@ -411,7 +407,9 @@ class QuotationManager extends Component
         'tinh trang'                => 'status',
         'giá trị gốc'              => 'original_value',
         'gia tri goc'               => 'original_value',
-        'giá chưa vat'             => 'original_value',
+        'giá chưa vat'             => 'value_inc_vat',
+        'giá trị chưa vat'         => 'value_inc_vat',
+        'gia tri chua vat'          => 'value_inc_vat',
         'giá có vat'               => 'value_inc_vat',
         'gia co vat'                => 'value_inc_vat',
         'hoa hồng kh'              => 'commission_value',
@@ -422,6 +420,10 @@ class QuotationManager extends Component
         'tiền thuế'                => 'commission_tax',
         'giá trị hđ (chưa vat)'   => 'total_value',
         'giá trị hd (chua vat)'    => 'total_value',
+        'giá trị hđ (có vat)'     => 'total_value',
+        'giá trị hd (co vat)'      => 'total_value',
+        'giá trị hđ có vat'       => 'total_value',
+        'gia tri hd co vat'        => 'total_value',
         'giá trị hđ'               => 'total_value',
         'tổng tiền'                => 'total_value',
         'tong tien'                 => 'total_value',
