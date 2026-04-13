@@ -80,7 +80,7 @@
                         <th class="text-center" style="width:80px">Tháng</th>
                         <th class="text-end">DS cam kết</th>
                         <th class="text-end">DS cam kết lũy kế</th>
-                        <th class="text-end">Doanh số đã về</th>
+                        <th class="text-end">Thực tế (Tổng giá trị HĐ ký) (đ)</th>
                         <th class="text-end">DS thực hiện lũy kế</th>
                         <th class="text-end">Doanh số còn lại</th>
                         <th class="text-center" style="width:140px">% hoàn thành KPI</th>
@@ -92,7 +92,7 @@
                             <td class="text-center fw-semibold">{{ $row['month'] }}</td>
                             <td class="text-end fw-semibold">{{ number_format($row['target'], 0, ',', '.') }}đ</td>
                             <td class="text-end fw-semibold text-danger">{{ number_format($row['target_cumulative'], 0, ',', '.') }}đ</td>
-                            <td class="text-end fw-semibold text-dark">{{ number_format($row['actual'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-dark">{{ $row['actual'] > 0 ? number_format($row['actual'], 0, ',', '.') . 'đ' : '—' }}</td>
                             <td class="text-end fw-semibold text-danger">{{ number_format($row['actual_cumulative'], 0, ',', '.') }}đ</td>
                             <td class="text-end fw-semibold text-primary">{{ number_format($row['remaining'], 0, ',', '.') }}đ</td>
                             <td class="text-center fw-bold {{ ($row['kpi_pct'] ?? 0) >= 100 ? 'text-success' : 'text-danger' }}">

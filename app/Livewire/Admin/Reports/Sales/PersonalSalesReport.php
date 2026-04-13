@@ -2,8 +2,13 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
+use App\Models\ContractCommercial;
+use App\Models\ContractConsulting;
+use App\Models\ContractEnergy;
+use App\Models\ContractProject;
+use App\Models\ContractSustainability;
+use App\Models\ContractWaste;
 use App\Models\ProgressiveSales;
-use App\Models\Quotation;
 use App\Models\RenewalSales;
 use App\Models\SalesTarget;
 use App\Models\User;
@@ -13,6 +18,15 @@ class PersonalSalesReport extends Component
 {
     public int $year;
     public string $filter_staff = '';
+
+    protected array $contractModels = [
+        ContractWaste::class,
+        ContractConsulting::class,
+        ContractProject::class,
+        ContractCommercial::class,
+        ContractSustainability::class,
+        ContractEnergy::class,
+    ];
 
     private function canViewAllSalesStaff(): bool
     {
@@ -53,17 +67,24 @@ class PersonalSalesReport extends Component
             ->get()
             ->keyBy('m');
 
-        $actualByMonth = Quotation::query()
-            ->whereYear('date', $this->year)
-            ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('staff_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
-            )
-            ->selectRaw('MONTH(date) as m, SUM(total_value) as total')
-            ->groupBy('m')
-            ->get()
-            ->keyBy('m');
+        $actualByMonth = array_fill(1, 12, 0.0);
+        if (!empty($targetStaffIds)) {
+            foreach ($this->contractModels as $modelClass) {
+                $rows = $modelClass::query()
+                    ->whereYear('signed_at', $this->year)
+                    ->whereIn('staff_id', $targetStaffIds)
+                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->groupBy('m')
+                    ->get();
+
+                foreach ($rows as $r) {
+                    $month = (int) $r->m;
+                    if ($month >= 1 && $month <= 12) {
+                        $actualByMonth[$month] += (float) $r->total;
+                    }
+                }
+            }
+        }
 
         $potentialByMonth = RenewalSales::query()
             ->whereYear('sales_month', $this->year)
@@ -139,7 +160,7 @@ class PersonalSalesReport extends Component
 
         for ($m = 1; $m <= 12; $m++) {
             $target = (float) ($targetsByMonth->get($m)?->total ?? 0);
-            $actual = (float) ($actualByMonth->get($m)?->total ?? 0);
+            $actual = (float) ($actualByMonth[$m] ?? 0);
 
             $potential = (float) ($potentialByMonth->get($m)?->total ?? 0);
             $sampleContract = (float) ($sampleContractByMonth->get($m)?->total ?? 0);
