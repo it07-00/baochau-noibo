@@ -240,10 +240,6 @@ class DailyReportManager extends Component
 
     public function render()
     {
-        if ($this->isDirector && $this->activeTab !== 'management') {
-            $this->activeTab = 'management';
-        }
-
         $allUsers = collect();
         $departments = collect();
 
