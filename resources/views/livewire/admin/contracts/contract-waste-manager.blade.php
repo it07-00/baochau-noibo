@@ -416,7 +416,7 @@
                             <th class="text-center">Doanh số</th>
                         @endunless
                         <th class="text-center">Tình trạng tái ký</th>
-                        <th class="text-center">Tình trạng chứng từ</th>
+                        <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
                         <th class="text-center">Được giao</th>
                         <th class="text-center">Tình trạng</th>
                         <th class="text-center pe-4">Thao tác</th>
@@ -476,7 +476,8 @@
                                         default => 'bg-secondary text-white',
                                     };
 
-                                    $voucherStatusKey = mb_strtolower(trim((string) ($doc->voucher_status ?? '')));
+                                    $voucherStatusValue = trim((string) ($doc->voucher_status ?? ''));
+                                    $voucherStatusKey = mb_strtolower($voucherStatusValue);
                                     $voucherBadgeClass = match ($voucherStatusKey) {
                                         'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
                                         'đã xuất hóa đơn' => 'bg-warning text-dark',
@@ -485,11 +486,23 @@
                                         '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
                                         default => 'bg-secondary text-white',
                                     };
+
+                                    $voucherBadgeLabel = match ($voucherStatusKey) {
+                                        'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
+                                        'đã xuất hóa đơn' => 'Xuất hóa đơn',
+                                        'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
+                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'BB nghiệm thu kết thúc HĐ',
+                                        '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
+                                        default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
+                                    };
                                 @endphp
                                 <span class="badge {{ $renewalBadgeClass }}">{{ $doc->renewal_status ?: 'Chưa chọn' }}</span>
                             </td>
-                            <td class="text-center">
-                                <span class="badge {{ $voucherBadgeClass }}">{{ $doc->voucher_status ?: 'Chưa chọn' }}</span>
+                            <td class="text-center voucher-status-cell">
+                                <span class="badge voucher-status-badge {{ $voucherBadgeClass }}"
+                                    title="{{ $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn' }}">
+                                    {{ $voucherBadgeLabel }}
+                                </span>
                             </td>
                             <td class="text-center">
                                 @if ($doc->assignments->count() > 0)

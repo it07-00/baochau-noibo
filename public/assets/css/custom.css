@@ -27,6 +27,23 @@
     padding: 0.5rem 0.25rem;
 }
 
+/* ----- Voucher status (compact in table) ----- */
+.table-xs .voucher-status-cell {
+    width: 180px;
+    min-width: 160px;
+}
+
+.table-xs .voucher-status-badge {
+    display: inline-block;
+    max-width: 170px;
+    font-size: 11px;
+    line-height: 1.25;
+    padding: 0.2rem 0.45rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* ----- Modal title (white text trên nền tối) ----- */
 .modal-title-custom {
     color: #ffffff !important;
