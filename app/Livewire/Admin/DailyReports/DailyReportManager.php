@@ -19,8 +19,10 @@ class DailyReportManager extends Component
     public $issues;
 
     // View states
-    public $activeTab = 'form'; // 'form' or 'history'
+    public $activeTab = 'form'; // 'form' | 'history' | 'management'
     public $isManager = false;
+    public $isDirector = false;
+    public $canSubmitOwnReport = true;
     public $isEditing = false;
     public $viewType = 'day'; // 'day' or 'month' (for managers)
 
@@ -48,11 +50,22 @@ class DailyReportManager extends Component
         $this->dateFilter = date('Y-m-d');
         $this->monthFilter = (int)date('m');
         $this->yearFilter = (int)date('Y');
+
+        $this->isDirector = auth()->user()->hasRole('giam-doc');
+        $this->canSubmitOwnReport = !$this->isDirector;
         $this->isManager = $this->canManageReports();
+
+        if ($this->isDirector && $this->isManager) {
+            $this->activeTab = 'management';
+        }
+
         if (!$this->isManager) {
             $this->userIdFilter = auth()->id();
         }
-        $this->loadReportByDate();
+
+        if ($this->canSubmitOwnReport) {
+            $this->loadReportByDate();
+        }
     }
 
     private function canManageReports(): bool
@@ -73,11 +86,26 @@ class DailyReportManager extends Component
 
     public function updatedReportDate()
     {
+        if (!$this->canSubmitOwnReport) {
+            return;
+        }
+
         $this->loadReportByDate();
+    }
+
+    public function updatedActiveTab($value)
+    {
+        if ($this->isDirector && $value !== 'management') {
+            $this->activeTab = 'management';
+        }
     }
 
     public function loadReportByDate()
     {
+        if (!$this->canSubmitOwnReport) {
+            return;
+        }
+
         $report = DailyReport::where('user_id', auth()->id())
             ->whereDate('date', $this->reportDate)
             ->first();
@@ -101,6 +129,8 @@ class DailyReportManager extends Component
 
     public function save()
     {
+        abort_unless($this->canSubmitOwnReport, 403);
+
         $this->validate([
             'reportDate' => 'required|date|before_or_equal:today',
             'content' => 'required|min:10|max:10000',
@@ -210,6 +240,10 @@ class DailyReportManager extends Component
 
     public function render()
     {
+        if ($this->isDirector && $this->activeTab !== 'management') {
+            $this->activeTab = 'management';
+        }
+
         $allUsers = collect();
         $departments = collect();
 

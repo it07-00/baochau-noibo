@@ -4,22 +4,24 @@
         <div class="{{ ($activeTab === 'management' || $activeTab === 'history') ? 'col-12' : 'col-lg-8 mx-auto' }}">
             <!-- Unified Tab Navigation -->
             <ul class="nav nav-pills mb-4 bg-white p-2 shadow-sm d-inline-flex" style="border-radius: 12px;">
-                <li class="nav-item">
-                    <button wire:click="$set('activeTab', 'form')"
-                        class="nav-link px-4 py-2 {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }}"
-                        style="border-radius: 10px;">
-                        <i class="bi bi-pencil-square me-2"></i> Gửi báo cáo
-                    </button>
-                </li>
-                <li class="nav-item ms-2">
-                    <button wire:click="$set('activeTab', 'history')"
-                        class="nav-link px-4 py-2 {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }}"
-                        style="border-radius: 10px;">
-                        <i class="bi bi-calendar3 me-2"></i> Lịch sử cá nhân
-                    </button>
-                </li>
-                @if($isManager)
+                @if($canSubmitOwnReport)
+                    <li class="nav-item">
+                        <button wire:click="$set('activeTab', 'form')"
+                            class="nav-link px-4 py-2 {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }}"
+                            style="border-radius: 10px;">
+                            <i class="bi bi-pencil-square me-2"></i> Gửi báo cáo
+                        </button>
+                    </li>
                     <li class="nav-item ms-2">
+                        <button wire:click="$set('activeTab', 'history')"
+                            class="nav-link px-4 py-2 {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }}"
+                            style="border-radius: 10px;">
+                            <i class="bi bi-calendar3 me-2"></i> Lịch sử cá nhân
+                        </button>
+                    </li>
+                @endif
+                @if($isManager)
+                    <li class="nav-item {{ $canSubmitOwnReport ? 'ms-2' : '' }}">
                         <button wire:click="$set('activeTab', 'management')"
                             class="nav-link px-4 py-2 {{ $activeTab === 'management' ? 'active bg-dark' : 'text-muted' }}"
                             style="border-radius: 10px;">
@@ -29,7 +31,7 @@
                 @endif
             </ul>
 
-            @if($activeTab === 'form')
+            @if($canSubmitOwnReport && $activeTab === 'form')
                 <!-- Daily Report Form -->
                 <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
                     <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
@@ -134,7 +136,7 @@
                     </p>
                 </div>
 
-            @elseif($activeTab === 'history')
+            @elseif($canSubmitOwnReport && $activeTab === 'history')
                 <!-- Employee History Header -->
                 <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
                     <div
