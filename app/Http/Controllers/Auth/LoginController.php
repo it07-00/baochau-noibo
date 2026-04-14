@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +25,20 @@ class LoginController extends Controller
 
         $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt([...$credentials, 'is_active' => true], $remember)) {
             $request->session()->regenerate();
 
             return redirect()->intended(route('app.dashboard'));
+        }
+
+        $lockedUser = User::where('username', $credentials['username'])->first();
+
+        if ($lockedUser && !$lockedUser->is_active && Auth::validate($credentials)) {
+            return back()
+                ->withInput($request->only('username'))
+                ->withErrors([
+                    'username' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
+                ]);
         }
 
         return back()

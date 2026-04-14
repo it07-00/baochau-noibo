@@ -23,7 +23,7 @@ Route::post('/logout', [LoginController::class, 'logout'])
     ->name('logout');
 
 // Legacy URLs redirect: /admin/* -> /*
-Route::middleware('auth')->get('/admin/{path?}', function (Request $request, ?string $path = null) {
+Route::middleware(['auth', 'active'])->get('/admin/{path?}', function (Request $request, ?string $path = null) {
     $target = '/' . ltrim($path ?: 'dashboard', '/');
     $query = $request->getQueryString();
 
@@ -34,7 +34,7 @@ Route::middleware('auth')->get('/admin/{path?}', function (Request $request, ?st
     return redirect($target, 301);
 })->where('path', '.*');
 
-Route::middleware('auth')->name('app.')->group(function () {
+Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     Route::get('/bang-dieu-khien', \App\Livewire\Admin\StatisticsBoard::class)->name('dashboard');
 
     Route::prefix('profile')->name('profile.')->group(function () {
