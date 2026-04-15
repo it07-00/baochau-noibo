@@ -109,7 +109,7 @@ class ContractCommercialManager extends Component
                 $this->formData['customer_id']    = $customer->id;
                 $this->formData['value']          = $quotation->original_value ?? 0;
                 $this->formData['commission']     = $quotation->commission_value ?? 0;
-                $this->formData['revenue']        = $quotation->total_value ?? 0;
+                $this->formData['revenue']        = $quotation->original_value ?? 0;
                 $this->formData['staff_id']       = $quotation->staff_id ?? auth()->id();
                 $this->formData['notes']          = $quotation->notes ?? '';
                 $this->formData['info_source']    = 'MỚI';
@@ -125,13 +125,14 @@ class ContractCommercialManager extends Component
         $this->resetPage();
     }
 
-    public function updatedSortDirection($value): void
+    public function updatedFormDataValue(): void
     {
-        $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
-        $this->resetPage();
+        if (!$this->isEditing) {
+            $this->formData['revenue'] = $this->formData['value'];
+        }
     }
 
-    public function create(): void
+    public function updatedSortDirection($value): void
     {
         $this->resetForm();
         $this->isEditing = false;

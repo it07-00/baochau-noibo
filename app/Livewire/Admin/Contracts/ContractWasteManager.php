@@ -128,7 +128,7 @@ class ContractWasteManager extends Component
                 $this->formData['content'] = $quotation->work_description;
                 $this->formData['value'] = $quotation->original_value;
                 $this->formData['commission'] = $quotation->commission_value;
-                $this->formData['revenue'] = $quotation->total_value;
+                $this->formData['revenue'] = $quotation->original_value;
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
                 $this->formData['note'] = $quotation->notes;
@@ -145,6 +145,13 @@ class ContractWasteManager extends Component
     public function updatedSearch()
     {
         $this->resetPage();
+    }
+
+    public function updatedFormDataValue(): void
+    {
+        if (!$this->isEditing) {
+            $this->formData['revenue'] = $this->formData['value'];
+        }
     }
 
     public function updatedSortDirection($value)
