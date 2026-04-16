@@ -61,6 +61,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
+                        <th class="text-center" style="width:45px;">STT</th>
                         <th class="ps-4" style="width: 28%;">Khách hàng</th>
                         <th class="text-center" style="width: 13%;">Số bill Viettel Post</th>
                         <th class="text-center" style="width: 13%;">Số bill 247</th>
@@ -73,6 +74,7 @@
                 <tbody>
                     @forelse($deliveries as $delivery)
                     <tr>
+                        <td class="text-center text-muted small fw-semibold">{{ ($deliveries->currentPage() - 1) * $deliveries->perPage() + $loop->iteration }}</td>
                         <td class="ps-4 py-3">
                             <div class="d-flex flex-column">
                                 <span class="fw-bold text-dark small mb-1">{{ $delivery->customer_name }}</span>
@@ -180,7 +182,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted italic">Không tìm thấy dữ liệu chuyển phát thư nào</td>
+                        <td colspan="8" class="text-center py-5 text-muted italic">Không tìm thấy dữ liệu chuyển phát thư nào</td>
                     </tr>
                     @endforelse
                 </tbody>

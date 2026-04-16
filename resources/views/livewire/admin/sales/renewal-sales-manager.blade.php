@@ -64,6 +64,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
+                        <th class="text-center" style="width:45px;">STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         <th class="text-center">Tháng tính doanh số</th>
@@ -77,6 +78,7 @@
                 <tbody>
                     @forelse($items as $item)
                     <tr>
+                        <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                         <td class="ps-4">
                             <div class="fw-bold">SHD: {{ $item->contract_number }}</div>
                             <small class="text-muted">Ngày tạo: {{ $item->created_at->format('d/m/Y') }}</small>

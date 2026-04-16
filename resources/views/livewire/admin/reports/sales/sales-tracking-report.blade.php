@@ -110,6 +110,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th class="text-center" style="width:45px;">STT</th>
                             <th>Tháng</th>
                             <th>Số hợp đồng</th>
                             <th>Nhân viên</th>
@@ -122,6 +123,7 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
+                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="text-muted small">{{ $item->sales_month->format('m/Y') }}</td>
                             <td class="small">{{ $item->contract_number ?: '—' }}</td>
                             <td>{{ $item->creator?->name ?? '—' }}</td>
@@ -144,6 +146,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th class="text-center" style="width:45px;">STT</th>
                             <th>Tháng</th>
                             <th>Số hợp đồng</th>
                             <th>Nhân viên</th>
@@ -156,6 +159,7 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
+                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="text-muted small">{{ $item->sales_month->format('m/Y') }}</td>
                             <td class="small">{{ $item->contract_number ?: '—' }}</td>
                             <td>{{ $item->creator?->name ?? '—' }}</td>

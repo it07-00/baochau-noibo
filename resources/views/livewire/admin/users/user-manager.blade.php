@@ -59,7 +59,7 @@
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>ID</th>
+                                    <th class="text-center" style="width:45px;">STT</th>
                                     <th>Họ tên</th>
                                     <th>Tên đăng nhập</th>
                                     <th>Phòng ban</th>
@@ -71,7 +71,7 @@
                             <tbody>
                                 @forelse($users as $user)
                                 <tr wire:key="user-{{ $user->id }}">
-                                    <td>{{ $user->id }}</td>
+                                    <td class="text-center text-muted small fw-semibold">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <x-user-avatar :user="$user" :size="32" class="me-2" />

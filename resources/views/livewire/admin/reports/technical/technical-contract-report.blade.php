@@ -93,6 +93,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th class="text-center" style="width:45px;">STT</th>
                             <th>Số HĐ</th>
                             <th>Khách hàng</th>
                             <th>Loại dịch vụ</th>
@@ -109,6 +110,7 @@
                         @forelse($items as $item)
                         @php $wp = $workflowProgress[$item->id] ?? ['percent' => 0, 'current_label' => 'Chưa bắt đầu', 'completed_count' => 0, 'total_steps' => 6]; @endphp
                         <tr>
+                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="fw-semibold small">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
                             <td class="small text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>

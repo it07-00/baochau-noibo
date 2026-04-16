@@ -269,6 +269,7 @@
                         @if ($canBulkDelete)
                             <th class="text-center" style="width:42px;">Chọn</th>
                         @endif
+                        <th class="text-center" style="width:45px;">STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
@@ -294,6 +295,9 @@
                                     @endif
                                 </td>
                             @endif
+                            <td class="text-center text-muted small fw-semibold">
+                                {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
+                            </td>
                             <td class="ps-4 py-4">
                                 <div class="d-flex flex-column">
                                     <span class="small">Số HĐ BC:<span
@@ -354,6 +358,7 @@
                                 <div class="small text-muted mt-1" style="font-size:11px;">{{ $wp['current_label'] }}</div>
                             </td>
                             <td class="text-center">
+                                <div class="d-flex flex-column align-items-center gap-1">
                                     @php
                                         $statusColor = match ($doc->status) {
                                             'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => [
@@ -377,20 +382,18 @@
                                     @endphp
 
                                     @if (!$canUpdateStatus)
-                                        <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0"
-                                            style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
+                                        <span class="rounded-pill px-3 py-2 fw-semibold border-0 d-inline-block"
+                                            style="font-size:0.8rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
                                             {{ $doc->status ?: 'PTH đang kiểm tra' }}
                                         </span>
                                     @else
                                         <div class="position-relative" x-data="{ open: false }">
                                             <button type="button" @click="open = !open"
-                                                class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
-                                                style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
+                                                class="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center gap-2 fw-semibold border-0"
+                                                style="font-size:0.8rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
                                                 {{ $doc->status ?: 'PTH đang kiểm tra' }}
-                                                <svg width="12" height="12" viewBox="0 0 12 12"
-                                                    fill="currentColor">
-                                                    <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor"
-                                                        stroke-width="1.5" fill="none" stroke-linecap="round" />
+                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                                                    <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" />
                                                 </svg>
                                             </button>
                                             <div x-show="open" @click.away="open = false" x-cloak
@@ -411,8 +414,9 @@
                                             </div>
                                         </div>
                                     @endif
-                                    <span
-                                        class="small text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
+                                    <span class="small text-muted" style="font-size:0.75rem;">
+                                        {{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '—' }}
+                                    </span>
                                 </div>
                             </td>
                             <td class="text-center voucher-status-cell">
@@ -484,7 +488,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 6: 9) + ($canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 6: 9) + ($canBulkDelete ? 1 : 0) + 1 }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse

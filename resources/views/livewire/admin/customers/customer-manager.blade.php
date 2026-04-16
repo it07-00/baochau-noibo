@@ -36,7 +36,7 @@
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="60">ID</th>
+                                    <th class="text-center" style="width:45px;">STT</th>
                                     <th>Tên khách hàng</th>
                                     <th>Mã số thuế</th>
                                     <th>Tỉnh thành</th>
@@ -58,7 +58,7 @@
                                         + $customer->contracts_sustainability_count;
                                 @endphp
                                 <tr wire:key="customer-{{ $customer->id }}">
-                                    <td>{{ $customer->id }}</td>
+                                    <td class="text-center text-muted small fw-semibold">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
                                     <td class="fw-bold">{{ $customer->name }}</td>
                                     <td>{{ $customer->tax_code ?: '—' }}</td>
                                     <td>{{ $customer->province ?: '—' }}</td>

@@ -230,6 +230,7 @@
                         @if ($canBulkDelete)
                             <th class="text-center" style="width:42px;">Chọn</th>
                         @endif
+                        <th class="text-center" style="width:45px;">STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
@@ -254,6 +255,9 @@
                                     @endif
                                 </td>
                             @endif
+                            <td class="text-center text-muted small fw-semibold">
+                                {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
+                            </td>
                             <td class="ps-4 py-4">
                                 <div class="d-flex flex-column">
                                     <span class="small">Số HĐ BC:<span

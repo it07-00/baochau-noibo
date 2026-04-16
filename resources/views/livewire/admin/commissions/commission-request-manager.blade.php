@@ -118,6 +118,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th class="text-center" style="min-width: 45px; width: 45px;">STT</th>
                             <th class="ps-4" style="min-width: 300px;">Hợp đồng / Khách hàng</th>
                             <th style="min-width: 220px;">Người nhận</th>
                             <th class="text-center" style="min-width: 170px;">Loại hợp đồng</th>
@@ -130,6 +131,7 @@
                     <tbody>
                         @forelse($requests as $request)
                             <tr>
+                                <td class="text-center text-muted small fw-semibold">{{ ($requests->currentPage() - 1) * $requests->perPage() + $loop->iteration }}</td>
                                 <td class="ps-4">
                                     <div class="fw-semibold text-primary mb-1">BC {{ $request->contract->shd_bc ?? 'N/A' }}</div>
                                     @if($request->contract && $request->contract->customer)

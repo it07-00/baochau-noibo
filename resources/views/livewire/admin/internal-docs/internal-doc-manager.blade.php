@@ -41,6 +41,7 @@
                 <table class="table table-hover align-middle mb-0 internal-doc-table">
                     <thead class="internal-doc-table-head">
                         <tr>
+                            <th class="text-center" style="width: 45px;">STT</th>
                             <th class="ps-4" style="width: 50%;">Thông tin quy định</th>
                             <th style="width: 35%;">Tập tin</th>
                             @canany(['internal-docs.edit', 'internal-docs.delete'])
@@ -51,6 +52,7 @@
                     <tbody>
                         @forelse($docs as $doc)
                         <tr>
+                            <td class="text-center text-muted small fw-semibold" style="width: 45px;">{{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}</td>
                             <td class="ps-4">
                                 <span class="fw-bold">{{ $doc->title }}</span>
                             </td>
