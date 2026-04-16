@@ -64,8 +64,16 @@ class PermissionsSeeder extends Seeder
             'rankings'            => ['view'],
             'statistics'          => ['view'],
 
-            // --- Báo cáo ---
+            // --- Báo cáo (chung) ---
             'reports'             => ['view'],
+
+            // --- Báo cáo theo bộ phận ---
+            'reports-sales'       => ['view'],
+            'reports-consulting'  => ['view'],
+            'reports-technical'   => ['view'],
+
+            // --- Chuyển phát (admin) ---
+            'mail-delivery-admin' => ['view'],
 
             // --- Nội bộ & Marketing ---
             'internal-docs'       => ['view', 'create', 'edit', 'delete'],
@@ -103,8 +111,9 @@ class PermissionsSeeder extends Seeder
             'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
             'departments.view', 'departments.create', 'departments.edit', 'departments.delete',
             'settings.view', 'settings.edit',
-            // Chuyển phát thư
+            // Chuyển phát thư (quản lý tập trung)
             'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit', 'mail-delivery.delete',
+            'mail-delivery-admin.view',
             // Nội bộ
             'internal-docs.view', 'internal-docs.create', 'internal-docs.edit', 'internal-docs.delete',
             // Báo cáo ngày
@@ -121,6 +130,10 @@ class PermissionsSeeder extends Seeder
                 'users.view', 'users.create', 'users.edit', 'users.delete',
                 'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
                 'settings.view', 'settings.edit',
+                // GĐ không truy cập trực tiếp BC bộ phận (TV, KT) và postal admin
+                'reports-consulting.view',
+                'reports-technical.view',
+                'mail-delivery-admin.view',
             ])->pluck('name')->toArray()
         );
 
@@ -150,7 +163,7 @@ class PermissionsSeeder extends Seeder
             // Chuyển phát
             'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit',
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view',
+            'rankings.view', 'statistics.view', 'reports.view', 'reports-sales.view',
             // Nội bộ
             'internal-docs.view',
             // Báo cáo ngày: xem tất cả + tạo/sửa
@@ -185,7 +198,7 @@ class PermissionsSeeder extends Seeder
             // Chuyển phát
             'mail-delivery.view', 'mail-delivery.create',
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view',
+            'rankings.view', 'statistics.view', 'reports.view', 'reports-sales.view',
             // Nội bộ
             'internal-docs.view',
             // Báo cáo ngày: chỉ xem của mình + tạo/sửa
@@ -213,7 +226,7 @@ class PermissionsSeeder extends Seeder
             // Chuyển phát
             'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit', 'mail-delivery.delete',
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view',
+            'rankings.view', 'statistics.view', 'reports.view', 'reports-consulting.view',
             // Nội bộ
             'internal-docs.view',
             // Báo cáo ngày
@@ -230,7 +243,7 @@ class PermissionsSeeder extends Seeder
             'waste-requests.view', 'waste-requests.create', 'waste-requests.edit',
             'technical-requests.view', 'technical-requests.create', 'technical-requests.edit', 'technical-requests.delete',
             // Báo cáo
-            'reports.view',
+            'reports.view', 'reports-technical.view',
             'rankings.view', 'statistics.view',
             // Nội bộ
             'internal-docs.view',

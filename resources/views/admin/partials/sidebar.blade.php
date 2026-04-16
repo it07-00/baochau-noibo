@@ -206,14 +206,12 @@
                     </svg>
                     SVG;
 
-                    // allow_roles: nếu có thì chỉ các role trong danh sách mới thấy menu
-                    // Không có allow_roles = tất cả role đều thấy (chỉ còn chặn bởi @can)
+                    // permission: chỉ những role được cấp permission tương ứng mới thấy menu
                     $groupMenus = [
                         [
                             'title' => 'Quản lý hợp đồng',
                             'icon' => $stackIcon,
-                            'permission' => 'contracts-waste.view',
-                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan'],
+                            'permission' => 'payment-schedules.view',
                             'children' => [
                                 'HĐ Chất thải & Tiếng ồn',
                                 'HĐ Pháp lý & Hồ sơ MT',
@@ -227,28 +225,25 @@
                             'title' => 'Quản lý hóa đơn',
                             'icon' => $stackIcon,
                             'permission' => 'invoices.view',
-                            'allow_roles' => ['giam-doc', 'ke-toan'],
                             'children' => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
                         ],
                         [
                             'title' => 'Chuyển phát thư',
                             'icon' => $stackIcon,
-                            'permission' => 'mail-delivery.view',
-                            'allow_roles' => ['it'],
+                            'permission' => 'mail-delivery-admin.view',
                             'children' => ['Quản lý chuyển phát'],
                         ],
                         [
                             'title' => 'Bộ phận kinh doanh',
                             'icon' => $stackIcon,
                             'permission' => 'sales-renewal.view',
-                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
                             'children' => ['Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá', 'Đăng ký mục tiêu doanh số'],
                         ],
                         [
                             'title' => 'Bộ phận tư vấn',
                             'icon' => $stackIcon,
                             'permission' => 'consulting-requests.view',
-                            'allow_roles' => ['giam-doc', 'tu-van'],
+
                             'children' => [
                                 'HĐ Chất thải & Tiếng ồn',
                                 'HĐ Pháp lý & Hồ sơ MT',
@@ -262,14 +257,12 @@
                             'title' => 'Bộ phận kế toán',
                             'icon' => $stackIcon,
                             'permission' => 'commissions.view',
-                            'allow_roles' => ['giam-doc', 'ke-toan', 'tp-kinh-doanh', 'kinh-doanh', 'tu-van'],
                             'children' => ['Yêu cầu chi hoa hồng'],
                         ],
                         [
                             'title' => 'Bộ phận kỹ thuật',
                             'icon' => $stackIcon,
                             'permission' => 'technical-requests.view',
-                            'allow_roles' => ['giam-doc', 'ky-thuat'],
                             'children' => [
                                 'HĐ Pháp lý & Hồ sơ MT',
                             ],
@@ -278,14 +271,12 @@
                             'title' => 'Bộ phận Marketing',
                             'icon' => $usersIcon,
                             'permission' => 'marketing-reports.view',
-                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'marketing', 'quan-ly'],
                             'children' => ['Báo cáo hàng ngày'],
                         ],
                         [
                             'title' => 'Báo cáo Kinh doanh',
                             'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'allow_roles' => ['giam-doc', 'tp-kinh-doanh', 'kinh-doanh'],
+                            'permission' => 'reports-sales.view',
                             'children' => [
                                 'Bảng tổng kết doanh số',
                                 'Bảng doanh số cam kết',
@@ -300,8 +291,7 @@
                         [
                             'title' => 'Báo cáo Tư vấn',
                             'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'allow_roles' => ['giam-doc', 'tu-van'],
+                            'permission' => 'reports-consulting.view',
                             'children' => [
                                 'BC CV Chất thải & Tiếng ồn',
                                 'BC CV Pháp lý & Hồ sơ MT',
@@ -314,8 +304,7 @@
                         [
                             'title' => 'Báo cáo Kỹ thuật',
                             'icon' => $usersIcon,
-                            'permission' => 'reports.view',
-                            'allow_roles' => ['giam-doc', 'ky-thuat'],
+                            'permission' => 'reports-technical.view',
                             'children' => $currentUser->hasRole('ky-thuat')
                                 ? ['BC Pháp lý & Hồ sơ MT']
                                 : [

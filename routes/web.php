@@ -122,7 +122,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         ->middleware(['permission:quotation-tracking.view', 'role:kinh-doanh,tp-kinh-doanh,giam-doc']);
 
     // Báo cáo Kinh doanh
-    Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware('permission:reports.view')->group(function () {
+    Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware('permission:reports-sales.view')->group(function () {
         Route::get('tong-hop',           \App\Livewire\Admin\Reports\Sales\SalesSummaryReport::class)->name('summary');
         Route::get('chi-tieu',           \App\Livewire\Admin\Reports\Sales\SalesTargetReport::class)->name('target');
         Route::get('tong-quan',          \App\Livewire\Admin\Reports\Sales\SalesOverviewReport::class)->name('overview');
@@ -138,7 +138,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     Route::get('hoa-don/chu-xu-ly',   \App\Livewire\Admin\Invoices\InvoiceHandlerManager::class)->name('invoices.handlers')->middleware('permission:handler-invoices.view');
 
     // Báo cáo Tư vấn
-    Route::prefix('bao-cao/tu-van')->name('reports.consulting-work.')->middleware('permission:reports.view')->group(function () {
+    Route::prefix('bao-cao/tu-van')->name('reports.consulting-work.')->middleware('permission:reports-consulting.view')->group(function () {
         Route::get('chat-thai-va-tieng-on',       \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('waste');
         Route::get('phap-ly-va-ho-so-mt',         \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('consulting');
         Route::get('ky-thuat-va-ung-pho-sc',      \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('project');
@@ -148,7 +148,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     });
 
     // Báo cáo Kỹ thuật
-    Route::prefix('bao-cao/ky-thuat')->name('reports.technical.')->middleware('permission:reports.view')->group(function () {
+    Route::prefix('bao-cao/ky-thuat')->name('reports.technical.')->middleware('permission:reports-technical.view')->group(function () {
         Route::get('chat-thai-va-tieng-on',      \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('waste');
         Route::get('phap-ly-va-ho-so-mt',        \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('consulting');
         Route::get('ky-thuat-va-ung-pho-sc',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('project');
