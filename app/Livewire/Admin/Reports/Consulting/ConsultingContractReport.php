@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Admin\Reports\Consulting;
 
-use App\Models\ContractAssignment;
-use App\Models\ContractWaste;
-use App\Models\ContractConsulting;
-use App\Models\ContractProject;
 use App\Models\ContractCommercial;
-use App\Models\ContractSustainability;
+use App\Models\ContractConsulting;
 use App\Models\ContractEnergy;
+use App\Models\ContractProject;
+use App\Models\ContractSustainability;
+use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -21,20 +20,26 @@ class ConsultingContractReport extends Component
     use WithPagination;
 
     public int $year;
+
     public string $filter_service = '';
+
     public string $filter_status = '';
+
     public int|string $filter_staff = '';
+
     public string $contract_type = 'waste';
+
     public string $page_title = 'Báo cáo công việc tư vấn';
+
     public array $years = [];
 
     private const TYPE_MAP = [
-        'waste'          => ['model' => ContractWaste::class,          'label' => 'BC CV Chất thải & Tiếng ồn'],
-        'consulting'     => ['model' => ContractConsulting::class,     'label' => 'BC CV Hồ sơ môi trường'],
-        'project'        => ['model' => ContractProject::class,        'label' => 'BC CV Kỹ thuật & Ứng phó SC'],
-        'commercial'     => ['model' => ContractCommercial::class,     'label' => 'BC CV NC & CĐ Công nghệ'],
+        'waste' => ['model' => ContractWaste::class,          'label' => 'BC CV Chất thải & Tiếng ồn'],
+        'consulting' => ['model' => ContractConsulting::class,     'label' => 'BC CV Pháp lý & Hồ sơ MT'],
+        'project' => ['model' => ContractProject::class,        'label' => 'BC CV Kỹ thuật & Ứng phó SC'],
+        'commercial' => ['model' => ContractCommercial::class,     'label' => 'BC CV NC & CĐ Công nghệ'],
         'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC CV TV & BC PTBV'],
-        'energy'         => ['model' => ContractEnergy::class,         'label' => 'BC CV Phát thải & Năng lượng'],
+        'energy' => ['model' => ContractEnergy::class,         'label' => 'BC CV Phát thải & Năng lượng'],
     ];
 
     public function mount(): void
@@ -48,21 +53,33 @@ class ConsultingContractReport extends Component
 
         $routeName = Route::currentRouteName();
         $this->contract_type = match ($routeName) {
-            'app.reports.consulting-work.waste'          => 'waste',
-            'app.reports.consulting-work.consulting'     => 'consulting',
-            'app.reports.consulting-work.project'        => 'project',
-            'app.reports.consulting-work.commercial'     => 'commercial',
+            'app.reports.consulting-work.waste' => 'waste',
+            'app.reports.consulting-work.consulting' => 'consulting',
+            'app.reports.consulting-work.project' => 'project',
+            'app.reports.consulting-work.commercial' => 'commercial',
             'app.reports.consulting-work.sustainability' => 'sustainability',
-            'app.reports.consulting-work.energy'         => 'energy',
-            default                                      => 'waste',
+            'app.reports.consulting-work.energy' => 'energy',
+            default => 'waste',
         };
 
         $this->page_title = self::TYPE_MAP[$this->contract_type]['label'];
     }
 
-    public function updatedYear(): void          { $this->resetPage(); }
-    public function updatedFilterService(): void { $this->resetPage(); }
-    public function updatedFilterStatus(): void  { $this->resetPage(); }
+    public function updatedYear(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterService(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
     public function updatedFilterStaff(): void
     {
         if ($this->isRestrictedConsultant()) {
@@ -82,7 +99,7 @@ class ConsultingContractReport extends Component
         $user ??= auth()->user();
 
         return $user->hasRole('tu-van')
-            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+            && ! $user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
     }
 
     private function baseQuery()
@@ -94,15 +111,12 @@ class ConsultingContractReport extends Component
 
         $query = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
             ->when($this->filter_service, fn ($q) => $q->where('loai_dich_vu', $this->filter_service))
-            ->when($this->filter_status === 'not_started', fn($q) =>
-                $q->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
+            ->when($this->filter_status === 'not_started', fn ($q) => $q->whereDoesntHave('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass))
             )
-            ->when($this->filter_status === 'in_progress', fn($q) =>
-                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
-                  ->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            ->when($this->filter_status === 'in_progress', fn ($q) => $q->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass))
+                ->whereDoesntHave('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
             )
-            ->when($this->filter_status === 'finished', fn($q) =>
-                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            ->when($this->filter_status === 'finished', fn ($q) => $q->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
             );
 
         // Scope to contracts that have tu-van assignments
@@ -167,9 +181,9 @@ class ConsultingContractReport extends Component
 
             $progress[$item->id] = [
                 'completed_count' => $completedCount,
-                'total_steps'     => $totalSteps,
-                'percent'         => $totalSteps > 0 ? round(($completedCount / $totalSteps) * 100) : 0,
-                'current_label'   => $currentStep ? ($stepLabels[$currentStep] ?? $currentStep) : 'Chưa bắt đầu',
+                'total_steps' => $totalSteps,
+                'percent' => $totalSteps > 0 ? round(($completedCount / $totalSteps) * 100) : 0,
+                'current_label' => $currentStep ? ($stepLabels[$currentStep] ?? $currentStep) : 'Chưa bắt đầu',
             ];
         }
 
@@ -186,9 +200,9 @@ class ConsultingContractReport extends Component
             ->orderByDesc('signed_at')
             ->paginate(20);
 
-        $modelClass   = $this->getModelClass();
-        $allIds       = $this->baseQuery()->pluck('id');
-        $total        = $allIds->count();
+        $modelClass = $this->getModelClass();
+        $allIds = $this->baseQuery()->pluck('id');
+        $total = $allIds->count();
 
         $stepsByContract = ContractWorkflowStep::where('contract_type', $modelClass)
             ->whereIn('contract_id', $allIds)
@@ -196,7 +210,7 @@ class ConsultingContractReport extends Component
             ->groupBy('contract_id');
 
         $completed = 0;
-        $active    = 0;
+        $active = 0;
         foreach ($allIds as $id) {
             $steps = $stepsByContract->get($id, collect());
             $stepNames = $steps->pluck('step_name')->unique()->toArray();

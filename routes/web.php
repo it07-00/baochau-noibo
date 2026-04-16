@@ -139,22 +139,22 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
 
     // Báo cáo Tư vấn
     Route::prefix('bao-cao/tu-van')->name('reports.consulting-work.')->middleware('permission:reports.view')->group(function () {
-        Route::get('chat-thai',      \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('waste');
-        Route::get('tu-van',         \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('consulting');
-        Route::get('du-an',          \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('project');
-        Route::get('thuong-mai',     \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('commercial');
-        Route::get('ben-vung',       \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('sustainability');
-        Route::get('nang-luong',     \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('energy');
+        Route::get('chat-thai-va-tieng-on',       \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('waste');
+        Route::get('phap-ly-va-ho-so-mt',         \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('consulting');
+        Route::get('ky-thuat-va-ung-pho-sc',      \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('project');
+        Route::get('nc-va-chuyen-doi-cong-nghe',  \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('commercial');
+        Route::get('tv-va-bao-cao-ptbv',          \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('sustainability');
+        Route::get('phat-thai-va-nang-luong',     \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('energy');
     });
 
     // Báo cáo Kỹ thuật
     Route::prefix('bao-cao/ky-thuat')->name('reports.technical.')->middleware('permission:reports.view')->group(function () {
-        Route::get('chat-thai',      \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('waste');
-        Route::get('tu-van',         \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('consulting');
-        Route::get('du-an',          \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('project');
-        Route::get('thuong-mai',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('commercial');
-        Route::get('ben-vung',       \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('sustainability');
-        Route::get('nang-luong',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('energy');
+        Route::get('chat-thai-va-tieng-on',      \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('waste');
+        Route::get('phap-ly-va-ho-so-mt',        \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('consulting');
+        Route::get('ky-thuat-va-ung-pho-sc',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('project');
+        Route::get('nc-va-chuyen-doi-cong-nghe', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('commercial');
+        Route::get('tv-va-bao-cao-ptbv',         \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('sustainability');
+        Route::get('phat-thai-va-nang-luong',    \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('energy');
     });
 
     // Báo cáo Marketing
