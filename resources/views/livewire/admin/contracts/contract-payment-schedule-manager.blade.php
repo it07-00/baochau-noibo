@@ -102,11 +102,12 @@
                                                 <i class="bi bi-check-circle fs-6"></i>
                                             </button>
                                         @endif
-                                        <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $s->id }})"
-                                            title="Sửa">
+                                        <button class="btn btn-sm p-0 text-warning"
+                                            wire:click="edit({{ $s->id }})" title="Sửa">
                                             <i class="bi bi-pencil fs-6"></i>
                                         </button>
-                                        <button class="btn btn-sm p-0 text-danger" wire:click="delete({{ $s->id }})"
+                                        <button class="btn btn-sm p-0 text-danger"
+                                            wire:click="delete({{ $s->id }})"
                                             wire:confirm="Xác nhận xóa đợt thanh toán này?" title="Xóa">
                                             <i class="bi bi-trash fs-6"></i>
                                         </button>

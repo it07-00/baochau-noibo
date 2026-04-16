@@ -31,88 +31,139 @@
     </div>
 
     @php
-        $canBulkDelete = auth()->user()->can('contracts-consulting.delete') && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
+        $canBulkDelete =
+            auth()->user()->can('contracts-consulting.delete') &&
+            !auth()
+                ->user()
+                ->hasAnyRole(['tu-van', 'ky-thuat']);
     @endphp
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
-            <h6 class="mb-0 fw-bold">Bộ lọc Hợp đồng tư vấn</h6>
-            <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="collapse"
-                data-bs-target="#filterBodyConsulting">−</button>
+        <div class="card-header bg-white py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-funnel-fill text-primary" style="font-size:13px;"></i>
+                <span class="fw-semibold" style="font-size:13px;">Bộ lọc Hồ sơ môi trường</span>
+            </div>
+            <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filterBodyConsulting" style="font-size:18px; line-height:1;">−</button>
         </div>
         <div class="collapse show" id="filterBodyConsulting">
-            <div class="card-body p-4">
-                <div class="row g-3">
-                    @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+            <div class="card-body px-4 pt-3 pb-2">
+                @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                    {{-- ── Hàng 1: Ngày + Tỉnh thành + Cờ boolean ── --}}
+                    <div class="row g-2 mb-2">
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
-                            <div class="d-flex gap-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Ngày ký hợp đồng</label>
+                            <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_from">
+                                    wire:model.live="filter.signed_from" title="Từ ngày">
+                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
                                 <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_to">
+                                    wire:model.live="filter.signed_to" title="Đến ngày">
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Ngày xuất hóa đơn</label>
-                            <div class="d-flex gap-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Ngày xuất hóa đơn</label>
+                            <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.submitted_from">
+                                    wire:model.live="filter.submitted_from" title="Từ ngày">
+                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
                                 <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.submitted_to">
+                                    wire:model.live="filter.submitted_to" title="Đến ngày">
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Tỉnh thành</label>
                             <select class="form-select form-control-xs" wire:model.live="filter.province">
-                                <option value="">Chọn tỉnh thành</option>
+                                <option value="">Tất cả tỉnh thành</option>
                                 @foreach ($provinces as $p)
                                     <option value="{{ $p }}">{{ $p }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3 d-flex align-items-end gap-3 pb-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="ct_offset"
-                                    wire:model.live="filter.is_offset">
-                                <label class="form-check-label small" for="ct_offset">Có bù trừ</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="ct_roomfund"
-                                    wire:model.live="filter.has_room_fund">
-                                <label class="form-check-label small" for="ct_roomfund">Có quỹ phòng</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="ct_overdue"
-                                    wire:model.live="filter.is_overdue">
-                                <label class="form-check-label small" for="ct_overdue">Trễ hạn</label>
-                            </div>
+                        <div class="col-md-4 d-flex align-items-end gap-2 pb-1">
+                            <label
+                                class="d-flex align-items-center gap-1 px-3 py-1 rounded border mb-0 {{ $filter['is_offset'] ? 'border-primary text-primary bg-primary bg-opacity-10' : 'border-secondary text-muted' }}"
+                                style="font-size:12px; cursor:pointer;">
+                                <input class="form-check-input m-0" type="checkbox" wire:model.live="filter.is_offset"> Có
+                                bù trừ
+                            </label>
+                            <label
+                                class="d-flex align-items-center gap-1 px-3 py-1 rounded border mb-0 {{ $filter['has_room_fund'] ? 'border-primary text-primary bg-primary bg-opacity-10' : 'border-secondary text-muted' }}"
+                                style="font-size:12px; cursor:pointer;">
+                                <input class="form-check-input m-0" type="checkbox" wire:model.live="filter.has_room_fund">
+                                Quỹ phòng
+                            </label>
+                            <label
+                                class="d-flex align-items-center gap-1 px-3 py-1 rounded border mb-0 {{ $filter['is_overdue'] ? 'border-danger text-danger bg-danger bg-opacity-10' : 'border-secondary text-muted' }}"
+                                style="font-size:12px; cursor:pointer;">
+                                <input class="form-check-input m-0" type="checkbox" wire:model.live="filter.is_overdue"> Trễ
+                                hạn
+                            </label>
                         </div>
-
+                    </div>
+                    {{-- ── Hàng 2: Dropdowns ── --}}
+                    <div class="row g-2 mb-3">
                         <div class="col-md-2">
-                            <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Tình trạng</label>
+                            <select class="form-select form-control-xs" wire:model.live="filter.status">
+                                <option value="">Tất cả</option>
+                                @foreach ($all_statuses as $s)
+                                    <option value="{{ $s }}">{{ $s }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Chứng từ</label>
+                            <select class="form-select form-control-xs" wire:model.live="filter.voucher_status">
+                                <option value="">Tất cả</option>
+                                @foreach ($voucher_status_options as $voucherStatus)
+                                    <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Loại dịch vụ</label>
+                            <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
+                                <option value="">Tất cả</option>
+                                @foreach ($loai_dich_vu_options as $opt)
+                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Nguồn thông tin</label>
                             <select class="form-select form-control-xs" wire:model.live="filter.info_source">
-                                <option value="">Chọn Nguồn thông...</option>
+                                <option value="">Tất cả</option>
                                 @foreach ($info_sources as $src)
                                     <option value="{{ $src }}">{{ $src }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label fw-bold custom-filter-label">Phương thức thanh toán</label>
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Thanh toán</label>
                             <select class="form-select form-control-xs" wire:model.live="filter.payment_method">
-                                <option value="">Chọn phương thức...</option>
+                                <option value="">Tất cả</option>
                                 @foreach ($payment_methods as $pm)
                                     <option value="{{ $pm }}">{{ $pm }}</option>
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Tái ký</label>
+                            <select class="form-select form-control-xs" wire:model.live="filter.renewal_status">
+                                <option value="">Tất cả</option>
+                                @foreach ($renewal_statuses as $rs)
+                                    <option value="{{ $rs }}">{{ $rs }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
                             <div class="col-md-2">
-                                <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
+                                <label class="custom-filter-label fw-semibold d-block mb-1">Nhân viên KD</label>
                                 <select class="form-select form-control-xs" wire:model.live="filter.staff_id">
-                                    <option value="">Chọn nhân viên</option>
+                                    <option value="">Tất cả</option>
                                     @foreach ($staffs as $staff)
                                         <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                                     @endforeach
@@ -120,101 +171,87 @@
                             </div>
                         @endif
                         <div class="col-md-2">
-                            <label class="form-label fw-bold custom-filter-label">Tình trạng tái ký</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.renewal_status">
-                                <option value="">Chọn tình trạng</option>
-                                @foreach ($renewal_statuses as $rs)
-                                    <option value="{{ $rs }}">{{ $rs }}</option>
-                                @endforeach
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Sắp xếp</label>
+                            <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                                <option value="desc">Mới nhất trước</option>
+                                <option value="asc">Cũ nhất trước</option>
                             </select>
                         </div>
-                    @else
-                        {{-- Bộ lọc cho tư vấn / kỹ thuật --}}
+                    </div>
+                @else
+                    {{-- ── Bộ lọc cho tư vấn / kỹ thuật ── --}}
+                    <div class="row g-2 mb-2">
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
-                            <div class="d-flex gap-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Ngày ký hợp đồng</label>
+                            <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_from">
+                                    wire:model.live="filter.signed_from" title="Từ ngày">
+                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
                                 <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_to">
+                                    wire:model.live="filter.signed_to" title="Đến ngày">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Ngày xuất hóa đơn</label>
+                            <div class="input-group input-group-sm">
+                                <input type="date" class="form-control form-control-xs"
+                                    wire:model.live="filter.submitted_from" title="Từ ngày">
+                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
+                                <input type="date" class="form-control form-control-xs"
+                                    wire:model.live="filter.submitted_to" title="Đến ngày">
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Tỉnh thành</label>
                             <select class="form-select form-control-xs" wire:model.live="filter.province">
-                                <option value="">Chọn tỉnh thành</option>
+                                <option value="">Tất cả tỉnh thành</option>
                                 @foreach ($provinces as $p)
                                     <option value="{{ $p }}">{{ $p }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-1 d-flex align-items-end pb-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="ct_overdue"
-                                    wire:model.live="filter.is_overdue">
-                                <label class="form-check-label small" for="ct_overdue">Trễ hạn</label>
-                            </div>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Loại dịch vụ</label>
+                            <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
+                                <option value="">Tất cả</option>
+                                @foreach ($loai_dich_vu_options as $opt)
+                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                @endforeach
+                            </select>
                         </div>
+                        <div class="col-md-2">
+                            <label class="custom-filter-label fw-semibold d-block mb-1">Sắp xếp</label>
+                            <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                                <option value="desc">Mới nhất trước</option>
+                                <option value="asc">Cũ nhất trước</option>
+                            </select>
+                        </div>
+                    </div>
+                @endunless
+                {{-- ── Nút hành động ── --}}
+                <div class="d-flex align-items-center gap-2 pt-2 pb-2 border-top">
+                    <button class="btn btn-primary btn-sm px-4 btn-filter" wire:click="$refresh">
+                        <i class="bi bi-search me-1"></i>Lọc
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm px-3 btn-filter" wire:click="resetFilters">
+                        <i class="bi bi-x-circle me-1"></i>Xóa lọc
+                    </button>
+                    @if ($canBulkDelete)
+                        <button class="btn btn-danger btn-sm px-3 btn-filter" wire:click="bulkDeleteSelected"
+                            wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
+                            @if (empty($selectedDocIds)) disabled @endif>
+                            <i class="bi bi-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
+                        </button>
+                    @endif
+                    @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                        <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
+                            class="btn btn-success btn-sm px-3 btn-filter">
+                            <span wire:loading wire:target="exportExcel"
+                                class="spinner-border spinner-border-sm me-1"></span>
+                            <i wire:loading.remove wire:target="exportExcel"
+                                class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
+                        </button>
                     @endunless
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
-                        <select class="form-select form-control-xs" wire:model.live="filter.status">
-                            <option value="">Chọn tình trạng</option>
-                            @foreach ($all_statuses as $s)
-                                <option value="{{ $s }}">{{ $s }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold custom-filter-label">Tình trạng chứng từ</label>
-                        <select class="form-select form-control-xs" wire:model.live="filter.voucher_status">
-                            <option value="">Chọn tình trạng</option>
-                            @foreach ($voucher_status_options as $voucherStatus)
-                                <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
-                        <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
-                            <option value="">Chọn loại dịch vụ</option>
-                            @foreach ($loai_dich_vu_options as $opt)
-                                <option value="{{ $opt }}">{{ $opt }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
-                        <select class="form-select form-control-xs" wire:model.live="sortDirection">
-                            <option value="desc">Từ trên xuống</option>
-                            <option value="asc">Từ dưới lên</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-12 d-flex gap-2 mt-2">
-                        <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
-                            <i class="bi bi-search me-1"></i>Lọc
-                        </button>
-                        <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
-                            <i class="bi bi-x-circle me-1"></i>Xóa lọc
-                        </button>
-                        @if ($canBulkDelete)
-                            <button class="btn btn-danger px-4 btn-filter" wire:click="bulkDeleteSelected"
-                                wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
-                                @if (empty($selectedDocIds)) disabled @endif>
-                                <i class="bi bi-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
-                            </button>
-                        @endif
-                        @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                            <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
-                                class="btn btn-success px-4 btn-filter">
-                                <span wire:loading wire:target="exportExcel"
-                                    class="spinner-border spinner-border-sm me-1"></span>
-                                <i wire:loading.remove wire:target="exportExcel"
-                                    class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
-                            </button>
-                        @endunless
-                    </div>
                 </div>
             </div>
         </div>
@@ -223,7 +260,7 @@
     <!-- Table Card -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 border-bottom">
-            <h6 class="mb-0 fw-bold">Danh sách Hợp đồng tư vấn</h6>
+            <h6 class="mb-0 fw-bold">Danh sách Hồ sơ môi trường</h6>
         </div>
         <div class="table-responsive" style="overflow:visible; min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
@@ -240,6 +277,7 @@
                             <th class="text-center">Doanh số</th>
                         @endunless
                         <th class="text-center">Được giao</th>
+                        <th class="text-center" style="min-width:160px;">Tiến trình</th>
                         <th class="text-center">Tình trạng</th>
                         <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
                         <th class="text-center pe-4">Thao tác</th>
@@ -302,11 +340,26 @@
                                     <span class="text-muted small">—</span>
                                 @endif
                             </td>
+                            @php $wp = $workflowProgress[$doc->id] ?? ['percent' => 0, 'current_label' => 'Chưa bắt đầu', 'completed_count' => 0, 'total_steps' => 6]; @endphp
                             <td class="text-center">
-                                <div class="d-flex flex-column align-items-center">
+                                <div class="d-flex align-items-center gap-2 justify-content-center">
+                                    <div class="progress flex-grow-1" style="height:7px; max-width:90px;">
+                                        <div class="progress-bar {{ $wp['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
+                                             role="progressbar" style="width:{{ $wp['percent'] }}%"
+                                             aria-valuenow="{{ $wp['percent'] }}" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <span class="small text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
+                                </div>
+                                <div class="small text-muted mt-1" style="font-size:11px;">{{ $wp['current_label'] }}</div>
+                            </td>
+                            <td class="text-center">
                                     @php
                                         $statusColor = match ($doc->status) {
-                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => [
+                                                'bg' => '#cfe2ff',
+                                                'text' => '#0d6efd',
+                                            ],
                                             'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
                                             'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
                                             'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
@@ -315,8 +368,12 @@
                                         };
                                     @endphp
                                     @php
-                                        $canUpdateStatus = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) &&
-                                            (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id());
+                                        $canUpdateStatus =
+                                            !auth()
+                                                ->user()
+                                                ->hasAnyRole(['tu-van', 'ky-thuat']) &&
+                                            (!auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                $doc->staff_id === auth()->id());
                                     @endphp
 
                                     @if (!$canUpdateStatus)
@@ -375,7 +432,8 @@
                                         'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
                                         'đã xuất hóa đơn' => 'Xuất hóa đơn',
                                         'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
-                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'BB nghiệm thu kết thúc HĐ',
+                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng'
+                                            => 'BB nghiệm thu kết thúc HĐ',
                                         '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
                                         default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
                                     };
@@ -405,7 +463,9 @@
                                     @endif
                                     @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                                         @php
-                                            $canEditDelete = !auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id();
+                                            $canEditDelete =
+                                                !auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                $doc->staff_id === auth()->id();
                                         @endphp
                                         @if ($canEditDelete)
                                             <button class="btn btn-sm p-0 text-warning"
@@ -424,7 +484,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) ? 6 : 9) + ($canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 6: 9) + ($canBulkDelete ? 1 : 0) }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
@@ -710,20 +770,24 @@
                         </div>
                         @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Nhân viên CS <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">Nhân viên CS <span
+                                        class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button class="form-select text-start text-wrap" type="button"
                                         @click.prevent="open = !open"
                                         style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
                                         {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? '-- Chọn nhân viên --' }}
                                     </button>
-                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                        x-cloak style="max-height: 300px; overflow-y: auto;">
-                                        <input type="text" x-model="search" class="form-control form-control-sm mb-2"
-                                            placeholder="Tìm kiếm..." @click.stop>
+                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open"
+                                        @click.away="open = false" x-cloak
+                                        style="max-height: 300px; overflow-y: auto;">
+                                        <input type="text" x-model="search"
+                                            class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
+                                            @click.stop>
                                         <button class="dropdown-item @if (empty($formData['staff_id'])) active @endif"
                                             type="button" x-show="!search.length"
-                                            wire:click="$set('formData.staff_id', '')" @click="open = false">-- Chọn nhân
+                                            wire:click="$set('formData.staff_id', '')" @click="open = false">-- Chọn
+                                            nhân
                                             viên --</button>
                                         @foreach ($staffs as $s)
                                             <button

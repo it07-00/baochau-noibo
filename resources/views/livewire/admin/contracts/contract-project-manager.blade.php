@@ -31,7 +31,11 @@
     </div>
 
     @php
-        $canBulkDelete = auth()->user()->can('contracts-project.delete') && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
+        $canBulkDelete =
+            auth()->user()->can('contracts-project.delete') &&
+            !auth()
+                ->user()
+                ->hasAnyRole(['tu-van', 'ky-thuat']);
     @endphp
 
     <!-- Filter Card -->
@@ -300,7 +304,10 @@
                                 <div class="d-flex flex-column align-items-center">
                                     @php
                                         $statusColor = match ($doc->status) {
-                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => [
+                                                'bg' => '#cfe2ff',
+                                                'text' => '#0d6efd',
+                                            ],
                                             'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
                                             'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
                                             'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
@@ -309,8 +316,12 @@
                                         };
                                     @endphp
                                     @php
-                                        $canUpdateStatus = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) &&
-                                            (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id());
+                                        $canUpdateStatus =
+                                            !auth()
+                                                ->user()
+                                                ->hasAnyRole(['tu-van', 'ky-thuat']) &&
+                                            (!auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                $doc->staff_id === auth()->id());
                                     @endphp
 
                                     @if (!$canUpdateStatus)
@@ -369,7 +380,8 @@
                                         'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
                                         'đã xuất hóa đơn' => 'Xuất hóa đơn',
                                         'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
-                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'BB nghiệm thu kết thúc HĐ',
+                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng'
+                                            => 'BB nghiệm thu kết thúc HĐ',
                                         '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
                                         default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
                                     };
@@ -393,7 +405,9 @@
                                     @endif
                                     @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                                         @php
-                                            $canEditDelete = !auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id();
+                                            $canEditDelete =
+                                                !auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                $doc->staff_id === auth()->id();
                                         @endphp
                                         @if ($canEditDelete)
                                             <button class="btn btn-sm p-0 text-warning"
@@ -412,7 +426,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']) ? 6 : 9) + ($canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 6: 9) + ($canBulkDelete ? 1 : 0) }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
@@ -698,20 +712,24 @@
                         </div>
                         @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Nhân viên CS <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">Nhân viên CS <span
+                                        class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button class="form-select text-start text-wrap" type="button"
                                         @click.prevent="open = !open"
                                         style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
                                         {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? '-- Chọn nhân viên --' }}
                                     </button>
-                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                        x-cloak style="max-height: 300px; overflow-y: auto;">
-                                        <input type="text" x-model="search" class="form-control form-control-sm mb-2"
-                                            placeholder="Tìm kiếm..." @click.stop>
+                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open"
+                                        @click.away="open = false" x-cloak
+                                        style="max-height: 300px; overflow-y: auto;">
+                                        <input type="text" x-model="search"
+                                            class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
+                                            @click.stop>
                                         <button class="dropdown-item @if (empty($formData['staff_id'])) active @endif"
                                             type="button" x-show="!search.length"
-                                            wire:click="$set('formData.staff_id', '')" @click="open = false">-- Chọn nhân
+                                            wire:click="$set('formData.staff_id', '')" @click="open = false">-- Chọn
+                                            nhân
                                             viên --</button>
                                         @foreach ($staffs as $s)
                                             <button

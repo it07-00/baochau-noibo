@@ -506,7 +506,7 @@
                                                         : $docIcon);
                                             $childLabel = $child;
 
-                                            if (in_array($menu['title'], ['Quản lý hợp đồng', 'Bộ phận tư vấn', 'Bộ phận kỹ thuật'])) {
+                                            if ($menu['title'] === 'Quản lý hợp đồng') {
                                                 $childLabel = match ($child) {
                                                     'HĐ Chất thải & Tiếng ồn' => 'Chất thải & Tiếng ồn',
                                                     'HĐ Pháp lý & Hồ sơ MT' => 'Hồ sơ môi trường',
@@ -514,11 +514,6 @@
                                                     'HĐ NC & CĐ Công nghệ' => 'NC & CĐ Công nghệ',
                                                     'HĐ TV & BC PTBV' => 'TV & BC PTBV',
                                                     'HĐ Phát thải & Năng lượng' => 'Phát thải & Năng lượng',
-                                                    default => $child,
-                                                };
-                                            } elseif ($menu['title'] === 'Báo cáo Kỹ thuật') {
-                                                $childLabel = match ($child) {
-                                                    'BC Pháp lý & Hồ sơ MT' => 'Hồ sơ môi trường',
                                                     default => $child,
                                                 };
                                             }

@@ -2,17 +2,16 @@
 
 namespace App\Livewire\Admin\Reports\Technical;
 
-use App\Models\ContractWaste;
-use App\Models\ContractConsulting;
-use App\Models\ContractProject;
 use App\Models\ContractCommercial;
-use App\Models\ContractSustainability;
+use App\Models\ContractConsulting;
 use App\Models\ContractEnergy;
+use App\Models\ContractProject;
+use App\Models\ContractSustainability;
+use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
-use App\Models\ContractAssignment;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -21,20 +20,26 @@ class TechnicalContractReport extends Component
     use WithPagination;
 
     public int $year;
+
     public string $filter_service = '';
+
     public string $filter_status = '';
+
     public int|string $filter_staff = '';
+
     public string $contract_type = 'waste';
+
     public string $page_title = 'Báo cáo kỹ thuật';
+
     public array $years = [];
 
     private const TYPE_MAP = [
-        'waste'          => ['model' => ContractWaste::class,          'label' => 'BC Chất thải & Tiếng ồn'],
-        'consulting'     => ['model' => ContractConsulting::class,     'label' => 'Hồ sơ môi trường'],
-        'project'        => ['model' => ContractProject::class,        'label' => 'BC Kỹ thuật & Ứng phó SC'],
-        'commercial'     => ['model' => ContractCommercial::class,     'label' => 'BC NC & CĐ Công nghệ'],
+        'waste' => ['model' => ContractWaste::class,          'label' => 'BC Chất thải & Tiếng ồn'],
+        'consulting' => ['model' => ContractConsulting::class,     'label' => 'Hồ sơ môi trường'],
+        'project' => ['model' => ContractProject::class,        'label' => 'BC Kỹ thuật & Ứng phó SC'],
+        'commercial' => ['model' => ContractCommercial::class,     'label' => 'BC NC & CĐ Công nghệ'],
         'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC TV & BC PTBV'],
-        'energy'         => ['model' => ContractEnergy::class,         'label' => 'BC Phát thải & Năng lượng'],
+        'energy' => ['model' => ContractEnergy::class,         'label' => 'BC Phát thải & Năng lượng'],
     ];
 
     public function mount(): void
@@ -44,13 +49,13 @@ class TechnicalContractReport extends Component
 
         $routeName = Route::currentRouteName();
         $this->contract_type = match ($routeName) {
-            'app.reports.technical.waste'          => 'waste',
-            'app.reports.technical.consulting'     => 'consulting',
-            'app.reports.technical.project'        => 'project',
-            'app.reports.technical.commercial'     => 'commercial',
+            'app.reports.technical.waste' => 'waste',
+            'app.reports.technical.consulting' => 'consulting',
+            'app.reports.technical.project' => 'project',
+            'app.reports.technical.commercial' => 'commercial',
             'app.reports.technical.sustainability' => 'sustainability',
-            'app.reports.technical.energy'         => 'energy',
-            default                                => 'waste',
+            'app.reports.technical.energy' => 'energy',
+            default => 'waste',
         };
 
         $this->page_title = self::TYPE_MAP[$this->contract_type]['label'];
@@ -61,9 +66,21 @@ class TechnicalContractReport extends Component
         }
     }
 
-    public function updatedYear(): void          { $this->resetPage(); }
-    public function updatedFilterService(): void { $this->resetPage(); }
-    public function updatedFilterStatus(): void  { $this->resetPage(); }
+    public function updatedYear(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterService(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
     public function updatedFilterStaff(): void
     {
         // Khóa bộ lọc nếu là nhân viên kỹ thuật bị hạn chế
@@ -76,8 +93,9 @@ class TechnicalContractReport extends Component
     private function isRestrictedTechnical(): bool
     {
         $user = auth()->user();
+
         return $user->hasRole('ky-thuat')
-            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+            && ! $user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
     }
 
     private function getModelClass(): string
@@ -92,21 +110,18 @@ class TechnicalContractReport extends Component
         $effectiveStaff = $isRestricted ? (string) auth()->id() : $this->filter_staff;
 
         $query = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
-            ->when($this->filter_service, fn($q) => $q->where('loai_dich_vu', $this->filter_service))
-            ->when($this->filter_status === 'not_started', fn($q) =>
-                $q->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
+            ->when($this->filter_service, fn ($q) => $q->where('loai_dich_vu', $this->filter_service))
+            ->when($this->filter_status === 'not_started', fn ($q) => $q->whereDoesntHave('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass))
             )
-            ->when($this->filter_status === 'in_progress', fn($q) =>
-                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
-                  ->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            ->when($this->filter_status === 'in_progress', fn ($q) => $q->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass))
+                ->whereDoesntHave('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
             )
-            ->when($this->filter_status === 'finished', fn($q) =>
-                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            ->when($this->filter_status === 'finished', fn ($q) => $q->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
             );
 
         // Lọc theo nhân viên được giao (assignment), không phải staff_id của hợp đồng
         if ($effectiveStaff !== '') {
-            $query->whereHas('assignments', fn($q) => $q->where('user_id', $effectiveStaff));
+            $query->whereHas('assignments', fn ($q) => $q->where('user_id', $effectiveStaff));
         }
 
         return $query;
@@ -143,9 +158,9 @@ class TechnicalContractReport extends Component
 
             $progress[$item->id] = [
                 'completed_count' => $completedCount,
-                'total_steps'     => $totalSteps,
-                'percent'         => $totalSteps > 0 ? round(($completedCount / $totalSteps) * 100) : 0,
-                'current_label'   => $currentStep ? ($stepLabels[$currentStep] ?? $currentStep) : 'Chưa bắt đầu',
+                'total_steps' => $totalSteps,
+                'percent' => $totalSteps > 0 ? round(($completedCount / $totalSteps) * 100) : 0,
+                'current_label' => $currentStep ? ($stepLabels[$currentStep] ?? $currentStep) : 'Chưa bắt đầu',
             ];
         }
 
@@ -159,9 +174,9 @@ class TechnicalContractReport extends Component
             ->orderByDesc('signed_at')
             ->paginate(20);
 
-        $modelClass   = $this->getModelClass();
-        $allIds       = $this->baseQuery()->pluck('id');
-        $total        = $allIds->count();
+        $modelClass = $this->getModelClass();
+        $allIds = $this->baseQuery()->pluck('id');
+        $total = $allIds->count();
 
         // Lấy tất cả bước workflow của các hợp đồng này
         $stepsByContract = ContractWorkflowStep::where('contract_type', $modelClass)
@@ -170,7 +185,7 @@ class TechnicalContractReport extends Component
             ->groupBy('contract_id');
 
         $completed = 0;
-        $active    = 0;
+        $active = 0;
         foreach ($allIds as $id) {
             $steps = $stepsByContract->get($id, collect());
             $stepNames = $steps->pluck('step_name')->unique()->toArray();
