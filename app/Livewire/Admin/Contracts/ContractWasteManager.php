@@ -646,7 +646,8 @@ class ContractWasteManager extends Component
             'voucher_statuses' => $voucherStatuses,
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
-            'provinces' => \App\Support\VietnamProvinces::list(),
+            'provinces' => ContractWaste::whereNotNull('province')->where('province', '!=', '')
+                ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
             'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Chất thải & Tiếng ồn']);

@@ -554,7 +554,8 @@ class ContractCommercialManager extends Component
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van']))->orderBy('name')->get(),
-            'provinces' => \App\Support\VietnamProvinces::list(),
+            'provinces'          => ContractCommercial::whereNotNull('province')->where('province', '!=', '')
+                ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'       => self::ALLOWED_STATUSES,
             'renewal_statuses'   => ContractCommercial::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,

@@ -697,7 +697,8 @@ class ContractConsultingManager extends Component
                 ? ContractConsulting::whereHas('assignments', fn ($q) => $q->where('user_id', $user->id))
                     ->whereNotNull('province')->where('province', '!=', '')
                     ->distinct()->orderBy('province')->pluck('province')->toArray()
-                : VietnamProvinces::list(),
+                : ContractConsulting::whereNotNull('province')->where('province', '!=', '')
+                    ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractConsulting::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
