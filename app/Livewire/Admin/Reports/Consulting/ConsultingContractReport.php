@@ -30,7 +30,7 @@ class ConsultingContractReport extends Component
 
     private const TYPE_MAP = [
         'waste'          => ['model' => ContractWaste::class,          'label' => 'BC CV Chất thải & Tiếng ồn'],
-        'consulting'     => ['model' => ContractConsulting::class,     'label' => 'BC CV Pháp lý & Hồ sơ MT'],
+        'consulting'     => ['model' => ContractConsulting::class,     'label' => 'BC CV Hồ sơ môi trường'],
         'project'        => ['model' => ContractProject::class,        'label' => 'BC CV Kỹ thuật & Ứng phó SC'],
         'commercial'     => ['model' => ContractCommercial::class,     'label' => 'BC CV NC & CĐ Công nghệ'],
         'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC CV TV & BC PTBV'],
@@ -125,8 +125,21 @@ class ConsultingContractReport extends Component
 
     private function getWorkflowProgress($items)
     {
-        $stepKeys = ContractWorkflowStep::STEP_KEYS;
-        $stepLabels = ContractWorkflowStep::STEPS;
+        // Xác định role của user hiện tại
+        $user = auth()->user();
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách bước workflow phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+        $stepKeys = $stepsData['stepKeys'];
+        $stepLabels = $stepsData['steps'];
         $totalSteps = count($stepKeys);
         $modelClass = $this->getModelClass();
 
@@ -197,7 +210,20 @@ class ConsultingContractReport extends Component
         $summary = (object) ['total' => $total, 'completed' => $completed, 'active' => $active];
 
         $workflowProgress = $this->getWorkflowProgress($items);
-        $stepLabels = ContractWorkflowStep::STEPS;
+
+        // Xác định role của user hiện tại
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách step labels phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+        $stepLabels = $stepsData['steps'];
 
         $staffs = User::role('tu-van')
             ->when($isRestrictedConsultant, fn ($q) => $q->where('id', $user->id))

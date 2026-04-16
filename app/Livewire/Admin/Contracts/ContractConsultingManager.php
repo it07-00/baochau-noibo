@@ -574,8 +574,21 @@ class ContractConsultingManager extends Component
 
     private function getWorkflowProgress($items)
     {
-        $stepKeys = ContractWorkflowStep::STEP_KEYS;
-        $stepLabels = ContractWorkflowStep::STEPS;
+        // Xác định role của user hiện tại
+        $user = auth()->user();
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách bước workflow phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+        $stepKeys = $stepsData['stepKeys'];
+        $stepLabels = $stepsData['steps'];
         $totalSteps = count($stepKeys);
         $modelClass = ContractConsulting::class;
 

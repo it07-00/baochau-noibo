@@ -111,7 +111,7 @@ class ContractWorkflowPanel extends Component
             'workflow_status' => $this->activeStep,
         ]);
 
-        $stepLabel = ContractWorkflowStep::STEPS[$this->activeStep] ?? $this->activeStep;
+        $stepLabel = $this->getStepLabel($this->activeStep);
         $completedStep = $this->activeStep;
 
         $this->activeStep  = null;
@@ -150,7 +150,7 @@ class ContractWorkflowPanel extends Component
         }
         foreach ($recipients->unique('id') as $recipient) {
             if ($recipient->id !== auth()->id()) {
-                $recipient->notify(new ContractWorkflowUpdatedNotification($typeKey, $this->contractId, $contractLabel, $completedStep, auth()->user()->name));
+                $recipient->notify(new ContractWorkflowUpdatedNotification($typeKey, $this->contractId, $contractLabel, $completedStep, $stepLabel, auth()->user()->name));
             }
         }
     }
@@ -165,6 +165,30 @@ class ContractWorkflowPanel extends Component
     private function getModelClass(): string
     {
         return $this->modelMap[$this->contractType] ?? '';
+    }
+
+    private function getStepLabel(?string $stepName): string
+    {
+        if (!$stepName) {
+            return $stepName ?? '';
+        }
+
+        // Xác định role của user hiện tại
+        $user = auth()->user();
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách step labels phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+        $stepLabels = $stepsData['steps'];
+
+        return $stepLabels[$stepName] ?? $stepName;
     }
 
     public function render()
@@ -185,9 +209,23 @@ class ContractWorkflowPanel extends Component
             ->get()
             ->groupBy('milestone');
 
+        // Xác định role của user hiện tại
+        $user = auth()->user();
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách bước workflow phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+
         return view('livewire.admin.contracts.contract-workflow-panel', [
-            'steps'          => ContractWorkflowStep::STEPS,
-            'stepKeys'       => ContractWorkflowStep::STEP_KEYS,
+            'steps'          => $stepsData['steps'],
+            'stepKeys'       => $stepsData['stepKeys'],
             'completedSteps' => $completedSteps,
             'currentStatus'  => $currentStatus,
             'filesByStep'    => $filesByStep,

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Contracts;
 
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractWorkflowStep;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class ContractWorkflowProgress extends Component
@@ -44,11 +45,27 @@ class ContractWorkflowProgress extends Component
                 ->groupBy('milestone')
             : collect();
 
+        // Xác định role của user hiện tại
+        $user = Auth::user();
+        $userRole = null;
+        if ($user) {
+            // Kiểm tra các role liên quan
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách bước workflow phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+
         return view('livewire.admin.contracts.contract-workflow-progress', [
-            'steps'          => ContractWorkflowStep::STEPS,
-            'stepKeys'       => ContractWorkflowStep::STEP_KEYS,
+            'steps'          => $stepsData['steps'],
+            'stepKeys'       => $stepsData['stepKeys'],
             'completedSteps' => $completedSteps,
             'filesByStep'    => $filesByStep,
         ]);
     }
 }
+

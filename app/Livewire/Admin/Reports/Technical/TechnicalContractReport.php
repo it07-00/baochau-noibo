@@ -129,8 +129,21 @@ class TechnicalContractReport extends Component
 
     private function getWorkflowProgress($items)
     {
-        $stepKeys = ContractWorkflowStep::STEP_KEYS;
-        $stepLabels = ContractWorkflowStep::STEPS;
+        // Xác định role của user hiện tại
+        $user = auth()->user();
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách bước workflow phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+        $stepKeys = $stepsData['stepKeys'];
+        $stepLabels = $stepsData['steps'];
         $totalSteps = count($stepKeys);
         $modelClass = $this->getModelClass();
 
@@ -199,7 +212,21 @@ class TechnicalContractReport extends Component
         $summary = (object) ['total' => $total, 'completed' => $completed, 'active' => $active];
 
         $workflowProgress = $this->getWorkflowProgress($items);
-        $stepLabels = ContractWorkflowStep::STEPS;
+
+        // Xác định role của user hiện tại
+        $user = auth()->user();
+        $userRole = null;
+        if ($user) {
+            if ($user->hasRole('ky-thuat')) {
+                $userRole = 'ky-thuat';
+            } elseif ($user->hasRole('tu-van')) {
+                $userRole = 'tu-van';
+            }
+        }
+
+        // Lấy danh sách step labels phù hợp với role
+        $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
+        $stepLabels = $stepsData['steps'];
 
         $isRestricted = $this->isRestrictedTechnical();
         $staffs = $isRestricted
