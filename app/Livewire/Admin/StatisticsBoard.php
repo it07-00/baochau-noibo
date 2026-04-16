@@ -268,12 +268,25 @@ class StatisticsBoard extends Component
         }
 
         // ── Doanh số ghi nhận từ cột doanh số (revenue) trong hợp đồng ──────
+        // Doanh số tính theo ngày xuất hóa đơn: COALESCE(submitted_at, signed_at)
         $totalSales = 0;
         foreach ($contractTypes as $modelClass) {
-            $dateColumn = $resolveContractDateColumn($modelClass);
+            $revDateExpr = DB::raw('COALESCE(submitted_at, signed_at)');
 
             $modelQuery = $modelClass::query();
-            $applyContractDateFilter($modelQuery, $selectedMonth, $dateColumn);
+            if ($contractDateFrom || $contractDateTo) {
+                if ($contractDateFrom) {
+                    $modelQuery->whereDate(DB::raw('COALESCE(submitted_at, signed_at)'), '>=', $contractDateFrom);
+                }
+                if ($contractDateTo) {
+                    $modelQuery->whereDate(DB::raw('COALESCE(submitted_at, signed_at)'), '<=', $contractDateTo);
+                }
+            } else {
+                $modelQuery->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year);
+                if ($selectedMonth !== null) {
+                    $modelQuery->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $selectedMonth);
+                }
+            }
             $totalSales += (float) $modelQuery->sum('revenue');
         }
 
@@ -300,17 +313,27 @@ class StatisticsBoard extends Component
         foreach ($monthlyModels as $model) {
             $dateColumn = $resolveContractDateColumn($model);
 
+            // Số lượng HĐ và giá trị: theo ngày ký (signed_at)
             $monthlyQuery = $model::query();
             $applyContractDateFilter($monthlyQuery, null, $dateColumn);
             $rows = $monthlyQuery
-                ->selectRaw("MONTH({$dateColumn}) as m, COUNT(*) as cnt, SUM(value) as val, SUM(revenue) as rev")
+                ->selectRaw("MONTH({$dateColumn}) as m, COUNT(*) as cnt, SUM(value) as val")
                 ->groupByRaw("MONTH({$dateColumn})")
                 ->get()
                 ->keyBy('m');
             foreach ($rows as $m => $row) {
                 $contractMonthly[$m]['cnt'] = ($contractMonthly[$m]['cnt'] ?? 0) + $row->cnt;
                 $contractMonthly[$m]['val'] = ($contractMonthly[$m]['val'] ?? 0) + (float) $row->val;
-                $contractMonthly[$m]['rev'] = ($contractMonthly[$m]['rev'] ?? 0) + (float) $row->rev;
+            }
+
+            // Doanh số: theo ngày xuất hóa đơn COALESCE(submitted_at, signed_at)
+            $revQuery = $model::query()
+                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as rev')
+                ->groupByRaw('MONTH(COALESCE(submitted_at, signed_at))')
+                ->get();
+            foreach ($revQuery as $row) {
+                $contractMonthly[$row->m]['rev'] = ($contractMonthly[$row->m]['rev'] ?? 0) + (float) $row->rev;
             }
         }
 

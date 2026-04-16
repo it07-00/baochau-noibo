@@ -54,7 +54,7 @@ class RankingsBoard extends Component
 
             $totalsByStaff = [];
             foreach ($contractModels as $modelClass) {
-                $rows = $modelClass::whereYear('signed_at', $this->year)
+                $rows = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereNotNull('staff_id')
                     ->selectRaw('staff_id, COALESCE(SUM(value), 0) as total')
                     ->groupBy('staff_id')
@@ -193,11 +193,11 @@ class RankingsBoard extends Component
 
                     foreach ($assignments->groupBy('assignable_type') as $type => $group) {
                         $contracts = $type::whereIn('id', $group->pluck('assignable_id'))
-                            ->whereYear('signed_at', $this->year)
+                            ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                             ->get();
 
                         $totalCount += $contracts->count();
-                        $totalCompleted += $contracts->where('workflow_status', 'finished')->count();
+                        $totalCompleted += $contracts->whereIn('workflow_status', ['finished'])->count();
                     }
 
                     return [
@@ -228,14 +228,21 @@ class RankingsBoard extends Component
                     }
 
                     $contracts = ContractConsulting::whereIn('id', $assignments)
-                        ->whereYear('signed_at', $this->year)
+                        ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                         ->get();
+
+                    $contractIds = $contracts->pluck('id');
+                    $finishedIds = \App\Models\ContractWorkflowStep::where('contract_type', ContractConsulting::class)
+                        ->whereIn('contract_id', $contractIds)
+                        ->where('step_name', 'finished')
+                        ->pluck('contract_id')
+                        ->unique();
 
                     return [
                         'name'      => $user->name,
                         'count'     => $contracts->count(),
                         'value'     => (float) $contracts->sum('value'),
-                        'completed' => $contracts->where('workflow_status', 'finished')->count(),
+                        'completed' => $finishedIds->count(),
                     ];
                 })
                 ->sortByDesc('count')

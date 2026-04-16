@@ -66,15 +66,17 @@
                     <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
-                        <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
-                        <option value="HOÀN THÀNH">Hoàn thành</option>
-                        <option value="ĐÃ HỦY">Đã hủy</option>
+                        <option value="not_started">Chưa bắt đầu</option>
+                        <option value="in_progress">Đang thực hiện</option>
+                        <option value="finished">Đã hoàn thành</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
-                    <select wire:model.live="filter_staff" class="form-select form-select-sm">
-                        <option value="">Tất cả</option>
+                    <label class="form-label fw-semibold mb-1 small">Nhân viên kỹ thuật</label>
+                    <select wire:model.live="filter_staff" class="form-select form-select-sm" @if($isRestricted) disabled @endif>
+                        @unless($isRestricted)
+                            <option value="">Tất cả</option>
+                        @endunless
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
@@ -140,7 +142,7 @@
             </div>
             @if($items->hasPages())
             <div class="px-4 py-3 border-top">
-                {{ $items->links() }}
+                {{ $items->links('livewire.admin.users.pagination') }}
             </div>
             @endif
         </div>

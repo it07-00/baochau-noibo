@@ -9,6 +9,7 @@ use App\Models\ContractProject;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\SalesTarget;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesTargetRegistration extends Component
@@ -102,9 +103,9 @@ class SalesTargetRegistration extends Component
 
         foreach ($this->contractModels as $modelClass) {
             $rows = $modelClass::query()
-                ->whereYear('signed_at', $this->year)
+                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                 ->where('staff_id', auth()->id())
-                ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total')
                 ->groupBy('m')
                 ->get();
 

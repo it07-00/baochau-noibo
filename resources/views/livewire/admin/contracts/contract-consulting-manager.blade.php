@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Ngày hợp đồng về</label>
+                            <label class="form-label fw-bold custom-filter-label">Ngày xuất hóa đơn</label>
                             <div class="d-flex gap-2">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_from">
@@ -507,7 +507,7 @@
                                             <td>{{ $selectedDoc->signed_at?->format('d/m/Y') }}</td>
                                         </tr>
                                         <tr>
-                                            <th class="bg-light">Ngày HĐ về</th>
+                                            <th class="bg-light">Ngày xuất hóa đơn</th>
                                             <td>{{ $selectedDoc->submitted_at?->format('d/m/Y') }}</td>
                                         </tr>
                                         <tr>
@@ -757,7 +757,7 @@
                             <input type="date" class="form-control" wire:model="formData.signed_at">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Ngày HĐ về</label>
+                            <label class="form-label fw-bold">Ngày xuất hóa đơn</label>
                             <input type="date" class="form-control" wire:model="formData.submitted_at">
                         </div>
                         <div class="col-md-4">

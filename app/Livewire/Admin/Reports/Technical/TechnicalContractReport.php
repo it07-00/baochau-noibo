@@ -10,7 +10,9 @@ use App\Models\ContractSustainability;
 use App\Models\ContractEnergy;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
+use App\Models\ContractAssignment;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -28,7 +30,7 @@ class TechnicalContractReport extends Component
 
     private const TYPE_MAP = [
         'waste'          => ['model' => ContractWaste::class,          'label' => 'BC Chất thải & Tiếng ồn'],
-        'consulting'     => ['model' => ContractConsulting::class,     'label' => 'BC Pháp lý & Hồ sơ MT'],
+        'consulting'     => ['model' => ContractConsulting::class,     'label' => 'Hồ sơ môi trường'],
         'project'        => ['model' => ContractProject::class,        'label' => 'BC Kỹ thuật & Ứng phó SC'],
         'commercial'     => ['model' => ContractCommercial::class,     'label' => 'BC NC & CĐ Công nghệ'],
         'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC TV & BC PTBV'],
@@ -52,12 +54,31 @@ class TechnicalContractReport extends Component
         };
 
         $this->page_title = self::TYPE_MAP[$this->contract_type]['label'];
+
+        // Nhân viên kỹ thuật chỉ xem hợp đồng được giao cho mình
+        if ($this->isRestrictedTechnical()) {
+            $this->filter_staff = (string) auth()->id();
+        }
     }
 
     public function updatedYear(): void          { $this->resetPage(); }
     public function updatedFilterService(): void { $this->resetPage(); }
     public function updatedFilterStatus(): void  { $this->resetPage(); }
-    public function updatedFilterStaff(): void   { $this->resetPage(); }
+    public function updatedFilterStaff(): void
+    {
+        // Khóa bộ lọc nếu là nhân viên kỹ thuật bị hạn chế
+        if ($this->isRestrictedTechnical()) {
+            $this->filter_staff = (string) auth()->id();
+        }
+        $this->resetPage();
+    }
+
+    private function isRestrictedTechnical(): bool
+    {
+        $user = auth()->user();
+        return $user->hasRole('ky-thuat')
+            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+    }
 
     private function getModelClass(): string
     {
@@ -67,11 +88,28 @@ class TechnicalContractReport extends Component
     private function baseQuery()
     {
         $modelClass = $this->getModelClass();
+        $isRestricted = $this->isRestrictedTechnical();
+        $effectiveStaff = $isRestricted ? (string) auth()->id() : $this->filter_staff;
 
-        return $modelClass::whereYear('signed_at', $this->year)
+        $query = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
             ->when($this->filter_service, fn($q) => $q->where('loai_dich_vu', $this->filter_service))
-            ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
-            ->when($this->filter_staff, fn($q) => $q->where('staff_id', $this->filter_staff));
+            ->when($this->filter_status === 'not_started', fn($q) =>
+                $q->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
+            )
+            ->when($this->filter_status === 'in_progress', fn($q) =>
+                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
+                  ->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            )
+            ->when($this->filter_status === 'finished', fn($q) =>
+                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            );
+
+        // Lọc theo nhân viên được giao (assignment), không phải staff_id của hợp đồng
+        if ($effectiveStaff !== '') {
+            $query->whereHas('assignments', fn($q) => $q->where('user_id', $effectiveStaff));
+        }
+
+        return $query;
     }
 
     private function getWorkflowProgress($items)
@@ -121,21 +159,42 @@ class TechnicalContractReport extends Component
             ->orderByDesc('signed_at')
             ->paginate(20);
 
-        $summary = $this->baseQuery()
-            ->selectRaw('COUNT(*) as total,
-                SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
-            ->first();
+        $modelClass   = $this->getModelClass();
+        $allIds       = $this->baseQuery()->pluck('id');
+        $total        = $allIds->count();
+
+        // Lấy tất cả bước workflow của các hợp đồng này
+        $stepsByContract = ContractWorkflowStep::where('contract_type', $modelClass)
+            ->whereIn('contract_id', $allIds)
+            ->get()
+            ->groupBy('contract_id');
+
+        $completed = 0;
+        $active    = 0;
+        foreach ($allIds as $id) {
+            $steps = $stepsByContract->get($id, collect());
+            $stepNames = $steps->pluck('step_name')->unique()->toArray();
+            if (in_array('finished', $stepNames)) {
+                $completed++;
+            } elseif (count($stepNames) > 0) {
+                $active++;
+            }
+        }
+
+        $summary = (object) ['total' => $total, 'completed' => $completed, 'active' => $active];
 
         $workflowProgress = $this->getWorkflowProgress($items);
         $stepLabels = ContractWorkflowStep::STEPS;
 
-        $staffs = User::orderBy('name')->get();
-        $modelClass = $this->getModelClass();
+        $isRestricted = $this->isRestrictedTechnical();
+        $staffs = $isRestricted
+            ? User::where('id', auth()->id())->get()
+            : User::role('ky-thuat')->orderBy('name')->get();
+
         $serviceTypes = defined("$modelClass::SERVICE_TYPES") ? $modelClass::SERVICE_TYPES : [];
 
         return view('livewire.admin.reports.technical.technical-contract-report',
-            compact('items', 'summary', 'staffs', 'serviceTypes', 'workflowProgress', 'stepLabels'))
+            compact('items', 'summary', 'staffs', 'serviceTypes', 'workflowProgress', 'stepLabels', 'isRestricted'))
             ->layout('admin.layouts.app');
     }
 }

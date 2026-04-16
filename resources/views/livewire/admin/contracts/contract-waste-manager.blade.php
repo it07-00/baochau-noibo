@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold custom-filter-label">Ngày hợp đồng về</label>
+                            <label class="form-label fw-bold custom-filter-label">Ngày xuất hóa đơn</label>
                             <div class="d-flex gap-2">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.returned_from">
@@ -748,7 +748,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th class="bg-light fw-bold px-4 py-3">Ngày trình ký</th>
+                                                <th class="bg-light fw-bold px-4 py-3">Ngày xuất hóa đơn</th>
                                                 <td class="px-4 py-3 text-danger">
                                                     {{ $selectedDoc->submitted_at ? $selectedDoc->submitted_at->format('d/m/Y') : '-' }}
                                                 </td>
@@ -1075,7 +1075,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Ngày trình ký</label>
+                                <label class="form-label fw-bold">Ngày xuất hóa đơn</label>
                                 <input type="date" class="form-control" wire:model.defer="formData.submitted_at">
                             </div>
 

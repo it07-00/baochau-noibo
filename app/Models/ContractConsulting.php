@@ -25,7 +25,8 @@ class ContractConsulting extends Model
     const SERVICE_TYPES = [
         'Tư vấn, lập ĐTM, GPMT, DKMT',
         'Quan trắc môi trường',
-        'Quan trắc môi trường lao động và phân loại lao động',
+        'Quan trắc môi trường lao động',
+        'Phân loại lao động',
     ];
 
     const STATUS_DRAFT = 'draft';

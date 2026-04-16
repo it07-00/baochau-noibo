@@ -11,6 +11,7 @@ use App\Models\ContractSustainability;
 use App\Models\ContractEnergy;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -91,9 +92,18 @@ class ConsultingContractReport extends Component
         $isRestrictedConsultant = $this->isRestrictedConsultant($user);
         $effectiveStaffFilter = $isRestrictedConsultant ? (string) $user->id : (string) $this->filter_staff;
 
-        $query = $modelClass::whereYear('signed_at', $this->year)
+        $query = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
             ->when($this->filter_service, fn ($q) => $q->where('loai_dich_vu', $this->filter_service))
-            ->when($this->filter_status, fn ($q) => $q->where('status', $this->filter_status));
+            ->when($this->filter_status === 'not_started', fn($q) =>
+                $q->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
+            )
+            ->when($this->filter_status === 'in_progress', fn($q) =>
+                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass))
+                  ->whereDoesntHave('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            )
+            ->when($this->filter_status === 'finished', fn($q) =>
+                $q->whereHas('workflowSteps', fn($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
+            );
 
         // Scope to contracts that have tu-van assignments
         $query->whereHas('assignments', function ($q) use ($user) {
@@ -163,11 +173,28 @@ class ConsultingContractReport extends Component
             ->orderByDesc('signed_at')
             ->paginate(20);
 
-        $summary = $this->baseQuery()
-            ->selectRaw('COUNT(*) as total,
-                SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
-            ->first();
+        $modelClass   = $this->getModelClass();
+        $allIds       = $this->baseQuery()->pluck('id');
+        $total        = $allIds->count();
+
+        $stepsByContract = ContractWorkflowStep::where('contract_type', $modelClass)
+            ->whereIn('contract_id', $allIds)
+            ->get()
+            ->groupBy('contract_id');
+
+        $completed = 0;
+        $active    = 0;
+        foreach ($allIds as $id) {
+            $steps = $stepsByContract->get($id, collect());
+            $stepNames = $steps->pluck('step_name')->unique()->toArray();
+            if (in_array('finished', $stepNames)) {
+                $completed++;
+            } elseif (count($stepNames) > 0) {
+                $active++;
+            }
+        }
+
+        $summary = (object) ['total' => $total, 'completed' => $completed, 'active' => $active];
 
         $workflowProgress = $this->getWorkflowProgress($items);
         $stepLabels = ContractWorkflowStep::STEPS;
@@ -176,7 +203,6 @@ class ConsultingContractReport extends Component
             ->when($isRestrictedConsultant, fn ($q) => $q->where('id', $user->id))
             ->orderBy('name')
             ->get();
-        $modelClass = $this->getModelClass();
         $serviceTypes = defined("$modelClass::SERVICE_TYPES") ? $modelClass::SERVICE_TYPES : [];
 
         return view('livewire.admin.reports.consulting.consulting-contract-report',

@@ -66,8 +66,9 @@
                     <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
-                        <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
-                        <option value="HOÀN THÀNH">Hoàn thành</option>
+                        <option value="not_started">Chưa bắt đầu</option>
+                        <option value="in_progress">Đang thực hiện</option>
+                        <option value="finished">Đã hoàn thành</option>
                         <option value="ĐÃ HỦY">Đã hủy</option>
                     </select>
                 </div>

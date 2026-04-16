@@ -10,6 +10,7 @@ use App\Models\ContractProject;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesSummaryReport extends Component
@@ -50,22 +51,22 @@ class SalesSummaryReport extends Component
         if (!empty($targetStaffIds)) {
             foreach ($this->contractModelClasses as $modelClass) {
                 foreach ($modelClass::query()
-                    ->whereYear('signed_at', $this->year)
+                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where('is_renewal', true)
-                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total')
                     ->groupBy('m')
                     ->get() as $r) {
                     $months[(int) $r->m]['renewal'] += (float) $r->total;
                 }
 
                 foreach ($modelClass::query()
-                    ->whereYear('signed_at', $this->year)
+                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where(function ($q) {
                         $q->where('is_renewal', false)->orWhereNull('is_renewal');
                     })
-                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total')
                     ->groupBy('m')
                     ->get() as $r) {
                     $months[(int) $r->m]['progressive'] += (float) $r->total;
