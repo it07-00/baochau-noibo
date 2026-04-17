@@ -140,6 +140,18 @@
     background-color: var(--bs-secondary-bg) !important;
 }
 
+/* ── text-dark trong dark mode ── */
+:root[data-bs-theme=dark] .text-dark {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* ── badge bg-light text-dark (vd: Chưa chọn, tỉ lệ%) ── */
+:root[data-bs-theme=dark] span.bg-light:not(.badge) {
+    background-color: rgba(148, 163, 184, 0.18) !important;
+    color: rgba(226, 232, 240, 0.92) !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
 /* ── table-light thead ── */
 :root[data-bs-theme=dark] .table-light,
 :root[data-bs-theme=dark] .table-light > th,
@@ -149,6 +161,44 @@
     --bs-table-border-color: var(--bs-border-color);
     background-color: var(--bs-secondary-bg) !important;
     color: var(--bs-body-color) !important;
+}
+
+/* ── table-secondary (tổng/tfoot rows) ── */
+:root[data-bs-theme=dark] .table-secondary,
+:root[data-bs-theme=dark] tfoot.table-secondary td,
+:root[data-bs-theme=dark] tfoot.table-secondary th,
+:root[data-bs-theme=dark] tr.table-secondary td,
+:root[data-bs-theme=dark] tr.table-secondary th {
+    --bs-table-bg: rgba(255, 255, 255, 0.06);
+    --bs-table-color: rgba(255, 255, 255, 0.9);
+    --bs-table-border-color: var(--bs-border-color);
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ── tfoot.table-light ── */
+:root[data-bs-theme=dark] tfoot.table-light,
+:root[data-bs-theme=dark] tfoot.table-light td,
+:root[data-bs-theme=dark] tfoot.table-light th {
+    --bs-table-bg: rgba(255, 255, 255, 0.06);
+    --bs-table-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ── badge bg-secondary (Chờ thanh toán) ── */
+:root[data-bs-theme=dark] .badge.bg-secondary {
+    background-color: rgba(148, 163, 184, 0.25) !important;
+    color: rgba(203, 213, 225, 0.95) !important;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* ── badges bg-light text-dark (Sale, TT chuyên, ...) ── */
+:root[data-bs-theme=dark] .badge.bg-light,
+:root[data-bs-theme=dark] span.badge.bg-light {
+    background-color: rgba(148, 163, 184, 0.18) !important;
+    color: rgba(226, 232, 240, 0.92) !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
 }
 
 /* ── IT Dashboard components ── */

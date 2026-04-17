@@ -29,6 +29,20 @@
             background: linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%);
             color: #fff;
         }
+
+        /* Dark mode */
+        :root[data-bs-theme=dark] .personal-sales-board .board-title {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        :root[data-bs-theme=dark] .personal-sales-board .board-table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        :root[data-bs-theme=dark] .personal-sales-board .board-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        :root[data-bs-theme=dark] .personal-sales-board .card-header.bg-white {
+            background-color: var(--bs-body-bg) !important;
+        }
     </style>
 
     @php
