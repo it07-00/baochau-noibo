@@ -22,7 +22,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="small text-muted">Tổng hóa đơn</div>
+                    <div class=" text-muted">Tổng hóa đơn</div>
                     <div class="fw-bold fs-5 text-primary">{{ $summary->cnt ?? 0 }}</div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="small text-muted">Tổng phải trả</div>
+                    <div class=" text-muted">Tổng phải trả</div>
                     <div class="fw-bold text-dark">{{ number_format($summary->total ?? 0, 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -38,7 +38,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="small text-muted">Đã chi</div>
+                    <div class=" text-muted">Đã chi</div>
                     <div class="fw-bold text-success">{{ number_format($summary->paid ?? 0, 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="small text-muted">Còn phải chi</div>
+                    <div class=" text-muted">Còn phải chi</div>
                     <div class="fw-bold text-warning">{{ number_format($summary->outstanding ?? 0, 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -66,7 +66,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Tháng</label>
+                    <label class="form-label fw-semibold mb-1 ">Tháng</label>
                     <select wire:model.live="filter_month" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @for($m=1; $m<=12; $m++)
@@ -75,7 +75,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
+                    <label class="form-label fw-semibold mb-1 ">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($statuses as $key => $label)
@@ -84,7 +84,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Chủ xử lý</label>
+                    <label class="form-label fw-semibold mb-1 ">Chủ xử lý</label>
                     <select wire:model.live="filter_handler" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($handlers as $h)
@@ -119,19 +119,19 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
-                            <td class="fw-semibold small">{{ $item->invoice_number ?: '—' }}</td>
+                            <td class="fw-semibold ">{{ $item->invoice_number ?: '—' }}</td>
                             <td>{{ $item->handler?->name ?? '—' }}</td>
-                            <td class="small text-muted">{{ $item->contractWaste?->shd_bc ?? '—' }}</td>
-                            <td class="small text-muted">{{ $item->issue_date?->format('d/m/Y') ?? '—' }}</td>
-                            <td class="small {{ $item->due_date && $item->due_date->isPast() && $item->status !== 'paid' ? 'text-danger fw-semibold' : 'text-muted' }}">
+                            <td class=" text-muted">{{ $item->contractWaste?->shd_bc ?? '—' }}</td>
+                            <td class=" text-muted">{{ $item->issue_date?->format('d/m/Y') ?? '—' }}</td>
+                            <td class=" {{ $item->due_date && $item->due_date->isPast() && $item->status !== 'paid' ? 'text-danger fw-semibold' : 'text-muted' }}">
                                 {{ $item->due_date?->format('d/m/Y') ?? '—' }}
                             </td>
-                            <td class="text-end small">{{ number_format($item->amount, 0, ',', '.') }}</td>
-                            <td class="text-end small text-muted">{{ number_format($item->vat_amount, 0, ',', '.') }}</td>
+                            <td class="text-end ">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                            <td class="text-end  text-muted">{{ number_format($item->vat_amount, 0, ',', '.') }}</td>
                             <td class="text-end fw-semibold">{{ number_format($item->total_amount, 0, ',', '.') }} đ</td>
-                            <td class="text-end small text-success">{{ $item->paid_amount > 0 ? number_format($item->paid_amount, 0, ',', '.') . ' đ' : '—' }}</td>
+                            <td class="text-end  text-success">{{ $item->paid_amount > 0 ? number_format($item->paid_amount, 0, ',', '.') . ' đ' : '—' }}</td>
                             <td>
-                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} small">
+                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} ">
                                     {{ $item->status_label }}
                                 </span>
                             </td>
@@ -170,7 +170,7 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Chủ xử lý <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold ">Chủ xử lý <span class="text-danger">*</span></label>
                             <select wire:model="form.handler_id" class="form-select form-select-sm @error('form.handler_id') is-invalid @enderror">
                                 <option value="">— Chọn chủ xử lý —</option>
                                 @foreach($handlers as $h)
@@ -180,7 +180,7 @@
                             @error('form.handler_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Hợp đồng chất thải</label>
+                            <label class="form-label fw-semibold ">Hợp đồng chất thải</label>
                             <select wire:model="form.contract_waste_id" class="form-select form-select-sm">
                                 <option value="">— Không liên kết —</option>
                                 @foreach($contractWastes as $cw)
@@ -189,36 +189,36 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Số hóa đơn CXL</label>
+                            <label class="form-label fw-semibold ">Số hóa đơn CXL</label>
                             <input wire:model="form.invoice_number" type="text" class="form-control form-control-sm" placeholder="Số HĐ từ chủ xử lý">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Ngày lập</label>
+                            <label class="form-label fw-semibold ">Ngày lập</label>
                             <input wire:model="form.issue_date" type="date" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Hạn thanh toán</label>
+                            <label class="form-label fw-semibold ">Hạn thanh toán</label>
                             <input wire:model="form.due_date" type="date" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold small">Tiền trước VAT (đ) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold ">Tiền trước VAT (đ) <span class="text-danger">*</span></label>
                             <input wire:model.live="form.amount" type="number" class="form-control form-control-sm @error('form.amount') is-invalid @enderror" placeholder="0" min="0">
                             @error('form.amount') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label fw-semibold small">VAT %</label>
+                            <label class="form-label fw-semibold ">VAT %</label>
                             <input wire:model.live="form.vat_percent" type="number" class="form-control form-control-sm" value="10" min="0" max="100">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Tiền VAT</label>
+                            <label class="form-label fw-semibold ">Tiền VAT</label>
                             <input wire:model="form.vat_amount" type="number" class="form-control form-control-sm bg-light" readonly>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Tổng cộng</label>
+                            <label class="form-label fw-semibold ">Tổng cộng</label>
                             <input wire:model="form.total_amount" type="number" class="form-control form-control-sm bg-light fw-bold" readonly>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold small">Trạng thái</label>
+                            <label class="form-label fw-semibold ">Trạng thái</label>
                             <select wire:model="form.status" class="form-select form-select-sm">
                                 @foreach($statuses as $key => $label)
                                     <option value="{{ $key }}">{{ $label }}</option>
@@ -226,15 +226,15 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold small">Đã chi (đ)</label>
+                            <label class="form-label fw-semibold ">Đã chi (đ)</label>
                             <input wire:model="form.paid_amount" type="number" class="form-control form-control-sm" placeholder="0" min="0">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold small">Ngày thanh toán</label>
+                            <label class="form-label fw-semibold ">Ngày thanh toán</label>
                             <input wire:model="form.paid_at" type="date" class="form-control form-control-sm">
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-semibold small">Ghi chú</label>
+                            <label class="form-label fw-semibold ">Ghi chú</label>
                             <textarea wire:model="form.notes" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                     </div>

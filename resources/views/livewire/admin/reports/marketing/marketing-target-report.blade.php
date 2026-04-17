@@ -22,7 +22,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -31,7 +31,7 @@
                 </div>
                 @if(!$canEdit)
                 <div class="col-md-5">
-                    <div class="alert alert-info py-2 mb-0 small">Chỉ Quản lý / IT có thể chỉnh sửa mục tiêu.</div>
+                    <div class="alert alert-info py-2 mb-0 ">Chỉ Quản lý / IT có thể chỉnh sửa mục tiêu.</div>
                 </div>
                 @endif
             </div>
@@ -73,7 +73,7 @@
                                 <td class="text-end fw-semibold {{ $data['actual'] > 0 ? 'text-primary' : 'text-muted' }}">
                                     {{ $data['actual'] > 0 ? $data['actual'] : '—' }}
                                 </td>
-                                <td class="text-end small text-success">
+                                <td class="text-end  text-success">
                                     {{ $data['actual_sales'] > 0 ? number_format($data['actual_sales'], 0, ',', '.') . ' đ' : '—' }}
                                 </td>
                                 <td class="text-end">
@@ -86,13 +86,13 @@
                                 </td>
                                 <td class="text-center">
                                     @if($pct === null)
-                                        <span class="badge bg-soft-secondary text-secondary small">Chưa có mục tiêu</span>
+                                        <span class="badge bg-soft-secondary text-secondary ">Chưa có mục tiêu</span>
                                     @elseif($pct >= 100)
-                                        <span class="badge bg-soft-success text-success small">Đạt</span>
+                                        <span class="badge bg-soft-success text-success ">Đạt</span>
                                     @elseif($pct >= 70)
-                                        <span class="badge bg-soft-warning text-warning small">Gần đạt</span>
+                                        <span class="badge bg-soft-warning text-warning ">Gần đạt</span>
                                     @else
-                                        <span class="badge bg-soft-danger text-danger small">Chưa đạt</span>
+                                        <span class="badge bg-soft-danger text-danger ">Chưa đạt</span>
                                     @endif
                                 </td>
                             </tr>

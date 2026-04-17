@@ -83,11 +83,11 @@
                         <label class="form-label fw-bold">
                             File đính kèm
                             @if ($activeStep === 'receiving')
-                                <small class="text-muted fw-normal">(Tùy chọn)</small>
+                                < class="text-muted fw-normal">(Tùy chọn)</>
                             @else
                                 <span class="text-danger">*</span>
                             @endif
-                            <small class="text-muted fw-normal">(PDF, Word, Excel, JPG, PNG — tối đa 20MB/file)</small>
+                            < class="text-muted fw-normal">(PDF, Word, Excel, JPG, PNG — tối đa 20MB/file)</>
                         </label>
                         <input wire:model="uploadFiles" type="file" class="form-control" multiple
                             accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">

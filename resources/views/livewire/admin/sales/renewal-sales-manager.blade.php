@@ -78,13 +78,13 @@
                 <tbody>
                     @forelse($items as $item)
                     <tr>
-                        <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                        <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                         <td class="ps-4">
                             <div class="fw-bold">SHD: {{ $item->contract_number }}</div>
-                            <small class="text-muted">Ngày tạo: {{ $item->created_at->format('d/m/Y') }}</small>
+                            < class="text-muted">Ngày tạo: {{ $item->created_at->format('d/m/Y') }}</>
                         </td>
                         <td>
-                            <div class="text-muted small">Cần bổ sung quan hệ khách hàng</div>
+                            <div class="text-muted ">Cần bổ sung quan hệ khách hàng</div>
                         </td>
                         <td class="text-center">{{ $item->sales_month->format('m/Y') }}</td>
                         <td class="text-end fw-bold text-danger">{{ number_format($item->sales_value) }}đ</td>
@@ -127,23 +127,23 @@
                     <form wire:submit.prevent="save">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Số hợp đồng <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Số hợp đồng <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control form-control-sm" wire:model="contract_number" placeholder="Chọn số hợp đồng">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Tháng tính doanh số <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Tháng tính doanh số <span class="text-danger">*</span></label>
                                 <input type="month" class="form-control form-control-sm" wire:model="sales_month">
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Giá trị tính doanh số <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Giá trị tính doanh số <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control money-input" wire:model.blur="sales_value" wire:change="calculateSales">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Hoa hồng <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Hoa hồng <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control money-input" wire:model="commission">
                                     <span class="input-group-text">VNĐ</span>
@@ -151,14 +151,14 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">% tính doanh số <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">% tính doanh số <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-sm">
                                     <input type="number" class="form-control" wire:model.blur="sales_percentage" wire:change="calculateSales">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
                             <div class="col-md-8">
-                                <label class="form-label small fw-bold">Doanh số</label>
+                                <label class="form-label  fw-bold">Doanh số</label>
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control bg-light money-input" wire:model="sales_amount" readonly>
                                     <span class="input-group-text">VNĐ</span>
@@ -166,7 +166,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label class="form-label small fw-bold">Tình trạng <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Tình trạng <span class="text-danger">*</span></label>
                                 <select class="form-select form-control-sm" wire:model="status">
                                     <option value="">Chọn tình trạng</option>
                                     <option value="Hợp đồng mẫu">Hợp đồng mẫu</option>
@@ -175,14 +175,14 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label class="form-label small fw-bold">Ghi chú</label>
+                                <label class="form-label  fw-bold">Ghi chú</label>
                                 <textarea class="form-control form-control-sm" wire:model="notes" rows="3"></textarea>
                             </div>
 
                             <div class="col-md-12">
-                                <label class="form-label small fw-bold">Tệp đính kèm</label>
+                                <label class="form-label  fw-bold">Tệp đính kèm</label>
                                 <input type="file" class="form-control form-control-sm" wire:model="file">
-                                <small class="text-muted">.doc|.docx|.pdf|.rar|.zip|.ppt|.pptx|.xls|.xlsx|.png|.jpg</small>
+                                < class="text-muted">.doc|.docx|.pdf|.rar|.zip|.ppt|.pptx|.xls|.xlsx|.png|.jpg</>
                             </div>
                         </div>
 

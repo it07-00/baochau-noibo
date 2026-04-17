@@ -16,7 +16,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -24,7 +24,7 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold mb-1 small">Loại dịch vụ</label>
+                    <label class="form-label fw-semibold mb-1 ">Loại dịch vụ</label>
                     <select wire:model.live="filter_service" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($serviceTypes as $type)
@@ -42,11 +42,11 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="small text-muted mb-1">{{ $svc->loai_dich_vu ?: 'Chưa phân loại' }}</div>
+                    <div class=" text-muted mb-1">{{ $svc->loai_dich_vu ?: 'Chưa phân loại' }}</div>
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <div>
                             <div class="fw-bold fs-5 text-primary">{{ $svc->count }} HĐ</div>
-                            <div class="small text-muted">{{ number_format($svc->total_value, 0, ',', '.') }} đ</div>
+                            <div class=" text-muted">{{ number_format($svc->total_value, 0, ',', '.') }} đ</div>
                         </div>
                         <div class="text-end">
                             <span class="badge bg-soft-success text-success">{{ $svc->completed }} hoàn thành</span><br>
@@ -64,7 +64,7 @@
         <div class="card-header bg-white border-bottom py-3">
             <h6 class="mb-0 fw-bold">
                 Theo dõi theo tháng — Năm {{ $year }}
-                @if($filter_service) <span class="text-muted small fw-normal">/ {{ $filter_service }}</span> @endif
+                @if($filter_service) <span class="text-muted  fw-normal">/ {{ $filter_service }}</span> @endif
             </h6>
         </div>
         <div class="card-body p-0">

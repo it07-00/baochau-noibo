@@ -133,7 +133,7 @@
                                                 {{ $isChecked ? 'checked' : '' }}>
                                             <label class="form-check-label" for="perm_{{ $permission->id }}">
                                                 {{ $displayAction }}
-                                                <small class="d-block text-muted" style="font-size: 0.75rem">{{ $permission->name }}</small>
+                                                < class="d-block text-muted" style="font-size: 0.75rem">{{ $permission->name }}</>
                                             </label>
                                         </div>
                                     </div>

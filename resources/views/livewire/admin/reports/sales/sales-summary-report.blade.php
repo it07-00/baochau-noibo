@@ -4,7 +4,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -12,7 +12,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
+                    <label class="form-label fw-semibold mb-1 ">Nhân viên</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
@@ -49,7 +49,7 @@
                                 <td class="text-end {{ $val > 0 ? 'text-success' : 'text-muted' }}">
                                     @if($val > 0)
                                         <div>{{ number_format($val, 0, ',', '.') }}</div>
-                                        <div class="text-muted small">{{ $cnt }} HĐ</div>
+                                        <div class="text-muted ">{{ $cnt }} HĐ</div>
                                     @else
                                         —
                                     @endif
@@ -57,7 +57,7 @@
                             @endfor
                             <td class="text-end fw-bold text-success">
                                 <div>{{ number_format($totals['renewal'], 0, ',', '.') }} đ</div>
-                                <div class="text-muted small fw-normal">{{ $totals['renewal_count'] }} HĐ</div>
+                                <div class="text-muted  fw-normal">{{ $totals['renewal_count'] }} HĐ</div>
                             </td>
                         </tr>
                         <tr>
@@ -67,7 +67,7 @@
                                 <td class="text-end {{ $val > 0 ? 'text-warning' : 'text-muted' }}">
                                     @if($val > 0)
                                         <div>{{ number_format($val, 0, ',', '.') }}</div>
-                                        <div class="text-muted small">{{ $cnt }} HĐ</div>
+                                        <div class="text-muted ">{{ $cnt }} HĐ</div>
                                     @else
                                         —
                                     @endif
@@ -75,7 +75,7 @@
                             @endfor
                             <td class="text-end fw-bold text-warning">
                                 <div>{{ number_format($totals['progressive'], 0, ',', '.') }} đ</div>
-                                <div class="text-muted small fw-normal">{{ $totals['progressive_count'] }} HĐ</div>
+                                <div class="text-muted  fw-normal">{{ $totals['progressive_count'] }} HĐ</div>
                             </td>
                         </tr>
                         <tr class="table-secondary">
@@ -88,7 +88,7 @@
                                 <td class="text-end fw-bold {{ $val > 0 ? 'text-dark' : 'text-muted' }}">
                                     @if($val > 0)
                                         <div>{{ number_format($val, 0, ',', '.') }}</div>
-                                        <div class="text-muted small fw-normal">{{ $cnt }} HĐ</div>
+                                        <div class="text-muted  fw-normal">{{ $cnt }} HĐ</div>
                                     @else
                                         —
                                     @endif
@@ -96,7 +96,7 @@
                             @endfor
                             <td class="text-end fw-bold fs-6">
                                 <div>{{ number_format($totals['contract_total'], 0, ',', '.') }} đ</div>
-                                <div class="text-muted small fw-normal">{{ $totals['renewal_count'] + $totals['progressive_count'] }} HĐ</div>
+                                <div class="text-muted  fw-normal">{{ $totals['renewal_count'] + $totals['progressive_count'] }} HĐ</div>
                             </td>
                         </tr>
                     </tbody>
@@ -157,9 +157,9 @@
                         <tbody>
                             @foreach($detail as $i => $row)
                                 <tr>
-                                    <td class="text-center text-muted small">{{ $i + 1 }}</td>
+                                    <td class="text-center text-muted ">{{ $i + 1 }}</td>
                                     <td class="fw-semibold">{{ $row['customer'] }}</td>
-                                    <td class="text-muted small">{{ $row['type'] }}</td>
+                                    <td class="text-muted ">{{ $row['type'] }}</td>
                                     <td class="text-end fw-semibold">{{ number_format($row['value'], 0, ',', '.') }}</td>
                                     <td class="text-center">
                                         @if($row['is_renewal'])
@@ -168,7 +168,7 @@
                                             <span class="badge bg-warning-subtle text-warning">HĐ mới</span>
                                         @endif
                                     </td>
-                                    <td class="text-center text-muted small">
+                                    <td class="text-center text-muted ">
                                         {{ $row['date'] ? \Carbon\Carbon::parse($row['date'])->format('d/m/Y') : '—' }}
                                     </td>
                                 </tr>
@@ -178,7 +178,7 @@
                             <tr>
                                 <td colspan="3" class="text-end">Tổng tháng {{ $filter_month }}</td>
                                 <td class="text-end">{{ number_format($detail->sum('value'), 0, ',', '.') }} đ</td>
-                                <td colspan="2" class="text-center text-muted small">{{ $detail->count() }} hợp đồng</td>
+                                <td colspan="2" class="text-center text-muted ">{{ $detail->count() }} hợp đồng</td>
                             </tr>
                         </tfoot>
                     </table>

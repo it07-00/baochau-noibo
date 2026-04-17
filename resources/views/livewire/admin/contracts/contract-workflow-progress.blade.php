@@ -1,6 +1,6 @@
 <div class="px-4 py-3 border-top" style="background: #f8f9fa;">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <span class="fw-bold text-muted small">
+        <span class="fw-bold text-muted ">
             <i class="bi bi-diagram-3 me-1 text-primary"></i> Tiến độ xử lý
         </span>
         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle"

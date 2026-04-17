@@ -71,13 +71,13 @@
                             <tbody>
                                 @forelse($users as $user)
                                 <tr wire:key="user-{{ $user->id }}">
-                                    <td class="text-center text-muted small fw-semibold">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
+                                    <td class="text-center text-muted  fw-semibold">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <x-user-avatar :user="$user" :size="32" class="me-2" />
                                             <div>
                                                 <h6 class="mb-0">{{ $user->name }}</h6>
-                                                <small class="text-muted">{{ $user->email }}</small>
+                                                < class="text-muted">{{ $user->email }}</>
                                             </div>
                                         </div>
                                     </td>

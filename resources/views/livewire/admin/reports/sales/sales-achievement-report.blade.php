@@ -4,7 +4,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -12,7 +12,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Tháng</label>
+                    <label class="form-label fw-semibold mb-1 ">Tháng</label>
                     <select wire:model.live="filter_month" class="form-select form-select-sm">
                         <option value="">Cả năm</option>
                         @foreach($months as $m)

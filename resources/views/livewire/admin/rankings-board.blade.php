@@ -39,7 +39,7 @@
 
                     <div class="mt-2">
                         <div class="border rounded-3 px-3 py-2 bg-light-subtle">
-                            <div class="small text-muted">Tổng doanh số 6 loại hợp đồng (theo nhân viên)</div>
+                            <div class=" text-muted">Tổng doanh số 6 loại hợp đồng (theo nhân viên)</div>
                             <div class="fw-semibold text-primary">{{ number_format($salesRankings->sum('total'), 0, ',', '.') }} đ</div>
                         </div>
                     </div>
@@ -118,9 +118,6 @@
                                 <th>Nhân viên</th>
                                 <th class="text-center">Số HĐ</th>
                                 <th class="text-center">Hoàn thành</th>
-                                @if($canSeeFinance)
-                                <th class="text-end fw-bold">Giá trị HĐ</th>
-                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -134,11 +131,6 @@
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
                                 <td class="text-center">{{ $row['count'] > 0 ? $row['count'] : '—' }}</td>
                                 <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
-                                @if($canSeeFinance)
-                                <td class="text-end fw-bold {{ $row['value'] > 0 ? 'text-body' : '' }}">
-                                    {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') . ' đ' : '—' }}
-                                </td>
-                                @endif
                             </tr>
                             @empty
                             <tr><td colspan="5" class="text-center text-muted py-4">Không có dữ liệu</td></tr>
@@ -150,9 +142,6 @@
                                 <td colspan="2">Tổng</td>
                                 <td class="text-center">{{ $technicalRankings->sum('count') }}</td>
                                 <td class="text-center text-success">{{ $technicalRankings->sum('completed') }}</td>
-                                @if($canSeeFinance)
-                                <td class="text-end">{{ number_format($technicalRankings->sum('value'), 0, ',', '.') }} đ</td>
-                                @endif
                             </tr>
                         </tfoot>
                         @endif
@@ -180,15 +169,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="small text-muted">Tổng phải thu</span>
+                                    <span class=" text-muted">Tổng phải thu</span>
                                     <span class="fw-bold text-danger">{{ number_format($paymentStats['due'], 0, ',', '.') }} đ</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="small text-muted">Đã thu</span>
+                                    <span class=" text-muted">Đã thu</span>
                                     <span class="fw-bold text-success">{{ number_format($paymentStats['paid'], 0, ',', '.') }} đ</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted">Còn phải thu</span>
+                                    <span class=" text-muted">Còn phải thu</span>
                                     <span class="fw-bold text-secondary">{{ number_format($paymentStats['due'] - $paymentStats['paid'], 0, ',', '.') }} đ</span>
                                 </div>
                             </div>
@@ -197,23 +186,23 @@
                                 <tbody>
                                     <tr>
                                         <td><span class="badge bg-success">&nbsp;</span> Đã thanh toán</td>
-                                        <td class="text-end small">{{ $paymentStats['paid_count'] }} đợt</td>
-                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['paid_amount'], 0, ',', '.') }} đ</td>
+                                        <td class="text-end ">{{ $paymentStats['paid_count'] }} đợt</td>
+                                        <td class="text-end  fw-semibold">{{ number_format($paymentStats['paid_amount'], 0, ',', '.') }} đ</td>
                                     </tr>
                                     <tr>
                                         <td><span class="badge bg-secondary">&nbsp;</span> Chờ thanh toán</td>
-                                        <td class="text-end small">{{ $paymentStats['pending_count'] }} đợt</td>
-                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['pending_amount'], 0, ',', '.') }} đ</td>
+                                        <td class="text-end ">{{ $paymentStats['pending_count'] }} đợt</td>
+                                        <td class="text-end  fw-semibold">{{ number_format($paymentStats['pending_amount'], 0, ',', '.') }} đ</td>
                                     </tr>
                                     <tr>
                                         <td><span class="badge bg-warning">&nbsp;</span> Thanh toán 1 phần</td>
-                                        <td class="text-end small">{{ $paymentStats['partial_count'] }} đợt</td>
-                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['partial_amount'], 0, ',', '.') }} đ</td>
+                                        <td class="text-end ">{{ $paymentStats['partial_count'] }} đợt</td>
+                                        <td class="text-end  fw-semibold">{{ number_format($paymentStats['partial_amount'], 0, ',', '.') }} đ</td>
                                     </tr>
                                     <tr>
                                         <td><span class="badge bg-danger">&nbsp;</span> Quá hạn</td>
-                                        <td class="text-end small">{{ $paymentStats['overdue_count'] }} đợt</td>
-                                        <td class="text-end small fw-semibold">{{ number_format($paymentStats['overdue_amount'], 0, ',', '.') }} đ</td>
+                                        <td class="text-end ">{{ $paymentStats['overdue_count'] }} đợt</td>
+                                        <td class="text-end  fw-semibold">{{ number_format($paymentStats['overdue_amount'], 0, ',', '.') }} đ</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -289,12 +278,12 @@
                             <tbody>
                                 @forelse($topCustomers as $i => $row)
                                 <tr>
-                                    <td class="text-center text-muted small">{{ $i + 1 }}</td>
+                                    <td class="text-center text-muted ">{{ $i + 1 }}</td>
                                     <td class="fw-semibold">{{ $row->name }}</td>
                                     <td class="text-center">{{ $row->waste_count > 0 ? $row->waste_count : '—' }}</td>
-                                    <td class="text-end small">{{ $row->waste_value > 0 ? number_format($row->waste_value, 0, ',', '.') : '—' }}</td>
+                                    <td class="text-end ">{{ $row->waste_value > 0 ? number_format($row->waste_value, 0, ',', '.') : '—' }}</td>
                                     <td class="text-center">{{ $row->consult_count > 0 ? $row->consult_count : '—' }}</td>
-                                    <td class="text-end small">{{ $row->consult_value > 0 ? number_format($row->consult_value, 0, ',', '.') : '—' }}</td>
+                                    <td class="text-end ">{{ $row->consult_value > 0 ? number_format($row->consult_value, 0, ',', '.') : '—' }}</td>
                                     <td class="text-end fw-bold text-body">{{ number_format($row->waste_value + $row->consult_value, 0, ',', '.') }} đ</td>
                                 </tr>
                                 @empty
@@ -327,7 +316,7 @@
                             @forelse($topServices as $i => $row)
                             <tr>
                                 <td class="text-center text-muted">{{ $i + 1 }}</td>
-                                <td class="small text-muted" style="max-width:180px;">{{ $row->service }}</td>
+                                <td class=" text-muted" style="max-width:180px;">{{ $row->service }}</td>
                                 <td class="text-center">{{ $row->cnt }}</td>
                                 <td class="text-end fw-semibold text-success">{{ number_format($row->total, 0, ',', '.') }} đ</td>
                             </tr>

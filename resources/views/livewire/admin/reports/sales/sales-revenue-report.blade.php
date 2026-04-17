@@ -16,7 +16,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -24,7 +24,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
+                    <label class="form-label fw-semibold mb-1 ">Nhân viên</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($staffs as $s)
@@ -33,7 +33,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Loại HĐ (6 nhóm)</label>
+                    <label class="form-label fw-semibold mb-1 ">Loại HĐ (6 nhóm)</label>
                     <select wire:model.live="filter_contract_type" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($contractTypeOptions as $key => $label)
@@ -42,7 +42,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Mới / Tái ký</label>
+                    <label class="form-label fw-semibold mb-1 ">Mới / Tái ký</label>
                     <select wire:model.live="filter_renewal" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         <option value="0">Hợp đồng mới</option>
@@ -58,7 +58,7 @@
         <div class="col-md-4">
             <div class="card border-0 bg-soft-primary text-primary h-100">
                 <div class="card-body">
-                    <div class="small fw-semibold mb-1">DS Hợp đồng mới</div>
+                    <div class=" fw-semibold mb-1">DS Hợp đồng mới</div>
                     <div class="fw-bold fs-5">{{ number_format($totals['new'], 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
         <div class="col-md-4">
             <div class="card border-0 bg-soft-success text-success h-100">
                 <div class="card-body">
-                    <div class="small fw-semibold mb-1">DS Tái ký</div>
+                    <div class=" fw-semibold mb-1">DS Tái ký</div>
                     <div class="fw-bold fs-5">{{ number_format($totals['renewal'], 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
         <div class="col-md-4">
             <div class="card border-0 bg-soft-warning text-dark h-100">
                 <div class="card-body">
-                    <div class="small fw-semibold mb-1">Tổng thực thu {{ $year }}</div>
+                    <div class=" fw-semibold mb-1">Tổng thực thu {{ $year }}</div>
                     <div class="fw-bold fs-5">{{ number_format($totals['total'], 0, ',', '.') }} đ</div>
                 </div>
             </div>

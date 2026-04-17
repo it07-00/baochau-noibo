@@ -38,32 +38,32 @@
                     <form wire:submit.prevent="save">
                         {{-- Ngày báo cáo --}}
                         <div class="mb-4">
-                            <label class="form-label fw-bold small">Ngày báo cáo</label>
+                            <label class="form-label fw-bold ">Ngày báo cáo</label>
                             <input type="date" class="form-control form-control-sm" style="max-width:200px;" wire:model="report_date">
                         </div>
 
                         {{-- Số lượng content theo kênh --}}
                         <div class="mb-4">
-                            <label class="form-label fw-bold small">Số lượng content / bài viết đã đăng hôm nay</label>
+                            <label class="form-label fw-bold ">Số lượng content / bài viết đã đăng hôm nay</label>
                             <div class="row g-2 mt-1">
                                 <div class="col-6 col-md-4 col-lg-2">
-                                    <label class="form-label small text-muted mb-1"><i class="bi bi-facebook text-primary me-1"></i>Facebook</label>
+                                    <label class="form-label  text-muted mb-1"><i class="bi bi-facebook text-primary me-1"></i>Facebook</label>
                                     <input type="number" min="0" class="form-control form-control-sm text-center" wire:model="facebook_count">
                                 </div>
                                 <div class="col-6 col-md-4 col-lg-2">
-                                    <label class="form-label small text-muted mb-1"><i class="bi bi-chat-dots text-success me-1"></i>Zalo</label>
+                                    <label class="form-label  text-muted mb-1"><i class="bi bi-chat-dots text-success me-1"></i>Zalo</label>
                                     <input type="number" min="0" class="form-control form-control-sm text-center" wire:model="zalo_count">
                                 </div>
                                 <div class="col-6 col-md-4 col-lg-2">
-                                    <label class="form-label small text-muted mb-1"><i class="bi bi-globe text-info me-1"></i>Website</label>
+                                    <label class="form-label  text-muted mb-1"><i class="bi bi-globe text-info me-1"></i>Website</label>
                                     <input type="number" min="0" class="form-control form-control-sm text-center" wire:model="website_count">
                                 </div>
                                 <div class="col-6 col-md-4 col-lg-2">
-                                    <label class="form-label small text-muted mb-1"><i class="bi bi-tiktok me-1"></i>TikTok</label>
+                                    <label class="form-label  text-muted mb-1"><i class="bi bi-tiktok me-1"></i>TikTok</label>
                                     <input type="number" min="0" class="form-control form-control-sm text-center" wire:model="tiktok_count">
                                 </div>
                                 <div class="col-6 col-md-4 col-lg-2">
-                                    <label class="form-label small text-muted mb-1"><i class="bi bi-youtube text-danger me-1"></i>YouTube</label>
+                                    <label class="form-label  text-muted mb-1"><i class="bi bi-youtube text-danger me-1"></i>YouTube</label>
                                     <input type="number" min="0" class="form-control form-control-sm text-center" wire:model="youtube_count">
                                 </div>
                             </div>
@@ -71,29 +71,29 @@
 
                         {{-- Nội dung đã làm --}}
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Nội dung / công việc đã làm hôm nay <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold ">Nội dung / công việc đã làm hôm nay <span class="text-danger">*</span></label>
                             <textarea class="form-control form-control-sm" wire:model="content_details" rows="4"
                                 placeholder="VD: Viết 3 bài về dịch vụ quan trắc môi trường, thiết kế 2 banner cho campaign tháng 4..."></textarea>
-                            @error('content_details')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                            @error('content_details')<div class="text-danger  mt-1">{{ $message }}</div>@enderror
                         </div>
 
                         {{-- Banner / ấn phẩm --}}
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Banner / ấn phẩm đã tạo</label>
+                            <label class="form-label fw-bold ">Banner / ấn phẩm đã tạo</label>
                             <textarea class="form-control form-control-sm" wire:model="banners" rows="2"
                                 placeholder="VD: Banner tháng 4 cho Facebook (1200x628), Story Instagram dịch vụ xử lý chất thải..."></textarea>
                         </div>
 
                         {{-- Chỉ tiêu đạt được --}}
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Chỉ tiêu đạt được</label>
+                            <label class="form-label fw-bold ">Chỉ tiêu đạt được</label>
                             <textarea class="form-control form-control-sm" wire:model="targets_achieved" rows="2"
                                 placeholder="VD: Reach Facebook 500 người, tăng 20 followers, 3 leads từ website..."></textarea>
                         </div>
 
                         {{-- Ghi chú --}}
                         <div class="mb-4">
-                            <label class="form-label fw-bold small">Ghi chú / vấn đề phát sinh</label>
+                            <label class="form-label fw-bold ">Ghi chú / vấn đề phát sinh</label>
                             <textarea class="form-control form-control-sm" wire:model="notes" rows="2"
                                 placeholder="VD: Cần duyệt thêm ngân sách ads, tài khoản Facebook bị hạn chế..."></textarea>
                         </div>
@@ -116,12 +116,12 @@
         <div class="card-body p-3">
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label small fw-bold">Tháng</label>
+                    <label class="form-label  fw-bold">Tháng</label>
                     <input type="month" class="form-control form-control-sm" wire:model.live="filterMonth">
                 </div>
                 @if($isManager || $isViewOnly)
                 <div class="col-md-3">
-                    <label class="form-label small fw-bold">Nhân viên</label>
+                    <label class="form-label  fw-bold">Nhân viên</label>
                     <select class="form-select form-select-sm" wire:model.live="filterUser">
                         <option value="">Tất cả</option>
                         @foreach($users as $u)
@@ -166,9 +166,9 @@
                         <td class="text-center">{{ $row->zalo_count ?: '-' }}</td>
                         <td class="text-center">{{ $row->website_count ?: '-' }}</td>
                         <td class="text-center">{{ $row->tiktok_count ?: '-' }}</td>
-                        <td class="small text-muted" style="max-width:200px; white-space:pre-wrap;">{{ \Illuminate\Support\Str::limit($row->content_details, 80) }}</td>
-                        <td class="small text-muted" style="max-width:150px;">{{ \Illuminate\Support\Str::limit($row->banners, 60) }}</td>
-                        <td class="small text-muted" style="max-width:150px;">{{ \Illuminate\Support\Str::limit($row->targets_achieved, 60) }}</td>
+                        <td class=" text-muted" style="max-width:200px; white-space:pre-wrap;">{{ \Illuminate\Support\Str::limit($row->content_details, 80) }}</td>
+                        <td class=" text-muted" style="max-width:150px;">{{ \Illuminate\Support\Str::limit($row->banners, 60) }}</td>
+                        <td class=" text-muted" style="max-width:150px;">{{ \Illuminate\Support\Str::limit($row->targets_achieved, 60) }}</td>
                     </tr>
                     @empty
                     <tr>

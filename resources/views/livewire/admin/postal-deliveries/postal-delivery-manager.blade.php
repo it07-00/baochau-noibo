@@ -25,14 +25,14 @@
         <div class="card-body p-4">
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
-                    <label class="form-label fw-bold small text-muted mb-2">Tìm kiếm</label>
+                    <label class="form-label fw-bold  text-muted mb-2">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
                         <input type="text" class="form-control bg-light border-0" placeholder="Khách hàng, số bill, người gửi..." wire:model.live.debounce.300ms="search">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold small text-muted mb-2">Phòng ban</label>
+                    <label class="form-label fw-bold  text-muted mb-2">Phòng ban</label>
                     <select class="form-select bg-light border-0 shadow-none" wire:model.live="departmentIdFilter">
                         <option value="">Tất cả phòng ban</option>
                         @foreach($departments as $dept)
@@ -74,17 +74,17 @@
                 <tbody>
                     @forelse($deliveries as $delivery)
                     <tr>
-                        <td class="text-center text-muted small fw-semibold">{{ ($deliveries->currentPage() - 1) * $deliveries->perPage() + $loop->iteration }}</td>
+                        <td class="text-center text-muted  fw-semibold">{{ ($deliveries->currentPage() - 1) * $deliveries->perPage() + $loop->iteration }}</td>
                         <td class="ps-4 py-3">
                             <div class="d-flex flex-column">
-                                <span class="fw-bold text-dark small mb-1">{{ $delivery->customer_name }}</span>
+                                <span class="fw-bold text-dark  mb-1">{{ $delivery->customer_name }}</span>
                                 @if($delivery->customer_phone)
-                                    <span class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i> {{ $delivery->customer_phone }}</span>
+                                    <span class="text-muted  mb-1"><i class="bi bi-telephone me-1"></i> {{ $delivery->customer_phone }}</span>
                                 @endif
                                 @if($delivery->address)
-                                    <span class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i> {{ $delivery->address }}</span>
+                                    <span class="text-muted  mb-1"><i class="bi bi-geo-alt me-1"></i> {{ $delivery->address }}</span>
                                 @endif
-                                <span class="text-dark small"><i class="bi bi-person me-1"></i> Người gửi: <strong>{{ $delivery->sender_name }}</strong></span>
+                                <span class="text-dark "><i class="bi bi-person me-1"></i> Người gửi: <strong>{{ $delivery->sender_name }}</strong></span>
                             </div>
                         </td>
                         <td class="text-center">
@@ -93,7 +93,7 @@
                                     {{ $delivery->bill_viettel }}
                                 </a>
                             @else
-                                <span class="text-muted small">--</span>
+                                <span class="text-muted ">--</span>
                             @endif
                         </td>
                         <td class="text-center">
@@ -102,7 +102,7 @@
                                     {{ $delivery->bill_247 }}
                                 </a>
                             @else
-                                <span class="text-muted small">--</span>
+                                <span class="text-muted ">--</span>
                             @endif
                         </td>
                         <td class="text-center">
@@ -116,7 +116,7 @@
                                         default => 'secondary',
                                     };
                                 @endphp
-                                <span class="badge bg-{{ $statusColor }}-subtle text-{{ $statusColor }} px-3 py-2 rounded-pill small">
+                                <span class="badge bg-{{ $statusColor }}-subtle text-{{ $statusColor }} px-3 py-2 rounded-pill ">
                                     {{ $delivery->vtp_status_name }}
                                 </span>
                                 @if($delivery->vtp_last_tracked_at)
@@ -125,14 +125,14 @@
                                     </div>
                                 @endif
                             @else
-                                <span class="text-muted small">--</span>
+                                <span class="text-muted ">--</span>
                             @endif
                         </td>
                         <td class="text-center">
-                            <span class="text-muted small">{{ $delivery->created_at->format('d/m/Y') }}</span>
+                            <span class="text-muted ">{{ $delivery->created_at->format('d/m/Y') }}</span>
                         </td>
                         <td>
-                            <div class="text-dark small" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
+                            <div class="text-dark " style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
                                 {{ $delivery->content }}
                             </div>
                         </td>
@@ -207,24 +207,24 @@
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted mb-2">Tên khách hàng <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold  text-muted mb-2">Tên khách hàng <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none @error('customer_name') is-invalid @enderror" wire:model="customer_name" placeholder="Ví dụ: Công ty TNHH Giải pháp SunTech">
                                 @error('customer_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted mb-2">Số điện thoại @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Số điện thoại @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none @error('customer_phone') is-invalid @enderror" wire:model="customer_phone" placeholder="Số điện thoại khách">
                                 @error('customer_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold small text-muted mb-2">Địa chỉ nhận @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Địa chỉ nhận @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none @error('address') is-invalid @enderror" wire:model="address" placeholder="Địa chỉ chi tiết nhận thư">
                                 @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             {{-- Tỉnh / Quận / Phường cho VTP --}}
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted mb-2">Tỉnh/Thành phố @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Tỉnh/Thành phố @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
                                 <select class="form-select bg-light border-0 shadow-none @error('receiver_province') is-invalid @enderror" wire:model.live="receiver_province">
                                     <option value="">Chọn tỉnh/TP</option>
                                     @foreach($provinces as $province)
@@ -234,7 +234,7 @@
                                 @error('receiver_province') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted mb-2">Quận/Huyện @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Quận/Huyện @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
                                 <select class="form-select bg-light border-0 shadow-none @error('receiver_district') is-invalid @enderror" wire:model.live="receiver_district">
                                     <option value="">Chọn quận/huyện</option>
                                     @foreach($districts as $district)
@@ -244,7 +244,7 @@
                                 @error('receiver_district') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted mb-2">Phường/Xã @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Phường/Xã @if($create_vtp_order)<span class="text-danger">*</span>@endif</label>
                                 <select class="form-select bg-light border-0 shadow-none @error('receiver_ward') is-invalid @enderror" wire:model="receiver_ward">
                                     <option value="">Chọn phường/xã</option>
                                     @foreach($wards as $ward)
@@ -255,12 +255,12 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted mb-2">Người gửi thực tế <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold  text-muted mb-2">Người gửi thực tế <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none @error('sender_name') is-invalid @enderror" wire:model="sender_name" placeholder="Ví dụ: Hồ Thị Thanh Thảo">
                                 @error('sender_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted mb-2">Phòng ban liên quan <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold  text-muted mb-2">Phòng ban liên quan <span class="text-danger">*</span></label>
                                 <select class="form-select bg-light border-0 shadow-none @error('department_id') is-invalid @enderror" wire:model="department_id">
                                     <option value="">Chọn phòng ban</option>
                                     @foreach($departments as $dept)
@@ -270,15 +270,15 @@
                                 @error('department_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted mb-2">Số bill Viettel Post</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Số bill Viettel Post</label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none" wire:model="bill_viettel" placeholder="WQNHG..." {{ $create_vtp_order ? 'disabled' : '' }}>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted mb-2">Số bill 247 Post</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Số bill 247 Post</label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none" wire:model="bill_247" placeholder="Số bill 247 (nếu có)">
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold small text-muted mb-2">Nội dung thư/bưu phẩm</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Nội dung thư/bưu phẩm</label>
                                 <textarea class="form-control bg-light border-0 shadow-none" rows="3" wire:model="content" placeholder="Ví dụ: 1 Hợp đồng chất thải, 05 chứng từ..."></textarea>
                             </div>
 
@@ -297,7 +297,7 @@
 
                             @if($create_vtp_order)
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted mb-2">Dịch vụ VTP</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Dịch vụ VTP</label>
                                 <select class="form-select bg-light border-0 shadow-none" wire:model="vtp_service">
                                     <option value="VCN">Chuyển phát nhanh (VCN)</option>
                                     <option value="VTK">Tiết kiệm (VTK)</option>
@@ -307,11 +307,11 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted mb-2">Trọng lượng (gram)</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Trọng lượng (gram)</label>
                                 <input type="number" class="form-control bg-light border-0 shadow-none" wire:model="vtp_weight" min="1" placeholder="100">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted mb-2">Thu hộ (COD) VNĐ</label>
+                                <label class="form-label fw-bold  text-muted mb-2">Thu hộ (COD) VNĐ</label>
                                 <input type="text" class="form-control bg-light border-0 shadow-none money-input" wire:model="vtp_money_collection" placeholder="0">
                             </div>
                             @endif
@@ -347,17 +347,17 @@
                     <div class="bg-light rounded-3 p-3 mb-4">
                         <div class="row">
                             <div class="col-md-6">
-                                <small class="text-muted">Mã vận đơn</small>
+                                < class="text-muted">Mã vận đơn</>
                                 <div class="fw-bold text-primary">{{ $trackingDelivery->vtp_order_code ?? $trackingDelivery->bill_viettel }}</div>
                             </div>
                             <div class="col-md-6">
-                                <small class="text-muted">Người nhận</small>
+                                < class="text-muted">Người nhận</>
                                 <div class="fw-bold">{{ $trackingDelivery->customer_name }}</div>
                             </div>
                         </div>
                         @if($trackingDelivery->vtp_total_fee)
                         <div class="mt-2">
-                            <small class="text-muted">Phí vận chuyển:</small>
+                            < class="text-muted">Phí vận chuyển:</>
                             <span class="fw-bold text-danger">{{ number_format($trackingDelivery->vtp_total_fee) }} VNĐ</span>
                         </div>
                         @endif
@@ -380,10 +380,10 @@
                                 @endif
                             </div>
                             <div class="flex-grow-1 pb-2">
-                                <div class="fw-bold small {{ $index === 0 ? 'text-primary' : 'text-dark' }}">
+                                <div class="fw-bold  {{ $index === 0 ? 'text-primary' : 'text-dark' }}">
                                     {{ $item['STATUS_NAME'] ?? 'N/A' }}
                                 </div>
-                                <div class="text-muted small">
+                                <div class="text-muted ">
                                     {{ $item['NOTE'] ?? '' }}
                                 </div>
                                 <div class="text-muted" style="font-size: 11px;">

@@ -20,7 +20,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">DS Tái ký</div>
+                        <div class=" text-muted">DS Tái ký</div>
                         <div class="fw-bold text-success">{{ number_format($rTotal, 0, ',', '.') }} đ</div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">DS Theo tiến độ</div>
+                        <div class=" text-muted">DS Theo tiến độ</div>
                         <div class="fw-bold text-warning">{{ number_format($pTotal, 0, ',', '.') }} đ</div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -54,7 +54,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Tháng</label>
+                    <label class="form-label fw-semibold mb-1 ">Tháng</label>
                     <select wire:model.live="filter_month" class="form-select form-select-sm">
                         <option value="">Tất cả tháng</option>
                         @for($m=1; $m<=12; $m++)
@@ -64,7 +64,7 @@
                 </div>
                 @can('roles.view')
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
+                    <label class="form-label fw-semibold mb-1 ">Nhân viên</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($staffs as $s)
@@ -74,7 +74,7 @@
                 </div>
                 @endcan
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
+                    <label class="form-label fw-semibold mb-1 ">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         <option value="pending">Đang xử lý</option>
@@ -123,16 +123,16 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
-                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
-                            <td class="text-muted small">{{ $item->sales_month->format('m/Y') }}</td>
-                            <td class="small">{{ $item->contract_number ?: '—' }}</td>
+                            <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                            <td class="text-muted ">{{ $item->sales_month->format('m/Y') }}</td>
+                            <td class="">{{ $item->contract_number ?: '—' }}</td>
                             <td>{{ $item->creator?->name ?? '—' }}</td>
-                            <td class="text-end small">{{ number_format($item->sales_value, 0, ',', '.') }}</td>
-                            <td class="text-end small">{{ $item->sales_percentage }}%</td>
+                            <td class="text-end ">{{ number_format($item->sales_value, 0, ',', '.') }}</td>
+                            <td class="text-end ">{{ $item->sales_percentage }}%</td>
                             <td class="text-end fw-semibold text-success">{{ number_format($item->sales_amount, 0, ',', '.') }} đ</td>
                             <td>
                                 @if($item->status)
-                                    <span class="badge bg-soft-secondary text-secondary small">{{ $item->status }}</span>
+                                    <span class="badge bg-soft-secondary text-secondary ">{{ $item->status }}</span>
                                 @endif
                             </td>
                         </tr>
@@ -159,16 +159,16 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
-                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
-                            <td class="text-muted small">{{ $item->sales_month->format('m/Y') }}</td>
-                            <td class="small">{{ $item->contract_number ?: '—' }}</td>
+                            <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                            <td class="text-muted ">{{ $item->sales_month->format('m/Y') }}</td>
+                            <td class="">{{ $item->contract_number ?: '—' }}</td>
                             <td>{{ $item->creator?->name ?? '—' }}</td>
                             <td>{{ $item->milestone_name ?: '—' }}</td>
-                            <td class="text-end small">{{ $item->percentage }}%</td>
+                            <td class="text-end ">{{ $item->percentage }}%</td>
                             <td class="text-end fw-semibold text-warning">{{ number_format($item->amount, 0, ',', '.') }} đ</td>
                             <td>
                                 @if($item->status)
-                                    <span class="badge bg-soft-secondary text-secondary small">{{ $item->status }}</span>
+                                    <span class="badge bg-soft-secondary text-secondary ">{{ $item->status }}</span>
                                 @endif
                             </td>
                         </tr>

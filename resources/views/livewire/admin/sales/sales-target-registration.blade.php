@@ -61,7 +61,7 @@
                     <div>
                         <p class="text-muted mb-2">Phần còn thiếu để đạt mục tiêu năm</p>
                         <h4 class="mb-1 text-danger">{{ number_format($remaining, 0, ',', '.') }} đ</h4>
-                        <small class="text-muted">Đã ký: {{ number_format($totals['actual'], 0, ',', '.') }} / {{ number_format($totals['target'], 0, ',', '.') }} đ</small>
+                        < class="text-muted">Đã ký: {{ number_format($totals['actual'], 0, ',', '.') }} / {{ number_format($totals['target'], 0, ',', '.') }} đ</>
                     </div>
                     <div class="progress mt-3" role="progressbar" aria-label="year-progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $totalPct !== null ? min($totalPct, 100) : 0 }}" style="height: 8px;">
                         <div class="progress-bar {{ $totalPct !== null && $totalPct >= 100 ? 'bg-success' : ($totalPct !== null && $totalPct >= 70 ? 'bg-warning' : 'bg-danger') }}" style="width: {{ $totalPct !== null ? min($totalPct, 100) : 0 }}%"></div>
@@ -134,7 +134,7 @@
                             <tr>
                                 <td class="ps-3 month-cell">
                                     <div class="fw-semibold">Tháng {{ $m }}</div>
-                                    <small class="text-muted">Quý {{ $quarter }}</small>
+                                    < class="text-muted">Quý {{ $quarter }}</>
                                 </td>
                                 <td class="text-end">
                                     <div class="input-group" style="max-width: 220px; margin-left: auto;">
@@ -215,7 +215,7 @@
         padding-bottom: 0.85rem;
     }
 
-    .sales-target-registration .sales-target-table .month-cell small {
+    .sales-target-registration .sales-target-table .month-cell  {
         font-size: 0.92rem;
     }
 

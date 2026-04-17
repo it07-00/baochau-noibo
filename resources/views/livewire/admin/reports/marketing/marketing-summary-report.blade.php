@@ -20,7 +20,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">Tổng số báo giá</div>
+                        <div class=" text-muted">Tổng số báo giá</div>
                         <div class="fw-bold text-primary">{{ $totals['count'] }} báo giá</div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">Giá trị (chưa VAT)</div>
+                        <div class=" text-muted">Giá trị (chưa VAT)</div>
                         <div class="fw-bold text-warning">{{ number_format($totals['value'], 0, ',', '.') }} đ</div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">Doanh số</div>
+                        <div class=" text-muted">Doanh số</div>
                         <div class="fw-bold text-success">{{ number_format($totals['sales'], 0, ',', '.') }} đ</div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -67,7 +67,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Tháng</label>
+                    <label class="form-label fw-semibold mb-1 ">Tháng</label>
                     <select wire:model.live="filter_month" class="form-select form-select-sm">
                         <option value="">Cả năm</option>
                         @for($m=1; $m<=12; $m++)
@@ -102,7 +102,7 @@
                                 <tr class="{{ $data['count'] == 0 ? 'text-muted' : '' }}">
                                     <td class="fw-semibold">Tháng {{ $m }}</td>
                                     <td class="text-center">{{ $data['count'] > 0 ? $data['count'] : '—' }}</td>
-                                    <td class="text-end small">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') : '—' }}</td>
+                                    <td class="text-end ">{{ $data['value'] > 0 ? number_format($data['value'], 0, ',', '.') : '—' }}</td>
                                     <td class="text-end fw-semibold text-primary">{{ $data['sales'] > 0 ? number_format($data['sales'], 0, ',', '.') . ' đ' : '—' }}</td>
                                 </tr>
                                 @endforeach
@@ -140,7 +140,7 @@
                             <tbody>
                                 @forelse($byService as $svc)
                                 <tr>
-                                    <td class="small text-muted" style="max-width:160px;">{{ $svc->service ?: '—' }}</td>
+                                    <td class=" text-muted" style="max-width:160px;">{{ $svc->service ?: '—' }}</td>
                                     <td class="text-center">{{ $svc->count }}</td>
                                     <td class="text-end fw-semibold text-primary">{{ number_format($svc->total_sales, 0, ',', '.') }} đ</td>
                                 </tr>

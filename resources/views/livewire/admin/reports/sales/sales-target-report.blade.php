@@ -9,7 +9,7 @@
         <div class="card-body py-3 px-4">
             <div class="row g-3 align-items-end">
                 <div class="col-md-3 col-lg-2">
-                    <label class="form-label fw-semibold mb-1 small text-muted">Năm báo cáo</label>
+                    <label class="form-label fw-semibold mb-1  text-muted">Năm báo cáo</label>
                     <select wire:model.live="year" class="form-select">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -17,7 +17,7 @@
                     </select>
                 </div>
                 <div class="col-md-4 col-lg-3">
-                    <label class="form-label fw-semibold mb-1 small text-muted">Nhân viên kinh doanh</label>
+                    <label class="form-label fw-semibold mb-1  text-muted">Nhân viên kinh doanh</label>
                     <select wire:model.live="filter_staff" class="form-select">
                         <option value="">Tất cả nhân viên KD</option>
                         @foreach($staffs as $s)
@@ -39,7 +39,7 @@
         <div class="col-md-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="small text-muted fw-semibold mb-2">Mục tiêu năm</div>
+                    <div class=" text-muted fw-semibold mb-2">Mục tiêu năm</div>
                     <div class="fs-5 fw-bold text-dark">{{ number_format($totals['target'], 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
         <div class="col-md-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="small text-muted fw-semibold mb-2">Thực tế năm</div>
+                    <div class=" text-muted fw-semibold mb-2">Thực tế năm</div>
                     <div class="fs-5 fw-bold text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
         <div class="col-md-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="small text-muted fw-semibold mb-2">Chênh lệch</div>
+                    <div class=" text-muted fw-semibold mb-2">Chênh lệch</div>
                     <div class="fs-5 fw-bold {{ $totalDelta >= 0 ? 'text-success' : 'text-danger' }}">
                         {{ $totalDelta >= 0 ? '+' : '−' }}{{ number_format(abs($totalDelta), 0, ',', '.') }} đ
                     </div>
@@ -65,7 +65,7 @@
         <div class="col-md-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="small text-muted fw-semibold mb-2">Tỷ lệ hoàn thành</div>
+                    <div class=" text-muted fw-semibold mb-2">Tỷ lệ hoàn thành</div>
                     <div class="fs-5 fw-bold {{ ($totalPct ?? 0) >= 100 ? 'text-success' : (($totalPct ?? 0) >= 70 ? 'text-warning' : 'text-danger') }}">
                         {{ $totalPct !== null ? $totalPct . '%' : '—' }}
                     </div>
@@ -124,23 +124,23 @@
                                             <div class="progress flex-grow-1" style="height: 8px;">
                                                 <div class="progress-bar {{ $progressClass }}" role="progressbar" style="width: {{ $progressWidth }}%"></div>
                                             </div>
-                                            <span class="small fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
+                                            <span class=" fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
                                                 {{ $pct }}%
                                             </span>
                                         </div>
                                     @else
-                                        <span class="text-muted small">Chưa đặt mục tiêu</span>
+                                        <span class="text-muted ">Chưa đặt mục tiêu</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if($pct === null)
-                                        <span class="badge bg-soft-secondary text-secondary small">Chưa có mục tiêu</span>
+                                        <span class="badge bg-soft-secondary text-secondary ">Chưa có mục tiêu</span>
                                     @elseif($pct >= 100)
-                                        <span class="badge bg-soft-success text-success small">Đạt</span>
+                                        <span class="badge bg-soft-success text-success ">Đạt</span>
                                     @elseif($pct >= 70)
-                                        <span class="badge bg-soft-warning text-warning small">Gần đạt</span>
+                                        <span class="badge bg-soft-warning text-warning ">Gần đạt</span>
                                     @else
-                                        <span class="badge bg-soft-danger text-danger small">Chưa đạt</span>
+                                        <span class="badge bg-soft-danger text-danger ">Chưa đạt</span>
                                     @endif
                                 </td>
                             </tr>
@@ -164,7 +164,7 @@
                                         <div class="progress flex-grow-1" style="height: 8px;">
                                             <div class="progress-bar {{ $totalProgressClass }}" role="progressbar" style="width: {{ $totalProgressWidth }}%"></div>
                                         </div>
-                                        <span class="small fw-semibold {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
+                                        <span class=" fw-semibold {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
                                             {{ $totalPct }}%
                                         </span>
                                     </div>
@@ -174,13 +174,13 @@
                             </td>
                             <td class="text-center">
                                 @if($totalPct === null)
-                                    <span class="badge bg-soft-secondary text-secondary small">Chưa có mục tiêu</span>
+                                    <span class="badge bg-soft-secondary text-secondary ">Chưa có mục tiêu</span>
                                 @elseif($totalPct >= 100)
-                                    <span class="badge bg-soft-success text-success small">Đạt</span>
+                                    <span class="badge bg-soft-success text-success ">Đạt</span>
                                 @elseif($totalPct >= 70)
-                                    <span class="badge bg-soft-warning text-warning small">Gần đạt</span>
+                                    <span class="badge bg-soft-warning text-warning ">Gần đạt</span>
                                 @else
-                                    <span class="badge bg-soft-danger text-danger small">Chưa đạt</span>
+                                    <span class="badge bg-soft-danger text-danger ">Chưa đạt</span>
                                 @endif
                             </td>
                         </tr>

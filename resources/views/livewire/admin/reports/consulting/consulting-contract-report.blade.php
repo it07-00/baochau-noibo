@@ -17,7 +17,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Tổng hợp đồng</div>
+                    <div class=" text-muted">Tổng hợp đồng</div>
                     <div class="fw-bold fs-4 text-primary">{{ $summary->total ?? 0 }}</div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Đang thực hiện</div>
+                    <div class=" text-muted">Đang thực hiện</div>
                     <div class="fw-bold fs-4 text-info">{{ $summary->active ?? 0 }}</div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Hoàn thành</div>
+                    <div class=" text-muted">Hoàn thành</div>
                     <div class="fw-bold fs-4 text-success">{{ $summary->completed ?? 0 }}</div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -54,7 +54,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Loại dịch vụ</label>
+                    <label class="form-label fw-semibold mb-1 ">Loại dịch vụ</label>
                     <select wire:model.live="filter_service" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($serviceTypes as $type)
@@ -63,7 +63,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
+                    <label class="form-label fw-semibold mb-1 ">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         <option value="not_started">Chưa bắt đầu</option>
@@ -73,7 +73,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">NV Tư vấn</label>
+                    <label class="form-label fw-semibold mb-1 ">NV Tư vấn</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         @unless($isRestrictedConsultant)
                             <option value="">Tất cả</option>
@@ -111,13 +111,13 @@
                         @forelse($items as $item)
                         @php $wp = $workflowProgress[$item->id] ?? ['percent' => 0, 'current_label' => 'Chưa bắt đầu', 'completed_count' => 0, 'total_steps' => 6]; @endphp
                         <tr>
-                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
-                            <td class="fw-semibold small">{{ $item->shd_bc ?: '—' }}</td>
+                            <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                            <td class="fw-semibold ">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
-                            <td class="small text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
-                            <td class="small">{{ $item->staff?->name ?? '—' }}</td>
-                            <td class="small">{{ $item->assignments->pluck('user.name')->filter()->implode(', ') ?: '—' }}</td>
-                            <td class="small">{{ $item->province ?: '—' }}</td>
+                            <td class=" text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
+                            <td class="">{{ $item->staff?->name ?? '—' }}</td>
+                            <td class="">{{ $item->assignments->pluck('user.name')->filter()->implode(', ') ?: '—' }}</td>
+                            <td class="">{{ $item->province ?: '—' }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="progress flex-grow-1" style="height:8px">
@@ -126,13 +126,13 @@
                                              aria-valuenow="{{ $wp['percent'] }}" aria-valuemin="0" aria-valuemax="100">
                                         </div>
                                     </div>
-                                    <span class="small text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
+                                    <span class=" text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
                                 </div>
                             </td>
-                            <td class="small">{{ $wp['current_label'] }}</td>
-                            <td class="small text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
+                            <td class="">{{ $wp['current_label'] }}</td>
+                            <td class=" text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
                             <td>
-                                <span class="badge bg-soft-{{ $item->status_color ?? 'secondary' }} text-{{ $item->status_color ?? 'secondary' }} small">
+                                <span class="badge bg-soft-{{ $item->status_color ?? 'secondary' }} text-{{ $item->status_color ?? 'secondary' }} ">
                                     {{ $item->status_label ?? $item->status ?? '—' }}
                                 </span>
                             </td>

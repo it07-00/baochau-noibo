@@ -57,7 +57,7 @@
             </div>
             <div class="flex-grow-1">
                 <h6 class="mb-0 fw-bold text-body">Bạn chưa gửi báo cáo ngày hôm nay</h6>
-                <p class="mb-0 small text-muted">Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</p>
+                <p class="mb-0  text-muted">Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</p>
             </div>
             <a href="{{ route('app.daily-reports.index') }}" class="btn btn-warning btn-sm px-3 fw-bold shadow-sm" style="border-radius: 8px;">
                 <i class="bi bi-pencil-square me-1"></i> Gửi báo cáo
@@ -143,7 +143,7 @@
                         <div class="card-body p-3">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <div class="it-panel-title">Tài nguyên ổ đĩa</div>
-                                <div class="small fw-bold {{ $itStats['system']['disk_percent'] > 80 ? 'text-danger' : 'text-success' }}">
+                                <div class=" fw-bold {{ $itStats['system']['disk_percent'] > 80 ? 'text-danger' : 'text-success' }}">
                                     {{ $itStats['system']['disk_percent'] }}%
                                 </div>
                             </div>
@@ -151,7 +151,7 @@
                                 <div class="progress-bar progress-bar-striped progress-bar-animated {{ $itStats['system']['disk_percent'] > 80 ? 'bg-danger' : 'bg-primary' }}"
                                      role="progressbar" style="width: {{ $itStats['system']['disk_percent'] }}%;"></div>
                             </div>
-                            <div class="d-flex justify-content-between small text-muted">
+                            <div class="d-flex justify-content-between  text-muted">
                                 <span>Sử dụng: <b>{{ $itStats['system']['disk_used'] }} GB</b></span>
                                 <span>Trống: <b>{{ $itStats['system']['disk_free'] }} GB</b></span>
                             </div>
@@ -176,11 +176,11 @@
                                 <div class="d-flex align-items-center gap-3 ms-2">
                                     <div class="text-center">
                                         <div class="badge bg-soft-info text-info it-panel-badge">DB SIZE</div>
-                                        <div class="small fw-bold">{{ number_format($itStats['system']['db_size_mb'], 1) }} MB</div>
+                                        <div class=" fw-bold">{{ number_format($itStats['system']['db_size_mb'], 1) }} MB</div>
                                     </div>
                                     <div class="text-center">
                                         <div class="badge bg-soft-warning text-warning it-panel-badge">QUEUE</div>
-                                        <div class="small fw-bold">{{ number_format($itStats['system']['pending_jobs']) }}</div>
+                                        <div class=" fw-bold">{{ number_format($itStats['system']['pending_jobs']) }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -193,11 +193,11 @@
                             <div class="it-panel-title mb-2">Môi trường</div>
                             <div class="d-flex flex-column gap-1">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted">Laravel</span>
+                                    <span class=" text-muted">Laravel</span>
                                     <span class="badge bg-light text-dark border fw-bold">{{ $itStats['system']['laravel_version'] }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted">PHP</span>
+                                    <span class=" text-muted">PHP</span>
                                     <span class="badge bg-light text-dark border fw-bold">{{ $itStats['system']['php_version'] }}</span>
                                 </div>
                             </div>
@@ -232,16 +232,16 @@
                                                     <div class="it-user-badge">
                                                         {{ $activity->causer ? strtoupper(substr($activity->causer->name, 0, 1)) : 'S' }}
                                                     </div>
-                                                    <div class="small fw-semibold">{{ $activity->causer ? $activity->causer->name : 'Hệ thống' }}</div>
+                                                    <div class=" fw-semibold">{{ $activity->causer ? $activity->causer->name : 'Hệ thống' }}</div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="small text-wrap">
+                                                <div class=" text-wrap">
                                                     <span class="badge bg-soft-info text-info text-uppercase" style="font-size: 10px">{{ $activity->event }}</span>
                                                     {{ $activity->description }}
                                                 </div>
                                             </td>
-                                            <td class="text-muted small">
+                                            <td class="text-muted ">
                                                 {{ $activity->created_at->diffForHumans() }}
                                             </td>
                                         </tr>
@@ -270,7 +270,7 @@
                                 <h6 class="mb-0 fw-bold">Cảnh báo Đăng nhập sai</h6>
                             </div>
                             <div class="display-5 fw-bold text-danger mb-1">{{ number_format($itStats['system']['failed_logins_24h']) }}</div>
-                            <div class="small text-muted">Lần thử thất bại trong 24h qua</div>
+                            <div class=" text-muted">Lần thử thất bại trong 24h qua</div>
                         </div>
                     </div>
                 </div>
@@ -288,7 +288,7 @@
                                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:30px;height:30px;font-size:11px">
                                                 {{ $stat->causer ? strtoupper(substr($stat->causer->name, 0, 1)) : '?' }}
                                             </div>
-                                            <span class="small fw-bold">{{ $stat->causer ? $stat->causer->name : 'N/A' }}</span>
+                                            <span class=" fw-bold">{{ $stat->causer ? $stat->causer->name : 'N/A' }}</span>
                                         </div>
                                         <span class="badge bg-white text-dark border">{{ $stat->total }} thao tác</span>
                                     </div>
@@ -319,15 +319,15 @@
                             <tbody>
                                 @foreach($itStats['recent_activities'] as $activity)
                                 <tr>
-                                    <td class="small text-nowrap">{{ $activity->created_at->format('d/m H:i:s') }}</td>
+                                    <td class=" text-nowrap">{{ $activity->created_at->format('d/m H:i:s') }}</td>
                                     <td>
-                                        <span class="fw-bold small">{{ $activity->causer ? $activity->causer->name : 'Hệ thống' }}</span>
+                                        <span class="fw-bold ">{{ $activity->causer ? $activity->causer->name : 'Hệ thống' }}</span>
                                     </td>
                                     <td>
                                         <span class="badge bg-soft-{{ in_array($activity->event, ['login','logout']) ? 'success text-success' : ($activity->event == 'failed_login' ? 'danger text-danger' : 'info text-info') }} text-uppercase" style="font-size: 10px">{{ $activity->event }}</span>
                                     </td>
-                                    <td class="small">{{ $activity->description }}</td>
-                                    <td class="small text-muted">
+                                    <td class="">{{ $activity->description }}</td>
+                                    <td class=" text-muted">
                                         <div class="d-flex flex-column">
                                             <span><i class="bi bi-geo-alt"></i> {{ $activity->getExtraProperty('ip') ?? 'N/A' }}</span>
                                             <span class="text-truncate" style="max-width: 150px" title="{{ $activity->getExtraProperty('user_agent') }}">{{ $activity->getExtraProperty('user_agent') ?? 'N/A' }}</span>
@@ -457,7 +457,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Tổng quan vận hành theo tháng</h6>
-                            <small class="text-muted">Biến động hợp đồng, doanh số và thực thu trong năm {{ $year }}</small>
+                            < class="text-muted">Biến động hợp đồng, doanh số và thực thu trong năm {{ $year }}</>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -473,7 +473,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Cơ cấu hợp đồng theo dịch vụ</h6>
-                            <small class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</small>
+                            < class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -493,7 +493,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">TỈ LỆ DOANH SỐ THEO NGUỒN THÔNG TIN</h6>
-                            <small class="text-muted">Dựa trên doanh số ghi nhận của tất cả loại hợp đồng</small>
+                            < class="text-muted">Dựa trên doanh số ghi nhận của tất cả loại hợp đồng</>
                         </div>
                     </div>
                     <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
@@ -510,7 +510,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Dịch vụ: báo giá vs ký hợp đồng</h6>
-                            <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
+                            < class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</>
                         </div>
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
@@ -527,7 +527,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Khu vực: báo giá, ký hợp đồng, doanh số</h6>
-                            <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
+                            < class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</>
                         </div>
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
@@ -559,7 +559,7 @@
                             <tbody>
                                 @foreach($technicalStats as $row)
                                 <tr>
-                                    <td class="small">{{ $row['label'] }}</td>
+                                    <td class="">{{ $row['label'] }}</td>
                                     <td class="text-center fw-bold">{{ $row['count'] }}</td>
                                     <td class="text-center text-success">{{ $row['completed'] }}</td>
                                 </tr>

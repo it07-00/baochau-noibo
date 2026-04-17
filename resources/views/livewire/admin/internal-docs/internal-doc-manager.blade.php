@@ -52,7 +52,7 @@
                     <tbody>
                         @forelse($docs as $doc)
                         <tr>
-                            <td class="text-center text-muted small fw-semibold" style="width: 45px;">{{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}</td>
+                            <td class="text-center text-muted  fw-semibold" style="width: 45px;">{{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}</td>
                             <td class="ps-4">
                                 <span class="fw-bold">{{ $doc->title }}</span>
                             </td>
@@ -64,11 +64,11 @@
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M12 15V3M12 15L8 11M12 15L16 11M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            <small>{{ $file['name'] }}</small>
+                                            <>{{ $file['name'] }}</>
                                         </a>
                                         @endforeach
                                     @else
-                                        <span class="text-muted small internal-doc-empty-file">Không có tập tin</span>
+                                        <span class="text-muted  internal-doc-empty-file">Không có tập tin</span>
                                     @endif
                                 </div>
                             </td>
@@ -125,7 +125,7 @@
                             <div class="list-group internal-doc-file-list">
                                 @foreach($existingFiles as $index => $file)
                                 <div class="list-group-item d-flex justify-content-between align-items-center internal-doc-file-item">
-                                    <span class="small text-truncate" style="max-width: 80%;">{{ $file['name'] }}</span>
+                                    <span class=" text-truncate" style="max-width: 80%;">{{ $file['name'] }}</span>
                                     <button type="button" class="btn btn-sm btn-outline-danger border-0" wire:click="removeExistingFile({{ $index }})">
                                         &times;
                                     </button>
@@ -142,7 +142,7 @@
                             @error('newFiles') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div wire:loading wire:target="newFiles" class="mt-2 text-primary small internal-doc-uploading">
+                        <div wire:loading wire:target="newFiles" class="mt-2 text-primary  internal-doc-uploading">
                             Đang chuẩn bị tệp...
                         </div>
                     </div>

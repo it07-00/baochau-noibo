@@ -20,7 +20,7 @@
             @php
                 $percent = $totalAmount > 0 ? round(($totalPaid / $totalAmount) * 100) : 0;
             @endphp
-            <div class="d-flex justify-content-between small mb-1">
+            <div class="d-flex justify-content-between  mb-1">
                 <span>Đã thanh toán: <strong class="text-success">{{ number_format($totalPaid) }}đ</strong></span>
                 <span>Tổng: <strong>{{ number_format($totalAmount) }}đ</strong></span>
                 <span>Còn lại: <strong
@@ -29,7 +29,7 @@
             <div class="progress" style="height: 8px;">
                 <div class="progress-bar bg-success" style="width: {{ $percent }}%"></div>
             </div>
-            <div class="text-end small text-muted mt-1">{{ $percent }}% hoàn thành</div>
+            <div class="text-end  text-muted mt-1">{{ $percent }}% hoàn thành</div>
         </div>
     @endif
 
@@ -38,7 +38,7 @@
         <div class="table-responsive">
             <table class="table table-sm table-hover align-middle mb-0">
                 <thead class="bg-light">
-                    <tr class="small text-muted">
+                    <tr class=" text-muted">
                         <th class="ps-4" style="width:40px;">#</th>
                         <th>Tên đợt</th>
                         <th class="text-center">Tỉ lệ</th>
@@ -58,7 +58,7 @@
                             <td>
                                 <span class="fw-semibold">{{ $s->installment_name }}</span>
                                 @if ($s->notes)
-                                    <br><small class="text-muted">{{ $s->notes }}</small>
+                                    <br>< class="text-muted">{{ $s->notes }}</>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -83,7 +83,7 @@
                                 @if ($s->paid_amount > 0)
                                     <span class="fw-bold text-success">{{ number_format($s->paid_amount) }}đ</span>
                                     @if ($s->paid_date)
-                                        <br><small class="text-muted">{{ $s->paid_date->format('d/m/Y') }}</small>
+                                        <br>< class="text-muted">{{ $s->paid_date->format('d/m/Y') }}</>
                                     @endif
                                 @else
                                     <span class="text-muted">0đ</span>
@@ -120,7 +120,7 @@
             </table>
         </div>
     @else
-        <div class="text-center py-4 text-muted small">
+        <div class="text-center py-4 text-muted ">
             <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
             Chưa có lịch thanh toán nào.
         </div>
@@ -132,7 +132,7 @@
             <h6 class="fw-bold mb-3">{{ $isEditing ? 'Chỉnh sửa' : 'Thêm' }} đợt thanh toán</h6>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold small">Tên đợt <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold ">Tên đợt <span class="text-danger">*</span></label>
                     <input type="text"
                         class="form-control form-control-sm @error('form.installment_name') is-invalid @enderror"
                         wire:model="form.installment_name" placeholder="VD: Đợt 1, Tạm ứng...">
@@ -141,12 +141,12 @@
                     @enderror
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold small">Tỉ lệ (%)</label>
+                    <label class="form-label fw-semibold ">Tỉ lệ (%)</label>
                     <input type="number" class="form-control form-control-sm" wire:model="form.percentage"
                         min="0" max="100" step="0.01">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small">Số tiền (đ) <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold ">Số tiền (đ) <span class="text-danger">*</span></label>
                     <input type="text"
                         class="form-control form-control-sm money-input @error('form.amount') is-invalid @enderror"
                         wire:model="form.amount" placeholder="0">
@@ -155,20 +155,20 @@
                     @enderror
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small">Hạn thanh toán</label>
+                    <label class="form-label fw-semibold ">Hạn thanh toán</label>
                     <input type="date" class="form-control form-control-sm" wire:model="form.due_date">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small">Đã thanh toán (đ)</label>
+                    <label class="form-label fw-semibold ">Đã thanh toán (đ)</label>
                     <input type="text" class="form-control form-control-sm money-input" wire:model="form.paid_amount"
                         placeholder="0">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small">Ngày thanh toán</label>
+                    <label class="form-label fw-semibold ">Ngày thanh toán</label>
                     <input type="date" class="form-control form-control-sm" wire:model="form.paid_date">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small">Trạng thái</label>
+                    <label class="form-label fw-semibold ">Trạng thái</label>
                     <select class="form-select form-select-sm" wire:model="form.status">
                         @foreach ($statuses as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
@@ -176,7 +176,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small">Ghi chú</label>
+                    <label class="form-label fw-semibold ">Ghi chú</label>
                     <input type="text" class="form-control form-control-sm" wire:model="form.notes"
                         placeholder="Ghi chú...">
                 </div>

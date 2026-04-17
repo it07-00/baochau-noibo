@@ -83,7 +83,7 @@
                                         <td>
                                             <span class="text-nowrap">{{ class_basename($activity->subject_type ?? '') }}</span>
                                             @if ($activity->subject_id)
-                                                <span class="text-muted small">#{{ $activity->subject_id }}</span>
+                                                <span class="text-muted ">#{{ $activity->subject_id }}</span>
                                             @endif
                                         </td>
                                         <td class="text-truncate" style="max-width: 250px;" title="{{ $activity->description }}">
@@ -98,7 +98,7 @@
                                                 <span class="text-muted">-</span>
                                             @endif
                                         </td>
-                                        <td class="text-nowrap text-muted small">
+                                        <td class="text-nowrap text-muted ">
                                             {{ $activity->created_at->format('d/m/Y H:i:s') }}
                                         </td>
                                     </tr>
@@ -176,7 +176,7 @@
                                     </table>
                                 </div>
                             @else
-                                <pre class="bg-light p-3 rounded small mb-0">{{ json_encode($activity->properties->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+                                <pre class="bg-light p-3 rounded  mb-0">{{ json_encode($activity->properties->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                             @endif
                         </div>
                     </div>

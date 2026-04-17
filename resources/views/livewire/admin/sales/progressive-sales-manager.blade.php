@@ -25,11 +25,11 @@
         <div class="card-body p-3">
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label small fw-bold">Tháng hạn thanh toán</label>
+                    <label class="form-label  fw-bold">Tháng hạn thanh toán</label>
                     <input type="month" class="form-control form-control-sm" wire:model.live="filter_month">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small fw-bold">Tình trạng</label>
+                    <label class="form-label  fw-bold">Tình trạng</label>
                     <select class="form-select form-select-sm" wire:model.live="filter_status">
                         <option value="">Tất cả</option>
                         @foreach($statuses as $key => $label)
@@ -41,7 +41,7 @@
                     <button class="btn btn-sm btn-outline-secondary" wire:click="$refresh"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
                 </div>
                 <div class="col-md-3 text-end">
-                    <div class="small text-muted">Tổng giá trị lọc được</div>
+                    <div class=" text-muted">Tổng giá trị lọc được</div>
                     <div class="fw-bold text-danger fs-5">{{ number_format($total) }}đ</div>
                 </div>
             </div>
@@ -112,31 +112,31 @@
                     <form wire:submit.prevent="save">
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label class="form-label small fw-bold">Tên giai đoạn <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Tên giai đoạn <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control form-control-sm" wire:model="installment_name">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Hạn thanh toán</label>
+                                <label class="form-label  fw-bold">Hạn thanh toán</label>
                                 <input type="date" class="form-control form-control-sm" wire:model="due_date">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Phần trăm (%)</label>
+                                <label class="form-label  fw-bold">Phần trăm (%)</label>
                                 <input type="number" step="0.01" class="form-control form-control-sm" wire:model="percentage">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Giá trị (VNĐ)</label>
+                                <label class="form-label  fw-bold">Giá trị (VNĐ)</label>
                                 <input type="text" class="form-control form-control-sm money-input" wire:model="amount">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Đã thanh toán (VNĐ)</label>
+                                <label class="form-label  fw-bold">Đã thanh toán (VNĐ)</label>
                                 <input type="text" class="form-control form-control-sm money-input" wire:model="paid_amount">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Ngày thanh toán thực tế</label>
+                                <label class="form-label  fw-bold">Ngày thanh toán thực tế</label>
                                 <input type="date" class="form-control form-control-sm" wire:model="paid_date">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Tình trạng <span class="text-danger">*</span></label>
+                                <label class="form-label  fw-bold">Tình trạng <span class="text-danger">*</span></label>
                                 <select class="form-select form-select-sm" wire:model="status">
                                     <option value="">--</option>
                                     @foreach($statuses as $key => $label)
@@ -145,7 +145,7 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label class="form-label small fw-bold">Ghi chú</label>
+                                <label class="form-label  fw-bold">Ghi chú</label>
                                 <textarea class="form-control form-control-sm" wire:model="notes" rows="2"></textarea>
                             </div>
                         </div>

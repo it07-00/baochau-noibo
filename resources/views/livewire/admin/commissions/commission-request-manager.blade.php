@@ -131,22 +131,22 @@
                     <tbody>
                         @forelse($requests as $request)
                             <tr>
-                                <td class="text-center text-muted small fw-semibold">{{ ($requests->currentPage() - 1) * $requests->perPage() + $loop->iteration }}</td>
+                                <td class="text-center text-muted  fw-semibold">{{ ($requests->currentPage() - 1) * $requests->perPage() + $loop->iteration }}</td>
                                 <td class="ps-4">
                                     <div class="fw-semibold text-primary mb-1">BC {{ $request->contract->shd_bc ?? 'N/A' }}</div>
                                     @if($request->contract && $request->contract->customer)
                                         <div class="fw-semibold">{{ $request->contract->customer->name }}</div>
-                                        <div class="small text-muted text-truncate" style="max-width: 320px;">
+                                        <div class=" text-muted text-truncate" style="max-width: 320px;">
                                             {{ $request->contract->customer->address }}
                                         </div>
                                     @else
-                                        <div class="small text-muted">{{ $request->referrer_info ?: 'Không có thông tin khách hàng' }}</div>
+                                        <div class=" text-muted">{{ $request->referrer_info ?: 'Không có thông tin khách hàng' }}</div>
                                     @endif
                                 </td>
                                 <td>
                                     <div class="fw-semibold">{{ $request->receiver_name }}</div>
-                                    <div class="small text-muted">{{ $request->receiver_phone ?: 'Chưa có số điện thoại' }}</div>
-                                    <div class="small text-muted text-truncate" style="max-width: 200px;">{{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}</div>
+                                    <div class=" text-muted">{{ $request->receiver_phone ?: 'Chưa có số điện thoại' }}</div>
+                                    <div class=" text-muted text-truncate" style="max-width: 200px;">{{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}</div>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge bg-soft-primary text-primary px-2 py-1">{{ $request->contract_type_label }}</span>
@@ -157,7 +157,7 @@
                                         <span class="badge bg-soft-success text-success px-3 py-2">
                                             Đã chi
                                             <br>
-                                            <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
+                                            <>{{ $request->processed_at?->format('d/m/Y') }}</>
                                         </span>
                                     @elseif($request->status === 'Từ chối')
                                         @php
@@ -169,10 +169,10 @@
                                         <span class="badge bg-soft-danger text-danger px-3 py-2">
                                             Từ chối
                                             <br>
-                                            <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
+                                            <>{{ $request->processed_at?->format('d/m/Y') }}</>
                                         </span>
                                         @if($rejectionReason)
-                                            <div class="small text-muted mt-1" style="max-width: 190px;" title="{{ $rejectionReason }}">
+                                            <div class=" text-muted mt-1" style="max-width: 190px;" title="{{ $rejectionReason }}">
                                                 Lý do: {{ \Illuminate\Support\Str::limit($rejectionReason, 70) }}
                                             </div>
                                         @endif
@@ -217,7 +217,7 @@
                                         @endif
 
                                         @if(!$canApprove && !$canEdit && !$canDelete)
-                                            <span class="small text-muted">Không có thao tác</span>
+                                            <span class=" text-muted">Không có thao tác</span>
                                         @endif
                                     </div>
                                 </td>

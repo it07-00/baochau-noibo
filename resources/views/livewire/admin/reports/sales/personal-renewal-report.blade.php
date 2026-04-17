@@ -16,7 +16,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -25,7 +25,7 @@
                 </div>
                 @can('roles.view')
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên</label>
+                    <label class="form-label fw-semibold mb-1 ">Nhân viên</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($staffs as $s)
@@ -95,7 +95,7 @@
                 <tbody>
                     @forelse($allUsers as $i => $row)
                     <tr>
-                        <td class="text-muted small">{{ $i + 1 }}</td>
+                        <td class="text-muted ">{{ $i + 1 }}</td>
                         <td class="fw-semibold">{{ $row['name'] }}</td>
                         <td class="text-center">{{ $row['count'] }}</td>
                         <td class="text-end">{{ number_format($row['sales_value'], 0, ',', '.') }}</td>

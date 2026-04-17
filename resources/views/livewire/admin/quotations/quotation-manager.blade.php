@@ -32,7 +32,7 @@
         <div class="card-body p-3">
             <div class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label small fw-bold">Nhân viên sale</label>
+                    <label class="form-label  fw-bold">Nhân viên sale</label>
                     <select class="form-select form-select-sm" wire:model.live="filter_staff">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
@@ -41,7 +41,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small fw-bold">Tình trạng</label>
+                    <label class="form-label  fw-bold">Tình trạng</label>
                     <select class="form-select form-select-sm" wire:model.live="filter_status">
                         <option value="">Tất cả tình trạng</option>
                         @foreach($statuses as $st)
@@ -50,14 +50,14 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small fw-bold">Khoảng thời gian</label>
+                    <label class="form-label  fw-bold">Khoảng thời gian</label>
                     <div class="d-flex gap-2">
                         <input type="date" class="form-control form-control-sm" wire:model.live="date_from">
                         <input type="date" class="form-control form-control-sm" wire:model.live="date_to">
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small fw-bold">Sắp xếp</label>
+                    <label class="form-label  fw-bold">Sắp xếp</label>
                     <select class="form-select form-select-sm" wire:model.live="sortDirection">
                         <option value="desc">Từ trên xuống</option>
                         <option value="asc">Từ dưới lên</option>
@@ -96,7 +96,7 @@
                     @forelse($quotations as $index => $item)
                     <tr class="border-bottom border-light">
                         <td class="ps-3">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
-                        <td class="small" style="width: 130px;">
+                        <td class="" style="width: 130px;">
                             <div class="fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
                             @if($item->source)
                             <span class="badge bg-secondary bg-opacity-10 text-secondary border mt-1" style="font-size: 0.68rem;">{{ $item->source }}</span>
@@ -106,23 +106,23 @@
                         <td>
                             <div class="fw-bold text-primary text-capitalize" style="font-size: 0.85rem; line-height: 1.3;">{{ $item->company_name }}</div>
                             @if($item->contact_person)
-                            <div class="small text-muted mt-1"><i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}</div>
+                            <div class=" text-muted mt-1"><i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}</div>
                             @endif
                             @if($item->province)
                             <span class="badge bg-info bg-opacity-10 text-info mt-1" style="font-size: 0.65rem;">{{ $item->province }}</span>
                             @endif
                         </td>
-                        <td class="small text-wrap" style="max-width: 130px;">
+                        <td class=" text-wrap" style="max-width: 130px;">
                             <div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->service }}">
                                 {{ $item->service ?: '-' }}
                             </div>
                         </td>
-                        <td class="small">
+                        <td class="">
                             @if($item->industry)
                             <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.7rem;">{{ $item->industry }}</span>
                             @else <span class="text-muted">-</span> @endif
                         </td>
-                        <td class="text-wrap small" style="max-width: 200px;">
+                        <td class="text-wrap " style="max-width: 200px;">
                             <div style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->work_description }}">
                                 {{ $item->work_description ?: '-' }}
                             </div>
@@ -142,10 +142,10 @@
                                 {{ $item->status }}
                             </span>
                         </td>
-                        <td class="text-end small">{{ $item->original_value ? number_format($item->original_value) : '-' }}</td>
-                        <td class="text-end small">{{ $item->commission_value ? number_format($item->commission_value) : '-' }}</td>
-                        <td class="text-end small">{{ $item->commission_tax ? number_format($item->commission_tax) : '-' }}</td>
-                        <td class="text-end fw-bold text-danger small">{{ $item->total_value ? number_format($item->total_value) : '-' }}</td>
+                        <td class="text-end ">{{ $item->original_value ? number_format($item->original_value) : '-' }}</td>
+                        <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value) : '-' }}</td>
+                        <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax) : '-' }}</td>
+                        <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value) : '-' }}</td>
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
@@ -467,7 +467,7 @@
                     <div class="mb-4">
                         <label class="form-label fw-bold">1. Chọn file Excel (.xlsx / .xls / .csv)</label>
                         <input type="file" class="form-control" wire:model="importFile" accept=".xlsx,.xls,.csv">
-                        <div wire:loading wire:target="importFile" class="text-primary mt-1 small">
+                        <div wire:loading wire:target="importFile" class="text-primary mt-1 ">
                             <span class="spinner-border spinner-border-sm me-1"></span> Đang đọc file...
                         </div>
                         <div class="form-text">Hàng đầu tiên của file sẽ được dùng làm tên cột. Hệ thống tự động nhận diện tên cột tiếng Việt phổ biến.</div>

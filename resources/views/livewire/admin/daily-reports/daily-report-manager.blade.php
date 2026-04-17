@@ -45,7 +45,7 @@
                             @endif
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <label class="text-muted small fw-bold mb-0">Ngày báo cáo:</label>
+                            <label class="text-muted  fw-bold mb-0">Ngày báo cáo:</label>
                             <input
                                 type="date"
                                 wire:model.live="reportDate"
@@ -58,16 +58,16 @@
                     <div class="card-body p-4 pt-0">
                         <form wire:submit.prevent="save">
                             <div class="mb-3">
-                                <label class="form-label small fw-bold text-muted">Hôm nay đã làm gì *</label>
+                                <label class="form-label  fw-bold text-muted">Hôm nay đã làm gì *</label>
                                 <div wire:ignore class="editor-container">
                                     <div id="content-editor">{!! $content !!}</div>
                                 </div>
-                                @error('content') <span class="text-danger small">{{ $message }}</span> @enderror
+                                @error('content') <span class="text-danger ">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-muted">Kết quả tổng thể hôm nay</label>
+                                    <label class="form-label  fw-bold text-muted">Kết quả tổng thể hôm nay</label>
                                     <select wire:model.live.debounce.500ms="status" class="form-select border-light-subtle"
                                         style="border-radius: 8px;">
                                         <option value="Hoàn thành đúng kế hoạch">Hoàn thành đúng kế hoạch</option>
@@ -76,12 +76,12 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-muted">Kế hoạch ngày mai <span
+                                    <label class="form-label  fw-bold text-muted">Kế hoạch ngày mai <span
                                             class="fw-normal text-muted">(không bắt buộc)</span></label>
                                     <textarea wire:model.live.debounce.500ms="plan" class="form-control border-light-subtle"
                                         rows="5" style="border-radius: 8px;"
                                         placeholder="Sẽ làm gì tiếp..."></textarea>
-                                    @error('plan') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    @error('plan') <span class="text-danger ">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 
@@ -93,8 +93,8 @@
                                         <i class="bi bi-lightbulb fs-4"></i>
                                     </div>
                                     <div>
-                                        <h6 class="fw-bold mb-1 small text-body">Mẹo viết báo cáo chuyên nghiệp:</h6>
-                                        <ul class="mb-0 small text-muted ps-3">
+                                        <h6 class="fw-bold mb-1  text-body">Mẹo viết báo cáo chuyên nghiệp:</h6>
+                                        <ul class="mb-0  text-muted ps-3">
                                             <li>Sử dụng <strong>Dấu đầu dòng (Bullet points)</strong> để liệt kê các công
                                                 việc cụ thể.</li>
                                             <li><strong>In đậm (Bold)</strong> những kết quả quan trọng hoặc tên khách
@@ -106,7 +106,7 @@
                             </div>
 
                             <div class="mt-4 mb-4">
-                                <label class="form-label small fw-bold text-muted">Vấn đề / Cần hỗ trợ <span
+                                <label class="form-label  fw-bold text-muted">Vấn đề / Cần hỗ trợ <span
                                         class="fw-normal text-muted">(không bắt buộc)</span></label>
                                 <textarea wire:model.live.debounce.500ms="issues" class="form-control border-light-subtle"
                                     rows="3" style="border-radius: 8px;"
@@ -119,9 +119,9 @@
                                     {{ $isEditing ? 'Cập nhật báo cáo' : 'Gửi báo cáo ngày' }}
                                 </button>
                                 @if($isEditing)
-                                    <span class="text-success small fw-bold"><i class="bi bi-info-circle me-1"></i> Bạn đang chỉnh sửa báo cáo ngày {{ \Carbon\Carbon::parse($reportDate)->format('d/m/Y') }}</span>
+                                    <span class="text-success  fw-bold"><i class="bi bi-info-circle me-1"></i> Bạn đang chỉnh sửa báo cáo ngày {{ \Carbon\Carbon::parse($reportDate)->format('d/m/Y') }}</span>
                                 @else
-                                    <span class="text-muted small">Nội dung sẽ tự động lưu khi bạn nhập</span>
+                                    <span class="text-muted ">Nội dung sẽ tự động lưu khi bạn nhập</span>
                                 @endif
                             </div>
                         </form>
@@ -130,7 +130,7 @@
 
                 <div class="daily-report-help-alert alert alert-warning border-0 shadow-sm py-3"
                     style="background-color: #fdf5ea; border-radius: 12px;">
-                    <p class="mb-0 small text-body">
+                    <p class="mb-0  text-body">
                         <i class="bi bi-info-circle me-1"></i> Nếu chọn <strong>"Gặp vấn đề, cần hỗ trợ"</strong> &rarr;
                         TPKD nhận thông báo ngay sau khi bạn gửi.
                     </p>
@@ -191,14 +191,14 @@
 
                             @if($viewType === 'day')
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="text-muted small fw-bold">Ngày:</span>
+                                    <span class="text-muted  fw-bold">Ngày:</span>
                                     <input type="date" wire:model.live="dateFilter"
                                         class="form-control form-control-sm border-light-subtle"
                                         style="width: auto; border-radius: 6px;">
                                 </div>
                             @else
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="text-muted small fw-bold">Kỳ báo cáo:</span>
+                                    <span class="text-muted  fw-bold">Kỳ báo cáo:</span>
                                     <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle"
                                         style="width: auto; border-radius: 6px;">
                                         @for($m = 1; $m <= 12; $m++)
@@ -215,7 +215,7 @@
                             @endif
 
                             <div class="d-flex align-items-center gap-2">
-                                <span class="text-muted small fw-bold">Bộ lọc:</span>
+                                <span class="text-muted  fw-bold">Bộ lọc:</span>
                                 <select wire:model.live="deptIdFilter"
                                     class="form-select form-select-sm border-light-subtle"
                                     style="width: auto; border-radius: 6px;">
@@ -274,13 +274,13 @@
                                                 x-data="{ expanded: false }">
                                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                                     <div class="d-flex align-items-center gap-3">
-                                                        <div class="rounded-pill bg-light d-flex align-items-center justify-content-center fw-bold text-muted small"
+                                                        <div class="rounded-pill bg-light d-flex align-items-center justify-content-center fw-bold text-muted "
                                                             style="width: 38px; height: 38px;">
                                                             {{ strtoupper(substr($item->user->name, 0, 1)) }}
                                                         </div>
                                                         <div>
                                                             <h6 class="mb-0 fw-bold text-danger">{{ $item->user->name }} <span
-                                                                    class="badge bg-soft-success text-success fw-normal rounded-pill ms-2 small">{{ $item->user->department?->name ?? 'Nhân viên' }}</span>
+                                                                    class="badge bg-soft-success text-success fw-normal rounded-pill ms-2 ">{{ $item->user->department?->name ?? 'Nhân viên' }}</span>
                                                             </h6>
                                                         </div>
                                                     </div>
@@ -293,7 +293,7 @@
                                                 $statusLabelClass = 'text-warning';
                                         @endphp
                                                         <span
-                                                            class="{{ $statusLabelClass }} small fw-bold">{{ $item->report->status }}</span>
+                                                            class="{{ $statusLabelClass }}  fw-bold">{{ $item->report->status }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 ps-5 ms-3">
@@ -307,11 +307,11 @@
                                                         <span x-show="expanded"><i class="bi bi-chevron-up me-1"></i> Thu gọn lại</span>
                                                     </button>
                                                     @if($item->report->issues)
-                                                        <div class="text-danger mt-2 small">
+                                                        <div class="text-danger mt-2 ">
                                                             <strong>Vấn đề/Hỗ trợ:</strong> {{ $item->report->issues }}
                                                         </div>
                                                     @endif
-                                                    <div class="text-muted mt-2 small">
+                                                    <div class="text-muted mt-2 ">
                                                         <span class="text-danger opacity-75">Kế hoạch mai:</span>
                                                         {!! nl2br(e($item->report->plan)) !!}
                                                     </div>
@@ -322,7 +322,7 @@
                                         <div class="list-group-item p-4 border-light-subtle border-dashed">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <div class="rounded-pill bg-light d-flex align-items-center justify-content-center fw-bold text-muted small"
+                                                    <div class="rounded-pill bg-light d-flex align-items-center justify-content-center fw-bold text-muted "
                                                         style="width: 38px; height: 38px;">
                                                         {{ strtoupper(substr($item->user->name, 0, 1)) }}
                                                     </div>
@@ -331,7 +331,7 @@
                                                             chưa gửi báo cáo</h6>
                                                     </div>
                                                 </div>
-                                                <span class="text-warning small fw-bold">Chưa báo cáo</span>
+                                                <span class="text-warning  fw-bold">Chưa báo cáo</span>
                                             </div>
                                         </div>
                                     @endif
@@ -353,7 +353,7 @@
             <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
                 @php $daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']; @endphp
                 @foreach($daysOfWeek as $dow)
-                    <div class="calendar-header-cell small fw-bold text-muted text-center py-2">{{ $dow }}</div>
+                    <div class="calendar-header-cell  fw-bold text-muted text-center py-2">{{ $dow }}</div>
                 @endforeach
             </div>
 
@@ -399,7 +399,7 @@
                     >
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <span
-                                class="small fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm' : 'text-muted opacity-75' }}"
+                                class=" fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm' : 'text-muted opacity-75' }}"
                                 style="width: 24px; height: 24px; font-size: 0.75rem;">
                                 {{ $dayNum }}
                             </span>
@@ -411,7 +411,7 @@
                         <div class="calendar-day-content mt-1">
                             @if($isInsideMonth && $dayReports->isNotEmpty())
                                 @foreach($dayReports as $dr)
-                                    <div class="mb-1 px-2 py-1 rounded small" style="font-size: 0.7rem; background-color: {{ $dr->status === 'Gặp vấn đề, cần hỗ trợ' ? '#fee2e2' : ($dr->status === 'Hoàn thành một phần' ? '#fef3c7' : '#dcfce7') }};">
+                                    <div class="mb-1 px-2 py-1 rounded " style="font-size: 0.7rem; background-color: {{ $dr->status === 'Gặp vấn đề, cần hỗ trợ' ? '#fee2e2' : ($dr->status === 'Hoàn thành một phần' ? '#fef3c7' : '#dcfce7') }};">
                                         <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $dr->user->name ?? '' }}</div>
                                         <div class="riched-content-mini text-truncate-2">{!! Str::limit(strip_tags($dr->content), 80) !!}</div>
                                     </div>
@@ -446,16 +446,16 @@
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
                                 <span class="fw-bold text-body" x-text="r.name"></span>
-                                <span class="daily-report-dept-badge badge ms-2 fw-normal small" x-text="r.department"></span>
+                                <span class="daily-report-dept-badge badge ms-2 fw-normal " x-text="r.department"></span>
                             </div>
-                            <span class="small fw-bold" :class="r.status === 'Gặp vấn đề, cần hỗ trợ' ? 'text-danger' : (r.status === 'Hoàn thành một phần' ? 'text-warning' : 'text-success')" x-text="r.status"></span>
+                            <span class=" fw-bold" :class="r.status === 'Gặp vấn đề, cần hỗ trợ' ? 'text-danger' : (r.status === 'Hoàn thành một phần' ? 'text-warning' : 'text-success')" x-text="r.status"></span>
                         </div>
-                        <div class="riched-content small text-body" style="word-break: break-word; overflow-wrap: break-word;" x-html="r.content"></div>
+                        <div class="riched-content  text-body" style="word-break: break-word; overflow-wrap: break-word;" x-html="r.content"></div>
                         <template x-if="r.plan">
-                            <div class="mt-2 small text-muted"><span class="text-danger opacity-75 fw-bold">Kế hoạch mai:</span> <span x-text="r.plan"></span></div>
+                            <div class="mt-2  text-muted"><span class="text-danger opacity-75 fw-bold">Kế hoạch mai:</span> <span x-text="r.plan"></span></div>
                         </template>
                         <template x-if="r.issues">
-                            <div class="mt-2 small text-danger"><strong>Vấn đề/Hỗ trợ:</strong> <span x-text="r.issues"></span></div>
+                            <div class="mt-2  text-danger"><strong>Vấn đề/Hỗ trợ:</strong> <span x-text="r.issues"></span></div>
                         </template>
                     </div>
                 </template>

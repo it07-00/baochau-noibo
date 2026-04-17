@@ -17,7 +17,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Tổng hợp đồng</div>
+                    <div class=" text-muted">Tổng hợp đồng</div>
                     <div class="fw-bold fs-4 text-primary">{{ $summary->total ?? 0 }}</div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Đang thực hiện</div>
+                    <div class=" text-muted">Đang thực hiện</div>
                     <div class="fw-bold fs-4 text-info">{{ $summary->active ?? 0 }}</div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Hoàn thành</div>
+                    <div class=" text-muted">Hoàn thành</div>
                     <div class="fw-bold fs-4 text-success">{{ $summary->completed ?? 0 }}</div>
                 </div>
             </div>
@@ -41,8 +41,8 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="small text-muted">Tổng giá trị</div>
-                    <div class="fw-bold text-dark small">{{ number_format($summary->total_value ?? 0, 0, ',', '.') }} đ</div>
+                    <div class=" text-muted">Tổng giá trị</div>
+                    <div class="fw-bold text-dark ">{{ number_format($summary->total_value ?? 0, 0, ',', '.') }} đ</div>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -62,7 +62,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Loại quan trắc</label>
+                    <label class="form-label fw-semibold mb-1 ">Loại quan trắc</label>
                     <select wire:model.live="filter_service" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($monitoringTypes as $type)
@@ -71,7 +71,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
+                    <label class="form-label fw-semibold mb-1 ">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
@@ -80,7 +80,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Tư vấn viên</label>
+                    <label class="form-label fw-semibold mb-1 ">Tư vấn viên</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($staffs as $s)
@@ -113,16 +113,16 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
-                            <td class="text-center text-muted small fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
-                            <td class="fw-semibold small">{{ $item->shd_bc ?: '—' }}</td>
+                            <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                            <td class="fw-semibold ">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
-                            <td class="small text-muted">{{ $item->loai_dich_vu ?: '—' }}</td>
+                            <td class=" text-muted">{{ $item->loai_dich_vu ?: '—' }}</td>
                             <td>{{ $item->consultant?->name ?? '—' }}</td>
-                            <td class="small">{{ $item->province ?: '—' }}</td>
-                            <td class="text-end small">{{ number_format($item->value, 0, ',', '.') }}</td>
-                            <td class="small text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
+                            <td class="">{{ $item->province ?: '—' }}</td>
+                            <td class="text-end ">{{ number_format($item->value, 0, ',', '.') }}</td>
+                            <td class=" text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
                             <td>
-                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} small">
+                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} ">
                                     {{ $item->status_label }}
                                 </span>
                             </td>

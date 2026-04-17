@@ -41,7 +41,7 @@
             <div class="row g-3 align-items-end">
                 @if(auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh']) || auth()->user()->can('roles.view'))
                 <div class="col-md-4 col-lg-4">
-                    <label class="form-label fw-semibold mb-1 small text-muted">Nhân viên</label>
+                    <label class="form-label fw-semibold mb-1  text-muted">Nhân viên</label>
                     <select wire:model.live="filter_staff" class="form-select">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
@@ -51,7 +51,7 @@
                 </div>
                 @endif
                 <div class="col-md-3 col-lg-2">
-                    <label class="form-label fw-semibold mb-1 small text-muted">Năm</label>
+                    <label class="form-label fw-semibold mb-1  text-muted">Năm</label>
                     <select wire:model.live="year" class="form-select">
                         @foreach($years as $y)
                             <option value="{{ $y }}">Năm {{ $y }}</option>
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <div class="mb-4 small text-muted fw-semibold">
+    <div class="mb-4  text-muted fw-semibold">
         Dữ liệu theo: <span class="text-dark">{{ $scopeLabel }}</span> - Năm {{ $year }}
     </div>
 

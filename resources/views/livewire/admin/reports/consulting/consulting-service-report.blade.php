@@ -21,7 +21,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">Tổng hợp đồng</div>
+                        <div class=" text-muted">Tổng hợp đồng</div>
                         <div class="fw-bold text-primary">{{ $summary->count ?? 0 }} HĐ</div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">Hoàn thành</div>
+                        <div class=" text-muted">Hoàn thành</div>
                         <div class="fw-bold text-success">{{ $summary->completed ?? 0 }}</div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     </div>
                     <div>
-                        <div class="small text-muted">Tổng giá trị</div>
+                        <div class=" text-muted">Tổng giá trị</div>
                         <div class="fw-bold text-warning">{{ number_format($summary->total_value ?? 0, 0, ',', '.') }} đ</div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Năm</label>
+                    <label class="form-label fw-semibold mb-1 ">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
@@ -69,7 +69,7 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold mb-1 small">Loại dịch vụ</label>
+                    <label class="form-label fw-semibold mb-1 ">Loại dịch vụ</label>
                     <select wire:model.live="filter_service" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($serviceTypes as $type)
@@ -78,7 +78,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1 small">Trạng thái</label>
+                    <label class="form-label fw-semibold mb-1 ">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
@@ -87,7 +87,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 small">Nhân viên / Tư vấn</label>
+                    <label class="form-label fw-semibold mb-1 ">Nhân viên / Tư vấn</label>
                     <select wire:model.live="filter_staff" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($staffs as $s)
@@ -121,16 +121,16 @@
                     <tbody>
                         @forelse($items as $item)
                         <tr>
-                            <td class="fw-semibold small">{{ $item->shd_bc ?: '—' }}</td>
+                            <td class="fw-semibold ">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
-                            <td class="small text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
-                            <td class="small">{{ $item->staff?->name ?? '—' }}</td>
-                            <td class="small">{{ $item->consultant?->name ?? '—' }}</td>
-                            <td class="small">{{ $item->province ?: '—' }}</td>
-                            <td class="text-end small">{{ number_format($item->value, 0, ',', '.') }}</td>
-                            <td class="small text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
+                            <td class=" text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
+                            <td class="">{{ $item->staff?->name ?? '—' }}</td>
+                            <td class="">{{ $item->consultant?->name ?? '—' }}</td>
+                            <td class="">{{ $item->province ?: '—' }}</td>
+                            <td class="text-end ">{{ number_format($item->value, 0, ',', '.') }}</td>
+                            <td class=" text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
                             <td>
-                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} small">
+                                <span class="badge bg-soft-{{ $item->status_color }} text-{{ $item->status_color }} ">
                                     {{ $item->status_label }}
                                 </span>
                             </td>

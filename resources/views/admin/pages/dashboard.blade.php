@@ -90,7 +90,7 @@
                             <tbody>
                                 @foreach($monthly as $m => $val)
                                 <tr class="{{ $m == $month ? 'table-warning' : '' }}">
-                                    <td class="fw-semibold small">
+                                    <td class="fw-semibold ">
                                         {{ $monthNames[$m] }}
                                         @if($m == $month)<span class="badge bg-warning text-dark ms-1" style="font-size:10px">Hiện tại</span>@endif
                                     </td>
@@ -100,10 +100,10 @@
                                             <div class="progress-bar bg-primary" style="width:{{ round($val / $maxMonthly * 100) }}%"></div>
                                         </div>
                                         @else
-                                        <span class="text-muted small">—</span>
+                                        <span class="text-muted ">—</span>
                                         @endif
                                     </td>
-                                    <td class="text-end small fw-semibold {{ $val > 0 ? 'text-primary' : 'text-muted' }}">
+                                    <td class="text-end  fw-semibold {{ $val > 0 ? 'text-primary' : 'text-muted' }}">
                                         {{ $val > 0 ? number_format($val, 0, ',', '.') . ' đ' : '—' }}
                                     </td>
                                 </tr>
@@ -148,7 +148,7 @@
                             <tr>
                                 <td class="text-center fw-bold">{{ $medal }}</td>
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
-                                <td class="text-end small fw-semibold text-primary">
+                                <td class="text-end  fw-semibold text-primary">
                                     {{ $row['total'] > 0 ? number_format($row['total'], 0, ',', '.') . ' đ' : '—' }}
                                 </td>
                             </tr>
@@ -189,15 +189,15 @@
                             <tbody>
                                 @forelse($recentContracts as $i => $c)
                                 <tr>
-                                    <td class="text-muted small">{{ $i + 1 }}</td>
+                                    <td class="text-muted ">{{ $i + 1 }}</td>
                                     <td><span class="badge fs-3 {{ $c['badge'] }}">{{ $c['type'] }}</span></td>
                                     <td class="fw-medium text-custom-body">{{ $c['contract_no'] }}</td>
                                     <td class="text-custom-body" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">{{ $c['customer'] }}</td>
-                                    <td class="text-custom-body small">{{ $c['staff'] }}</td>
-                                    <td class="text-end fw-semibold text-primary small">
+                                    <td class="text-custom-body ">{{ $c['staff'] }}</td>
+                                    <td class="text-end fw-semibold text-primary ">
                                         {{ $c['value'] > 0 ? number_format($c['value'], 0, ',', '.') . ' đ' : '—' }}
                                     </td>
-                                    <td class="text-center small text-muted">
+                                    <td class="text-center  text-muted">
                                         {{ $c['signed_at'] ? \Carbon\Carbon::parse($c['signed_at'])->format('d/m/Y') : '—' }}
                                     </td>
                                 </tr>

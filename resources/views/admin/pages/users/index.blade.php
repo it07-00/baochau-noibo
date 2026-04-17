@@ -60,7 +60,7 @@
                                             <x-user-avatar :user="$user" :size="32" class="me-2" />
                                             <div>
                                                 <h6 class="mb-0">{{ $user->name }}</h6>
-                                                <small class="text-muted">{{ $user->email }}</small>
+                                                < class="text-muted">{{ $user->email }}</>
                                             </div>
                                         </div>
                                     </td>

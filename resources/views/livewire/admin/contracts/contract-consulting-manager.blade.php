@@ -265,7 +265,7 @@
         <div class="table-responsive" style="overflow:visible; min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
-                    <tr class="small text-muted fw-bold">
+                    <tr class=" text-muted fw-bold">
                         @if ($canBulkDelete)
                             <th class="text-center" style="width:42px;">Chọn</th>
                         @endif
@@ -295,26 +295,26 @@
                                     @endif
                                 </td>
                             @endif
-                            <td class="text-center text-muted small fw-semibold">
+                            <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
                             <td class="ps-4 py-4">
                                 <div class="d-flex flex-column">
-                                    <span class="small">Số HĐ BC:<span
+                                    <span class="">Số HĐ BC:<span
                                             class="fw-bold">{{ $doc->shd_bc }}</span></span>
-                                    <span class="small">Ngày ký hợp đồng: <span
+                                    <span class="">Ngày ký hợp đồng: <span
                                             class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
-                                    <span class="small">Nhân viên CS:<span
+                                    <span class="">Nhân viên CS:<span
                                             class="fw-bold">{{ $doc->staff?->name }}</span></span>
                                 </div>
                             </td>
                             <td class="py-4">
                                 <div class="d-flex flex-column">
                                     <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
-                                    <span class="small">{{ $doc->customer?->representative }} -
+                                    <span class="">{{ $doc->customer?->representative }} -
                                         {{ $doc->customer?->phone }}</span>
-                                    <span class="small text-muted">{{ $doc->customer?->email }}</span>
-                                    <span class="small text-muted">{{ $doc->customer?->address }}</span>
+                                    <span class=" text-muted">{{ $doc->customer?->email }}</span>
+                                    <span class=" text-muted">{{ $doc->customer?->address }}</span>
                                 </div>
                             </td>
                             @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
@@ -341,7 +341,7 @@
                                         @endif
                                     </div>
                                 @else
-                                    <span class="text-muted small">—</span>
+                                    <span class="text-muted ">—</span>
                                 @endif
                             </td>
                             @php $wp = $workflowProgress[$doc->id] ?? ['percent' => 0, 'current_label' => 'Chưa bắt đầu', 'completed_count' => 0, 'total_steps' => 6]; @endphp
@@ -353,9 +353,9 @@
                                              aria-valuenow="{{ $wp['percent'] }}" aria-valuemin="0" aria-valuemax="100">
                                         </div>
                                     </div>
-                                    <span class="small text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
+                                    <span class=" text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
                                 </div>
-                                <div class="small text-muted mt-1" style="font-size:11px;">{{ $wp['current_label'] }}</div>
+                                <div class=" text-muted mt-1" style="font-size:11px;">{{ $wp['current_label'] }}</div>
                             </td>
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center gap-1">
@@ -414,7 +414,7 @@
                                             </div>
                                         </div>
                                     @endif
-                                    <span class="small text-muted" style="font-size:0.75rem;">
+                                    <span class=" text-muted" style="font-size:0.75rem;">
                                         {{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '—' }}
                                     </span>
                                 </div>
@@ -639,13 +639,13 @@
                                                         <div class="mb-1">
                                                             <span
                                                                 class="badge bg-primary me-1">{{ $assign->user?->name }}</span>
-                                                            <small class="text-muted">— giao bởi
+                                                            < class="text-muted">— giao bởi
                                                                 {{ $assign->assigner?->name }} lúc
-                                                                {{ $assign->created_at?->format('d/m/Y H:i') }}</small>
+                                                                {{ $assign->created_at?->format('d/m/Y H:i') }}</>
                                                         </div>
                                                     @endforeach
                                                 @else
-                                                    <span class="text-muted small">Chưa giao việc</span>
+                                                    <span class="text-muted ">Chưa giao việc</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -663,7 +663,7 @@
                                                     <td colspan="2" class="py-2 ps-4">
                                                         <div class="d-flex flex-column">
                                                             <span
-                                                                class="small fw-bold text-primary">{{ $pNote->user?->name }}
+                                                                class=" fw-bold text-primary">{{ $pNote->user?->name }}
                                                                 <span class="text-muted fw-normal">—
                                                                     {{ $pNote->created_at?->format('d/m/Y H:i') }}</span></span>
                                                             <span class="mt-1">{{ $pNote->note }}</span>
@@ -673,7 +673,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="2" class="text-muted small ps-4 py-2">Chưa có ghi chú
+                                                <td colspan="2" class="text-muted  ps-4 py-2">Chưa có ghi chú
                                                     tiến độ nào.</td>
                                             </tr>
                                         @endif
@@ -683,7 +683,7 @@
                                                     <textarea class="form-control form-control-sm mb-2" rows="2" wire:model="progressNote"
                                                         placeholder="Nhập ghi chú tiến độ..."></textarea>
                                                     @error('progressNote')
-                                                        <div class="text-danger small mb-1">{{ $message }}</div>
+                                                        <div class="text-danger  mb-1">{{ $message }}</div>
                                                     @enderror
                                                     <button class="btn btn-sm btn-primary"
                                                         wire:click="addProgressNote({{ $selectedDoc->id }})"
@@ -769,7 +769,7 @@
                                 </div>
                             </div>
                             @error('formData.customer_id')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                <div class="text-danger  mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
@@ -807,7 +807,7 @@
                                     </div>
                                 </div>
                                 @error('formData.staff_id')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                         @endif
@@ -832,7 +832,7 @@
                             <label class="form-label fw-bold">Giá trị HĐ <span class="text-danger">*</span></label>
                             <input type="text" class="form-control money-input" wire:model="formData.value">
                             @error('formData.value')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                <div class="text-danger  mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-4">
@@ -960,14 +960,14 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
+                    <p class="text-muted  mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
                     <div class="list-group" style="max-height: 320px; overflow-y: auto;">
                         @foreach ($assignable_users as $u)
                             <label class="list-group-item list-group-item-action d-flex gap-2">
                                 <input class="form-check-input flex-shrink-0 mt-1" type="checkbox"
                                     value="{{ $u->id }}" wire:model="assignUserIds">
-                                <span>{{ $u->name }}<small
-                                        class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
+                                <span>{{ $u->name }}<
+                                        class="text-muted d-block">{{ $u->roles->first()?->name }}</></span>
                             </label>
                         @endforeach
                     </div>
