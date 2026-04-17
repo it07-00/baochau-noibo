@@ -299,14 +299,13 @@
                                 'NC & CĐ Công nghệ',
                                 'TV & BC PTBV',
                                 'Phát thải & Năng lượng',
-                                'Đường đua tư vấn',
                             ],
                         ],
                         [
                             'title' => 'Báo cáo Kỹ thuật',
                             'icon' => $usersIcon,
                             'permission' => 'reports-technical.view',
-                            'children' => ['Hồ sơ môi trường', 'Đường đua kỹ thuật'],
+                            'children' => ['Hồ sơ môi trường'],
                         ],
                         [
                             'title' => 'Nội bộ',
@@ -403,7 +402,6 @@
                             request()->routeIs('app.reports.consulting-work.commercial') => 'NC & CĐ Công nghệ',
                             request()->routeIs('app.reports.consulting-work.sustainability') => 'TV & BC PTBV',
                             request()->routeIs('app.reports.consulting-work.energy') => 'Phát thải & Năng lượng',
-                            request()->routeIs('app.reports.consulting-work.achievement') => 'Đường đua tư vấn',
                             default => 'Chất thải & Tiếng ồn',
                         };
                     } elseif (request()->routeIs('app.reports.technical.*')) {
@@ -415,7 +413,6 @@
                             request()->routeIs('app.reports.technical.commercial') => 'BC NC & CĐ Công nghệ',
                             request()->routeIs('app.reports.technical.sustainability') => 'BC TV & BC PTBV',
                             request()->routeIs('app.reports.technical.energy') => 'BC Phát thải & Năng lượng',
-                            request()->routeIs('app.reports.technical.achievement') => 'Đường đua kỹ thuật',
                             default => 'BC Chất thải & Tiếng ồn',
                         };
                     } elseif (request()->routeIs('app.invoices.bao-chau')) {
@@ -624,11 +621,6 @@
                                             ) {
                                                 $href = route('app.reports.consulting-work.energy');
                                             } elseif (
-                                                $menu['title'] === 'Báo cáo Tư vấn' &&
-                                                $child === 'Đường đua tư vấn'
-                                            ) {
-                                                $href = route('app.reports.consulting-work.achievement');
-                                            } elseif (
                                                 $menu['title'] === 'Báo cáo Kỹ thuật' &&
                                                 $child === 'BC Chất thải & Tiếng ồn'
                                             ) {
@@ -658,11 +650,6 @@
                                                 $child === 'BC Phát thải & Năng lượng'
                                             ) {
                                                 $href = route('app.reports.technical.energy');
-                                            } elseif (
-                                                $menu['title'] === 'Báo cáo Kỹ thuật' &&
-                                                $child === 'Đường đua kỹ thuật'
-                                            ) {
-                                                $href = route('app.reports.technical.achievement');
                                             } elseif (
                                                 $menu['title'] === 'Bộ phận Marketing' &&
                                                 $child === 'Báo cáo hàng ngày'
