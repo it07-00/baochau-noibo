@@ -1,4 +1,5 @@
 <div>
+    @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
     <div class="page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
             <h4 class="mb-0">Bảng thống kê</h4>
@@ -46,11 +47,12 @@
             </button>
         </div>
     </div>
+    @endunless
 
     @php
         $isIT = auth()->user()->hasRole('it');
     @endphp
-    @if($dailyReportReminder)
+    @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
         <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
                 <i class="bi bi-clock-fill text-warning fs-5"></i>
@@ -570,6 +572,16 @@
                 </div>
             </div>
         </div>
+        @endif
+
+        {{-- ── ĐƯỜNG ĐUA TƯ VẤN (chỉ role tu-van) ─────────────── --}}
+        @if(auth()->user()->hasRole('tu-van'))
+            @livewire('admin.reports.consulting.consulting-achievement-report')
+        @endif
+
+        {{-- ── ĐƯỜNG ĐUA KỸ THUẬT (chỉ role ky-thuat) ─────────── --}}
+        @if(auth()->user()->hasRole('ky-thuat'))
+            @livewire('admin.reports.technical.technical-achievement-report')
         @endif
     @endif
 

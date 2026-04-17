@@ -299,13 +299,14 @@
                                 'NC & CĐ Công nghệ',
                                 'TV & BC PTBV',
                                 'Phát thải & Năng lượng',
+                                'Đường đua tư vấn',
                             ],
                         ],
                         [
                             'title' => 'Báo cáo Kỹ thuật',
                             'icon' => $usersIcon,
                             'permission' => 'reports-technical.view',
-                            'children' => ['Hồ sơ môi trường'],
+                            'children' => ['Hồ sơ môi trường', 'Đường đua kỹ thuật'],
                         ],
                         [
                             'title' => 'Nội bộ',
@@ -317,7 +318,7 @@
                             'title' => 'Báo cáo ngày',
                             'icon' => $reportNodeIcon,
                             'permission' => 'daily-reports.view',
-                            'children' => ['Báo cáo ngày'],
+                            'href' => route('app.daily-reports.index'),
                         ],
                     ];
 
@@ -402,6 +403,7 @@
                             request()->routeIs('app.reports.consulting-work.commercial') => 'NC & CĐ Công nghệ',
                             request()->routeIs('app.reports.consulting-work.sustainability') => 'TV & BC PTBV',
                             request()->routeIs('app.reports.consulting-work.energy') => 'Phát thải & Năng lượng',
+                            request()->routeIs('app.reports.consulting-work.achievement') => 'Đường đua tư vấn',
                             default => 'Chất thải & Tiếng ồn',
                         };
                     } elseif (request()->routeIs('app.reports.technical.*')) {
@@ -413,6 +415,7 @@
                             request()->routeIs('app.reports.technical.commercial') => 'BC NC & CĐ Công nghệ',
                             request()->routeIs('app.reports.technical.sustainability') => 'BC TV & BC PTBV',
                             request()->routeIs('app.reports.technical.energy') => 'BC Phát thải & Năng lượng',
+                            request()->routeIs('app.reports.technical.achievement') => 'Đường đua kỹ thuật',
                             default => 'BC Chất thải & Tiếng ồn',
                         };
                     } elseif (request()->routeIs('app.invoices.bao-chau')) {
@@ -455,6 +458,13 @@
                     @can($menu['permission'])
                         @if (!isset($menu['allow_roles']) || $currentUser->hasAnyRole($menu['allow_roles']))
                             <li class="app-sidebar-menu-item">
+                                @if(isset($menu['href']))
+                                <a href="{{ $menu['href'] }}"
+                                    class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
+                                    <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
+                                    <span class="menu-title flex-grow-1">{{ $menu['title'] }}</span>
+                                </a>
+                                @else
                                 <a href="javascript:void(0)"
                                     class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
                                     <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
@@ -614,6 +624,11 @@
                                             ) {
                                                 $href = route('app.reports.consulting-work.energy');
                                             } elseif (
+                                                $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                $child === 'Đường đua tư vấn'
+                                            ) {
+                                                $href = route('app.reports.consulting-work.achievement');
+                                            } elseif (
                                                 $menu['title'] === 'Báo cáo Kỹ thuật' &&
                                                 $child === 'BC Chất thải & Tiếng ồn'
                                             ) {
@@ -644,6 +659,11 @@
                                             ) {
                                                 $href = route('app.reports.technical.energy');
                                             } elseif (
+                                                $menu['title'] === 'Báo cáo Kỹ thuật' &&
+                                                $child === 'Đường đua kỹ thuật'
+                                            ) {
+                                                $href = route('app.reports.technical.achievement');
+                                            } elseif (
                                                 $menu['title'] === 'Bộ phận Marketing' &&
                                                 $child === 'Báo cáo hàng ngày'
                                             ) {
@@ -669,6 +689,7 @@
                                         </li>
                                     @endforeach
                                 </ul>
+                                @endif
                             </li>
                         @endif
                     @endcan

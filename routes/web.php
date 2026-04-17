@@ -145,6 +145,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::get('nc-va-chuyen-doi-cong-nghe',  \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('commercial');
         Route::get('tv-va-bao-cao-ptbv',          \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('sustainability');
         Route::get('phat-thai-va-nang-luong',     \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('energy');
+        Route::get('duong-dua',                   \App\Livewire\Admin\Reports\Consulting\ConsultingAchievementReport::class)->name('achievement');
     });
 
     // Báo cáo Kỹ thuật
@@ -155,6 +156,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::get('nc-va-chuyen-doi-cong-nghe', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('commercial');
         Route::get('tv-va-bao-cao-ptbv',         \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('sustainability');
         Route::get('phat-thai-va-nang-luong',    \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('energy');
+        Route::get('duong-dua',                  \App\Livewire\Admin\Reports\Technical\TechnicalAchievementReport::class)->name('achievement');
     });
 
     // Báo cáo Marketing
