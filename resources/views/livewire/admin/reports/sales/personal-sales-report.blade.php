@@ -93,8 +93,8 @@
                             <td class="text-end fw-semibold">{{ number_format($row['target'], 0, ',', '.') }}đ</td>
                             <td class="text-end fw-semibold text-danger">{{ number_format($row['target_cumulative'], 0, ',', '.') }}đ</td>
                             <td class="text-end fw-semibold text-dark">{{ $row['actual'] > 0 ? number_format($row['actual'], 0, ',', '.') . 'đ' : '—' }}</td>
-                            <td class="text-end fw-semibold text-danger">{{ number_format($row['actual_cumulative'], 0, ',', '.') }}đ</td>
-                            <td class="text-end fw-semibold text-primary">{{ number_format($row['remaining'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-success">{{ number_format($row['actual_cumulative'], 0, ',', '.') }}đ</td>
+                            <td class="text-end fw-semibold text-danger">{{ number_format($row['remaining'], 0, ',', '.') }}đ</td>
                             <td class="text-center fw-bold {{ ($row['kpi_pct'] ?? 0) >= 100 ? 'text-success' : 'text-danger' }}">
                                 {{ $row['kpi_pct'] !== null ? $row['kpi_pct'] . '%' : '—' }}
                             </td>
@@ -107,8 +107,8 @@
                         <td class="text-end">{{ number_format($personalTotals['target'], 0, ',', '.') }}đ</td>
                         <td class="text-end">{{ number_format($personalTotals['target_cumulative'], 0, ',', '.') }}đ</td>
                         <td class="text-end">{{ number_format($personalTotals['actual'], 0, ',', '.') }}đ</td>
-                        <td class="text-end">{{ number_format($personalTotals['actual_cumulative'], 0, ',', '.') }}đ</td>
-                        <td class="text-end">{{ number_format($personalTotals['remaining'], 0, ',', '.') }}đ</td>
+                        <td class="text-end text-success">{{ number_format($personalTotals['actual_cumulative'], 0, ',', '.') }}đ</td>
+                        <td class="text-end text-danger">{{ number_format($personalTotals['remaining'], 0, ',', '.') }}đ</td>
                         <td class="text-center">{{ $personalTotals['kpi_pct'] !== null ? $personalTotals['kpi_pct'] . '%' : '—' }}</td>
                     </tr>
                 </tfoot>
