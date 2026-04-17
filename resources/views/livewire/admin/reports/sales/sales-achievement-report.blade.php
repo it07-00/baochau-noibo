@@ -87,59 +87,59 @@
                     {{-- TOP 3 PODIUM WITH PEDESTALS --}}
                     @if($doanhSoRankings->count() >= 3)
                     <div class="race-podium">
-                        {{-- #2 --}}
+                        {{-- #2 LEFT --}}
                         <div class="race-podium-slot race-podium-2">
                             @php $p = $doanhSoRankings[1]; @endphp
                             <div class="race-avatar-wrap">
-                                <div class="race-avatar race-avatar-md race-border-silver">
+                                <div class="race-avatar race-avatar-md">
                                     @if($p['avatar_url'])
                                         <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
                                     @else
                                         {{ raceInitials($p['name']) }}
                                     @endif
                                 </div>
-                                <div class="race-medal race-medal-silver">2</div>
                             </div>
                             <div class="race-pedestal race-pedestal-2">
+                                <img src="{{ asset('assets/images/2.png') }}" class="race-medal-img" alt="Hạng 2">
                                 <div class="race-podium-name">{{ $p['name'] }}</div>
                                 <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
                             </div>
                         </div>
 
-                        {{-- #1 --}}
+                        {{-- #1 CENTER --}}
                         <div class="race-podium-slot race-podium-1">
                             @php $p = $doanhSoRankings[0]; @endphp
                             <div class="race-crown">👑</div>
                             <div class="race-avatar-wrap">
-                                <div class="race-avatar race-avatar-lg race-border-gold">
+                                <div class="race-avatar race-avatar-lg">
                                     @if($p['avatar_url'])
                                         <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
                                     @else
                                         {{ raceInitials($p['name']) }}
                                     @endif
                                 </div>
-                                <div class="race-medal race-medal-gold">1</div>
                             </div>
                             <div class="race-pedestal race-pedestal-1">
+                                <img src="{{ asset('assets/images/1.png') }}" class="race-medal-img" alt="Hạng 1">
                                 <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
                                 <div class="race-podium-value race-value-gold">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
                             </div>
                         </div>
 
-                        {{-- #3 --}}
+                        {{-- #3 RIGHT --}}
                         <div class="race-podium-slot race-podium-3">
                             @php $p = $doanhSoRankings[2]; @endphp
                             <div class="race-avatar-wrap">
-                                <div class="race-avatar race-avatar-md race-border-bronze">
+                                <div class="race-avatar race-avatar-md">
                                     @if($p['avatar_url'])
                                         <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
                                     @else
                                         {{ raceInitials($p['name']) }}
                                     @endif
                                 </div>
-                                <div class="race-medal race-medal-bronze">3</div>
                             </div>
                             <div class="race-pedestal race-pedestal-3">
+                                <img src="{{ asset('assets/images/3.png') }}" class="race-medal-img" alt="Hạng 3">
                                 <div class="race-podium-name">{{ $p['name'] }}</div>
                                 <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
                             </div>
@@ -178,59 +178,59 @@
                     {{-- TOP 3 PODIUM WITH PEDESTALS --}}
                     @if($kpiRankings->count() >= 3)
                     <div class="race-podium">
-                        {{-- #2 --}}
+                        {{-- #2 LEFT --}}
                         <div class="race-podium-slot race-podium-2">
                             @php $p = $kpiRankings[1]; @endphp
                             <div class="race-avatar-wrap">
-                                <div class="race-avatar race-avatar-md race-border-silver">
+                                <div class="race-avatar race-avatar-md">
                                     @if($p['avatar_url'])
                                         <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
                                     @else
                                         {{ raceInitials($p['name']) }}
                                     @endif
                                 </div>
-                                <div class="race-medal race-medal-silver">2</div>
                             </div>
                             <div class="race-pedestal race-pedestal-2">
+                                <img src="{{ asset('assets/images/2.png') }}" class="race-medal-img" alt="Hạng 2">
                                 <div class="race-podium-name">{{ $p['name'] }}</div>
                                 <div class="race-podium-value">{{ $p['pct'] }}%</div>
                             </div>
                         </div>
 
-                        {{-- #1 --}}
+                        {{-- #1 CENTER --}}
                         <div class="race-podium-slot race-podium-1">
                             @php $p = $kpiRankings[0]; @endphp
                             <div class="race-crown">👑</div>
                             <div class="race-avatar-wrap">
-                                <div class="race-avatar race-avatar-lg race-border-gold">
+                                <div class="race-avatar race-avatar-lg">
                                     @if($p['avatar_url'])
                                         <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
                                     @else
                                         {{ raceInitials($p['name']) }}
                                     @endif
                                 </div>
-                                <div class="race-medal race-medal-gold">1</div>
                             </div>
                             <div class="race-pedestal race-pedestal-1">
+                                <img src="{{ asset('assets/images/1.png') }}" class="race-medal-img" alt="Hạng 1">
                                 <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
                                 <div class="race-podium-value race-value-gold">{{ $p['pct'] }}%</div>
                             </div>
                         </div>
 
-                        {{-- #3 --}}
+                        {{-- #3 RIGHT --}}
                         <div class="race-podium-slot race-podium-3">
                             @php $p = $kpiRankings[2]; @endphp
                             <div class="race-avatar-wrap">
-                                <div class="race-avatar race-avatar-md race-border-bronze">
+                                <div class="race-avatar race-avatar-md">
                                     @if($p['avatar_url'])
                                         <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
                                     @else
                                         {{ raceInitials($p['name']) }}
                                     @endif
                                 </div>
-                                <div class="race-medal race-medal-bronze">3</div>
                             </div>
                             <div class="race-pedestal race-pedestal-3">
+                                <img src="{{ asset('assets/images/3.png') }}" class="race-medal-img" alt="Hạng 3">
                                 <div class="race-podium-name">{{ $p['name'] }}</div>
                                 <div class="race-podium-value">{{ $p['pct'] }}%</div>
                             </div>
@@ -458,11 +458,12 @@
 /* ── PODIUM ── */
 .race-podium {
     display: flex;
+    flex-direction: row;
     align-items: flex-end;
     justify-content: center;
-    gap: 6px;
-    margin-bottom: 40px;
-    padding-top: 30px;
+    gap: 0;
+    margin-bottom: 30px;
+    padding-top: 20px;
 }
 .race-podium-slot {
     display: flex;
@@ -470,73 +471,93 @@
     align-items: center;
     position: relative;
     animation: raceFadeUp .6s ease both;
-    width: 180px;
 }
-.race-podium-1 { animation-delay: .1s; }
-.race-podium-2 { animation-delay: .2s; }
-.race-podium-3 { animation-delay: .3s; }
+.race-podium-1 { animation-delay: .1s; width: 240px; }
+.race-podium-2 { animation-delay: .2s; width: 200px; }
+.race-podium-3 { animation-delay: .3s; width: 200px; }
 
-/* ── AVATAR WRAPPER (for medal overlay) ── */
+/* ── AVATAR WRAPPER (laurel wreath via ::before) ── */
 .race-avatar-wrap {
     position: relative;
     display: inline-block;
-    margin-bottom: -20px;
     z-index: 2;
 }
-.race-avatar-wrap .race-medal {
+/* Laurel wreath overlay for top-3 podium */
+.race-podium-slot .race-avatar-wrap::before {
+    content: '';
     position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
+    inset: -22px;
+    background-image: url('{{ asset("assets/images/laurel-wreath.png") }}');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 5;
 }
+.race-podium-1 .race-avatar-wrap::before { inset: -26px; filter: drop-shadow(0 0 10px rgba(245,200,66,.75)); }
+.race-podium-2 .race-avatar-wrap::before { filter: grayscale(80%) brightness(1.4); opacity: 0.82; }
+.race-podium-3 .race-avatar-wrap::before { filter: sepia(80%) saturate(1.4) hue-rotate(-10deg) brightness(0.82); opacity: 0.82; }
 
-/* ── PEDESTAL BLOCKS ── */
+/* ── MEDAL IMAGE ── */
+.race-medal-img {
+    display: block;
+    width: 52px;
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,.6));
+    margin-bottom: 6px;
+}
+.race-podium-1 .race-medal-img { width: 64px; }
+
+/* ── PEDESTAL (bục) ── */
 .race-pedestal {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 28px;
-    border-radius: 12px 12px 4px 4px;
-    position: relative;
+    padding: 14px 10px 12px;
+    border-radius: 8px 8px 0 0;
+    margin-top: 14px;
 }
 .race-pedestal-1 {
-    height: 140px;
-    background: linear-gradient(180deg, #2d5fa8 0%, #1a3d7a 40%, #0f2650 100%);
-    box-shadow: 0 4px 30px rgba(30, 80, 180, .4), inset 0 1px 0 rgba(255,255,255,.15);
+    background: linear-gradient(180deg, #f5c842 0%, #c9a227 60%, #a07a10 100%);
+    min-height: 160px;
+    box-shadow: 0 -4px 22px rgba(245,200,66,.45), inset 0 1px 0 rgba(255,255,255,.3);
+    border: 1px solid rgba(255,220,80,.4);
 }
 .race-pedestal-2 {
-    height: 110px;
-    background: linear-gradient(180deg, #264d8e 0%, #17336a 40%, #0d2245 100%);
-    box-shadow: 0 4px 24px rgba(23, 60, 140, .3), inset 0 1px 0 rgba(255,255,255,.1);
+    background: linear-gradient(180deg, #e0e0e0 0%, #b0b0b0 60%, #888 100%);
+    min-height: 120px;
+    box-shadow: 0 -4px 14px rgba(180,180,180,.3);
+    border: 1px solid rgba(255,255,255,.2);
 }
 .race-pedestal-3 {
-    height: 90px;
-    background: linear-gradient(180deg, #264d8e 0%, #17336a 40%, #0d2245 100%);
-    box-shadow: 0 4px 24px rgba(23, 60, 140, .3), inset 0 1px 0 rgba(255,255,255,.1);
+    background: linear-gradient(180deg, #e8a870 0%, #c07640 60%, #8b5020 100%);
+    min-height: 96px;
+    box-shadow: 0 -4px 14px rgba(180,110,50,.3);
+    border: 1px solid rgba(220,140,80,.3);
 }
 
+/* ── PEDESTAL TEXT ── */
 .race-podium-name {
     font-weight: 800;
-    font-size: 1rem;
+    font-size: 0.82rem;
     text-align: center;
-    max-width: 170px;
+    max-width: 180px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-transform: uppercase;
     letter-spacing: .5px;
+    color: rgba(0,0,0,0.72);
+    text-shadow: 0 1px 0 rgba(255,255,255,.25);
 }
 .race-podium-value {
     font-weight: 700;
-    font-size: 1.05rem;
-    color: var(--race-gold);
-    margin-top: 4px;
+    font-size: 0.86rem;
+    color: rgba(0,0,0,0.6);
+    margin-top: 3px;
 }
-.race-name-gold { color: var(--race-gold-light); font-size: 1.1rem; }
-.race-value-gold { color: var(--race-gold); font-size: 1.15rem; }
+.race-name-gold  { color: rgba(0,0,0,0.75) !important; font-size: 0.88rem !important; }
+.race-value-gold { color: rgba(0,0,0,0.65) !important; font-size: 0.9rem !important; }
 
 /* ── CROWN ── */
 .race-crown {
@@ -559,42 +580,14 @@
     flex-shrink: 0;
 }
 .race-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.race-avatar-lg { width: 130px; height: 130px; font-size: 2.2rem; }
-.race-avatar-md { width: 100px; height: 100px; font-size: 1.6rem; }
+.race-avatar-lg { width: 140px; height: 140px; font-size: 2.2rem; }
+.race-avatar-md { width: 110px; height: 110px; font-size: 1.7rem; }
 .race-avatar-sm { width: 48px; height: 48px; font-size: 1rem; }
 
-.race-border-gold  { border: 4px solid var(--race-gold); box-shadow: 0 0 24px rgba(245,200,66,.5); }
-.race-border-silver { border: 3px solid #b8b8b8; box-shadow: 0 0 16px rgba(200,200,200,.3); }
-.race-border-bronze { border: 3px solid #c06a2a; box-shadow: 0 0 16px rgba(192,106,42,.3); }
+.race-border-gold, .race-border-silver, .race-border-bronze { border: none; box-shadow: none; }
 
-/* ── MEDAL ── */
-.race-medal {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 1rem;
-    z-index: 3;
-}
-.race-medal-gold {
-    background: radial-gradient(circle at 35% 35%, #ffe88a, #c9a227);
-    color: #6b4400;
-    box-shadow: 0 0 14px rgba(245,200,66,.6);
-    animation: racePulseGlow 2.5s ease-in-out infinite;
-}
-.race-medal-silver {
-    background: radial-gradient(circle at 35% 35%, #e8e8e8, #9e9e9e);
-    color: #333;
-    box-shadow: 0 0 10px rgba(200,200,200,.3);
-}
-.race-medal-bronze {
-    background: radial-gradient(circle at 35% 35%, #f8b87a, #c06a2a);
-    color: #5a1a00;
-    box-shadow: 0 0 10px rgba(192,106,42,.3);
-}
+/* ── MEDAL (old CSS badges — unused, kept for safety) ── */
+.race-medal { display: none; }
 
 /* ── RANK CARD (4+) — Table-style rows ── */
 .race-rank-card {
