@@ -465,7 +465,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
-                        <div id="monthlyOverviewChart" style="min-height:250px;" wire:ignore></div>
+                        <canvas id="monthlyOverviewChart" style="height:220px;" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -481,7 +481,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="workloadChartConfig" class="d-none" data-by-type='@json($byType)'></div>
-                        <div id="teamWorkloadChart" style="min-height:250px;" wire:ignore></div>
+                        <canvas id="teamWorkloadChart" style="height:220px;" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -500,7 +500,7 @@
                     </div>
                     <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="sourceSalesConfig" class="d-none" data-chart='@json($sourceSalesChart)'></div>
-                        <div id="sourceSalesChart" style="min-height:300px;" wire:ignore></div>
+                        <canvas id="sourceSalesChart" style="height:220px;" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -515,7 +515,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="serviceInsightConfig" class="d-none" data-chart='@json($serviceInsightChart)'></div>
-                        <div id="serviceInsightChart" style="min-height:250px;" wire:ignore></div>
+                        <canvas id="serviceInsightChart" style="height:220px;" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -532,7 +532,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="regionInsightConfig" class="d-none" data-chart='@json($regionInsightChart)'></div>
-                        <div id="regionInsightChart" style="min-height:250px;" wire:ignore></div>
+                        <canvas id="regionInsightChart" style="height:220px;" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -575,7 +575,7 @@
     @endif
 
     @push('scripts')
-    <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
     (function () {
         const palette = ['#4f7cff', '#2ec27e', '#f5a524', '#f05252', '#7c3aed', '#0ea5e9', '#06b6d4', '#f97316'];
@@ -587,142 +587,78 @@
             return value;
         }
 
-        // Destroy helper
-        function destroyChart(elId) {
-            const el = document.getElementById(elId);
-            if (el && el._apexChart) { el._apexChart.destroy(); el._apexChart = null; }
+        function destroyChart(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (canvas && canvas._chartInstance) {
+                canvas._chartInstance.destroy();
+                canvas._chartInstance = null;
+            }
         }
 
         function renderMonthlyOverviewChart() {
             const configEl = document.getElementById('monthlyOverviewConfig');
-            const el = document.getElementById('monthlyOverviewChart');
-            if (!configEl || !el) return;
+            const canvas = document.getElementById('monthlyOverviewChart');
+            if (!configEl || !canvas) return;
             destroyChart('monthlyOverviewChart');
 
             const monthly = JSON.parse(configEl.dataset.monthly || '{}');
             const canSeeFinance = String(configEl.dataset.canSeeFinance) === '1';
-            const labels = Object.keys(monthly).map((m) => 'Th' + m);
-            const contractData = Object.values(monthly).map((item) => Number(item.contracts || 0));
-            const salesData = Object.values(monthly).map((item) => Number(item.sales || 0));
-            const revenueData = Object.values(monthly).map((item) => Number(item.revenue || 0));
+            const labels = Object.keys(monthly).map(m => 'Tháng ' + m);
+            const contractData = Object.values(monthly).map(item => Number(item.contracts || 0));
+            const salesData = Object.values(monthly).map(item => Number(item.sales || 0));
+            const revenueData = Object.values(monthly).map(item => Number(item.revenue || 0));
 
-            const series = [{ name: 'Hợp đồng ký mới', type: 'bar', data: contractData }];
-            const yaxis = [{ seriesName: 'Hợp đồng ký mới', title: { text: 'Số HĐ' }, labels: { formatter: v => Math.round(v) } }];
+            const datasets = [{
+                label: 'Hợp đồng ký mới', type: 'bar', data: contractData,
+                backgroundColor: 'rgba(79,124,255,0.75)', borderRadius: 4, yAxisID: 'y'
+            }];
+            const scales = {
+                y: { title: { display: true, text: 'Số HĐ' }, ticks: { stepSize: 1 } }
+            };
 
             if (canSeeFinance) {
-                series.push({ name: 'Doanh số ghi nhận', type: 'bar', data: salesData });
-                series.push({ name: 'Thực thu', type: 'line', data: revenueData });
-                yaxis.push({ seriesName: 'Doanh số ghi nhận', opposite: true, title: { text: 'Giá trị (VND)' }, labels: { formatter: v => compactCurrency(v) } });
-                yaxis.push({ seriesName: 'Thực thu', show: false });
+                datasets.push({ label: 'Doanh số ghi nhận', type: 'bar', data: salesData, backgroundColor: 'rgba(240,82,82,0.7)', borderRadius: 4, yAxisID: 'y1' });
+                datasets.push({ label: 'Thực thu', type: 'line', data: revenueData, borderColor: '#2ec27e', backgroundColor: 'rgba(46,194,126,0.12)', fill: false, tension: 0.4, pointRadius: 4, yAxisID: 'y1' });
+                scales.y1 = { position: 'right', title: { display: true, text: 'Giá trị (VND)' }, grid: { drawOnChartArea: false }, ticks: { callback: v => compactCurrency(v) } };
             }
 
-            el._apexChart = new ApexCharts(el, {
-                series, chart: { type: 'bar', height: 250, toolbar: { show: false } },
-                xaxis: { categories: labels },
-                yaxis,
-                colors: ['#4f7cff', '#f05252', '#2ec27e'],
-                plotOptions: { bar: { borderRadius: 4, columnWidth: '55%' } },
-                stroke: { width: series.map(s => s.type === 'line' ? 2 : 0), curve: 'smooth' },
-                markers: { size: series.map(s => s.type === 'line' ? 4 : 0) },
-                legend: { position: 'top' },
-                tooltip: { shared: true, intersect: false },
-                grid: { borderColor: 'rgba(15,23,42,0.08)' }
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'top' } },
+                    scales
+                }
             });
-            el._apexChart.render();
         }
 
         function renderWorkloadChart() {
             const configEl = document.getElementById('workloadChartConfig');
-            const el = document.getElementById('teamWorkloadChart');
-            if (!configEl || !el) return;
+            const canvas = document.getElementById('teamWorkloadChart');
+            if (!configEl || !canvas) return;
             destroyChart('teamWorkloadChart');
 
             const byType = JSON.parse(configEl.dataset.byType || '{}');
             const entries = Object.entries(byType);
             if (!entries.length) return;
 
-            const labels = entries.map(([label]) => label);
-            const values = entries.map(([, item]) => Number(item.count || 0));
-
-            el._apexChart = new ApexCharts(el, {
-                series: values,
-                chart: { type: 'donut', height: 250, toolbar: { show: false } },
-                labels,
-                colors: palette,
-                legend: { position: 'right' },
-                plotOptions: { pie: { donut: { size: '60%' } } },
-                dataLabels: { formatter: (val) => val.toFixed(1) + '%' }
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: entries.map(([label]) => label),
+                    datasets: [{ data: entries.map(([, item]) => Number(item.count || 0)), backgroundColor: palette }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
             });
-            el._apexChart.render();
-        }
-
-        function renderServiceInsightChart() {
-            const configEl = document.getElementById('serviceInsightConfig');
-            const el = document.getElementById('serviceInsightChart');
-            if (!configEl || !el) return;
-            destroyChart('serviceInsightChart');
-
-            const payload = JSON.parse(configEl.dataset.chart || '{}');
-            const labels = payload.labels || [];
-            const quoted = payload.quoted || [];
-            const signed = payload.signed || [];
-
-            el._apexChart = new ApexCharts(el, {
-                series: [
-                    { name: 'Đã báo giá', data: quoted },
-                    { name: 'Đã ký hợp đồng', data: signed }
-                ],
-                chart: { type: 'bar', height: 250, toolbar: { show: false } },
-                xaxis: { categories: labels },
-                colors: ['#f59e0b', '#2563eb'],
-                plotOptions: { bar: { borderRadius: 4, columnWidth: '60%' } },
-                legend: { position: 'top' },
-                yaxis: { title: { text: 'Số lượng hồ sơ' }, labels: { formatter: v => Math.round(v) } },
-                grid: { borderColor: 'rgba(15,23,42,0.08)' }
-            });
-            el._apexChart.render();
-        }
-
-        function renderRegionInsightChart() {
-            const configEl = document.getElementById('regionInsightConfig');
-            const el = document.getElementById('regionInsightChart');
-            if (!configEl || !el) return;
-            destroyChart('regionInsightChart');
-
-            const payload = JSON.parse(configEl.dataset.chart || '{}');
-            const labels = payload.labels || [];
-            const quoted = payload.quoted || [];
-            const signed = payload.signed || [];
-            const revenue = payload.revenue || [];
-
-            el._apexChart = new ApexCharts(el, {
-                series: [
-                    { name: 'Báo giá', type: 'bar', data: quoted },
-                    { name: 'Ký hợp đồng', type: 'bar', data: signed },
-                    { name: 'Doanh số (HĐ)', type: 'line', data: revenue }
-                ],
-                chart: { type: 'bar', height: 250, toolbar: { show: false } },
-                xaxis: { categories: labels },
-                colors: ['#f59e0b', '#2563eb', '#16a34a'],
-                yaxis: [
-                    { title: { text: 'Số lượng hồ sơ' }, labels: { formatter: v => Math.round(v) } },
-                    { opposite: true, title: { text: 'VND' }, labels: { formatter: v => compactCurrency(v) } },
-                    { show: false }
-                ],
-                plotOptions: { bar: { borderRadius: 4, columnWidth: '55%' } },
-                stroke: { width: [0, 0, 2], curve: 'smooth' },
-                markers: { size: [0, 0, 4] },
-                legend: { position: 'top' },
-                tooltip: { shared: true, intersect: false },
-                grid: { borderColor: 'rgba(15,23,42,0.08)' }
-            });
-            el._apexChart.render();
         }
 
         function renderSourceSalesChart() {
             const configEl = document.getElementById('sourceSalesConfig');
-            const el = document.getElementById('sourceSalesChart');
-            if (!configEl || !el) return;
+            const canvas = document.getElementById('sourceSalesChart');
+            if (!configEl || !canvas) return;
             destroyChart('sourceSalesChart');
 
             const payload = JSON.parse(configEl.dataset.chart || '{}');
@@ -737,18 +673,80 @@
             const fallback = ['#007bff','#c084fc','#facc15','#b91c1c','#15803d','#f43f5e','#0ea5e9','#6366f1','#f97316','#10b981'];
             const colors = labels.map((l, i) => colorMap[l.toUpperCase()] || fallback[i % fallback.length]);
 
-            el._apexChart = new ApexCharts(el, {
-                series: data,
-                chart: { type: 'pie', height: 300, toolbar: { show: false } },
-                labels,
-                colors,
-                legend: { position: 'right', fontSize: '12px', fontWeight: 600 },
-                tooltip: { y: { formatter: (v, { seriesIndex, w }) => {
-                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                    return compactCurrency(v) + ' (' + ((v / total) * 100).toFixed(1) + '%)';
-                }}}
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'pie',
+                data: { labels, datasets: [{ data, backgroundColor: colors }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { font: { weight: '600' } } },
+                        tooltip: { callbacks: { label: ctx => {
+                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            return ctx.label + ': ' + compactCurrency(ctx.raw) + ' (' + ((ctx.raw / total) * 100).toFixed(1) + '%)';
+                        }}}
+                    }
+                }
             });
-            el._apexChart.render();
+        }
+
+        function renderServiceInsightChart() {
+            const configEl = document.getElementById('serviceInsightConfig');
+            const canvas = document.getElementById('serviceInsightChart');
+            if (!configEl || !canvas) return;
+            destroyChart('serviceInsightChart');
+
+            const payload = JSON.parse(configEl.dataset.chart || '{}');
+            const labels = payload.labels || [];
+
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Đã báo giá', data: payload.quoted || [], backgroundColor: 'rgba(245,158,11,0.75)', borderRadius: 4 },
+                        { label: 'Đã ký hợp đồng', data: payload.signed || [], backgroundColor: 'rgba(37,99,235,0.75)', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { title: { display: true, text: 'Số lượng hồ sơ' }, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+
+        function renderRegionInsightChart() {
+            const configEl = document.getElementById('regionInsightConfig');
+            const canvas = document.getElementById('regionInsightChart');
+            if (!configEl || !canvas) return;
+            destroyChart('regionInsightChart');
+
+            const payload = JSON.parse(configEl.dataset.chart || '{}');
+            const labels = payload.labels || [];
+
+            canvas._chartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Báo giá', type: 'bar', data: payload.quoted || [], backgroundColor: 'rgba(245,158,11,0.75)', borderRadius: 4, yAxisID: 'y' },
+                        { label: 'Ký hợp đồng', type: 'bar', data: payload.signed || [], backgroundColor: 'rgba(37,99,235,0.75)', borderRadius: 4, yAxisID: 'y' },
+                        { label: 'Doanh số (HĐ)', type: 'line', data: payload.revenue || [], borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.12)', fill: false, tension: 0.4, pointRadius: 4, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: { title: { display: true, text: 'Số lượng hồ sơ' }, ticks: { stepSize: 1 } },
+                        y1: { position: 'right', title: { display: true, text: 'VND' }, grid: { drawOnChartArea: false }, ticks: { callback: v => compactCurrency(v) } }
+                    }
+                }
+            });
         }
 
         window.renderStatisticsBoardCharts = function() {
@@ -760,15 +758,11 @@
         };
 
         document.addEventListener('livewire:update', function () {
-            setTimeout(function() {
-                window.renderStatisticsBoardCharts();
-            }, 100);
+            setTimeout(function() { window.renderStatisticsBoardCharts(); }, 100);
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function() {
-                window.renderStatisticsBoardCharts();
-            }, 100);
+            setTimeout(function() { window.renderStatisticsBoardCharts(); }, 100);
         });
     })();
     </script>

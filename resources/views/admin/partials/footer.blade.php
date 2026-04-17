@@ -20,10 +20,10 @@
 }
 .app-footer-brand img { height: 24px; width: auto; opacity: .85; }
 .app-footer-copy {
-    font-size: .8rem;
+    font-size: .9rem;
     color: var(--bs-secondary-color, #6c757d);
 }
-.app-footer-copy span { color: var(--bs-primary, #0d6efd); font-weight: 500; }
+.app-footer-copy span { color: var(--bs-primary, #0d6efd); font-weight: 600; }
 .app-footer-links {
     display: flex;
     align-items: center;
@@ -45,7 +45,7 @@
 <footer class="app-footer app-footer-redesign">
     <p class="app-footer-copy mb-0">
         Bản quyền © <span id="footer-year"></span>
-        <span>Công ty TNHH Môi trường Bảo Châu</span>.
+        <span>Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu</span>.
         Đã đăng ký mọi quyền.
     </p>
 

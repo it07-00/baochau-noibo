@@ -18,21 +18,6 @@
 
     <div class="race-wrapper">
 
-        {{-- FILTERS --}}
-        <div class="race-filters">
-            <select wire:model.live="filter_month" class="race-select">
-                <option value="">Cả năm</option>
-                @foreach($months as $m)
-                    <option value="{{ $m }}">Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
-                @endforeach
-            </select>
-            <select wire:model.live="year" class="race-select">
-                @foreach($years as $y)
-                    <option value="{{ $y }}">{{ $y }}</option>
-                @endforeach
-            </select>
-        </div>
-
         {{-- DAILY REPORT REMINDER --}}
         @php
             $salesHasDailyReport = \App\Models\DailyReport::where('user_id', auth()->id())
@@ -49,6 +34,21 @@
             <a href="{{ route('app.daily-reports.index') }}" class="race-reminder-btn">Gửi báo cáo</a>
         </div>
         @endif
+
+        {{-- FILTERS --}}
+        <div class="race-filters">
+            <select wire:model.live="filter_month" class="race-select">
+                <option value="">Cả năm</option>
+                @foreach($months as $m)
+                    <option value="{{ $m }}">Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
+                @endforeach
+            </select>
+            <select wire:model.live="year" class="race-select">
+                @foreach($years as $y)
+                    <option value="{{ $y }}">{{ $y }}</option>
+                @endforeach
+            </select>
+        </div>
 
         {{-- COMPANY PROGRESS BAR --}}
         <div class="race-company-progress">

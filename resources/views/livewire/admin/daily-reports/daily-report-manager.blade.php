@@ -411,7 +411,7 @@
                         <div class="calendar-day-content mt-1">
                             @if($isInsideMonth && $dayReports->isNotEmpty())
                                 @foreach($dayReports as $dr)
-                                    <div class="mb-1 px-2 py-1 rounded " style="font-size: 0.7rem; background-color: {{ $dr->status === 'Gặp vấn đề, cần hỗ trợ' ? '#fee2e2' : ($dr->status === 'Hoàn thành một phần' ? '#fef3c7' : '#dcfce7') }};">
+                                    <div class="mb-1 px-2 py-1 rounded cal-report-chip cal-chip-{{ $dr->status === 'Gặp vấn đề, cần hỗ trợ' ? 'issue' : ($dr->status === 'Hoàn thành một phần' ? 'partial' : 'done') }}" style="font-size: 0.7rem;">
                                         <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $dr->user->name ?? '' }}</div>
                                         <div class="riched-content-mini text-truncate-2">{!! Str::limit(strip_tags($dr->content), 80) !!}</div>
                                     </div>
@@ -746,6 +746,28 @@
             color: #e4edf9 !important;
             border-color: rgba(255, 255, 255, 0.24) !important;
             background: transparent !important;
+        }
+
+        /* Calendar mini chip colors */
+        .cal-report-chip.cal-chip-done    { background-color: #dcfce7; }
+        .cal-report-chip.cal-chip-partial { background-color: #fef3c7; }
+        .cal-report-chip.cal-chip-issue   { background-color: #fee2e2; }
+
+        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-done {
+            background-color: rgba(16, 185, 129, 0.18) !important;
+            color: #a7f3d0;
+        }
+        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-partial {
+            background-color: rgba(245, 158, 11, 0.18) !important;
+            color: #fde68a;
+        }
+        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-issue {
+            background-color: rgba(239, 68, 68, 0.18) !important;
+            color: #fca5a5;
+        }
+        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip .riched-content-mini {
+            color: inherit !important;
+            opacity: 0.85;
         }
 
         [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content a {
