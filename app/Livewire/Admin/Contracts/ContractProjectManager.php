@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
-use App\Models\ContractProject;
+use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\User;
@@ -148,7 +148,7 @@ class ContractProjectManager extends Component
 
     public function edit(int $id): void
     {
-        $this->selectedDoc = ContractProject::findOrFail($id);
+        $this->selectedDoc = ContractTechnical::findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
             $this->formData['signed_at'] = $this->selectedDoc->signed_at->format('Y-m-d');
@@ -208,7 +208,7 @@ class ContractProjectManager extends Component
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
         } else {
-            ContractProject::create($data);
+            ContractTechnical::create($data);
         }
 
         $this->dispatch('closeFormModal');
@@ -218,7 +218,7 @@ class ContractProjectManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
-        $doc = ContractProject::findOrFail($id);
+        $doc = ContractTechnical::findOrFail($id);
         $user = auth()->user();
         $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
 
@@ -238,13 +238,13 @@ class ContractProjectManager extends Component
             $updateData['submitted_at'] = now()->toDateString();
         }
 
-        ContractProject::findOrFail($id)->update($updateData);
+        ContractTechnical::findOrFail($id)->update($updateData);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
     public function delete(int $id): void
     {
-        $doc = ContractProject::findOrFail($id);
+        $doc = ContractTechnical::findOrFail($id);
         $user = auth()->user();
         $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
 
@@ -277,7 +277,7 @@ class ContractProjectManager extends Component
         $deletedCount = 0;
         $skippedCount = 0;
 
-        $docs = ContractProject::whereIn('id', $selectedIds)->get();
+        $docs = ContractTechnical::whereIn('id', $selectedIds)->get();
         foreach ($docs as $doc) {
             if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
                 $skippedCount++;
@@ -306,7 +306,7 @@ class ContractProjectManager extends Component
 
     public function viewDetail(int $id): void
     {
-        $this->selectedDoc = ContractProject::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
+        $this->selectedDoc = ContractTechnical::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
         if ($this->selectedDoc) {
             $this->progressNotes = ContractProgressNote::where('contract_type', 'project')
                 ->where('contract_id', $id)
@@ -321,7 +321,7 @@ class ContractProjectManager extends Component
     public function openAssign(int $id): void
     {
         $this->assignContractId = $id;
-        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractProject::class)
+        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractTechnical::class)
             ->where('assignable_id', $id)
             ->pluck('user_id')
             ->toArray();
@@ -330,19 +330,19 @@ class ContractProjectManager extends Component
 
     public function saveAssign(): void
     {
-        ContractAssignment::where('assignable_type', ContractProject::class)
+        ContractAssignment::where('assignable_type', ContractTechnical::class)
             ->where('assignable_id', $this->assignContractId)
             ->delete();
         foreach ($this->assignUserIds as $userId) {
             ContractAssignment::create([
-                'assignable_type' => ContractProject::class,
+                'assignable_type' => ContractTechnical::class,
                 'assignable_id'   => $this->assignContractId,
                 'user_id'         => (int) $userId,
                 'assigned_by'     => auth()->id(),
             ]);
         }
         // Gửi thông báo đến users được giao
-        $contract = ContractProject::with('customer')->find($this->assignContractId);
+        $contract = ContractTechnical::with('customer')->find($this->assignContractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
         foreach ($this->assignUserIds as $userId) {
             $user = User::find($userId);
@@ -374,11 +374,11 @@ class ContractProjectManager extends Component
             ->get();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
 
-        $contract = ContractProject::with('customer')->find($contractId);
+        $contract = ContractTechnical::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
         $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))->get();
 
-        $assignmentUserIds = ContractAssignment::where('assignable_type', ContractProject::class)
+        $assignmentUserIds = ContractAssignment::where('assignable_type', ContractTechnical::class)
             ->where('assignable_id', $contractId)
             ->get(['user_id', 'assigned_by'])
             ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
@@ -471,7 +471,7 @@ class ContractProjectManager extends Component
         $isRestrictedSales = $user->hasRole('kinh-doanh')
             && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
 
-        $query = ContractProject::with(['customer', 'staff', 'department'])
+        $query = ContractTechnical::with(['customer', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -519,7 +519,7 @@ class ContractProjectManager extends Component
         $isRestrictedSales = $user->hasRole('kinh-doanh')
             && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
 
-        $query = ContractProject::with(['customer', 'staff', 'department', 'assignments.user'])
+        $query = ContractTechnical::with(['customer', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -560,15 +560,15 @@ class ContractProjectManager extends Component
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van']))->orderBy('name')->get(),
-            'provinces'          => ContractProject::whereNotNull('province')->where('province', '!=', '')
+            'provinces'          => ContractTechnical::whereNotNull('province')->where('province', '!=', '')
                 ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'       => self::ALLOWED_STATUSES,
-            'renewal_statuses'   => ContractProject::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'renewal_statuses'   => ContractTechnical::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
-            'loai_dich_vu_options' => ContractProject::SERVICE_TYPES,
+            'loai_dich_vu_options' => ContractTechnical::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
-            'info_sources' => ContractProject::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
-            'parentContracts' => ContractProject::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
+            'info_sources' => ContractTechnical::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
+            'parentContracts' => ContractTechnical::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Kỹ thuật & Ứng phó SC']);
     }
 }

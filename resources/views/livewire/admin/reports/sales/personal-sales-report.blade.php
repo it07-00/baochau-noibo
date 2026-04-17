@@ -82,7 +82,7 @@
                         <th class="text-end">DS cam kết lũy kế</th>
                         <th class="text-end">Thực tế (Tổng giá trị HĐ ký) (đ)</th>
                         <th class="text-end">DS thực hiện lũy kế</th>
-                        <th class="text-end">Doanh số còn lại</th>
+                        <th class="text-end">Còn thiếu</th>
                         <th class="text-center" style="width:140px">% hoàn thành KPI</th>
                     </tr>
                 </thead>

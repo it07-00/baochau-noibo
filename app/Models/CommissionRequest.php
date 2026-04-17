@@ -34,20 +34,20 @@ class CommissionRequest extends Model
 
     public const CONTRACT_TYPES = [
         'waste'          => ContractWaste::class,
-        'consulting'     => ContractConsulting::class,
-        'project'        => ContractProject::class,
-        'commercial'     => ContractCommercial::class,
+        'consulting'     => ContractLegal::class,
+        'project'        => ContractTechnical::class,
+        'commercial'     => ContractResearch::class,
         'sustainability' => ContractSustainability::class,
-        'energy'         => ContractEnergy::class,
+        'energy'         => ContractEmission::class,
     ];
 
     public const CONTRACT_TYPE_LABELS = [
         ContractWaste::class          => 'Chất thải & Tiếng ồn',
-        ContractConsulting::class      => 'Pháp lý & Hồ sơ MT',
-        ContractProject::class         => 'Kỹ thuật & Ứng phó SC',
-        ContractCommercial::class      => 'NC & CĐ Công nghệ',
+        ContractLegal::class      => 'Pháp lý & Hồ sơ MT',
+        ContractTechnical::class         => 'Kỹ thuật & Ứng phó SC',
+        ContractResearch::class      => 'NC & CĐ Công nghệ',
         ContractSustainability::class  => 'TV & BC PTBV',
-        ContractEnergy::class          => 'Phát thải & Năng lượng',
+        ContractEmission::class          => 'Phát thải & Năng lượng',
     ];
 
     public function contract(): MorphTo

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\RenewalSales;
-use App\Models\ProgressiveSales;
+use App\Models\SalesRenewal;
+use App\Models\SalesProgressive;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -20,7 +20,7 @@ class SalesDataSeeder extends Seeder
             $month = rand(1, 12);
             $value = rand(8, 120) * 1000000;
 
-            RenewalSales::create([
+            SalesRenewal::create([
                 'contract_number' => 'TK-2025-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
                 'sales_month'     => "2025-{$month}-01",
                 'sales_value'     => $value,
@@ -38,7 +38,7 @@ class SalesDataSeeder extends Seeder
             $month = rand(1, 12);
             $amount = rand(10, 80) * 1000000;
 
-            ProgressiveSales::create([
+            SalesProgressive::create([
                 'contract_number' => 'TD-2025-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
                 'sales_month'     => "2025-{$month}-01",
                 'milestone_name'  => ['Đợt 1', 'Đợt 2', 'Đợt 3', 'Thanh toán cuối'][rand(0, 3)],

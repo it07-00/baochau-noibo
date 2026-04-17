@@ -5,14 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class ContractCommercial extends Model
+class ContractLegal extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
+
+    protected $table = 'contract_consultings';
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -22,9 +25,28 @@ class ContractCommercial extends Model
     }
 
     const SERVICE_TYPES = [
-        'Nghiên cứu khoa học về môi trường',
-        'Cung cấp giải pháp chuyển đổi công nghệ',
+        'Tư vấn, lập ĐTM, GPMT, DKMT',
+        'Quan trắc môi trường',
+        'Quan trắc môi trường lao động',
+        'Phân loại lao động',
     ];
+
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PENDING_ACCOUNTING = 'pending_accounting';
+    const STATUS_REJECTED_ACCOUNTING = 'rejected_accounting';
+    const STATUS_PENDING_DIRECTOR = 'pending_director';
+    const STATUS_REJECTED_DIRECTOR = 'rejected_director';
+    const STATUS_APPROVED_DIRECTOR = 'approved_director';
+    const STATUS_CONSULTANT_ASSIGNED = 'consultant_assigned';
+    const STATUS_CONSULTING_RECEIVING = 'consulting_receiving';
+    const STATUS_CONSULTING_SURVEY = 'consulting_survey';
+    const STATUS_CONSULTING_PROCESSING = 'consulting_processing';
+    const STATUS_WAITING_CLIENT = 'waiting_client';
+    const STATUS_CLIENT_CONFIRMED = 'client_confirmed';
+    const STATUS_PENDING_FINAL_REVIEW = 'pending_final_review';
+    const STATUS_REJECTED_FINAL_REVIEW = 'rejected_final_review';
+    const STATUS_FINISHED = 'finished';
+    const STATUS_INCIDENT = 'incident';
 
     protected $fillable = [
         'shd_bc',
@@ -39,8 +61,12 @@ class ContractCommercial extends Model
         'province',
         'info_source',
         'payment_method',
+        'consultant_id',
+        'manager_id',
         'status',
         'workflow_status',
+        'assigned_at',
+        'completed_at',
         'renewal_status',
         'voucher_status',
         'is_offset',
@@ -99,9 +125,14 @@ class ContractCommercial extends Model
         };
     }
 
-    public function assignments(): MorphMany
+    public function consultant(): BelongsTo
     {
-        return $this->morphMany(ContractAssignment::class, 'assignable');
+        return $this->belongsTo(User::class, 'consultant_id');
+    }
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'manager_id');
     }
 
     public function workflowSteps(): MorphMany
@@ -114,12 +145,17 @@ class ContractCommercial extends Model
         return $this->morphMany(ContractMilestoneFile::class, 'contract');
     }
 
+    public function assignments(): MorphMany
+    {
+        return $this->morphMany(ContractAssignment::class, 'assignable');
+    }
+
     public function parentContract(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_contract_id');
     }
 
-    public function renewalContracts()
+    public function renewalContracts(): HasMany
     {
         return $this->hasMany(self::class, 'parent_contract_id');
     }

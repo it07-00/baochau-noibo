@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
-use App\Models\ContractConsulting;
-use App\Models\ContractProject;
+use App\Models\ContractLegal;
+use App\Models\ContractTechnical;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -37,10 +37,10 @@ class CommissionRequestSeeder extends Seeder
         }
 
         // Consulting contracts
-        $consultingContracts = ContractConsulting::where('commission', '>', 0)->limit(2)->get();
+        $consultingContracts = ContractLegal::where('commission', '>', 0)->limit(2)->get();
         foreach ($consultingContracts as $contract) {
             CommissionRequest::create([
-                'contract_type' => ContractConsulting::class,
+                'contract_type' => ContractLegal::class,
                 'contract_id'   => $contract->id,
                 'receiver_name' => 'Người nhận hoa hồng #' . (++$i),
                 'receiver_phone' => '09' . rand(10000000, 99999999),

@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Admin\Reports\Technical;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
-use App\Models\ContractProject;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
@@ -35,11 +35,11 @@ class TechnicalContractReport extends Component
 
     private const TYPE_MAP = [
         'waste' => ['model' => ContractWaste::class,          'label' => 'BC Chất thải & Tiếng ồn'],
-        'consulting' => ['model' => ContractConsulting::class,     'label' => 'Hồ sơ môi trường'],
-        'project' => ['model' => ContractProject::class,        'label' => 'BC Kỹ thuật & Ứng phó SC'],
-        'commercial' => ['model' => ContractCommercial::class,     'label' => 'BC NC & CĐ Công nghệ'],
+        'consulting' => ['model' => ContractLegal::class,     'label' => 'Hồ sơ môi trường'],
+        'project' => ['model' => ContractTechnical::class,        'label' => 'BC Kỹ thuật & Ứng phó SC'],
+        'commercial' => ['model' => ContractResearch::class,     'label' => 'BC NC & CĐ Công nghệ'],
         'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC TV & BC PTBV'],
-        'energy' => ['model' => ContractEnergy::class,         'label' => 'BC Phát thải & Năng lượng'],
+        'energy' => ['model' => ContractEmission::class,         'label' => 'BC Phát thải & Năng lượng'],
     ];
 
     public function mount(): void

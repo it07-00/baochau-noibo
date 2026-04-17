@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\RenewalSales;
-use App\Models\ProgressiveSales;
+use App\Models\SalesRenewal;
+use App\Models\SalesProgressive;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -38,7 +38,7 @@ class SalesTrackingReport extends Component
         $staffFilter  = $this->filter_staff ?: ($isKinhDoanh ? (string) auth()->id() : '');
 
         $items = match ($this->active_tab) {
-            'renewal' => RenewalSales::with('creator')
+            'renewal' => SalesRenewal::with('creator')
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month,  fn($q) => $q->whereMonth('sales_month', $this->filter_month))
                 ->when($staffFilter,         fn($q) => $q->where('user_id', $staffFilter))
@@ -46,7 +46,7 @@ class SalesTrackingReport extends Component
                 ->orderByDesc('sales_month')
                 ->paginate(20),
 
-            'progressive' => ProgressiveSales::with('creator')
+            'progressive' => SalesProgressive::with('creator')
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month,  fn($q) => $q->whereMonth('sales_month', $this->filter_month))
                 ->when($staffFilter,         fn($q) => $q->where('user_id', $staffFilter))
@@ -58,10 +58,10 @@ class SalesTrackingReport extends Component
         };
 
         // Tab totals (without pagination)
-        $rTotal = RenewalSales::whereYear('sales_month', $this->year)
+        $rTotal = SalesRenewal::whereYear('sales_month', $this->year)
             ->when($staffFilter, fn($q) => $q->where('user_id', $staffFilter))
             ->sum('sales_amount');
-        $pTotal = ProgressiveSales::whereYear('sales_month', $this->year)
+        $pTotal = SalesProgressive::whereYear('sales_month', $this->year)
             ->when($staffFilter, fn($q) => $q->where('user_id', $staffFilter))
             ->sum('amount');
 

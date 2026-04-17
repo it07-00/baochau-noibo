@@ -38,11 +38,11 @@ class ContractPaymentSchedule extends Model
 
     public const MODEL_MAP = [
         'waste'          => ContractWaste::class,
-        'consulting'     => ContractConsulting::class,
-        'project'        => ContractProject::class,
-        'commercial'     => ContractCommercial::class,
+        'consulting'     => ContractLegal::class,
+        'project'        => ContractTechnical::class,
+        'commercial'     => ContractResearch::class,
         'sustainability' => ContractSustainability::class,
-        'energy'         => ContractEnergy::class,
+        'energy'         => ContractEmission::class,
     ];
 
     public function contract()

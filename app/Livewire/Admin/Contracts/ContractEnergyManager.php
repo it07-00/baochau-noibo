@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
-use App\Models\ContractEnergy;
+use App\Models\ContractEmission;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\User;
@@ -148,7 +148,7 @@ class ContractEnergyManager extends Component
 
     public function edit(int $id): void
     {
-        $this->selectedDoc = ContractEnergy::findOrFail($id);
+        $this->selectedDoc = ContractEmission::findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
             $this->formData['signed_at'] = $this->selectedDoc->signed_at->format('Y-m-d');
@@ -208,7 +208,7 @@ class ContractEnergyManager extends Component
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
         } else {
-            ContractEnergy::create($data);
+            ContractEmission::create($data);
         }
 
         $this->dispatch('closeFormModal');
@@ -218,7 +218,7 @@ class ContractEnergyManager extends Component
 
     public function updateStatus(int $id, string $status): void
     {
-        $doc = ContractEnergy::findOrFail($id);
+        $doc = ContractEmission::findOrFail($id);
         $user = auth()->user();
         $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
 
@@ -238,13 +238,13 @@ class ContractEnergyManager extends Component
             $updateData['submitted_at'] = now()->toDateString();
         }
 
-        ContractEnergy::findOrFail($id)->update($updateData);
+        ContractEmission::findOrFail($id)->update($updateData);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình trạng!']);
     }
 
     public function delete(int $id): void
     {
-        $doc = ContractEnergy::findOrFail($id);
+        $doc = ContractEmission::findOrFail($id);
         $user = auth()->user();
         $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
 
@@ -277,7 +277,7 @@ class ContractEnergyManager extends Component
         $deletedCount = 0;
         $skippedCount = 0;
 
-        $docs = ContractEnergy::whereIn('id', $selectedIds)->get();
+        $docs = ContractEmission::whereIn('id', $selectedIds)->get();
         foreach ($docs as $doc) {
             if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
                 $skippedCount++;
@@ -306,7 +306,7 @@ class ContractEnergyManager extends Component
 
     public function viewDetail(int $id): void
     {
-        $this->selectedDoc = ContractEnergy::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
+        $this->selectedDoc = ContractEmission::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
         if ($this->selectedDoc) {
             $this->progressNotes = ContractProgressNote::where('contract_type', 'energy')
                 ->where('contract_id', $id)
@@ -321,7 +321,7 @@ class ContractEnergyManager extends Component
     public function openAssign(int $id): void
     {
         $this->assignContractId = $id;
-        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractEnergy::class)
+        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractEmission::class)
             ->where('assignable_id', $id)
             ->pluck('user_id')
             ->toArray();
@@ -330,19 +330,19 @@ class ContractEnergyManager extends Component
 
     public function saveAssign(): void
     {
-        ContractAssignment::where('assignable_type', ContractEnergy::class)
+        ContractAssignment::where('assignable_type', ContractEmission::class)
             ->where('assignable_id', $this->assignContractId)
             ->delete();
         foreach ($this->assignUserIds as $userId) {
             ContractAssignment::create([
-                'assignable_type' => ContractEnergy::class,
+                'assignable_type' => ContractEmission::class,
                 'assignable_id'   => $this->assignContractId,
                 'user_id'         => (int) $userId,
                 'assigned_by'     => auth()->id(),
             ]);
         }
         // Gửi thông báo đến users được giao
-        $contract = ContractEnergy::with('customer')->find($this->assignContractId);
+        $contract = ContractEmission::with('customer')->find($this->assignContractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
         foreach ($this->assignUserIds as $userId) {
             $user = User::find($userId);
@@ -374,11 +374,11 @@ class ContractEnergyManager extends Component
             ->get();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
 
-        $contract = ContractEnergy::with('customer')->find($contractId);
+        $contract = ContractEmission::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
         $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))->get();
 
-        $assignmentUserIds = ContractAssignment::where('assignable_type', ContractEnergy::class)
+        $assignmentUserIds = ContractAssignment::where('assignable_type', ContractEmission::class)
             ->where('assignable_id', $contractId)
             ->get(['user_id', 'assigned_by'])
             ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
@@ -471,7 +471,7 @@ class ContractEnergyManager extends Component
         $isRestrictedSales = $user->hasRole('kinh-doanh')
             && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
 
-        $query = ContractEnergy::with(['customer', 'staff', 'department'])
+        $query = ContractEmission::with(['customer', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -519,7 +519,7 @@ class ContractEnergyManager extends Component
         $isRestrictedSales = $user->hasRole('kinh-doanh')
             && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
 
-        $query = ContractEnergy::with(['customer', 'staff', 'department', 'assignments.user'])
+        $query = ContractEmission::with(['customer', 'staff', 'department', 'assignments.user'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -560,15 +560,15 @@ class ContractEnergyManager extends Component
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', ['tu-van']))->orderBy('name')->get(),
-            'provinces'          => ContractEnergy::whereNotNull('province')->where('province', '!=', '')
+            'provinces'          => ContractEmission::whereNotNull('province')->where('province', '!=', '')
                 ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'       => self::ALLOWED_STATUSES,
-            'renewal_statuses'   => ContractEnergy::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'renewal_statuses'   => ContractEmission::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
-            'loai_dich_vu_options' => ContractEnergy::SERVICE_TYPES,
+            'loai_dich_vu_options' => ContractEmission::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
-            'info_sources' => ContractEnergy::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
-            'parentContracts' => ContractEnergy::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
+            'info_sources' => ContractEmission::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
+            'parentContracts' => ContractEmission::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Phát thải & Năng lượng']);
     }
 }

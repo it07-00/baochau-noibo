@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RenewalSales extends Model
+class SalesRenewal extends Model
 {
     use HasFactory;
+
+    protected $table = 'renewal_sales';
 
     protected $fillable = [
         'contract_number',

@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\RenewalSales;
-use App\Models\ProgressiveSales;
+use App\Models\SalesRenewal;
+use App\Models\SalesProgressive;
 use Livewire\Component;
 
 class SalesOverviewReport extends Component
@@ -22,13 +22,13 @@ class SalesOverviewReport extends Component
             $quarters[$q] = ['renewal' => 0, 'progressive' => 0];
         }
 
-        foreach (RenewalSales::whereYear('sales_month', $this->year)
+        foreach (SalesRenewal::whereYear('sales_month', $this->year)
             ->selectRaw('QUARTER(sales_month) as q, SUM(sales_amount) as total')
             ->groupBy('q')->get() as $r) {
             $quarters[$r->q]['renewal'] = (float) $r->total;
         }
 
-        foreach (ProgressiveSales::whereYear('sales_month', $this->year)
+        foreach (SalesProgressive::whereYear('sales_month', $this->year)
             ->selectRaw('QUARTER(sales_month) as q, SUM(amount) as total')
             ->groupBy('q')->get() as $r) {
             $quarters[$r->q]['progressive'] = (float) $r->total;
@@ -36,8 +36,8 @@ class SalesOverviewReport extends Component
 
         $prevYear    = $this->year - 1;
         $prevTotals  = [
-            'renewal'     => (float) RenewalSales::whereYear('sales_month', $prevYear)->sum('sales_amount'),
-            'progressive' => (float) ProgressiveSales::whereYear('sales_month', $prevYear)->sum('amount'),
+            'renewal'     => (float) SalesRenewal::whereYear('sales_month', $prevYear)->sum('sales_amount'),
+            'progressive' => (float) SalesProgressive::whereYear('sales_month', $prevYear)->sum('amount'),
         ];
         $prevTotals['grand'] = array_sum($prevTotals);
 

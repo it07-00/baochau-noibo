@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ContractConsulting;
+use App\Models\ContractLegal;
 use App\Models\ContractWaste;
 use App\Models\Customer;
-use App\Models\ProgressiveSales;
-use App\Models\RenewalSales;
+use App\Models\SalesProgressive;
+use App\Models\SalesRenewal;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -20,20 +20,20 @@ class DashboardController extends Controller
         // ── KPI ────────────────────────────────────────
         $totalCustomers = Customer::count();
 
-        $salesThisMonth = (float) RenewalSales::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('sales_amount')
-                        + (float) ProgressiveSales::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('amount');
+        $salesThisMonth = (float) SalesRenewal::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('sales_amount')
+                        + (float) SalesProgressive::whereYear('sales_month', $year)->whereMonth('sales_month', $month)->sum('amount');
 
-        $salesThisYear = (float) RenewalSales::whereYear('sales_month', $year)->sum('sales_amount')
-                       + (float) ProgressiveSales::whereYear('sales_month', $year)->sum('amount');
+        $salesThisYear = (float) SalesRenewal::whereYear('sales_month', $year)->sum('sales_amount')
+                       + (float) SalesProgressive::whereYear('sales_month', $year)->sum('amount');
 
         $contractsThisYear = ContractWaste::whereYear('signed_at', $year)->count()
-                           + ContractConsulting::whereYear('signed_at', $year)->count();
+                           + ContractLegal::whereYear('signed_at', $year)->count();
 
         // ── Doanh số theo tháng ─────────────────────────
-        $rM = RenewalSales::whereYear('sales_month', $year)
+        $rM = SalesRenewal::whereYear('sales_month', $year)
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as val')
             ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
-        $pM = ProgressiveSales::whereYear('sales_month', $year)
+        $pM = SalesProgressive::whereYear('sales_month', $year)
             ->selectRaw('MONTH(sales_month) as m, SUM(amount) as val')
             ->groupByRaw('MONTH(sales_month)')->get()->keyBy('m');
 
@@ -48,8 +48,8 @@ class DashboardController extends Controller
         // ── Top 5 nhân viên kinh doanh ───────────────────
         $topStaff = User::role('kinh-doanh')->get()
             ->map(function ($user) use ($year) {
-                $total = (float) RenewalSales::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('sales_amount')
-                       + (float) ProgressiveSales::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('amount');
+                $total = (float) SalesRenewal::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('sales_amount')
+                       + (float) SalesProgressive::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('amount');
                 return ['name' => $user->name, 'total' => $total];
             })
             ->sortByDesc('total')
@@ -72,7 +72,7 @@ class DashboardController extends Controller
                 'signed_at'   => $c->signed_at,
             ]);
 
-        $recentConsulting = ContractConsulting::with('customer', 'staff')
+        $recentConsulting = ContractLegal::with('customer', 'staff')
             ->whereNotNull('signed_at')
             ->latest('signed_at')
             ->limit(6)

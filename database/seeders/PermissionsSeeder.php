@@ -130,9 +130,10 @@ class PermissionsSeeder extends Seeder
                 'users.view', 'users.create', 'users.edit', 'users.delete',
                 'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
                 'settings.view', 'settings.edit',
-                // GĐ không truy cập trực tiếp BC bộ phận (TV, KT) và postal admin
-                'reports-consulting.view',
-                'reports-technical.view',
+                // GĐ không truy cập bộ phận kinh doanh/tư vấn và postal admin
+                'consulting-requests.view',
+                'technical-requests.view',
+                'marketing-reports.view',
                 'mail-delivery-admin.view',
             ])->pluck('name')->toArray()
         );

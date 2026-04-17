@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
 use App\Models\ContractPaymentSchedule;
-use App\Models\ContractProject;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\User;
@@ -21,20 +21,20 @@ class SalesRevenueReport extends Component
 
     protected array $contractTypeMap = [
         'waste'          => ContractWaste::class,
-        'consulting'     => ContractConsulting::class,
-        'project'        => ContractProject::class,
-        'commercial'     => ContractCommercial::class,
+        'consulting'     => ContractLegal::class,
+        'project'        => ContractTechnical::class,
+        'commercial'     => ContractResearch::class,
         'sustainability' => ContractSustainability::class,
-        'energy'         => ContractEnergy::class,
+        'energy'         => ContractEmission::class,
     ];
 
     protected array $contractTypeLabels = [
         ContractWaste::class          => 'Chất thải',
-        ContractConsulting::class      => 'Tư vấn',
-        ContractProject::class         => 'Dự án',
-        ContractCommercial::class      => 'Thương mại',
+        ContractLegal::class      => 'Tư vấn',
+        ContractTechnical::class         => 'Dự án',
+        ContractResearch::class      => 'Thương mại',
         ContractSustainability::class  => 'Bền vững',
-        ContractEnergy::class          => 'Năng lượng',
+        ContractEmission::class          => 'Năng lượng',
     ];
 
     public function mount(): void

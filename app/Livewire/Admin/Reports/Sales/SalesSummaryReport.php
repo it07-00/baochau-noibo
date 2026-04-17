@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
 use App\Models\ContractPaymentSchedule;
-use App\Models\ContractProject;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\User;
@@ -17,14 +17,24 @@ class SalesSummaryReport extends Component
 {
     public int $year;
     public string $filter_staff = '';
+    public int $filter_month = 0;
 
     protected array $contractModelClasses = [
         ContractWaste::class,
-        ContractConsulting::class,
-        ContractProject::class,
-        ContractCommercial::class,
+        ContractLegal::class,
+        ContractTechnical::class,
+        ContractResearch::class,
         ContractSustainability::class,
-        ContractEnergy::class,
+        ContractEmission::class,
+    ];
+
+    protected array $contractTypeLabels = [
+        ContractWaste::class          => 'Chất thải & Tiếng ồn',
+        ContractLegal::class     => 'Pháp lý & Hồ sơ MT',
+        ContractTechnical::class        => 'Kỹ thuật & Ứng phó SC',
+        ContractResearch::class     => 'NC & CĐ Công nghệ',
+        ContractSustainability::class => 'TV & BC PTBV',
+        ContractEmission::class         => 'Phát thải & Năng lượng',
     ];
 
     public function mount(): void
@@ -37,39 +47,45 @@ class SalesSummaryReport extends Component
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
             $months[$m] = [
-                'renewal' => 0,
-                'progressive' => 0,
-                'contract_total' => 0,
-                'payment_due' => 0,
-                'payment_paid' => 0,
+                'renewal'          => 0,
+                'progressive'      => 0,
+                'contract_total'   => 0,
+                'renewal_count'    => 0,
+                'progressive_count'=> 0,
+                'payment_due'      => 0,
+                'payment_paid'     => 0,
             ];
         }
 
-        $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+        $salesStaffIds  = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
         $targetStaffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
 
         if (!empty($targetStaffIds)) {
             foreach ($this->contractModelClasses as $modelClass) {
+                // DS Tái ký — tổng tiền
                 foreach ($modelClass::query()
                     ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where('is_renewal', true)
-                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total')
+                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total, COUNT(*) as cnt')
                     ->groupBy('m')
                     ->get() as $r) {
-                    $months[(int) $r->m]['renewal'] += (float) $r->total;
+                    $months[(int) $r->m]['renewal']       += (float) $r->total;
+                    $months[(int) $r->m]['renewal_count'] += (int) $r->cnt;
                 }
 
+                // DS HĐ mới — tổng tiền
                 foreach ($modelClass::query()
                     ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where(function ($q) {
                         $q->where('is_renewal', false)->orWhereNull('is_renewal');
                     })
-                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total')
+                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total, COUNT(*) as cnt')
                     ->groupBy('m')
                     ->get() as $r) {
-                    $months[(int) $r->m]['progressive'] += (float) $r->total;
+                    $months[(int) $r->m]['progressive']       += (float) $r->total;
+                    $months[(int) $r->m]['progressive_count'] += (int) $r->cnt;
                 }
             }
         }
@@ -90,7 +106,6 @@ class SalesSummaryReport extends Component
             $paymentScheduleQuery->whereRaw('1 = 0');
         }
 
-        // ── Tiến độ thu tiền ────────────────────────
         foreach ((clone $paymentScheduleQuery)->whereYear('due_date', $this->year)
             ->selectRaw('MONTH(due_date) as m, SUM(amount) as total')
             ->groupBy('m')->get() as $r) {
@@ -108,13 +123,39 @@ class SalesSummaryReport extends Component
         }
 
         $totals = [
-            'renewal' => array_sum(array_column($months, 'renewal')),
-            'progressive' => array_sum(array_column($months, 'progressive')),
-            'contract_total' => array_sum(array_column($months, 'contract_total')),
-            'payment_due' => array_sum(array_column($months, 'payment_due')),
-            'payment_paid' => array_sum(array_column($months, 'payment_paid')),
+            'renewal'          => array_sum(array_column($months, 'renewal')),
+            'progressive'      => array_sum(array_column($months, 'progressive')),
+            'contract_total'   => array_sum(array_column($months, 'contract_total')),
+            'renewal_count'    => array_sum(array_column($months, 'renewal_count')),
+            'progressive_count'=> array_sum(array_column($months, 'progressive_count')),
+            'payment_due'      => array_sum(array_column($months, 'payment_due')),
+            'payment_paid'     => array_sum(array_column($months, 'payment_paid')),
         ];
         $totals['grand'] = $totals['contract_total'];
+
+        // ── Chi tiết theo tháng được chọn ───────────────
+        $detail = collect();
+        if ($this->filter_month > 0 && !empty($targetStaffIds)) {
+            foreach ($this->contractModelClasses as $modelClass) {
+                $contracts = $modelClass::query()
+                    ->with('customer')
+                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                    ->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->filter_month)
+                    ->whereIn('staff_id', $targetStaffIds)
+                    ->get();
+
+                foreach ($contracts as $contract) {
+                    $detail->push([
+                        'customer'   => $contract->customer?->name ?? '—',
+                        'type'       => $this->contractTypeLabels[$modelClass],
+                        'value'      => (float) $contract->value,
+                        'is_renewal' => (bool) $contract->is_renewal,
+                        'date'       => $contract->submitted_at ?? $contract->signed_at,
+                    ]);
+                }
+            }
+            $detail = $detail->sortByDesc('date')->values();
+        }
 
         $staffs = User::query()->whereIn('id', $salesStaffIds)->orderBy('name')->get();
 
@@ -123,6 +164,7 @@ class SalesSummaryReport extends Component
             'totals'  => $totals,
             'staffs'  => $staffs,
             'years'   => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'detail'  => $detail,
         ])->layout('admin.layouts.app', ['title' => 'Bảng tổng kết doanh số']);
     }
 }

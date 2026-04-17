@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
-use App\Models\ContractProject;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\Customer;
@@ -94,7 +94,7 @@ class ContractSampleSeeder extends Seeder
         }
 
         // ============================================================
-        // 2. HỢP ĐỒNG TƯ VẤN (ContractConsulting) — 10 bản ghi
+        // 2. HỢP ĐỒNG TƯ VẤN (ContractLegal) — 10 bản ghi
         // ============================================================
         $consultingData = [
             ['customer' => 'CÔNG TY TNHH KHU CÔNG NGHIỆP THÀNH ĐẠT',       'shd_bc' => 'TV-2025-001', 'value' => 45000000, 'commission' => 5000000, 'revenue' => 38000000, 'signed_at' => '2025-01-08', 'province' => 'TP. Hồ Chí Minh', 'loai_dich_vu' => 'Tư vấn, lập ĐTM, GPMT, DKMT',           'workflow_status' => 'finished',               'status' => 'HOÀN THÀNH',      'info_source' => 'TÁI KÝ'],
@@ -111,7 +111,7 @@ class ContractSampleSeeder extends Seeder
 
         foreach ($consultingData as $row) {
             $cus = Customer::firstOrCreate(['name' => $row['customer']], ['name' => $row['customer']]);
-            ContractConsulting::create([
+            ContractLegal::create([
                 'shd_bc'         => $row['shd_bc'],
                 'customer_id'    => $cus->id,
                 'staff_id'       => $staffKD->id,
@@ -135,7 +135,7 @@ class ContractSampleSeeder extends Seeder
         }
 
         // ============================================================
-        // 3. HỢP ĐỒNG THƯƠNG MẠI (ContractCommercial) — 10 bản ghi
+        // 3. HỢP ĐỒNG THƯƠNG MẠI (ContractResearch) — 10 bản ghi
         // ============================================================
         $commercialData = [
             ['customer' => 'CÔNG TY CP NGHIÊN CỨU VÀ ỨNG DỤNG MÔI TRƯỜNG XANH',  'shd_bc' => 'TM-2025-001', 'value' => 85000000,  'commission' => 9000000,  'revenue' => 72000000, 'signed_at' => '2025-01-20', 'province' => 'Hà Nội',             'loai_dich_vu' => 'Nghiên cứu khoa học về môi trường',   'status' => 'HOÀN THÀNH',      'info_source' => 'MỚI'],
@@ -152,7 +152,7 @@ class ContractSampleSeeder extends Seeder
 
         foreach ($commercialData as $row) {
             $cus = Customer::firstOrCreate(['name' => $row['customer']], ['name' => $row['customer']]);
-            ContractCommercial::create([
+            ContractResearch::create([
                 'shd_bc'         => $row['shd_bc'],
                 'customer_id'    => $cus->id,
                 'staff_id'       => $staffValue = ($row['info_source'] === 'TÁI KÝ' ? $staffTP->id : $staffKD->id),
@@ -175,7 +175,7 @@ class ContractSampleSeeder extends Seeder
         }
 
         // ============================================================
-        // 4. HỢP ĐỒNG DỰ ÁN (ContractProject) — 10 bản ghi
+        // 4. HỢP ĐỒNG DỰ ÁN (ContractTechnical) — 10 bản ghi
         // ============================================================
         $projectData = [
             ['customer' => 'CÔNG TY TNHH SẢN XUẤT GIẤY KBP LONG AN',              'shd_bc' => 'DA-2025-001', 'value' => 350000000,  'commission' => 0,         'revenue' => 350000000, 'signed_at' => '2025-02-01', 'province' => 'Long An',        'loai_dich_vu' => 'Tư vấn, thiết kế và thi công hệ thống xử lý khí thải, nước thải', 'status' => 'HOÀN THÀNH',      'info_source' => 'MỚI'],
@@ -192,7 +192,7 @@ class ContractSampleSeeder extends Seeder
 
         foreach ($projectData as $row) {
             $cus = Customer::firstOrCreate(['name' => $row['customer']], ['name' => $row['customer']]);
-            ContractProject::create([
+            ContractTechnical::create([
                 'shd_bc'         => $row['shd_bc'],
                 'customer_id'    => $cus->id,
                 'staff_id'       => $staffKD->id,
@@ -255,7 +255,7 @@ class ContractSampleSeeder extends Seeder
         }
 
         // ============================================================
-        // 6. HỢP ĐỒNG NĂNG LƯỢNG (ContractEnergy) — 10 bản ghi
+        // 6. HỢP ĐỒNG NĂNG LƯỢNG (ContractEmission) — 10 bản ghi
         // ============================================================
         $energyData = [
             ['customer' => 'CÔNG TY TNHH ERICSSON VIỆT NAM',                   'shd_bc' => 'NL-2025-001', 'value' => 95000000,  'commission' => 10000000, 'revenue' => 80500000,  'signed_at' => '2025-01-15', 'province' => 'Hà Nội',             'loai_dich_vu' => 'Kiểm kê khí nhà kính NĐ 06/2022 và ISO 14064-1',                                              'status' => 'ĐANG THỰC HIỆN', 'info_source' => 'MỚI'],
@@ -272,7 +272,7 @@ class ContractSampleSeeder extends Seeder
 
         foreach ($energyData as $row) {
             $cus = Customer::firstOrCreate(['name' => $row['customer']], ['name' => $row['customer']]);
-            ContractEnergy::create([
+            ContractEmission::create([
                 'shd_bc'         => $row['shd_bc'],
                 'customer_id'    => $cus->id,
                 'staff_id'       => $staffTV->id,

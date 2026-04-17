@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\RenewalSales;
+use App\Models\SalesRenewal;
 use App\Models\User;
 use Livewire\Component;
 
@@ -33,7 +33,7 @@ class PersonalRenewalReport extends Component
         }
 
         if ($userId) {
-            RenewalSales::whereYear('sales_month', $this->year)
+            SalesRenewal::whereYear('sales_month', $this->year)
                 ->where('user_id', $userId)
                 ->selectRaw('MONTH(sales_month) as m, COUNT(*) as cnt, SUM(sales_value) as sv, SUM(sales_amount) as sa')
                 ->groupBy('m')->get()
@@ -47,7 +47,7 @@ class PersonalRenewalReport extends Component
             $userDetail = null;
             $months     = [];
             $allUsers   = User::orderBy('name')->get()->map(function ($user) {
-                $rows = RenewalSales::whereYear('sales_month', $this->year)
+                $rows = SalesRenewal::whereYear('sales_month', $this->year)
                     ->where('user_id', $user->id)
                     ->selectRaw('COUNT(*) as cnt, SUM(sales_value) as sv, SUM(sales_amount) as sa')
                     ->first();

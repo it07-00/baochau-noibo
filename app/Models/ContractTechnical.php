@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class ContractProject extends Model
+class ContractTechnical extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
+
+    protected $table = 'contract_projects';
 
     public function getActivitylogOptions(): LogOptions
     {

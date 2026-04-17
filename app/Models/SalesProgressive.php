@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProgressiveSales extends Model
+class SalesProgressive extends Model
 {
     use HasFactory;
+
+    protected $table = 'progressive_sales';
 
     protected $fillable = [
         'payment_schedule_id',

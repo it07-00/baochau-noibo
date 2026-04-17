@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Sales;
 
-use App\Models\RenewalSales;
+use App\Models\SalesRenewal;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -31,7 +31,7 @@ class RenewalSalesManager extends Component
 
     public function render()
     {
-        $query = RenewalSales::query()
+        $query = SalesRenewal::query()
             ->when($this->search, fn($q) => $q->where('contract_number', 'like', '%' . $this->search . '%'))
             ->when($this->filter_month, fn($q) => $q->whereDate('sales_month', $this->filter_month . '-01'))
             ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
@@ -39,7 +39,7 @@ class RenewalSalesManager extends Component
 
         return view('livewire.admin.sales.renewal-sales-manager', [
             'items' => $query->paginate(15),
-            'statuses' => RenewalSales::distinct()->pluck('status')->filter()->values(),
+            'statuses' => SalesRenewal::distinct()->pluck('status')->filter()->values(),
         ])->layout('admin.layouts.app');
     }
 
@@ -102,10 +102,10 @@ class RenewalSalesManager extends Component
         }
 
         if ($this->selectedId) {
-            RenewalSales::findOrFail($this->selectedId)->update($data);
+            SalesRenewal::findOrFail($this->selectedId)->update($data);
             $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Cập nhật thành công!']]);
         } else {
-            RenewalSales::create($data);
+            SalesRenewal::create($data);
             $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Lưu thành công!']]);
         }
 
@@ -115,7 +115,7 @@ class RenewalSalesManager extends Component
 
     public function edit($id)
     {
-        $item = RenewalSales::findOrFail($id);
+        $item = SalesRenewal::findOrFail($id);
         $this->selectedId = $id;
         $this->contract_number = $item->contract_number;
         $this->sales_month = $item->sales_month->format('Y-m');
@@ -134,7 +134,7 @@ class RenewalSalesManager extends Component
     {
         abort_unless(auth()->user()->can('renewal-sales.delete'), 403);
 
-        RenewalSales::findOrFail($id)->delete();
+        SalesRenewal::findOrFail($id)->delete();
         $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Xóa thành công!']]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Consulting;
 
-use App\Models\ContractConsulting;
+use App\Models\ContractLegal;
 use Livewire\Component;
 
 class ConsultingGeneralReport extends Component
@@ -19,14 +19,14 @@ class ConsultingGeneralReport extends Component
 
     public function render()
     {
-        $byService = ContractConsulting::whereYear('signed_at', $this->year)
+        $byService = ContractLegal::whereYear('signed_at', $this->year)
             ->selectRaw('loai_dich_vu, COUNT(*) as count, SUM(value) as total_value,
                 SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
                 SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
             ->groupBy('loai_dich_vu')
             ->get();
 
-        $monthRows = ContractConsulting::whereYear('signed_at', $this->year)
+        $monthRows = ContractLegal::whereYear('signed_at', $this->year)
             ->when($this->filter_service, fn($q) => $q->where('loai_dich_vu', $this->filter_service))
             ->selectRaw('MONTH(signed_at) as m, COUNT(*) as count, SUM(value) as total_value,
                 SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
@@ -52,7 +52,7 @@ class ConsultingGeneralReport extends Component
             'active'    => array_sum(array_column($monthly, 'active')),
         ];
 
-        $serviceTypes = ContractConsulting::SERVICE_TYPES;
+        $serviceTypes = ContractLegal::SERVICE_TYPES;
 
         return view('livewire.admin.reports.consulting.consulting-general-report',
             compact('byService', 'monthly', 'totals', 'serviceTypes'))

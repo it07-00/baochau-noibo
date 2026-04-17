@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\ContractPaymentSchedule;
-use App\Models\ProgressiveSales;
+use App\Models\SalesProgressive;
 
 class ContractPaymentScheduleObserver
 {
@@ -19,7 +19,7 @@ class ContractPaymentScheduleObserver
 
     public function deleted(ContractPaymentSchedule $schedule): void
     {
-        ProgressiveSales::where('payment_schedule_id', $schedule->id)->delete();
+        SalesProgressive::where('payment_schedule_id', $schedule->id)->delete();
     }
 
     // ────────────────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ class ContractPaymentScheduleObserver
             default   => 'Chờ thanh toán',
         };
 
-        ProgressiveSales::updateOrCreate(
+        SalesProgressive::updateOrCreate(
             ['payment_schedule_id' => $schedule->id],
             [
                 'contract_number' => $contractNumber,

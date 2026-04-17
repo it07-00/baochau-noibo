@@ -34,22 +34,22 @@ class Customer extends Model
 
     public function contractsConsulting()
     {
-        return $this->hasMany(ContractConsulting::class);
+        return $this->hasMany(ContractLegal::class);
     }
 
     public function contractsCommercial()
     {
-        return $this->hasMany(ContractCommercial::class);
+        return $this->hasMany(ContractResearch::class);
     }
 
     public function contractsProject()
     {
-        return $this->hasMany(ContractProject::class);
+        return $this->hasMany(ContractTechnical::class);
     }
 
     public function contractsEnergy()
     {
-        return $this->hasMany(ContractEnergy::class);
+        return $this->hasMany(ContractEmission::class);
     }
 
     public function contractsSustainability()

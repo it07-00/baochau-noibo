@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
-use App\Models\ContractProject;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
-use App\Models\ProgressiveSales;
-use App\Models\RenewalSales;
+use App\Models\SalesProgressive;
+use App\Models\SalesRenewal;
 use App\Models\SalesTarget;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -22,11 +22,11 @@ class PersonalSalesReport extends Component
 
     protected array $contractModels = [
         ContractWaste::class,
-        ContractConsulting::class,
-        ContractProject::class,
-        ContractCommercial::class,
+        ContractLegal::class,
+        ContractTechnical::class,
+        ContractResearch::class,
         ContractSustainability::class,
-        ContractEnergy::class,
+        ContractEmission::class,
     ];
 
     private function canViewAllSalesStaff(): bool
@@ -87,7 +87,7 @@ class PersonalSalesReport extends Component
             }
         }
 
-        $potentialByMonth = RenewalSales::query()
+        $potentialByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
                 !empty($targetStaffIds),
@@ -100,7 +100,7 @@ class PersonalSalesReport extends Component
             ->get()
             ->keyBy('m');
 
-        $sampleContractByMonth = RenewalSales::query()
+        $sampleContractByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
                 !empty($targetStaffIds),
@@ -113,7 +113,7 @@ class PersonalSalesReport extends Component
             ->get()
             ->keyBy('m');
 
-        $officialContractByMonth = RenewalSales::query()
+        $officialContractByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
                 !empty($targetStaffIds),
@@ -126,7 +126,7 @@ class PersonalSalesReport extends Component
             ->get()
             ->keyBy('m');
 
-        $renewalByMonth = RenewalSales::query()
+        $renewalByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
                 !empty($targetStaffIds),
@@ -138,7 +138,7 @@ class PersonalSalesReport extends Component
             ->get()
             ->keyBy('m');
 
-        $progressiveByMonth = ProgressiveSales::query()
+        $progressiveByMonth = SalesProgressive::query()
             ->whereYear('sales_month', $this->year)
             ->when(
                 !empty($targetStaffIds),

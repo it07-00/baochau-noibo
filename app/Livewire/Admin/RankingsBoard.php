@@ -3,13 +3,13 @@
 namespace App\Livewire\Admin;
 
 use App\Models\ContractAssignment;
-use App\Models\ContractConsulting;
+use App\Models\ContractLegal;
 use App\Models\ContractPaymentSchedule;
 use App\Models\ContractWaste;
-use App\Models\ContractProject;
-use App\Models\ContractCommercial;
+use App\Models\ContractTechnical;
+use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
-use App\Models\ContractEnergy;
+use App\Models\ContractEmission;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -45,11 +45,11 @@ class RankingsBoard extends Component
             // ── Xếp hạng nhân viên kinh doanh theo tổng tiền của 6 loại HĐ ──
             $contractModels = [
                 ContractWaste::class,
-                ContractConsulting::class,
-                ContractProject::class,
-                ContractCommercial::class,
+                ContractLegal::class,
+                ContractTechnical::class,
+                ContractResearch::class,
                 ContractSustainability::class,
-                ContractEnergy::class,
+                ContractEmission::class,
             ];
 
             $totalsByStaff = [];
@@ -167,11 +167,11 @@ class RankingsBoard extends Component
             // ── Xếp hạng nhân viên tư vấn (qua ContractAssignment, tất cả loại HĐ) ──
             $allContractTypes = [
                 ContractWaste::class,
-                ContractConsulting::class,
-                ContractProject::class,
-                ContractCommercial::class,
+                ContractLegal::class,
+                ContractTechnical::class,
+                ContractResearch::class,
                 ContractSustainability::class,
-                ContractEnergy::class,
+                ContractEmission::class,
             ];
 
             $consultingRankings = User::role('tu-van')->get()
@@ -215,7 +215,7 @@ class RankingsBoard extends Component
             $technicalRankings = User::role('ky-thuat')->get()
                 ->map(function ($user) {
                     $assignments = ContractAssignment::where('user_id', $user->id)
-                        ->where('assignable_type', ContractConsulting::class)
+                        ->where('assignable_type', ContractLegal::class)
                         ->pluck('assignable_id');
 
                     if ($assignments->isEmpty()) {
@@ -227,12 +227,12 @@ class RankingsBoard extends Component
                         ];
                     }
 
-                    $contracts = ContractConsulting::whereIn('id', $assignments)
+                    $contracts = ContractLegal::whereIn('id', $assignments)
                         ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                         ->get();
 
                     $contractIds = $contracts->pluck('id');
-                    $finishedIds = \App\Models\ContractWorkflowStep::where('contract_type', ContractConsulting::class)
+                    $finishedIds = \App\Models\ContractWorkflowStep::where('contract_type', ContractLegal::class)
                         ->whereIn('contract_id', $contractIds)
                         ->where('step_name', 'finished')
                         ->pluck('contract_id')

@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
-use App\Models\ContractProject;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\ContractAssignment;
@@ -233,10 +233,10 @@ class StatisticsBoard extends Component
 
         $contractTypes = [
             'Chất thải'   => ContractWaste::class,
-            'Tư vấn'      => ContractConsulting::class,
-            'Dự án'       => ContractProject::class,
-            'Thương mại'  => ContractCommercial::class,
-            'Năng lượng'  => ContractEnergy::class,
+            'Tư vấn'      => ContractLegal::class,
+            'Dự án'       => ContractTechnical::class,
+            'Thương mại'  => ContractResearch::class,
+            'Năng lượng'  => ContractEmission::class,
             'Bền vững'    => ContractSustainability::class,
         ];
 
@@ -302,11 +302,11 @@ class StatisticsBoard extends Component
         // ── Theo tháng: tất cả 6 loại HĐ ký ─────────
         $monthlyModels = [
             ContractWaste::class,
-            ContractConsulting::class,
-            ContractProject::class,
-            ContractCommercial::class,
+            ContractLegal::class,
+            ContractTechnical::class,
+            ContractResearch::class,
             ContractSustainability::class,
-            ContractEnergy::class,
+            ContractEmission::class,
         ];
 
         $contractMonthly = [];
@@ -454,11 +454,11 @@ class StatisticsBoard extends Component
 
         // ── Biểu đồ tư vấn: số dự án theo loại / quý hoặc cả năm ──
         $consultingTypes = [
-            'Tư vấn'    => ContractConsulting::class,
-            'Dự án'     => ContractProject::class,
-            'Thương mại'=> ContractCommercial::class,
+            'Tư vấn'    => ContractLegal::class,
+            'Dự án'     => ContractTechnical::class,
+            'Thương mại'=> ContractResearch::class,
             'Bền vững'  => ContractSustainability::class,
-            'Năng lượng'=> ContractEnergy::class,
+            'Năng lượng'=> ContractEmission::class,
         ];
         $consultingChartData = [];
         if ($canSeeConsulting) {
@@ -503,7 +503,7 @@ class StatisticsBoard extends Component
         if ($canSeeTechnical) {
             $techUsers = User::role('ky-thuat')->get();
             $typeLabels = [
-                ContractConsulting::class      => 'Pháp lý & Hồ sơ MT',
+                ContractLegal::class      => 'Pháp lý & Hồ sơ MT',
             ];
 
             foreach ($typeLabels as $modelClass => $label) {

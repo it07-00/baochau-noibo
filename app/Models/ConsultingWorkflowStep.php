@@ -22,7 +22,7 @@ class ConsultingWorkflowStep extends Model
 
     public function contract(): BelongsTo
     {
-        return $this->belongsTo(ContractConsulting::class, 'contract_id');
+        return $this->belongsTo(ContractLegal::class, 'contract_id');
     }
 
     public function user(): BelongsTo

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Technical;
 
-use App\Models\ContractConsulting;
+use App\Models\ContractLegal;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -51,7 +51,7 @@ class TechnicalFieldReport extends Component
     {
         $types = ['Quan trắc môi trường', 'Quan trắc môi trường lao động và phân loại lao động'];
 
-        return ContractConsulting::whereIn('loai_dich_vu', $types)
+        return ContractLegal::whereIn('loai_dich_vu', $types)
             ->whereYear('signed_at', $this->year)
             ->when($this->filter_service, fn ($q) => $q->where('loai_dich_vu', $this->filter_service))
             ->when($this->filter_status, fn ($q) => $q->where('status', $this->filter_status))

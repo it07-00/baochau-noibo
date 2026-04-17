@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Consulting;
 
-use App\Models\ContractConsulting;
+use App\Models\ContractLegal;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
@@ -41,7 +41,7 @@ class ConsultingServiceReport extends Component
         };
 
         if ($this->page_context !== 'all') {
-            $this->filter_service = ContractConsulting::SERVICE_TYPES[0];
+            $this->filter_service = ContractLegal::SERVICE_TYPES[0];
         }
     }
 
@@ -52,7 +52,7 @@ class ConsultingServiceReport extends Component
 
     private function baseQuery()
     {
-        return ContractConsulting::whereYear('signed_at', $this->year)
+        return ContractLegal::whereYear('signed_at', $this->year)
             ->when($this->filter_service, fn($q) => $q->where('loai_dich_vu', $this->filter_service))
             ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
             ->when($this->filter_staff, fn($q) => $q->where(
@@ -74,7 +74,7 @@ class ConsultingServiceReport extends Component
             ->first();
 
         $staffs = User::orderBy('name')->get();
-        $serviceTypes = ContractConsulting::SERVICE_TYPES;
+        $serviceTypes = ContractLegal::SERVICE_TYPES;
 
         return view('livewire.admin.reports.consulting.consulting-service-report',
             compact('items', 'summary', 'staffs', 'serviceTypes'))

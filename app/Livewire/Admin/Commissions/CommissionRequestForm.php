@@ -4,11 +4,11 @@ namespace App\Livewire\Admin\Commissions;
 
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
-use App\Models\ContractConsulting;
-use App\Models\ContractProject;
-use App\Models\ContractCommercial;
+use App\Models\ContractLegal;
+use App\Models\ContractTechnical;
+use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
-use App\Models\ContractEnergy;
+use App\Models\ContractEmission;
 use App\Models\User;
 use App\Notifications\CommissionRequestSubmittedNotification;
 use Livewire\Component;

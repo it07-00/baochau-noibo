@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Admin\Sales;
 
-use App\Models\ContractCommercial;
-use App\Models\ContractConsulting;
-use App\Models\ContractEnergy;
-use App\Models\ContractProject;
+use App\Models\ContractResearch;
+use App\Models\ContractLegal;
+use App\Models\ContractEmission;
+use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\SalesTarget;
@@ -19,11 +19,11 @@ class SalesTargetRegistration extends Component
 
     protected array $contractModels = [
         ContractWaste::class,
-        ContractConsulting::class,
-        ContractProject::class,
-        ContractCommercial::class,
+        ContractLegal::class,
+        ContractTechnical::class,
+        ContractResearch::class,
         ContractSustainability::class,
-        ContractEnergy::class,
+        ContractEmission::class,
     ];
 
     public function mount(): void

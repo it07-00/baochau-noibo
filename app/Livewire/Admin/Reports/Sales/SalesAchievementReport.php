@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\RenewalSales;
-use App\Models\ProgressiveSales;
+use App\Models\SalesRenewal;
+use App\Models\SalesProgressive;
 use App\Models\User;
 use Livewire\Component;
 
@@ -32,11 +32,11 @@ class SalesAchievementReport extends Component
         $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
 
         $rankings = $staffs->map(function ($user) {
-            $rBase = RenewalSales::where('user_id', $user->id)
+            $rBase = SalesRenewal::where('user_id', $user->id)
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
 
-            $pBase = ProgressiveSales::where('user_id', $user->id)
+            $pBase = SalesProgressive::where('user_id', $user->id)
                 ->whereYear('sales_month', $this->year)
                 ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
 

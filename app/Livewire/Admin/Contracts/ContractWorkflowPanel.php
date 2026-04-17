@@ -20,11 +20,11 @@ class ContractWorkflowPanel extends Component
     // model class map
     protected array $modelMap = [
         'waste'          => \App\Models\ContractWaste::class,
-        'consulting'     => \App\Models\ContractConsulting::class,
-        'project'        => \App\Models\ContractProject::class,
-        'commercial'     => \App\Models\ContractCommercial::class,
+        'consulting'     => \App\Models\ContractLegal::class,
+        'project'        => \App\Models\ContractTechnical::class,
+        'commercial'     => \App\Models\ContractResearch::class,
         'sustainability' => \App\Models\ContractSustainability::class,
-        'energy'         => \App\Models\ContractEnergy::class,
+        'energy'         => \App\Models\ContractEmission::class,
     ];
 
     public array $uploadFiles = [];
