@@ -36,7 +36,6 @@
         {{-- COMPANY PROGRESS BAR --}}
         <div class="race-company-progress">
             <div class="race-progress-track">
-                <div class="race-progress-start">🇻🇳</div>
                 <div class="race-progress-bar-wrap">
                     <div class="race-progress-fill" style="width: {{ min($companyPct, 100) }}%"></div>
                     <div class="race-progress-label" style="left: {{ min($companyPct, 100) }}%">
@@ -45,7 +44,6 @@
                 </div>
                 <div class="race-progress-end">
                     <span>{{ number_format($companyTarget, 0, ',', '.') }}đ</span>
-                    🏁
                 </div>
             </div>
         </div>
@@ -69,62 +67,74 @@
                 @if($doanhSoRankings->isEmpty())
                     <div class="race-empty">Không có dữ liệu</div>
                 @else
-                    {{-- TOP 3 PODIUM --}}
+                    {{-- TOP 3 PODIUM WITH PEDESTALS --}}
                     @if($doanhSoRankings->count() >= 3)
                     <div class="race-podium">
                         {{-- #2 --}}
                         <div class="race-podium-slot race-podium-2">
                             @php $p = $doanhSoRankings[1]; @endphp
-                            <div class="race-avatar race-avatar-md race-border-silver">
-                                @if($p['avatar_url'])
-                                    <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
-                                @else
-                                    {{ raceInitials($p['name']) }}
-                                @endif
+                            <div class="race-avatar-wrap">
+                                <div class="race-avatar race-avatar-md race-border-silver">
+                                    @if($p['avatar_url'])
+                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @else
+                                        {{ raceInitials($p['name']) }}
+                                    @endif
+                                </div>
+                                <div class="race-medal race-medal-silver">2</div>
                             </div>
-                            <div class="race-medal race-medal-silver">2</div>
-                            <div class="race-podium-name">{{ $p['name'] }}</div>
-                            <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                            <div class="race-pedestal race-pedestal-2">
+                                <div class="race-podium-name">{{ $p['name'] }}</div>
+                                <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                            </div>
                         </div>
 
                         {{-- #1 --}}
                         <div class="race-podium-slot race-podium-1">
                             @php $p = $doanhSoRankings[0]; @endphp
                             <div class="race-crown">👑</div>
-                            <div class="race-avatar race-avatar-lg race-border-gold">
-                                @if($p['avatar_url'])
-                                    <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
-                                @else
-                                    {{ raceInitials($p['name']) }}
-                                @endif
+                            <div class="race-avatar-wrap">
+                                <div class="race-avatar race-avatar-lg race-border-gold">
+                                    @if($p['avatar_url'])
+                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @else
+                                        {{ raceInitials($p['name']) }}
+                                    @endif
+                                </div>
+                                <div class="race-medal race-medal-gold">1</div>
                             </div>
-                            <div class="race-medal race-medal-gold">1</div>
-                            <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
-                            <div class="race-podium-value race-value-gold">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                            <div class="race-pedestal race-pedestal-1">
+                                <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
+                                <div class="race-podium-value race-value-gold">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                            </div>
                         </div>
 
                         {{-- #3 --}}
                         <div class="race-podium-slot race-podium-3">
                             @php $p = $doanhSoRankings[2]; @endphp
-                            <div class="race-avatar race-avatar-md race-border-bronze">
-                                @if($p['avatar_url'])
-                                    <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
-                                @else
-                                    {{ raceInitials($p['name']) }}
-                                @endif
+                            <div class="race-avatar-wrap">
+                                <div class="race-avatar race-avatar-md race-border-bronze">
+                                    @if($p['avatar_url'])
+                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @else
+                                        {{ raceInitials($p['name']) }}
+                                    @endif
+                                </div>
+                                <div class="race-medal race-medal-bronze">3</div>
                             </div>
-                            <div class="race-medal race-medal-bronze">3</div>
-                            <div class="race-podium-name">{{ $p['name'] }}</div>
-                            <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                            <div class="race-pedestal race-pedestal-3">
+                                <div class="race-podium-name">{{ $p['name'] }}</div>
+                                <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                            </div>
                         </div>
                     </div>
                     @endif
 
                     {{-- REMAINING RANKS --}}
                     @foreach($doanhSoRankings->skip(3)->values() as $i => $row)
-                        @php $rank = $i + 4; $pct = $maxDoanhSo > 0 ? round($row['total'] / $maxDoanhSo * 100) : 0; @endphp
+                        @php $rank = $i + 4; @endphp
                         <div class="race-rank-card">
-                            <div class="race-rank-num">{{ $rank }}</div>
+                            <div class="race-rank-num">{{ $rank }}.</div>
                             <div class="race-avatar race-avatar-sm">
                                 @if($row['avatar_url'])
                                     <img src="{{ $row['avatar_url'] }}" alt="{{ $row['name'] }}">
@@ -132,13 +142,8 @@
                                     {{ raceInitials($row['name']) }}
                                 @endif
                             </div>
-                            <div class="race-card-info">
-                                <div class="race-card-name">{{ $row['name'] }}</div>
-                                <div class="race-card-value">{{ number_format($row['total'], 0, ',', '.') }}đ</div>
-                                <div class="race-progress-mini">
-                                    <div class="race-progress-mini-bar" style="width: {{ $pct }}%"></div>
-                                </div>
-                            </div>
+                            <div class="race-card-name">{{ $row['name'] }}</div>
+                            <div class="race-card-value">{{ number_format($row['total'], 0, ',', '.') }}đ</div>
                         </div>
                     @endforeach
                 @endif
@@ -153,62 +158,74 @@
                 @if($kpiRankings->isEmpty())
                     <div class="race-empty">Không có dữ liệu</div>
                 @else
-                    {{-- TOP 3 PODIUM --}}
+                    {{-- TOP 3 PODIUM WITH PEDESTALS --}}
                     @if($kpiRankings->count() >= 3)
                     <div class="race-podium">
                         {{-- #2 --}}
                         <div class="race-podium-slot race-podium-2">
                             @php $p = $kpiRankings[1]; @endphp
-                            <div class="race-avatar race-avatar-md race-border-silver">
-                                @if($p['avatar_url'])
-                                    <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
-                                @else
-                                    {{ raceInitials($p['name']) }}
-                                @endif
+                            <div class="race-avatar-wrap">
+                                <div class="race-avatar race-avatar-md race-border-silver">
+                                    @if($p['avatar_url'])
+                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @else
+                                        {{ raceInitials($p['name']) }}
+                                    @endif
+                                </div>
+                                <div class="race-medal race-medal-silver">2</div>
                             </div>
-                            <div class="race-medal race-medal-silver">2</div>
-                            <div class="race-podium-name">{{ $p['name'] }}</div>
-                            <div class="race-podium-value">{{ $p['pct'] }}%</div>
+                            <div class="race-pedestal race-pedestal-2">
+                                <div class="race-podium-name">{{ $p['name'] }}</div>
+                                <div class="race-podium-value">{{ $p['pct'] }}%</div>
+                            </div>
                         </div>
 
                         {{-- #1 --}}
                         <div class="race-podium-slot race-podium-1">
                             @php $p = $kpiRankings[0]; @endphp
                             <div class="race-crown">👑</div>
-                            <div class="race-avatar race-avatar-lg race-border-gold">
-                                @if($p['avatar_url'])
-                                    <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
-                                @else
-                                    {{ raceInitials($p['name']) }}
-                                @endif
+                            <div class="race-avatar-wrap">
+                                <div class="race-avatar race-avatar-lg race-border-gold">
+                                    @if($p['avatar_url'])
+                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @else
+                                        {{ raceInitials($p['name']) }}
+                                    @endif
+                                </div>
+                                <div class="race-medal race-medal-gold">1</div>
                             </div>
-                            <div class="race-medal race-medal-gold">1</div>
-                            <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
-                            <div class="race-podium-value race-value-gold">{{ $p['pct'] }}%</div>
+                            <div class="race-pedestal race-pedestal-1">
+                                <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
+                                <div class="race-podium-value race-value-gold">{{ $p['pct'] }}%</div>
+                            </div>
                         </div>
 
                         {{-- #3 --}}
                         <div class="race-podium-slot race-podium-3">
                             @php $p = $kpiRankings[2]; @endphp
-                            <div class="race-avatar race-avatar-md race-border-bronze">
-                                @if($p['avatar_url'])
-                                    <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
-                                @else
-                                    {{ raceInitials($p['name']) }}
-                                @endif
+                            <div class="race-avatar-wrap">
+                                <div class="race-avatar race-avatar-md race-border-bronze">
+                                    @if($p['avatar_url'])
+                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @else
+                                        {{ raceInitials($p['name']) }}
+                                    @endif
+                                </div>
+                                <div class="race-medal race-medal-bronze">3</div>
                             </div>
-                            <div class="race-medal race-medal-bronze">3</div>
-                            <div class="race-podium-name">{{ $p['name'] }}</div>
-                            <div class="race-podium-value">{{ $p['pct'] }}%</div>
+                            <div class="race-pedestal race-pedestal-3">
+                                <div class="race-podium-name">{{ $p['name'] }}</div>
+                                <div class="race-podium-value">{{ $p['pct'] }}%</div>
+                            </div>
                         </div>
                     </div>
                     @endif
 
                     {{-- REMAINING RANKS --}}
                     @foreach($kpiRankings->skip(3)->values() as $i => $row)
-                        @php $rank = $i + 4; $pct = $maxKpi > 0 ? round($row['pct'] / $maxKpi * 100) : 0; @endphp
+                        @php $rank = $i + 4; @endphp
                         <div class="race-rank-card">
-                            <div class="race-rank-num">{{ $rank }}</div>
+                            <div class="race-rank-num">{{ $rank }}.</div>
                             <div class="race-avatar race-avatar-sm">
                                 @if($row['avatar_url'])
                                     <img src="{{ $row['avatar_url'] }}" alt="{{ $row['name'] }}">
@@ -216,13 +233,8 @@
                                     {{ raceInitials($row['name']) }}
                                 @endif
                             </div>
-                            <div class="race-card-info">
-                                <div class="race-card-name">{{ $row['name'] }}</div>
-                                <div class="race-card-value">{{ $row['pct'] }}%</div>
-                                <div class="race-progress-mini">
-                                    <div class="race-progress-mini-bar" style="width: {{ $pct }}%"></div>
-                                </div>
-                            </div>
+                            <div class="race-card-name">{{ $row['name'] }}</div>
+                            <div class="race-card-value">{{ $row['pct'] }}%</div>
                         </div>
                     @endforeach
                 @endif
@@ -285,18 +297,18 @@
     z-index: 1;
     max-width: 1600px;
     margin: 0 auto;
-    padding: 32px 32px 80px;
+    padding: 48px 56px 100px;
 }
 
 /* ── FILTERS ── */
 .race-filters {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 16px;
 }
 .race-select {
     background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
     color: var(--race-text);
     padding: 10px 18px;
     border-radius: 10px;
@@ -309,35 +321,39 @@
 
 /* ── COMPANY PROGRESS ── */
 .race-company-progress {
-    margin-bottom: 20px;
+    margin-bottom: 44px;
 }
 .race-progress-track {
     display: flex;
     align-items: center;
     gap: 14px;
-    font-size: .95rem;
+    font-size: 1rem;
+    padding: 0 8px;
 }
-.race-progress-start { font-size: 1.8rem; }
+
 .race-progress-bar-wrap {
     flex: 1;
-    height: 18px;
-    background: rgba(255,255,255,0.1);
+    height: 20px;
+    background: rgba(255,255,255,0.08);
     border-radius: 99px;
     position: relative;
     overflow: visible;
+    margin-top: 32px;
 }
 .race-progress-fill {
     height: 100%;
     border-radius: 99px;
-    background: linear-gradient(90deg, var(--race-gold-dark), var(--race-gold), var(--race-gold-light));
+    background: linear-gradient(90deg, #1a7fd4, #3eadff, #6ec6ff);
     transition: width 1.5s cubic-bezier(.25,.46,.45,.94);
-    box-shadow: 0 0 12px rgba(245,200,66,.5);
+    box-shadow: 0 0 14px rgba(62,173,255,.5);
+    position: relative;
+    min-width: 30px;
 }
 .race-progress-label {
     position: absolute;
-    top: -26px;
+    top: -28px;
     transform: translateX(-50%);
-    font-size: .9rem;
+    font-size: .92rem;
     font-weight: 700;
     color: var(--race-gold-light);
     white-space: nowrap;
@@ -377,7 +393,7 @@
     font-size: 1.05rem;
     color: rgba(255,255,255,0.45);
     font-style: italic;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 /* ── DIVIDER ── */
@@ -427,9 +443,9 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 28px;
+    gap: 6px;
     margin-bottom: 40px;
-    min-height: 300px;
+    padding-top: 30px;
 }
 .race-podium-slot {
     display: flex;
@@ -437,34 +453,78 @@
     align-items: center;
     position: relative;
     animation: raceFadeUp .6s ease both;
+    width: 180px;
 }
-.race-podium-1 { animation-delay: .1s; margin-bottom: 28px; }
+.race-podium-1 { animation-delay: .1s; }
 .race-podium-2 { animation-delay: .2s; }
 .race-podium-3 { animation-delay: .3s; }
 
+/* ── AVATAR WRAPPER (for medal overlay) ── */
+.race-avatar-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: -20px;
+    z-index: 2;
+}
+.race-avatar-wrap .race-medal {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+/* ── PEDESTAL BLOCKS ── */
+.race-pedestal {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 28px;
+    border-radius: 12px 12px 4px 4px;
+    position: relative;
+}
+.race-pedestal-1 {
+    height: 140px;
+    background: linear-gradient(180deg, #2d5fa8 0%, #1a3d7a 40%, #0f2650 100%);
+    box-shadow: 0 4px 30px rgba(30, 80, 180, .4), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.race-pedestal-2 {
+    height: 110px;
+    background: linear-gradient(180deg, #264d8e 0%, #17336a 40%, #0d2245 100%);
+    box-shadow: 0 4px 24px rgba(23, 60, 140, .3), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.race-pedestal-3 {
+    height: 90px;
+    background: linear-gradient(180deg, #264d8e 0%, #17336a 40%, #0d2245 100%);
+    box-shadow: 0 4px 24px rgba(23, 60, 140, .3), inset 0 1px 0 rgba(255,255,255,.1);
+}
+
 .race-podium-name {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1rem;
-    margin-top: 10px;
     text-align: center;
-    max-width: 180px;
+    max-width: 170px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-transform: uppercase;
+    letter-spacing: .5px;
 }
 .race-podium-value {
     font-weight: 700;
     font-size: 1.05rem;
-    color: var(--race-red);
+    color: var(--race-gold);
     margin-top: 4px;
 }
-.race-name-gold { color: var(--race-gold-light); font-size: 1.15rem; }
-.race-value-gold { color: #ff6b6b; font-size: 1.2rem; }
+.race-name-gold { color: var(--race-gold-light); font-size: 1.1rem; }
+.race-value-gold { color: var(--race-gold); font-size: 1.15rem; }
 
 /* ── CROWN ── */
 .race-crown {
     font-size: 1.8rem;
-    margin-bottom: -4px;
+    margin-bottom: 2px;
     animation: raceFloat 2.5s ease-in-out infinite;
     filter: drop-shadow(0 2px 6px rgba(245,200,66,.7));
 }
@@ -484,7 +544,7 @@
 .race-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .race-avatar-lg { width: 130px; height: 130px; font-size: 2.2rem; }
 .race-avatar-md { width: 100px; height: 100px; font-size: 1.6rem; }
-.race-avatar-sm { width: 56px; height: 56px; font-size: 1.05rem; }
+.race-avatar-sm { width: 48px; height: 48px; font-size: 1rem; }
 
 .race-border-gold  { border: 4px solid var(--race-gold); box-shadow: 0 0 24px rgba(245,200,66,.5); }
 .race-border-silver { border: 3px solid #b8b8b8; box-shadow: 0 0 16px rgba(200,200,200,.3); }
@@ -500,9 +560,7 @@
     justify-content: center;
     font-weight: 900;
     font-size: 1rem;
-    margin-top: -14px;
-    position: relative;
-    z-index: 2;
+    z-index: 3;
 }
 .race-medal-gold {
     background: radial-gradient(circle at 35% 35%, #ffe88a, #c9a227);
@@ -521,68 +579,48 @@
     box-shadow: 0 0 10px rgba(192,106,42,.3);
 }
 
-/* ── RANK CARD (4+) ── */
+/* ── RANK CARD (4+) — Table-style rows ── */
 .race-rank-card {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 14px 20px;
-    border-radius: 14px;
-    margin-bottom: 14px;
+    gap: 14px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    margin-bottom: 10px;
     background: rgba(255,255,255,0.04);
-    border: 1px solid transparent;
+    border: 1px solid rgba(255,255,255,0.06);
     transition: transform .25s, border-color .25s, background .25s;
     animation: raceFadeUp .5s ease both;
 }
-.race-rank-card:nth-child(1) { animation-delay: .35s; }
-.race-rank-card:nth-child(2) { animation-delay: .4s; }
-.race-rank-card:nth-child(3) { animation-delay: .45s; }
 .race-rank-card:hover {
     transform: translateX(4px);
     border-color: rgba(245,200,66,0.2);
     background: rgba(255,255,255,0.07);
 }
 .race-rank-num {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.07);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-weight: 800;
-    font-size: 1rem;
-    color: rgba(255,255,255,0.5);
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.45);
     flex-shrink: 0;
+    width: 32px;
+    text-align: center;
 }
-.race-card-info { flex: 1; min-width: 0; }
 .race-card-name {
+    flex: 1;
     font-weight: 700;
     font-size: 1.05rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-transform: uppercase;
+    letter-spacing: .3px;
 }
 .race-card-value {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--race-red);
-    margin-top: 3px;
-}
-
-/* ── MINI PROGRESS ── */
-.race-progress-mini {
-    margin-top: 6px;
-    height: 6px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 99px;
-    overflow: hidden;
-}
-.race-progress-mini-bar {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, var(--race-gold-dark), var(--race-gold-light));
-    transition: width 1s cubic-bezier(.25,.46,.45,.94);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--race-gold);
+    flex-shrink: 0;
+    text-align: right;
 }
 
 /* ── EMPTY ── */
@@ -625,14 +663,19 @@
 }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-    .race-columns { grid-template-columns: 1fr; gap: 32px 0; }
+@media (max-width: 900px) {
+    .race-columns { grid-template-columns: 1fr; gap: 40px 0; }
     .race-col-divider { display: none; }
     .race-section { padding: 0; }
-    .race-podium { gap: 10px; min-height: 180px; }
+    .race-podium { gap: 4px; }
+    .race-podium-slot { width: 140px; }
     .race-avatar-lg { width: 90px; height: 90px; font-size: 1.6rem; }
     .race-avatar-md { width: 70px; height: 70px; font-size: 1.2rem; }
+    .race-pedestal-1 { height: 110px; }
+    .race-pedestal-2 { height: 85px; }
+    .race-pedestal-3 { height: 70px; }
     .sales-race-board { margin: -1rem; }
+    .race-wrapper { padding: 20px 16px 60px; }
 }
 </style>
 
@@ -681,8 +724,6 @@
     init();
     draw();
     window.addEventListener('resize', () => { resize(); });
-
-    // Re-init on Livewire navigation
     document.addEventListener('livewire:navigated', () => { init(); draw(); });
 })();
 </script>
