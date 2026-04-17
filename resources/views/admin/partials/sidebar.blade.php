@@ -427,19 +427,19 @@
 
                 @unless ($currentUser->hasRole('it'))
                     <li class="app-sidebar-menu-item">
-                        <a href="{{ route('app.home') }}"
-                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') ? 'active menu-current' : '' }}">
+                        <a href="{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || ($currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
                             <span class="menu-icon flex-shrink-0">
                                 <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M8.5 1.5L1.5 7V15.5H6.5V11H10.5V15.5H15.5V7L8.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </span>
-                            <span class="menu-title flex-grow-1">Bảng xếp hạng</span>
+                            <span class="menu-title flex-grow-1">{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
                         </a>
                     </li>
                 @endunless
 
-                @unless ($currentUser->hasAnyRole(['it', 'tu-van', 'ky-thuat']))
+                @unless ($currentUser->hasAnyRole(['it', 'tu-van', 'ky-thuat', 'giam-doc', 'admin', 'quan-ly']))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.dashboard') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active' : '' }}">
