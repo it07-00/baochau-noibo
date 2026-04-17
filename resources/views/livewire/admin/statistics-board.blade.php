@@ -457,7 +457,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Tổng quan vận hành theo tháng</h6>
-                            < class="text-muted">Biến động hợp đồng, doanh số và thực thu trong năm {{ $year }}</>
+                            <small class="text-muted">Biến động hợp đồng, doanh số và thực thu trong năm {{ $year }}</small>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -473,7 +473,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Cơ cấu hợp đồng theo dịch vụ</h6>
-                            < class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</>
+                            <small class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</small>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -493,7 +493,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">TỈ LỆ DOANH SỐ THEO NGUỒN THÔNG TIN</h6>
-                            < class="text-muted">Dựa trên doanh số ghi nhận của tất cả loại hợp đồng</>
+                            <small class="text-muted">Dựa trên doanh số ghi nhận của tất cả loại hợp đồng</small>
                         </div>
                     </div>
                     <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
@@ -510,7 +510,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Dịch vụ: báo giá vs ký hợp đồng</h6>
-                            < class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</>
+                            <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
                         </div>
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
@@ -527,7 +527,7 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Khu vực: báo giá, ký hợp đồng, doanh số</h6>
-                            < class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</>
+                            <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
                         </div>
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">

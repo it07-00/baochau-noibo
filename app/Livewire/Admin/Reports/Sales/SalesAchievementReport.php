@@ -2,9 +2,15 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\SalesRenewal;
-use App\Models\SalesProgressive;
+use App\Models\ContractEmission;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
+use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
+use App\Models\ContractWaste;
+use App\Models\SalesTarget;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesAchievementReport extends Component
@@ -12,60 +18,100 @@ class SalesAchievementReport extends Component
     public int $year;
     public string $filter_month = '';
 
+    protected array $contractModels = [
+        ContractWaste::class,
+        ContractLegal::class,
+        ContractTechnical::class,
+        ContractResearch::class,
+        ContractSustainability::class,
+        ContractEmission::class,
+    ];
+
     public function mount(): void
     {
         $this->year = (int) now()->format('Y');
-    }
-
-    public function updatedYear(): void
-    {
-        $this->dispatch('achievement-chart-updated');
-    }
-
-    public function updatedFilterMonth(): void
-    {
-        $this->dispatch('achievement-chart-updated');
+        $this->filter_month = (string) now()->month;
     }
 
     public function render()
     {
         $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
+        $staffIds = $staffs->pluck('id')->all();
 
-        $rankings = $staffs->map(function ($user) {
-            $rBase = SalesRenewal::where('user_id', $user->id)
-                ->whereYear('sales_month', $this->year)
-                ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
+        // ── Actual sales per staff from 6 contract types ──
+        $actualByStaff = [];
+        foreach ($this->contractModels as $modelClass) {
+            $query = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                ->whereNotNull('staff_id');
 
-            $pBase = SalesProgressive::where('user_id', $user->id)
-                ->whereYear('sales_month', $this->year)
-                ->when($this->filter_month, fn($q) => $q->whereMonth('sales_month', $this->filter_month));
+            if ($this->filter_month) {
+                $query->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->filter_month);
+            }
 
-            $renewal     = (float) (clone $rBase)->sum('sales_amount');
-            $progressive = (float) (clone $pBase)->sum('amount');
-            $total       = $renewal + $progressive;
+            $rows = $query->selectRaw('staff_id, COALESCE(SUM(value), 0) as total')
+                ->groupBy('staff_id')
+                ->pluck('total', 'staff_id');
+
+            foreach ($rows as $staffId => $total) {
+                $staffId = (int) $staffId;
+                $actualByStaff[$staffId] = ($actualByStaff[$staffId] ?? 0) + (float) $total;
+            }
+        }
+
+        // ── Targets per staff ──
+        $targetByStaff = [];
+        $targetQuery = SalesTarget::where('year', $this->year)
+            ->whereIn('staff_id', $staffIds);
+
+        if ($this->filter_month) {
+            $targetQuery->where('month', $this->filter_month);
+        }
+
+        foreach ($targetQuery->selectRaw('staff_id, SUM(target_amount) as total_target')
+            ->groupBy('staff_id')
+            ->get() as $r) {
+            $targetByStaff[(int) $r->staff_id] = (float) $r->total_target;
+        }
+
+        // ── Doanh Số rankings ──
+        $doanhSoRankings = $staffs->map(fn($user) => [
+            'name'       => $user->name,
+            'avatar_url' => $user->avatar_url,
+            'total'      => (float) ($actualByStaff[$user->id] ?? 0),
+        ])->sortByDesc('total')->values();
+
+        $maxDoanhSo = $doanhSoRankings->max('total') ?: 1;
+
+        // ── KPI rankings ──
+        $kpiRankings = $staffs->map(function ($user) use ($actualByStaff, $targetByStaff) {
+            $actual = (float) ($actualByStaff[$user->id] ?? 0);
+            $target = (float) ($targetByStaff[$user->id] ?? 0);
+            $pct = $target > 0 ? round($actual / $target * 100, 0) : 0;
 
             return [
-                'id'          => $user->id,
-                'name'        => $user->name,
-                'renewal'     => $renewal,
-                'progressive' => $progressive,
-                'total'       => $total,
+                'name'       => $user->name,
+                'avatar_url' => $user->avatar_url,
+                'pct'        => (int) $pct,
             ];
-        })
-        ->sortByDesc('total')
-        ->values();
+        })->sortByDesc('pct')->values();
 
-        $chartLabels = $rankings->pluck('name')->values();
-        $chartValues = $rankings->pluck('total')->map(fn($v) => (float) $v)->values();
-        $chartHasData = $chartValues->sum() > 0;
+        $maxKpi = $kpiRankings->max('pct') ?: 1;
+
+        // ── Company totals ──
+        $companyTarget = array_sum($targetByStaff) ?: 0;
+        $companyActual = array_sum($actualByStaff) ?: 0;
+        $companyPct = $companyTarget > 0 ? round($companyActual / $companyTarget * 100, 0) : 0;
 
         return view('livewire.admin.reports.sales.sales-achievement-report', [
-            'rankings'     => $rankings,
-            'chartLabels'  => $chartLabels,
-            'chartValues'  => $chartValues,
-            'chartHasData' => $chartHasData,
-            'years'        => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'months'       => range(1, 12),
-        ])->layout('admin.layouts.app', ['title' => 'Bảng thành tích']);
+            'doanhSoRankings' => $doanhSoRankings,
+            'kpiRankings'     => $kpiRankings,
+            'maxDoanhSo'      => $maxDoanhSo,
+            'maxKpi'          => $maxKpi,
+            'companyTarget'   => $companyTarget,
+            'companyActual'   => $companyActual,
+            'companyPct'      => $companyPct,
+            'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'months'          => range(1, 12),
+        ])->layout('admin.layouts.app', ['title' => 'Đường đua doanh số']);
     }
 }

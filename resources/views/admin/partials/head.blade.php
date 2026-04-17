@@ -2,8 +2,8 @@
     <script>
         (function() {
             const theme = localStorage.getItem('conca_theme') || 'auto';
-            const resolvedTheme = theme === 'auto' 
-                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') 
+            const resolvedTheme = theme === 'auto'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
                 : theme;
             document.documentElement.setAttribute('data-bs-theme', resolvedTheme);
         })();

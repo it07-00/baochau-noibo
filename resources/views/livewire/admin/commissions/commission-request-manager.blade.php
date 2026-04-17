@@ -157,7 +157,7 @@
                                         <span class="badge bg-soft-success text-success px-3 py-2">
                                             Đã chi
                                             <br>
-                                            <>{{ $request->processed_at?->format('d/m/Y') }}</>
+                                            <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
                                     @elseif($request->status === 'Từ chối')
                                         @php
@@ -169,7 +169,7 @@
                                         <span class="badge bg-soft-danger text-danger px-3 py-2">
                                             Từ chối
                                             <br>
-                                            <>{{ $request->processed_at?->format('d/m/Y') }}</>
+                                            <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
                                         @if($rejectionReason)
                                             <div class=" text-muted mt-1" style="max-width: 190px;" title="{{ $rejectionReason }}">

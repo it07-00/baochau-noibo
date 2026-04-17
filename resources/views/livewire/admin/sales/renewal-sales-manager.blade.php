@@ -81,7 +81,7 @@
                         <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                         <td class="ps-4">
                             <div class="fw-bold">SHD: {{ $item->contract_number }}</div>
-                            < class="text-muted">Ngày tạo: {{ $item->created_at->format('d/m/Y') }}</>
+                            <small class="text-muted">Ngày tạo: {{ $item->created_at->format('d/m/Y') }}</small>
                         </td>
                         <td>
                             <div class="text-muted ">Cần bổ sung quan hệ khách hàng</div>
@@ -182,7 +182,7 @@
                             <div class="col-md-12">
                                 <label class="form-label  fw-bold">Tệp đính kèm</label>
                                 <input type="file" class="form-control form-control-sm" wire:model="file">
-                                < class="text-muted">.doc|.docx|.pdf|.rar|.zip|.ppt|.pptx|.xls|.xlsx|.png|.jpg</>
+                                <small class="text-muted">.doc|.docx|.pdf|.rar|.zip|.ppt|.pptx|.xls|.xlsx|.png|.jpg</small>
                             </div>
                         </div>
 

@@ -347,17 +347,17 @@
                     <div class="bg-light rounded-3 p-3 mb-4">
                         <div class="row">
                             <div class="col-md-6">
-                                < class="text-muted">Mã vận đơn</>
+                                <small class="text-muted">Mã vận đơn</small>
                                 <div class="fw-bold text-primary">{{ $trackingDelivery->vtp_order_code ?? $trackingDelivery->bill_viettel }}</div>
                             </div>
                             <div class="col-md-6">
-                                < class="text-muted">Người nhận</>
+                                <small class="text-muted">Người nhận</small>
                                 <div class="fw-bold">{{ $trackingDelivery->customer_name }}</div>
                             </div>
                         </div>
                         @if($trackingDelivery->vtp_total_fee)
                         <div class="mt-2">
-                            < class="text-muted">Phí vận chuyển:</>
+                            <small class="text-muted">Phí vận chuyển:</small>
                             <span class="fw-bold text-danger">{{ number_format($trackingDelivery->vtp_total_fee) }} VNĐ</span>
                         </div>
                         @endif

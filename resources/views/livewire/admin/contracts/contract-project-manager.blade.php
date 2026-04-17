@@ -581,9 +581,9 @@
                                                         <div class="mb-1">
                                                             <span
                                                                 class="badge bg-primary me-1">{{ $assign->user?->name }}</span>
-                                                            < class="text-muted">— giao bởi
+                                                            <small class="text-muted">— giao bởi
                                                                 {{ $assign->assigner?->name }} lúc
-                                                                {{ $assign->created_at?->format('d/m/Y H:i') }}</>
+                                                                {{ $assign->created_at?->format('d/m/Y H:i') }}</small>
                                                         </div>
                                                     @endforeach
                                                 @else
@@ -908,8 +908,8 @@
                             <label class="list-group-item list-group-item-action d-flex gap-2">
                                 <input class="form-check-input flex-shrink-0 mt-1" type="checkbox"
                                     value="{{ $u->id }}" wire:model="assignUserIds">
-                                <span>{{ $u->name }}<
-                                        class="text-muted d-block">{{ $u->roles->first()?->name }}</></span>
+                                <span>{{ $u->name }}<small
+                                        class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
                             </label>
                         @endforeach
                     </div>

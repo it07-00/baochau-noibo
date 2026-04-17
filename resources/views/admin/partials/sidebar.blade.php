@@ -283,7 +283,7 @@
                                 'Bảng tổng kết',
                                 'Bảng doanh số cá nhân',
                                 'Bảng theo dõi tái ký cá nhân',
-                                'Bảng thành tích',
+                                'Đường đua doanh số',
                                 'Bảng theo dõi doanh số',
                                 'Doanh số thực thu',
                             ],
@@ -386,7 +386,7 @@
                         $activeChild = 'Bảng theo dõi tái ký cá nhân';
                     } elseif (request()->routeIs('app.reports.sales.achievement')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
-                        $activeChild = 'Bảng thành tích';
+                        $activeChild = 'Đường đua doanh số';
                     } elseif (request()->routeIs('app.reports.sales.tracking')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng theo dõi doanh số';
@@ -570,7 +570,7 @@
                                                 $href = route('app.reports.sales.renewal-personal');
                                             } elseif (
                                                 $menu['title'] === 'Báo cáo Kinh doanh' &&
-                                                $child === 'Bảng thành tích'
+                                                $child === 'Đường đua doanh số'
                                             ) {
                                                 $href = route('app.reports.sales.achievement');
                                             } elseif (

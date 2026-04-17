@@ -58,7 +58,7 @@
                             <td>
                                 <span class="fw-semibold">{{ $s->installment_name }}</span>
                                 @if ($s->notes)
-                                    <br>< class="text-muted">{{ $s->notes }}</>
+                                    <br><small class="text-muted">{{ $s->notes }}</small>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -83,7 +83,7 @@
                                 @if ($s->paid_amount > 0)
                                     <span class="fw-bold text-success">{{ number_format($s->paid_amount) }}đ</span>
                                     @if ($s->paid_date)
-                                        <br>< class="text-muted">{{ $s->paid_date->format('d/m/Y') }}</>
+                                        <br><small class="text-muted">{{ $s->paid_date->format('d/m/Y') }}</small>
                                     @endif
                                 @else
                                     <span class="text-muted">0đ</span>
