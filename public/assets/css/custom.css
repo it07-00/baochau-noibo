@@ -123,6 +123,71 @@
     background-color: var(--bs-body-bg) !important;
 }
 
+/* ── input[type=date/time] — browser native color-scheme ── */
+:root[data-bs-theme=dark] input[type="date"],
+:root[data-bs-theme=dark] input[type="time"],
+:root[data-bs-theme=dark] input[type="datetime-local"],
+:root[data-bs-theme=dark] input[type="month"],
+:root[data-bs-theme=dark] input[type="week"] {
+    color-scheme: dark;
+}
+
+/* ── bg-white / bg-light utilities ── */
+:root[data-bs-theme=dark] .bg-white {
+    background-color: var(--bs-body-bg) !important;
+}
+:root[data-bs-theme=dark] .bg-light {
+    background-color: var(--bs-secondary-bg) !important;
+}
+
+/* ── table-light thead ── */
+:root[data-bs-theme=dark] .table-light,
+:root[data-bs-theme=dark] .table-light > th,
+:root[data-bs-theme=dark] thead.table-light th {
+    --bs-table-bg: var(--bs-secondary-bg);
+    --bs-table-color: var(--bs-body-color);
+    --bs-table-border-color: var(--bs-border-color);
+    background-color: var(--bs-secondary-bg) !important;
+    color: var(--bs-body-color) !important;
+}
+
+/* ── IT Dashboard components ── */
+:root[data-bs-theme=dark] .it-dashboard-tabs {
+    background: linear-gradient(180deg, #1e2435 0%, #1a1f2e 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+:root[data-bs-theme=dark] .it-dashboard-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.72);
+}
+:root[data-bs-theme=dark] .it-panel-card {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+:root[data-bs-theme=dark] .it-panel-title {
+    color: rgba(255, 255, 255, 0.5);
+}
+:root[data-bs-theme=dark] .it-disk-progress {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+:root[data-bs-theme=dark] .it-activity-card {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+:root[data-bs-theme=dark] .it-activity-card .card-header {
+    background: var(--bs-body-bg) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+:root[data-bs-theme=dark] .it-activity-table thead th {
+    background: var(--bs-secondary-bg) !important;
+    color: rgba(255, 255, 255, 0.55) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+:root[data-bs-theme=dark] .it-activity-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+:root[data-bs-theme=dark] .it-user-badge {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+}
+
 /* ================================================
    Consulting Workflow Stepper
    ================================================ */

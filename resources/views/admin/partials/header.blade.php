@@ -2,52 +2,156 @@
     $currentUser = auth()->user();
 
     $roleLabels = [
-        'it' => 'IT / Quản trị',
-        'giam-doc' => 'Giám đốc',
+        'it'            => 'IT / Quản trị',
+        'giam-doc'      => 'Giám đốc',
         'tp-kinh-doanh' => 'Trưởng phòng KD',
-        'quan-ly' => 'Quản lý',
-        'kinh-doanh' => 'Nhân viên KD',
-        'tu-van' => 'Tư vấn',
-        'ky-thuat' => 'Kỹ thuật',
-        'marketing' => 'Marketing',
-        'ke-toan' => 'Kế toán',
+        'quan-ly'       => 'Quản lý',
+        'kinh-doanh'    => 'Nhân viên KD',
+        'tu-van'        => 'Tư vấn',
+        'ky-thuat'      => 'Kỹ thuật',
+        'marketing'     => 'Marketing',
+        'ke-toan'       => 'Kế toán',
+    ];
+
+    $roleColors = [
+        'it'            => '#6366f1',
+        'giam-doc'      => '#f59e0b',
+        'tp-kinh-doanh' => '#3b82f6',
+        'quan-ly'       => '#8b5cf6',
+        'kinh-doanh'    => '#10b981',
+        'tu-van'        => '#06b6d4',
+        'ky-thuat'      => '#f97316',
+        'marketing'     => '#ec4899',
+        'ke-toan'       => '#84cc16',
     ];
 
     $rolePriority = ['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'ke-toan', 'marketing', 'tu-van', 'ky-thuat', 'kinh-doanh'];
-    $primaryRole = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
-
+    $primaryRole  = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
     if (!$primaryRole) {
         $primaryRole = $currentUser?->roles?->first()?->name;
     }
 
     $roleLabel = $roleLabels[$primaryRole] ?? 'Nhân viên';
+    $roleColor = $roleColors[$primaryRole] ?? '#64748b';
+
+    $weekdays = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+    $todayLabel = $weekdays[now()->dayOfWeek] . ', ' . now()->format('d/m/Y');
 @endphp
 
-<div class="app-header bg-card py-2 px-4 px-md-6 d-flex align-items-center">
-    <div class="row align-items-center w-100 gx-0">
-        <div class="col-xl-7 col-lg-7 col-md-8 col-sm-7 col-6">
-            <div class="app-header-left d-flex align-items-center">
-                <button type="button" class="app-header-bar-btn app-sidebar-open-btn me-4 d-none d-xl-inline-block">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <button type="button" class="app-header-bar-btn app-sidebar-mobile-open d-xl-none me-4">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+<style>
+.app-header-redesign {
+    background: var(--bs-card-bg, #fff);
+    border-bottom: 1px solid var(--bs-border-color, #e9ecef);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,.06);
+}
 
-                <div class="d-none d-md-block">
-                    <h6 class="mb-0 fw-normal text-custom-secondary">
-                        Xin chào, {{ \Illuminate\Support\Str::upper($currentUser?->name ?? 'Người dùng') }}!
-                    </h6>
-                </div>
-            </div>
+.app-header-left-group { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+
+.app-header-greeting { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.app-header-greeting-name {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--bs-body-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+.app-header-greeting-sub {
+    font-size: .78rem;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+.app-header-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.app-header-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .82rem;
+    color: var(--bs-secondary-color, #6c757d);
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: var(--bs-tertiary-bg, #f8f9fa);
+    border: 1px solid var(--bs-border-color, #e9ecef);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.app-header-right-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+@media (max-width: 768px) {
+    .app-header-date { display: none !important; }
+    .app-header-greeting-name { max-width: 130px; }
+    .app-header-role-badge { display: none !important; }
+}
+@media (max-width: 480px) {
+    .app-header-redesign { padding: 0 12px; gap: 8px; }
+}
+</style>
+
+<div class="app-header app-header-redesign">
+    {{-- LEFT: Hamburger + Greeting --}}
+    <div class="app-header-left-group">
+        <button type="button" class="app-header-bar-btn app-sidebar-open-btn d-none d-xl-inline-flex align-items-center justify-content-center" style="flex-shrink:0;">
+            <span></span><span></span><span></span>
+        </button>
+        <button type="button" class="app-header-bar-btn app-sidebar-mobile-open d-xl-none d-inline-flex align-items-center justify-content-center" style="flex-shrink:0;">
+            <span></span><span></span><span></span>
+        </button>
+
+        @php
+            $hour = now()->hour;
+            $wish = match(true) {
+                $hour >= 5  && $hour < 11 => 'Chúc bạn buổi sáng làm việc hiệu quả! ☀️',
+                $hour >= 11 && $hour < 13 => 'Chúc bạn buổi trưa vui vẻ! 🌤️',
+                $hour >= 13 && $hour < 18 => 'Chúc bạn buổi chiều làm việc tốt lành! 🌿',
+                $hour >= 18 && $hour < 22 => 'Chúc bạn buổi tối thư giãn! 🌙',
+                default                   => 'Chúc bạn một ngày tốt lành! ✨',
+            };
+        @endphp
+        <div class="app-header-greeting d-none d-sm-flex">
+            <span class="app-header-greeting-name">{{ $currentUser?->name ?? 'Người dùng' }}</span>
+            <span class="app-header-greeting-sub">{{ $wish }}</span>
         </div>
 
-        <div class="col-xl-5 col-lg-5 col-md-4 col-sm-5 col-6">
-            <ul class="navbar-nav flex-row align-items-center justify-content-end">
+        <span class="app-header-role-badge d-none d-md-inline-flex"
+              style="background: {{ $roleColor }}1a; color: {{ $roleColor }}; border: 1px solid {{ $roleColor }}40;">
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="currentColor"><circle cx="4.5" cy="4.5" r="4.5"/></svg>
+            {{ $roleLabel }}
+        </span>
+    </div>
+
+    {{-- CENTER: Date --}}
+    <div class="app-header-date d-none d-lg-flex">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1.5" y="2.5" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M5 1v3M11 1v3M1.5 6.5h13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        {{ $todayLabel }}
+    </div>
+
+    {{-- RIGHT: Actions --}}
+    <div class="app-header-right-group">
+        <ul class="navbar-nav flex-row align-items-center gap-1">
                 <li class="header-nav-item header-style-switcher me-2">
                     <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown" title="Giao diện">
                         <span class="d-flex align-items-center justify-content-center theme-icon light-icon">
@@ -104,5 +208,4 @@
                 </li>
             </ul>
         </div>
-    </div>
 </div>

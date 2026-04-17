@@ -52,7 +52,7 @@
     @php
         $isIT = auth()->user()->hasRole('it');
     @endphp
-    @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+    @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'kinh-doanh', 'tp-kinh-doanh']))
         <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
                 <i class="bi bi-clock-fill text-warning fs-5"></i>
@@ -465,7 +465,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
-                        <canvas id="monthlyOverviewChart" height="250" wire:ignore></canvas>
+                        <div id="monthlyOverviewChart" style="min-height:250px;" wire:ignore></div>
                     </div>
                 </div>
             </div>
@@ -481,7 +481,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="workloadChartConfig" class="d-none" data-by-type='@json($byType)'></div>
-                        <canvas id="teamWorkloadChart" height="250" wire:ignore></canvas>
+                        <div id="teamWorkloadChart" style="min-height:250px;" wire:ignore></div>
                     </div>
                 </div>
             </div>
@@ -500,9 +500,7 @@
                     </div>
                     <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="sourceSalesConfig" class="d-none" data-chart='@json($sourceSalesChart)'></div>
-                        <div style="height: 300px; width: 100%;">
-                            <canvas id="sourceSalesChart" wire:ignore></canvas>
-                        </div>
+                        <div id="sourceSalesChart" style="min-height:300px;" wire:ignore></div>
                     </div>
                 </div>
             </div>
@@ -517,7 +515,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="serviceInsightConfig" class="d-none" data-chart='@json($serviceInsightChart)'></div>
-                        <canvas id="serviceInsightChart" height="250" wire:ignore></canvas>
+                        <div id="serviceInsightChart" style="min-height:250px;" wire:ignore></div>
                     </div>
                 </div>
             </div>
@@ -534,7 +532,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="regionInsightConfig" class="d-none" data-chart='@json($regionInsightChart)'></div>
-                        <canvas id="regionInsightChart" height="250" wire:ignore></canvas>
+                        <div id="regionInsightChart" style="min-height:250px;" wire:ignore></div>
                     </div>
                 </div>
             </div>
@@ -574,23 +572,13 @@
         </div>
         @endif
 
-        {{-- ── ĐƯỜNG ĐUA TƯ VẤN (chỉ role tu-van) ─────────────── --}}
-        @if(auth()->user()->hasRole('tu-van'))
-            @livewire('admin.reports.consulting.consulting-achievement-report')
-        @endif
-
-        {{-- ── ĐƯỜNG ĐUA KỸ THUẬT (chỉ role ky-thuat) ─────────── --}}
-        @if(auth()->user()->hasRole('ky-thuat'))
-            @livewire('admin.reports.technical.technical-achievement-report')
-        @endif
     @endif
 
-    {{-- ── SHARED FOOTER / SCRIPTS ────────────────────────────────── --}}
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
     <script>
     (function () {
-        const workloadPalette = ['#4f7cff', '#2ec27e', '#f5a524', '#f05252', '#7c3aed', '#0ea5e9'];
+        const palette = ['#4f7cff', '#2ec27e', '#f5a524', '#f05252', '#7c3aed', '#0ea5e9', '#06b6d4', '#f97316'];
 
         function compactCurrency(value) {
             if (value >= 1000000000) return (value / 1000000000).toFixed(1) + 'B';
@@ -599,10 +587,17 @@
             return value;
         }
 
+        // Destroy helper
+        function destroyChart(elId) {
+            const el = document.getElementById(elId);
+            if (el && el._apexChart) { el._apexChart.destroy(); el._apexChart = null; }
+        }
+
         function renderMonthlyOverviewChart() {
             const configEl = document.getElementById('monthlyOverviewConfig');
-            const canvas = document.getElementById('monthlyOverviewChart');
-            if (!configEl || !canvas) return;
+            const el = document.getElementById('monthlyOverviewChart');
+            if (!configEl || !el) return;
+            destroyChart('monthlyOverviewChart');
 
             const monthly = JSON.parse(configEl.dataset.monthly || '{}');
             const canSeeFinance = String(configEl.dataset.canSeeFinance) === '1';
@@ -611,88 +606,36 @@
             const salesData = Object.values(monthly).map((item) => Number(item.sales || 0));
             const revenueData = Object.values(monthly).map((item) => Number(item.revenue || 0));
 
-            if (canvas._chartInstance) canvas._chartInstance.destroy();
-
-            const datasets = [
-                {
-                    type: 'bar',
-                    label: 'Hợp đồng ký mới',
-                    data: contractData,
-                    yAxisID: 'y',
-                    backgroundColor: '#4f7cff',
-                    borderRadius: 6,
-                    maxBarThickness: 22,
-                    order: 2
-                }
-            ];
+            const series = [{ name: 'Hợp đồng ký mới', type: 'bar', data: contractData }];
+            const yaxis = [{ seriesName: 'Hợp đồng ký mới', title: { text: 'Số HĐ' }, labels: { formatter: v => Math.round(v) } }];
 
             if (canSeeFinance) {
-                datasets.push({
-                    type: 'bar',
-                    label: 'Doanh số ghi nhận',
-                    data: salesData,
-                    yAxisID: 'y1',
-                    backgroundColor: '#f05252',
-                    borderRadius: 6,
-                    maxBarThickness: 22,
-                    order: 3
-                });
-
-                datasets.push({
-                    type: 'line',
-                    label: 'Thực thu',
-                    data: revenueData,
-                    yAxisID: 'y1',
-                    borderColor: '#2ec27e',
-                    backgroundColor: 'rgba(46, 194, 126, 0.2)',
-                    tension: 0.35,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: '#2ec27e',
-                    fill: false,
-                    order: 1
-                });
+                series.push({ name: 'Doanh số ghi nhận', type: 'bar', data: salesData });
+                series.push({ name: 'Thực thu', type: 'line', data: revenueData });
+                yaxis.push({ seriesName: 'Doanh số ghi nhận', opposite: true, title: { text: 'Giá trị (VND)' }, labels: { formatter: v => compactCurrency(v) } });
+                yaxis.push({ seriesName: 'Thực thu', show: false });
             }
 
-            canvas._chartInstance = new Chart(canvas, {
-                data: { labels, datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Số lượng hợp đồng ký' },
-                            grid: { color: 'rgba(15, 23, 42, 0.08)' }
-                        },
-                        y1: {
-                            beginAtZero: true,
-                            position: 'right',
-                            display: canSeeFinance,
-                            title: { display: canSeeFinance, text: 'Giá trị (VND)' },
-                            grid: { drawOnChartArea: false },
-                            ticks: {
-                                callback: function(value) {
-                                    return compactCurrency(Number(value));
-                                }
-                            }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    }
-                }
+            el._apexChart = new ApexCharts(el, {
+                series, chart: { type: 'bar', height: 250, toolbar: { show: false } },
+                xaxis: { categories: labels },
+                yaxis,
+                colors: ['#4f7cff', '#f05252', '#2ec27e'],
+                plotOptions: { bar: { borderRadius: 4, columnWidth: '55%' } },
+                stroke: { width: series.map(s => s.type === 'line' ? 2 : 0), curve: 'smooth' },
+                markers: { size: series.map(s => s.type === 'line' ? 4 : 0) },
+                legend: { position: 'top' },
+                tooltip: { shared: true, intersect: false },
+                grid: { borderColor: 'rgba(15,23,42,0.08)' }
             });
+            el._apexChart.render();
         }
 
         function renderWorkloadChart() {
             const configEl = document.getElementById('workloadChartConfig');
-            const canvas = document.getElementById('teamWorkloadChart');
-            if (!configEl || !canvas) return;
+            const el = document.getElementById('teamWorkloadChart');
+            if (!configEl || !el) return;
+            destroyChart('teamWorkloadChart');
 
             const byType = JSON.parse(configEl.dataset.byType || '{}');
             const entries = Object.entries(byType);
@@ -700,95 +643,51 @@
 
             const labels = entries.map(([label]) => label);
             const values = entries.map(([, item]) => Number(item.count || 0));
-            const colors = labels.map((_, idx) => workloadPalette[idx % workloadPalette.length]);
 
-            if (canvas._chartInstance) canvas._chartInstance.destroy();
-
-            canvas._chartInstance = new Chart(canvas, {
-                type: 'polarArea',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Số hợp đồng theo loại',
-                        data: values,
-                        backgroundColor: colors.map((c) => c + 'cc'),
-                        borderColor: colors,
-                        borderWidth: 1.5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8 } }
-                    },
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            ticks: { backdropColor: 'transparent' },
-                            grid: { color: 'rgba(15, 23, 42, 0.12)' },
-                            angleLines: { color: 'rgba(15, 23, 42, 0.12)' }
-                        }
-                    }
-                }
+            el._apexChart = new ApexCharts(el, {
+                series: values,
+                chart: { type: 'donut', height: 250, toolbar: { show: false } },
+                labels,
+                colors: palette,
+                legend: { position: 'right' },
+                plotOptions: { pie: { donut: { size: '60%' } } },
+                dataLabels: { formatter: (val) => val.toFixed(1) + '%' }
             });
+            el._apexChart.render();
         }
 
         function renderServiceInsightChart() {
             const configEl = document.getElementById('serviceInsightConfig');
-            const canvas = document.getElementById('serviceInsightChart');
-            if (!configEl || !canvas) return;
+            const el = document.getElementById('serviceInsightChart');
+            if (!configEl || !el) return;
+            destroyChart('serviceInsightChart');
 
             const payload = JSON.parse(configEl.dataset.chart || '{}');
             const labels = payload.labels || [];
             const quoted = payload.quoted || [];
             const signed = payload.signed || [];
 
-            if (canvas._chartInstance) canvas._chartInstance.destroy();
-
-            canvas._chartInstance = new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            label: 'Đã báo giá',
-                            data: quoted,
-                            backgroundColor: '#f59e0b',
-                            borderRadius: 6,
-                            maxBarThickness: 30
-                        },
-                        {
-                            label: 'Đã ký hợp đồng',
-                            data: signed,
-                            backgroundColor: '#2563eb',
-                            borderRadius: 6,
-                            maxBarThickness: 30
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { precision: 0 },
-                            title: { display: true, text: 'Số lượng hồ sơ' }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
+            el._apexChart = new ApexCharts(el, {
+                series: [
+                    { name: 'Đã báo giá', data: quoted },
+                    { name: 'Đã ký hợp đồng', data: signed }
+                ],
+                chart: { type: 'bar', height: 250, toolbar: { show: false } },
+                xaxis: { categories: labels },
+                colors: ['#f59e0b', '#2563eb'],
+                plotOptions: { bar: { borderRadius: 4, columnWidth: '60%' } },
+                legend: { position: 'top' },
+                yaxis: { title: { text: 'Số lượng hồ sơ' }, labels: { formatter: v => Math.round(v) } },
+                grid: { borderColor: 'rgba(15,23,42,0.08)' }
             });
+            el._apexChart.render();
         }
 
         function renderRegionInsightChart() {
             const configEl = document.getElementById('regionInsightConfig');
-            const canvas = document.getElementById('regionInsightChart');
-            if (!configEl || !canvas) return;
+            const el = document.getElementById('regionInsightChart');
+            if (!configEl || !el) return;
+            destroyChart('regionInsightChart');
 
             const payload = JSON.parse(configEl.dataset.chart || '{}');
             const labels = payload.labels || [];
@@ -796,141 +695,60 @@
             const signed = payload.signed || [];
             const revenue = payload.revenue || [];
 
-            if (canvas._chartInstance) canvas._chartInstance.destroy();
-
-            canvas._chartInstance = new Chart(canvas, {
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            type: 'bar',
-                            label: 'Báo giá',
-                            data: quoted,
-                            yAxisID: 'y',
-                            backgroundColor: '#f59e0b',
-                            borderRadius: 6,
-                            maxBarThickness: 26,
-                        },
-                        {
-                            type: 'bar',
-                            label: 'Ký hợp đồng',
-                            data: signed,
-                            yAxisID: 'y',
-                            backgroundColor: '#2563eb',
-                            borderRadius: 6,
-                            maxBarThickness: 26,
-                        },
-                        {
-                            type: 'line',
-                            label: 'Doanh số (hợp đồng)',
-                            data: revenue,
-                            yAxisID: 'y1',
-                            borderColor: '#16a34a',
-                            backgroundColor: 'rgba(22, 163, 74, 0.2)',
-                            tension: 0.35,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#16a34a',
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { precision: 0 },
-                            title: { display: true, text: 'Số lượng hồ sơ' }
-                        },
-                        y1: {
-                            beginAtZero: true,
-                            position: 'right',
-                            grid: { drawOnChartArea: false },
-                            title: { display: true, text: 'VND' },
-                            ticks: {
-                                callback: function(value) {
-                                    return compactCurrency(Number(value));
-                                }
-                            }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
+            el._apexChart = new ApexCharts(el, {
+                series: [
+                    { name: 'Báo giá', type: 'bar', data: quoted },
+                    { name: 'Ký hợp đồng', type: 'bar', data: signed },
+                    { name: 'Doanh số (HĐ)', type: 'line', data: revenue }
+                ],
+                chart: { type: 'bar', height: 250, toolbar: { show: false } },
+                xaxis: { categories: labels },
+                colors: ['#f59e0b', '#2563eb', '#16a34a'],
+                yaxis: [
+                    { title: { text: 'Số lượng hồ sơ' }, labels: { formatter: v => Math.round(v) } },
+                    { opposite: true, title: { text: 'VND' }, labels: { formatter: v => compactCurrency(v) } },
+                    { show: false }
+                ],
+                plotOptions: { bar: { borderRadius: 4, columnWidth: '55%' } },
+                stroke: { width: [0, 0, 2], curve: 'smooth' },
+                markers: { size: [0, 0, 4] },
+                legend: { position: 'top' },
+                tooltip: { shared: true, intersect: false },
+                grid: { borderColor: 'rgba(15,23,42,0.08)' }
             });
+            el._apexChart.render();
         }
 
         function renderSourceSalesChart() {
             const configEl = document.getElementById('sourceSalesConfig');
-            const canvas = document.getElementById('sourceSalesChart');
-            if (!configEl || !canvas) return;
+            const el = document.getElementById('sourceSalesChart');
+            if (!configEl || !el) return;
+            destroyChart('sourceSalesChart');
 
             const payload = JSON.parse(configEl.dataset.chart || '{}');
             const labels = payload.labels || [];
             const data = payload.datasets || [];
 
-            if (canvas._chartInstance) canvas._chartInstance.destroy();
-
-            // Bảng màu kết hợp giữa cố định và linh hoạt
             const colorMap = {
-                'SALE': '#007bff',
-                'KHAI THÁC': '#c084fc',
-                'TÁI KÝ': '#facc15',
-                'MARKETING': '#b91c1c',
-                'CHUYỂN THÔNG TIN': '#15803d',
-                'CÔNG TY': '#f43f5e',
-                'MỚI': '#0ea5e9'
+                'SALE': '#007bff', 'KHAI THÁC': '#c084fc', 'TÁI KÝ': '#facc15',
+                'MARKETING': '#b91c1c', 'CHUYỂN THÔNG TIN': '#15803d',
+                'CÔNG TY': '#f43f5e', 'MỚI': '#0ea5e9'
             };
+            const fallback = ['#007bff','#c084fc','#facc15','#b91c1c','#15803d','#f43f5e','#0ea5e9','#6366f1','#f97316','#10b981'];
+            const colors = labels.map((l, i) => colorMap[l.toUpperCase()] || fallback[i % fallback.length]);
 
-            const palette = [
-                '#007bff', '#c084fc', '#facc15', '#b91c1c', '#15803d', '#f43f5e', '#0ea5e9',
-                '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e', '#f97316', '#fbbf24', '#84cc16', '#10b981', '#06b6d4'
-            ];
-
-            const backgroundColors = labels.map((label, i) => {
-                const upper = label.toUpperCase();
-                return colorMap[upper] || palette[i % palette.length];
+            el._apexChart = new ApexCharts(el, {
+                series: data,
+                chart: { type: 'pie', height: 300, toolbar: { show: false } },
+                labels,
+                colors,
+                legend: { position: 'right', fontSize: '12px', fontWeight: 600 },
+                tooltip: { y: { formatter: (v, { seriesIndex, w }) => {
+                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                    return compactCurrency(v) + ' (' + ((v / total) * 100).toFixed(1) + '%)';
+                }}}
             });
-
-            canvas._chartInstance = new Chart(canvas, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: backgroundColors,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20,
-                                font: { size: 12, weight: '600' }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const value = context.raw;
-                                    const percentage = ((value / total) * 100).toFixed(1) + '%';
-                                    return ` ${context.label}: ${compactCurrency(value)} (${percentage})`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            el._apexChart.render();
         }
 
         window.renderStatisticsBoardCharts = function() {

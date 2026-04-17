@@ -30,6 +30,24 @@
 
     <div class="dept-wrapper">
 
+        {{-- DAILY REPORT REMINDER (dark-themed, chỉ hiện nếu chưa gửi báo cáo ngày) --}}
+        @php
+            $hasReportToday = \App\Models\DailyReport::where('user_id', auth()->id())
+                ->whereDate('date', today())->exists();
+        @endphp
+        @if(!$hasReportToday)
+        <div class="dept-reminder">
+            <div class="dept-reminder-icon">⏰</div>
+            <div class="dept-reminder-text">
+                <strong>Bạn chưa gửi báo cáo ngày hôm nay</strong>
+                <span>Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</span>
+            </div>
+            <a href="{{ route('app.daily-reports.index') }}" class="dept-reminder-btn">
+                ✏️ Gửi báo cáo
+            </a>
+        </div>
+        @endif
+
         {{-- FILTERS --}}
         <div class="dept-filters">
             <select wire:model.live="{{ $wireYearModel ?? 'year' }}" class="dept-select">
@@ -419,6 +437,27 @@
 .dept-card-sub { font-weight: 400; font-size: .88rem; color: rgba(255,255,255,0.4); }
 .dept-empty { text-align: center; color: rgba(255,255,255,0.3); padding: 40px 0; font-style: italic; }
 .dept-footer-quote { text-align: center; margin-top: 56px; font-size: 1rem; color: rgba(255,255,255,0.25); font-style: italic; }
+/* REMINDER */
+.dept-reminder {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-left: 4px solid #f59e0b;
+    border-radius: 12px; padding: 14px 20px;
+    margin-bottom: 28px;
+}
+.dept-reminder-icon { font-size: 1.6rem; flex-shrink: 0; }
+.dept-reminder-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.dept-reminder-text strong { color: #ffe88a; font-size: 1rem; }
+.dept-reminder-text span { color: rgba(255,255,255,0.55); font-size: .9rem; }
+.dept-reminder-btn {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #1a0a00; font-weight: 700; font-size: .9rem;
+    padding: 9px 20px; border-radius: 8px; text-decoration: none;
+    white-space: nowrap; transition: opacity .2s;
+}
+.dept-reminder-btn:hover { opacity: .85; color: #1a0a00; }
 /* ANIMATIONS */
 @keyframes deptFadeDown { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes deptFadeUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: translateY(0); } }

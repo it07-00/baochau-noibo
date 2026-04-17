@@ -5,7 +5,7 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ route('app.dashboard') }}" class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
+            <a href="{{ route('app.home') }}" class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment" style="height: 40px; width: auto;">
                 <span class="fw-bolder fs-5 text-primary" style="letter-spacing: 1px;">BẢO CHÂU</span>
             </a>
@@ -283,7 +283,6 @@
                                 'Bảng tổng kết',
                                 'Bảng doanh số cá nhân',
                                 'Bảng theo dõi tái ký cá nhân',
-                                'Đường đua doanh số',
                                 'Bảng theo dõi doanh số',
                                 'Doanh số thực thu',
                             ],
@@ -384,9 +383,6 @@
                     } elseif (request()->routeIs('app.reports.sales.renewal-personal')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng theo dõi tái ký cá nhân';
-                    } elseif (request()->routeIs('app.reports.sales.achievement')) {
-                        $activeGroup = 'Báo cáo Kinh doanh';
-                        $activeChild = 'Đường đua doanh số';
                     } elseif (request()->routeIs('app.reports.sales.tracking')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng theo dõi doanh số';
@@ -431,8 +427,22 @@
 
                 @unless ($currentUser->hasRole('it'))
                     <li class="app-sidebar-menu-item">
-                        <a href="{{ route('app.rankings') }}"
-                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.rankings') ? 'active' : '' }}">
+                        <a href="{{ route('app.home') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') ? 'active menu-current' : '' }}">
+                            <span class="menu-icon flex-shrink-0">
+                                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.5 1.5L1.5 7V15.5H6.5V11H10.5V15.5H15.5V7L8.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <span class="menu-title flex-grow-1">Bảng xếp hạng</span>
+                        </a>
+                    </li>
+                @endunless
+
+                @unless ($currentUser->hasAnyRole(['it', 'tu-van', 'ky-thuat']))
+                    <li class="app-sidebar-menu-item">
+                        <a href="{{ route('app.dashboard') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active' : '' }}">
                             <span class="menu-icon flex-shrink-0">
                                 <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -446,7 +456,8 @@
                                         stroke-linecap="round" />
                                 </svg>
                             </span>
-                            <span class="menu-title flex-grow-1">Bảng xếp hạng</span>
+                            <span class="menu-title flex-grow-1">Bảng điều khiển</span>
+                            {{-- /bang-dieu-khien --}}
                         </a>
                     </li>
                 @endunless
@@ -575,11 +586,6 @@
                                                 $child === 'Bảng theo dõi tái ký cá nhân'
                                             ) {
                                                 $href = route('app.reports.sales.renewal-personal');
-                                            } elseif (
-                                                $menu['title'] === 'Báo cáo Kinh doanh' &&
-                                                $child === 'Đường đua doanh số'
-                                            ) {
-                                                $href = route('app.reports.sales.achievement');
                                             } elseif (
                                                 $menu['title'] === 'Báo cáo Kinh doanh' &&
                                                 $child === 'Bảng theo dõi doanh số'

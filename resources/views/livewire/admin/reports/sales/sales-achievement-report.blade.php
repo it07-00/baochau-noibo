@@ -33,6 +33,23 @@
             </select>
         </div>
 
+        {{-- DAILY REPORT REMINDER --}}
+        @php
+            $salesHasDailyReport = \App\Models\DailyReport::where('user_id', auth()->id())
+                ->whereDate('date', today())
+                ->exists();
+        @endphp
+        @if(!$salesHasDailyReport)
+        <div class="race-reminder">
+            <div class="race-reminder-icon">📋</div>
+            <div class="race-reminder-text">
+                <strong>Bạn chưa gửi báo cáo ngày hôm nay</strong>
+                <span>Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</span>
+            </div>
+            <a href="{{ route('app.daily-reports.index') }}" class="race-reminder-btn">Gửi báo cáo</a>
+        </div>
+        @endif
+
         {{-- COMPANY PROGRESS BAR --}}
         <div class="race-company-progress">
             <div class="race-progress-track">
@@ -630,6 +647,28 @@
     padding: 40px 0;
     font-style: italic;
 }
+
+/* ── REMINDER ── */
+.race-reminder {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-left: 4px solid #f59e0b;
+    border-radius: 12px; padding: 14px 20px;
+    margin-bottom: 28px;
+}
+.race-reminder-icon { font-size: 1.6rem; flex-shrink: 0; }
+.race-reminder-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.race-reminder-text strong { color: #ffe88a; font-size: 1rem; }
+.race-reminder-text span { color: rgba(255,255,255,0.55); font-size: .9rem; }
+.race-reminder-btn {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #1a0a00; font-weight: 700; font-size: .9rem;
+    padding: 9px 20px; border-radius: 8px; text-decoration: none;
+    white-space: nowrap; transition: opacity .2s;
+}
+.race-reminder-btn:hover { opacity: .85; color: #1a0a00; }
 
 /* ── FOOTER ── */
 .race-footer-quote {

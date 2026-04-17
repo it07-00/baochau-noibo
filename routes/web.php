@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return auth()->check()
-        ? redirect()->route('app.dashboard')
+        ? redirect()->route('app.home')
         : redirect()->route('login');
 });
 
@@ -35,6 +35,7 @@ Route::middleware(['auth', 'active'])->get('/admin/{path?}', function (Request $
 })->where('path', '.*');
 
 Route::middleware(['auth', 'active'])->name('app.')->group(function () {
+    Route::get('/', \App\Livewire\Admin\HomeBoard::class)->name('home');
     Route::get('/bang-dieu-khien', \App\Livewire\Admin\StatisticsBoard::class)->name('dashboard');
 
     Route::prefix('profile')->name('profile.')->group(function () {
