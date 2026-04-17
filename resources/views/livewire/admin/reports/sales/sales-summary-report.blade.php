@@ -149,7 +149,7 @@
                                 <th class="text-center" style="width: 50px;">STT</th>
                                 <th>Tên khách hàng</th>
                                 <th>Loại hợp đồng</th>
-                                <th class="text-end">Giá trị HĐ (đ)</th>
+                                <th class="text-end">Doanh số (đ)</th>
                                 <th class="text-center" style="width: 110px;">Loại</th>
                                 <th class="text-center" style="width: 110px;">Ngày ký</th>
                             </tr>
