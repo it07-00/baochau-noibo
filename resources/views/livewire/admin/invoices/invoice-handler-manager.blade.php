@@ -103,7 +103,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Số HĐ CXL</th>
+                            <th>Số HĐ NTP</th>
                             <th>Nhà thầu phụ</th>
                             <th>Hợp đồng</th>
                             <th>Ngày lập</th>

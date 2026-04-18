@@ -63,7 +63,7 @@
                             <select class="form-select form-select-sm" wire:model.live="sortField" style="width:130px;">
                                 <option value="signed_at">Ngày ký</option>
                                 <option value="value">Giá trị</option>
-                                <option value="shd_cxl">Số HĐ CXL</option>
+                                <option value="shd_cxl">Số HĐ NTP</option>
                             </select>
                         </div>
                         <button class="btn btn-outline-secondary btn-sm px-2" wire:click="toggleDir" title="{{ $sortDir === 'desc' ? 'Mới nhất trước' : 'Cũ nhất trước' }}">
@@ -93,7 +93,7 @@
                                     <th>
                                         <button class="btn btn-link btn-sm p-0 text-dark fw-bold text-decoration-none"
                                                 wire:click="sortBy('shd_cxl')">
-                                            Số HĐ CXL
+                                            Số HĐ NTP
                                             @if($sortField === 'shd_cxl')
                                                 <i class="bi bi-arrow-{{ $sortDir === 'asc' ? 'up' : 'down' }}-short ms-1"></i>
                                             @endif

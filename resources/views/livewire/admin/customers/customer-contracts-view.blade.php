@@ -108,7 +108,7 @@
                                             @endif
                                         </button>
                                     </th>
-                                    <th>Số HĐ CXL</th>
+                                    <th>Số HĐ NTP</th>
                                     <th>Nhà thầu phụ</th>
                                     <th>
                                         <button class="btn btn-link btn-sm p-0 text-dark fw-bold text-decoration-none"

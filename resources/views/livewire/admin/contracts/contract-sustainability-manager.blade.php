@@ -267,7 +267,7 @@
                             </td>
                             <td class="ps-4 py-4">
                                 <div class="d-flex flex-column">
-                                    <span class="">Số HĐ CXL:<span
+                                    <span class="">Số HĐ NTP:<span
                                             class="fw-bold">{{ $doc->shd_cxl }}</span></span>
                                     <span class="">Số HĐ BC:<span
                                             class="fw-bold">{{ $doc->shd_bc }}</span></span>
@@ -500,7 +500,7 @@
                                 <table class="table table-bordered mb-0">
                                     <tbody>
                                         <tr>
-                                            <th class="bg-light w-30">Số HĐ CXL</th>
+                                            <th class="bg-light w-30">Số HĐ NTP</th>
                                             <td class="fw-bold">{{ $selectedDoc->shd_cxl }}</td>
                                         </tr>
                                         <tr>
@@ -704,7 +704,7 @@
                     <div class="row g-3">
                         @if ($isEditing && auth()->user()->hasRole('ke-toan'))
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Số HĐ CXL</label>
+                                <label class="form-label fw-bold">Số HĐ NTP</label>
                                 <input type="text" class="form-control" wire:model="formData.shd_cxl">
                             </div>
                             <div class="col-md-6">

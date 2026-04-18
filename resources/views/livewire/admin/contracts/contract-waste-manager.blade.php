@@ -443,7 +443,7 @@
                             </td>
                             <td class="ps-4 py-4" style="max-width: 250px;">
                                 <div class="d-flex flex-column">
-                                    <span class="">Số HĐ CXL: <span
+                                    <span class="">Số HĐ NTP: <span
                                             class="fw-bold">{{ $doc->shd_cxl }}</span></span>
                                     <span class="">Số HĐ BC: <span
                                             class="fw-bold">{{ $doc->shd_bc ?: '-' }}</span></span>
@@ -893,7 +893,7 @@
                             <!-- Info -->
                             @if ($isEditing && auth()->user()->hasRole('ke-toan'))
                                 <div class="col-md-3">
-                                    <label class="form-label fw-bold">Số HĐ CXL</label>
+                                    <label class="form-label fw-bold">Số HĐ NTP</label>
                                     <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
                                 </div>
                                 <div class="col-md-3">
