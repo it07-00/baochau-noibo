@@ -15,7 +15,7 @@ class AttendanceExportController extends Controller
 {
     public function export(string $month)
     {
-        abort_unless(auth()->user()->hasRole('it'), 403);
+        abort_unless(auth()->user()->can('cham-cong.export'), 403);
 
         $service   = app(AttendanceService::class);
         $monthData = $service->getMonthData($month);
@@ -295,7 +295,7 @@ class AttendanceExportController extends Controller
     // ─────────────────────────────────────────────────────────────────────────
     public function exportDetail(string $month)
     {
-        abort_unless(auth()->user()->hasRole('it'), 403);
+        abort_unless(auth()->user()->can('cham-cong.export'), 403);
 
         $service   = app(AttendanceService::class);
         $monthData = $service->getMonthData($month);

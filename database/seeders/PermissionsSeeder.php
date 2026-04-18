@@ -87,6 +87,9 @@ class PermissionsSeeder extends Seeder
 
             // --- Nhật ký hoạt động (chỉ IT) ---
             'activity-log'        => ['view'],
+
+            // --- Chấm công ---
+            'cham-cong'           => ['view', 'edit', 'export'],
         ];
 
         foreach ($modules as $module => $actions) {
@@ -120,6 +123,8 @@ class PermissionsSeeder extends Seeder
             'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit', 'daily-reports.delete',
             // Nhật ký hoạt động
             'activity-log.view',
+            // Chấm công
+            'cham-cong.view', 'cham-cong.edit', 'cham-cong.export',
         ]);
 
         // ------------------------------------------------

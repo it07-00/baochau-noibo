@@ -175,9 +175,9 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Nhật ký hoạt động
     Route::get('nhat-ky-hoat-dong', \App\Livewire\Admin\ActivityLogViewer::class)->name('activity-log')->middleware('permission:activity-log.view');
 
-    // Chấm công (beta — chỉ IT)
-    Route::get('cham-cong', \App\Livewire\Admin\Attendance\AttendanceManager::class)->name('attendance.index')->middleware('role:it');
-    Route::get('cham-cong/nhan-vien', \App\Livewire\Admin\Attendance\AttendanceEmployeeManager::class)->name('attendance.employees')->middleware('role:it');
-    Route::get('cham-cong/xuat-excel/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'export'])->name('attendance.export')->middleware('role:it');
-    Route::get('cham-cong/xuat-excel-chitiet/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'exportDetail'])->name('attendance.export-detail')->middleware('role:it');
+    // Chấm công
+    Route::get('cham-cong', \App\Livewire\Admin\Attendance\AttendanceManager::class)->name('attendance.index')->middleware('permission:cham-cong.view');
+    Route::get('cham-cong/nhan-vien', \App\Livewire\Admin\Attendance\AttendanceEmployeeManager::class)->name('attendance.employees')->middleware('permission:cham-cong.edit');
+    Route::get('cham-cong/xuat-excel/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'export'])->name('attendance.export')->middleware('permission:cham-cong.export');
+    Route::get('cham-cong/xuat-excel-chitiet/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'exportDetail'])->name('attendance.export-detail')->middleware('permission:cham-cong.export');
 });

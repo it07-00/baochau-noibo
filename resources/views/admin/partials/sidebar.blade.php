@@ -150,7 +150,7 @@
                     @endunless
                 @endcan
 
-                @if ($currentUser->hasRole('it'))
+                @can('cham-cong.view')
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.attendance.index') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.index') ? 'active menu-current' : '' }}">
@@ -163,9 +163,11 @@
                                     <path d="M9 15L11 17L15 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </span>
-                            <span class="menu-title flex-grow-1">Chấm công <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">BETA</span></span>
+                            <span class="menu-title flex-grow-1">Chấm công</span>
                         </a>
                     </li>
+                @endcan
+                @can('cham-cong.edit')
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.attendance.employees') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.employees') ? 'active menu-current' : '' }}">
@@ -178,7 +180,7 @@
                             <span class="menu-title flex-grow-1">NV chấm công</span>
                         </a>
                     </li>
-                @endif
+                @endcan
 
 
                 <li class="app-sidebar-menu-heading">
