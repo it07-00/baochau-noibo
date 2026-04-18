@@ -16,7 +16,7 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>
                         <h5 class="mb-1 fw-bold">Bảng chấm công</h5>
-                        <div class="text-muted small">
+                        <div class="text-muted">
                             @if($lastImport)
                                 Cập nhật lần cuối: {{ $lastImport->created_at->format('d/m/Y H:i') }}
                                 · {{ $lastImport->total_records }} bản ghi
@@ -102,29 +102,50 @@
                                         {{ $row['employee']->name }}
                                     </td>
                                     @foreach($dates as $date)
-                                        @php $day = $row['days'][$date->day] ?? null; @endphp
-                                        <td class="text-center {{ $date->isSunday() ? 'bg-light' : '' }}"
-                                            style="vertical-align:middle;padding:2px 3px;">
-                                            @if($day)
-                                                <div style="font-size:0.82rem;line-height:1.3;">
-                                                    @php
-                                                        $isLate = !$date->isSunday() && $day['first'] > '08:00';
-                                                        $isEarly = !$date->isSunday() && $day['last'] && $day['last'] < '17:00';
-                                                    @endphp
-                                                    <span class="{{ $isLate ? 'text-danger fw-bold' : 'text-success' }}">
-                                                        {{ $day['first'] }}
-                                                    </span>
-                                                    @if($day['last'])
-                                                        <br>
-                                                        <span class="{{ $isEarly ? 'text-warning fw-bold' : 'text-primary' }}">
-                                                            {{ $day['last'] }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            @elseif(!$date->isSunday() && $date->lte(now()))
-                                                <span class="text-danger" style="font-size:0.82rem;">✗</span>
-                                            @endif
-                                        </td>
+                                        @php
+                                            $day = $row['days'][$date->day] ?? null;
+                                            $isSun = $date->isSunday();
+                                        @endphp
+                                        @if($isSun)
+                                            <td class="text-center bg-light" style="vertical-align:middle;padding:2px 3px;">
+                                                @if($day)
+                                                    <div style="font-size:0.82rem;line-height:1.3;">
+                                                        <span>{{ $day['first'] }}</span>
+                                                        @if($day['last'])<br><span>{{ $day['last'] }}</span>@endif
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        @else
+                                            @php
+                                                $isLate  = $day && $day['first'] > '08:00';
+                                                $isEarly = $day && $day['last'] && $day['last'] < '17:00';
+                                                $isAbsent = !$day && $date->lte(now());
+
+                                                if ($isAbsent) {
+                                                    $cellBg = '#dc3545'; $cellColor = '#fff';
+                                                } elseif ($day && $isLate && $isEarly) {
+                                                    $cellBg = '#dc3545'; $cellColor = '#fff';
+                                                } elseif ($day && $isLate) {
+                                                    $cellBg = '#fd7e14'; $cellColor = '#fff';
+                                                } elseif ($day && $isEarly) {
+                                                    $cellBg = '#ffc107'; $cellColor = '#000';
+                                                } elseif ($day) {
+                                                    $cellBg = '#198754'; $cellColor = '#fff';
+                                                } else {
+                                                    $cellBg = 'transparent'; $cellColor = 'inherit';
+                                                }
+                                            @endphp
+                                            <td class="text-center" style="vertical-align:middle;padding:2px 3px;background:{{ $cellBg }};color:{{ $cellColor }};">
+                                                @if($day)
+                                                    <div style="font-size:0.82rem;line-height:1.3;font-weight:600;">
+                                                        <span>{{ $day['first'] }}</span>
+                                                        @if($day['last'])<br><span>{{ $day['last'] }}</span>@endif
+                                                    </div>
+                                                @elseif($isAbsent)
+                                                    <span style="font-size:0.82rem;font-weight:700;">✗</span>
+                                                @endif
+                                            </td>
+                                        @endif
                                     @endforeach
                                     <td class="text-center fw-bold" style="background:#f8f9fa;">{{ $row['work_days'] }}</td>
                                     <td class="text-center {{ $row['late_days'] > 0 ? 'text-danger fw-bold' : '' }}" style="background:#f8f9fa;">
@@ -148,11 +169,10 @@
                 {{-- Legend --}}
                 @if(count($grid) > 0)
                     <div class="p-3 border-top d-flex flex-wrap gap-4" style="font-size:0.78rem;">
-                        <span><span class="text-success">■</span> Đúng giờ</span>
-                        <span><span class="text-danger fw-bold">■</span> Đi trễ (&gt; 08:00)</span>
-                        <span><span class="text-warning fw-bold">■</span> Về sớm (&lt; 17:00)</span>
-                        <span><span class="text-primary">■</span> Giờ ra</span>
-                        <span><span class="text-danger">✗</span> Vắng (ngày thường)</span>
+                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#198754;vertical-align:middle;"></span> Đúng giờ</span>
+                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#fd7e14;vertical-align:middle;"></span> Đi trễ (&gt; 08:00)</span>
+                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#ffc107;vertical-align:middle;"></span> Về sớm (&lt; 17:00)</span>
+                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#dc3545;vertical-align:middle;"></span> Trễ + Sớm / Vắng</span>
                     </div>
                 @endif
             </div>
@@ -176,16 +196,16 @@
                                 <label class="form-label fw-semibold">File user.dat <span class="text-danger">*</span></label>
                                 <input type="file" wire:model="userFile" class="form-control form-control-sm" accept=".dat">
                                 <div class="form-text">File danh sách nhân viên từ máy chấm công</div>
-                                @error('userFile') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                @error('userFile') <div class="text-danger mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">File attlog.dat <span class="text-danger">*</span></label>
                                 <input type="file" wire:model="attlogFile" class="form-control form-control-sm" accept=".dat">
                                 <div class="form-text">File log chấm công (tên có dạng 8116..._attlog.dat)</div>
-                                @error('attlogFile') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                @error('attlogFile') <div class="text-danger mt-1">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="alert alert-info small mb-0 py-2">
+                            <div class="alert alert-info mb-0 py-2">
                                 <strong>Lưu ý:</strong> Import sẽ thay thế toàn bộ dữ liệu chấm công của tháng tương ứng.
                             </div>
                         </div>
