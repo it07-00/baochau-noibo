@@ -153,7 +153,7 @@
                 @if ($currentUser->hasRole('it'))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.attendance.index') }}"
-                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.*') ? 'active menu-current' : '' }}">
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.index') ? 'active menu-current' : '' }}">
                             <span class="menu-icon flex-shrink-0">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
@@ -164,6 +164,18 @@
                                 </svg>
                             </span>
                             <span class="menu-title flex-grow-1">Chấm công <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">BETA</span></span>
+                        </a>
+                    </li>
+                    <li class="app-sidebar-menu-item">
+                        <a href="{{ route('app.attendance.employees') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.employees') ? 'active menu-current' : '' }}">
+                            <span class="menu-icon flex-shrink-0">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <span class="menu-title flex-grow-1">NV chấm công</span>
                         </a>
                     </li>
                 @endif

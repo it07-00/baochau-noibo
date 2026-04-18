@@ -49,6 +49,14 @@
                             </svg>
                             Import dữ liệu
                         </button>
+                        <a href="{{ route('app.attendance.employees') }}"
+                           class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                                <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M3 14c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                            Quản lý NV
+                        </a>
                     </div>
                 </div>
             </div>

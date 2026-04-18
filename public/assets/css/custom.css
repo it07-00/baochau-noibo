@@ -4,7 +4,9 @@
    ================================================ */
 
 /* Inline style ẩn Alpine.js trước khi load */
-[x-cloak] { display: none !important; }
+[x-cloak] {
+    display: none !important;
+}
 
 /* ----- Filter Labels ----- */
 .custom-filter-label {
@@ -65,6 +67,7 @@
 .dropdown-custom {
     position: relative;
 }
+
 .dropdown-menu-custom {
     position: absolute;
     top: 100%;
@@ -83,10 +86,12 @@
     border-radius: .25rem;
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .175);
 }
+
 .dropdown-menu-custom .dropdown-item {
     font-size: 13px;
     padding: 0.4rem 0.8rem;
 }
+
 .dropdown-menu-custom .form-control-sm {
     font-size: 13px;
 }
@@ -96,6 +101,7 @@
 .form-select.text-wrap {
     white-space: normal !important;
 }
+
 .form-select.text-wrap {
     height: auto !important;
     min-height: 31px;
@@ -142,6 +148,7 @@
 :root[data-bs-theme=dark] .bg-white {
     background-color: var(--bs-body-bg) !important;
 }
+
 :root[data-bs-theme=dark] .bg-light {
     background-color: var(--bs-secondary-bg) !important;
 }
@@ -160,7 +167,7 @@
 
 /* ── table-light thead ── */
 :root[data-bs-theme=dark] .table-light,
-:root[data-bs-theme=dark] .table-light > th,
+:root[data-bs-theme=dark] .table-light>th,
 :root[data-bs-theme=dark] thead.table-light th {
     --bs-table-bg: var(--bs-secondary-bg);
     --bs-table-color: var(--bs-body-color);
@@ -212,33 +219,42 @@
     background: linear-gradient(180deg, #1e2435 0%, #1a1f2e 100%);
     border-color: rgba(255, 255, 255, 0.1);
 }
+
 :root[data-bs-theme=dark] .it-dashboard-tabs .nav-link {
     color: rgba(255, 255, 255, 0.72);
 }
+
 :root[data-bs-theme=dark] .it-panel-card {
     border-color: rgba(255, 255, 255, 0.1);
 }
+
 :root[data-bs-theme=dark] .it-panel-title {
     color: rgba(255, 255, 255, 0.5);
 }
+
 :root[data-bs-theme=dark] .it-disk-progress {
     background-color: rgba(255, 255, 255, 0.1);
 }
+
 :root[data-bs-theme=dark] .it-activity-card {
     border-color: rgba(255, 255, 255, 0.1);
 }
+
 :root[data-bs-theme=dark] .it-activity-card .card-header {
     background: var(--bs-body-bg) !important;
     border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
+
 :root[data-bs-theme=dark] .it-activity-table thead th {
     background: var(--bs-secondary-bg) !important;
     color: rgba(255, 255, 255, 0.55) !important;
     border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
+
 :root[data-bs-theme=dark] .it-activity-table tbody tr:hover {
     background: rgba(255, 255, 255, 0.05) !important;
 }
+
 :root[data-bs-theme=dark] .it-user-badge {
     background: rgba(255, 255, 255, 0.12);
     color: rgba(255, 255, 255, 0.85);
@@ -722,7 +738,7 @@
     background: rgba(142, 183, 255, 0.08) !important;
 }
 
-[data-bs-theme="dark"] .internal-doc-manager .internal-doc-table > :not(caption) > * > * {
+[data-bs-theme="dark"] .internal-doc-manager .internal-doc-table> :not(caption)>*>* {
     border-color: var(--internal-doc-border) !important;
 }
 
@@ -775,44 +791,56 @@
 .app-sidebar {
     background-color: #0f172a !important;
 }
+
 .app-sidebar-header {
-    border-bottom-color: rgba(255,255,255,0.08) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
 }
+
 .app-sidebar-header .text-primary {
     color: #93c5fd !important;
 }
+
 .app-sidebar-close-btn {
-    color: rgba(255,255,255,0.6) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
 }
+
 .app-sidebar-close-btn:hover {
-    color: rgba(255,255,255,1) !important;
+    color: rgba(255, 255, 255, 1) !important;
 }
+
 .app-sidebar-menu ul li a {
-    color: rgba(203,213,225,0.8) !important;
+    color: rgba(203, 213, 225, 0.8) !important;
 }
+
 .app-sidebar-menu ul li a.menu-current {
     color: #ffffff !important;
 }
+
 .app-sidebar-menu ul li a:hover,
 .app-sidebar-menu ul li a.active:not(.menu-current) {
-    background-color: rgba(255,255,255,0.07) !important;
-    color: rgba(255,255,255,0.95) !important;
+    background-color: rgba(255, 255, 255, 0.07) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
 }
-.app-sidebar-menu ul .app-sidebar-menu-heading > span {
-    color: rgba(148,163,184,0.55) !important;
+
+.app-sidebar-menu ul .app-sidebar-menu-heading>span {
+    color: rgba(148, 163, 184, 0.55) !important;
 }
+
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line,
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line::after,
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line::before {
-    background-color: rgba(148,163,184,0.25) !important;
+    background-color: rgba(148, 163, 184, 0.25) !important;
 }
+
 .app-sidebar-footer {
-    border-top-color: rgba(255,255,255,0.08) !important;
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
     background-color: #0f172a !important;
 }
+
 .app-sidebar-footer h6 {
-    color: rgba(255,255,255,0.9) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
+
 .app-sidebar-footer span {
-    color: rgba(148,163,184,0.7) !important;
+    color: rgba(148, 163, 184, 0.7) !important;
 }

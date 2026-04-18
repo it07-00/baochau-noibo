@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Attendance;
 use App\Models\AttendanceEmployee;
 use App\Models\AttendanceImport;
 use App\Models\AttendanceLog;
+use App\Services\AttendanceService;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -102,77 +103,12 @@ class AttendanceManager extends Component
 
     public function render()
     {
-        $startOfMonth = Carbon::parse($this->selectedMonth . '-01')->startOfMonth();
-        $endOfMonth   = Carbon::parse($this->selectedMonth . '-01')->endOfMonth();
+        $service = app(AttendanceService::class);
+        $monthData = $service->getMonthData($this->selectedMonth, onlyWithLogs: false);
 
-        $employees = AttendanceEmployee::orderBy('device_uid')->get();
-
-        // Get all logs for the month
-        $logs = AttendanceLog::whereBetween('checked_at', [$startOfMonth, $endOfMonth])
-            ->orderBy('checked_at')
-            ->get()
-            ->groupBy('employee_id');
-
-        // Build calendar data
-        $daysInMonth = $startOfMonth->daysInMonth;
-        $dates = [];
-        for ($d = 1; $d <= $daysInMonth; $d++) {
-            $dates[] = $startOfMonth->copy()->day($d);
-        }
-
-        // Build attendance grid: employee_id => [day => [first_check, last_check]]
         $grid = [];
-        foreach ($employees as $emp) {
-            $empLogs = $logs->get($emp->id, collect());
-            $dayData = [];
-
-            foreach ($dates as $date) {
-                $dayLogs = $empLogs->filter(fn($l) => $l->checked_at->isSameDay($date))
-                    ->sortBy('checked_at');
-
-                if ($dayLogs->isEmpty()) {
-                    $dayData[$date->day] = null;
-                } else {
-                    $dayData[$date->day] = [
-                        'first' => $dayLogs->first()->checked_at->format('H:i'),
-                        'last'  => $dayLogs->count() > 1 ? $dayLogs->last()->checked_at->format('H:i') : null,
-                        'count' => $dayLogs->count(),
-                    ];
-                }
-            }
-
-            // Calculate summary
-            $workDays = 0;
-            $lateDays = 0;
-            $earlyDays = 0;
-
-            foreach ($dayData as $day => $data) {
-                if (!$data) continue;
-
-                $dateObj = $startOfMonth->copy()->day($day);
-                // Skip Sunday only (Saturday is a work day)
-                if ($dateObj->isSunday()) continue;
-
-                if ($data['last']) {
-                    $workDays++;
-                }
-                // Late: first check after 08:00
-                if ($data['first'] > '08:00') {
-                    $lateDays++;
-                }
-                // Early leave: last check before 17:00
-                if ($data['last'] && $data['last'] < '17:00') {
-                    $earlyDays++;
-                }
-            }
-
-            $grid[$emp->id] = [
-                'employee'   => $emp,
-                'days'       => $dayData,
-                'work_days'  => $workDays,
-                'late_days'  => $lateDays,
-                'early_days' => $earlyDays,
-            ];
+        foreach ($service->buildSummaryGrid($monthData['employees'], $monthData['logs'], $monthData['dates'], $monthData['startOfMonth']) as $row) {
+            $grid[$row['employee']->id] = $row;
         }
 
         $lastImport = AttendanceImport::where('month', $this->selectedMonth)
@@ -181,8 +117,8 @@ class AttendanceManager extends Component
 
         return view('livewire.admin.attendance.attendance-manager', [
             'grid'        => $grid,
-            'dates'       => $dates,
-            'daysInMonth' => $daysInMonth,
+            'dates'       => $monthData['dates'],
+            'daysInMonth' => $monthData['daysInMonth'],
             'lastImport'  => $lastImport,
         ])->layout('admin.layouts.app');
     }

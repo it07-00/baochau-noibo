@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AttendanceEmployee;
-use App\Models\AttendanceLog;
+use App\Services\AttendanceService;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -18,68 +17,13 @@ class AttendanceExportController extends Controller
     {
         abort_unless(auth()->user()->hasRole('it'), 403);
 
-        $startOfMonth = Carbon::parse($month . '-01')->startOfMonth();
-        $endOfMonth   = Carbon::parse($month . '-01')->endOfMonth();
-        $daysInMonth  = $startOfMonth->daysInMonth;
+        $service   = app(AttendanceService::class);
+        $monthData = $service->getMonthData($month);
 
-        $logs = AttendanceLog::whereBetween('checked_at', [$startOfMonth, $endOfMonth])
-            ->orderBy('checked_at')
-            ->get()
-            ->groupBy('employee_id');
-
-        $employees = AttendanceEmployee::whereIn('id', $logs->keys())
-            ->orderBy('device_uid')
-            ->get();
-
-        // Build dates
-        $dates = [];
-        for ($d = 1; $d <= $daysInMonth; $d++) {
-            $dates[] = $startOfMonth->copy()->day($d);
-        }
-
-        // Build grid
-        $grid = [];
-        foreach ($employees as $emp) {
-            $empLogs = $logs->get($emp->id, collect());
-            $dayData = [];
-
-            foreach ($dates as $date) {
-                $dayLogs = $empLogs->filter(fn($l) => $l->checked_at->isSameDay($date))
-                    ->sortBy('checked_at');
-
-                if ($dayLogs->isEmpty()) {
-                    $dayData[$date->day] = null;
-                } else {
-                    $dayData[$date->day] = [
-                        'first' => $dayLogs->first()->checked_at->format('H:i'),
-                        'last'  => $dayLogs->count() > 1 ? $dayLogs->last()->checked_at->format('H:i') : null,
-                        'count' => $dayLogs->count(),
-                    ];
-                }
-            }
-
-            $workDays  = 0;
-            $lateDays  = 0;
-            $earlyDays = 0;
-
-            foreach ($dayData as $day => $data) {
-                if (!$data) continue;
-                $dateObj = $startOfMonth->copy()->day($day);
-                if ($dateObj->isSunday()) continue;
-
-                if ($data['last']) $workDays++;
-                if ($data['first'] > '08:00') $lateDays++;
-                if ($data['last'] && $data['last'] < '17:00') $earlyDays++;
-            }
-
-            $grid[] = [
-                'employee'   => $emp,
-                'days'       => $dayData,
-                'work_days'  => $workDays,
-                'late_days'  => $lateDays,
-                'early_days' => $earlyDays,
-            ];
-        }
+        $startOfMonth = $monthData['startOfMonth'];
+        $daysInMonth  = $monthData['daysInMonth'];
+        $dates        = $monthData['dates'];
+        $grid         = $service->buildSummaryGrid($monthData['employees'], $monthData['logs'], $dates, $startOfMonth);
 
         // ── Build spreadsheet ──────────────────────────────────────────────
         $spreadsheet = new Spreadsheet();
@@ -353,28 +297,16 @@ class AttendanceExportController extends Controller
     {
         abort_unless(auth()->user()->hasRole('it'), 403);
 
-        $startOfMonth = Carbon::parse($month . '-01')->startOfMonth();
-        $endOfMonth   = Carbon::parse($month . '-01')->endOfMonth();
-        $daysInMonth  = $startOfMonth->daysInMonth;
+        $service   = app(AttendanceService::class);
+        $monthData = $service->getMonthData($month);
 
-        $logs = AttendanceLog::whereBetween('checked_at', [$startOfMonth, $endOfMonth])
-            ->orderBy('checked_at')
-            ->get()
-            ->groupBy('employee_id');
-
-        $employees = AttendanceEmployee::whereIn('id', $logs->keys())
-            ->orderBy('device_uid')
-            ->get();
-
-        $dates = [];
-        for ($d = 1; $d <= $daysInMonth; $d++) {
-            $dates[] = $startOfMonth->copy()->day($d);
-        }
+        $startOfMonth = $monthData['startOfMonth'];
+        $daysInMonth  = $monthData['daysInMonth'];
+        $dates        = $monthData['dates'];
+        $employees    = $monthData['employees'];
+        $logs         = $monthData['logs'];
 
         $viDayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-        $startMin   = 8 * 60;
-        $endMin     = 17 * 60;
-        $lunchMin   = 60;
 
         // ── Spreadsheet ────────────────────────────────────────────────────
         $spreadsheet = new Spreadsheet();
@@ -454,74 +386,22 @@ class AttendanceExportController extends Controller
             $empLogs = $logs->get($emp->id, collect());
             $empBlockStart = $currentRow;
 
-            // ── Per-day data ─────────────────────────────────────────────
-            $dayData = [];
-            foreach ($dates as $date) {
-                $dayLogs  = $empLogs->filter(fn($l) => $l->checked_at->isSameDay($date))
-                    ->sortBy('checked_at')->values();
-                $isSunday = $date->isSunday();
-
-                if ($dayLogs->isEmpty()) {
-                    $dayData[$date->day] = null;
-                    continue;
-                }
-
-                $first     = $dayLogs->first()->checked_at;
-                $last      = $dayLogs->count() > 1 ? $dayLogs->last()->checked_at : null;
-                $checkinM  = $first->hour * 60 + $first->minute;
-                $checkoutM = $last ? ($last->hour * 60 + $last->minute) : null;
-                $hasOut    = $checkoutM !== null;
-
-                $lateMin   = (!$isSunday && $hasOut) ? max(0, $checkinM - $startMin) : 0;
-                $earlyMin  = (!$isSunday && $hasOut) ? max(0, $endMin - $checkoutM) : 0;
-                $overtimeM = (!$isSunday && $hasOut) ? max(0, $checkoutM - $endMin) : 0;
-
-                if (!$isSunday && $hasOut) {
-                    $effStart    = max($checkinM, $startMin);
-                    $effEnd      = min($checkoutM, $endMin);
-                    $workMinutes = max(0, $effEnd - $effStart - $lunchMin);
-                    $workHours   = round($workMinutes / 60, 2);
-                    $cong        = min(1.0, round($workHours / 8, 2));
-                } else {
-                    $workHours = 0.0;
-                    $cong      = 0.0;
-                }
-
-                $dayData[$date->day] = [
-                    'checkin'    => $first->format('H:i'),
-                    'checkout'   => $last ? $last->format('H:i') : null,
-                    'late_min'   => $lateMin,
-                    'early_min'  => $earlyMin,
-                    'overtime_m' => $overtimeM,
-                    'work_hours' => $workHours,
-                    'cong'       => $cong,
-                    'ky_hieu'    => $isSunday ? 'V' : ($hasOut ? 'X' : 'O'),
-                    'is_sunday'  => $isSunday,
-                ];
-            }
-
-            // ── Summary ───────────────────────────────────────────────────
-            $totalHours = $totalCong = $lateTimes = $lateMinutes = 0.0;
-            $earlyTimes = $earlyMinutes = $vangKP = 0;
-
-            foreach ($dates as $date) {
-                if ($date->isSunday()) continue;
-                $data = $dayData[$date->day] ?? null;
-                if (!$data) {
-                    if ($date->lte(now())) $vangKP++;
-                    continue;
-                }
-                $totalHours  += $data['work_hours'];
-                $totalCong   += $data['cong'];
-                if ($data['late_min'] > 0)  { $lateTimes++;  $lateMinutes  += $data['late_min']; }
-                if ($data['early_min'] > 0) { $earlyTimes++; $earlyMinutes += $data['early_min']; }
-            }
+            // ── Per-day data + Summary via service ───────────────────────
+            $detail      = $service->buildEmployeeDetail($empLogs, $dates);
+            $dayData     = $detail['dayData'];
+            $totalHours  = $detail['summary']['total_hours'];
+            $totalCong   = $detail['summary']['total_cong'];
+            $lateTimes   = $detail['summary']['late_times'];
+            $lateMinutes = $detail['summary']['late_minutes'];
+            $earlyTimes  = $detail['summary']['early_times'];
+            $earlyMinutes = $detail['summary']['early_minutes'];
+            $vangKP      = $detail['summary']['vang_kp'];
 
             // ── Employee header row ───────────────────────────────────────
             $sheet->mergeCells("A{$currentRow}:{$lastColLetter}{$currentRow}");
             $sheet->setCellValue("A{$currentRow}",
-                sprintf('Mã nhân viên: %05d      Tên nhân viên: %s      Phòng ban: ---',
-                    $emp->device_uid, $emp->name));
+                sprintf('Mã nhân viên: %05d      Tên nhân viên: %s      Phòng ban: %s',
+                    $emp->device_uid, $emp->name, $emp->department ?: '---'));
             $sheet->getStyle("A{$currentRow}")->applyFromArray(array_merge_recursive([
                 'font'      => ['name' => 'Times New Roman', 'size' => 11, 'bold' => true],
                 'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFF00']],
