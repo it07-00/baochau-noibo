@@ -99,9 +99,15 @@ class HandlerManager extends Component
         abort_unless(auth()->user()->can('handlers.delete'), 403);
 
         $handler = Handler::findOrFail($id);
-        $usedContracts = ContractWaste::where('handler_id', $id)->count();
 
-        if ($usedContracts > 0) {
+        $usedCount = \App\Models\ContractWaste::where('handler_id', $id)->count()
+            + \App\Models\ContractLegal::where('handler_id', $id)->count()
+            + \App\Models\ContractTechnical::where('handler_id', $id)->count()
+            + \App\Models\ContractResearch::where('handler_id', $id)->count()
+            + \App\Models\ContractSustainability::where('handler_id', $id)->count()
+            + \App\Models\ContractEmission::where('handler_id', $id)->count();
+
+        if ($usedCount > 0) {
             $this->dispatch('swal:toast', [
                 'type' => 'error',
                 'message' => 'Không thể xóa vì nhà thầu phụ đang được dùng trong hợp đồng.',
@@ -128,7 +134,14 @@ class HandlerManager extends Component
     public function render()
     {
         $handlers = Handler::query()
-            ->withCount('contracts')
+            ->withCount([
+                'contracts',
+                'contractLegals',
+                'contractTechnicals',
+                'contractResearches',
+                'contractSustainabilities',
+                'contractEmissions',
+            ])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -137,7 +150,17 @@ class HandlerManager extends Component
                 });
             })
             ->orderBy('name')
-            ->paginate(10);
+            ->paginate(10)
+            ->through(function ($h) {
+                $h->contracts_count =
+                    $h->contracts_count +
+                    $h->contract_legals_count +
+                    $h->contract_technicals_count +
+                    $h->contract_researches_count +
+                    $h->contract_sustainabilities_count +
+                    $h->contract_emissions_count;
+                return $h;
+            });
 
         return view('livewire.admin.handlers.handler-manager', [
             'handlers' => $handlers,

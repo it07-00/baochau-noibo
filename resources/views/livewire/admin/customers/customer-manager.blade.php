@@ -59,14 +59,25 @@
                                 @endphp
                                 <tr wire:key="customer-{{ $customer->id }}">
                                     <td class="text-center text-muted  fw-semibold">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
-                                    <td class="fw-bold">{{ $customer->name }}</td>
+                                    <td class="fw-bold">
+                                        <a href="{{ route('app.customers.contracts', $customer) }}" class="text-body text-decoration-none link-hover-primary">
+                                            {{ $customer->name }}
+                                        </a>
+                                    </td>
                                     <td>{{ $customer->tax_code ?: '—' }}</td>
                                     <td>{{ $customer->province ?: '—' }}</td>
                                     <td>{{ $customer->phone ?: '—' }}</td>
                                     <td>{{ $customer->email ?: '—' }}</td>
                                     <td>{{ $customer->representative ?: '—' }}</td>
                                     <td class="text-center">
-                                        <span class="badge bg-label-primary px-2 py-1">{{ $totalContracts }}</span>
+                                        @if($totalContracts > 0)
+                                            <a href="{{ route('app.customers.contracts', $customer) }}"
+                                               class="badge bg-label-primary px-2 py-1 text-decoration-none">
+                                                {{ $totalContracts }}
+                                            </a>
+                                        @else
+                                            <span class="badge bg-label-secondary px-2 py-1">0</span>
+                                        @endif
                                     </td>
                                     <td class="text-end">
                                         @can('customers.edit')

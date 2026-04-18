@@ -64,14 +64,16 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::resource('departments', \App\Http\Controllers\Admin\DepartmentController::class)->except(['index']);
     });
 
-    // Chủ xử lý
+    // Nhà thầu phụ
     Route::middleware('permission:handlers.view')->group(function () {
-        Route::get('chu-xu-ly', \App\Livewire\Admin\Handlers\HandlerManager::class)->name('handlers.index');
+        Route::get('nha-thau-phu', \App\Livewire\Admin\Handlers\HandlerManager::class)->name('handlers.index');
+        Route::get('nha-thau-phu/{handler}/hop-dong', \App\Livewire\Admin\Handlers\HandlerContractsView::class)->name('handlers.contracts');
     });
 
     // Khách hàng
     Route::middleware('permission:customers.view')->group(function () {
         Route::get('khach-hang', \App\Livewire\Admin\Customers\CustomerManager::class)->name('customers.index');
+        Route::get('khach-hang/{customer}/hop-dong', \App\Livewire\Admin\Customers\CustomerContractsView::class)->name('customers.contracts');
     });
 
     // Cài đặt

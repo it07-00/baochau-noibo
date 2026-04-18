@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -19,6 +20,7 @@ class Customer extends Model
     }
     protected $fillable = [
         'name',
+        'slug',
         'tax_code',
         'phone',
         'email',
@@ -26,6 +28,33 @@ class Customer extends Model
         'province',
         'representative',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Customer $customer) {
+            if (empty($customer->slug) || $customer->isDirty('name')) {
+                $base = Str::slug($customer->name);
+                if (empty($base)) {
+                    $base = 'khach-hang';
+                }
+                $slug = $base;
+                $i = 1;
+                while (
+                    static::where('slug', $slug)
+                        ->when($customer->exists, fn ($q) => $q->where('id', '!=', $customer->id))
+                        ->exists()
+                ) {
+                    $slug = $base . '-' . $i++;
+                }
+                $customer->slug = $slug;
+            }
+        });
+    }
 
     public function contracts()
     {

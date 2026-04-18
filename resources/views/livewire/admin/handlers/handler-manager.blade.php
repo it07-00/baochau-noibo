@@ -48,11 +48,22 @@
                                 @forelse($handlers as $handler)
                                 <tr wire:key="handler-{{ $handler->id }}">
                                     <td>{{ $handler->id }}</td>
-                                    <td class="fw-bold">{{ $handler->name }}</td>
+                                    <td class="fw-bold">
+                                        <a href="{{ route('app.handlers.contracts', $handler) }}" class="text-body text-decoration-none link-hover-primary">
+                                            {{ $handler->name }}
+                                        </a>
+                                    </td>
                                     <td>{{ $handler->phone ?: '—' }}</td>
                                     <td class="text-wrap" style="max-width: 300px;">{{ $handler->address ?: '—' }}</td>
                                     <td class="text-center">
-                                        <span class="badge bg-label-primary px-2 py-1">{{ $handler->contracts_count }}</span>
+                                        @if($handler->contracts_count > 0)
+                                            <a href="{{ route('app.handlers.contracts', $handler) }}"
+                                               class="badge bg-label-primary px-2 py-1 text-decoration-none">
+                                                {{ $handler->contracts_count }}
+                                            </a>
+                                        @else
+                                            <span class="badge bg-label-secondary px-2 py-1">0</span>
+                                        @endif
                                     </td>
                                     <td class="text-end">
                                         @can('handlers.edit')

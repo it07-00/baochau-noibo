@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -19,9 +20,34 @@ class Handler extends Model
     }
     protected $fillable = [
         'name',
+        'slug',
         'phone',
         'address',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Handler $handler) {
+            if (empty($handler->slug) || $handler->isDirty('name')) {
+                $base = Str::slug($handler->name);
+                $slug = $base;
+                $i = 1;
+                while (
+                    static::where('slug', $slug)
+                        ->when($handler->exists, fn ($q) => $q->where('id', '!=', $handler->id))
+                        ->exists()
+                ) {
+                    $slug = $base . '-' . $i++;
+                }
+                $handler->slug = $slug;
+            }
+        });
+    }
 
     public function contracts()
     {
