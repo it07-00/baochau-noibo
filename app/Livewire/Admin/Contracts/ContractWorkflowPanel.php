@@ -60,8 +60,13 @@ class ContractWorkflowPanel extends Component
             return;
         }
 
+        // Bộ phận kỹ thuật: survey, waiting_client, client_confirmed không bắt buộc upload file
+        $isKyThuat = auth()->user()->hasRole('ky-thuat');
+        $kyThuatOptionalSteps = ['survey', 'waiting_client', 'client_confirmed'];
+        $fileRequired = !($this->activeStep === 'receiving' || ($isKyThuat && in_array($this->activeStep, $kyThuatOptionalSteps)));
+
         $rules = [
-            'uploadFiles'   => ($this->activeStep === 'receiving' ? 'nullable' : 'required') . '|array|max:10' . ($this->activeStep === 'receiving' ? '' : '|min:1'),
+            'uploadFiles'   => ($fileRequired ? 'required|array|max:10|min:1' : 'nullable|array|max:10'),
             'uploadFiles.*' => 'file|max:20480|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
             'comment'       => 'nullable|string|max:1000',
         ];

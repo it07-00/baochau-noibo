@@ -82,7 +82,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">
                             File đính kèm
-                            @if ($activeStep === 'receiving')
+                            @if ($activeStep === 'receiving' || (auth()->user()->hasRole('ky-thuat') && in_array($activeStep, ['survey', 'waiting_client', 'client_confirmed'])))
                                 <small class="text-muted fw-normal">(Tùy chọn)</small>
                             @else
                                 <span class="text-danger">*</span>

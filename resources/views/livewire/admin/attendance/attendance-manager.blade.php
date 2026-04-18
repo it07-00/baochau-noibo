@@ -9,7 +9,7 @@
         ];
     @endphp
 
-    <div class="row g-3 mt-1">
+    <div class="row g-3 mt-1 px-4">
         {{-- Header --}}
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom p-4">
@@ -66,8 +66,8 @@
         {{-- Bảng chấm công --}}
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="table-responsive" style="max-height:75vh;">
-                    <table class="table table-bordered table-hover table-sm mb-0 text-nowrap" style="font-size: 0.78rem;">
+                <div class="table-responsive" style="max-height:88vh;">
+                    <table class="table table-bordered table-hover table-sm mb-0 text-nowrap" style="font-size: 0.88rem;">
                         <thead class="table-light" style="position:sticky;top:0;z-index:2;">
                             <tr>
                                 <th style="position:sticky;left:0;z-index:3;background:#f8f9fa;min-width:40px;" class="text-center">#</th>
@@ -76,7 +76,7 @@
                                     <th class="text-center {{ $date->isSunday() ? 'bg-light text-danger' : '' }}"
                                         style="min-width:65px;">
                                         <div>{{ $date->format('d') }}</div>
-                                        <div class="fw-normal" style="font-size:0.65rem;">{{ $date->locale('vi')->shortDayName }}</div>
+                                        <div class="fw-normal" style="font-size:0.75rem;">{{ $date->locale('vi')->shortDayName }}</div>
                                     </th>
                                 @endforeach
                                 <th class="text-center" style="min-width:50px;background:#f8f9fa;">Công</th>
@@ -98,7 +98,7 @@
                                         <td class="text-center {{ $date->isSunday() ? 'bg-light' : '' }}"
                                             style="vertical-align:middle;padding:2px 3px;">
                                             @if($day)
-                                                <div style="font-size:0.72rem;line-height:1.3;">
+                                                <div style="font-size:0.82rem;line-height:1.3;">
                                                     @php
                                                         $isLate = !$date->isSunday() && $day['first'] > '08:00';
                                                         $isEarly = !$date->isSunday() && $day['last'] && $day['last'] < '17:00';
@@ -114,7 +114,7 @@
                                                     @endif
                                                 </div>
                                             @elseif(!$date->isSunday() && $date->lte(now()))
-                                                <span class="text-danger" style="font-size:0.7rem;">✗</span>
+                                                <span class="text-danger" style="font-size:0.82rem;">✗</span>
                                             @endif
                                         </td>
                                     @endforeach
