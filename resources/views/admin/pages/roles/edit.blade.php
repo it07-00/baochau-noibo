@@ -18,7 +18,7 @@
         'master-data'              => 'Dữ liệu chuẩn',
 
         // Dữ liệu nền
-        'handlers'                 => 'Chủ xử lý',
+        'handlers'                 => 'Nhà thầu phụ',
         'customers'                => 'Khách hàng',
 
         // Hợp đồng
@@ -31,7 +31,7 @@
 
         // Hóa đơn
         'invoices'                 => 'Hóa đơn Bảo Châu',
-        'handler-invoices'         => 'Hóa đơn chủ xử lý',
+        'handler-invoices'         => 'Hóa đơn nhà thầu phụ',
 
         // Kinh doanh
         'sales-renewal'            => 'Doanh số tái ký',

@@ -31,7 +31,7 @@
 
         // Hóa đơn
         'invoices'                 => 'Hóa đơn Bảo Châu',
-        'handler-invoices'         => 'Hóa đơn chủ xử lý',
+        'handler-invoices'         => 'Hóa đơn nhà thầu phụ',
 
         // Kinh doanh
         'sales-renewal'            => 'Doanh số tái ký',

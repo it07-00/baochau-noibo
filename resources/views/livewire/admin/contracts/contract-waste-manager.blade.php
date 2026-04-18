@@ -108,8 +108,7 @@
                                     <button class="dropdown-item @if (!$filter['handler_id']) active @endif"
                                         type="button"
                                         x-show="'chọn nhà thầu phụ'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                        wire:click="$set('filter.handler_id', '')" @click="open = false">Chọn chủ xử
-                                        lý</button>
+                                        wire:click="$set('filter.handler_id', '')" @click="open = false">Chọn nhà thầu phụ</button>
                                     @foreach ($handlers as $handler)
                                         <button
                                             class="dropdown-item text-wrap @if ($filter['handler_id'] == $handler->id) active @endif"
