@@ -174,4 +174,9 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
 
     // Nhật ký hoạt động
     Route::get('nhat-ky-hoat-dong', \App\Livewire\Admin\ActivityLogViewer::class)->name('activity-log')->middleware('permission:activity-log.view');
+
+    // Chấm công (beta — chỉ IT)
+    Route::get('cham-cong', \App\Livewire\Admin\Attendance\AttendanceManager::class)->name('attendance.index')->middleware('role:it');
+    Route::get('cham-cong/xuat-excel/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'export'])->name('attendance.export')->middleware('role:it');
+    Route::get('cham-cong/xuat-excel-chitiet/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'exportDetail'])->name('attendance.export-detail')->middleware('role:it');
 });
