@@ -119,10 +119,13 @@ class TechnicalContractReport extends Component
             ->when($this->filter_status === 'finished', fn ($q) => $q->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'))
             );
 
-        // Lọc theo nhân viên được giao (assignment), không phải staff_id của hợp đồng
-        if ($effectiveStaff !== '') {
-            $query->whereHas('assignments', fn ($q) => $q->where('user_id', $effectiveStaff));
-        }
+        // Luôn scope theo bộ phận kỹ thuật (chỉ hiển thị hợp đồng được giao cho nhân viên kỹ thuật)
+        $query->whereHas('assignments', function ($q) use ($effectiveStaff) {
+            $q->whereHas('user', fn ($u) => $u->role('ky-thuat'));
+            if ($effectiveStaff !== '') {
+                $q->where('user_id', $effectiveStaff);
+            }
+        });
 
         return $query;
     }
