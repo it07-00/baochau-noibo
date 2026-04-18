@@ -49,8 +49,10 @@ class ContractLegal extends Model
     const STATUS_INCIDENT = 'incident';
 
     protected $fillable = [
+        'shd_cxl',
         'shd_bc',
         'customer_id',
+        'handler_id',
         'staff_id',
         'department_id',
         'signed_at',
@@ -93,6 +95,11 @@ class ContractLegal extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function handler(): BelongsTo
+    {
+        return $this->belongsTo(Handler::class);
     }
 
     public function staff(): BelongsTo

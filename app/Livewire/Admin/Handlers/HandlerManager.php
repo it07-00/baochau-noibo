@@ -70,7 +70,7 @@ class HandlerManager extends Component
             'formData.phone' => 'nullable|string|max:30',
             'formData.address' => 'nullable|string|max:2000',
         ], [], [
-            'formData.name' => 'tên chủ xử lý',
+            'formData.name' => 'tên nhà thầu phụ',
             'formData.phone' => 'số điện thoại',
             'formData.address' => 'địa chỉ',
         ]);
@@ -83,10 +83,10 @@ class HandlerManager extends Component
 
         if ($this->isEditing && $this->editingId) {
             Handler::whereKey($this->editingId)->update($data);
-            $message = 'Cập nhật chủ xử lý thành công.';
+            $message = 'Cập nhật nhà thầu phụ thành công.';
         } else {
             Handler::create($data);
-            $message = 'Thêm chủ xử lý thành công.';
+            $message = 'Thêm nhà thầu phụ thành công.';
         }
 
         $this->dispatch('closeHandlerFormModal');
@@ -104,13 +104,13 @@ class HandlerManager extends Component
         if ($usedContracts > 0) {
             $this->dispatch('swal:toast', [
                 'type' => 'error',
-                'message' => 'Không thể xóa vì Chủ xử lý đang được dùng trong hợp đồng.',
+                'message' => 'Không thể xóa vì nhà thầu phụ đang được dùng trong hợp đồng.',
             ]);
             return;
         }
 
         $handler->delete();
-        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa Chủ xử lý.']);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa nhà thầu phụ.']);
     }
 
     private function resetForm(): void

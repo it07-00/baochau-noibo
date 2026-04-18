@@ -1,11 +1,11 @@
 <div>
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-0">Hóa đơn chủ xử lý</h4>
+            <h4 class="mb-0">Hóa đơn nhà thầu phụ</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Hóa đơn chủ xử lý</li>
+                    <li class="breadcrumb-item active">Hóa đơn nhà thầu phụ</li>
                 </ol>
             </nav>
         </div>
@@ -84,7 +84,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1 ">Chủ xử lý</label>
+                    <label class="form-label fw-semibold mb-1 ">Nhà thầu phụ</label>
                     <select wire:model.live="filter_handler" class="form-select form-select-sm">
                         <option value="">Tất cả</option>
                         @foreach($handlers as $h)
@@ -104,7 +104,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Số HĐ CXL</th>
-                            <th>Chủ xử lý</th>
+                            <th>Nhà thầu phụ</th>
                             <th>Hợp đồng</th>
                             <th>Ngày lập</th>
                             <th>Hạn TT</th>
@@ -170,9 +170,9 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold ">Chủ xử lý <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold ">Nhà thầu phụ <span class="text-danger">*</span></label>
                             <select wire:model="form.handler_id" class="form-select form-select-sm @error('form.handler_id') is-invalid @enderror">
-                                <option value="">— Chọn chủ xử lý —</option>
+                                <option value="">— Chọn nhà thầu phụ —</option>
                                 @foreach($handlers as $h)
                                     <option value="{{ $h->id }}">{{ $h->name }}</option>
                                 @endforeach
@@ -190,7 +190,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold ">Số hóa đơn CXL</label>
-                            <input wire:model="form.invoice_number" type="text" class="form-control form-control-sm" placeholder="Số HĐ từ chủ xử lý">
+                            <input wire:model="form.invoice_number" type="text" class="form-control form-control-sm" placeholder="Số HĐ từ nhà thầu phụ">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold ">Ngày lập</label>

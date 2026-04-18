@@ -94,12 +94,12 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Chủ xử lý</label>
+                            <label class="form-label fw-bold custom-filter-label">Nhà thầu phụ</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                 <button class="form-select form-control-xs text-start text-wrap" type="button"
                                     @click.prevent="open = !open"
                                     style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
-                                    {{ $handlers->find($filter['handler_id'])?->name ?? 'Chọn chủ xử lý' }}
+                                    {{ $handlers->find($filter['handler_id'])?->name ?? 'Chọn nhà thầu phụ' }}
                                 </button>
                                 <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
                                     x-cloak style="max-height: 300px; overflow-y: auto;">
@@ -107,7 +107,7 @@
                                         placeholder="Tìm kiếm..." @click.stop>
                                     <button class="dropdown-item @if (!$filter['handler_id']) active @endif"
                                         type="button"
-                                        x-show="'chọn chủ xử lý'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                        x-show="'chọn nhà thầu phụ'.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
                                         wire:click="$set('filter.handler_id', '')" @click="open = false">Chọn chủ xử
                                         lý</button>
                                     @foreach ($handlers as $handler)
@@ -543,8 +543,8 @@
                                                 'bg' => '#f8d7da',
                                                 'text' => '#dc3545',
                                             ],
-                                            'đã trình ký chủ xử lý' => ['bg' => '#fff3cd', 'text' => '#b45309'],
-                                            'chủ xử lý đã gửi về' => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
+                                            'đã trình ký nhà thầu phụ' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+                                            'nhà thầu phụ đã gửi về' => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
                                             'đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
                                             'đang thực hiện', '' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
                                             default => ['bg' => '#e9ecef', 'text' => '#495057'],
@@ -705,7 +705,7 @@
                                                 <td class="px-4 py-3">{{ $selectedDoc->customer?->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th class="bg-light fw-bold px-4 py-3">Chủ xử lý</th>
+                                                <th class="bg-light fw-bold px-4 py-3">Nhà thầu phụ</th>
                                                 <td class="px-4 py-3">{{ $selectedDoc->handler?->name }}</td>
                                             </tr>
                                             <tr>
@@ -940,13 +940,13 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Chủ xử lý <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">Nhà thầu phụ <span class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button
                                         class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror"
                                         type="button" @click.prevent="open = !open"
                                         style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
-                                        {{ $handlers->find($formData['handler_id'] ?? '')?->name ?? 'Chọn chủ xử lý' }}
+                                        {{ $handlers->find($formData['handler_id'] ?? '')?->name ?? 'Chọn nhà thầu phụ' }}
                                     </button>
                                     <div class="dropdown-menu-custom w-100 p-2" x-show="open"
                                         @click.away="open = false" x-cloak
@@ -957,7 +957,7 @@
                                         <button class="dropdown-item @if (empty($formData['handler_id'])) active @endif"
                                             type="button" x-show="!search.length"
                                             wire:click="$set('formData.handler_id', '')" @click="open = false">Chọn
-                                            chủ xử lý</button>
+                                            nhà thầu phụ</button>
                                         @foreach ($handlers as $h)
                                             <button
                                                 class="dropdown-item text-wrap @if (($formData['handler_id'] ?? '') == $h->id) active @endif"

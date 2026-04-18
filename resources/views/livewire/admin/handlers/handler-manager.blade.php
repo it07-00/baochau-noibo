@@ -1,11 +1,11 @@
 <div>
-    @section('title', 'Quản lý Chủ xử lý')
-    @section('page_title', 'Danh sách Chủ xử lý')
+    @section('title', 'Quản lý Nhà thầu phụ')
+    @section('page_title', 'Danh sách Nhà thầu phụ')
 
     @php
         $breadcrumbs = [
             ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Chủ xử lý']
+            ['label' => 'Nhà thầu phụ']
         ];
     @endphp
 
@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
                 <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <h3 class="pure-card-title m-0">Danh sách chủ xử lý</h3>
+                    <h3 class="pure-card-title m-0">Danh sách nhà thầu phụ</h3>
 
                     <div class="d-flex align-items-center gap-2">
                         <div class="input-group input-group-sm" style="width: 280px;">
@@ -37,7 +37,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th width="80">ID</th>
-                                    <th>Tên Chủ xử lý</th>
+                                    <th>Tên Nhà thầu phụ</th>
                                     <th>Số điện thoại</th>
                                     <th>Địa chỉ</th>
                                     <th class="text-center">Số HĐ đang dùng</th>
@@ -64,7 +64,7 @@
                                         @can('handlers.delete')
                                         <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
                                                 wire:click="delete({{ $handler->id }})"
-                                                wire:confirm="Xác nhận xóa Chủ xử lý này?"
+                                                wire:confirm="Xác nhận xóa nhà thầu phụ này?"
                                                 title="Xóa" {{ $handler->contracts_count > 0 ? 'disabled' : '' }}>
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -73,7 +73,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">Không có dữ liệu Chủ xử lý.</td>
+                                    <td colspan="6" class="text-center py-4 text-muted">Không có dữ liệu nhà thầu phụ.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -94,7 +94,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-0 shadow-lg overflow-hidden">
                 <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white">{{ $isEditing ? 'Cập nhật Chủ xử lý' : 'Thêm Chủ xử lý mới' }}</h5>
+                    <h5 class="modal-title fw-bold text-white">{{ $isEditing ? 'Cập nhật Nhà thầu phụ' : 'Thêm Nhà thầu phụ mới' }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -102,8 +102,8 @@
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Tên Chủ xử lý <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('formData.name') is-invalid @enderror" wire:model.defer="formData.name" placeholder="Nhập tên chủ xử lý">
+                                <label class="form-label fw-bold">Tên Nhà thầu phụ <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('formData.name') is-invalid @enderror" wire:model.defer="formData.name" placeholder="Nhập tên nhà thầu phụ">
                                 @error('formData.name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">

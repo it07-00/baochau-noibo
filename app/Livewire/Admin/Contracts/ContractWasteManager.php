@@ -22,8 +22,8 @@ class ContractWasteManager extends Component
     use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation;
 
     private const ALLOWED_STATUSES = [
-        'Đã trình ký Chủ xử lý',
-        'Chủ xử lý đã gửi về',
+        'Đã trình ký nhà thầu phụ',
+        'Nhà thầu phụ đã gửi về',
         'Đã gửi khách hàng',
         'Đã hoàn thành KH ký trước',
         'Đã hoàn thành',

@@ -27,4 +27,29 @@ class Handler extends Model
     {
         return $this->hasMany(ContractWaste::class);
     }
+
+    public function contractLegals()
+    {
+        return $this->hasMany(ContractLegal::class);
+    }
+
+    public function contractTechnicals()
+    {
+        return $this->hasMany(ContractTechnical::class);
+    }
+
+    public function contractResearches()
+    {
+        return $this->hasMany(ContractResearch::class);
+    }
+
+    public function contractSustainabilities()
+    {
+        return $this->hasMany(ContractSustainability::class);
+    }
+
+    public function contractEmissions()
+    {
+        return $this->hasMany(ContractEmission::class);
+    }
 }

@@ -18,7 +18,7 @@
         'master-data'              => 'Dữ liệu chuẩn',
 
         // Dữ liệu nền
-        'handlers'                 => 'Chủ xử lý',
+        'handlers'                 => 'Nhà thầu phụ',
         'customers'                => 'Khách hàng',
 
         // Hợp đồng

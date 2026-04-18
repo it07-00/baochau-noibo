@@ -123,7 +123,7 @@
                                         <path d="M21 8H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                                     </svg>
                                 </span>
-                                <span class="menu-title flex-grow-1">Chủ xử lý</span>
+                                <span class="menu-title flex-grow-1">Nhà thầu phụ</span>
                             </a>
                         </li>
                     @endunless
@@ -225,7 +225,7 @@
                             'title' => 'Quản lý hóa đơn',
                             'icon' => $stackIcon,
                             'permission' => 'invoices.view',
-                            'children' => ['Hóa đơn Bảo Châu', 'Hóa đơn chủ xử lý'],
+                            'children' => ['Hóa đơn Bảo Châu', 'Hóa đơn nhà thầu phụ'],
                         ],
                         [
                             'title' => 'Chuyển phát thư',
@@ -416,7 +416,7 @@
                         $activeChild = 'Hóa đơn Bảo Châu';
                     } elseif (request()->routeIs('app.invoices.handlers')) {
                         $activeGroup = 'Quản lý hóa đơn';
-                        $activeChild = 'Hóa đơn chủ xử lý';
+                        $activeChild = 'Hóa đơn nhà thầu phụ';
                     }
 
                     // TV/KT: redirect activeGroup to their own section when on contract pages
@@ -668,7 +668,7 @@
                                                 $href = route('app.invoices.bao-chau');
                                             } elseif (
                                                 $menu['title'] === 'Quản lý hóa đơn' &&
-                                                $child === 'Hóa đơn chủ xử lý'
+                                                $child === 'Hóa đơn nhà thầu phụ'
                                             ) {
                                                 $href = route('app.invoices.handlers');
                                             }

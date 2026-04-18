@@ -179,6 +179,15 @@
                         </select>
                     </div>
                     <div class="col-md-2">
+                        <label class="form-label fw-bold custom-filter-label">Nhà thầu phụ</label>
+                        <select class="form-select form-control-xs" wire:model.live="filter.handler_id">
+                            <option value="">Tất cả</option>
+                            @foreach ($handlers as $h)
+                                <option value="{{ $h->id }}">{{ $h->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
                         <select class="form-select form-control-xs" wire:model.live="sortDirection">
                             <option value="desc">Từ trên xuống</option>
@@ -260,8 +269,12 @@
                             </td>
                             <td class="ps-4 py-4">
                                 <div class="d-flex flex-column">
+                                    <span class="">Số HĐ CXL:<span
+                                            class="fw-bold">{{ $doc->shd_cxl }}</span></span>
                                     <span class="">Số HĐ BC:<span
                                             class="fw-bold">{{ $doc->shd_bc }}</span></span>
+                                    <span class="">Nhà thầu phụ:<span
+                                            class="fw-bold">{{ $doc->handler?->name }}</span></span>
                                     <span class="">Ngày ký hợp đồng: <span
                                             class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
                                     <span class="">Nhân viên CS:<span
@@ -484,8 +497,16 @@
                                 <table class="table table-bordered mb-0">
                                     <tbody>
                                         <tr>
+                                            <th class="bg-light w-30">Số HĐ CXL</th>
+                                            <td class="fw-bold">{{ $selectedDoc->shd_cxl }}</td>
+                                        </tr>
+                                        <tr>
                                             <th class="bg-light w-30">Số HĐ BC</th>
                                             <td class="fw-bold">{{ $selectedDoc->shd_bc }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Nhà thầu phụ</th>
+                                            <td class="fw-bold">{{ $selectedDoc->handler?->name }}</td>
                                         </tr>
                                         <tr>
                                             <th class="bg-light">Khách hàng</th>
@@ -677,6 +698,10 @@
                     <div class="row g-3">
                         @if ($isEditing && auth()->user()->hasRole('ke-toan'))
                             <div class="col-md-6">
+                                <label class="form-label fw-bold">Số HĐ CXL</label>
+                                <input type="text" class="form-control" wire:model="formData.shd_cxl">
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label fw-bold">Số HĐ BC</label>
                                 <input type="text" class="form-control" wire:model="formData.shd_bc">
                             </div>
@@ -713,6 +738,35 @@
                             @error('formData.customer_id')
                                 <div class="text-danger  mt-1">{{ $message }}</div>
                             @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nhà thầu phụ</label>
+                            <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                <button class="form-select text-start text-wrap" type="button"
+                                    @click.prevent="open = !open"
+                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                    {{ $handlers->find($formData['handler_id'] ?? '')?->name ?? '-- Chọn nhà thầu phụ --' }}
+                                </button>
+                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
+                                    x-cloak style="max-height: 300px; overflow-y: auto;">
+                                    <input type="text" x-model="search" class="form-control form-control-sm mb-2"
+                                        placeholder="Tìm kiếm..." @click.stop>
+                                    <button class="dropdown-item @if (empty($formData['handler_id'])) active @endif"
+                                        type="button" x-show="!search.length"
+                                        wire:click="$set('formData.handler_id', '')" @click="open = false">-- Chọn nhà thầu phụ --</button>
+                                    @foreach ($handlers as $h)
+                                        <button
+                                            class="dropdown-item text-wrap @if (($formData['handler_id'] ?? '') == $h->id) active @endif"
+                                            type="button"
+                                            x-show="{{ json_encode(mb_strtolower($h->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                            style="white-space: normal !important;"
+                                            wire:click="$set('formData.handler_id', {{ $h->id }})"
+                                            @click="open = false">
+                                            {{ $h->name }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
                         @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
                             <div class="col-md-6">

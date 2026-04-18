@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Contracts;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\Customer;
+use App\Models\Handler;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Quotation;
@@ -47,8 +48,10 @@ class ContractProjectManager extends Component
     public ?int $quotation_id = null;
 
     public $formData = [
+        'shd_cxl'        => '',
         'shd_bc'         => '',
         'customer_id'    => '',
+        'handler_id'     => '',
         'staff_id'       => '',
         'department_id'  => '',
         'signed_at'      => '',
@@ -88,6 +91,7 @@ class ContractProjectManager extends Component
         'has_room_fund'  => false,
         'is_overdue'     => false,
         'loai_dich_vu'   => '',
+        'handler_id'     => '',
     ];
 
     protected $queryString = ['search', 'quotation_id'];
@@ -306,7 +310,7 @@ class ContractProjectManager extends Component
 
     public function viewDetail(int $id): void
     {
-        $this->selectedDoc = ContractTechnical::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
+        $this->selectedDoc = ContractTechnical::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner', 'handler'])->find($id);
         if ($this->selectedDoc) {
             $this->progressNotes = ContractProgressNote::where('contract_type', 'project')
                 ->where('contract_id', $id)
@@ -430,6 +434,7 @@ class ContractProjectManager extends Component
             'has_room_fund'  => false,
             'is_overdue'     => false,
             'loai_dich_vu'   => '',
+            'handler_id'     => '',
         ];
         $this->selectedDocIds = [];
         $this->sortDirection = 'desc';
@@ -439,8 +444,10 @@ class ContractProjectManager extends Component
     private function resetForm(): void
     {
         $this->formData = [
+            'shd_cxl'        => '',
             'shd_bc'         => '',
             'customer_id'    => '',
+        'handler_id'     => '',
             'staff_id'       => auth()->id(),
             'department_id'  => 3, // Phòng Kinh doanh
             'signed_at'      => date('Y-m-d'),
@@ -471,7 +478,7 @@ class ContractProjectManager extends Component
         $isRestrictedSales = $user->hasRole('kinh-doanh')
             && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
 
-        $query = ContractTechnical::with(['customer', 'staff', 'department'])
+        $query = ContractTechnical::with(['customer', 'staff', 'department', 'handler'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -500,6 +507,7 @@ class ContractProjectManager extends Component
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
         if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
+        if ($this->filter['handler_id'])     $query->where('handler_id', $this->filter['handler_id']);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs           = $query->orderBy('id', $orderDirection)->get();
@@ -519,7 +527,7 @@ class ContractProjectManager extends Component
         $isRestrictedSales = $user->hasRole('kinh-doanh')
             && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
 
-        $query = ContractTechnical::with(['customer', 'staff', 'department', 'assignments.user'])
+        $query = ContractTechnical::with(['customer', 'staff', 'department', 'assignments.user', 'handler'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -549,6 +557,7 @@ class ContractProjectManager extends Component
         if ($this->filter['has_room_fund'])  $query->where('has_room_fund', true);
         if ($this->filter['is_overdue'])     $query->where('is_overdue', true);
         if ($this->filter['loai_dich_vu'])   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
+        if ($this->filter['handler_id'])     $query->where('handler_id', $this->filter['handler_id']);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->paginate(10);
@@ -569,6 +578,7 @@ class ContractProjectManager extends Component
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractTechnical::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractTechnical::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
+            'handlers' => Handler::orderBy('name')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Kỹ thuật & Ứng phó SC']);
     }
 }

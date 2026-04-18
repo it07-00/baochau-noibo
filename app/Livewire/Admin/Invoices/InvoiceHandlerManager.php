@@ -58,8 +58,8 @@ class InvoiceHandlerManager extends Component
     protected function messages(): array
     {
         return [
-            'form.handler_id.required'   => 'Vui lòng chọn chủ xử lý.',
-            'form.handler_id.exists'     => 'Chủ xử lý không tồn tại.',
+            'form.handler_id.required'   => 'Vui lòng chọn nhà thầu phụ.',
+            'form.handler_id.exists'     => 'Nhà thầu phụ không tồn tại.',
             'form.amount.required'       => 'Vui lòng nhập số tiền.',
             'form.amount.numeric'        => 'Số tiền phải là số.',
             'form.amount.min'            => 'Số tiền không được âm.',
