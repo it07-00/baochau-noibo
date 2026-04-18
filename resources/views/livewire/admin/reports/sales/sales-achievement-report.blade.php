@@ -2,9 +2,16 @@
     @php
         $monthLabel = $filter_month ? 'Tháng ' . str_pad($filter_month, 2, '0', STR_PAD_LEFT) : 'Cả năm';
         function raceInitials($name) {
-            $parts = explode(' ', trim($name));
-            $last = array_slice($parts, -2);
-            return strtoupper(implode('', array_map(fn($w) => mb_substr($w, 0, 1), $last)));
+            // Lấy phần tên trước dấu " - " (bỏ suffix như "TPKD")
+            $cleanName = preg_split('/\s*-\s*/', trim($name))[0];
+            $parts = array_filter(explode(' ', $cleanName), fn($w) => mb_strlen($w) > 0);
+            $parts = array_values($parts);
+            if (count($parts) === 0) return '?';
+            if (count($parts) === 1) return strtoupper(mb_substr($parts[0], 0, 2));
+            // Lấy chữ cái đầu của từ đầu và từ cuối
+            $first = mb_substr($parts[0], 0, 1);
+            $last  = mb_substr($parts[count($parts) - 1], 0, 1);
+            return strtoupper($first . $last);
         }
     @endphp
 
