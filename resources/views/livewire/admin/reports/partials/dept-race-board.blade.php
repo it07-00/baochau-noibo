@@ -482,6 +482,42 @@
     .dept-race-board { margin: -1rem; }
     .dept-wrapper { padding: 20px 16px 60px; }
 }
+@media (max-width: 520px) {
+    .dept-podium { gap: 2px; justify-content: center; }
+    .dept-podium-slot { width: 110px; }
+    .dept-avatar-lg { width: 68px; height: 68px; font-size: 1.2rem; }
+    .dept-avatar-md { width: 54px; height: 54px; font-size: 0.95rem; }
+    .dept-pedestal-1 { height: 95px; padding-top: 18px; }
+    .dept-pedestal-2 { height: 76px; padding-top: 14px; }
+    .dept-pedestal-3 { height: 62px; padding-top: 12px; }
+    .dept-podium-name { font-size: 0.72rem; max-width: 100px; }
+    .dept-name-gold { font-size: 0.78rem; }
+    .dept-podium-value { font-size: 0.85rem; }
+    .dept-podium-sub { font-size: 0.68rem; }
+    .dept-value-gold { font-size: 0.9rem; }
+    .dept-medal { width: 28px; height: 28px; font-size: 0.8rem; }
+    .dept-crown { font-size: 1.3rem; }
+    .dept-col-title { font-size: 0.85rem; letter-spacing: 1.5px; margin-bottom: 20px; }
+    .dept-rank-card { padding: 10px 14px; gap: 10px; }
+    .dept-card-name { font-size: 0.88rem; }
+    .dept-card-value { font-size: 0.88rem; }
+    .dept-reminder { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+    .dept-reminder-btn { width: 100%; text-align: center; }
+    .dept-wrapper { padding: 16px 10px 50px; }
+    .dept-header-badge { font-size: 1.1rem; }
+    .dept-header-sub { font-size: 0.82rem; }
+    .dept-gold-divider { margin-bottom: 28px; }
+}
+@media (max-width: 360px) {
+    .dept-podium-slot { width: 96px; }
+    .dept-avatar-lg { width: 58px; height: 58px; font-size: 1rem; }
+    .dept-avatar-md { width: 46px; height: 46px; font-size: 0.82rem; }
+    .dept-pedestal-1 { height: 80px; }
+    .dept-pedestal-2 { height: 64px; }
+    .dept-pedestal-3 { height: 52px; }
+    .dept-podium-name { font-size: 0.65rem; max-width: 88px; }
+    .dept-medal { width: 24px; height: 24px; font-size: 0.7rem; }
+}
 </style>
 
 @push('scripts')
