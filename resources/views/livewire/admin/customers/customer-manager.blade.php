@@ -9,14 +9,14 @@
         ];
     @endphp
 
-    <div class="row g-3 mt-1">
+    <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="pure-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
                     <h3 class="pure-card-title m-0">Danh sách khách hàng</h3>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="input-group input-group-sm" style="width: 280px;">
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-md-0">
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text bg-transparent border-end-0">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </span>
@@ -24,7 +24,7 @@
                         </div>
 
                         @can('customers.create')
-                        <button class="btn btn-primary btn-sm" wire:click="openCreate">
+                        <button class="btn btn-primary btn-sm text-nowrap" wire:click="openCreate">
                             <i class="bi bi-plus-circle me-1"></i>Tạo mới
                         </button>
                         @endcan
@@ -36,13 +36,13 @@
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-center" style="width:45px;">STT</th>
+                                    <th class="text-center d-none d-sm-table-cell" style="width:45px;">STT</th>
                                     <th>Tên khách hàng</th>
-                                    <th>Mã số thuế</th>
-                                    <th>Tỉnh thành</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Email</th>
-                                    <th>Người đại diện</th>
+                                    <th class="d-none d-md-table-cell">Mã số thuế</th>
+                                    <th class="d-none d-lg-table-cell">Tỉnh thành</th>
+                                    <th class="d-none d-lg-table-cell">Số điện thoại</th>
+                                    <th class="d-none d-xl-table-cell">Email</th>
+                                    <th class="d-none d-md-table-cell">Người đại diện</th>
                                     <th class="text-center">Số HĐ</th>
                                     <th class="text-end">Hành động</th>
                                 </tr>
@@ -58,17 +58,26 @@
                                         + $customer->contracts_sustainability_count;
                                 @endphp
                                 <tr wire:key="customer-{{ $customer->id }}">
-                                    <td class="text-center text-muted  fw-semibold">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
+                                    <td class="text-center text-muted fw-semibold d-none d-sm-table-cell">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
                                     <td class="fw-bold">
                                         <a href="{{ route('app.customers.contracts', $customer) }}" class="text-body text-decoration-none link-hover-primary">
                                             {{ $customer->name }}
                                         </a>
+                                        {{-- Mobile extras --}}
+                                        <div class="d-md-none mt-1 d-flex flex-wrap gap-1" style="font-size:0.72rem;">
+                                            @if($customer->tax_code)
+                                                <span class="text-muted">MST: {{ $customer->tax_code }}</span>
+                                            @endif
+                                            @if($customer->representative)
+                                                <span class="text-muted">· {{ $customer->representative }}</span>
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td>{{ $customer->tax_code ?: '—' }}</td>
-                                    <td>{{ $customer->province ?: '—' }}</td>
-                                    <td>{{ $customer->phone ?: '—' }}</td>
-                                    <td>{{ $customer->email ?: '—' }}</td>
-                                    <td>{{ $customer->representative ?: '—' }}</td>
+                                    <td class="d-none d-md-table-cell">{{ $customer->tax_code ?: '—' }}</td>
+                                    <td class="d-none d-lg-table-cell">{{ $customer->province ?: '—' }}</td>
+                                    <td class="d-none d-lg-table-cell">{{ $customer->phone ?: '—' }}</td>
+                                    <td class="d-none d-xl-table-cell">{{ $customer->email ?: '—' }}</td>
+                                    <td class="d-none d-md-table-cell">{{ $customer->representative ?: '—' }}</td>
                                     <td class="text-center">
                                         @if($totalContracts > 0)
                                             <a href="{{ route('app.customers.contracts', $customer) }}"

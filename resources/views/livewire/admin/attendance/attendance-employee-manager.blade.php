@@ -10,14 +10,14 @@
         ];
     @endphp
 
-    <div class="row g-3 mt-1">
+    <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="pure-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
                     <h3 class="pure-card-title m-0">Nhân viên chấm công</h3>
 
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="input-group" style="width: 300px;">
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-md-0">
+                        <div class="input-group">
                             <span class="input-group-text bg-transparent border-end-0">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </span>
@@ -25,7 +25,7 @@
                                    class="form-control border-start-0 ps-0" placeholder="Tìm tên hoặc mã...">
                         </div>
 
-                        <select wire:model.live="filterDepartment" class="form-select" style="width:200px;">
+                        <select wire:model.live="filterDepartment" class="form-select">
                             <option value="">Tất cả phòng ban</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept }}">{{ $dept }}</option>
@@ -43,26 +43,33 @@
                         <table class="table text-nowrap align-middle table-hover table-sm">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="70">Mã máy</th>
+                                    <th width="60">Mã máy</th>
                                     <th>Họ và tên</th>
-                                    <th width="180">Phòng ban</th>
-                                    <th width="110" class="text-center">Ngày tạo</th>
-                                    <th width="100" class="text-end">Hành động</th>
+                                    <th width="160" class="d-none d-sm-table-cell">Phòng ban</th>
+                                    <th width="110" class="text-center d-none d-md-table-cell">Ngày tạo</th>
+                                    <th width="90" class="text-end">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($employees as $emp)
                                     <tr wire:key="emp-{{ $emp->id }}">
                                         <td class="fw-bold">{{ str_pad($emp->device_uid, 5, '0', STR_PAD_LEFT) }}</td>
-                                        <td class="fw-bold">{{ $emp->name }}</td>
                                         <td>
+                                            <div class="fw-bold">{{ $emp->name }}</div>
+                                            @if($emp->department)
+                                                <div class="d-sm-none">
+                                                    <span class="badge bg-label-primary px-2 py-1" style="font-size:0.7rem;">{{ $emp->department }}</span>
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td class="d-none d-sm-table-cell">
                                             @if($emp->department)
                                                 <span class="badge bg-label-primary px-2 py-1">{{ $emp->department }}</span>
                                             @else
                                                 <span class="text-muted">—</span>
                                             @endif
                                         </td>
-                                        <td class="text-center text-muted">{{ $emp->created_at?->format('d/m/Y') }}</td>
+                                        <td class="text-center text-muted d-none d-md-table-cell">{{ $emp->created_at?->format('d/m/Y') }}</td>
                                         <td class="text-end">
                                             <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1"
                                                     wire:click="openEdit({{ $emp->id }})" title="Sửa">

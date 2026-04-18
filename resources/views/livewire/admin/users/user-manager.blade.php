@@ -9,8 +9,7 @@
         ];
     @endphp
 
-    <div class="row g-3 mt-1">
-        <div class="col-lg-4 col-md-6">
+    <div class="row g-3 mt-1 px-2 px-md-0">
             <x-admin.summary-card title="Tổng người dùng" value="{{ $totalUsers }}" badge="Tổng hệ thống" iconClass="bg-glow-primary" />
         </div>
         <div class="col-lg-4 col-md-6">
@@ -28,29 +27,31 @@
         <div class="alert alert-danger mt-3 shadow-sm border-0">{{ session('error') }}</div>
     @endif
 
-    <div class="row g-3 mt-1">
+    <div class="row g-3 mt-2 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="pure-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
                     <h3 class="pure-card-title m-0">Danh sách người dùng</h3>
 
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-md-0">
                         <!-- Ô tìm kiếm realtime -->
-                        <div class="input-group input-group-sm" style="width: 250px;">
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text bg-transparent border-end-0">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </span>
                             <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm...">
                         </div>
 
-                        <!-- Lọc số lượng -->
-                        <select wire:model.live="perPage" class="form-select form-select-sm w-auto">
-                            <option value="10">10 dòng</option>
-                            <option value="25">25 dòng</option>
-                            <option value="50">50 dòng</option>
-                        </select>
+                        <div class="d-flex gap-2">
+                            <!-- Lọc số lượng -->
+                            <select wire:model.live="perPage" class="form-select form-select-sm">
+                                <option value="10">10 dòng</option>
+                                <option value="25">25 dòng</option>
+                                <option value="50">50 dòng</option>
+                            </select>
 
-                        <a href="{{ route('app.users.create') }}" class="btn btn-primary btn-sm" wire:navigate>Tạo mới</a>
+                            <a href="{{ route('app.users.create') }}" class="btn btn-primary btn-sm text-nowrap" wire:navigate>Tạo mới</a>
+                        </div>
                     </div>
                 </div>
 
@@ -59,38 +60,49 @@
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-center" style="width:45px;">STT</th>
+                                    <th class="text-center d-none d-sm-table-cell" style="width:45px;">STT</th>
                                     <th>Họ tên</th>
-                                    <th>Tên đăng nhập</th>
-                                    <th>Phòng ban</th>
-                                    <th>Vai trò</th>
-                                    <th>Trạng thái</th>
+                                    <th class="d-none d-md-table-cell">Tên đăng nhập</th>
+                                    <th class="d-none d-lg-table-cell">Phòng ban</th>
+                                    <th class="d-none d-md-table-cell">Vai trò</th>
+                                    <th class="d-none d-sm-table-cell">Trạng thái</th>
                                     <th class="text-end">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($users as $user)
                                 <tr wire:key="user-{{ $user->id }}">
-                                    <td class="text-center text-muted  fw-semibold">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
+                                    <td class="text-center text-muted fw-semibold d-none d-sm-table-cell">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <x-user-avatar :user="$user" :size="32" class="me-2" />
-                                            <div>
-                                                <h6 class="mb-0">{{ $user->name }}</h6>
-                                                <small class="text-muted">{{ $user->email }}</small>
+                                            <x-user-avatar :user="$user" :size="32" class="me-2 flex-shrink-0" />
+                                            <div style="min-width:0;">
+                                                <h6 class="mb-0 text-truncate" style="max-width:130px;">{{ $user->name }}</h6>
+                                                <small class="text-muted d-block text-truncate" style="max-width:130px;">{{ $user->email }}</small>
+                                                {{-- Mobile-only extras --}}
+                                                <div class="d-sm-none mt-1 d-flex flex-wrap gap-1">
+                                                    @if($user->is_active)
+                                                        <span class="badge bg-label-success" style="font-size:0.65rem;">Hoạt động</span>
+                                                    @else
+                                                        <span class="badge bg-label-danger" style="font-size:0.65rem;">Khóa</span>
+                                                    @endif
+                                                    @foreach($user->roles as $role)
+                                                        <span class="badge bg-label-primary" style="font-size:0.65rem;">{{ $role->name }}</span>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $user->username }}</td>
-                                    <td>
+                                    <td class="d-none d-md-table-cell">{{ $user->username }}</td>
+                                    <td class="d-none d-lg-table-cell">
                                         <span class="badge bg-label-info">{{ $user->department?->name ?? 'Không có' }}</span>
                                     </td>
-                                    <td>
+                                    <td class="d-none d-md-table-cell">
                                         @foreach($user->roles as $role)
                                             <span class="badge bg-label-primary">{{ $role->name }}</span>
                                         @endforeach
                                     </td>
-                                    <td>
+                                    <td class="d-none d-sm-table-cell">
                                         @if($user->is_active)
                                             <span class="badge bg-label-success">Đang hoạt động</span>
                                         @else

@@ -9,14 +9,14 @@
         ];
     @endphp
 
-    <div class="row g-3 mt-1">
+    <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="pure-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
                     <h3 class="pure-card-title m-0">Danh sách nhà thầu phụ</h3>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="input-group input-group-sm" style="width: 280px;">
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-md-0">
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text bg-transparent border-end-0">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </span>
@@ -24,7 +24,7 @@
                         </div>
 
                         @can('handlers.create')
-                        <button class="btn btn-primary btn-sm" wire:click="openCreate">
+                        <button class="btn btn-primary btn-sm text-nowrap" wire:click="openCreate">
                             <i class="bi bi-plus-circle me-1"></i>Tạo mới
                         </button>
                         @endcan
@@ -36,26 +36,35 @@
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="80">ID</th>
+                                    <th width="60" class="d-none d-sm-table-cell">ID</th>
                                     <th>Tên Nhà thầu phụ</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Địa chỉ</th>
-                                    <th class="text-center">Số HĐ đang dùng</th>
+                                    <th class="d-none d-md-table-cell">Số điện thoại</th>
+                                    <th class="d-none d-lg-table-cell">Địa chỉ</th>
+                                    <th class="text-center d-none d-sm-table-cell">Số HĐ</th>
                                     <th class="text-end">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($handlers as $handler)
                                 <tr wire:key="handler-{{ $handler->id }}">
-                                    <td>{{ $handler->id }}</td>
+                                    <td class="d-none d-sm-table-cell">{{ $handler->id }}</td>
                                     <td class="fw-bold">
                                         <a href="{{ route('app.handlers.contracts', $handler) }}" class="text-body text-decoration-none link-hover-primary">
                                             {{ $handler->name }}
                                         </a>
+                                        {{-- Mobile-only extras --}}
+                                        <div class="d-sm-none mt-1 d-flex flex-wrap gap-1">
+                                            @if($handler->phone)
+                                                <small class="text-muted"><i class="bi bi-telephone me-1"></i>{{ $handler->phone }}</small>
+                                            @endif
+                                            @if($handler->contracts_count > 0)
+                                                <span class="badge bg-label-primary" style="font-size:0.65rem;">{{ $handler->contracts_count }} HĐ</span>
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td>{{ $handler->phone ?: '—' }}</td>
-                                    <td class="text-wrap" style="max-width: 300px;">{{ $handler->address ?: '—' }}</td>
-                                    <td class="text-center">
+                                    <td class="d-none d-md-table-cell">{{ $handler->phone ?: '—' }}</td>
+                                    <td class="text-wrap d-none d-lg-table-cell" style="max-width: 300px;">{{ $handler->address ?: '—' }}</td>
+                                    <td class="text-center d-none d-sm-table-cell">
                                         @if($handler->contracts_count > 0)
                                             <a href="{{ route('app.handlers.contracts', $handler) }}"
                                                class="badge bg-label-primary px-2 py-1 text-decoration-none">

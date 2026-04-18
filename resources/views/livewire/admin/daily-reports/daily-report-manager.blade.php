@@ -1,31 +1,31 @@
-<div class="daily-report-manager {{ ($activeTab === 'management' || $activeTab === 'history') ? 'w-100 px-3' : 'container-fluid' }} pb-5"
+<div class="daily-report-manager {{ ($activeTab === 'management' || $activeTab === 'history') ? 'w-100 px-2 px-md-3' : 'container-fluid px-2 px-md-3' }} pb-5"
     x-data="{ activeTab: @entangle('activeTab') }">
     <div class="row">
         <div class="{{ ($activeTab === 'management' || $activeTab === 'history') ? 'col-12' : 'col-lg-8 mx-auto' }}">
             <!-- Unified Tab Navigation -->
-            <ul class="nav nav-pills mb-4 bg-white p-2 shadow-sm d-inline-flex" style="border-radius: 12px;">
+            <ul class="nav nav-pills mb-3 bg-white p-2 shadow-sm d-flex flex-wrap" style="border-radius: 12px;">
                 @if($canSubmitOwnReport)
                     <li class="nav-item">
                         <button wire:click="$set('activeTab', 'form')"
-                            class="nav-link px-4 py-2 {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }}"
+                            class="nav-link nav-pill-btn {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }}"
                             style="border-radius: 10px;">
-                            <i class="bi bi-pencil-square me-2"></i> Gửi báo cáo
+                            <i class="bi bi-pencil-square me-1 me-md-2"></i><span class="nav-pill-label">Gửi báo cáo</span>
                         </button>
                     </li>
-                    <li class="nav-item ms-2">
+                    <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'history')"
-                            class="nav-link px-4 py-2 {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }}"
+                            class="nav-link nav-pill-btn {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }}"
                             style="border-radius: 10px;">
-                            <i class="bi bi-calendar3 me-2"></i> Lịch sử cá nhân
+                            <i class="bi bi-calendar3 me-1 me-md-2"></i><span class="nav-pill-label">Lịch sử cá nhân</span>
                         </button>
                     </li>
                 @endif
                 @if($isManager)
-                    <li class="nav-item {{ $canSubmitOwnReport ? 'ms-2' : '' }}">
+                    <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'management')"
-                            class="nav-link px-4 py-2 {{ $activeTab === 'management' ? 'active bg-dark' : 'text-muted' }}"
+                            class="nav-link nav-pill-btn {{ $activeTab === 'management' ? 'active bg-dark' : 'text-muted' }}"
                             style="border-radius: 10px;">
-                            <i class="bi bi-speedometer2 me-2"></i> Quản lý chung
+                            <i class="bi bi-speedometer2 me-1 me-md-2"></i><span class="nav-pill-label">Quản lý chung</span>
                         </button>
                     </li>
                 @endif
@@ -391,8 +391,8 @@
                         }
                     @endphp
 
-                    <div class="calendar-day-cell p-3 @if(!$isInsideMonth) bg-light opacity-25 @elseif($isSunday) bg-sunday @else bg-white @endif border-start border-bottom border-light-subtle @if($isInsideMonth && $dayReports->isNotEmpty()) cursor-pointer @endif"
-                        style="min-height: 140px; transition: background 0.2s;"
+                    <div class="calendar-day-cell @if(!$isInsideMonth) bg-light opacity-25 @elseif($isSunday) bg-sunday @else bg-white @endif border-start border-bottom border-light-subtle @if($isInsideMonth && $dayReports->isNotEmpty()) cursor-pointer @endif"
+                        style="min-height: 140px; transition: background 0.2s;padding: clamp(4px, 2vw, 12px);"
                         @if($isInsideMonth && $dayReports->isNotEmpty())
                             @click="$dispatch('open-day-detail', { date: '{{ $currentDate->format('d/m/Y') }}', reports: {{ $dayReports->map(fn($r) => ['name' => $r->user->name ?? '', 'department' => $r->user->department->name ?? '', 'status' => $r->status, 'content' => $r->content, 'plan' => $r->plan ?? '', 'issues' => $r->issues ?? ''])->toJson() }} })"
                         @endif
@@ -485,6 +485,46 @@
 
         .calendar-day-cell.cursor-pointer:hover {
             background-color: #eef2ff !important;
+        }
+
+        .nav-pill-btn {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 576px) {
+            .nav-pill-btn {
+                padding: 5px 8px;
+                font-size: 0.78rem;
+            }
+            .calendar-day-cell {
+                min-height: 70px !important;
+            }
+            .calendar-header-cell {
+                font-size: 0.72rem;
+                padding-top: 4px !important;
+                padding-bottom: 4px !important;
+            }
+            .status-indicator {
+                width: 6px;
+                height: 6px;
+            }
+            .cal-report-chip {
+                display: none;
+            }
+            .calendar-day-content::after {
+                content: none;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .nav-pill-label {
+                display: none;
+            }
+            .nav-pill-btn {
+                padding: 6px 10px;
+            }
         }
 
         .bg-sunday {
