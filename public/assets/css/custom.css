@@ -20,6 +20,12 @@
     height: auto;
 }
 
+/* Override Bootstrap form-control-sm: giữ padding nhỏ nhưng font mặc định */
+.form-control-sm,
+.form-select-sm {
+    font-size: 1rem;
+}
+
 /* ----- Table (compact) ----- */
 .table-xs td,
 .table-xs th {
