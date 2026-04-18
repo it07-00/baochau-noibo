@@ -5,7 +5,7 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}" class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
+            <a href="{{ $currentUser->hasRole('it') ? route('app.it-dashboard') : ($currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home')) }}" class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment" style="height: 40px; width: auto;">
                 <span class="fw-bolder fs-5 text-primary" style="letter-spacing: 1px;">BẢO CHÂU</span>
             </a>
@@ -28,6 +28,23 @@
                         QUẢN LÝ
                     </span>
                 </li>
+
+                @if($currentUser->hasRole('it'))
+                    <li class="app-sidebar-menu-item">
+                        <a href="{{ route('app.it-dashboard') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.it-dashboard') ? 'active menu-current' : '' }}">
+                            <span class="menu-icon flex-shrink-0">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M7 8h2M7 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <circle cx="16" cy="9.5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </span>
+                            <span class="menu-title flex-grow-1">Quản trị hệ thống</span>
+                        </a>
+                    </li>
+                @endif
 
                 @can('users.view')
                     <li class="app-sidebar-menu-item">
