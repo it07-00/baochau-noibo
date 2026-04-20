@@ -126,9 +126,9 @@ class ContractWasteManager extends Component
 
                 $this->formData['customer_id'] = $customer->id;
                 $this->formData['content'] = $quotation->work_description;
-                $this->formData['value'] = $quotation->original_value;
+                $this->formData['value'] = $quotation->total_value;
                 $this->formData['commission'] = $quotation->commission_value;
-                $this->formData['revenue'] = $quotation->original_value;
+                $this->formData['revenue'] = $quotation->total_value;
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
                 $this->formData['note'] = $quotation->notes;
