@@ -66,45 +66,58 @@ class FixContractValueFromQuotation extends Command
         $skipped = 0;
 
         foreach ($contracts as $contract) {
-            // Tìm báo giá khớp: cùng nhân viên + cùng tên công ty + original_value = contract.value hiện tại
-            $matches = DB::table('quotations')
+            // Pattern 1: value = original_value (tạo trước khi fix) → cần sửa value → total_value
+            // Pattern 2: value = total_value, revenue = total_value (tạo sau khi fix nhưng revenue bị auto-sync) → cần sửa revenue → original_value
+            $matchByOriginal = DB::table('quotations')
                 ->where('staff_id', $contract->staff_id)
                 ->whereRaw('TRIM(COALESCE(company_name, "")) = ?', [trim($contract->customer_name)])
                 ->where('original_value', $contract->value)
                 ->select('id', 'original_value', 'total_value')
                 ->get();
 
-            if ($matches->count() !== 1) {
-                // Không match rõ ràng → bỏ qua
-                $reason = $matches->count() === 0 ? 'không tìm thấy báo giá' : "có {$matches->count()} báo giá trùng";
-                $this->line("  <fg=yellow>Bỏ qua</> #{$contract->id} [{$contract->customer_name}] — {$reason}");
+            $matchByTotal = DB::table('quotations')
+                ->where('staff_id', $contract->staff_id)
+                ->whereRaw('TRIM(COALESCE(company_name, "")) = ?', [trim($contract->customer_name)])
+                ->where('total_value', $contract->value)
+                ->select('id', 'original_value', 'total_value')
+                ->get();
+
+            $updateData = [];
+
+            // Pattern 1: value cần đổi từ original → total
+            if ($matchByOriginal->count() === 1) {
+                $q = $matchByOriginal->first();
+                if ((float) $q->total_value > 0 && (float) $contract->value !== (float) $q->total_value) {
+                    $oldVal = number_format($contract->value, 0, ',', '.');
+                    $newVal = number_format($q->total_value, 0, ',', '.');
+                    $this->line("  <fg=green>Cập nhật</> #{$contract->id} [{$contract->customer_name}] value: {$oldVal} → {$newVal}đ");
+                    $updateData['value'] = $q->total_value;
+                }
+            }
+
+            // Pattern 2: revenue = total_value nhưng phải là original_value
+            if ($matchByTotal->count() === 1) {
+                $q = $matchByTotal->first();
+                if ((float) $q->original_value > 0 && (float) $contract->revenue !== (float) $q->original_value) {
+                    $oldRev = number_format($contract->revenue, 0, ',', '.');
+                    $newRev = number_format($q->original_value, 0, ',', '.');
+                    $this->line("  <fg=green>Cập nhật</> #{$contract->id} [{$contract->customer_name}] revenue: {$oldRev} → {$newRev}đ");
+                    $updateData['revenue'] = $q->original_value;
+                }
+            }
+
+            if (empty($updateData)) {
+                // Không match hoặc đã đúng
+                $noMatch = $matchByOriginal->count() === 0 && $matchByTotal->count() === 0;
+                if ($noMatch) {
+                    $this->line("  <fg=yellow>Bỏ qua</> #{$contract->id} [{$contract->customer_name}] — không tìm thấy báo giá");
+                }
                 $skipped++;
                 continue;
             }
-
-            $quotation = $matches->first();
-
-            if ((float) $quotation->total_value <= 0) {
-                $this->line("  <fg=yellow>Bỏ qua</> #{$contract->id} [{$contract->customer_name}] — total_value = 0");
-                $skipped++;
-                continue;
-            }
-
-            if ((float) $contract->value === (float) $quotation->total_value) {
-                // Đã đúng rồi
-                $skipped++;
-                continue;
-            }
-
-            $oldValue = number_format($contract->value, 0, ',', '.');
-            $newValue = number_format($quotation->total_value, 0, ',', '.');
-
-            $this->line("  <fg=green>Cập nhật</> #{$contract->id} [{$contract->customer_name}] value: {$oldValue} → {$newValue}đ");
 
             if (!$dryRun) {
-                DB::table($table)
-                    ->where('id', $contract->id)
-                    ->update(['value' => $quotation->total_value]);
+                DB::table($table)->where('id', $contract->id)->update($updateData);
             }
 
             $updated++;
