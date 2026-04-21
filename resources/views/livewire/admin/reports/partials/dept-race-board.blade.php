@@ -273,7 +273,8 @@
     min-height: 100vh;
     margin: -1.5rem;
     padding: 0;
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: visible;
     font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
 }
 .dept-nebula {
@@ -328,7 +329,9 @@
     background: linear-gradient(180deg, transparent, var(--dept-gold-dark), var(--dept-gold), var(--dept-gold-dark), transparent);
     opacity: 0.5; width: 2px; justify-self: center;
 }
-.dept-section { padding: 0 28px; }
+.dept-section { padding: 0 28px; min-width: 0; }
+/* Right section gets extra breathing room on desktop */
+.dept-section:last-of-type { padding-right: 48px; }
 /* COL TITLE */
 .dept-col-title {
     text-align: center;
@@ -344,10 +347,12 @@
 .dept-podium {
     display: flex; align-items: flex-end; justify-content: center;
     gap: 6px; margin-bottom: 40px; padding-top: 30px;
+    width: 100%;
 }
 .dept-podium-slot {
     display: flex; flex-direction: column; align-items: center;
-    position: relative; animation: deptFadeUp .6s ease both; width: 180px;
+    position: relative; animation: deptFadeUp .6s ease both;
+    flex: 1; min-width: 0; max-width: 180px;
 }
 .dept-podium-1 { animation-delay: .1s; }
 .dept-podium-2 { animation-delay: .2s; }
@@ -468,23 +473,57 @@
     50%      { box-shadow: 0 0 24px rgba(245,200,66,.9), 0 0 40px rgba(245,200,66,.3); }
 }
 /* RESPONSIVE */
+@media (max-width: 1600px) {
+    .dept-wrapper { padding: 40px 40px 90px; }
+    .dept-avatar-lg { width: 100px; height: 100px; font-size: 1.8rem; }
+    .dept-avatar-md { width: 78px; height: 78px; font-size: 1.3rem; }
+    .dept-pedestal-1 { height: 130px; }
+    .dept-pedestal-2 { height: 100px; }
+    .dept-pedestal-3 { height: 82px; }
+}
+@media (max-width: 1400px) {
+    .dept-wrapper { padding: 32px 28px 80px; }
+    .dept-section { padding: 0 16px; }
+    .dept-podium-slot { max-width: 150px; }
+    .dept-avatar-lg { width: 86px; height: 86px; font-size: 1.5rem; }
+    .dept-avatar-md { width: 68px; height: 68px; font-size: 1.15rem; }
+    .dept-pedestal-1 { height: 112px; }
+    .dept-pedestal-2 { height: 88px; }
+    .dept-pedestal-3 { height: 72px; }
+    .dept-podium-name { font-size: 0.78rem; }
+    .dept-podium-value { font-size: 0.88rem; }
+}
+@media (max-width: 1200px) {
+    .dept-wrapper { padding: 24px 16px 70px; }
+    .dept-section { padding: 0 8px; }
+    .dept-podium-slot { max-width: 120px; }
+    .dept-avatar-lg { width: 70px; height: 70px; font-size: 1.2rem; }
+    .dept-avatar-md { width: 56px; height: 56px; font-size: 0.98rem; }
+    .dept-pedestal-1 { height: 92px; }
+    .dept-pedestal-2 { height: 74px; }
+    .dept-pedestal-3 { height: 60px; }
+    .dept-podium-name { font-size: 0.68rem; max-width: 100%; }
+    .dept-podium-value { font-size: 0.78rem; }
+}
 @media (max-width: 900px) {
     .dept-columns { grid-template-columns: 1fr; gap: 40px 0; }
     .dept-col-divider { display: none; }
     .dept-section { padding: 0; }
+    /* Reset last-of-type override on mobile */
+    .dept-section:last-of-type { padding-right: 0; }
     .dept-podium { gap: 4px; }
-    .dept-podium-slot { width: 140px; }
+    .dept-podium-slot { max-width: 140px; }
     .dept-avatar-lg { width: 90px; height: 90px; font-size: 1.6rem; }
     .dept-avatar-md { width: 70px; height: 70px; font-size: 1.2rem; }
     .dept-pedestal-1 { height: 118px; }
     .dept-pedestal-2 { height: 92px; }
     .dept-pedestal-3 { height: 75px; }
     .dept-race-board { margin: -1rem; }
-    .dept-wrapper { padding: 20px 16px 60px; }
+    .dept-wrapper { padding: 20px 32px 60px; }
 }
 @media (max-width: 520px) {
     .dept-podium { gap: 2px; justify-content: center; }
-    .dept-podium-slot { width: 110px; }
+    .dept-podium-slot { max-width: 110px; }
     .dept-avatar-lg { width: 68px; height: 68px; font-size: 1.2rem; }
     .dept-avatar-md { width: 54px; height: 54px; font-size: 0.95rem; }
     .dept-pedestal-1 { height: 95px; padding-top: 18px; }
@@ -509,7 +548,7 @@
     .dept-gold-divider { margin-bottom: 28px; }
 }
 @media (max-width: 360px) {
-    .dept-podium-slot { width: 96px; }
+    .dept-podium-slot { max-width: 96px; }
     .dept-avatar-lg { width: 58px; height: 58px; font-size: 1rem; }
     .dept-avatar-md { width: 46px; height: 46px; font-size: 0.82rem; }
     .dept-pedestal-1 { height: 80px; }

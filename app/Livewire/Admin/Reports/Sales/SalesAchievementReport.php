@@ -39,16 +39,18 @@ class SalesAchievementReport extends Component
         $staffIds = $staffs->pluck('id')->all();
 
         // ── Actual sales per staff from 6 contract types ──
+        // Doanh số tính theo cột "revenue", lọc theo tháng xuất hóa đơn (submitted_at)
         $actualByStaff = [];
         foreach ($this->contractModels as $modelClass) {
-            $query = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+            $query = $modelClass::whereNotNull('submitted_at')
+                ->whereYear('submitted_at', $this->year)
                 ->whereNotNull('staff_id');
 
             if ($this->filter_month) {
-                $query->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->filter_month);
+                $query->whereMonth('submitted_at', $this->filter_month);
             }
 
-            $rows = $query->selectRaw('staff_id, COALESCE(SUM(value), 0) as total')
+            $rows = $query->selectRaw('staff_id, COALESCE(SUM(revenue), 0) as total')
                 ->groupBy('staff_id')
                 ->pluck('total', 'staff_id');
 

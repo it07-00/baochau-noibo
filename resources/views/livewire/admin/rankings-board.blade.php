@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Bảng xếp hạng</h4>
             <nav aria-label="breadcrumb">
@@ -61,6 +61,7 @@
                     <h6 class="mb-0 fw-bold">Xếp hạng nhân viên Tư vấn — Năm {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
+                    <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -96,6 +97,7 @@
                         </tfoot>
                         @endif
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,6 +113,7 @@
                     <h6 class="mb-0 fw-bold">Xếp hạng nhân viên Kỹ thuật — Năm {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
+                    <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -146,6 +149,7 @@
                         </tfoot>
                         @endif
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,6 +186,7 @@
                                 </div>
                             </div>
                             <hr>
+                            <div class="table-responsive">
                             <table class="table table-sm table-borderless mb-0">
                                 <tbody>
                                     <tr>
@@ -206,6 +211,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                     @else
@@ -227,6 +233,7 @@
                         <div id="provincePieChart"></div>
                     </div>
                     @endif
+                    <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -249,6 +256,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -303,6 +311,7 @@
                     <h6 class="mb-0 fw-bold">Top dịch vụ báo giá — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
+                    <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -325,6 +334,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
