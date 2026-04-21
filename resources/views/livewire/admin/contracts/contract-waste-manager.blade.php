@@ -337,7 +337,7 @@
                         </div>
 
                         <!-- Row 5 -->
-                        <div class="col-md-3 d-flex align-items-end gap-3 pb-2">
+                        <div class="col-md-3 d-flex align-items-end flex-wrap gap-3 pb-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="offset"
                                     wire:model.live="filter.is_offset">
@@ -367,7 +367,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 d-flex align-items-end gap-2 justify-content-start">
+                    <div class="col-md-6 d-flex align-items-end gap-2 flex-wrap justify-content-start">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
                             <i class="bi bi-search me-1"></i>Lọc
                         </button>

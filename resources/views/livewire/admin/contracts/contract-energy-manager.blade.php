@@ -76,7 +76,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3 d-flex align-items-end gap-3 pb-2">
+                        <div class="col-md-3 d-flex align-items-end flex-wrap gap-3 pb-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="en_offset"
                                     wire:model.live="filter.is_offset">
@@ -195,7 +195,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-12 d-flex gap-2 mt-2">
+                    <div class="col-md-12 d-flex flex-wrap gap-2 mt-2">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
                             <i class="bi bi-search me-1"></i>Lọc
                         </button>

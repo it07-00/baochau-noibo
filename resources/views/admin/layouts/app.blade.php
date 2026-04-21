@@ -30,6 +30,12 @@
                         .page-header > div:has(> h6) {
                             display: none !important;
                         }
+
+                        /* Fix date range inputs in filter d-flex containers */
+                        .card-body .d-flex > input[type="date"].form-control {
+                            min-width: 0;
+                            flex: 1 1 0;
+                        }
                     </style>
 
                     <div class="page-content">
