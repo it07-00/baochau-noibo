@@ -296,7 +296,6 @@
                             <th class="text-center">Doanh số</th>
                         @endunless
                         <th class="text-center">Được giao</th>
-                        <th class="text-center" style="min-width:160px;">Tiến trình</th>
                         <th class="text-center">Tình trạng</th>
                         <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
                         <th class="text-center pe-4">Thao tác</th>
@@ -365,19 +364,6 @@
                                 @else
                                     <span class="text-muted ">—</span>
                                 @endif
-                            </td>
-                            @php $wp = $workflowProgress[$doc->id] ?? ['percent' => 0, 'current_label' => 'Chưa bắt đầu', 'completed_count' => 0, 'total_steps' => 6]; @endphp
-                            <td class="text-center">
-                                <div class="d-flex align-items-center gap-2 justify-content-center">
-                                    <div class="progress flex-grow-1" style="height:7px; max-width:90px;">
-                                        <div class="progress-bar {{ $wp['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
-                                             role="progressbar" style="width:{{ $wp['percent'] }}%"
-                                             aria-valuenow="{{ $wp['percent'] }}" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                    <span class=" text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
-                                </div>
-                                <div class=" text-muted mt-1" style="font-size:11px;">{{ $wp['current_label'] }}</div>
                             </td>
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center gap-1">
@@ -510,7 +496,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 6: 9) + ($canBulkDelete ? 1 : 0) + 1 }}"
+                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 5: 8) + ($canBulkDelete ? 1 : 0) + 1 }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
