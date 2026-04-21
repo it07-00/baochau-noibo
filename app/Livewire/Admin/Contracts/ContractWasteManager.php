@@ -39,6 +39,7 @@ class ContractWasteManager extends Component
     public $showDetail = false;
     public $showModal = false;
     public $isEditing = false;
+    public $isDuplicating = false;
     public $selectedDoc = null;
     public bool $showAssignModal = false;
     public ?int $assignContractId = null;
@@ -164,6 +165,7 @@ class ContractWasteManager extends Component
     {
         $this->resetForm();
         $this->isEditing = false;
+        $this->isDuplicating = false;
         $this->showModal = true;
         $this->dispatch('openFormModal');
     }
@@ -180,6 +182,26 @@ class ContractWasteManager extends Component
         $this->formData['submitted_at'] = $doc->submitted_at ? $doc->submitted_at->format('Y-m-d') : '';
 
         $this->isEditing = true;
+        $this->showModal = true;
+        $this->dispatch('openFormModal');
+    }
+
+    public function duplicate($id): void
+    {
+        abort_unless(auth()->user()->can('contracts-waste.create'), 403);
+        $doc = ContractWaste::findOrFail($id);
+        $this->resetForm();
+        $this->formData = $doc->toArray();
+        $this->formData['signed_at'] = $doc->signed_at ? $doc->signed_at->format('Y-m-d') : date('Y-m-d');
+        $this->formData['effective_at'] = $doc->effective_at ? $doc->effective_at->format('Y-m-d') : '';
+        $this->formData['end_at'] = $doc->end_at ? $doc->end_at->format('Y-m-d') : '';
+        $this->formData['submitted_at'] = '';
+        $this->formData['shd_cxl'] = '';
+        $this->formData['shd_bc'] = '';
+        unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
+        $this->isEditing = false;
+        $this->isDuplicating = true;
+        $this->selectedDoc = null;
         $this->showModal = true;
         $this->dispatch('openFormModal');
     }
@@ -493,7 +515,8 @@ class ContractWasteManager extends Component
         ];
         $this->selectedDocIds = [];
         $this->sortDirection = 'desc';
-        $this->resetPage();
+            $this->isDuplicating = false;
+            $this->selectedDoc = null;
     }
 
     public function viewDetail($id)

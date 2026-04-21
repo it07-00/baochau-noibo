@@ -87,7 +87,7 @@
                         <tr>
                             <th style="width:120px">Tháng</th>
                             <th class="text-end" style="width:220px">Mục tiêu (đ)</th>
-                            <th class="text-end" style="width:230px">Thực tế (Tổng giá trị HĐ ký) (đ)</th>
+                            <th class="text-end" style="width:230px">Thực tế (Doanh số từ HĐ) (đ)</th>
                             <th class="text-end" style="width:220px">Chênh lệch (đ)</th>
                             <th style="min-width:220px">Tiến độ</th>
                             <th class="text-center" style="width:140px">Trạng thái</th>

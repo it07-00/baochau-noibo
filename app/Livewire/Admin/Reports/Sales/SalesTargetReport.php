@@ -64,7 +64,7 @@ class SalesTargetReport extends Component
                         fn($q) => $q->where('staff_id', $this->filter_staff),
                         fn($q) => $q->whereIn('staff_id', $salesStaffIds)
                     )
-                    ->selectRaw('MONTH(signed_at) as m, SUM(value) as total')
+                    ->selectRaw('MONTH(signed_at) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
 

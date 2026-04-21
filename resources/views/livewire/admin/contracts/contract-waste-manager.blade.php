@@ -624,6 +624,10 @@
                                                 $doc->staff_id === auth()->id();
                                         @endphp
                                         @if ($canEditDelete)
+                                            <button class="btn btn-sm p-0 text-secondary"
+                                                wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
+                                                <i class="bi bi-copy fs-5"></i>
+                                            </button>
                                             <button class="btn btn-sm p-0 text-warning"
                                                 wire:click="edit({{ $doc->id }})">
                                                 <i class="bi bi-pencil-square fs-5"></i>
@@ -883,7 +887,14 @@
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-primary py-3">
                     <h5 class="modal-title fw-bold text-white">
-                        {{ $isEditing ? 'Cập nhật Hợp đồng' : 'Thêm Hợp đồng mới' }}</h5>
+                        @if ($isEditing)
+                            Cập nhật Hợp đồng
+                        @elseif ($isDuplicating)
+                            Nhân bản Hợp đồng
+                        @else
+                            Thêm Hợp đồng mới
+                        @endif
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form wire:submit.prevent="save">

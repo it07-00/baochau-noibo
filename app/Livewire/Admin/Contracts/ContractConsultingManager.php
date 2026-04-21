@@ -46,6 +46,7 @@ class ContractConsultingManager extends Component
     public bool $showModal = false;
 
     public bool $isEditing = false;
+    public bool $isDuplicating = false;
 
     public $showDetail = false;
 
@@ -164,6 +165,7 @@ class ContractConsultingManager extends Component
     {
         $this->resetForm();
         $this->isEditing = false;
+        $this->isDuplicating = false;
         $this->showModal = true;
         $this->dispatch('openFormModal');
     }
@@ -280,6 +282,24 @@ class ContractConsultingManager extends Component
 
         $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
+    }
+
+    public function duplicate(int $id): void
+    {
+        abort_unless(auth()->user()->can('contracts-consulting.create'), 403);
+        $doc = ContractLegal::findOrFail($id);
+        $this->resetForm();
+        $this->formData = $doc->toArray();
+        $this->formData['signed_at'] = $doc->signed_at ? $doc->signed_at->format('Y-m-d') : date('Y-m-d');
+        $this->formData['submitted_at'] = '';
+        $this->formData['shd_cxl'] = '';
+        $this->formData['shd_bc'] = '';
+        unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
+        $this->isEditing = false;
+        $this->isDuplicating = true;
+        $this->selectedDoc = null;
+        $this->showModal = true;
+        $this->dispatch('openFormModal');
     }
 
     public function bulkDeleteSelected(): void
@@ -496,6 +516,7 @@ class ContractConsultingManager extends Component
             'is_renewal' => false,
             'parent_contract_id' => '',
         ];
+        $this->isDuplicating = false;
         $this->selectedDoc = null;
     }
 
@@ -514,7 +535,6 @@ class ContractConsultingManager extends Component
                         });
                 });
             })
-            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
                 fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
