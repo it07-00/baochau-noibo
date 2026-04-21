@@ -462,13 +462,13 @@
                                 </div>
                             </td>
                             @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->commission) }}đ</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
                                 </td>
                             @endunless

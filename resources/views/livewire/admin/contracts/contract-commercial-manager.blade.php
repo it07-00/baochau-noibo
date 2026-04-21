@@ -255,7 +255,7 @@
                 </thead>
                 <tbody>
                     @forelse($docs as $doc)
-                        <tr class="border-bottom border-light">
+                        <tr class="border-bottom border-light" wire:key="commercial-row-{{ $doc->id }}">
                             @if ($canBulkDelete)
                                 <td class="text-center">
                                     @if (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id())
@@ -267,37 +267,35 @@
                             <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
-                            <td class="ps-4 py-4">
+                            <td class="ps-4 py-4" style="min-width: 180px; max-width: 220px;">
                                 <div class="d-flex flex-column">
                                     <span class="">Số HĐ NTP:<span
                                             class="fw-bold">{{ $doc->shd_cxl }}</span></span>
                                     <span class="">Số HĐ BC:<span
-                                            class="fw-bold">{{ $doc->shd_bc }}</span></span>
-                                    <span class="">Nhà thầu phụ:<span
-                                            class="fw-bold">{{ $doc->handler?->name }}</span></span>
-                                    <span class="">Ngày ký hợp đồng: <span
-                                            class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
-                                    <span class="">Nhân viên CS:<span
+                                            class="fw-bold">{{ $doc->shd_bc ?: '-' }}</span></span>
+                                    <span class="">Ngày ký hợp đồng:</span>
+                                    <span
+                                        class=" fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span>
+                                    <span class="">Nhân viên CS: <span
                                             class="fw-bold">{{ $doc->staff?->name }}</span></span>
                                 </div>
                             </td>
-                            <td class="py-4">
+                            <td class="py-4" style="min-width: 180px; max-width: 260px;">
                                 <div class="d-flex flex-column">
                                     <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
                                     <span class="">{{ $doc->customer?->representative }} -
-                                        {{ $doc->customer?->phone }}</span>
-                                    <span class=" text-muted">{{ $doc->customer?->email }}</span>
+                                        {{ $doc->customer?->phone }} - {{ $doc->customer?->email }}</span>
                                     <span class=" text-muted">{{ $doc->customer?->address }}</span>
                                 </div>
                             </td>
                             @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->commission) }}đ</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
                                 </td>
                             @endunless
@@ -343,15 +341,15 @@
 
                                     @if (!$canUpdateStatus)
                                         <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0"
-                                            style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
-                                            {{ $doc->status ?: 'PTH đang kiểm tra' }}
+                                            style="font-size:0.7rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
+                                            {{ $doc->status ?: '—' }}
                                         </span>
                                     @else
                                         <div class="position-relative" x-data="{ open: false }">
                                             <button type="button" @click="open = !open"
                                                 class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
-                                                style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
-                                                {{ $doc->status ?: 'PTH đang kiểm tra' }}
+                                                style="font-size:0.7rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
+                                                {{ $doc->status ?: '—' }}
                                                 <svg width="12" height="12" viewBox="0 0 12 12"
                                                     fill="currentColor">
                                                     <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor"
@@ -360,7 +358,7 @@
                                             </button>
                                             <div x-show="open" @click.away="open = false" x-cloak
                                                 class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1"
-                                                style="z-index:1050; min-width:160px; right:50%; transform:translateX(50%);">
+                                                style="z-index:1050; min-width:200px; right:50%; transform:translateX(50%); max-height:250px; overflow-y:auto;">
                                                 @foreach ($all_statuses as $opt)
                                                     <button type="button"
                                                         class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }}"
