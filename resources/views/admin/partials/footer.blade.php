@@ -42,19 +42,11 @@
 }
 </style>
 
-<footer class="app-footer app-footer-redesign">
+<footer class="app-footer app-footer-redesign" style="justify-content: center; text-align: center;">
     <p class="app-footer-copy mb-0">
         Bản quyền © <span id="footer-year"></span>
         <span>Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu</span>.
         Đã đăng ký mọi quyền.
     </p>
 
-    <div class="app-footer-links">
-        <a href="{{ route('app.profile.index') }}">Hồ sơ</a>
-        <a href="{{ route('app.daily-reports.index') }}">Báo cáo ngày</a>
-        <form method="POST" action="{{ route('logout') }}" class="d-inline">
-            @csrf
-            <button type="submit" class="btn btn-link p-0 app-footer-links" style="font-size:.8rem;">Đăng xuất</button>
-        </form>
-    </div>
 </footer>

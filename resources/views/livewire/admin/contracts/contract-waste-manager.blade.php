@@ -1,6 +1,6 @@
 <div>
 
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Chất thải & Tiếng ồn</h4>
             <nav aria-label="breadcrumb">
@@ -404,7 +404,7 @@
         <div class="card-header bg-white py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng chất thải</h6>
         </div>
-        <div class="table-responsive" style="overflow:visible; min-height:350px;">
+        <div class="table-responsive" style="min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class=" text-muted fw-bold">
@@ -440,7 +440,7 @@
                             <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
-                            <td class="ps-4 py-4" style="max-width: 250px;">
+                            <td class="ps-4 py-4" style="min-width: 180px; max-width: 220px;">
                                 <div class="d-flex flex-column">
                                     <span class="">Số HĐ NTP: <span
                                             class="fw-bold">{{ $doc->shd_cxl }}</span></span>
@@ -453,7 +453,7 @@
                                             class="fw-bold">{{ $doc->staff?->name }}</span></span>
                                 </div>
                             </td>
-                            <td class="py-4" style="max-width: 400px;">
+                            <td class="py-4" style="min-width: 180px; max-width: 260px;">
                                 <div class="d-flex flex-column">
                                     <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
                                     <span class="">{{ $doc->customer?->representative }} -

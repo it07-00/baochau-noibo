@@ -1,6 +1,6 @@
 <div>
 
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Hồ sơ môi trường</h4>
             <nav aria-label="breadcrumb">
@@ -280,7 +280,7 @@
         <div class="card-header bg-white py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hồ sơ môi trường</h6>
         </div>
-        <div class="table-responsive" style="overflow:visible; min-height:350px;">
+        <div class="table-responsive" style="min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class=" text-muted fw-bold">
