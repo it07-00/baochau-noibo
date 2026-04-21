@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Quản lý Doanh số tái ký</h4>
             <nav aria-label="breadcrumb">
@@ -9,46 +9,43 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary d-flex align-items-center gap-2" wire:click="openCreateModal">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Thêm mới
+        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" wire:click="openCreateModal">
+                <i class="bi bi-plus-lg"></i> Thêm mới
             </button>
-            <div class="input-group" style="width: 250px;">
-                <input type="text" class="form-control" placeholder="Tìm kiếm theo SHD..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button>
+            <div class="input-group" style="width: 230px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo SHD..." wire:model.live.debounce.300ms="search">
+                <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
             </div>
         </div>
     </div>
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom border-secondary-subtle">
-            <h6 class="mb-0 fw-bold">Bộ lọc Doanh số tái ký</h6>
-            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-            </button>
+        <div class="card-header bg-white py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-funnel-fill text-primary" style="font-size:13px;"></i>
+                <span class="fw-semibold" style="font-size:13px;">Bộ lọc Doanh số tái ký</span>
+            </div>
+            <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" style="font-size:18px; line-height:1;">−</button>
         </div>
         <div class="collapse show" id="filterCollapse">
-            <div class="card-body p-4">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold custom-filter-label">Tháng tính doanh số</label>
+            <div class="card-body px-4 py-3">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="custom-filter-label fw-semibold d-block mb-1">Tháng tính doanh số</label>
                         <input type="month" class="form-control form-control-sm" wire:model.live="filter_month">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
-                        <select class="form-select form-control-sm" wire:model.live="filter_status">
-                            <option value="">Chọn tình trạng</option>
+                    <div class="col-md-3">
+                        <label class="custom-filter-label fw-semibold d-block mb-1">Tình trạng</label>
+                        <select class="form-select form-select-sm" wire:model.live="filter_status">
+                            <option value="">Tất cả</option>
                             @foreach($statuses as $st) <option value="{{ $st }}">{{ $st }}</option> @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end gap-2">
-                        <button class="btn btn-primary px-4"><i class="bi bi-search me-1"></i> Lọc</button>
+                    <div class="col-md-auto d-flex align-items-end gap-2">
+                        <button class="btn btn-primary btn-sm px-3" wire:click="$refresh"><i class="bi bi-search me-1"></i>Lọc</button>
+                        <button class="btn btn-outline-secondary btn-sm px-3" wire:click="resetFilters"><i class="bi bi-x-circle me-1"></i>Xóa lọc</button>
                     </div>
                 </div>
             </div>

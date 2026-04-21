@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Theo dõi Báo giá</h4>
             <nav aria-label="breadcrumb">
@@ -9,20 +9,18 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end">
-            <button class="btn btn-success d-flex align-items-center gap-2" wire:click="create">
+        <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
+            <button class="btn btn-success btn-sm d-flex align-items-center gap-1" wire:click="create">
                 <i class="bi bi-plus-lg"></i> Thêm mới
             </button>
-            <button class="btn btn-outline-primary d-flex align-items-center gap-2"
+            <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
                     wire:click="resetImport"
                     data-bs-toggle="modal" data-bs-target="#importModal">
                 <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
             </button>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary">
-                    <i class="bi bi-search"></i>
-                </button>
+            <div class="input-group" style="width: 230px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
+                <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
             </div>
         </div>
     </div>

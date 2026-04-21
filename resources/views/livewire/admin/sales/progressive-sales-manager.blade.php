@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Doanh số theo tiến độ</h4>
             <nav aria-label="breadcrumb">
@@ -9,27 +9,27 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
-            <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-3 py-2" style="font-size: 0.8rem;">
+        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-3 py-2 fw-normal" style="font-size: 0.78rem;">
                 <i class="bi bi-arrow-repeat me-1"></i> Đồng bộ từ lịch thanh toán hợp đồng
             </span>
-            <div class="input-group" style="width: 250px;">
-                <input type="text" class="form-control" placeholder="Tìm SHĐ, giai đoạn..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+            <div class="input-group" style="width: 230px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Tìm SHĐ, giai đoạn..." wire:model.live.debounce.300ms="search">
+                <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
             </div>
         </div>
     </div>
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-3">
-            <div class="row g-3 align-items-end">
+        <div class="card-body px-4 py-3">
+            <div class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label  fw-bold">Tháng hạn thanh toán</label>
+                    <label class="custom-filter-label fw-semibold d-block mb-1">Tháng hạn thanh toán</label>
                     <input type="month" class="form-control form-control-sm" wire:model.live="filter_month">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label  fw-bold">Tình trạng</label>
+                    <label class="custom-filter-label fw-semibold d-block mb-1">Tình trạng</label>
                     <select class="form-select form-select-sm" wire:model.live="filter_status">
                         <option value="">Tất cả</option>
                         @foreach($statuses as $key => $label)
@@ -37,11 +37,12 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-sm btn-outline-secondary" wire:click="$refresh"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
+                <div class="col-md-auto d-flex align-items-end gap-2">
+                    <button class="btn btn-primary btn-sm px-3" wire:click="$refresh"><i class="bi bi-search me-1"></i>Lọc</button>
+                    <button class="btn btn-outline-secondary btn-sm px-3" wire:click="$refresh"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
                 </div>
-                <div class="col-md-3 text-end">
-                    <div class=" text-muted">Tổng giá trị lọc được</div>
+                <div class="col-md text-end">
+                    <div class="text-muted" style="font-size:0.8rem;">Tổng giá trị lọc được</div>
                     <div class="fw-bold text-danger fs-5">{{ number_format($total) }}đ</div>
                 </div>
             </div>
