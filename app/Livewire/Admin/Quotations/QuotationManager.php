@@ -26,6 +26,7 @@ class QuotationManager extends Component
 
     public $showModal = false;
     public $isEditing = false;
+    public $isDuplicating = false;
     public $selectedId = null;
     public $selectedQuotation = null;
     public $convertingQuotation = null;
@@ -400,6 +401,7 @@ class QuotationManager extends Component
     {
         $this->resetForm();
         $this->isEditing = false;
+        $this->isDuplicating = false;
         $this->dispatch('open-quotation-modal');
     }
 
@@ -413,6 +415,23 @@ class QuotationManager extends Component
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
         $this->recalculateTotals();
         $this->isEditing = true;
+        $this->isDuplicating = false;
+        $this->dispatch('open-quotation-modal');
+    }
+
+    public function duplicate($id)
+    {
+        $quotation = Quotation::findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
+        $this->resetForm();
+        $this->formData = $quotation->toArray();
+        $this->formData['date'] = now()->format('Y-m-d');
+        $this->isEditing = false;
+        $this->isDuplicating = true;
+        $this->selectedId = null;
+        unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at'], $this->formData['deleted_at']);
+        $this->recalculateTotals();
         $this->dispatch('open-quotation-modal');
     }
 

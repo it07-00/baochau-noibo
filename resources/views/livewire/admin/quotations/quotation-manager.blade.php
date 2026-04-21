@@ -87,7 +87,7 @@
                         <th class="text-end" style="width: 100px;">Hoa hồng KH</th>
                         <th class="text-end" style="width: 85px;">Thuế HH</th>
                         <th class="text-end fw-bold" style="width: 120px;">Giá trị HĐ</th>
-                        <th class="text-center pe-3" style="width: 80px;">#</th>
+                        <th class="text-center pe-3" style="width: 110px;">#</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,10 +149,13 @@
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
                                     <i class="bi bi-file-earmark-plus fs-5"></i>
                                 </button>
-                                <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})">
+                                <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
-                                <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})">
+                                <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
+                                    <i class="bi bi-copy fs-5"></i>
+                                </button>
+                                <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-danger"
@@ -271,7 +274,12 @@
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white">{{ $isEditing ? 'Cập nhật Báo giá' : 'Thêm Báo giá mới' }}</h5>
+                    <h5 class="modal-title fw-bold text-white">
+                        @if($isEditing) Cập nhật Báo giá
+                        @elseif($isDuplicating) Sao chép Báo giá
+                        @else Thêm Báo giá mới
+                        @endif
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form wire:submit.prevent="save">
