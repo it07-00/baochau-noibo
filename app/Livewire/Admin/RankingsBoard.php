@@ -56,7 +56,7 @@ class RankingsBoard extends Component
             foreach ($contractModels as $modelClass) {
                 $rows = $modelClass::whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereNotNull('staff_id')
-                    ->selectRaw('staff_id, COALESCE(SUM(value), 0) as total')
+                    ->selectRaw('staff_id, COALESCE(SUM(revenue), 0) as total')
                     ->groupBy('staff_id')
                     ->pluck('total', 'staff_id');
 
