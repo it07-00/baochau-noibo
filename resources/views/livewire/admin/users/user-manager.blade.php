@@ -10,6 +10,7 @@
     @endphp
 
     <div class="row g-3 mt-1 px-2 px-md-0">
+        <div class="col-lg-4 col-md-6">
             <x-admin.summary-card title="Tổng người dùng" value="{{ $totalUsers }}" badge="Tổng hệ thống" iconClass="bg-glow-primary" />
         </div>
         <div class="col-lg-4 col-md-6">
