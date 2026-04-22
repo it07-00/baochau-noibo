@@ -105,7 +105,7 @@ class SalesTargetRegistration extends Component
             $rows = $modelClass::query()
                 ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                 ->where('staff_id', auth()->id())
-                ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(value) as total')
+                ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total')
                 ->groupBy('m')
                 ->get();
 
