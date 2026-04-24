@@ -58,13 +58,14 @@ class SalesTargetReport extends Component
 
             foreach ($this->contractModels as $modelClass) {
                 $rows = $modelClass::query()
-                    ->whereYear('signed_at', $this->year)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
                     ->when(
                         $this->filter_staff !== '',
                         fn($q) => $q->where('staff_id', $this->filter_staff),
                         fn($q) => $q->whereIn('staff_id', $salesStaffIds)
                     )
-                    ->selectRaw('MONTH(signed_at) as m, SUM(revenue) as total')
+                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
 

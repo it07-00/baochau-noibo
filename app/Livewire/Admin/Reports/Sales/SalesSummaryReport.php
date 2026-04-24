@@ -10,7 +10,6 @@ use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesSummaryReport extends Component
@@ -62,26 +61,28 @@ class SalesSummaryReport extends Component
 
         if (!empty($targetStaffIds)) {
             foreach ($this->contractModelClasses as $modelClass) {
-                // DS Tái ký — tổng tiền
+                // DS Tái ký — tổng tiền (theo ngày xuất hóa đơn)
                 foreach ($modelClass::query()
-                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where('is_renewal', true)
-                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total, COUNT(*) as cnt')
+                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total, COUNT(*) as cnt')
                     ->groupBy('m')
                     ->get() as $r) {
                     $months[(int) $r->m]['renewal']       += (float) $r->total;
                     $months[(int) $r->m]['renewal_count'] += (int) $r->cnt;
                 }
 
-                // DS HĐ mới — tổng tiền
+                // DS HĐ mới — tổng tiền (theo ngày xuất hóa đơn)
                 foreach ($modelClass::query()
-                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where(function ($q) {
                         $q->where('is_renewal', false)->orWhereNull('is_renewal');
                     })
-                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total, COUNT(*) as cnt')
+                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total, COUNT(*) as cnt')
                     ->groupBy('m')
                     ->get() as $r) {
                     $months[(int) $r->m]['progressive']       += (float) $r->total;
@@ -139,8 +140,9 @@ class SalesSummaryReport extends Component
             foreach ($this->contractModelClasses as $modelClass) {
                 $contracts = $modelClass::query()
                     ->with('customer')
-                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
-                    ->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->filter_month)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
+                    ->whereMonth('submitted_at', $this->filter_month)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->get();
 
@@ -150,7 +152,7 @@ class SalesSummaryReport extends Component
                         'type'       => $this->contractTypeLabels[$modelClass],
                         'value'      => (float) $contract->revenue,
                         'is_renewal' => (bool) $contract->is_renewal,
-                        'date'       => $contract->submitted_at ?? $contract->signed_at,
+                        'date'       => $contract->submitted_at,
                     ]);
                 }
             }
