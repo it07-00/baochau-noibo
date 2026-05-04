@@ -177,7 +177,7 @@ class DailyReportManager extends Component
         DailyReport::updateOrCreate(
             ['user_id' => auth()->id(), 'date' => $this->reportDate],
             [
-                'content' => $this->content,
+                'content' => clean($this->content),
                 'status' => $this->status,
                 'plan' => $normalizedPlan,
                 'issues' => $normalizedIssues === '' ? null : $normalizedIssues,

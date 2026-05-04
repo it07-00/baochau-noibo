@@ -145,7 +145,7 @@ class HrProfileDetail extends Component
             'contract_start_date'  => 'required|date',
             'contract_end_date'    => 'nullable|date|after_or_equal:contract_start_date',
             'contract_salary'      => 'nullable|numeric|min:0',
-            'contract_file'        => 'nullable|file|max:10240',
+            'contract_file'        => 'nullable|file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
         ]);
 
         $data = [
@@ -222,7 +222,7 @@ class HrProfileDetail extends Component
         $this->validate([
             'document_type'  => 'required|in:' . implode(',', array_keys(EmployeeDocument::DOCUMENT_TYPES)),
             'document_files' => 'required|array|min:1',
-            'document_files.*' => 'file|max:10240',
+            'document_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
         ]);
 
         foreach ($this->document_files as $file) {
