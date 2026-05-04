@@ -3,12 +3,12 @@
 
 .calendar-header-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(6, 1fr) 0.3fr;
 }
 
 .calendar-body-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(6, 1fr) 0.3fr;
 }
 
 .calendar-day-cell:hover {
@@ -327,9 +327,18 @@
 }
 
 /* Calendar mini chip colors */
-.cal-report-chip.cal-chip-done    { background-color: #dcfce7; }
-.cal-report-chip.cal-chip-partial { background-color: #fef3c7; }
-.cal-report-chip.cal-chip-issue   { background-color: #fee2e2; }
+.cal-report-chip {
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+.cal-report-chip:hover {
+    filter: brightness(0.95);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+.cal-report-chip.cal-chip-done    { background-color: #dcfce7; border-left-color: #10b981; }
+.cal-report-chip.cal-chip-partial { background-color: #fef3c7; border-left-color: #f59e0b; }
+.cal-report-chip.cal-chip-issue   { background-color: #fee2e2; border-left-color: #ef4444; }
 
 [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-done {
     background-color: rgba(16, 185, 129, 0.18) !important;

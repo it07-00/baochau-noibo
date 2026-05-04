@@ -77,26 +77,26 @@
                     $isInsideMonth = $currentDate->month == $monthFilter;
                     $dayEvents = collect($calendarData[$dayKey] ?? []);
                     $isToday = $currentDate->isToday();
-                    $isSunday = $currentDate->isSunday();
+                    $isWeekend = $currentDate->isWeekend();
                     $isPast = $currentDate->lt(today());
                     $canAddHere = !$isPast && $isInsideMonth;
                 @endphp
 
                 <div class="calendar-day-cell position-relative
-                    @if(!$isInsideMonth) bg-light opacity-25
-                    @elseif($isSunday) bg-sunday
+                    @if(!$isInsideMonth) bg-light opacity-50
+                    @elseif($isWeekend) bg-light bg-opacity-50
                     @else bg-white
                     @endif
                     border-start border-bottom border-light-subtle
                     @if($isInsideMonth && $dayEvents->isNotEmpty()) cursor-pointer @endif"
-                    style="min-height: 180px; transition: background 0.2s; padding: clamp(4px, 2vw, 12px); min-width: 0; overflow: hidden;"
+                    style="min-height: 180px; transition: background 0.2s; padding: clamp(6px, 1.5vw, 12px); min-width: 0; overflow: hidden;"
                     @if($isInsideMonth && $dayEvents->isNotEmpty())
                         wire:click="openDayDetail('{{ $dayKey }}')"
                     @endif
                 >
-                    <div class="d-flex justify-content-between align-items-start mb-1">
-                        <span class="fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm' : 'text-muted opacity-75' }}"
-                            style="width: 24px; height: 24px; font-size: 0.75rem;">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center' : 'text-secondary opacity-75' }}"
+                            style="width: clamp(28px, 2.5vw, 32px); height: clamp(28px, 2.5vw, 32px); font-size: clamp(0.85rem, 1vw, 1.1rem); {{ $isToday ? 'box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);' : '' }}">
                             {{ $dayNum }}
                         </span>
 
@@ -104,7 +104,7 @@
                             <button wire:click.stop="openCreateModal('{{ $dayKey }}')"
                                 class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
                                 title="Thêm sự kiện"
-                                style="width: 20px; height: 20px; border-radius: 50%; font-size: 0.65rem; opacity: 0; transition: opacity 0.2s;">
+                                style="width: clamp(20px, 2vw, 24px); height: clamp(20px, 2vw, 24px); border-radius: 50%; font-size: clamp(0.65rem, 0.8vw, 0.9rem); opacity: 0; transition: opacity 0.2s;">
                                 <i class="bi bi-plus"></i>
                             </button>
                         @endif
@@ -114,14 +114,14 @@
                         @if($isInsideMonth && $dayEvents->isNotEmpty())
                             @foreach($dayEvents->take(4) as $evt)
                                 <div class="mb-1 px-2 py-1 rounded ws-event-chip ws-chip-{{ $evt->color }}"
-                                    style="font-size: 0.7rem; cursor: pointer; max-width: 100%; overflow: hidden;"
+                                    style="font-size: clamp(0.7rem, 0.85vw, 0.9rem); cursor: pointer; max-width: 100%; overflow: hidden;"
                                     wire:click.stop="openDayDetail('{{ $dayKey }}')">
                                     <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $evt->title }}</div>
-                                    <div class="ws-event-author text-truncate" style="font-size: 0.6rem; opacity: 0.7; max-width: 100%;">{{ $evt->participants->pluck('name')->join(', ') }}</div>
+                                    <div class="ws-event-author text-truncate" style="font-size: clamp(0.6rem, 0.75vw, 0.8rem); opacity: 0.75; max-width: 100%;">{{ $evt->participants->pluck('name')->join(', ') }}</div>
                                 </div>
                             @endforeach
                             @if($dayEvents->count() > 4)
-                                <div class="text-muted text-center" style="font-size: 0.65rem;">
+                                <div class="text-muted text-center" style="font-size: clamp(0.65rem, 0.8vw, 0.85rem);">
                                     +{{ $dayEvents->count() - 4 }} sự kiện khác
                                 </div>
                             @endif
@@ -151,26 +151,26 @@
                         <div class="mb-3 p-3 rounded-3 border ws-detail-item ws-detail-{{ $evt['color'] }}">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
-                                    <span class="fw-bold text-body fs-6">{{ $evt['title'] }}</span>
-                                    <span class="ws-dept-badge badge ms-2 fw-normal">{{ $evt['department'] ?: 'Nhân viên' }}</span>
+                                    <span class="fw-bold text-body fs-5">{{ $evt['title'] }}</span>
+                                    <span class="ws-dept-badge badge ms-2 fw-normal" style="font-size: 0.85rem;">{{ $evt['department'] ?: 'Nhân viên' }}</span>
                                 </div>
-                                <div class="d-flex gap-1">
+                                <div class="d-flex gap-2">
                                     @if($evt['is_owner'] && !$evt['is_past'])
                                         <button wire:click="edit({{ $evt['id'] }})"
-                                            class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;">
+                                            class="btn btn-sm btn-outline-primary px-2" style="border-radius: 6px;">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                     @endif
                                     @if($evt['is_owner'])
                                         <button wire:click="delete({{ $evt['id'] }})"
                                             wire:confirm="Bạn chắc chắn muốn xóa sự kiện này?"
-                                            class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;">
+                                            class="btn btn-sm btn-outline-danger px-2" style="border-radius: 6px;">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     @endif
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.8rem;">
+                            <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.95rem;">
                                 <span class="text-muted"><i class="bi bi-person me-1"></i>{{ $evt['user_name'] }}</span>
                                 <span class="text-muted">•</span>
                                 <span class="text-muted">
@@ -182,14 +182,14 @@
                                 </span>
                             </div>
                             @if(!empty($evt['participants']))
-                                <div class="mb-2" style="font-size: 0.8rem;">
+                                <div class="mb-2" style="font-size: 0.95rem;">
                                     <i class="bi bi-people me-1 text-muted"></i>
                                     <span class="text-muted">Người tham gia:</span>
                                     <span class="fw-semibold">{{ $evt['participants'] }}</span>
                                 </div>
                             @endif
                             @if($evt['description'])
-                                <div class="text-body" style="white-space: pre-line; font-size: 0.9rem;">{{ $evt['description'] }}</div>
+                                <div class="text-body mt-2" style="white-space: pre-line; font-size: 1rem;">{{ $evt['description'] }}</div>
                             @endif
                         </div>
                     @endforeach
@@ -199,10 +199,10 @@
 
                 @php $canAddToday = $detailDate && !\Carbon\Carbon::parse($detailDate)->lt(today()); @endphp
                 @if($canAddToday)
-                    <div class="text-center mt-3">
+                    <div class="text-center mt-4">
                         <button wire:click="openCreateModal('{{ $detailDate }}')"
-                            class="btn btn-outline-primary btn-sm px-4" style="border-radius: 8px;">
-                            <i class="bi bi-plus-lg me-1"></i> Thêm sự kiện vào ngày này
+                            class="btn btn-outline-primary px-4 py-2 fw-semibold" style="border-radius: 10px; font-size: 1rem;">
+                            <i class="bi bi-plus-lg me-2"></i> Thêm sự kiện vào ngày này
                         </button>
                     </div>
                 @endif

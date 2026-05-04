@@ -178,13 +178,15 @@
                     <div
                         class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-4">
                         <div class="d-flex align-items-center gap-3 flex-wrap">
-                            <div class="btn-group btn-group-sm" role="group">
+                            <div class="p-1 bg-light rounded-pill d-inline-flex border border-light-subtle">
                                 <button type="button" wire:click="$set('viewType', 'day')"
-                                    class="btn {{ $viewType === 'day' ? 'btn-primary' : 'btn-outline-primary' }}">Xem theo
-                                    ngày</button>
+                                    class="btn rounded-pill px-4 py-2 {{ $viewType === 'day' ? 'bg-white shadow-sm fw-bold text-primary' : 'border-0 text-muted fw-semibold' }}" style="font-size: 0.95rem;">
+                                    Xem theo ngày
+                                </button>
                                 <button type="button" wire:click="$set('viewType', 'month')"
-                                    class="btn {{ $viewType === 'month' ? 'btn-primary' : 'btn-outline-primary' }}">Xem theo
-                                    tháng</button>
+                                    class="btn rounded-pill px-4 py-2 {{ $viewType === 'month' ? 'bg-white shadow-sm fw-bold text-primary' : 'border-0 text-muted fw-semibold' }}" style="font-size: 0.95rem;">
+                                    Xem theo tháng
+                                </button>
                             </div>
 
                             <div class="vr mx-1 d-none d-md-block" style="height: 24px;"></div>
@@ -258,8 +260,8 @@
                                 @endif
                             </div>
                             <button wire:click="export" wire:loading.attr="disabled"
-                                class="btn btn-sm btn-success px-3 shadow-sm d-flex align-items-center gap-2"
-                                style="border-radius: 6px;">
+                                class="btn btn-success px-4 py-2 shadow-sm d-flex align-items-center gap-2 fw-semibold"
+                                style="border-radius: 8px; font-size: 0.95rem;">
                                 <i class="bi bi-file-earmark-excel"></i> Xuất dữ liệu
                             </button>
                         </div>
@@ -350,10 +352,10 @@
     @if(isset($renderCalendar) && $renderCalendar)
         <div class="calendar-container shadow-sm bg-white"
             style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
-            <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
+            <div class="calendar-header-grid bg-light border-bottom border-light-subtle" style="border-radius: 12px 12px 0 0;">
                 @php $daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']; @endphp
                 @foreach($daysOfWeek as $dow)
-                    <div class="calendar-header-cell  fw-bold text-muted text-center py-2">{{ $dow }}</div>
+                    <div class="calendar-header-cell fw-bold text-secondary text-center py-3 text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">{{ $dow }}</div>
                 @endforeach
             </div>
 
@@ -372,7 +374,7 @@
                         $dayReports = collect($calendarData[$dayNum] ?? []);
                         $isPast = $currentDate->isPast() && !$currentDate->isToday();
                         $isToday = $currentDate->isToday();
-                        $isSunday = $currentDate->isSunday();
+                        $isWeekend = $currentDate->isWeekend();
                         $isComplete = $dayReports->isNotEmpty();
                         $hasIssue = $dayReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->isNotEmpty();
 
@@ -381,7 +383,7 @@
                             if ($isComplete) {
                                 $dotColor = $hasIssue ? 'danger' : 'success';
                             } else {
-                                if ($isSunday)
+                                if ($isWeekend)
                                     $dotColor = 'secondary opacity-25';
                                 elseif ($isPast)
                                     $dotColor = 'danger';
@@ -391,16 +393,22 @@
                         }
                     @endphp
 
-                    <div class="calendar-day-cell @if(!$isInsideMonth) bg-light opacity-25 @elseif($isSunday) bg-sunday @else bg-white @endif border-start border-bottom border-light-subtle @if($isInsideMonth && $dayReports->isNotEmpty()) cursor-pointer @endif"
-                        style="min-height: 140px; transition: background 0.2s;padding: clamp(4px, 2vw, 12px);"
+                    <div class="calendar-day-cell position-relative
+                        @if(!$isInsideMonth) bg-light opacity-50
+                        @elseif($isWeekend) bg-light bg-opacity-50
+                        @else bg-white
+                        @endif
+                        border-start border-bottom border-light-subtle
+                        @if($isInsideMonth && $dayReports->isNotEmpty()) cursor-pointer @endif"
+                        style="min-height: 180px; transition: background 0.2s; padding: clamp(6px, 1.5vw, 12px); min-width: 0; overflow: hidden;"
                         @if($isInsideMonth && $dayReports->isNotEmpty())
                             @click="$dispatch('open-day-detail', { date: '{{ $currentDate->format('d/m/Y') }}', reports: {{ $dayReports->map(fn($r) => ['id' => $r->id, 'user_id' => $r->user_id, 'date' => $r->date->format('Y-m-d'), 'name' => $r->user->name ?? '', 'department' => $r->user->department->name ?? '', 'status' => $r->status, 'content' => $r->content, 'plan' => $r->plan ?? '', 'issues' => $r->issues ?? ''])->toJson() }} })"
                         @endif
                     >
-                        <div class="d-flex justify-content-between align-items-start mb-1">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
                             <span
-                                class=" fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm' : 'text-muted opacity-75' }}"
-                                style="width: 24px; height: 24px; font-size: 0.75rem;">
+                                class="fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center' : 'text-secondary opacity-75' }}"
+                                style="width: clamp(28px, 2.5vw, 32px); height: clamp(28px, 2.5vw, 32px); font-size: clamp(0.85rem, 1vw, 1.1rem); {{ $isToday ? 'box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);' : '' }}">
                                 {{ $dayNum }}
                             </span>
                             @if($isInsideMonth)
@@ -413,9 +421,9 @@
                         <div class="calendar-day-content mt-1">
                             @if($isInsideMonth && $dayReports->isNotEmpty())
                                 @foreach($dayReports as $dr)
-                                    <div class="mb-1 px-2 py-1 rounded cal-report-chip cal-chip-{{ $dr->status === 'Gặp vấn đề, cần hỗ trợ' ? 'issue' : ($dr->status === 'Hoàn thành một phần' ? 'partial' : 'done') }}" style="font-size: 0.7rem;">
+                                    <div class="mb-1 px-2 py-1 rounded cal-report-chip cal-chip-{{ $dr->status === 'Gặp vấn đề, cần hỗ trợ' ? 'issue' : ($dr->status === 'Hoàn thành một phần' ? 'partial' : 'done') }}" style="font-size: clamp(0.7rem, 0.85vw, 0.9rem); cursor: pointer; max-width: 100%; overflow: hidden;">
                                         <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $dr->user->name ?? '' }}</div>
-                                        <div class="riched-content-mini text-truncate-2">{!! Str::limit(strip_tags($dr->content), 80) !!}</div>
+                                        <div class="riched-content-mini text-truncate-2" style="font-size: clamp(0.6rem, 0.75vw, 0.8rem); opacity: 0.8;">{!! Str::limit(strip_tags($dr->content), 80) !!}</div>
                                     </div>
                                 @endforeach
                             @endif

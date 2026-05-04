@@ -1,11 +1,11 @@
 /* ─── Calendar Grid ─── */
 .calendar-header-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(6, 1fr) 0.3fr;
 }
 .calendar-body-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(6, 1fr) 0.3fr;
 }
 .calendar-day-cell:hover {
     background-color: #f8fafc !important;
