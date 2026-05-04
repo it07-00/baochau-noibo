@@ -32,6 +32,20 @@ class WorkSchedule extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function participants(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'work_schedule_participants')->withTimestamps();
+    }
+
+    /**
+     * Get all people involved (creator + participants).
+     */
+    public function getAllParticipantsAttribute(): \Illuminate\Support\Collection
+    {
+        $creator = collect([$this->user]);
+        return $creator->merge($this->participants)->unique('id');
+    }
+
     /**
      * Get the effective end date (defaults to start_date if null).
      */

@@ -21,6 +21,7 @@ class WorkScheduleManager extends Component
     public string $startDate = '';
     public string $endDate = '';
     public string $color = 'primary';
+    public array $selectedParticipants = [];
 
     // Modal state
     public bool $showFormModal = false;
@@ -82,6 +83,7 @@ class WorkScheduleManager extends Component
         $this->startDate   = $event->start_date->format('Y-m-d');
         $this->endDate     = $event->effective_end_date->format('Y-m-d');
         $this->color       = $event->color;
+        $this->selectedParticipants = $event->participants->pluck('id')->map(fn($id) => (string) $id)->toArray();
         $this->showFormModal = true;
     }
 
@@ -124,6 +126,7 @@ class WorkScheduleManager extends Component
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
                 'color'       => $this->color,
             ]);
+            $event->participants()->sync($this->selectedParticipants);
 
             $this->dispatch('swal:success', ['message' => 'Cập nhật sự kiện thành công!']);
         } else {
@@ -133,7 +136,7 @@ class WorkScheduleManager extends Component
                 return;
             }
 
-            WorkSchedule::create([
+            $event = WorkSchedule::create([
                 'user_id'     => auth()->id(),
                 'title'       => $this->title,
                 'description' => $this->description ?: null,
@@ -141,6 +144,7 @@ class WorkScheduleManager extends Component
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
                 'color'       => $this->color,
             ]);
+            $event->participants()->sync($this->selectedParticipants);
 
             $this->dispatch('swal:success', ['message' => 'Thêm sự kiện thành công!']);
         }
@@ -195,6 +199,7 @@ class WorkScheduleManager extends Component
             'is_owner'    => $e->user_id === auth()->id(),
             'is_past'     => $e->start_date->lt(today()),
             'is_multi_day' => $e->end_date !== null && $e->end_date->ne($e->start_date),
+            'participants' => $e->all_participants->map(fn($p) => $p->name)->join(', '),
         ])->toArray();
 
         $this->showDayDetailModal = true;
@@ -221,6 +226,7 @@ class WorkScheduleManager extends Component
         $this->startDate   = '';
         $this->endDate     = '';
         $this->color       = 'primary';
+        $this->selectedParticipants = [];
         $this->resetValidation();
     }
 
@@ -230,7 +236,7 @@ class WorkScheduleManager extends Component
         $monthEnd   = $monthStart->copy()->endOfMonth();
 
         // Get all events that overlap with this month
-        $events = WorkSchedule::with('user', 'user.department')
+        $events = WorkSchedule::with('user', 'user.department', 'participants')
             ->where(function ($query) use ($monthStart, $monthEnd) {
                 $query->where(function ($q) use ($monthStart, $monthEnd) {
                     // Events with end_date that overlap the month
@@ -266,9 +272,12 @@ class WorkScheduleManager extends Component
 
         $totalEvents = $events->count();
 
+        $allUsers = User::where('is_active', true)->orderBy('name')->get(['id', 'name']);
+
         return view('livewire.admin.work-schedules.work-schedule-manager', [
             'calendarData' => $calendarData,
             'totalEvents'  => $totalEvents,
+            'allUsers'     => $allUsers,
         ])->layout('admin.layouts.app', [
             'title'     => 'Lịch công tác',
             'fullWidth' => true,

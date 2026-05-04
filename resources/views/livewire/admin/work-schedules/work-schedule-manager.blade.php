@@ -89,7 +89,7 @@
                     @endif
                     border-start border-bottom border-light-subtle
                     @if($isInsideMonth && $dayEvents->isNotEmpty()) cursor-pointer @endif"
-                    style="min-height: 140px; transition: background 0.2s; padding: clamp(4px, 2vw, 12px);"
+                    style="min-height: 180px; transition: background 0.2s; padding: clamp(4px, 2vw, 12px);"
                     @if($isInsideMonth && $dayEvents->isNotEmpty())
                         wire:click="openDayDetail('{{ $dayKey }}')"
                     @endif
@@ -112,7 +112,7 @@
 
                     <div class="calendar-day-content mt-1">
                         @if($isInsideMonth && $dayEvents->isNotEmpty())
-                            @foreach($dayEvents->take(3) as $evt)
+                            @foreach($dayEvents->take(4) as $evt)
                                 <div class="mb-1 px-2 py-1 rounded ws-event-chip ws-chip-{{ $evt->color }}"
                                     style="font-size: 0.7rem; cursor: pointer;"
                                     wire:click.stop="openDayDetail('{{ $dayKey }}')">
@@ -120,9 +120,9 @@
                                     <div class="ws-event-author text-truncate" style="font-size: 0.6rem; opacity: 0.7;">{{ $evt->user->name ?? '' }}</div>
                                 </div>
                             @endforeach
-                            @if($dayEvents->count() > 3)
+                            @if($dayEvents->count() > 4)
                                 <div class="text-muted text-center" style="font-size: 0.65rem;">
-                                    +{{ $dayEvents->count() - 3 }} sự kiện khác
+                                    +{{ $dayEvents->count() - 4 }} sự kiện khác
                                 </div>
                             @endif
                         @endif
@@ -181,6 +181,13 @@
                                     @endif
                                 </span>
                             </div>
+                            @if(!empty($evt['participants']))
+                                <div class="mb-2" style="font-size: 0.8rem;">
+                                    <i class="bi bi-people me-1 text-muted"></i>
+                                    <span class="text-muted">Người tham gia:</span>
+                                    <span class="fw-semibold">{{ $evt['participants'] }}</span>
+                                </div>
+                            @endif
                             @if($evt['description'])
                                 <div class="text-body" style="white-space: pre-line; font-size: 0.9rem;">{{ $evt['description'] }}</div>
                             @endif
@@ -262,6 +269,22 @@
                     <textarea wire:model="description" class="form-control border-light-subtle" rows="3"
                         style="border-radius: 8px;" placeholder="Ghi chú thêm..."></textarea>
                     @error('description') <span class="text-danger" style="font-size: 0.8rem;">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-muted"><i class="bi bi-people me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
+                    <div class="border rounded-3 p-2 border-light-subtle" style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
+                        @foreach($allUsers as $u)
+                            @if($u->id !== auth()->id())
+                                <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2" style="cursor: pointer; font-size: 0.88rem;"
+                                    onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                                    <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
+                                        class="form-check-input m-0" style="border-radius: 4px;">
+                                    <span>{{ $u->name }}</span>
+                                </label>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
