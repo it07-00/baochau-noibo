@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -25,23 +26,24 @@ class ViettelPostService
      */
     public function getToken(): ?string
     {
-        return Cache::remember('viettelpost_token', now()->addHours(20), function () {
+        $encrypted = Cache::remember('viettelpost_token', now()->addHours(20), function () {
             $response = Http::post("{$this->baseUrl}/user/Login", [
                 'USERNAME' => $this->username,
                 'PASSWORD' => $this->password,
             ]);
 
             if ($response->successful() && $response->json('status') == 200) {
-                return $response->json('data.token');
+                return Crypt::encryptString($response->json('data.token'));
             }
 
             Log::error('ViettelPost login failed', [
                 'status' => $response->status(),
-                'body' => $response->json(),
             ]);
 
             return null;
         });
+
+        return $encrypted ? Crypt::decryptString($encrypted) : null;
     }
 
     /**

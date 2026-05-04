@@ -33,7 +33,7 @@ class CommissionRequestForm extends Component
         if ($id) {
             abort_if(auth()->check() && auth()->user()->hasRole('ke-toan'), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
 
-            $request = CommissionRequest::findOrFail($id);
+            $request = CommissionRequest::where('user_id', auth()->id())->findOrFail($id);
             $this->requestId = $request->id;
             $this->contract_type = $this->normalizeContractType($request->contract_type);
             $this->contract_id = $request->contract_id;

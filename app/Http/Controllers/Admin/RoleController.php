@@ -27,6 +27,8 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->can('roles.create'), 403);
+
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:255', 'unique:roles,name'],
             'permissions' => ['nullable', 'array'],
@@ -57,6 +59,8 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
+        abort_unless(auth()->user()->can('roles.edit'), 403);
+
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:255', 'unique:roles,name,' . $role->id],
             'permissions' => ['nullable', 'array'],
@@ -73,6 +77,8 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        abort_unless(auth()->user()->can('roles.delete'), 403);
+
         if ($role->users->count() > 0) {
             return back()->with('error', 'Không thể xóa vai trò đang có người dùng.');
         }

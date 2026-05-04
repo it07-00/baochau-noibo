@@ -22,6 +22,8 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->can('departments.create'), 403);
+
         $validated = $request->validate([
             'name'      => ['required', 'string', 'max:255'],
             'slug'      => ['required', 'string', 'max:255', 'unique:departments,slug'],
@@ -46,6 +48,8 @@ class DepartmentController extends Controller
 
     public function update(Request $request, Department $department)
     {
+        abort_unless(auth()->user()->can('departments.edit'), 403);
+
         $validated = $request->validate([
             'name'      => ['required', 'string', 'max:255'],
             'slug'      => ['required', 'string', 'max:255', 'unique:departments,slug,' . $department->id],
@@ -65,6 +69,8 @@ class DepartmentController extends Controller
 
     public function destroy(Department $department)
     {
+        abort_unless(auth()->user()->can('departments.delete'), 403);
+
         if ($department->users()->count() > 0) {
             return back()->with('error', 'Không thể xóa phòng ban đang có nhân viên.');
         }

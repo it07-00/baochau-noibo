@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -83,7 +84,7 @@ class SettingController extends Controller
         ]);
 
         $user = $request->user();
-        $user->password = $validated['password'];
+        $user->password = Hash::make($validated['password']);
         $user->save();
 
         return redirect()

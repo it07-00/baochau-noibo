@@ -167,7 +167,9 @@ class HrProfileDetail extends Component
         }
 
         if ($this->editingContractId) {
-            EmployeeContract::findOrFail($this->editingContractId)->update($data);
+            $contract = EmployeeContract::findOrFail($this->editingContractId);
+            abort_unless($contract->user_id === $this->user->id, 403);
+            $contract->update($data);
         } else {
             EmployeeContract::create($data);
         }
@@ -181,6 +183,7 @@ class HrProfileDetail extends Component
     {
         $this->checkPermission('delete', 'hr-profiles');
         $contract = EmployeeContract::findOrFail($id);
+        abort_unless($contract->user_id === $this->user->id, 403);
 
         if ($contract->file_path) {
             \Illuminate\Support\Facades\Storage::disk('private')->delete($contract->file_path);
@@ -248,8 +251,9 @@ class HrProfileDetail extends Component
 
     public function deleteDocument(int $id): void
     {
-        $this->authorize('delete', 'hr-profiles');
+        $this->checkPermission('delete', 'hr-profiles');
         $doc = EmployeeDocument::findOrFail($id);
+        abort_unless($doc->user_id === $this->user->id, 403);
 
         \Illuminate\Support\Facades\Storage::disk('private')->delete($doc->file_path);
         $doc->delete();
@@ -258,13 +262,17 @@ class HrProfileDetail extends Component
 
     public function downloadDocument(int $id)
     {
+        $this->checkPermission('view', 'hr-profiles');
         $doc = EmployeeDocument::findOrFail($id);
+        abort_unless($doc->user_id === $this->user->id, 403);
         return \Illuminate\Support\Facades\Storage::disk('private')->download($doc->file_path, $doc->file_name);
     }
 
     public function downloadContract(int $id)
     {
+        $this->checkPermission('view', 'hr-profiles');
         $contract = EmployeeContract::findOrFail($id);
+        abort_unless($contract->user_id === $this->user->id, 403);
         if (!$contract->file_path) {
             return;
         }

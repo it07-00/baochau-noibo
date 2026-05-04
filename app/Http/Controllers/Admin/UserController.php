@@ -32,6 +32,8 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->can('users.create'), 403);
+
         $validated = $request->validate([
             'name'          => ['required', 'string', 'max:255'],
             'username'      => ['required', 'string', 'max:255', 'unique:users,username'],
@@ -94,6 +96,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        abort_unless(auth()->user()->can('users.edit'), 403);
+
         $validated = $request->validate([
             'name'          => ['required', 'string', 'max:255'],
             'username'      => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($user->id)],
@@ -128,6 +132,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        abort_unless(auth()->user()->can('users.delete'), 403);
+
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Không thể xóa tài khoản đang đăng nhập.');
         }

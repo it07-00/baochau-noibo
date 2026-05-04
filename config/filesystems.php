@@ -24,7 +24,7 @@ return [
     |
     */
 
-    'upload_disk' => env('UPLOAD_DISK', env('AVATAR_DISK', 'public')),
+    'upload_disk' => env('UPLOAD_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------

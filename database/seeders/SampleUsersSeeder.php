@@ -11,6 +11,11 @@ class SampleUsersSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command->error('SampleUsersSeeder must not run in production. Aborting.');
+            return;
+        }
+
         $sampleUsers = [
             [
                 'name'       => 'Quản trị hệ thống',
