@@ -183,4 +183,10 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     Route::get('cham-cong/nhan-vien', \App\Livewire\Admin\Attendance\AttendanceEmployeeManager::class)->name('attendance.employees')->middleware('permission:cham-cong.edit');
     Route::get('cham-cong/xuat-excel/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'export'])->name('attendance.export')->middleware('permission:cham-cong.export');
     Route::get('cham-cong/xuat-excel-chitiet/{month}', [\App\Http\Controllers\Admin\AttendanceExportController::class, 'exportDetail'])->name('attendance.export-detail')->middleware('permission:cham-cong.export');
+
+    // Quản lý hồ sơ nhân sự
+    Route::prefix('nhan-su')->name('hr.')->middleware('permission:hr-profiles.view')->group(function () {
+        Route::get('/', \App\Livewire\Admin\Hr\HrProfileManager::class)->name('index');
+        Route::get('/{user}', \App\Livewire\Admin\Hr\HrProfileDetail::class)->name('detail');
+    });
 });
