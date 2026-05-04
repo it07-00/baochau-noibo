@@ -374,7 +374,7 @@
                             'title' => 'Nội bộ',
                             'icon' => $usersIcon,
                             'permission' => 'internal-docs.view',
-                            'children' => ['Quy định'],
+                            'children' => ['Quy định', 'Phần mềm'],
                         ],
                         [
                             'title' => 'Báo cáo ngày',
@@ -390,6 +390,9 @@
                     if (request()->routeIs('app.internal-docs.*')) {
                         $activeGroup = 'Nội bộ';
                         $activeChild = 'Quy định';
+                    } elseif (request()->routeIs('app.internal-software.*')) {
+                        $activeGroup = 'Nội bộ';
+                        $activeChild = 'Phần mềm';
                     } elseif (request()->routeIs('app.contracts.waste.*')) {
                         $activeGroup = 'Quản lý hợp đồng';
                         $activeChild = 'HĐ Chất thải & Tiếng ồn';
@@ -584,6 +587,8 @@
                                             $href = 'javascript:void(0)';
                                             if ($menu['title'] === 'Nội bộ' && $child === 'Quy định') {
                                                 $href = route('app.internal-docs.index');
+                                            } elseif ($menu['title'] === 'Nội bộ' && $child === 'Phần mềm') {
+                                                $href = route('app.internal-software.index');
                                             } elseif ($child === 'HĐ Chất thải & Tiếng ồn') {
                                                 $href = route('app.contracts.waste.index');
                                             } elseif ($child === 'HĐ Pháp lý & Hồ sơ MT') {

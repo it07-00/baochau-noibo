@@ -81,8 +81,9 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::get('/', [SettingController::class, 'index'])->name('index');
     });
 
-    // Công văn nội bộ
+    // Công văn nội bộ & Phần mềm
     Route::get('cong-van-noi-bo', \App\Livewire\Admin\InternalDocs\InternalDocManager::class)->name('internal-docs.index')->middleware('permission:internal-docs.view');
+    Route::get('phan-mem-noi-bo', \App\Livewire\Admin\InternalDocs\SoftwareManager::class)->name('internal-software.index');
 
     // Nhật ký công việc
     Route::get('nhat-ky-cong-viec', \App\Livewire\Admin\DailyReports\DailyReportManager::class)->name('daily-reports.index')->middleware('permission:daily-reports.view');

@@ -89,7 +89,7 @@
                     @endif
                     border-start border-bottom border-light-subtle
                     @if($isInsideMonth && $dayEvents->isNotEmpty()) cursor-pointer @endif"
-                    style="min-height: 180px; transition: background 0.2s; padding: clamp(4px, 2vw, 12px);"
+                    style="min-height: 180px; transition: background 0.2s; padding: clamp(4px, 2vw, 12px); min-width: 0; overflow: hidden;"
                     @if($isInsideMonth && $dayEvents->isNotEmpty())
                         wire:click="openDayDetail('{{ $dayKey }}')"
                     @endif
@@ -114,10 +114,10 @@
                         @if($isInsideMonth && $dayEvents->isNotEmpty())
                             @foreach($dayEvents->take(4) as $evt)
                                 <div class="mb-1 px-2 py-1 rounded ws-event-chip ws-chip-{{ $evt->color }}"
-                                    style="font-size: 0.7rem; cursor: pointer;"
+                                    style="font-size: 0.7rem; cursor: pointer; max-width: 100%; overflow: hidden;"
                                     wire:click.stop="openDayDetail('{{ $dayKey }}')">
                                     <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $evt->title }}</div>
-                                    <div class="ws-event-author text-truncate" style="font-size: 0.6rem; opacity: 0.7;">{{ $evt->participants->pluck('name')->join(', ') }}</div>
+                                    <div class="ws-event-author text-truncate" style="font-size: 0.6rem; opacity: 0.7; max-width: 100%;">{{ $evt->participants->pluck('name')->join(', ') }}</div>
                                 </div>
                             @endforeach
                             @if($dayEvents->count() > 4)
