@@ -43,6 +43,18 @@
                             </span>
                             <span class="menu-title flex-grow-1">Quản trị hệ thống</span>
                         </a>
+                    <li class="app-sidebar-menu-item">
+                        <a href="{{ url('log-viewer') }}" target="_blank"
+                            class="menu-link d-flex align-items-center">
+                            <span class="menu-icon flex-shrink-0">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"></path>
+                                    <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                                    <path d="M4 14l2 2l4-4"></path>
+                                </svg>
+                            </span>
+                            <span class="menu-title flex-grow-1">Log Hệ Thống</span>
+                        </a>
                     </li>
                 @endif
 

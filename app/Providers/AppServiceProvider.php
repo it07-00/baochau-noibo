@@ -30,5 +30,9 @@ class AppServiceProvider extends ServiceProvider
             ],
             [\App\Listeners\LogAuthActivity::class, 'handle']
         );
+
+        \Opcodes\LogViewer\Facades\LogViewer::auth(function ($request) {
+            return $request->user() && $request->user()->hasRole('it');
+        });
     }
 }
