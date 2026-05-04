@@ -205,6 +205,7 @@ class DailyReportManager extends Component
             if ($recipient->id !== $reporter->id) {
                 $recipient->notify(new DailyReportSubmittedNotification($reporter->name, $this->reportDate));
             }
+        }
     }
 
     public function deleteReport($id)
