@@ -394,7 +394,7 @@
                     <div class="calendar-day-cell @if(!$isInsideMonth) bg-light opacity-25 @elseif($isSunday) bg-sunday @else bg-white @endif border-start border-bottom border-light-subtle @if($isInsideMonth && $dayReports->isNotEmpty()) cursor-pointer @endif"
                         style="min-height: 140px; transition: background 0.2s;padding: clamp(4px, 2vw, 12px);"
                         @if($isInsideMonth && $dayReports->isNotEmpty())
-                            @click="$dispatch('open-day-detail', { date: '{{ $currentDate->format('d/m/Y') }}', reports: {{ $dayReports->map(fn($r) => ['name' => $r->user->name ?? '', 'department' => $r->user->department->name ?? '', 'status' => $r->status, 'content' => $r->content, 'plan' => $r->plan ?? '', 'issues' => $r->issues ?? ''])->toJson() }} })"
+                            @click="$dispatch('open-day-detail', { date: '{{ $currentDate->format('d/m/Y') }}', reports: {{ $dayReports->map(fn($r) => ['id' => $r->id, 'user_id' => $r->user_id, 'date' => $r->date->format('Y-m-d'), 'name' => $r->user->name ?? '', 'department' => $r->user->department->name ?? '', 'status' => $r->status, 'content' => $r->content, 'plan' => $r->plan ?? '', 'issues' => $r->issues ?? ''])->toJson() }} })"
                         @endif
                     >
                         <div class="d-flex justify-content-between align-items-start mb-1">
@@ -404,7 +404,9 @@
                                 {{ $dayNum }}
                             </span>
                             @if($isInsideMonth)
-                                <span class="status-indicator bg-{{ $dotColor }} shadow-sm"></span>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="status-indicator bg-{{ $dotColor }} shadow-sm"></span>
+                                </div>
                             @endif
                         </div>
 
@@ -448,7 +450,21 @@
                                 <span class="fw-bold text-body" x-text="r.name"></span>
                                 <span class="daily-report-dept-badge badge ms-2 fw-normal " x-text="r.department"></span>
                             </div>
-                            <span class=" fw-bold" :class="r.status === 'Gặp vấn đề, cần hỗ trợ' ? 'text-danger' : (r.status === 'Hoàn thành một phần' ? 'text-warning' : 'text-success')" x-text="r.status"></span>
+                            <div class="d-flex gap-2 align-items-center">
+                                <span class=" fw-bold" :class="r.status === 'Gặp vấn đề, cần hỗ trợ' ? 'text-danger' : (r.status === 'Hoàn thành một phần' ? 'text-warning' : 'text-success')" x-text="r.status"></span>
+                                <template x-if="r.user_id === {{ auth()->id() }}">
+                                    <div class="d-flex gap-1 ms-2">
+                                        <button @click="$wire.openReportModal(r.date); open = false"
+                                            class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button @click="if(confirm('Bạn chắc chắn muốn xóa báo cáo này?')) { $wire.deleteReport(r.id); open = false }"
+                                            class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                         <div class="riched-content  text-body" style="word-break: break-word; overflow-wrap: break-word;" x-html="r.content"></div>
                         <template x-if="r.plan">
@@ -464,368 +480,77 @@
         </div>
     </div>
 
-    <style>
-        .calendar-header-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-        }
+    <!-- Quick Report Modal (Add/Edit) -->
+    <div x-data="{ open: @entangle('showReportModal') }" 
+         x-show="open" x-cloak
+         style="position: fixed; inset: 0; z-index: 10000;"
+         @keydown.escape.window="open = false">
+        <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);" @click="open = false"></div>
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 600px; background: var(--daily-report-modal-bg, #fff); border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); overflow: hidden;"
+             @click.stop>
+            <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-pencil-square me-2 text-primary"></i>
+                    {{ $isEditing ? 'Cập nhật báo cáo' : 'Gửi báo cáo mới' }}
+                </h5>
+                <button @click="open = false" class="btn-close shadow-none"></button>
+            </div>
 
-        .calendar-body-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-        }
+            <div class="p-4" style="max-height: 70vh; overflow-y: auto;">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label fw-bold text-muted mb-0">Ngày báo cáo</label>
+                        <span class="badge bg-primary-subtle text-primary px-3 py-1 rounded-pill">{{ \Carbon\Carbon::parse($reportDate)->format('d/m/Y') }}</span>
+                    </div>
+                </div>
 
-        .calendar-day-cell:hover {
-            background-color: #f8fafc !important;
-        }
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted">Nội dung công việc *</label>
+                    <div wire:ignore class="editor-container">
+                        <div id="modal-content-editor">{!! $content !!}</div>
+                    </div>
+                    @error('content') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
 
-        .calendar-day-cell.cursor-pointer {
-            cursor: pointer;
-        }
+                <div class="row g-3 mb-3">
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-muted">Trạng thái hoàn thành</label>
+                        <select wire:model="status" class="form-select border-light-subtle" style="border-radius: 12px;">
+                            <option value="Hoàn thành đúng kế hoạch">Hoàn thành đúng kế hoạch</option>
+                            <option value="Hoàn thành một phần">Hoàn thành một phần</option>
+                            <option value="Gặp vấn đề, cần hỗ trợ">Gặp vấn đề, cần hỗ trợ</option>
+                        </select>
+                    </div>
+                </div>
 
-        .calendar-day-cell.cursor-pointer:hover {
-            background-color: #eef2ff !important;
-        }
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted">Kế hoạch ngày mai</label>
+                    <textarea wire:model="plan" class="form-control border-light-subtle" rows="3"
+                        style="border-radius: 12px; font-size: 0.95rem;"
+                        placeholder="Dự định công việc cho ngày mai..."></textarea>
+                </div>
 
-        .nav-pill-btn {
-            padding: 6px 12px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
+                <div class="mb-0">
+                    <label class="form-label fw-bold text-muted">Vấn đề / Hỗ trợ</label>
+                    <textarea wire:model="issues" class="form-control border-light-subtle" rows="2"
+                        style="border-radius: 12px; font-size: 0.95rem;"
+                        placeholder="Nếu có khó khăn cần giúp đỡ..."></textarea>
+                </div>
+            </div>
 
-        @media (max-width: 576px) {
-            .nav-pill-btn {
-                padding: 5px 8px;
-                font-size: 0.78rem;
-            }
-            .calendar-day-cell {
-                min-height: 70px !important;
-            }
-            .calendar-header-cell {
-                font-size: 0.72rem;
-                padding-top: 4px !important;
-                padding-bottom: 4px !important;
-            }
-            .status-indicator {
-                width: 6px;
-                height: 6px;
-            }
-            .cal-report-chip {
-                display: none;
-            }
-            .calendar-day-content::after {
-                content: none;
-            }
-        }
+            <div class="p-4 bg-light-subtle border-top d-flex gap-2">
+                <button @click="open = false" class="btn btn-light px-4 py-2 flex-grow-1" style="border-radius: 10px;">Hủy</button>
+                <button wire:click="save" class="btn btn-dark px-4 py-2 flex-grow-1" style="border-radius: 10px;" wire:loading.attr="disabled">
+                    <span wire:loading.remove><i class="bi bi-check2-circle me-1"></i> Lưu báo cáo</span>
+                    <span wire:loading><span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-        @media (max-width: 400px) {
-            .nav-pill-label {
-                display: none;
-            }
-            .nav-pill-btn {
-                padding: 6px 10px;
-            }
-        }
-
-        .bg-sunday {
-            background-color: #f7fafc !important;
-        }
-
-        .bg-soft-danger-light {
-            background-color: #fff5f5 !important;
-        }
-
-        .text-truncate-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 11;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .nav-pills .nav-link.active {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .riched-content p {
-            margin-bottom: 0.5rem;
-        }
-
-        .riched-content ul,
-        .riched-content ol {
-            margin-bottom: 0.5rem;
-            padding-left: 1.5rem;
-        }
-
-        .riched-content-mini {
-            font-size: 0.65rem !important;
-            line-height: 1.3 !important;
-            color: #64748b !important;
-            max-height: 60px;
-            overflow: hidden;
-        }
-
-        .riched-content-mini p {
-            margin-bottom: 2px;
-        }
-
-        .riched-content-mini ul,
-        .riched-content-mini ol {
-            padding-left: 12px;
-            margin-bottom: 2px;
-            list-style-type: disc;
-        }
-
-        .riched-content-mini li {
-            margin-bottom: 0;
-        }
-
-        .riched-content-mini strong,
-        .riched-content-mini b {
-            font-weight: 600;
-            color: #475569;
-        }
-
-        /* Hide overlay when typing or focused */
-        .textarea-overlay-container:focus-within .position-absolute {
-            display: none !important;
-        }
-
-        /* CKEditor Custom Styles */
-        .ck-editor__animated-placeholder {
-            font-size: 0.9rem !important;
-            color: #94a3b8 !important;
-        }
-
-        .ck-editor__editable {
-            min-height: 400px !important;
-            border-radius: 0 0 8px 8px !important;
-            border-color: #e2e8f0 !important;
-            font-size: 1rem !important;
-            line-height: 1.6 !important;
-        }
-
-        .limit-height {
-            max-height: 200px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .limit-height::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: linear-gradient(transparent, rgba(255, 255, 255, 0.9));
-            pointer-events: none;
-        }
-
-        .riched-content {
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .daily-report-dept-badge {
-            background-color: #edf2f7;
-            color: #475569;
-            border: 1px solid #d5dee9;
-        }
-
-        .daily-report-modal-item {
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .ck-toolbar {
-            border-radius: 8px 8px 0 0 !important;
-            border-color: #e2e8f0 !important;
-            background-color: #f8fafc !important;
-        }
-
-        #plan-editor+.ck-editor .ck-editor__editable {
-            min-height: 120px !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager {
-            --daily-report-modal-bg: #1b222c;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .nav.nav-pills,
-        [data-bs-theme="dark"] .daily-report-manager .card-header.bg-white,
-        [data-bs-theme="dark"] .daily-report-manager .calendar-container,
-        [data-bs-theme="dark"] .daily-report-manager .calendar-header-grid.bg-white {
-            background-color: #1f2631 !important;
-            color: var(--bs-body-color) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .calendar-container,
-        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell,
-        [data-bs-theme="dark"] .daily-report-manager .calendar-header-grid {
-            border-color: rgba(255, 255, 255, 0.12) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell.bg-white {
-            background-color: #1a2029 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell.bg-light {
-            background-color: #131820 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .bg-sunday {
-            background-color: #212938 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell:hover {
-            background-color: #253041 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .calendar-day-cell.cursor-pointer:hover {
-            background-color: #29405f !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-tip-box {
-            border-color: rgba(255, 255, 255, 0.2) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-help-alert {
-            background-color: rgba(245, 158, 11, 0.16) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .form-control.border-light-subtle,
-        [data-bs-theme="dark"] .daily-report-manager .form-select.border-light-subtle {
-            background-color: #141b24 !important;
-            border-color: rgba(255, 255, 255, 0.16) !important;
-            color: var(--bs-body-color) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .riched-content-mini {
-            color: #c5d0df !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .riched-content-mini strong,
-        [data-bs-theme="dark"] .daily-report-manager .riched-content-mini b {
-            color: #e5ecf8 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .limit-height::after {
-            background: linear-gradient(transparent, rgba(27, 34, 44, 0.94));
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .ck-toolbar {
-            border-color: rgba(255, 255, 255, 0.16) !important;
-            background-color: #1f2631 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button,
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button .ck-icon,
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-icon {
-            color: #dbe7f9 !important;
-            fill: #dbe7f9 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button:hover:not(.ck-disabled),
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button:focus:not(.ck-disabled) {
-            background-color: rgba(148, 163, 184, 0.2) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button.ck-on {
-            background-color: rgba(59, 130, 246, 0.3) !important;
-            color: #f8fbff !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .ck.ck-toolbar .ck-button.ck-disabled .ck-icon {
-            opacity: 0.45;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .ck-editor__editable {
-            background-color: #121821 !important;
-            color: var(--bs-body-color) !important;
-            border-color: rgba(255, 255, 255, 0.16) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-dept-badge {
-            background-color: #2a3545;
-            color: #dbe7f6;
-            border-color: rgba(255, 255, 255, 0.18);
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item {
-            color: var(--bs-body-color);
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item.status-done {
-            background-color: rgba(16, 185, 129, 0.11) !important;
-            border-color: rgba(16, 185, 129, 0.34) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item.status-partial {
-            background-color: rgba(245, 158, 11, 0.12) !important;
-            border-color: rgba(245, 158, 11, 0.34) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item.status-issue {
-            background-color: rgba(239, 68, 68, 0.12) !important;
-            border-color: rgba(239, 68, 68, 0.34) !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .text-muted {
-            color: #b9c6d8 !important;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content,
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content * {
-            color: #e4edf9 !important;
-            border-color: rgba(255, 255, 255, 0.24) !important;
-            background: transparent !important;
-        }
-
-        /* Calendar mini chip colors */
-        .cal-report-chip.cal-chip-done    { background-color: #dcfce7; }
-        .cal-report-chip.cal-chip-partial { background-color: #fef3c7; }
-        .cal-report-chip.cal-chip-issue   { background-color: #fee2e2; }
-
-        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-done {
-            background-color: rgba(16, 185, 129, 0.18) !important;
-            color: #a7f3d0;
-        }
-        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-partial {
-            background-color: rgba(245, 158, 11, 0.18) !important;
-            color: #fde68a;
-        }
-        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-issue {
-            background-color: rgba(239, 68, 68, 0.18) !important;
-            color: #fca5a5;
-        }
-        [data-bs-theme="dark"] .daily-report-manager .cal-report-chip .riched-content-mini {
-            color: inherit !important;
-            opacity: 0.85;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content a {
-            color: #8ab4ff !important;
-            text-decoration: underline;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content li::marker {
-            color: #9fb4cf;
-        }
-
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content .text-muted,
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content .text-secondary,
-        [data-bs-theme="dark"] .daily-report-manager .daily-report-modal-item .riched-content .text-dark {
-            color: #d6e2f1 !important;
-            opacity: 1 !important;
-        }
-    </style>
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('assets/css/daily-report.css') }}">
+    @endpush
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -855,6 +580,28 @@
                 });
             }
 
+            // Modal Content Editor
+            const modalContentEl = document.querySelector('#modal-content-editor');
+            if (modalContentEl && !modalContentEl.classList.contains('ck-editor-initialized')) {
+                ClassicEditor.create(modalContentEl, {
+                    placeholder: 'Hôm nay bạn đã hoàn thành những việc gì?',
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo']
+                }).then(editor => {
+                    // Sync to Livewire
+                    editor.model.document.on('change:data', () => {
+                        @this.set('content', editor.getData());
+                    });
+
+                    // Apply buffered content when editor is initialized.
+                    if (window.__dailyReportContentBuffer !== undefined) {
+                        editor.setData(window.__dailyReportContentBuffer || '');
+                    }
+
+                    modalContentEl.classList.add('ck-editor-initialized');
+                    window.modalContentEditor = editor;
+                });
+            }
+
             // Plan Editor (Not using CKEditor for plan as per user request)
         }
 
@@ -870,11 +617,17 @@
             if (window.contentEditor && window.contentEditor.getData() !== nextContent) {
                 window.contentEditor.setData(nextContent);
             }
+            if (window.modalContentEditor && window.modalContentEditor.getData() !== nextContent) {
+                window.modalContentEditor.setData(nextContent);
+            }
         });
 
         // Polling-style check for tab changes (robust)
         setInterval(() => {
             if (document.querySelector('#content-editor') && !document.querySelector('#content-editor').classList.contains('ck-editor-initialized')) {
+                initAllEditors();
+            }
+            if (document.querySelector('#modal-content-editor') && !document.querySelector('#modal-content-editor').classList.contains('ck-editor-initialized')) {
                 initAllEditors();
             }
         }, 1000);

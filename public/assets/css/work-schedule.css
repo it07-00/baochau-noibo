@@ -1,0 +1,143 @@
+/* ─── Calendar Grid ─── */
+.calendar-header-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+.calendar-body-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+.calendar-day-cell:hover {
+    background-color: #f8fafc !important;
+}
+.calendar-day-cell.cursor-pointer {
+    cursor: pointer;
+}
+.calendar-day-cell.cursor-pointer:hover {
+    background-color: #eef2ff !important;
+}
+.bg-sunday {
+    background-color: #f7fafc !important;
+}
+
+/* ─── Add button on hover ─── */
+.calendar-day-cell:hover .ws-add-btn {
+    opacity: 1 !important;
+}
+.ws-add-btn {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.ws-add-btn:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+
+/* ─── Event Chips (light mode) ─── */
+.ws-event-chip { border-left: 3px solid transparent; }
+.ws-chip-primary   { background: #dbeafe; border-left-color: #3b82f6; color: #1e3a5f; }
+.ws-chip-success   { background: #dcfce7; border-left-color: #10b981; color: #14532d; }
+.ws-chip-warning   { background: #fef3c7; border-left-color: #f59e0b; color: #78350f; }
+.ws-chip-danger    { background: #fee2e2; border-left-color: #ef4444; color: #7f1d1d; }
+.ws-chip-info      { background: #cffafe; border-left-color: #06b6d4; color: #164e63; }
+.ws-chip-secondary { background: #f3f4f6; border-left-color: #6b7280; color: #374151; }
+
+/* ─── Detail items ─── */
+.ws-detail-primary   { background: #eff6ff; border-color: #bfdbfe !important; }
+.ws-detail-success   { background: #f0fdf4; border-color: #bbf7d0 !important; }
+.ws-detail-warning   { background: #fffbeb; border-color: #fde68a !important; }
+.ws-detail-danger    { background: #fef2f2; border-color: #fecaca !important; }
+.ws-detail-info      { background: #ecfeff; border-color: #a5f3fc !important; }
+.ws-detail-secondary { background: #f9fafb; border-color: #e5e7eb !important; }
+
+.ws-dept-badge {
+    background-color: #edf2f7;
+    color: #475569;
+    border: 1px solid #d5dee9;
+}
+
+/* ─── Color picker ─── */
+.ws-color-picker { transition: transform 0.15s ease; }
+.ws-color-picker:hover { transform: scale(1.15); }
+
+/* ─── Responsive ─── */
+@media (max-width: 576px) {
+    .calendar-day-cell { min-height: 80px !important; }
+    .calendar-header-cell { font-size: 0.72rem; padding-top: 4px !important; padding-bottom: 4px !important; }
+    .ws-event-chip { display: none; }
+    .calendar-day-cell::after { content: none; }
+}
+
+/* ─── Dark Mode ─── */
+[data-bs-theme="dark"] .work-schedule-manager {
+    --ws-modal-bg: #1b222c;
+}
+
+[data-bs-theme="dark"] .work-schedule-manager .card-header.bg-white,
+[data-bs-theme="dark"] .work-schedule-manager .calendar-container,
+[data-bs-theme="dark"] .work-schedule-manager .calendar-header-grid.bg-white {
+    background-color: #1f2631 !important;
+    color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .work-schedule-manager .calendar-container,
+[data-bs-theme="dark"] .work-schedule-manager .calendar-day-cell,
+[data-bs-theme="dark"] .work-schedule-manager .calendar-header-grid {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+[data-bs-theme="dark"] .work-schedule-manager .calendar-day-cell.bg-white {
+    background-color: #1a2029 !important;
+}
+[data-bs-theme="dark"] .work-schedule-manager .calendar-day-cell.bg-light {
+    background-color: #131820 !important;
+}
+[data-bs-theme="dark"] .work-schedule-manager .bg-sunday {
+    background-color: #212938 !important;
+}
+[data-bs-theme="dark"] .work-schedule-manager .calendar-day-cell:hover {
+    background-color: #253041 !important;
+}
+[data-bs-theme="dark"] .work-schedule-manager .calendar-day-cell.cursor-pointer:hover {
+    background-color: #29405f !important;
+}
+
+[data-bs-theme="dark"] .work-schedule-manager .form-control.border-light-subtle,
+[data-bs-theme="dark"] .work-schedule-manager .form-select.border-light-subtle {
+    background-color: #141b24 !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    color: var(--bs-body-color) !important;
+}
+
+/* Dark mode chips */
+[data-bs-theme="dark"] .ws-chip-primary   { background: rgba(59, 130, 246, 0.18); color: #93c5fd; }
+[data-bs-theme="dark"] .ws-chip-success   { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; }
+[data-bs-theme="dark"] .ws-chip-warning   { background: rgba(245, 158, 11, 0.18); color: #fde68a; }
+[data-bs-theme="dark"] .ws-chip-danger    { background: rgba(239, 68, 68, 0.18); color: #fca5a5; }
+[data-bs-theme="dark"] .ws-chip-info      { background: rgba(6, 182, 212, 0.18); color: #67e8f9; }
+[data-bs-theme="dark"] .ws-chip-secondary { background: rgba(107, 114, 128, 0.18); color: #d1d5db; }
+
+/* Dark mode detail items */
+[data-bs-theme="dark"] .ws-detail-primary   { background: rgba(59, 130, 246, 0.11) !important; border-color: rgba(59, 130, 246, 0.34) !important; }
+[data-bs-theme="dark"] .ws-detail-success   { background: rgba(16, 185, 129, 0.11) !important; border-color: rgba(16, 185, 129, 0.34) !important; }
+[data-bs-theme="dark"] .ws-detail-warning   { background: rgba(245, 158, 11, 0.12) !important; border-color: rgba(245, 158, 11, 0.34) !important; }
+[data-bs-theme="dark"] .ws-detail-danger    { background: rgba(239, 68, 68, 0.12) !important; border-color: rgba(239, 68, 68, 0.34) !important; }
+[data-bs-theme="dark"] .ws-detail-info      { background: rgba(6, 182, 212, 0.12) !important; border-color: rgba(6, 182, 212, 0.34) !important; }
+[data-bs-theme="dark"] .ws-detail-secondary  { background: rgba(107, 114, 128, 0.12) !important; border-color: rgba(107, 114, 128, 0.34) !important; }
+
+[data-bs-theme="dark"] .ws-dept-badge {
+    background-color: #2a3545;
+    color: #dbe7f6;
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+[data-bs-theme="dark"] .ws-add-btn {
+    background: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+    border-color: rgba(59, 130, 246, 0.4);
+}
+[data-bs-theme="dark"] .ws-add-btn:hover {
+    background: #3b82f6;
+    color: #fff;
+}

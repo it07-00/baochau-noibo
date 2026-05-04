@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasMany(DailyReport::class);
     }
 
+    public function workSchedules(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(WorkSchedule::class);
+    }
+
     public function getAvatarUrlAttribute(): ?string
     {
         if (! $this->avatar) {

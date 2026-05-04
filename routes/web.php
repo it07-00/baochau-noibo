@@ -87,6 +87,9 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Nhật ký công việc
     Route::get('nhat-ky-cong-viec', \App\Livewire\Admin\DailyReports\DailyReportManager::class)->name('daily-reports.index')->middleware('permission:daily-reports.view');
 
+    // Lịch công tác
+    Route::get('lich-cong-tac', \App\Livewire\Admin\WorkSchedules\WorkScheduleManager::class)->name('work-schedules.index');
+
     // Báo cáo hàng ngày Marketing
     Route::get('marketing/bao-cao-hang-ngay', \App\Livewire\Admin\Marketing\MarketingReportManager::class)->name('marketing.daily-report.index')->middleware('permission:marketing-reports.view');
 

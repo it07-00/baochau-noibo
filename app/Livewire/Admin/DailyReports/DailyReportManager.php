@@ -25,6 +25,7 @@ class DailyReportManager extends Component
     public $canSubmitOwnReport = true;
     public $isEditing = false;
     public $viewType = 'day'; // 'day' or 'month' (for managers)
+    public $showReportModal = false;
 
     // Filters
     public $dateFilter;
@@ -100,6 +101,29 @@ class DailyReportManager extends Component
         }
     }
 
+    public function openReportModal($date)
+    {
+        if (!$this->canSubmitOwnReport) {
+            return;
+        }
+
+        $parsed = Carbon::parse($date);
+        if ($parsed->gt(today())) {
+            $this->dispatch('swal:error', ['message' => 'Không thể gửi báo cáo cho ngày trong tương lai.']);
+            return;
+        }
+
+        $this->reportDate = $date;
+        $this->loadReportByDate();
+        $this->showReportModal = true;
+    }
+
+    public function closeReportModal()
+    {
+        $this->showReportModal = false;
+        $this->resetErrorBag();
+    }
+
     public function loadReportByDate()
     {
         if (!$this->canSubmitOwnReport) {
@@ -161,6 +185,7 @@ class DailyReportManager extends Component
         );
 
         $this->dispatch('swal:success', ['message' => 'Gửi báo cáo thành công!']);
+        $this->showReportModal = false;
         $this->loadReportByDate();
 
         // Gửi thông báo cho Giám đốc & TPKD
@@ -180,7 +205,11 @@ class DailyReportManager extends Component
             if ($recipient->id !== $reporter->id) {
                 $recipient->notify(new DailyReportSubmittedNotification($reporter->name, $this->reportDate));
             }
-        }
+    }
+
+    public function deleteReport($id)
+    {
+        $this->delete($id);
     }
 
     public function delete($id)
