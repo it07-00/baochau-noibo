@@ -117,7 +117,7 @@
                                     style="font-size: 0.7rem; cursor: pointer;"
                                     wire:click.stop="openDayDetail('{{ $dayKey }}')">
                                     <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $evt->title }}</div>
-                                    <div class="ws-event-author text-truncate" style="font-size: 0.6rem; opacity: 0.7;">{{ $evt->user->name ?? '' }}</div>
+                                    <div class="ws-event-author text-truncate" style="font-size: 0.6rem; opacity: 0.7;">{{ $evt->participants->pluck('name')->join(', ') }}</div>
                                 </div>
                             @endforeach
                             @if($dayEvents->count() > 4)
@@ -275,14 +275,12 @@
                     <label class="form-label fw-bold text-muted"><i class="bi bi-people me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
                     <div class="border rounded-3 p-2 border-light-subtle" style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
                         @foreach($allUsers as $u)
-                            @if($u->id !== auth()->id())
-                                <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2" style="cursor: pointer; font-size: 0.88rem;"
-                                    onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
-                                    <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
-                                        class="form-check-input m-0" style="border-radius: 4px;">
-                                    <span>{{ $u->name }}</span>
-                                </label>
-                            @endif
+                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2" style="cursor: pointer; font-size: 0.88rem;"
+                                onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                                <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
+                                    class="form-check-input m-0" style="border-radius: 4px;">
+                                <span>{{ $u->name }}@if($u->id === auth()->id()) (Bạn) @endif</span>
+                            </label>
                         @endforeach
                     </div>
                 </div>

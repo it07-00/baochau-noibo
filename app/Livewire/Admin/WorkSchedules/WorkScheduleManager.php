@@ -199,7 +199,7 @@ class WorkScheduleManager extends Component
             'is_owner'    => $e->user_id === auth()->id(),
             'is_past'     => $e->start_date->lt(today()),
             'is_multi_day' => $e->end_date !== null && $e->end_date->ne($e->start_date),
-            'participants' => $e->all_participants->map(fn($p) => $p->name)->join(', '),
+            'participants' => $e->participants->map(fn($p) => $p->name)->join(', '),
         ])->toArray();
 
         $this->showDayDetailModal = true;
@@ -226,7 +226,7 @@ class WorkScheduleManager extends Component
         $this->startDate   = '';
         $this->endDate     = '';
         $this->color       = 'primary';
-        $this->selectedParticipants = [];
+        $this->selectedParticipants = [(string) auth()->id()];
         $this->resetValidation();
     }
 

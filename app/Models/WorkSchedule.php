@@ -38,15 +38,6 @@ class WorkSchedule extends Model
     }
 
     /**
-     * Get all people involved (creator + participants).
-     */
-    public function getAllParticipantsAttribute(): \Illuminate\Support\Collection
-    {
-        $creator = collect([$this->user]);
-        return $creator->merge($this->participants)->unique('id');
-    }
-
-    /**
      * Get the effective end date (defaults to start_date if null).
      */
     public function getEffectiveEndDateAttribute(): \Carbon\Carbon
