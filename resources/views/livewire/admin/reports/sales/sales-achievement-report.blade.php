@@ -67,7 +67,7 @@
             <div class="race-progress-track">
                 <div class="race-progress-bar-wrap">
                     <div class="race-progress-fill" style="width: {{ min($companyPct, 100) }}%"></div>
-                    <div class="race-progress-label" style="left: {{ min($companyPct, 100) }}%">
+                    <div class="race-progress-label" style="left: {{ min($companyPct, 100) }}%; transform: translateX({{ $companyPct <= 5 ? '0%' : ($companyPct >= 95 ? '-100%' : '-50%') }})">
                         {{ number_format($companyActual, 0, ',', '.') }}đ ({{ $companyPct }}%)
                     </div>
                 </div>
@@ -421,7 +421,6 @@
     .race-progress-label {
         position: absolute;
         top: -28px;
-        transform: translateX(-50%);
         font-size: .92rem;
         font-weight: 700;
         color: var(--race-gold-light);
