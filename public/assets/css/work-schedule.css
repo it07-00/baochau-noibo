@@ -1,11 +1,11 @@
 /* ─── Calendar Grid ─── */
 .calendar-header-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr) 0.3fr;
+    grid-template-columns: repeat(7, 1fr);
 }
 .calendar-body-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr) 0.3fr;
+    grid-template-columns: repeat(7, 1fr);
 }
 .calendar-day-cell:hover {
     background-color: #f8fafc !important;
@@ -62,11 +62,28 @@
 .ws-color-picker:hover { transform: scale(1.15); }
 
 /* ─── Responsive ─── */
-@media (max-width: 576px) {
-    .calendar-day-cell { min-height: 80px !important; }
-    .calendar-header-cell { font-size: 0.72rem; padding-top: 4px !important; padding-bottom: 4px !important; }
-    .ws-event-chip { display: none; }
-    .calendar-day-cell::after { content: none; }
+@media (max-width: 768px) {
+    .calendar-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    .calendar-header-grid,
+    .calendar-body-grid {
+        grid-template-columns: repeat(7, minmax(110px, 1fr));
+        min-width: 770px;
+    }
+    .calendar-day-cell {
+        min-height: 100px !important;
+        padding: 6px !important;
+    }
+    .calendar-header-cell {
+        font-size: 0.78rem;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+    .ws-event-chip {
+        font-size: 0.7rem !important;
+    }
 }
 
 /* ─── Dark Mode ─── */
