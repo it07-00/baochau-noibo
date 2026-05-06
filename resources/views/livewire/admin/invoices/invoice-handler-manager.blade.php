@@ -113,7 +113,9 @@
                             <th class="text-end">Tổng cộng</th>
                             <th class="text-end">Đã chi</th>
                             <th>Trạng thái</th>
+                            @canany(['handler-invoices.edit', 'handler-invoices.delete'])
                             <th style="width:80px"></th>
+                            @endcanany
                         </tr>
                     </thead>
                     <tbody>

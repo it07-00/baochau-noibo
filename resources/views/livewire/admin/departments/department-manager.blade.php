@@ -38,7 +38,9 @@
                                     <th>Slug</th>
                                     <th>Số nhân viên</th>
                                     <th>Trạng thái</th>
+                                    @canany(['departments.edit', 'departments.delete'])
                                     <th class="text-end">Hành động</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
@@ -66,13 +68,17 @@
                                             <input class="form-check-input" type="checkbox" wire:click="toggleActive({{ $dept->id }})" {{ $dept->is_active ? 'checked' : '' }} style="cursor:pointer">
                                         </div>
                                     </td>
+                                    @canany(['departments.edit', 'departments.delete'])
                                     <td class="text-end">
+                                        @can('departments.edit')
                                         <a href="{{ route('app.departments.edit', $dept) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" title="Sửa" wire:navigate>
                                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
+                                        @endcan
 
+                                        @can('departments.delete')
                                         <button
                                             @if($dept->users_count > 0)
                                                 onclick="Swal.fire('Không thể xóa', 'Phòng ban này đang có {{ $dept->users_count }} nhân viên.', 'error')"
@@ -85,7 +91,9 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
                                         </button>
+                                        @endcan
                                     </td>
+                                    @endcanany
                                 </tr>
                                 @empty
                                 <tr>

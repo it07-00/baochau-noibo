@@ -87,7 +87,9 @@
                         <th class="text-end" style="width: 100px;">Hoa hồng KH</th>
                         <th class="text-end" style="width: 85px;">Thuế HH</th>
                         <th class="text-end fw-bold" style="width: 120px;">Giá trị HĐ</th>
+                        @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
                         <th class="text-center pe-3" style="width: 110px;">#</th>
+                        @endcanany
                     </tr>
                 </thead>
                 <tbody>
@@ -144,13 +146,15 @@
                         <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value) : '-' }}</td>
                         <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax) : '-' }}</td>
                         <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value) : '-' }}</td>
+                        @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
-                                    <i class="bi bi-file-earmark-plus fs-5"></i>
-                                </button>
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
+                                </button>
+                                @can('quotation-tracking.edit')
+                                <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
+                                    <i class="bi bi-file-earmark-plus fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
                                     <i class="bi bi-copy fs-5"></i>
@@ -158,13 +162,17 @@
                                 <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
                                     <i class="bi bi-pencil-square fs-5"></i>
                                 </button>
+                                @endcan
+                                @can('quotation-tracking.delete')
                                 <button class="btn btn-sm p-0 text-danger"
                                         wire:click="delete({{ $item->id }})"
                                         wire:confirm="Xác nhận xóa báo giá này?">
                                     <i class="bi bi-trash fs-5"></i>
                                 </button>
+                                @endcan
                             </div>
                         </td>
+                        @endcanany
                     </tr>
                     @empty
                     <tr>

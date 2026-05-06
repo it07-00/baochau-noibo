@@ -68,7 +68,9 @@
                         <th class="text-center" style="width: 12%;">Trạng thái VTP</th>
                         <th class="text-center">Ngày tạo đơn</th>
                         <th style="width: 15%;">Nội dung</th>
+                        @canany(['mail-delivery.edit', 'mail-delivery.delete'])
                         <th class="text-end pe-4">Thao tác</th>
+                        @endcanany
                     </tr>
                 </thead>
                 <tbody>
@@ -136,8 +138,10 @@
                                 {{ $delivery->content }}
                             </div>
                         </td>
+                        @canany(['mail-delivery.edit', 'mail-delivery.delete'])
                         <td class="text-end pe-4">
                             <div class="d-flex justify-content-end gap-1">
+                                @can('mail-delivery.edit')
                                 {{-- Nút tạo đơn VTP (nếu chưa có mã) --}}
                                 @if(!$delivery->vtp_order_code && $delivery->bill_viettel == null)
                                     <button class="btn btn-sm btn-icon btn-light rounded-circle text-warning shadow-none border"
@@ -164,21 +168,29 @@
                                         </span>
                                     </button>
                                 @endif
+                                @endcan
 
                                 <button class="btn btn-sm btn-icon btn-light rounded-circle text-success shadow-none border"
                                     onclick="copyAddress('{{ addslashes($delivery->address) }}')" title="Copy địa chỉ">
                                     <i class="bi bi-clipboard"></i>
                                 </button>
+
+                                @can('mail-delivery.edit')
                                 <button class="btn btn-sm btn-icon btn-light rounded-circle text-primary shadow-none border"
                                     wire:click="edit({{ $delivery->id }})" title="Sửa">
                                     <i class="bi bi-pencil"></i>
                                 </button>
+                                @endcan
+
+                                @can('mail-delivery.delete')
                                 <button class="btn btn-sm btn-icon btn-light rounded-circle text-danger shadow-none border"
                                     onclick="confirmDelete({{ $delivery->id }})" title="Xóa">
                                     <i class="bi bi-trash"></i>
                                 </button>
+                                @endcan
                             </div>
                         </td>
+                        @endcanany
                     </tr>
                     @empty
                     <tr>

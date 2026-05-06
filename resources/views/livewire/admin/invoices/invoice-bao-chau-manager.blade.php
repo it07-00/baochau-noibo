@@ -113,7 +113,9 @@
                             <th class="text-end">Tổng cộng</th>
                             <th class="text-end">Đã thu</th>
                             <th>Trạng thái</th>
+                            @canany(['invoices.edit', 'invoices.delete'])
                             <th style="width:80px"></th>
+                            @endcanany
                         </tr>
                     </thead>
                     <tbody>

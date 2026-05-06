@@ -125,7 +125,9 @@
                             <th class="text-end" style="min-width: 150px;">Số tiền</th>
                             <th class="text-center" style="min-width: 180px;">Tình trạng</th>
                             <th class="text-center" style="min-width: 120px;">Ngày gửi</th>
+                            @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
                             <th class="text-end pe-4" style="min-width: 260px;">Thao tác</th>
+                            @endcanany
                         </tr>
                     </thead>
                     <tbody>
