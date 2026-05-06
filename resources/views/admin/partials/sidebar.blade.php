@@ -586,6 +586,24 @@
                     );
                 @endphp
 
+                @if ($currentUser->hasRole('it'))
+                    @can('daily-reports.view')
+                        <li class="app-sidebar-menu-heading">
+                            <span>
+                                <span class="app-sidebar-menu-heading-line"></span>
+                                NGHIỆP VỤ
+                            </span>
+                        </li>
+                        <li class="app-sidebar-menu-item">
+                            <a href="{{ route('app.daily-reports.index') }}"
+                                class="menu-link d-flex align-items-center {{ 'Báo cáo ngày' === $activeGroup ? 'active' : '' }}">
+                                <span class="menu-icon flex-shrink-0">{!! $reportNodeIcon !!}</span>
+                                <span class="menu-title flex-grow-1">Báo cáo ngày</span>
+                            </a>
+                        </li>
+                    @endcan
+                @endif
+
                 @unless ($currentUser->hasRole('it'))
                     @php $currentSection = null; @endphp
                     @foreach ($allMenus as $menu)
