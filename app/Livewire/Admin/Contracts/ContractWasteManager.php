@@ -172,6 +172,7 @@ class ContractWasteManager extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can('contracts-waste.edit'), 403);
         $doc = ContractWaste::findOrFail($id);
         $this->selectedDoc = $doc;
         $this->formData = $doc->toArray();

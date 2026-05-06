@@ -154,6 +154,7 @@ class ContractCommercialManager extends Component
 
     public function edit(int $id): void
     {
+        abort_unless(auth()->user()->can('contracts-commercial.edit'), 403);
         $this->selectedDoc = ContractResearch::findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {

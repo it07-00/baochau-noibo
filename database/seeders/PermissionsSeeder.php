@@ -218,9 +218,9 @@ class PermissionsSeeder extends Seeder
             // Dữ liệu nền: xem khách hàng (CSKH cần)
             'customers.view',
             'handlers.view',
-            // Hợp đồng: xem tất cả + sửa tư vấn
+            // Hợp đồng: xem tất cả
             'contracts-waste.view',
-            'contracts-consulting.view', 'contracts-consulting.edit',
+            'contracts-consulting.view',
             'contracts-project.view',
             'contracts-commercial.view',
             'contracts-sustainability.view',

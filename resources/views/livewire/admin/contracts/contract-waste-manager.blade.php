@@ -617,7 +617,7 @@
                                             <i class="bi bi-diagram-3 fs-5"></i>
                                         </button>
                                     @endif
-                                    @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                    @can('contracts-waste.edit')
                                         @php
                                             $canEditDelete =
                                                 !auth()->user()->hasRole('tp-kinh-doanh') ||
@@ -632,13 +632,22 @@
                                                 wire:click="edit({{ $doc->id }})">
                                                 <i class="bi bi-pencil-square fs-5"></i>
                                             </button>
+                                        @endif
+                                    @endcan
+                                    @can('contracts-waste.delete')
+                                        @php
+                                            $canDelete =
+                                                !auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                $doc->staff_id === auth()->id();
+                                        @endphp
+                                        @if ($canDelete)
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
                                                 wire:confirm="Xác nhận xóa hợp đồng này?">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
                                         @endif
-                                    @endunless
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

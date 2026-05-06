@@ -154,6 +154,7 @@ class ContractEnergyManager extends Component
 
     public function edit(int $id): void
     {
+        abort_unless(auth()->user()->can('contracts-energy.edit'), 403);
         $this->selectedDoc = ContractEmission::findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {

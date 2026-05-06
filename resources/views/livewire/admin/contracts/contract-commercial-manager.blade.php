@@ -418,7 +418,7 @@
                                             <i class="bi bi-person-check fs-5"></i>
                                         </button>
                                     @endif
-                                    @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                    @can('contracts-commercial.edit')
                                         @php
                                             $canEditDelete =
                                                 !auth()->user()->hasRole('tp-kinh-doanh') ||
@@ -433,13 +433,22 @@
                                                 wire:click="edit({{ $doc->id }})" title="Chỉnh sửa">
                                                 <i class="bi bi-pencil fs-5"></i>
                                             </button>
+                                        @endif
+                                    @endcan
+                                    @can('contracts-commercial.delete')
+                                        @php
+                                            $canDelete =
+                                                !auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                $doc->staff_id === auth()->id();
+                                        @endphp
+                                        @if ($canDelete)
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
                                                 onclick="return confirm('Xóa hợp đồng này?')" title="Xóa">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
                                         @endif
-                                    @endunless
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -763,7 +772,8 @@
                                         placeholder="Tìm kiếm..." @click.stop>
                                     <button class="dropdown-item @if (empty($formData['handler_id'])) active @endif"
                                         type="button" x-show="!search.length"
-                                        wire:click="$set('formData.handler_id', '')" @click="open = false">-- Chọn nhà thầu phụ --</button>
+                                        wire:click="$set('formData.handler_id', '')" @click="open = false">-- Chọn nhà
+                                        thầu phụ --</button>
                                     @foreach ($handlers as $h)
                                         <button
                                             class="dropdown-item text-wrap @if (($formData['handler_id'] ?? '') == $h->id) active @endif"

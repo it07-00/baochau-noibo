@@ -172,6 +172,7 @@ class ContractConsultingManager extends Component
 
     public function edit(int $id): void
     {
+        abort_unless(auth()->user()->can('contracts-consulting.edit'), 403);
         $this->selectedDoc = ContractLegal::findOrFail($id);
         $this->formData = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {

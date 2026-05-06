@@ -86,6 +86,7 @@ class ContractPaymentScheduleManager extends Component
 
     public function edit(int $id): void
     {
+        abort_unless(auth()->user()->can('payment-schedules.edit'), 403);
         $schedule = ContractPaymentSchedule::findOrFail($id);
         $this->editingId = $id;
         $this->isEditing = true;
