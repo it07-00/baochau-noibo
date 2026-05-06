@@ -53,13 +53,31 @@
         // Chuyển phát
         'mail-delivery'            => 'Chuyển phát thư',
 
+        // Thanh toán
+        'payment-schedules'        => 'Lịch thanh toán HĐ',
+
         // Thống kê & Báo cáo
         'rankings'                 => 'Bảng xếp hạng',
         'statistics'               => 'Bảng thống kê',
-        'reports'                  => 'Báo cáo',
+        'reports'                  => 'Báo cáo tổng hợp',
+        'reports-consulting'       => 'Báo cáo tư vấn',
+        'reports-technical'        => 'Báo cáo kỹ thuật',
+        'reports-sales'            => 'Báo cáo kinh doanh',
         'daily-reports'            => 'Báo cáo ngày',
 
-        // Nội bộ & Marketing
+        // Kinh doanh bổ sung
+        'sales-quotation'          => 'Báo giá kinh doanh',
+
+        // Chấm công & Nhân sự
+        'cham-cong'                => 'Chấm công',
+        'hr-profiles'              => 'Hồ sơ nhân sự',
+
+        // Vận hành bổ sung
+        'mail-delivery-admin'      => 'Quản trị chuyển phát',
+        'marketing-reports'        => 'Báo cáo Marketing',
+
+        // Nhật ký & Nội bộ
+        'activity-log'             => 'Nhật ký hoạt động',
         'internal-docs'            => 'Tài liệu nội bộ',
         'articles'                 => 'Bài viết / Marketing',
     ];
@@ -111,13 +129,14 @@
                                         $displayParts = explode('.', $permission->name);
                                         $action = isset($displayParts[1]) ? $displayParts[1] : $displayParts[0];
                                         $actionLabels = [
-                                            'view' => 'Xem danh sách',
-                                            'create' => 'Thêm mới',
-                                            'edit' => 'Chỉnh sửa',
-                                            'delete' => 'Xóa',
-                                            'approve' => 'Phê duyệt',
-                                            'export' => 'Xuất dữ liệu',
-                                            'report' => 'Xem báo cáo'
+                                            'view'     => 'Xem danh sách',
+                                            'view-all' => 'Xem tất cả',
+                                            'create'   => 'Thêm mới',
+                                            'edit'     => 'Chỉnh sửa',
+                                            'delete'   => 'Xóa',
+                                            'approve'  => 'Phê duyệt',
+                                            'export'   => 'Xuất dữ liệu',
+                                            'report'   => 'Xem báo cáo',
                                         ];
                                         $displayAction = $actionLabels[$action] ?? ucfirst($action);
 
