@@ -28,7 +28,12 @@ class LoginController extends Controller
         if (Auth::attempt([...$credentials, 'is_active' => true], $remember)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('app.dashboard'));
+            $user = Auth::user();
+            $defaultRoute = $user->hasAnyRole(['it', 'giam-doc', 'admin', 'quan-ly', 'ke-toan'])
+                ? route('app.dashboard')
+                : route('app.home');
+
+            return redirect()->intended($defaultRoute);
         }
 
         $lockedUser = User::where('username', $credentials['username'])->first();
