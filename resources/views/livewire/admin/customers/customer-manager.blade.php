@@ -32,11 +32,12 @@
                 </div>
 
                 <div class="pure-card-body pb-3">
-                    <div class="table-responsive">
+                    {{-- Desktop: Table --}}
+                    <div class="table-responsive d-none d-sm-block">
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-center d-none d-sm-table-cell" style="width:45px;">STT</th>
+                                    <th class="text-center" style="width:45px;">STT</th>
                                     <th>Tên khách hàng</th>
                                     <th class="d-none d-md-table-cell">Mã số thuế</th>
                                     <th class="d-none d-lg-table-cell">Tỉnh thành</th>
@@ -44,7 +45,9 @@
                                     <th class="d-none d-xl-table-cell">Email</th>
                                     <th class="d-none d-md-table-cell">Người đại diện</th>
                                     <th class="text-center">Số HĐ</th>
+                                    @canany(['customers.edit', 'customers.delete'])
                                     <th class="text-end">Hành động</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,20 +61,11 @@
                                         + $customer->contracts_sustainability_count;
                                 @endphp
                                 <tr wire:key="customer-{{ $customer->id }}">
-                                    <td class="text-center text-muted fw-semibold d-none d-sm-table-cell">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
+                                    <td class="text-center text-muted fw-semibold">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
                                     <td class="fw-bold">
                                         <a href="{{ route('app.customers.contracts', $customer) }}" class="text-body text-decoration-none link-hover-primary">
                                             {{ $customer->name }}
                                         </a>
-                                        {{-- Mobile extras --}}
-                                        <div class="d-md-none mt-1 d-flex flex-wrap gap-1" style="font-size:0.72rem;">
-                                            @if($customer->tax_code)
-                                                <span class="text-muted">MST: {{ $customer->tax_code }}</span>
-                                            @endif
-                                            @if($customer->representative)
-                                                <span class="text-muted">· {{ $customer->representative }}</span>
-                                            @endif
-                                        </div>
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $customer->tax_code ?: '—' }}</td>
                                     <td class="d-none d-lg-table-cell">{{ $customer->province ?: '—' }}</td>
@@ -88,13 +82,13 @@
                                             <span class="badge bg-label-secondary px-2 py-1">0</span>
                                         @endif
                                     </td>
+                                    @canany(['customers.edit', 'customers.delete'])
                                     <td class="text-end">
                                         @can('customers.edit')
                                         <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" wire:click="openEdit({{ $customer->id }})" title="Sửa">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         @endcan
-
                                         @can('customers.delete')
                                         <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
                                                 wire:click="delete({{ $customer->id }})"
@@ -104,6 +98,7 @@
                                         </button>
                                         @endcan
                                     </td>
+                                    @endcanany
                                 </tr>
                                 @empty
                                 <tr>
@@ -113,7 +108,70 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+
+                    {{-- Mobile: Card list --}}
+                    <div class="d-sm-none px-3 pb-3">
+                        @forelse($customers as $customer)
+                        @php
+                            $totalContracts = $customer->contracts_count
+                                + $customer->contracts_consulting_count
+                                + $customer->contracts_commercial_count
+                                + $customer->contracts_project_count
+                                + $customer->contracts_energy_count
+                                + $customer->contracts_sustainability_count;
+                        @endphp
+                        <div wire:key="customer-card-{{ $customer->id }}" class="border rounded-3 p-3 mb-2 bg-body">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <a href="{{ route('app.customers.contracts', $customer) }}" class="fw-bold text-body text-decoration-none" style="font-size: 0.9rem; line-height: 1.4;">
+                                    {{ $customer->name }}
+                                </a>
+                                <div class="flex-shrink-0">
+                                    @if($totalContracts > 0)
+                                        <a href="{{ route('app.customers.contracts', $customer) }}"
+                                           class="badge bg-label-primary px-2 py-1 text-decoration-none">
+                                            {{ $totalContracts }} HĐ
+                                        </a>
+                                    @else
+                                        <span class="badge bg-label-secondary px-2 py-1">0 HĐ</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mt-2 d-flex flex-column gap-1" style="font-size: 0.8rem; color: var(--bs-secondary-color);">
+                                @if($customer->tax_code)
+                                    <span><i class="bi bi-card-text me-1"></i>MST: {{ $customer->tax_code }}</span>
+                                @endif
+                                @if($customer->province)
+                                    <span><i class="bi bi-geo-alt me-1"></i>{{ $customer->province }}</span>
+                                @endif
+                                @if($customer->phone)
+                                    <span><i class="bi bi-telephone me-1"></i>{{ $customer->phone }}</span>
+                                @endif
+                                @if($customer->representative)
+                                    <span><i class="bi bi-person me-1"></i>{{ $customer->representative }}</span>
+                                @endif
+                            </div>
+                            @canany(['customers.edit', 'customers.delete'])
+                            <div class="mt-2 d-flex gap-2 border-top pt-2">
+                                @can('customers.edit')
+                                <button class="btn btn-sm btn-outline-primary flex-fill" wire:click="openEdit({{ $customer->id }})">
+                                    <i class="bi bi-pencil me-1"></i>Sửa
+                                </button>
+                                @endcan
+                                @can('customers.delete')
+                                <button class="btn btn-sm btn-outline-danger flex-fill"
+                                        wire:click="delete({{ $customer->id }})"
+                                        wire:confirm="Xác nhận xóa khách hàng này?"
+                                        {{ $totalContracts > 0 ? 'disabled' : '' }}>
+                                    <i class="bi bi-trash me-1"></i>Xóa
+                                </button>
+                                @endcan
+                            </div>
+                            @endcanany
+                        </div>
+                        @empty
+                        <div class="text-center text-muted py-4">Không có dữ liệu khách hàng.</div>
+                        @endforelse
+                    </div>
 
                 @if($customers->hasPages())
                 <div class="pure-card-footer border-top px-4 py-3">
