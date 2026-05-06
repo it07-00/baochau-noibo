@@ -32,39 +32,39 @@
                 </div>
 
                 <div class="pure-card-body pb-3">
-                    <div class="table-responsive">
+                {{-- Desktop: Table --}}
+                    <div class="table-responsive d-none d-sm-block">
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="60" class="d-none d-sm-table-cell">ID</th>
+                                    <th width="60">ID</th>
                                     <th>Tên Nhà thầu phụ</th>
                                     <th class="d-none d-md-table-cell">Số điện thoại</th>
                                     <th class="d-none d-lg-table-cell">Địa chỉ</th>
-                                    <th class="text-center d-none d-sm-table-cell">Số HĐ</th>
+                                    <th class="text-center">Số HĐ</th>
+                                    @canany(['handlers.edit', 'handlers.delete'])
                                     <th class="text-end">Hành động</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($handlers as $handler)
                                 <tr wire:key="handler-{{ $handler->id }}">
-                                    <td class="d-none d-sm-table-cell">{{ $handler->id }}</td>
+                                    <td>{{ $handler->id }}</td>
                                     <td class="fw-bold">
                                         <a href="{{ route('app.handlers.contracts', $handler) }}" class="text-body text-decoration-none link-hover-primary">
                                             {{ $handler->name }}
                                         </a>
-                                        {{-- Mobile-only extras --}}
-                                        <div class="d-sm-none mt-1 d-flex flex-wrap gap-1">
-                                            @if($handler->phone)
-                                                <small class="text-muted"><i class="bi bi-telephone me-1"></i>{{ $handler->phone }}</small>
-                                            @endif
-                                            @if($handler->contracts_count > 0)
-                                                <span class="badge bg-label-primary" style="font-size:0.65rem;">{{ $handler->contracts_count }} HĐ</span>
-                                            @endif
-                                        </div>
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $handler->phone ?: '—' }}</td>
-                                    <td class="text-wrap d-none d-lg-table-cell" style="max-width: 300px;">{{ $handler->address ?: '—' }}</td>
-                                    <td class="text-center d-none d-sm-table-cell">
+                                    <td class="d-none d-lg-table-cell" style="max-width: 220px;">
+                                        @if($handler->address)
+                                            <span class="d-block text-truncate" title="{{ $handler->address }}">{{ $handler->address }}</span>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
                                         @if($handler->contracts_count > 0)
                                             <a href="{{ route('app.handlers.contracts', $handler) }}"
                                                class="badge bg-label-primary px-2 py-1 text-decoration-none">
@@ -74,13 +74,13 @@
                                             <span class="badge bg-label-secondary px-2 py-1">0</span>
                                         @endif
                                     </td>
+                                    @canany(['handlers.edit', 'handlers.delete'])
                                     <td class="text-end">
                                         @can('handlers.edit')
                                         <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" wire:click="openEdit({{ $handler->id }})" title="Sửa">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         @endcan
-
                                         @can('handlers.delete')
                                         <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
                                                 wire:click="delete({{ $handler->id }})"
@@ -90,6 +90,7 @@
                                         </button>
                                         @endcan
                                     </td>
+                                    @endcanany
                                 </tr>
                                 @empty
                                 <tr>
@@ -98,6 +99,58 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    {{-- Mobile: Card list --}}
+                    <div class="d-sm-none px-3 pb-3">
+                        @forelse($handlers as $handler)
+                        <div wire:key="handler-card-{{ $handler->id }}" class="border rounded-3 p-3 mb-2 bg-body">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <a href="{{ route('app.handlers.contracts', $handler) }}" class="fw-bold text-body text-decoration-none" style="font-size: 0.9rem; line-height: 1.4;">
+                                    {{ $handler->name }}
+                                </a>
+                                <div class="d-flex gap-1 flex-shrink-0">
+                                    @if($handler->contracts_count > 0)
+                                        <a href="{{ route('app.handlers.contracts', $handler) }}"
+                                           class="badge bg-label-primary px-2 py-1 text-decoration-none">
+                                            {{ $handler->contracts_count }} HĐ
+                                        </a>
+                                    @else
+                                        <span class="badge bg-label-secondary px-2 py-1">0 HĐ</span>
+                                    @endif
+                                </div>
+                            </div>
+                            @if($handler->phone || $handler->address)
+                            <div class="mt-2 d-flex flex-column gap-1" style="font-size: 0.8rem; color: var(--bs-secondary-color);">
+                                @if($handler->phone)
+                                    <span><i class="bi bi-telephone me-1"></i>{{ $handler->phone }}</span>
+                                @endif
+                                @if($handler->address)
+                                    <span><i class="bi bi-geo-alt me-1"></i>{{ $handler->address }}</span>
+                                @endif
+                            </div>
+                            @endif
+                            @canany(['handlers.edit', 'handlers.delete'])
+                            <div class="mt-2 d-flex gap-2 border-top pt-2">
+                                @can('handlers.edit')
+                                <button class="btn btn-sm btn-outline-primary flex-fill" wire:click="openEdit({{ $handler->id }})">
+                                    <i class="bi bi-pencil me-1"></i>Sửa
+                                </button>
+                                @endcan
+                                @can('handlers.delete')
+                                <button class="btn btn-sm btn-outline-danger flex-fill"
+                                        wire:click="delete({{ $handler->id }})"
+                                        wire:confirm="Xác nhận xóa nhà thầu phụ này?"
+                                        {{ $handler->contracts_count > 0 ? 'disabled' : '' }}>
+                                    <i class="bi bi-trash me-1"></i>Xóa
+                                </button>
+                                @endcan
+                            </div>
+                            @endcanany
+                        </div>
+                        @empty
+                        <div class="text-center text-muted py-4">Không có dữ liệu nhà thầu phụ.</div>
+                        @endforelse
                     </div>
                 </div>
 
