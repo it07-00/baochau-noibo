@@ -285,6 +285,12 @@
                     // permission: chỉ những role được cấp permission tương ứng mới thấy menu
                     $groupMenus = [
                         [
+                            'title' => 'Báo cáo ngày',
+                            'icon' => $reportNodeIcon,
+                            'permission' => 'daily-reports.view',
+                            'href' => route('app.daily-reports.index'),
+                        ],
+                        [
                             'title' => 'Quản lý hợp đồng',
                             'icon' => $stackIcon,
                             'permission' => 'payment-schedules.view',
@@ -387,12 +393,6 @@
                             'icon' => $usersIcon,
                             'permission' => 'internal-docs.view',
                             'children' => ['Quy định', 'Phần mềm'],
-                        ],
-                        [
-                            'title' => 'Báo cáo ngày',
-                            'icon' => $reportNodeIcon,
-                            'permission' => 'daily-reports.view',
-                            'href' => route('app.daily-reports.index'),
                         ],
                     ];
 
@@ -540,6 +540,25 @@
                         </a>
                     </li>
                 @endunless
+
+                {{-- Lịch công tác — standalone, visible to all --}}
+                <li class="app-sidebar-menu-item">
+                    <a href="{{ route('app.work-schedules.index') }}"
+                        class="menu-link d-flex align-items-center {{ request()->routeIs('app.work-schedules.*') ? 'active menu-current' : '' }}">
+                        <span class="menu-icon flex-shrink-0">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M3 10H21" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M7 14H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M14 14H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M7 18H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="menu-title flex-grow-1">Lịch công tác</span>
+                    </a>
+                </li>
 
                 @foreach ($groupMenus as $menu)
                     @can($menu['permission'])
@@ -768,25 +787,6 @@
                         @endif
                     @endcan
                 @endforeach
-
-                {{-- Lịch công tác — standalone, visible to all --}}
-                <li class="app-sidebar-menu-item">
-                    <a href="{{ route('app.work-schedules.index') }}"
-                        class="menu-link d-flex align-items-center {{ request()->routeIs('app.work-schedules.*') ? 'active menu-current' : '' }}">
-                        <span class="menu-icon flex-shrink-0">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M3 10H21" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M7 14H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M14 14H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M7 18H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        <span class="menu-title flex-grow-1">Lịch công tác</span>
-                    </a>
-                </li>
             </ul>
         </div>
 
