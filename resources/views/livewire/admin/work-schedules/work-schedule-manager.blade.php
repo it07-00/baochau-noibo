@@ -84,7 +84,6 @@
 
                 <div class="calendar-day-cell position-relative
                     @if(!$isInsideMonth) bg-light opacity-50
-                    @elseif($isWeekend) bg-light bg-opacity-50
                     @else bg-white
                     @endif
                     border-start border-bottom border-light-subtle

@@ -78,10 +78,10 @@
             <div class="pure-card rounded-custom card-bg shadow-custom">
                 <div class="table-responsive" style="max-height:80vh;-webkit-overflow-scrolling:touch;">
                     <table class="table table-bordered table-hover table-sm mb-0 text-nowrap" style="font-size: 0.82rem;">
-                        <thead class="table-light" style="position:sticky;top:0;z-index:2;">
+                        <thead style="position:sticky;top:0;z-index:2;background:var(--bs-secondary-bg);">
                             <tr>
-                                <th style="position:sticky;left:0;z-index:3;background:#f8f9fa;min-width:32px;" class="text-center">#</th>
-                                <th style="position:sticky;left:32px;z-index:3;background:#f8f9fa;min-width:100px;">Nhân viên</th>
+                                <th style="position:sticky;left:0;z-index:3;background:var(--bs-secondary-bg);min-width:32px;" class="text-center">#</th>
+                                <th style="position:sticky;left:32px;z-index:3;background:var(--bs-secondary-bg);min-width:100px;">Nhân viên</th>
                                 @foreach($dates as $date)
                                     <th class="text-center {{ $date->isSunday() ? 'bg-light text-danger' : '' }}"
                                         style="min-width:54px;">
@@ -89,18 +89,18 @@
                                         <div class="fw-normal" style="font-size:0.7rem;">{{ $date->locale('vi')->shortDayName }}</div>
                                     </th>
                                 @endforeach
-                                <th class="text-center" style="min-width:40px;background:#f8f9fa;">Công</th>
-                                <th class="text-center" style="min-width:40px;background:#f8f9fa;">Trễ</th>
-                                <th class="text-center" style="min-width:40px;background:#f8f9fa;">Sớm</th>
+                                <th class="text-center" style="min-width:40px;background:var(--bs-secondary-bg);">Công</th>
+                                <th class="text-center" style="min-width:40px;background:var(--bs-secondary-bg);">Trễ</th>
+                                <th class="text-center" style="min-width:40px;background:var(--bs-secondary-bg);">Sớm</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($grid as $empId => $row)
                                 <tr>
-                                    <td style="position:sticky;left:0;z-index:1;background:#fff;" class="text-center">
+                                    <td style="position:sticky;left:0;z-index:1;background:var(--bs-body-bg);" class="text-center">
                                         {{ $row['employee']->device_uid }}
                                     </td>
-                                    <td style="position:sticky;left:32px;z-index:1;background:#fff;" class="fw-semibold">
+                                    <td style="position:sticky;left:32px;z-index:1;background:var(--bs-body-bg);" class="fw-semibold">
                                         {{ $row['employee']->name }}
                                     </td>
                                     @foreach($dates as $date)
@@ -149,11 +149,11 @@
                                             </td>
                                         @endif
                                     @endforeach
-                                    <td class="text-center fw-bold" style="background:#f8f9fa;">{{ $row['work_days'] }}</td>
-                                    <td class="text-center {{ $row['late_days'] > 0 ? 'text-danger fw-bold' : '' }}" style="background:#f8f9fa;">
+                                    <td class="text-center fw-bold" style="background:var(--bs-secondary-bg);">{{ $row['work_days'] }}</td>
+                                    <td class="text-center {{ $row['late_days'] > 0 ? 'text-danger fw-bold' : '' }}" style="background:var(--bs-secondary-bg);">
                                         {{ $row['late_days'] }}
                                     </td>
-                                    <td class="text-center {{ $row['early_days'] > 0 ? 'text-warning fw-bold' : '' }}" style="background:#f8f9fa;">
+                                    <td class="text-center {{ $row['early_days'] > 0 ? 'text-warning fw-bold' : '' }}" style="background:var(--bs-secondary-bg);">
                                         {{ $row['early_days'] }}
                                     </td>
                                 </tr>
