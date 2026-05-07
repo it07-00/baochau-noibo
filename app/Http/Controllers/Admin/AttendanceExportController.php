@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Enums\Permission;
 use App\Services\AttendanceService;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -15,7 +16,7 @@ class AttendanceExportController extends Controller
 {
     public function export(string $month)
     {
-        abort_unless(auth()->user()->can('cham-cong.export'), 403);
+        abort_unless(auth()->user()->can(Permission::CHAM_CONG_EXPORT->value), 403);
 
         $service   = app(AttendanceService::class);
         $monthData = $service->getMonthData($month);
@@ -295,7 +296,7 @@ class AttendanceExportController extends Controller
     // ─────────────────────────────────────────────────────────────────────────
     public function exportDetail(string $month)
     {
-        abort_unless(auth()->user()->can('cham-cong.export'), 403);
+        abort_unless(auth()->user()->can(Permission::CHAM_CONG_EXPORT->value), 403);
 
         $service   = app(AttendanceService::class);
         $monthData = $service->getMonthData($month);

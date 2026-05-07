@@ -18,6 +18,7 @@ use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use App\Enums\Permission;
 
 class ContractCommercialManager extends Component
 {
@@ -155,7 +156,7 @@ class ContractCommercialManager extends Component
 
     public function edit(int $id): void
     {
-        abort_unless(auth()->user()->can('contracts-commercial.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::CONTRACTS_COMMERCIAL_EDIT->value), 403);
         $this->selectedDoc = ContractResearch::findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
@@ -173,7 +174,7 @@ class ContractCommercialManager extends Component
     {
         $user = auth()->user();
 
-        if (!$user->can($this->isEditing ? 'contracts-commercial.edit' : 'contracts-commercial.create')) {
+        if (!$user->can($this->isEditing ? Permission::CONTRACTS_COMMERCIAL_EDIT->value : Permission::CONTRACTS_COMMERCIAL_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
             return;
         }
@@ -235,7 +236,7 @@ class ContractCommercialManager extends Component
         } else {
             abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
         }
-        abort_unless($user->can('contracts-commercial.edit'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_COMMERCIAL_EDIT->value), 403);
 
         if (!in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
@@ -259,7 +260,7 @@ class ContractCommercialManager extends Component
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         }
-        abort_unless($user->can('contracts-commercial.delete'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_COMMERCIAL_DELETE->value), 403);
 
         $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
@@ -267,7 +268,7 @@ class ContractCommercialManager extends Component
 
     public function duplicate(int $id): void
     {
-        abort_unless(auth()->user()->can('contracts-commercial.create'), 403);
+        abort_unless(auth()->user()->can(Permission::CONTRACTS_COMMERCIAL_CREATE->value), 403);
         $doc = ContractResearch::findOrFail($id);
         $this->resetForm();
         $this->formData = $doc->toArray();
@@ -286,7 +287,7 @@ class ContractCommercialManager extends Component
     public function bulkDeleteSelected(): void
     {
         $user = auth()->user();
-        abort_unless($user->can('contracts-commercial.delete'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_COMMERCIAL_DELETE->value), 403);
 
         $selectedIds = collect($this->selectedDocIds)
             ->map(static fn($id) => (int) $id)

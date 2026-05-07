@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Enums\Permission;
 
 class ContractConsultingManager extends Component
 {
@@ -173,7 +174,7 @@ class ContractConsultingManager extends Component
 
     public function edit(int $id): void
     {
-        abort_unless(auth()->user()->can('contracts-consulting.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::CONTRACTS_CONSULTING_EDIT->value), 403);
         $this->selectedDoc = ContractLegal::findOrFail($id);
         $this->formData = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
@@ -191,7 +192,7 @@ class ContractConsultingManager extends Component
     {
         $user = auth()->user();
 
-        if (! $user->can($this->isEditing ? 'contracts-consulting.edit' : 'contracts-consulting.create')) {
+        if (! $user->can($this->isEditing ? Permission::CONTRACTS_CONSULTING_EDIT->value : Permission::CONTRACTS_CONSULTING_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
 
             return;
@@ -256,7 +257,7 @@ class ContractConsultingManager extends Component
         } else {
             abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
         }
-        abort_unless($user->can('contracts-consulting.edit'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_CONSULTING_EDIT->value), 403);
 
         if (! in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
@@ -280,7 +281,7 @@ class ContractConsultingManager extends Component
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         }
-        abort_unless($user->can('contracts-consulting.delete'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_CONSULTING_DELETE->value), 403);
 
         $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
@@ -288,7 +289,7 @@ class ContractConsultingManager extends Component
 
     public function duplicate(int $id): void
     {
-        abort_unless(auth()->user()->can('contracts-consulting.create'), 403);
+        abort_unless(auth()->user()->can(Permission::CONTRACTS_CONSULTING_CREATE->value), 403);
         $doc = ContractLegal::findOrFail($id);
         $this->resetForm();
         $this->formData = $doc->toArray();
@@ -307,7 +308,7 @@ class ContractConsultingManager extends Component
     public function bulkDeleteSelected(): void
     {
         $user = auth()->user();
-        abort_unless($user->can('contracts-consulting.delete'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_CONSULTING_DELETE->value), 403);
 
         $selectedIds = collect($this->selectedDocIds)
             ->map(static fn ($id) => (int) $id)

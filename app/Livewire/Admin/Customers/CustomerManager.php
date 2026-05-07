@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Customers;
 
+use App\Enums\Permission;
 use App\Models\Customer;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -115,7 +116,7 @@ class CustomerManager extends Component
 
     public function delete(int $id): void
     {
-        abort_unless(auth()->user()->can('customers.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::CUSTOMERS_DELETE->value), 403);
 
         $customer = Customer::findOrFail($id);
 

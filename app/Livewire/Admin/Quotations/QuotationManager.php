@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Quotations;
 
+use App\Enums\Permission;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Models\Customer;
@@ -519,7 +520,7 @@ class QuotationManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->user()->can('quotation-tracking.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_DELETE->value), 403);
 
         $quotation = Quotation::findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
@@ -687,7 +688,7 @@ class QuotationManager extends Component
 
     public function runImport()
     {
-        abort_unless(auth()->user()->can('quotation-tracking.create'), 403);
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_CREATE->value), 403);
 
         $this->importErrors = [];
         $this->importSuccess = null;

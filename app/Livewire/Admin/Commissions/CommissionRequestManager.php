@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\User;
@@ -111,7 +112,7 @@ class CommissionRequestManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->check() && auth()->user()->can('commissions.delete'), 403);
+        abort_unless(auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value), 403);
 
         $request = CommissionRequest::findOrFail($id);
         $request->delete();
@@ -228,9 +229,9 @@ class CommissionRequestManager extends Component
             'requesters'    => $requesters,
             'canApprove'    => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),
             'canEdit'       => auth()->check()
-                && auth()->user()->can('commissions.edit')
+                && auth()->user()->can(Permission::COMMISSIONS_EDIT->value)
                 && !auth()->user()->hasRole(Role::KE_TOAN->value),
-            'canDelete'     => auth()->check() && auth()->user()->can('commissions.delete'),
+            'canDelete'     => auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Yêu cầu chi hoa hồng']);
     }
 }

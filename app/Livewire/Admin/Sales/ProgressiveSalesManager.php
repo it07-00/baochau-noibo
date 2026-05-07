@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Sales;
 
+use App\Enums\Permission;
 use App\Models\ContractPaymentSchedule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -71,7 +72,7 @@ class ProgressiveSalesManager extends Component
 
     public function save()
     {
-        abort_unless(auth()->user()->can('sales-progressive.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::SALES_PROGRESSIVE_EDIT->value), 403);
 
         $this->cleanMoneyProperties(['amount', 'paid_amount']);
 
@@ -111,7 +112,7 @@ class ProgressiveSalesManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->user()->can('sales-progressive.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::SALES_PROGRESSIVE_DELETE->value), 403);
 
         ContractPaymentSchedule::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Xóa thành công!']);

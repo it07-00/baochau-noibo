@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Sales;
 
+use App\Enums\Permission;
 use App\Models\SalesRenewal;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -58,7 +59,7 @@ class RenewalSalesManager extends Component
     public function save()
     {
         abort_unless(
-            auth()->user()->can($this->selectedId ? 'renewal-sales.edit' : 'renewal-sales.create'),
+            auth()->user()->can($this->selectedId ? Permission::SALES_RENEWAL_EDIT->value : Permission::SALES_RENEWAL_CREATE->value),
             403
         );
 
@@ -132,7 +133,7 @@ class RenewalSalesManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->user()->can('renewal-sales.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::SALES_RENEWAL_DELETE->value), 403);
 
         SalesRenewal::findOrFail($id)->delete();
         $this->dispatch('swal:toast', [['type' => 'success', 'message' => 'Xóa thành công!']]);

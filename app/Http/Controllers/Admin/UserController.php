@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use App\Enums\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -32,7 +33,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->can('users.create'), 403);
+        abort_unless(auth()->user()->can(Permission::USERS_CREATE->value), 403);
 
         $validated = $request->validate([
             'name'          => ['required', 'string', 'max:255'],
@@ -96,7 +97,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        abort_unless(auth()->user()->can('users.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::USERS_EDIT->value), 403);
 
         $validated = $request->validate([
             'name'          => ['required', 'string', 'max:255'],
@@ -132,7 +133,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        abort_unless(auth()->user()->can('users.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::USERS_DELETE->value), 403);
 
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Không thể xóa tài khoản đang đăng nhập.');

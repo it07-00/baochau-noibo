@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\Permission;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\ContractPaymentSchedule;
 use Livewire\Component;
@@ -86,7 +87,7 @@ class ContractPaymentScheduleManager extends Component
 
     public function edit(int $id): void
     {
-        abort_unless(auth()->user()->can('payment-schedules.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::PAYMENT_SCHEDULES_EDIT->value), 403);
         $schedule = ContractPaymentSchedule::findOrFail($id);
         $this->editingId = $id;
         $this->isEditing = true;
@@ -111,7 +112,7 @@ class ContractPaymentScheduleManager extends Component
         }
 
         abort_unless(
-            auth()->user()->can($this->isEditing ? 'payment-schedules.edit' : 'payment-schedules.create'),
+            auth()->user()->can($this->isEditing ? Permission::PAYMENT_SCHEDULES_EDIT->value : 'payment-schedules.create'),
             403
         );
 
@@ -144,7 +145,7 @@ class ContractPaymentScheduleManager extends Component
             $parent = $this->contractModelClass::find($this->contractId);
             abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
         }
-        abort_unless(auth()->user()->can('payment-schedules.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::PAYMENT_SCHEDULES_DELETE->value), 403);
 
         ContractPaymentSchedule::findOrFail($id)->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa đợt thanh toán!']);
@@ -156,7 +157,7 @@ class ContractPaymentScheduleManager extends Component
             $parent = $this->contractModelClass::find($this->contractId);
             abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
         }
-        abort_unless(auth()->user()->can('payment-schedules.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::PAYMENT_SCHEDULES_EDIT->value), 403);
 
         $schedule = ContractPaymentSchedule::findOrFail($id);
         $schedule->update([

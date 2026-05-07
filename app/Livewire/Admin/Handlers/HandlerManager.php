@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Handlers;
 
+use App\Enums\Permission;
 use App\Models\ContractWaste;
 use App\Models\Handler;
 use Livewire\Component;
@@ -96,7 +97,7 @@ class HandlerManager extends Component
 
     public function delete(int $id): void
     {
-        abort_unless(auth()->user()->can('handlers.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::HANDLERS_DELETE->value), 403);
 
         $handler = Handler::findOrFail($id);
 

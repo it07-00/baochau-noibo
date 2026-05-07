@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -16,90 +17,11 @@ class PermissionsSeeder extends Seeder
         // ============================
         // 1. Định nghĩa tất cả permissions
         // ============================
-        $modules = [
-            // --- Quản trị hệ thống (chỉ IT) ---
-            'users'               => ['view', 'create', 'edit', 'delete'],
-            'roles'               => ['view', 'create', 'edit', 'delete'],
-            'departments'         => ['view', 'create', 'edit', 'delete'],
-            'settings'            => ['view', 'edit'],
-
-            // --- Dữ liệu nền ---
-            'handlers'            => ['view', 'create', 'edit', 'delete'],
-            'customers'           => ['view', 'create', 'edit', 'delete'],
-
-            // --- Hợp đồng (6 loại) ---
-            'contracts-waste'          => ['view', 'create', 'edit', 'delete'],
-            'contracts-consulting'     => ['view', 'create', 'edit', 'delete'],
-            'contracts-project'        => ['view', 'create', 'edit', 'delete'],
-            'contracts-commercial'     => ['view', 'create', 'edit', 'delete'],
-            'contracts-sustainability' => ['view', 'create', 'edit', 'delete'],
-            'contracts-energy'         => ['view', 'create', 'edit', 'delete'],
-
-            // --- Lịch thanh toán ---
-            'payment-schedules'   => ['view', 'create', 'edit', 'delete'],
-
-            // --- Hóa đơn ---
-            'invoices'            => ['view', 'create', 'edit', 'delete'],
-            'handler-invoices'    => ['view', 'create', 'edit', 'delete'],
-
-            // --- Kinh doanh ---
-            'sales-renewal'       => ['view', 'create', 'edit', 'delete'],
-            'sales-progressive'   => ['view', 'create', 'edit', 'delete'],
-            'quotation-tracking'  => ['view', 'create', 'edit', 'delete'],
-
-            // --- Tài chính ---
-            'commissions'         => ['view', 'create', 'edit', 'delete'],
-            'advance-requests'    => ['view', 'create', 'edit', 'delete'],
-
-            // --- Vận hành ---
-            'waste-requests'      => ['view', 'create', 'edit', 'delete'],
-            'consulting-requests' => ['view', 'create', 'edit', 'delete'],
-            'project-requests'    => ['view', 'create', 'edit', 'delete'],
-            'commercial-requests' => ['view', 'create', 'edit', 'delete'],
-            'technical-requests'  => ['view', 'create', 'edit', 'delete'],
-
-            // --- Chuyển phát ---
-            'mail-delivery'       => ['view', 'create', 'edit', 'delete'],
-
-            // --- Bảng thống kê & Xếp hạng ---
-            'rankings'            => ['view'],
-            'statistics'          => ['view'],
-
-            // --- Báo cáo (chung) ---
-            'reports'             => ['view'],
-
-            // --- Báo cáo theo bộ phận ---
-            'reports-sales'       => ['view'],
-            'reports-consulting'  => ['view'],
-            'reports-technical'   => ['view'],
-
-            // --- Chuyển phát (admin) ---
-            'mail-delivery-admin' => ['view'],
-
-            // --- Nội bộ & Marketing ---
-            'internal-docs'       => ['view', 'create', 'edit', 'delete'],
-            'articles'            => ['view', 'create', 'edit', 'delete'],
-
-            // --- Báo cáo ngày ---
-            'daily-reports'       => ['view', 'view-all', 'create', 'edit', 'delete'],
-
-            // --- Báo cáo Marketing hàng ngày ---
-            'marketing-reports'   => ['view', 'view-all', 'create', 'edit', 'delete'],
-
-            // --- Nhật ký hoạt động (chỉ IT) ---
-            'activity-log'        => ['view'],
-
-            // --- Chấm công ---
-            'cham-cong'           => ['view', 'edit', 'export'],
-        ];
-
-        foreach ($modules as $module => $actions) {
-            foreach ($actions as $action) {
-                Permission::firstOrCreate([
-                    'name'       => "{$module}.{$action}",
-                    'guard_name' => 'web',
-                ]);
-            }
+        foreach (PermissionEnum::cases() as $perm) {
+            Permission::firstOrCreate([
+                'name'       => $perm->value,
+                'guard_name' => 'web',
+            ]);
         }
 
         // ============================
@@ -111,21 +33,21 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::IT->value)->syncPermissions([
             // Quản trị hệ thống
-            'users.view', 'users.create', 'users.edit', 'users.delete',
-            'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
-            'departments.view', 'departments.create', 'departments.edit', 'departments.delete',
-            'settings.view', 'settings.edit',
+            PermissionEnum::USERS_VIEW->value, PermissionEnum::USERS_CREATE->value, PermissionEnum::USERS_EDIT->value, PermissionEnum::USERS_DELETE->value,
+            PermissionEnum::ROLES_VIEW->value, PermissionEnum::ROLES_CREATE->value, PermissionEnum::ROLES_EDIT->value, PermissionEnum::ROLES_DELETE->value,
+            PermissionEnum::DEPARTMENTS_VIEW->value, PermissionEnum::DEPARTMENTS_CREATE->value, PermissionEnum::DEPARTMENTS_EDIT->value, PermissionEnum::DEPARTMENTS_DELETE->value,
+            PermissionEnum::SETTINGS_VIEW->value, PermissionEnum::SETTINGS_EDIT->value,
             // Chuyển phát thư (quản lý tập trung)
-            'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit', 'mail-delivery.delete',
-            'mail-delivery-admin.view',
+            PermissionEnum::MAIL_DELIVERY_VIEW->value, PermissionEnum::MAIL_DELIVERY_CREATE->value, PermissionEnum::MAIL_DELIVERY_EDIT->value, PermissionEnum::MAIL_DELIVERY_DELETE->value,
+            PermissionEnum::MAIL_DELIVERY_ADMIN_VIEW->value,
             // Nội bộ
-            'internal-docs.view', 'internal-docs.create', 'internal-docs.edit', 'internal-docs.delete',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value, PermissionEnum::INTERNAL_DOCS_CREATE->value, PermissionEnum::INTERNAL_DOCS_EDIT->value, PermissionEnum::INTERNAL_DOCS_DELETE->value,
             // Báo cáo ngày
-            'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit', 'daily-reports.delete',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_VIEW_ALL->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value, PermissionEnum::DAILY_REPORTS_DELETE->value,
             // Nhật ký hoạt động
-            'activity-log.view',
+            PermissionEnum::ACTIVITY_LOG_VIEW->value,
             // Chấm công
-            'cham-cong.view', 'cham-cong.edit', 'cham-cong.export',
+            PermissionEnum::CHAM_CONG_VIEW->value, PermissionEnum::CHAM_CONG_EDIT->value, PermissionEnum::CHAM_CONG_EXPORT->value,
         ]);
 
         // ------------------------------------------------
@@ -133,14 +55,14 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::GIAM_DOC->value)->syncPermissions(
             Permission::whereNotIn('name', [
-                'users.view', 'users.create', 'users.edit', 'users.delete',
-                'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
-                'settings.view', 'settings.edit',
+                PermissionEnum::USERS_VIEW->value, PermissionEnum::USERS_CREATE->value, PermissionEnum::USERS_EDIT->value, PermissionEnum::USERS_DELETE->value,
+                PermissionEnum::ROLES_VIEW->value, PermissionEnum::ROLES_CREATE->value, PermissionEnum::ROLES_EDIT->value, PermissionEnum::ROLES_DELETE->value,
+                PermissionEnum::SETTINGS_VIEW->value, PermissionEnum::SETTINGS_EDIT->value,
                 // GĐ không truy cập bộ phận kinh doanh/tư vấn và postal admin
-                'consulting-requests.view',
-                'technical-requests.view',
-                'marketing-reports.view',
-                'mail-delivery-admin.view',
+                PermissionEnum::CONSULTING_REQUESTS_VIEW->value,
+                PermissionEnum::TECHNICAL_REQUESTS_VIEW->value,
+                PermissionEnum::MARKETING_REPORTS_VIEW->value,
+                PermissionEnum::MAIL_DELIVERY_ADMIN_VIEW->value,
             ])->pluck('name')->toArray()
         );
 
@@ -149,34 +71,34 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value)->syncPermissions([
             // Dữ liệu nền
-            'customers.view', 'customers.create', 'customers.edit',
-            'handlers.view', 'handlers.create', 'handlers.edit',
+            PermissionEnum::CUSTOMERS_VIEW->value, PermissionEnum::CUSTOMERS_CREATE->value, PermissionEnum::CUSTOMERS_EDIT->value,
+            PermissionEnum::HANDLERS_VIEW->value, PermissionEnum::HANDLERS_CREATE->value, PermissionEnum::HANDLERS_EDIT->value,
             // Hợp đồng: CRUD đầy đủ
-            'contracts-waste.view', 'contracts-waste.create', 'contracts-waste.edit', 'contracts-waste.delete',
-            'contracts-consulting.view', 'contracts-consulting.create', 'contracts-consulting.edit', 'contracts-consulting.delete',
-            'contracts-project.view', 'contracts-project.create', 'contracts-project.edit', 'contracts-project.delete',
-            'contracts-commercial.view', 'contracts-commercial.create', 'contracts-commercial.edit', 'contracts-commercial.delete',
-            'contracts-sustainability.view', 'contracts-sustainability.create', 'contracts-sustainability.edit', 'contracts-sustainability.delete',
-            'contracts-energy.view', 'contracts-energy.create', 'contracts-energy.edit', 'contracts-energy.delete',
+            PermissionEnum::CONTRACTS_WASTE_VIEW->value, PermissionEnum::CONTRACTS_WASTE_CREATE->value, PermissionEnum::CONTRACTS_WASTE_EDIT->value, PermissionEnum::CONTRACTS_WASTE_DELETE->value,
+            PermissionEnum::CONTRACTS_CONSULTING_VIEW->value, PermissionEnum::CONTRACTS_CONSULTING_CREATE->value, PermissionEnum::CONTRACTS_CONSULTING_EDIT->value, PermissionEnum::CONTRACTS_CONSULTING_DELETE->value,
+            PermissionEnum::CONTRACTS_PROJECT_VIEW->value, PermissionEnum::CONTRACTS_PROJECT_CREATE->value, PermissionEnum::CONTRACTS_PROJECT_EDIT->value, PermissionEnum::CONTRACTS_PROJECT_DELETE->value,
+            PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value, PermissionEnum::CONTRACTS_COMMERCIAL_CREATE->value, PermissionEnum::CONTRACTS_COMMERCIAL_EDIT->value, PermissionEnum::CONTRACTS_COMMERCIAL_DELETE->value,
+            PermissionEnum::CONTRACTS_SUSTAINABILITY_VIEW->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_CREATE->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_EDIT->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_DELETE->value,
+            PermissionEnum::CONTRACTS_ENERGY_VIEW->value, PermissionEnum::CONTRACTS_ENERGY_CREATE->value, PermissionEnum::CONTRACTS_ENERGY_EDIT->value, PermissionEnum::CONTRACTS_ENERGY_DELETE->value,
             // Lịch thanh toán: CRUD
-            'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit', 'payment-schedules.delete',
+            PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value, PermissionEnum::PAYMENT_SCHEDULES_DELETE->value,
             // Kinh doanh: CRUD đầy đủ
-            'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
-            'sales-progressive.view', 'sales-progressive.create', 'sales-progressive.edit', 'sales-progressive.delete',
-            'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
+            PermissionEnum::SALES_RENEWAL_VIEW->value, PermissionEnum::SALES_RENEWAL_CREATE->value, PermissionEnum::SALES_RENEWAL_EDIT->value, PermissionEnum::SALES_RENEWAL_DELETE->value,
+            PermissionEnum::SALES_PROGRESSIVE_VIEW->value, PermissionEnum::SALES_PROGRESSIVE_CREATE->value, PermissionEnum::SALES_PROGRESSIVE_EDIT->value, PermissionEnum::SALES_PROGRESSIVE_DELETE->value,
+            PermissionEnum::QUOTATION_TRACKING_VIEW->value, PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
             // Tài chính
-            'commissions.view', 'commissions.create', 'commissions.edit',
-            'advance-requests.view', 'advance-requests.create',
+            PermissionEnum::COMMISSIONS_VIEW->value, PermissionEnum::COMMISSIONS_CREATE->value, PermissionEnum::COMMISSIONS_EDIT->value,
+            PermissionEnum::ADVANCE_REQUESTS_VIEW->value, PermissionEnum::ADVANCE_REQUESTS_CREATE->value,
             // Chuyển phát
-            'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit',
+            PermissionEnum::MAIL_DELIVERY_VIEW->value, PermissionEnum::MAIL_DELIVERY_CREATE->value, PermissionEnum::MAIL_DELIVERY_EDIT->value,
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view', 'reports-sales.view',
+            PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value, PermissionEnum::REPORTS_VIEW->value, PermissionEnum::REPORTS_SALES_VIEW->value,
             // Nội bộ
-            'internal-docs.view',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày: xem tất cả + tạo/sửa
-            'daily-reports.view', 'daily-reports.view-all', 'daily-reports.create', 'daily-reports.edit',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_VIEW_ALL->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
             // Báo cáo Marketing hàng ngày: chỉ xem
-            'marketing-reports.view', 'marketing-reports.view-all',
+            PermissionEnum::MARKETING_REPORTS_VIEW->value, PermissionEnum::MARKETING_REPORTS_VIEW_ALL->value,
         ]);
 
         // ------------------------------------------------
@@ -184,32 +106,32 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::KINH_DOANH->value)->syncPermissions([
             // Dữ liệu nền
-            'customers.view', 'customers.create', 'customers.edit',
-            'handlers.view',
+            PermissionEnum::CUSTOMERS_VIEW->value, PermissionEnum::CUSTOMERS_CREATE->value, PermissionEnum::CUSTOMERS_EDIT->value,
+            PermissionEnum::HANDLERS_VIEW->value,
             // Hợp đồng: xem + tạo
-            'contracts-waste.view', 'contracts-waste.create', 'contracts-waste.edit',
-            'contracts-consulting.view', 'contracts-consulting.create', 'contracts-consulting.edit',
-            'contracts-project.view', 'contracts-project.create', 'contracts-project.edit',
-            'contracts-commercial.view', 'contracts-commercial.create', 'contracts-commercial.edit',
-            'contracts-sustainability.view', 'contracts-sustainability.create', 'contracts-sustainability.edit',
-            'contracts-energy.view', 'contracts-energy.create', 'contracts-energy.edit',
+            PermissionEnum::CONTRACTS_WASTE_VIEW->value, PermissionEnum::CONTRACTS_WASTE_CREATE->value, PermissionEnum::CONTRACTS_WASTE_EDIT->value,
+            PermissionEnum::CONTRACTS_CONSULTING_VIEW->value, PermissionEnum::CONTRACTS_CONSULTING_CREATE->value, PermissionEnum::CONTRACTS_CONSULTING_EDIT->value,
+            PermissionEnum::CONTRACTS_PROJECT_VIEW->value, PermissionEnum::CONTRACTS_PROJECT_CREATE->value, PermissionEnum::CONTRACTS_PROJECT_EDIT->value,
+            PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value, PermissionEnum::CONTRACTS_COMMERCIAL_CREATE->value, PermissionEnum::CONTRACTS_COMMERCIAL_EDIT->value,
+            PermissionEnum::CONTRACTS_SUSTAINABILITY_VIEW->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_CREATE->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_EDIT->value,
+            PermissionEnum::CONTRACTS_ENERGY_VIEW->value, PermissionEnum::CONTRACTS_ENERGY_CREATE->value, PermissionEnum::CONTRACTS_ENERGY_EDIT->value,
             // Lịch thanh toán: xem + tạo/sửa
-            'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit',
+            PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value,
             // Kinh doanh: CRUD cá nhân
-            'sales-renewal.view', 'sales-renewal.create', 'sales-renewal.edit', 'sales-renewal.delete',
-            'sales-progressive.view', 'sales-progressive.create', 'sales-progressive.edit', 'sales-progressive.delete',
-            'quotation-tracking.view', 'quotation-tracking.create', 'quotation-tracking.edit', 'quotation-tracking.delete',
+            PermissionEnum::SALES_RENEWAL_VIEW->value, PermissionEnum::SALES_RENEWAL_CREATE->value, PermissionEnum::SALES_RENEWAL_EDIT->value, PermissionEnum::SALES_RENEWAL_DELETE->value,
+            PermissionEnum::SALES_PROGRESSIVE_VIEW->value, PermissionEnum::SALES_PROGRESSIVE_CREATE->value, PermissionEnum::SALES_PROGRESSIVE_EDIT->value, PermissionEnum::SALES_PROGRESSIVE_DELETE->value,
+            PermissionEnum::QUOTATION_TRACKING_VIEW->value, PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
             // Tài chính: tạo yêu cầu
-            'commissions.view', 'commissions.create',
-            'advance-requests.view', 'advance-requests.create',
+            PermissionEnum::COMMISSIONS_VIEW->value, PermissionEnum::COMMISSIONS_CREATE->value,
+            PermissionEnum::ADVANCE_REQUESTS_VIEW->value, PermissionEnum::ADVANCE_REQUESTS_CREATE->value,
             // Chuyển phát
-            'mail-delivery.view', 'mail-delivery.create',
+            PermissionEnum::MAIL_DELIVERY_VIEW->value, PermissionEnum::MAIL_DELIVERY_CREATE->value,
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view', 'reports-sales.view',
+            PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value, PermissionEnum::REPORTS_VIEW->value, PermissionEnum::REPORTS_SALES_VIEW->value,
             // Nội bộ
-            'internal-docs.view',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày: chỉ xem của mình + tạo/sửa
-            'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
         ]);
 
         // ------------------------------------------------
@@ -217,27 +139,27 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::TU_VAN->value)->syncPermissions([
             // Dữ liệu nền: xem khách hàng (CSKH cần)
-            'customers.view',
-            'handlers.view',
+            PermissionEnum::CUSTOMERS_VIEW->value,
+            PermissionEnum::HANDLERS_VIEW->value,
             // Hợp đồng: xem tất cả
-            'contracts-waste.view',
-            'contracts-consulting.view',
-            'contracts-project.view',
-            'contracts-commercial.view',
-            'contracts-sustainability.view',
-            'contracts-energy.view',
+            PermissionEnum::CONTRACTS_WASTE_VIEW->value,
+            PermissionEnum::CONTRACTS_CONSULTING_VIEW->value,
+            PermissionEnum::CONTRACTS_PROJECT_VIEW->value,
+            PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value,
+            PermissionEnum::CONTRACTS_SUSTAINABILITY_VIEW->value,
+            PermissionEnum::CONTRACTS_ENERGY_VIEW->value,
             // Vận hành tư vấn: CRUD
-            'consulting-requests.view', 'consulting-requests.create', 'consulting-requests.edit', 'consulting-requests.delete',
+            PermissionEnum::CONSULTING_REQUESTS_VIEW->value, PermissionEnum::CONSULTING_REQUESTS_CREATE->value, PermissionEnum::CONSULTING_REQUESTS_EDIT->value, PermissionEnum::CONSULTING_REQUESTS_DELETE->value,
             // Tài chính: tạo yêu cầu hoa hồng
-            'commissions.view', 'commissions.create',
+            PermissionEnum::COMMISSIONS_VIEW->value, PermissionEnum::COMMISSIONS_CREATE->value,
             // Chuyển phát
-            'mail-delivery.view', 'mail-delivery.create', 'mail-delivery.edit', 'mail-delivery.delete',
+            PermissionEnum::MAIL_DELIVERY_VIEW->value, PermissionEnum::MAIL_DELIVERY_CREATE->value, PermissionEnum::MAIL_DELIVERY_EDIT->value, PermissionEnum::MAIL_DELIVERY_DELETE->value,
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view', 'reports-consulting.view',
+            PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value, PermissionEnum::REPORTS_VIEW->value, PermissionEnum::REPORTS_CONSULTING_VIEW->value,
             // Nội bộ
-            'internal-docs.view',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày
-            'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
         ]);
 
         // ------------------------------------------------
@@ -245,17 +167,17 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::KY_THUAT->value)->syncPermissions([
             // Hợp đồng: chỉ xem HĐ Pháp lý & Hồ sơ MT
-            'contracts-consulting.view',
+            PermissionEnum::CONTRACTS_CONSULTING_VIEW->value,
             // Vận hành kỹ thuật: CRUD
-            'waste-requests.view', 'waste-requests.create', 'waste-requests.edit',
-            'technical-requests.view', 'technical-requests.create', 'technical-requests.edit', 'technical-requests.delete',
+            PermissionEnum::WASTE_REQUESTS_VIEW->value, PermissionEnum::WASTE_REQUESTS_CREATE->value, PermissionEnum::WASTE_REQUESTS_EDIT->value,
+            PermissionEnum::TECHNICAL_REQUESTS_VIEW->value, PermissionEnum::TECHNICAL_REQUESTS_CREATE->value, PermissionEnum::TECHNICAL_REQUESTS_EDIT->value, PermissionEnum::TECHNICAL_REQUESTS_DELETE->value,
             // Báo cáo
-            'reports.view', 'reports-technical.view',
-            'rankings.view', 'statistics.view',
+            PermissionEnum::REPORTS_VIEW->value, PermissionEnum::REPORTS_TECHNICAL_VIEW->value,
+            PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value,
             // Nội bộ
-            'internal-docs.view',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày
-            'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
         ]);
 
         // ------------------------------------------------
@@ -263,15 +185,15 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::MARKETING->value)->syncPermissions([
             // Bài viết / nội dung: CRUD
-            'articles.view', 'articles.create', 'articles.edit', 'articles.delete',
+            PermissionEnum::ARTICLES_VIEW->value, PermissionEnum::ARTICLES_CREATE->value, PermissionEnum::ARTICLES_EDIT->value, PermissionEnum::ARTICLES_DELETE->value,
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view',
+            PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value, PermissionEnum::REPORTS_VIEW->value,
             // Nội bộ
-            'internal-docs.view',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày
-            'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
             // Báo cáo Marketing hàng ngày
-            'marketing-reports.view', 'marketing-reports.create', 'marketing-reports.edit',
+            PermissionEnum::MARKETING_REPORTS_VIEW->value, PermissionEnum::MARKETING_REPORTS_CREATE->value, PermissionEnum::MARKETING_REPORTS_EDIT->value,
         ]);
 
         // ------------------------------------------------
@@ -279,29 +201,29 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         Role::findOrCreate(RoleEnum::KE_TOAN->value)->syncPermissions([
             // Dữ liệu nền: xem để tra cứu hóa đơn
-            'customers.view',
-            'handlers.view',
+            PermissionEnum::CUSTOMERS_VIEW->value,
+            PermissionEnum::HANDLERS_VIEW->value,
             // Hợp đồng: chỉ xem
-            'contracts-waste.view',
-            'contracts-consulting.view',
-            'contracts-project.view',
-            'contracts-commercial.view',
-            'contracts-sustainability.view',
-            'contracts-energy.view',
+            PermissionEnum::CONTRACTS_WASTE_VIEW->value,
+            PermissionEnum::CONTRACTS_CONSULTING_VIEW->value,
+            PermissionEnum::CONTRACTS_PROJECT_VIEW->value,
+            PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value,
+            PermissionEnum::CONTRACTS_SUSTAINABILITY_VIEW->value,
+            PermissionEnum::CONTRACTS_ENERGY_VIEW->value,
             // Lịch thanh toán: CRUD
-            'payment-schedules.view', 'payment-schedules.create', 'payment-schedules.edit', 'payment-schedules.delete',
+            PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value, PermissionEnum::PAYMENT_SCHEDULES_DELETE->value,
             // Hóa đơn: CRUD đầy đủ
-            'invoices.view', 'invoices.create', 'invoices.edit', 'invoices.delete',
-            'handler-invoices.view', 'handler-invoices.create', 'handler-invoices.edit', 'handler-invoices.delete',
+            PermissionEnum::INVOICES_VIEW->value, PermissionEnum::INVOICES_CREATE->value, PermissionEnum::INVOICES_EDIT->value, PermissionEnum::INVOICES_DELETE->value,
+            PermissionEnum::HANDLER_INVOICES_VIEW->value, PermissionEnum::HANDLER_INVOICES_CREATE->value, PermissionEnum::HANDLER_INVOICES_EDIT->value, PermissionEnum::HANDLER_INVOICES_DELETE->value,
             // Tài chính: CRUD (duyệt, xử lý)
-            'commissions.view', 'commissions.create', 'commissions.edit', 'commissions.delete',
-            'advance-requests.view', 'advance-requests.create', 'advance-requests.edit', 'advance-requests.delete',
+            PermissionEnum::COMMISSIONS_VIEW->value, PermissionEnum::COMMISSIONS_CREATE->value, PermissionEnum::COMMISSIONS_EDIT->value, PermissionEnum::COMMISSIONS_DELETE->value,
+            PermissionEnum::ADVANCE_REQUESTS_VIEW->value, PermissionEnum::ADVANCE_REQUESTS_CREATE->value, PermissionEnum::ADVANCE_REQUESTS_EDIT->value, PermissionEnum::ADVANCE_REQUESTS_DELETE->value,
             // Thống kê & Báo cáo
-            'rankings.view', 'statistics.view', 'reports.view',
+            PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value, PermissionEnum::REPORTS_VIEW->value,
             // Nội bộ
-            'internal-docs.view',
+            PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày
-            'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+            PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
         ]);
 
         // ------------------------------------------------

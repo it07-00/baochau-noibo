@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Invoices;
 
+use App\Enums\Permission;
 use App\Models\ContractWaste;
 use App\Models\Handler;
 use App\Models\InvoiceHandler;
@@ -180,7 +181,7 @@ class InvoiceHandlerManager extends Component
 
     public function delete(): void
     {
-        abort_unless(auth()->user()->can('handler-invoices.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::HANDLER_INVOICES_DELETE->value), 403);
         InvoiceHandler::findOrFail($this->deletingId)->delete();
         $this->showDeleteModal = false;
         $this->dispatch('notify', ['type' => 'success', 'message' => 'Đã xóa hóa đơn!']);

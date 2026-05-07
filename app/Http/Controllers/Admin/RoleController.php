@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Enums\Permission as PermissionEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -27,7 +28,7 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->can('roles.create'), 403);
+        abort_unless(auth()->user()->can(PermissionEnum::ROLES_CREATE->value), 403);
 
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:255', 'unique:roles,name'],
@@ -59,7 +60,7 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        abort_unless(auth()->user()->can('roles.edit'), 403);
+        abort_unless(auth()->user()->can(PermissionEnum::ROLES_EDIT->value), 403);
 
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:255', 'unique:roles,name,' . $role->id],
@@ -77,7 +78,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        abort_unless(auth()->user()->can('roles.delete'), 403);
+        abort_unless(auth()->user()->can(PermissionEnum::ROLES_DELETE->value), 403);
 
         if ($role->users->count() > 0) {
             return back()->with('error', 'Không thể xóa vai trò đang có người dùng.');

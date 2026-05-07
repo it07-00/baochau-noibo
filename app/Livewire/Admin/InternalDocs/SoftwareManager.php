@@ -13,11 +13,11 @@ class SoftwareManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    
+
     // Modal state
     public $showModal = false;
     public $editingId = null;
-    
+
     // Form fields
     public $name = '';
     public $description = '';

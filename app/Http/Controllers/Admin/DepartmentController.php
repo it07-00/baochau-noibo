@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Enums\Permission;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -22,7 +23,7 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->can('departments.create'), 403);
+        abort_unless(auth()->user()->can(Permission::DEPARTMENTS_CREATE->value), 403);
 
         $validated = $request->validate([
             'name'      => ['required', 'string', 'max:255'],
@@ -48,7 +49,7 @@ class DepartmentController extends Controller
 
     public function update(Request $request, Department $department)
     {
-        abort_unless(auth()->user()->can('departments.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::DEPARTMENTS_EDIT->value), 403);
 
         $validated = $request->validate([
             'name'      => ['required', 'string', 'max:255'],
@@ -69,7 +70,7 @@ class DepartmentController extends Controller
 
     public function destroy(Department $department)
     {
-        abort_unless(auth()->user()->can('departments.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::DEPARTMENTS_DELETE->value), 403);
 
         if ($department->users()->count() > 0) {
             return back()->with('error', 'Không thể xóa phòng ban đang có nhân viên.');

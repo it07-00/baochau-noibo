@@ -17,6 +17,7 @@ use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use App\Enums\Permission;
 
 class ContractWasteManager extends Component
 {
@@ -116,7 +117,7 @@ class ContractWasteManager extends Component
     public function mount()
     {
         if ($this->quotation_id) {
-            abort_unless(auth()->user()->can('contracts-waste.create'), 403);
+            abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_CREATE->value), 403);
 
             $quotation = \App\Models\Quotation::find($this->quotation_id);
             if ($quotation) {
@@ -173,7 +174,7 @@ class ContractWasteManager extends Component
 
     public function edit($id)
     {
-        abort_unless(auth()->user()->can('contracts-waste.edit'), 403);
+        abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_EDIT->value), 403);
         $doc = ContractWaste::findOrFail($id);
         $this->selectedDoc = $doc;
         $this->formData = $doc->toArray();
@@ -190,7 +191,7 @@ class ContractWasteManager extends Component
 
     public function duplicate($id): void
     {
-        abort_unless(auth()->user()->can('contracts-waste.create'), 403);
+        abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_CREATE->value), 403);
         $doc = ContractWaste::findOrFail($id);
         $this->resetForm();
         $this->formData = $doc->toArray();
@@ -212,7 +213,7 @@ class ContractWasteManager extends Component
     {
         $user = auth()->user();
 
-        if (!$user->can($this->isEditing ? 'contracts-waste.edit' : 'contracts-waste.create')) {
+        if (!$user->can($this->isEditing ? Permission::CONTRACTS_WASTE_EDIT->value : Permission::CONTRACTS_WASTE_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
             return;
         }
@@ -282,7 +283,7 @@ class ContractWasteManager extends Component
         } else {
             abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
         }
-        abort_unless($user->can('contracts-waste.edit'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_WASTE_EDIT->value), 403);
 
         if (!in_array($status, self::ALLOWED_STATUSES, true)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Trạng thái không hợp lệ!']);
@@ -307,7 +308,7 @@ class ContractWasteManager extends Component
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         }
-        abort_unless($user->can('contracts-waste.delete'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_WASTE_DELETE->value), 403);
 
         $doc->delete();
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
@@ -316,7 +317,7 @@ class ContractWasteManager extends Component
     public function bulkDeleteSelected()
     {
         $user = auth()->user();
-        abort_unless($user->can('contracts-waste.delete'), 403);
+        abort_unless($user->can(Permission::CONTRACTS_WASTE_DELETE->value), 403);
 
         $selectedIds = collect($this->selectedDocIds)
             ->map(static fn($id) => (int) $id)

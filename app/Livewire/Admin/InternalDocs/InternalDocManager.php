@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\InternalDocs;
 
+use App\Enums\Permission;
 use App\Models\InternalDoc;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -124,7 +125,7 @@ class InternalDocManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->user()->can('internal-docs.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::INTERNAL_DOCS_DELETE->value), 403);
 
         $doc = InternalDoc::findOrFail($id);
 

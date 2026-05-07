@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Invoices;
 
+use App\Enums\Permission;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\InvoiceBaoChau;
@@ -185,7 +186,7 @@ class InvoiceBaoChauManager extends Component
 
     public function delete(): void
     {
-        abort_unless(auth()->user()->can('invoices.delete'), 403);
+        abort_unless(auth()->user()->can(Permission::INVOICES_DELETE->value), 403);
         InvoiceBaoChau::findOrFail($this->deletingId)->delete();
         $this->showDeleteModal = false;
         $this->dispatch('notify', ['type' => 'success', 'message' => 'Đã xóa hóa đơn!']);
