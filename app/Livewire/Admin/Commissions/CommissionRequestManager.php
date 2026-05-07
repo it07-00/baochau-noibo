@@ -7,7 +7,7 @@ use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\User;
-use App\Notifications\CommissionRequestStatusUpdatedNotification;
+use App\Services\CommissionService;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -71,26 +71,6 @@ class CommissionRequestManager extends Component
         $this->resetErrorBag('rejectReason');
     }
 
-    private function notifyRequesterStatusUpdate(CommissionRequest $request, string $status, ?string $reason = null): void
-    {
-        $requester = $request->user;
-        if (!$requester) {
-            return;
-        }
-
-        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#' . $request->id));
-        $processorName = (string) (auth()->user()?->name ?? 'Kế toán');
-
-        $requester->notify(new CommissionRequestStatusUpdatedNotification(
-            status: $status,
-            processedByName: $processorName,
-            contractLabel: $contractLabel,
-            amount: (string) $request->amount,
-            requestId: (int) $request->id,
-            reason: $reason,
-        ));
-    }
-
     public function updatingSearch()
     {
         $this->resetPage();
@@ -131,12 +111,7 @@ class CommissionRequestManager extends Component
             return;
         }
 
-        $request->update([
-            'status'       => 'Đã chi',
-            'processed_at' => now(),
-        ]);
-
-        $this->notifyRequesterStatusUpdate($request, 'Đã chi');
+        app(CommissionService::class)->approve($request, auth()->user());
 
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Kế toán đã duyệt chi yêu cầu thành công.']);
     }
@@ -185,16 +160,7 @@ class CommissionRequestManager extends Component
             return;
         }
 
-        $reason = trim($this->rejectReason);
-        $mergedNotes = trim(($request->notes ? rtrim($request->notes) . "\n\n" : '') . 'Lý do từ chối (kế toán): ' . $reason);
-
-        $request->update([
-            'status'       => 'Từ chối',
-            'processed_at' => now(),
-            'notes'        => $mergedNotes,
-        ]);
-
-        $this->notifyRequesterStatusUpdate($request, 'Từ chối', $reason);
+        app(CommissionService::class)->reject($request, trim($this->rejectReason), auth()->user());
 
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Kế toán đã từ chối yêu cầu chi hoa hồng.']);
         $this->cancelReject();
