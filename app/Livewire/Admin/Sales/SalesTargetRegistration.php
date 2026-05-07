@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Sales;
 
+use App\Enums\Role;
 use App\Models\ContractResearch;
 use App\Models\ContractLegal;
 use App\Models\ContractEmission;
@@ -28,7 +29,7 @@ class SalesTargetRegistration extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->user()->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh']), 403);
+        abort_unless(auth()->user()->hasAnyRole([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]), 403);
 
         $this->year = (int) now()->format('Y');
         $this->loadTargets();

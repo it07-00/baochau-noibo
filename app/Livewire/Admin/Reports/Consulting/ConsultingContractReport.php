@@ -144,9 +144,9 @@ class ConsultingContractReport extends Component
         $user = auth()->user();
         $userRole = null;
         if ($user) {
-            if ($user->hasRole('ky-thuat')) {
+            if ($user->hasRole(Role::KY_THUAT->value)) {
                 $userRole = 'ky-thuat';
-            } elseif ($user->hasRole('tu-van')) {
+            } elseif ($user->hasRole(Role::TU_VAN->value)) {
                 $userRole = 'tu-van';
             }
         }
@@ -229,9 +229,9 @@ class ConsultingContractReport extends Component
         // Xác định role của user hiện tại
         $userRole = null;
         if ($user) {
-            if ($user->hasRole('ky-thuat')) {
+            if ($user->hasRole(Role::KY_THUAT->value)) {
                 $userRole = 'ky-thuat';
-            } elseif ($user->hasRole('tu-van')) {
+            } elseif ($user->hasRole(Role::TU_VAN->value)) {
                 $userRole = 'tu-van';
             }
         }

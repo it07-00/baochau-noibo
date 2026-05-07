@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Admin\Quotations;
 
+use App\Actions\Quotations\UpsertQuotationAction;
 use App\Enums\Permission;
+use App\Enums\QuotationStatus;
+use App\Enums\Role;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Models\Customer;
@@ -74,7 +77,7 @@ class QuotationManager extends Component
         'service' => '',
         'contact_person' => '',
         'work_description' => '',
-        'status' => 'Đang theo dõi',
+        'status' => QuotationStatus::DANG_THEO_DOI->value,
         'original_value' => 0,   // GIÁ TRỊ GÓC
         'value_inc_vat' => 0,    // Giá trị chưa VAT
         'commission_value' => 0, // Hoa hồng KH
@@ -175,7 +178,7 @@ class QuotationManager extends Component
     public function mount()
     {
         abort_unless(
-            auth()->user()->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc']),
+            auth()->user()->hasAnyRole([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value]),
             403,
             'Bạn không có quyền truy cập chức năng này.'
         );
@@ -190,7 +193,7 @@ class QuotationManager extends Component
 
     private function isKinhDoanh(): bool
     {
-        return auth()->user()->hasRole('kinh-doanh');
+        return auth()->user()->hasRole(Role::KINH_DOANH->value);
     }
 
     private function authorizeQuotationAccess(Quotation $quotation): void
@@ -473,14 +476,15 @@ class QuotationManager extends Component
     {
         $user = auth()->user();
 
-        if (!$user->can($this->isEditing ? 'quotation-tracking.edit' : 'quotation-tracking.create')) {
+        if (!$user->can($this->isEditing ? Permission::QUOTATION_TRACKING_EDIT->value : Permission::QUOTATION_TRACKING_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu báo giá này.']);
             return;
         }
 
+        $existing = null;
         if ($this->isEditing) {
-            $quotation = Quotation::findOrFail($this->selectedId);
-            if ($this->isKinhDoanh() && (int) $quotation->staff_id !== (int) $user->id) {
+            $existing = Quotation::findOrFail($this->selectedId);
+            if ($this->isKinhDoanh() && (int) $existing->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật báo giá do bạn phụ trách.']);
                 return;
             }
@@ -499,19 +503,7 @@ class QuotationManager extends Component
             throw $e;
         }
 
-        if ($this->isEditing) {
-            $quotation = Quotation::findOrFail($this->selectedId);
-
-            $quotation->update($this->formData);
-            $msg = 'Cập nhật thành công';
-        } else {
-            if ($this->isKinhDoanh()) {
-                $this->formData['staff_id'] = auth()->id();
-            }
-
-            Quotation::create($this->formData);
-            $msg = 'Tạo mới thành công';
-        }
+        [$_, $msg] = app(UpsertQuotationAction::class)->execute($this->formData, $user, $existing);
 
         $this->dispatch('close-quotation-modal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => $msg]);
@@ -543,7 +535,7 @@ class QuotationManager extends Component
             'service' => '',
             'contact_person' => '',
             'work_description' => '',
-            'status' => 'Đang theo dõi',
+            'status' => QuotationStatus::DANG_THEO_DOI->value,
             'original_value' => 0,
             'value_inc_vat' => 0,
             'commission_value' => 0,
@@ -728,7 +720,7 @@ class QuotationManager extends Component
                 if (empty($nonEmpty)) continue;
 
                 $data = [
-                    'status' => 'Đang theo dõi',
+                    'status' => QuotationStatus::DANG_THEO_DOI->value,
                     'staff_id' => auth()->id(),
                     'source' => null,
                     'service' => null,
@@ -842,13 +834,7 @@ class QuotationManager extends Component
             'staffs' => $this->isKinhDoanh()
                 ? User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('id', auth()->id())->orderBy('name')->get()
                 : User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
-            'statuses' => [
-                'hẹn báo giá thời gian sau',
-                'Đang theo dõi',
-                'Rớt báo giá',
-                'Ký hợp đồng',
-                'Tham khảo'
-            ],
+            'statuses' => QuotationStatus::values(),
             'availableFields' => $this->availableFields,
         ])->layout('admin.layouts.app', ['title' => 'Theo dõi Báo giá']);
     }

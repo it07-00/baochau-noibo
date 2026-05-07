@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ContractRenewalStatus;
+use App\Enums\ContractVoucherStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -57,13 +59,6 @@ class ContractWaste extends Model
     const SERVICE_TYPES = [
         'Thu gom, xử lý chất thải nguy hại và công nghiệp',
         'Xây dựng bản đồ tiếng ồn',
-    ];
-
-    const VOUCHER_STATUSES = [
-        'Đã đề nghị thanh toán/tạm ứng',
-        'Đã xuất hóa đơn',
-        'Đã làm biên bản bàn giao hồ sơ',
-        'Đã làm BB bàn giao và nghiệm thu kết thúc hợp đồng',
     ];
 
     protected $casts = [

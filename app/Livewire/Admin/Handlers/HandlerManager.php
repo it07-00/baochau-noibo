@@ -62,7 +62,7 @@ class HandlerManager extends Component
     public function save(): void
     {
         abort_unless(
-            auth()->user()->can($this->isEditing ? 'handlers.edit' : 'handlers.create'),
+            auth()->user()->can($this->isEditing ? Permission::HANDLERS_EDIT->value : Permission::HANDLERS_CREATE->value),
             403
         );
 

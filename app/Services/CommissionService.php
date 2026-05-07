@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\CommissionRequestStatus;
 use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\User;
@@ -13,11 +14,11 @@ class CommissionService
     public function approve(CommissionRequest $request, User $actor): void
     {
         $request->update([
-            'status'       => 'Đã chi',
+            'status'       => CommissionRequestStatus::DA_CHI->value,
             'processed_at' => now(),
         ]);
 
-        $this->notifyRequesterStatusUpdate($request, 'Đã chi', $actor);
+        $this->notifyRequesterStatusUpdate($request, CommissionRequestStatus::DA_CHI->value, $actor);
     }
 
     public function reject(CommissionRequest $request, string $reason, User $actor): void
@@ -28,12 +29,12 @@ class CommissionService
         );
 
         $request->update([
-            'status'       => 'Từ chối',
+            'status'       => CommissionRequestStatus::TU_CHOI->value,
             'processed_at' => now(),
             'notes'        => $mergedNotes,
         ]);
 
-        $this->notifyRequesterStatusUpdate($request, 'Từ chối', $actor, $reason);
+        $this->notifyRequesterStatusUpdate($request, CommissionRequestStatus::TU_CHOI->value, $actor, $reason);
     }
 
     public function createRequest(array $data, User $creator): CommissionRequest

@@ -259,13 +259,16 @@ class StatisticsBoard extends Component
                 'value' => (float) ($row->val ?? 0),
             ];
 
-            $kpiContractQuery = $model::query();
-            $applyContractDateFilter($kpiContractQuery, $selectedMonth, $dateColumn);
-            $totalContracts += (int) $kpiContractQuery->count();
-
-            $kpiContractValueQuery = $model::query();
-            $applyContractDateFilter($kpiContractValueQuery, $selectedMonth, $dateColumn);
-            $totalContractValue += (float) $kpiContractValueQuery->sum('value');
+            if ($selectedMonth !== null) {
+                $kpiQuery = $model::query();
+                $applyContractDateFilter($kpiQuery, $selectedMonth, $dateColumn);
+                $kpiRow = $kpiQuery->selectRaw('COUNT(*) as cnt, COALESCE(SUM(value),0) as val')->first();
+                $totalContracts += (int) ($kpiRow->cnt ?? 0);
+                $totalContractValue += (float) ($kpiRow->val ?? 0);
+            } else {
+                $totalContracts += (int) ($row->cnt ?? 0);
+                $totalContractValue += (float) ($row->val ?? 0);
+            }
         }
 
         // ── Doanh số ghi nhận từ cột doanh số (revenue) trong hợp đồng ──────
@@ -366,7 +369,7 @@ class StatisticsBoard extends Component
 
         // ── Nhắc nhở báo cáo ngày ─────────────────────
         $dailyReportReminder = null;
-        if (!$currentUser->hasRole('giam-doc')) {
+        if (!$currentUser->hasRole(RoleEnum::GIAM_DOC->value)) {
             $hasReportToday = DailyReport::where('user_id', $currentUser->id)
                 ->whereDate('date', today())
                 ->exists();
@@ -625,18 +628,24 @@ class StatisticsBoard extends Component
             $modelQuery = $modelClass::query();
             $applyContractDateFilter($modelQuery, $selectedMonth, $dateColumn);
 
-            $contractsOnSource = $modelQuery->select($sourceField, 'is_renewal', 'revenue')->get();
+            $rows = $modelQuery
+                ->selectRaw("
+                    CASE
+                        WHEN is_renewal = 1 THEN 'TÁI KÝ'
+                        ELSE UPPER(TRIM(COALESCE(NULLIF(TRIM({$sourceField}), ''), 'KHÁC')))
+                    END as label,
+                    COALESCE(SUM(revenue), 0) as total_rev
+                ")
+                ->groupByRaw("
+                    CASE
+                        WHEN is_renewal = 1 THEN 'TÁI KÝ'
+                        ELSE UPPER(TRIM(COALESCE(NULLIF(TRIM({$sourceField}), ''), 'KHÁC')))
+                    END
+                ")
+                ->get();
 
-            foreach ($contractsOnSource as $c) {
-                $val = (float) $c->revenue;
-                if ($c->is_renewal) {
-                    $label = 'TÁI KÝ';
-                } else {
-                    $label = mb_convert_case(trim($c->$sourceField ?? 'KHÁC'), MB_CASE_UPPER, "UTF-8");
-                    if ($label === '') $label = 'KHÁC';
-                }
-
-                $sourceSalesMap[$label] = ($sourceSalesMap[$label] ?? 0) + $val;
+            foreach ($rows as $row) {
+                $sourceSalesMap[$row->label] = ($sourceSalesMap[$row->label] ?? 0) + (float) $row->total_rev;
             }
         }
 

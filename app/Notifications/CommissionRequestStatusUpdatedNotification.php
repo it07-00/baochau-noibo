@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Enums\CommissionRequestStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -28,11 +29,11 @@ class CommissionRequestStatusUpdatedNotification extends Notification
         $amountText = number_format((float) $this->amount, 0, ',', '.');
         $status = trim($this->status);
 
-        if ($status === 'Đã chi') {
+        if ($status === CommissionRequestStatus::DA_CHI->value) {
             $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã được {$this->processedByName} duyệt chi.";
             $icon = 'bi-patch-check-fill';
             $color = 'success';
-        } elseif ($status === 'Từ chối') {
+        } elseif ($status === CommissionRequestStatus::TU_CHOI->value) {
             $reasonText = $this->reason ? ' Lý do: ' . trim($this->reason) . '.' : '';
             $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã bị {$this->processedByName} từ chối." . $reasonText;
             $icon = 'bi-x-octagon-fill';

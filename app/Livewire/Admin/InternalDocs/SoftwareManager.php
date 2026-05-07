@@ -101,7 +101,7 @@ class SoftwareManager extends Component
                 $q->where('name', 'like', '%' . $this->search . '%')
                   ->orWhere('description', 'like', '%' . $this->search . '%');
             })
-            ->when(!auth()->user()->hasRole('it'), function ($q) {
+            ->when(!auth()->user()->hasRole(Role::IT->value), function ($q) {
                 $q->where('is_active', true);
             })
             ->orderBy('name')

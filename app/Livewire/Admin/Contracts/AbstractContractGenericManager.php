@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\ContractVoucherStatus;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\ContractAssignment;
@@ -592,7 +593,7 @@ abstract class AbstractContractGenericManager extends Component
             'provinces'              => $modelClass::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'           => self::ALLOWED_STATUSES,
             'renewal_statuses'       => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
-            'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
+            'voucher_status_options' => ContractVoucherStatus::values(),
             'loai_dich_vu_options'   => $modelClass::SERVICE_TYPES,
             'payment_methods'        => ['Sau ký', 'Trước ký'],
             'info_sources'           => $modelClass::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),

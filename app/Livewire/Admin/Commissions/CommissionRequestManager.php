@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\CommissionRequestStatus;
 use App\Enums\ContractType;
 use App\Enums\Permission;
 use App\Enums\Role;
@@ -106,7 +107,7 @@ class CommissionRequestManager extends Component
 
         $request = CommissionRequest::findOrFail($id);
 
-        if ($request->status === 'Đã chi') {
+        if ($request->status === CommissionRequestStatus::DA_CHI->value) {
             $this->dispatch('swal:toast', ['type' => 'info', 'message' => 'Yêu cầu này đã được duyệt chi trước đó.']);
             return;
         }
@@ -122,7 +123,7 @@ class CommissionRequestManager extends Component
 
         $request = CommissionRequest::findOrFail($id);
 
-        if ($request->status === 'Từ chối') {
+        if ($request->status === CommissionRequestStatus::TU_CHOI->value) {
             $this->dispatch('swal:toast', ['type' => 'info', 'message' => 'Yêu cầu này đã được từ chối trước đó.']);
             return;
         }
@@ -154,7 +155,7 @@ class CommissionRequestManager extends Component
 
         $request = CommissionRequest::findOrFail($this->rejectingId);
 
-        if ($request->status === 'Từ chối') {
+        if ($request->status === CommissionRequestStatus::TU_CHOI->value) {
             $this->dispatch('swal:toast', ['type' => 'info', 'message' => 'Yêu cầu này đã được từ chối trước đó.']);
             $this->cancelReject();
             return;
@@ -174,12 +175,18 @@ class CommissionRequestManager extends Component
         $summaryQuery = CommissionRequest::query();
         $this->applyFilters($summaryQuery);
 
+        $statusCounts = (clone $summaryQuery)
+            ->selectRaw('status, COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total_amount')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status');
+
         $summary = [
-            'total'    => (clone $summaryQuery)->count(),
-            'pending'  => (clone $summaryQuery)->where('status', 'Chờ chi')->count(),
-            'approved' => (clone $summaryQuery)->where('status', 'Đã chi')->count(),
-            'rejected' => (clone $summaryQuery)->where('status', 'Từ chối')->count(),
-            'amount'   => (clone $summaryQuery)->sum('amount'),
+            'total'    => $statusCounts->sum('cnt'),
+            'pending'  => (int) ($statusCounts->get(CommissionRequestStatus::CHO_CHI->value)?->cnt ?? 0),
+            'approved' => (int) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->cnt ?? 0),
+            'rejected' => (int) ($statusCounts->get(CommissionRequestStatus::TU_CHOI->value)?->cnt ?? 0),
+            'amount'   => (float) $statusCounts->sum('total_amount'),
         ];
 
         $requesters = User::query()

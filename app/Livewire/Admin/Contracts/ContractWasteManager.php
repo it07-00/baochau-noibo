@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Actions\Contracts\UpsertContractWasteAction;
+use App\Enums\ContractVoucherStatus;
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\ContractWaste;
 use App\Models\Customer;
@@ -17,7 +20,6 @@ use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
-use App\Enums\Permission;
 
 class ContractWasteManager extends Component
 {
@@ -247,24 +249,7 @@ class ContractWasteManager extends Component
             return $value === '' ? null : $value;
         })->toArray();
 
-        $isAccountant = $user->hasRole(Role::KE_TOAN->value);
-
-        if (!$this->isEditing) {
-            // Số HĐ chỉ do kế toán cập nhật sau khi tạo.
-            $data['shd_cxl'] = null;
-            $data['shd_bc'] = null;
-        } elseif (!$isAccountant && $this->selectedDoc) {
-            $data['shd_cxl'] = $this->selectedDoc->shd_cxl;
-            $data['shd_bc'] = $this->selectedDoc->shd_bc;
-        }
-
-        if ($this->isEditing) {
-            $this->selectedDoc->update($data);
-            $msg = 'Cập nhật thành công';
-        } else {
-            ContractWaste::create($data);
-            $msg = 'Tạo mới thành công';
-        }
+        [$_, $msg] = app(UpsertContractWasteAction::class)->execute($data, $user, $this->isEditing ? $this->selectedDoc : null);
 
         $this->showModal = false;
         $this->dispatch('closeFormModal');
@@ -586,7 +571,7 @@ class ContractWasteManager extends Component
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs           = $query->orderBy('id', $orderDirection)->get();
         $title          = 'Hợp đồng chất thải';
-        $showFinancials = !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
+        $showFinancials = !auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
         return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
             echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
@@ -643,7 +628,7 @@ class ContractWasteManager extends Component
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->paginate(10);
-        $voucherStatuses = collect(ContractWaste::VOUCHER_STATUSES)
+        $voucherStatuses = collect(ContractVoucherStatus::values())
             ->merge(
                 ContractWaste::whereNotNull('voucher_status')
                     ->where('voucher_status', '!=', '')
@@ -670,7 +655,7 @@ class ContractWasteManager extends Component
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'voucher_statuses' => $voucherStatuses,
-            'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
+            'voucher_status_options' => ContractVoucherStatus::values(),
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'provinces' => ContractWaste::whereNotNull('province')->where('province', '!=', '')
                 ->distinct()->orderBy('province')->pluck('province')->toArray(),

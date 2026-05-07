@@ -69,7 +69,7 @@ class CustomerManager extends Component
     public function save(): void
     {
         abort_unless(
-            auth()->user()->can($this->isEditing ? 'customers.edit' : 'customers.create'),
+            auth()->user()->can($this->isEditing ? Permission::CUSTOMERS_EDIT->value : Permission::CUSTOMERS_CREATE->value),
             403
         );
 

@@ -145,7 +145,7 @@ class InvoiceBaoChauManager extends Component
     public function save(): void
     {
         abort_unless(
-            auth()->user()->can($this->editingId ? 'invoices.edit' : 'invoices.create'),
+            auth()->user()->can($this->editingId ? Permission::INVOICES_EDIT->value : Permission::INVOICES_CREATE->value),
             403
         );
 

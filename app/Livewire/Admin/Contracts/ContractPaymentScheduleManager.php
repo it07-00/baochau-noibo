@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Contracts;
 use App\Enums\ContractType;
 use App\Enums\PaymentScheduleStatus;
 use App\Enums\Permission;
+use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\ContractPaymentSchedule;
 use Livewire\Component;
@@ -67,12 +68,12 @@ class ContractPaymentScheduleManager extends Component
     private function calculatePermissions(): void
     {
         $user = auth()->user();
-        if ($user->hasAnyRole(['tu-van', 'ky-thuat'])) {
+        if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
             $this->canManage = false;
             return;
         }
 
-        if ($user->hasRole('tp-kinh-doanh')) {
+        if ($user->hasRole(Role::TP_KINH_DOANH->value)) {
             $parent = $this->contractModelClass::find($this->contractId);
             $this->canManage = $parent && $parent->staff_id === $user->id;
             return;
@@ -108,13 +109,13 @@ class ContractPaymentScheduleManager extends Component
 
     public function save(): void
     {
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+        if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value)) {
             $parent = $this->contractModelClass::find($this->contractId);
             abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
         }
 
         abort_unless(
-            auth()->user()->can($this->isEditing ? Permission::PAYMENT_SCHEDULES_EDIT->value : 'payment-schedules.create'),
+            auth()->user()->can($this->isEditing ? Permission::PAYMENT_SCHEDULES_EDIT->value : Permission::PAYMENT_SCHEDULES_CREATE->value),
             403
         );
 
@@ -143,7 +144,7 @@ class ContractPaymentScheduleManager extends Component
 
     public function delete(int $id): void
     {
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+        if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value)) {
             $parent = $this->contractModelClass::find($this->contractId);
             abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
         }
@@ -155,7 +156,7 @@ class ContractPaymentScheduleManager extends Component
 
     public function markPaid(int $id): void
     {
-        if (auth()->user()->hasRole('tp-kinh-doanh')) {
+        if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value)) {
             $parent = $this->contractModelClass::find($this->contractId);
             abort_if(!$parent || $parent->staff_id !== auth()->id(), 403);
         }

@@ -2,19 +2,20 @@
 
 namespace App\Livewire\Admin\DailyReports;
 
+use App\Actions\DailyReports\SubmitDailyReportAction;
+use App\Enums\DailyReportStatus;
 use App\Enums\Role;
 use Livewire\Component;
 use App\Models\DailyReport;
 use App\Models\Department;
 use App\Models\User;
-use App\Notifications\DailyReportSubmittedNotification;
 use Carbon\Carbon;
 
 class DailyReportManager extends Component
 {
     // Form fields
     public $reportDate;
-    public $status = 'Hoàn thành đúng kế hoạch';
+    public $status = DailyReportStatus::HOAN_THANH_DUNG_KH->value;
     public $content;
     public $plan;
     public $issues;
@@ -143,7 +144,7 @@ class DailyReportManager extends Component
             $this->isEditing = true;
         } else {
             $this->content = '';
-            $this->status = 'Hoàn thành đúng kế hoạch';
+            $this->status = DailyReportStatus::HOAN_THANH_DUNG_KH->value;
             $this->plan = '';
             $this->issues = '';
             $this->isEditing = false;
@@ -159,7 +160,7 @@ class DailyReportManager extends Component
         $this->validate([
             'reportDate' => 'required|date|before_or_equal:today',
             'content' => 'required|min:10|max:10000',
-            'status' => 'required|in:Hoàn thành đúng kế hoạch,Hoàn thành một phần,Gặp vấn đề, cần hỗ trợ',
+            'status' => 'required|in:' . implode(',', DailyReportStatus::values()),
             'plan' => 'nullable|string|max:5000',
             'issues' => 'nullable|string|max:5000',
         ], [
@@ -172,41 +173,18 @@ class DailyReportManager extends Component
             'status.in' => 'Trạng thái không hợp lệ.',
         ]);
 
-        $normalizedPlan = trim((string) ($this->plan ?? ''));
-        $normalizedIssues = trim((string) ($this->issues ?? ''));
-
-        DailyReport::updateOrCreate(
-            ['user_id' => auth()->id(), 'date' => $this->reportDate],
-            [
-                'content' => clean($this->content),
-                'status' => $this->status,
-                'plan' => $normalizedPlan,
-                'issues' => $normalizedIssues === '' ? null : $normalizedIssues,
-            ]
+        app(SubmitDailyReportAction::class)->execute(
+            reporter: auth()->user(),
+            date:     $this->reportDate,
+            content:  $this->content,
+            status:   $this->status,
+            plan:     trim((string) ($this->plan ?? '')),
+            issues:   trim((string) ($this->issues ?? '')),
         );
 
         $this->dispatch('swal:success', ['message' => 'Gửi báo cáo thành công!']);
         $this->showReportModal = false;
         $this->loadReportByDate();
-
-        // Gửi thông báo cho Giám đốc & TPKD
-        $reporter = auth()->user();
-        $isSales = $reporter->hasRole(Role::KINH_DOANH->value);
-
-        // Giám đốc luôn nhận được
-        $recipients = User::role(Role::GIAM_DOC->value)->get();
-
-        // TPKD nhận được báo cáo từ nhân viên kinh doanh
-        if ($isSales) {
-            $recipients = $recipients->merge(User::role(Role::TP_KINH_DOANH->value)->get());
-        }
-
-        foreach ($recipients->unique('id') as $recipient) {
-            /** @var User $recipient */
-            if ($recipient->id !== $reporter->id) {
-                $recipient->notify(new DailyReportSubmittedNotification($reporter->name, $this->reportDate));
-            }
-        }
     }
 
     public function deleteReport($id)
@@ -221,7 +199,7 @@ class DailyReportManager extends Component
             abort(403);
         }
 
-        if ($this->isManager && auth()->user()->hasRole('tp-kinh-doanh') && !auth()->user()->hasRole('giam-doc')) {
+        if ($this->isManager && auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && !auth()->user()->hasRole(Role::GIAM_DOC->value)) {
             $canManageThisUser = $this->scopedUsersQuery()->whereKey($report->user_id)->exists();
             abort_unless($canManageThisUser, 403);
         }

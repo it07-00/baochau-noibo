@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\Role;
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractWorkflowStep;
 use Illuminate\Support\Facades\Auth;
@@ -50,9 +51,9 @@ class ContractWorkflowProgress extends Component
         $userRole = null;
         if ($user) {
             // Kiểm tra các role liên quan
-            if ($user->hasRole('ky-thuat')) {
+            if ($user->hasRole(Role::KY_THUAT->value)) {
                 $userRole = 'ky-thuat';
-            } elseif ($user->hasRole('tu-van')) {
+            } elseif ($user->hasRole(Role::TU_VAN->value)) {
                 $userRole = 'tu-van';
             }
         }

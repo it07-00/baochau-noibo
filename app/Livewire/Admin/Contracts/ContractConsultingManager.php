@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\ContractVoucherStatus;
 use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
@@ -596,7 +597,7 @@ class ContractConsultingManager extends Component
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->get();
         $title = 'Hợp đồng tư vấn';
-        $showFinancials = ! auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']);
+        $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
         return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
             echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
@@ -750,7 +751,7 @@ class ContractConsultingManager extends Component
                     ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractLegal::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
-            'voucher_status_options' => ContractWaste::VOUCHER_STATUSES,
+            'voucher_status_options' => ContractVoucherStatus::values(),
             'loai_dich_vu_options' => ContractLegal::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractLegal::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),

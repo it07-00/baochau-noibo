@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Enums\CommissionRequestStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -32,7 +33,7 @@ class CommissionRequestSubmittedNotification extends Notification
             'message'        => "{$this->requesterName} vừa gửi yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel}.",
             'url'            => route('app.commissions.index'),
             'request_id'     => $this->requestId,
-            'status'         => 'Chờ chi',
+            'status'         => CommissionRequestStatus::CHO_CHI->value,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
+use App\Enums\Role;
 use App\Models\SalesRenewal;
 use App\Models\SalesProgressive;
 use App\Models\User;
@@ -22,7 +23,7 @@ class SalesTrackingReport extends Component
     {
         $this->year = (int) now()->format('Y');
 
-        if (auth()->user()->hasRole('kinh-doanh')) {
+        if (auth()->user()->hasRole(Role::KINH_DOANH->value)) {
             $this->filter_staff = (string) auth()->id();
         }
     }
@@ -34,7 +35,7 @@ class SalesTrackingReport extends Component
 
     public function render()
     {
-        $isKinhDoanh  = auth()->user()->hasRole('kinh-doanh');
+        $isKinhDoanh  = auth()->user()->hasRole(Role::KINH_DOANH->value);
         $staffFilter  = $this->filter_staff ?: ($isKinhDoanh ? (string) auth()->id() : '');
 
         $items = match ($this->active_tab) {
