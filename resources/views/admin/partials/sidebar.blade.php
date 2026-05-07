@@ -5,8 +5,10 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ $currentUser->hasAnyRole(['it', 'giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}" class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment" style="height: 40px; width: auto;">
+            <a href="{{ $currentUser->hasAnyRole(['it', 'giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}"
+                class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment"
+                    style="height: 40px; width: auto;">
                 <span class="fw-bolder fs-5 text-primary" style="letter-spacing: 1px;">BẢO CHÂU</span>
             </a>
 
@@ -35,11 +37,14 @@
                         <a href="{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || ($currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
                             <span class="menu-icon flex-shrink-0">
-                                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M8.5 1.5L1.5 7V15.5H6.5V11H10.5V15.5H15.5V7L8.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.5 1.5L1.5 7V15.5H6.5V11H10.5V15.5H15.5V7L8.5 1.5Z" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </span>
-                            <span class="menu-title flex-grow-1">{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
+                            <span
+                                class="menu-title flex-grow-1">{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
                         </a>
                     </li>
                 @endunless
@@ -70,14 +75,16 @@
                     <a href="{{ route('app.work-schedules.index') }}"
                         class="menu-link d-flex align-items-center {{ request()->routeIs('app.work-schedules.*') ? 'active menu-current' : '' }}">
                         <span class="menu-icon flex-shrink-0">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M3 10H21" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M7 14H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M14 14H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M7 18H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor"
+                                    stroke-width="1.5" />
+                                <path d="M3 10H21" stroke="currentColor" stroke-width="1.5" />
+                                <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M7 14H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M14 14H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M7 18H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                             </svg>
                         </span>
                         <span class="menu-title flex-grow-1">Lịch công tác</span>
@@ -85,7 +92,7 @@
                 </li>
 
                 {{-- ── QUẢN TRỊ ─────────────────────────────────────── --}}
-                @if($currentUser->hasRole('it') || $currentUser->canany(['users.view','roles.view','activity-log.view']))
+                @if ($currentUser->hasRole('it') || $currentUser->canany(['users.view', 'roles.view', 'activity-log.view']))
                     <li class="app-sidebar-menu-heading">
                         <span>
                             <span class="app-sidebar-menu-heading-line"></span>
@@ -93,16 +100,21 @@
                         </span>
                     </li>
 
-                    @if($currentUser->hasRole('it'))
+                    @if ($currentUser->hasRole('it'))
                         <li class="app-sidebar-menu-item">
                             <a href="{{ route('app.dashboard') }}"
                                 class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active menu-current' : '' }}">
                                 <span class="menu-icon flex-shrink-0">
-                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                                        <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M7 8h2M7 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        <circle cx="16" cy="9.5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"
+                                            stroke="currentColor" stroke-width="1.5" />
+                                        <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                        <path d="M7 8h2M7 11h4" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                        <circle cx="16" cy="9.5" r="2.5" stroke="currentColor"
+                                            stroke-width="1.5" />
                                     </svg>
                                 </span>
                                 <span class="menu-title flex-grow-1">Quản trị hệ thống</span>
@@ -112,7 +124,9 @@
                             <a href="{{ url('log-viewer') }}" target="_blank"
                                 class="menu-link d-flex align-items-center">
                                 <span class="menu-icon flex-shrink-0">
-                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"></path>
                                         <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
                                         <path d="M4 14l2 2l4-4"></path>
@@ -170,7 +184,8 @@
                                 <span class="menu-icon flex-shrink-0">
                                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="8.5" cy="8.5" r="7" stroke="currentColor" stroke-width="1.5" />
+                                        <circle cx="8.5" cy="8.5" r="7" stroke="currentColor"
+                                            stroke-width="1.5" />
                                         <path d="M8.5 4.5V8.5L11.5 11.5" stroke="currentColor" stroke-width="1.5"
                                             stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
@@ -182,8 +197,15 @@
                 @endif
 
                 {{-- ── TỔ CHỨC ──────────────────────────────────────── --}}
-                @unless ($currentUser->hasRole('it'))
-                    @if($currentUser->canany(['departments.view','handlers.view','customers.view','hr-profiles.view','cham-cong.view','cham-cong.edit']))
+                @if (
+                        $currentUser->canany([
+                            'departments.view',
+                            'handlers.view',
+                            'customers.view',
+                            'hr-profiles.view',
+                            'cham-cong.view',
+                            'cham-cong.edit',
+                        ]))
                         <li class="app-sidebar-menu-heading">
                             <span>
                                 <span class="app-sidebar-menu-heading-line"></span>
@@ -198,8 +220,8 @@
                                     <span class="menu-icon flex-shrink-0">
                                         <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M2.5 15.5V5.5L8.5 1.5L14.5 5.5V15.5" stroke="currentColor" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M2.5 15.5V5.5L8.5 1.5L14.5 5.5V15.5" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                             <path d="M6.5 15.5V10.5H10.5V15.5" stroke="currentColor" stroke-width="1.5"
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
@@ -220,7 +242,8 @@
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                             <path d="M9 21V13H15V21" stroke="currentColor" stroke-width="1.5"
                                                 stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M3 7H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                            <path d="M3 7H21" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" />
                                         </svg>
                                     </span>
                                     <span class="menu-title flex-grow-1">Khách hàng</span>
@@ -242,8 +265,10 @@
                                             <path d="M5 20C5 16.6863 8.13401 14 12 14C15.866 14 19 16.6863 19 20"
                                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                 stroke-linejoin="round" />
-                                            <path d="M19 6V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                            <path d="M21 8H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                            <path d="M19 6V10" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M21 8H17" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" />
                                         </svg>
                                     </span>
                                     <span class="menu-title flex-grow-1">Nhà thầu phụ</span>
@@ -256,11 +281,16 @@
                                 <a href="{{ route('app.hr.index') }}"
                                     class="menu-link d-flex align-items-center {{ request()->routeIs('app.hr.*') ? 'active menu-current' : '' }}">
                                     <span class="menu-icon flex-shrink-0">
-                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                            <circle cx="9" cy="7" r="4" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </span>
                                     <span class="menu-title flex-grow-1">Quản lý nhân sự</span>
@@ -273,12 +303,17 @@
                                 <a href="{{ route('app.attendance.index') }}"
                                     class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.index') ? 'active menu-current' : '' }}">
                                     <span class="menu-icon flex-shrink-0">
-                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M3 10H21" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                            <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                            <path d="M9 15L11 17L15 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="3" y="4" width="18" height="18" rx="2"
+                                                stroke="currentColor" stroke-width="1.5" />
+                                            <path d="M3 10H21" stroke="currentColor" stroke-width="1.5" />
+                                            <path d="M8 2V6" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M16 2V6" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M9 15L11 17L15 13" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </span>
                                     <span class="menu-title flex-grow-1">Chấm công</span>
@@ -291,17 +326,19 @@
                                 <a href="{{ route('app.attendance.employees') }}"
                                     class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.employees') ? 'active menu-current' : '' }}">
                                     <span class="menu-icon flex-shrink-0">
-                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="12" cy="8" r="4" stroke="currentColor"
+                                                stroke-width="1.5" />
+                                            <path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" />
                                         </svg>
                                     </span>
                                     <span class="menu-title flex-grow-1">NV chấm công</span>
                                 </a>
                             </li>
                         @endcan
-                    @endif
-                @endunless
+                @endif
 
                 @php
                     $stackIcon = <<<'SVG'
@@ -375,7 +412,12 @@
                             'title' => 'Bộ phận kinh doanh',
                             'icon' => $stackIcon,
                             'permission' => 'sales-renewal.view',
-                            'children' => ['Doanh số tái ký', 'Doanh số theo tiến độ', 'Bảng theo dõi báo giá', 'Đăng ký mục tiêu doanh số'],
+                            'children' => [
+                                'Doanh số tái ký',
+                                'Doanh số theo tiến độ',
+                                'Bảng theo dõi báo giá',
+                                'Đăng ký mục tiêu doanh số',
+                            ],
                         ],
                         [
                             'title' => 'Bộ phận tư vấn',
@@ -394,9 +436,7 @@
                             'title' => 'Bộ phận kỹ thuật',
                             'icon' => $stackIcon,
                             'permission' => 'technical-requests.view',
-                            'children' => [
-                                'HĐ Pháp lý & Hồ sơ MT',
-                            ],
+                            'children' => ['HĐ Pháp lý & Hồ sơ MT'],
                         ],
                         [
                             'title' => 'Bộ phận Marketing',
@@ -618,130 +658,197 @@
                                 </li>
                             @endif
                             <li class="app-sidebar-menu-item">
-                                @if(isset($menu['href']))
-                                <a href="{{ $menu['href'] }}"
-                                    class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
-                                    <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
-                                    <span class="menu-title flex-grow-1">{{ $menu['title'] }}</span>
-                                </a>
+                                @if (isset($menu['href']))
+                                    <a href="{{ $menu['href'] }}"
+                                        class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
+                                        <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
+                                        <span class="menu-title flex-grow-1">{{ $menu['title'] }}</span>
+                                    </a>
                                 @else
-                                <a href="javascript:void(0)"
-                                    class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
-                                    <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
-                                    <span class="menu-title flex-grow-1">
-                                        {{ $menu['title'] }}
-                                        <span class="menu-arrow">{!! $chevronIcon !!}</span>
-                                    </span>
-                                </a>
+                                    <a href="javascript:void(0)"
+                                        class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
+                                        <span class="menu-icon flex-shrink-0">{!! $menu['icon'] !!}</span>
+                                        <span class="menu-title flex-grow-1">
+                                            {{ $menu['title'] }}
+                                            <span class="menu-arrow">{!! $chevronIcon !!}</span>
+                                        </span>
+                                    </a>
 
-                                <ul class="app-sidebar-submenu"
-                                    style="display: {{ $menu['title'] === $activeGroup ? 'block' : 'none' }};">
-                                    @foreach ($menu['children'] as $child)
-                                        @continue(
-                                            $child === 'Bảng theo dõi báo giá' &&
-                                            !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc'])
-                                        )
-                                        @continue(
-                                            $child === 'Đăng ký mục tiêu doanh số' &&
-                                            !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh'])
-                                        )
+                                    <ul class="app-sidebar-submenu"
+                                        style="display: {{ $menu['title'] === $activeGroup ? 'block' : 'none' }};">
+                                        @foreach ($menu['children'] as $child)
+                                            @continue($child === 'Bảng theo dõi báo giá' && !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc']))
+                                            @continue($child === 'Đăng ký mục tiêu doanh số' && !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh']))
 
-                                        @php
-                                            $childActive = $menu['title'] === $activeGroup && $child === $activeChild;
-                                            $childIcon =
-                                                $menu['title'] === 'Nội bộ'
-                                                    ? $fileIcon
-                                                    : ($menu['section'] === 'BÁO CÁO & THỐNG KÊ'
-                                                        ? $reportNodeIcon
-                                                        : $docIcon);
+                                            @php
+                                                $childActive =
+                                                    $menu['title'] === $activeGroup && $child === $activeChild;
+                                                $childIcon =
+                                                    $menu['title'] === 'Nội bộ'
+                                                        ? $fileIcon
+                                                        : ($menu['section'] === 'BÁO CÁO & THỐNG KÊ'
+                                                            ? $reportNodeIcon
+                                                            : $docIcon);
 
-                                            $childLabel = $child;
-                                            if (in_array($menu['title'], ['Quản lý hợp đồng', 'Bộ phận tư vấn', 'Bộ phận kỹ thuật'])) {
-                                                $childLabel = match ($child) {
-                                                    'HĐ Chất thải & Tiếng ồn' => 'Chất thải & Tiếng ồn',
-                                                    'HĐ Pháp lý & Hồ sơ MT'  => 'Hồ sơ môi trường',
-                                                    'HĐ Kỹ thuật & Ứng phó SC' => 'Kỹ thuật & Ứng phó SC',
-                                                    'HĐ NC & CĐ Công nghệ'   => 'NC & CĐ Công nghệ',
-                                                    'HĐ TV & BC PTBV'         => 'TV & BC PTBV',
-                                                    'HĐ Phát thải & Năng lượng' => 'Phát thải & Năng lượng',
-                                                    default => $child,
-                                                };
-                                            }
+                                                $childLabel = $child;
+                                                if (
+                                                    in_array($menu['title'], [
+                                                        'Quản lý hợp đồng',
+                                                        'Bộ phận tư vấn',
+                                                        'Bộ phận kỹ thuật',
+                                                    ])
+                                                ) {
+                                                    $childLabel = match ($child) {
+                                                        'HĐ Chất thải & Tiếng ồn' => 'Chất thải & Tiếng ồn',
+                                                        'HĐ Pháp lý & Hồ sơ MT' => 'Hồ sơ môi trường',
+                                                        'HĐ Kỹ thuật & Ứng phó SC' => 'Kỹ thuật & Ứng phó SC',
+                                                        'HĐ NC & CĐ Công nghệ' => 'NC & CĐ Công nghệ',
+                                                        'HĐ TV & BC PTBV' => 'TV & BC PTBV',
+                                                        'HĐ Phát thải & Năng lượng' => 'Phát thải & Năng lượng',
+                                                        default => $child,
+                                                    };
+                                                }
 
-                                            $href = 'javascript:void(0)';
-                                            if ($menu['title'] === 'Nội bộ' && $child === 'Quy định') {
-                                                $href = route('app.internal-docs.index');
-                                            } elseif ($menu['title'] === 'Nội bộ' && $child === 'Phần mềm') {
-                                                $href = route('app.internal-software.index');
-                                            } elseif ($child === 'HĐ Chất thải & Tiếng ồn') {
-                                                $href = route('app.contracts.waste.index');
-                                            } elseif ($child === 'HĐ Pháp lý & Hồ sơ MT') {
-                                                $href = route('app.contracts.consulting.index');
-                                            } elseif ($child === 'HĐ Kỹ thuật & Ứng phó SC') {
-                                                $href = route('app.contracts.project.index');
-                                            } elseif ($child === 'HĐ NC & CĐ Công nghệ') {
-                                                $href = route('app.contracts.commercial.index');
-                                            } elseif ($child === 'HĐ TV & BC PTBV') {
-                                                $href = route('app.contracts.sustainability.index');
-                                            } elseif ($child === 'HĐ Phát thải & Năng lượng') {
-                                                $href = route('app.contracts.energy.index');
-                                            } elseif ($menu['title'] === 'Hoa hồng' && $child === 'Yêu cầu chi hoa hồng') {
-                                                $href = route('app.commissions.index');
-                                            } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số tái ký') {
-                                                $href = route('app.sales.renewal.index');
-                                            } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Doanh số theo tiến độ') {
-                                                $href = route('app.sales.progressive.index');
-                                            } elseif ($menu['title'] === 'Bộ phận kinh doanh' && $child === 'Đăng ký mục tiêu doanh số') {
-                                                $href = route('app.sales.target-registration');
-                                            } elseif ($menu['title'] === 'Chuyển phát thư' && $child === 'Quản lý chuyển phát') {
-                                                $href = route('app.postal-deliveries.index');
-                                            } elseif ($child === 'Bảng theo dõi báo giá') {
-                                                $href = route('app.quotation-tracking.index');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết doanh số') {
-                                                $href = route('app.reports.sales.summary');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cam kết') {
-                                                $href = route('app.reports.sales.target');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng tổng kết') {
-                                                $href = route('app.reports.sales.overview');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng doanh số cá nhân') {
-                                                $href = route('app.reports.sales.personal');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi tái ký cá nhân') {
-                                                $href = route('app.reports.sales.renewal-personal');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Bảng theo dõi doanh số') {
-                                                $href = route('app.reports.sales.tracking');
-                                            } elseif ($menu['title'] === 'Báo cáo Kinh doanh' && $child === 'Doanh số thực thu') {
-                                                $href = route('app.reports.sales.revenue');
-                                            } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Chất thải & Tiếng ồn') {
-                                                $href = route('app.reports.consulting-work.waste');
-                                            } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Pháp lý & Hồ sơ MT') {
-                                                $href = route('app.reports.consulting-work.consulting');
-                                            } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Kỹ thuật & Ứng phó SC') {
-                                                $href = route('app.reports.consulting-work.project');
-                                            } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'NC & CĐ Công nghệ') {
-                                                $href = route('app.reports.consulting-work.commercial');
-                                            } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'TV & BC PTBV') {
-                                                $href = route('app.reports.consulting-work.sustainability');
-                                            } elseif ($menu['title'] === 'Báo cáo Tư vấn' && $child === 'Phát thải & Năng lượng') {
-                                                $href = route('app.reports.consulting-work.energy');
-                                            } elseif ($menu['title'] === 'Báo cáo Kỹ thuật' && $child === 'Hồ sơ môi trường') {
-                                                $href = route('app.reports.technical.consulting');
-                                            } elseif ($menu['title'] === 'Bộ phận Marketing' && $child === 'Báo cáo hàng ngày') {
-                                                $href = route('app.marketing.daily-report.index');
-                                            } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn Bảo Châu') {
-                                                $href = route('app.invoices.bao-chau');
-                                            } elseif ($menu['title'] === 'Quản lý hóa đơn' && $child === 'Hóa đơn nhà thầu phụ') {
-                                                $href = route('app.invoices.handlers');
-                                            }
-                                        @endphp
-                                        <li>
-                                            <a href="{{ $href }}"
-                                                class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
-                                                <span class="menu-icon flex-shrink-0">{!! $childIcon !!}</span>
-                                                <span class="menu-title flex-grow-1">{{ $childLabel }}</span>
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                                $href = 'javascript:void(0)';
+                                                if ($menu['title'] === 'Nội bộ' && $child === 'Quy định') {
+                                                    $href = route('app.internal-docs.index');
+                                                } elseif ($menu['title'] === 'Nội bộ' && $child === 'Phần mềm') {
+                                                    $href = route('app.internal-software.index');
+                                                } elseif ($child === 'HĐ Chất thải & Tiếng ồn') {
+                                                    $href = route('app.contracts.waste.index');
+                                                } elseif ($child === 'HĐ Pháp lý & Hồ sơ MT') {
+                                                    $href = route('app.contracts.consulting.index');
+                                                } elseif ($child === 'HĐ Kỹ thuật & Ứng phó SC') {
+                                                    $href = route('app.contracts.project.index');
+                                                } elseif ($child === 'HĐ NC & CĐ Công nghệ') {
+                                                    $href = route('app.contracts.commercial.index');
+                                                } elseif ($child === 'HĐ TV & BC PTBV') {
+                                                    $href = route('app.contracts.sustainability.index');
+                                                } elseif ($child === 'HĐ Phát thải & Năng lượng') {
+                                                    $href = route('app.contracts.energy.index');
+                                                } elseif (
+                                                    $menu['title'] === 'Hoa hồng' &&
+                                                    $child === 'Yêu cầu chi hoa hồng'
+                                                ) {
+                                                    $href = route('app.commissions.index');
+                                                } elseif (
+                                                    $menu['title'] === 'Bộ phận kinh doanh' &&
+                                                    $child === 'Doanh số tái ký'
+                                                ) {
+                                                    $href = route('app.sales.renewal.index');
+                                                } elseif (
+                                                    $menu['title'] === 'Bộ phận kinh doanh' &&
+                                                    $child === 'Doanh số theo tiến độ'
+                                                ) {
+                                                    $href = route('app.sales.progressive.index');
+                                                } elseif (
+                                                    $menu['title'] === 'Bộ phận kinh doanh' &&
+                                                    $child === 'Đăng ký mục tiêu doanh số'
+                                                ) {
+                                                    $href = route('app.sales.target-registration');
+                                                } elseif (
+                                                    $menu['title'] === 'Chuyển phát thư' &&
+                                                    $child === 'Quản lý chuyển phát'
+                                                ) {
+                                                    $href = route('app.postal-deliveries.index');
+                                                } elseif ($child === 'Bảng theo dõi báo giá') {
+                                                    $href = route('app.quotation-tracking.index');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Bảng tổng kết doanh số'
+                                                ) {
+                                                    $href = route('app.reports.sales.summary');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Bảng doanh số cam kết'
+                                                ) {
+                                                    $href = route('app.reports.sales.target');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Bảng tổng kết'
+                                                ) {
+                                                    $href = route('app.reports.sales.overview');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Bảng doanh số cá nhân'
+                                                ) {
+                                                    $href = route('app.reports.sales.personal');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Bảng theo dõi tái ký cá nhân'
+                                                ) {
+                                                    $href = route('app.reports.sales.renewal-personal');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Bảng theo dõi doanh số'
+                                                ) {
+                                                    $href = route('app.reports.sales.tracking');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
+                                                    $child === 'Doanh số thực thu'
+                                                ) {
+                                                    $href = route('app.reports.sales.revenue');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                    $child === 'Chất thải & Tiếng ồn'
+                                                ) {
+                                                    $href = route('app.reports.consulting-work.waste');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                    $child === 'Pháp lý & Hồ sơ MT'
+                                                ) {
+                                                    $href = route('app.reports.consulting-work.consulting');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                    $child === 'Kỹ thuật & Ứng phó SC'
+                                                ) {
+                                                    $href = route('app.reports.consulting-work.project');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                    $child === 'NC & CĐ Công nghệ'
+                                                ) {
+                                                    $href = route('app.reports.consulting-work.commercial');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                    $child === 'TV & BC PTBV'
+                                                ) {
+                                                    $href = route('app.reports.consulting-work.sustainability');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Tư vấn' &&
+                                                    $child === 'Phát thải & Năng lượng'
+                                                ) {
+                                                    $href = route('app.reports.consulting-work.energy');
+                                                } elseif (
+                                                    $menu['title'] === 'Báo cáo Kỹ thuật' &&
+                                                    $child === 'Hồ sơ môi trường'
+                                                ) {
+                                                    $href = route('app.reports.technical.consulting');
+                                                } elseif (
+                                                    $menu['title'] === 'Bộ phận Marketing' &&
+                                                    $child === 'Báo cáo hàng ngày'
+                                                ) {
+                                                    $href = route('app.marketing.daily-report.index');
+                                                } elseif (
+                                                    $menu['title'] === 'Quản lý hóa đơn' &&
+                                                    $child === 'Hóa đơn Bảo Châu'
+                                                ) {
+                                                    $href = route('app.invoices.bao-chau');
+                                                } elseif (
+                                                    $menu['title'] === 'Quản lý hóa đơn' &&
+                                                    $child === 'Hóa đơn nhà thầu phụ'
+                                                ) {
+                                                    $href = route('app.invoices.handlers');
+                                                }
+                                            @endphp
+                                            <li>
+                                                <a href="{{ $href }}"
+                                                    class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
+                                                    <span class="menu-icon flex-shrink-0">{!! $childIcon !!}</span>
+                                                    <span class="menu-title flex-grow-1">{{ $childLabel }}</span>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 @endif
                             </li>
                         @endcan
@@ -771,15 +878,25 @@
                             'hcns' => 'Hành chính NS',
                         ];
 
-                        $rolePriority = ['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'hcns', 'ke-toan', 'marketing', 'tu-van', 'ky-thuat', 'kinh-doanh'];
-                        $primaryRole = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
+                        $rolePriority = [
+                            'it',
+                            'giam-doc',
+                            'quan-ly',
+                            'tp-kinh-doanh',
+                            'hcns',
+                            'ke-toan',
+                            'marketing',
+                            'tu-van',
+                            'ky-thuat',
+                            'kinh-doanh',
+                        ];
+                        $primaryRole = collect($rolePriority)->first(fn($role) => $currentUser?->hasRole($role));
 
                         if (!$primaryRole) {
                             $primaryRole = $currentUser?->roles?->first()?->name;
                         }
                     @endphp
-                    <span
-                        class="text-muted">{{ $roleLabels[$primaryRole] ?? 'Nhân viên' }}</span>
+                    <span class="text-muted">{{ $roleLabels[$primaryRole] ?? 'Nhân viên' }}</span>
                 </div>
             </div>
         </div>
