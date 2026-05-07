@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role as RoleEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -108,7 +109,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // IT — Quản trị hệ thống
         // ------------------------------------------------
-        Role::findOrCreate('it')->syncPermissions([
+        Role::findOrCreate(RoleEnum::IT->value)->syncPermissions([
             // Quản trị hệ thống
             'users.view', 'users.create', 'users.edit', 'users.delete',
             'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
@@ -130,7 +131,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // GĐ (Giám đốc) — Xem mọi thứ, không quản trị hệ thống
         // ------------------------------------------------
-        Role::findOrCreate('giam-doc')->syncPermissions(
+        Role::findOrCreate(RoleEnum::GIAM_DOC->value)->syncPermissions(
             Permission::whereNotIn('name', [
                 'users.view', 'users.create', 'users.edit', 'users.delete',
                 'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
@@ -146,7 +147,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // TPKD (Trưởng phòng KD) — Quản lý KD đầy đủ
         // ------------------------------------------------
-        Role::findOrCreate('tp-kinh-doanh')->syncPermissions([
+        Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value)->syncPermissions([
             // Dữ liệu nền
             'customers.view', 'customers.create', 'customers.edit',
             'handlers.view', 'handlers.create', 'handlers.edit',
@@ -181,7 +182,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // KD (Nhân viên Kinh doanh)
         // ------------------------------------------------
-        Role::findOrCreate('kinh-doanh')->syncPermissions([
+        Role::findOrCreate(RoleEnum::KINH_DOANH->value)->syncPermissions([
             // Dữ liệu nền
             'customers.view', 'customers.create', 'customers.edit',
             'handlers.view',
@@ -214,7 +215,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // TV (Tư vấn / CSKH)
         // ------------------------------------------------
-        Role::findOrCreate('tu-van')->syncPermissions([
+        Role::findOrCreate(RoleEnum::TU_VAN->value)->syncPermissions([
             // Dữ liệu nền: xem khách hàng (CSKH cần)
             'customers.view',
             'handlers.view',
@@ -242,7 +243,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // KT (Kỹ thuật)
         // ------------------------------------------------
-        Role::findOrCreate('ky-thuat')->syncPermissions([
+        Role::findOrCreate(RoleEnum::KY_THUAT->value)->syncPermissions([
             // Hợp đồng: chỉ xem HĐ Pháp lý & Hồ sơ MT
             'contracts-consulting.view',
             // Vận hành kỹ thuật: CRUD
@@ -260,7 +261,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // MKT (Marketing)
         // ------------------------------------------------
-        Role::findOrCreate('marketing')->syncPermissions([
+        Role::findOrCreate(RoleEnum::MARKETING->value)->syncPermissions([
             // Bài viết / nội dung: CRUD
             'articles.view', 'articles.create', 'articles.edit', 'articles.delete',
             // Thống kê & Báo cáo
@@ -276,7 +277,7 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // KeToan (Kế toán)
         // ------------------------------------------------
-        Role::findOrCreate('ke-toan')->syncPermissions([
+        Role::findOrCreate(RoleEnum::KE_TOAN->value)->syncPermissions([
             // Dữ liệu nền: xem để tra cứu hóa đơn
             'customers.view',
             'handlers.view',
@@ -306,9 +307,9 @@ class PermissionsSeeder extends Seeder
         // ------------------------------------------------
         // Backward compat: quan-ly (role cũ) = giống giam-doc
         // ------------------------------------------------
-        if ($quanLy = Role::where('name', 'quan-ly')->first()) {
+        if ($quanLy = Role::where('name', RoleEnum::QUAN_LY->value)->first()) {
             $quanLy->syncPermissions(
-                Role::findByName('giam-doc')->permissions->pluck('name')->toArray()
+                Role::findByName(RoleEnum::GIAM_DOC->value)->permissions->pluck('name')->toArray()
             );
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Marketing;
 
+use App\Enums\Role;
 use App\Models\Quotation;
 use App\Models\SalesTarget;
 use Livewire\Component;
@@ -17,7 +18,7 @@ class MarketingTargetReport extends Component
     {
         $this->year = now()->year;
         $this->years = range(now()->year, now()->year - 4);
-        $this->canEdit = auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly']);
+        $this->canEdit = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value]);
         $this->loadTargets();
     }
 

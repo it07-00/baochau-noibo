@@ -2,30 +2,30 @@
     $currentUser = auth()->user();
 
     $roleLabels = [
-        'it'            => 'IT / Quản trị',
-        'giam-doc'      => 'Giám đốc',
-        'tp-kinh-doanh' => 'Trưởng phòng KD',
-        'quan-ly'       => 'Quản lý',
-        'kinh-doanh'    => 'Nhân viên KD',
-        'tu-van'        => 'Tư vấn',
-        'ky-thuat'      => 'Kỹ thuật',
-        'marketing'     => 'Marketing',
-        'ke-toan'       => 'Kế toán',
+        \App\Enums\Role::IT->value            => 'IT / Quản trị',
+        \App\Enums\Role::GIAM_DOC->value      => 'Giám đốc',
+        \App\Enums\Role::TP_KINH_DOANH->value => 'Trưởng phòng KD',
+        \App\Enums\Role::QUAN_LY->value       => 'Quản lý',
+        \App\Enums\Role::KINH_DOANH->value    => 'Nhân viên KD',
+        \App\Enums\Role::TU_VAN->value        => 'Tư vấn',
+        \App\Enums\Role::KY_THUAT->value      => 'Kỹ thuật',
+        \App\Enums\Role::MARKETING->value     => 'Marketing',
+        \App\Enums\Role::KE_TOAN->value       => 'Kế toán',
     ];
 
     $roleColors = [
-        'it'            => '#6366f1',
-        'giam-doc'      => '#f59e0b',
-        'tp-kinh-doanh' => '#3b82f6',
-        'quan-ly'       => '#8b5cf6',
-        'kinh-doanh'    => '#10b981',
-        'tu-van'        => '#06b6d4',
-        'ky-thuat'      => '#f97316',
-        'marketing'     => '#ec4899',
-        'ke-toan'       => '#84cc16',
+        \App\Enums\Role::IT->value            => '#6366f1',
+        \App\Enums\Role::GIAM_DOC->value      => '#f59e0b',
+        \App\Enums\Role::TP_KINH_DOANH->value => '#3b82f6',
+        \App\Enums\Role::QUAN_LY->value       => '#8b5cf6',
+        \App\Enums\Role::KINH_DOANH->value    => '#10b981',
+        \App\Enums\Role::TU_VAN->value        => '#06b6d4',
+        \App\Enums\Role::KY_THUAT->value      => '#f97316',
+        \App\Enums\Role::MARKETING->value     => '#ec4899',
+        \App\Enums\Role::KE_TOAN->value       => '#84cc16',
     ];
 
-    $rolePriority = ['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'ke-toan', 'marketing', 'tu-van', 'ky-thuat', 'kinh-doanh'];
+    $rolePriority = [\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::KE_TOAN->value, \App\Enums\Role::MARKETING->value, \App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value, \App\Enums\Role::KINH_DOANH->value];
     $primaryRole  = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
     if (!$primaryRole) {
         $primaryRole = $currentUser?->roles?->first()?->name;

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\Role as RoleEnum;
 use App\Models\ContractResearch;
 use App\Models\ContractLegal;
 use App\Models\ContractEmission;
@@ -79,7 +80,7 @@ class StatisticsBoard extends Component
 
     public function clearCache()
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
 
         try {
             Artisan::call('optimize:clear');
@@ -92,7 +93,7 @@ class StatisticsBoard extends Component
 
     public function clearLogs()
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
 
         try {
             $logFile = storage_path('logs/laravel.log');
@@ -111,7 +112,7 @@ class StatisticsBoard extends Component
 
     public function loadEnv()
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
 
         $path = base_path('.env');
         if (!file_exists($path)) return;
@@ -129,7 +130,7 @@ class StatisticsBoard extends Component
 
     public function saveEnv()
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
 
         try {
             if (empty($this->envData) || !isset($this->envData['APP_KEY'])) {
@@ -372,9 +373,9 @@ class StatisticsBoard extends Component
             $dailyReportReminder = !$hasReportToday;
         }
 
-        $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
-        $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van', 'tp-kinh-doanh']);
-        $canSeeFinance    = !$currentUser->hasAnyRole(['tu-van', 'ky-thuat']);
+        $canSeeTechnical  = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::KY_THUAT->value]);
+        $canSeeConsulting = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TU_VAN->value, RoleEnum::TP_KINH_DOANH->value]);
+        $canSeeFinance    = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value]);
 
         // ── Insight theo tháng: báo giá vs ký hợp đồng theo dịch vụ/khu vực ──
         $insightMonth = $selectedMonth ?? (int) now()->month;
@@ -528,7 +529,7 @@ class StatisticsBoard extends Component
         }
 
         // ── IT Admin Stats ───────────────────────────
-        $isIT = $currentUser->hasRole('it');
+        $isIT = $currentUser->hasRole(RoleEnum::IT->value);
         $itStats = [];
         $envData = [];
         $itStats = $this->itStats;

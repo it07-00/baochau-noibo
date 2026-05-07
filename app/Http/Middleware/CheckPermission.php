@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Enums\Role;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckPermission
@@ -22,7 +23,7 @@ class CheckPermission
         }
 
         // Super Admin (role: it) → toàn quyền
-        if ($user->hasRole('it')) {
+        if ($user->hasRole(Role::IT->value)) {
             return $next($request);
         }
 

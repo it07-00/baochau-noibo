@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Roles;
 
+use App\Enums\Role as RoleEnum;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
@@ -54,15 +55,15 @@ class RoleManager extends Component
         // Map names for display if needed
         $roles->getCollection()->transform(function($role) {
             $role->display_name = match($role->name) {
-                'it' => 'IT / Quản trị',
-                'giam-doc' => 'Giám đốc',
-                'tp-kinh-doanh' => 'Trưởng phòng KD',
-                'quan-ly' => 'Quản lý (cũ)',
-                'kinh-doanh' => 'Nhân viên KD',
-                'ke-toan' => 'Kế toán',
-                'tu-van' => 'Tư vấn',
-                'ky-thuat' => 'Kỹ thuật',
-                'marketing' => 'Marketing',
+                RoleEnum::IT->value             => 'IT / Quản trị',
+                RoleEnum::GIAM_DOC->value       => 'Giám đốc',
+                RoleEnum::TP_KINH_DOANH->value  => 'Trưởng phòng KD',
+                RoleEnum::QUAN_LY->value        => 'Quản lý (cũ)',
+                RoleEnum::KINH_DOANH->value     => 'Nhân viên KD',
+                RoleEnum::KE_TOAN->value        => 'Kế toán',
+                RoleEnum::TU_VAN->value         => 'Tư vấn',
+                RoleEnum::KY_THUAT->value       => 'Kỹ thuật',
+                RoleEnum::MARKETING->value      => 'Marketing',
                 default => ucfirst($role->name)
             };
             return $role;

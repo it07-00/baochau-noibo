@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
+use App\Enums\Role;
 use App\Models\SalesRenewal;
 use App\Models\User;
 use Livewire\Component;
@@ -15,7 +16,7 @@ class PersonalRenewalReport extends Component
     {
         $this->year = (int) now()->format('Y');
 
-        if (auth()->user()->hasRole('kinh-doanh')) {
+        if (auth()->user()->hasRole(Role::KINH_DOANH->value)) {
             $this->filter_staff = (string) auth()->id();
         }
     }
@@ -23,7 +24,7 @@ class PersonalRenewalReport extends Component
     public function render()
     {
         $userId = $this->filter_staff;
-        if (! $userId && ! auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly'])) {
+        if (! $userId && ! auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value])) {
             $userId = (string) auth()->id();
         }
 

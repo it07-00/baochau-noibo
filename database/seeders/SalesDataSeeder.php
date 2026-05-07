@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\SalesRenewal;
 use App\Models\SalesProgressive;
 use App\Models\User;
@@ -11,7 +12,7 @@ class SalesDataSeeder extends Seeder
 {
     public function run(): void
     {
-        $kdUsers = User::whereHas('roles', fn($q) => $q->whereIn('name', ['kinh-doanh', 'tp-kinh-doanh']))->pluck('id')->toArray();
+        $kdUsers = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->pluck('id')->toArray();
         if (empty($kdUsers)) return;
 
         // Renewal Sales — 8 bản ghi

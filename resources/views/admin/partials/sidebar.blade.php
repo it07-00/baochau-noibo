@@ -5,7 +5,7 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ $currentUser->hasAnyRole(['it', 'giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}"
+            <a href="{{ $currentUser->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]) ? route('app.dashboard') : route('app.home') }}"
                 class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment"
                     style="height: 40px; width: auto;">
@@ -32,10 +32,10 @@
                     </span>
                 </li>
 
-                @unless ($currentUser->hasRole('it'))
+                @unless ($currentUser->hasRole(\App\Enums\Role::IT->value))
                     <li class="app-sidebar-menu-item">
-                        <a href="{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? route('app.dashboard') : route('app.home') }}"
-                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || ($currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
+                        <a href="{{ $currentUser->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]) ? route('app.dashboard') : route('app.home') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || ($currentUser->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
                             <span class="menu-icon flex-shrink-0">
                                 <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -44,12 +44,12 @@
                                 </svg>
                             </span>
                             <span
-                                class="menu-title flex-grow-1">{{ $currentUser->hasAnyRole(['giam-doc', 'admin', 'quan-ly']) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
+                                class="menu-title flex-grow-1">{{ $currentUser->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
                         </a>
                     </li>
                 @endunless
 
-                @unless ($currentUser->hasAnyRole(['it', 'tu-van', 'ky-thuat', 'giam-doc', 'admin', 'quan-ly']))
+                @unless ($currentUser->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.dashboard') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active' : '' }}">
@@ -92,7 +92,7 @@
                 </li>
 
                 {{-- ── QUẢN TRỊ ─────────────────────────────────────── --}}
-                @if ($currentUser->hasRole('it') || $currentUser->canany(['users.view', 'roles.view', 'activity-log.view']))
+                @if ($currentUser->hasRole(\App\Enums\Role::IT->value) || $currentUser->canany(['users.view', 'roles.view', 'activity-log.view']))
                     <li class="app-sidebar-menu-heading">
                         <span>
                             <span class="app-sidebar-menu-heading-line"></span>
@@ -100,7 +100,7 @@
                         </span>
                     </li>
 
-                    @if ($currentUser->hasRole('it'))
+                    @if ($currentUser->hasRole(\App\Enums\Role::IT->value))
                         <li class="app-sidebar-menu-item">
                             <a href="{{ route('app.dashboard') }}"
                                 class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active menu-current' : '' }}">
@@ -614,8 +614,8 @@
                     }
 
                     // TV/KT: redirect activeGroup to their own section when on contract pages
-                    if ($activeGroup === 'Quản lý hợp đồng' && $currentUser->hasAnyRole(['tu-van', 'ky-thuat'])) {
-                        $activeGroup = $currentUser->hasRole('tu-van') ? 'Bộ phận tư vấn' : 'Bộ phận kỹ thuật';
+                    if ($activeGroup === 'Quản lý hợp đồng' && $currentUser->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value])) {
+                        $activeGroup = $currentUser->hasRole(\App\Enums\Role::TU_VAN->value) ? 'Bộ phận tư vấn' : 'Bộ phận kỹ thuật';
                     }
 
                     // Gắn nhãn section để render tự động heading
@@ -626,7 +626,7 @@
                     );
                 @endphp
 
-                @if ($currentUser->hasRole('it'))
+                @if ($currentUser->hasRole(\App\Enums\Role::IT->value))
                     @can('daily-reports.view')
                         <li class="app-sidebar-menu-heading">
                             <span>
@@ -644,7 +644,7 @@
                     @endcan
                 @endif
 
-                @unless ($currentUser->hasRole('it'))
+                @unless ($currentUser->hasRole(\App\Enums\Role::IT->value))
                     @php $currentSection = null; @endphp
                     @foreach ($allMenus as $menu)
                         @can($menu['permission'])
@@ -677,8 +677,8 @@
                                     <ul class="app-sidebar-submenu"
                                         style="display: {{ $menu['title'] === $activeGroup ? 'block' : 'none' }};">
                                         @foreach ($menu['children'] as $child)
-                                            @continue($child === 'Bảng theo dõi báo giá' && !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh', 'giam-doc']))
-                                            @continue($child === 'Đăng ký mục tiêu doanh số' && !$currentUser->hasAnyRole(['kinh-doanh', 'tp-kinh-doanh']))
+                                            @continue($child === 'Bảng theo dõi báo giá' && !$currentUser->hasAnyRole([\App\Enums\Role::KINH_DOANH->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
+                                            @continue($child === 'Đăng ký mục tiêu doanh số' && !$currentUser->hasAnyRole([\App\Enums\Role::KINH_DOANH->value, \App\Enums\Role::TP_KINH_DOANH->value]))
 
                                             @php
                                                 $childActive =
@@ -866,29 +866,29 @@
                     <h6 class="mb-0">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
                     @php
                         $roleLabels = [
-                            'it' => 'IT / Quản trị',
-                            'giam-doc' => 'Giám đốc',
-                            'tp-kinh-doanh' => 'Trưởng phòng KD',
-                            'kinh-doanh' => 'Nhân viên KD',
-                            'tu-van' => 'Tư vấn',
-                            'ky-thuat' => 'Kỹ thuật',
-                            'marketing' => 'Marketing',
-                            'ke-toan' => 'Kế toán',
-                            'quan-ly' => 'Quản lý',
+                            \App\Enums\Role::IT->value            => 'IT / Quản trị',
+                            \App\Enums\Role::GIAM_DOC->value      => 'Giám đốc',
+                            \App\Enums\Role::TP_KINH_DOANH->value => 'Trưởng phòng KD',
+                            \App\Enums\Role::KINH_DOANH->value    => 'Nhân viên KD',
+                            \App\Enums\Role::TU_VAN->value        => 'Tư vấn',
+                            \App\Enums\Role::KY_THUAT->value      => 'Kỹ thuật',
+                            \App\Enums\Role::MARKETING->value     => 'Marketing',
+                            \App\Enums\Role::KE_TOAN->value       => 'Kế toán',
+                            \App\Enums\Role::QUAN_LY->value       => 'Quản lý',
                             'hcns' => 'Hành chính NS',
                         ];
 
                         $rolePriority = [
-                            'it',
-                            'giam-doc',
-                            'quan-ly',
-                            'tp-kinh-doanh',
+                            \App\Enums\Role::IT->value,
+                            \App\Enums\Role::GIAM_DOC->value,
+                            \App\Enums\Role::QUAN_LY->value,
+                            \App\Enums\Role::TP_KINH_DOANH->value,
                             'hcns',
-                            'ke-toan',
-                            'marketing',
-                            'tu-van',
-                            'ky-thuat',
-                            'kinh-doanh',
+                            \App\Enums\Role::KE_TOAN->value,
+                            \App\Enums\Role::MARKETING->value,
+                            \App\Enums\Role::TU_VAN->value,
+                            \App\Enums\Role::KY_THUAT->value,
+                            \App\Enums\Role::KINH_DOANH->value,
                         ];
                         $primaryRole = collect($rolePriority)->first(fn($role) => $currentUser?->hasRole($role));
 

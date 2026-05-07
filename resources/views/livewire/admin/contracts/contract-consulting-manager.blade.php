@@ -11,7 +11,7 @@
             </nav>
         </div>
         <div class="d-flex gap-2 ms-auto justify-content-end">
-            @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                 <button wire:click="create" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
                 </button>
@@ -35,7 +35,7 @@
             auth()->user()->can('contracts-consulting.delete') &&
             !auth()
                 ->user()
-                ->hasAnyRole(['tu-van', 'ky-thuat']);
+                ->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]);
     @endphp
 
     <!-- Filter Card -->
@@ -50,7 +50,7 @@
         </div>
         <div class="collapse show" id="filterBodyConsulting">
             <div class="card-body px-4 pt-3 pb-2">
-                @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                     {{-- ── Hàng 1: Ngày + Tỉnh thành + Cờ boolean ── --}}
                     <div class="row g-2 mb-2">
                         <div class="col-md-3">
@@ -159,7 +159,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
+                        @if (auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
                             <div class="col-md-2">
                                 <label class="custom-filter-label fw-semibold d-block mb-1">Nhân viên KD</label>
                                 <select class="form-select form-control-xs" wire:model.live="filter.staff_id">
@@ -261,7 +261,7 @@
                             <i class="bi bi-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
                         </button>
                     @endif
-                    @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                    @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                         <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
                             class="btn btn-success btn-sm px-3 btn-filter">
                             <span wire:loading wire:target="exportExcel"
@@ -290,7 +290,7 @@
                         <th class="text-center" style="width:45px;">STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
-                        @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                        @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                             <th class="text-center">Giá trị hợp đồng</th>
                             <th class="text-center">Hoa hồng</th>
                             <th class="text-center">Doanh số</th>
@@ -306,7 +306,7 @@
                         <tr class="border-bottom border-light" wire:key="consulting-row-{{ $doc->id }}">
                             @if ($canBulkDelete)
                                 <td class="text-center">
-                                    @if (!auth()->user()->hasRole('tp-kinh-doanh') || $doc->staff_id === auth()->id())
+                                    @if (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) || $doc->staff_id === auth()->id())
                                         <input class="form-check-input" type="checkbox"
                                             wire:model.live="selectedDocIds" value="{{ $doc->id }}">
                                     @endif
@@ -336,7 +336,7 @@
                                     <span class=" text-muted">{{ $doc->customer?->address }}</span>
                                 </div>
                             </td>
-                            @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                 <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
                                 </td>
@@ -382,8 +382,8 @@
                                         $canUpdateStatus =
                                             !auth()
                                                 ->user()
-                                                ->hasAnyRole(['tu-van', 'ky-thuat']) &&
-                                            (!auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                ->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]) &&
+                                            (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
                                                 $doc->staff_id === auth()->id());
                                     @endphp
 
@@ -460,13 +460,13 @@
                                         wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                         <i class="bi bi-eye fs-5"></i>
                                     </button>
-                                    @if (auth()->user()->hasAnyRole(['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))
+                                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::IT->value]))
                                         <button class="btn btn-sm p-0 text-success"
                                             wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                             <i class="bi bi-person-check fs-5"></i>
                                         </button>
                                     @endif
-                                    @if (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                         <button class="btn btn-sm p-0 text-info"
                                             wire:click="openWorkflow({{ $doc->id }})" title="Cập nhật tiến độ">
                                             <i class="bi bi-diagram-3 fs-5"></i>
@@ -475,7 +475,7 @@
                                     @can('contracts-consulting.edit')
                                         @php
                                             $canEditDelete =
-                                                !auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                !auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
                                                 $doc->staff_id === auth()->id();
                                         @endphp
                                         @if ($canEditDelete)
@@ -492,7 +492,7 @@
                                     @can('contracts-consulting.delete')
                                         @php
                                             $canDelete =
-                                                !auth()->user()->hasRole('tp-kinh-doanh') ||
+                                                !auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
                                                 $doc->staff_id === auth()->id();
                                         @endphp
                                         @if ($canDelete)
@@ -508,7 +508,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])? 5: 8) + ($canBulkDelete ? 1 : 0) + 1 }}"
+                            <td colspan="{{ (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value])? 5: 8) + ($canBulkDelete ? 1 : 0) + 1 }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
@@ -546,7 +546,7 @@
                                     <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
                                 </button>
                             </li>
-                            @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                 <li class="nav-item">
                                     <button class="nav-link fw-semibold" data-bs-toggle="tab"
                                         data-bs-target="#tab-payment-consulting-{{ $selectedDoc->id }}" type="button">
@@ -618,7 +618,7 @@
                                             <th class="bg-light">Loại dịch vụ</th>
                                             <td>{{ $selectedDoc->loai_dich_vu ?: '-' }}</td>
                                         </tr>
-                                        @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                        @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                             <tr>
                                                 <th class="bg-light">Giá trị hợp đồng</th>
                                                 <td class="text-danger fw-bold">{{ number_format($selectedDoc->value) }}đ
@@ -705,7 +705,7 @@
                                                     tiến độ nào.</td>
                                             </tr>
                                         @endif
-                                        @if (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                                        @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                             <tr>
                                                 <td colspan="2" class="px-4 pb-3 pt-2">
                                                     <textarea class="form-control form-control-sm mb-2" rows="2" wire:model="progressNote"
@@ -734,7 +734,7 @@
                                     :key="'progress-consulting-' . $selectedDoc->id" />
                             </div>
 
-                            @unless (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                 {{-- Tab 3: Lịch thanh toán --}}
                                 <div class="tab-pane fade" id="tab-payment-consulting-{{ $selectedDoc->id }}"
                                     role="tabpanel">
@@ -769,7 +769,7 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
-                        @if ($isEditing && auth()->user()->hasRole('ke-toan'))
+                        @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Số HĐ NTP</label>
                                 <input type="text" class="form-control" wire:model="formData.shd_cxl">
@@ -841,7 +841,7 @@
                                 </div>
                             </div>
                         </div>
-                        @if (auth()->user()->hasAnyRole(['tp-kinh-doanh', 'giam-doc']))
+                        @if (auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Nhân viên CS <span
                                         class="text-danger">*</span></label>

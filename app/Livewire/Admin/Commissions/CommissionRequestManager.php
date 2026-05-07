@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\User;
 use App\Notifications\CommissionRequestStatusUpdatedNotification;
@@ -58,7 +59,7 @@ class CommissionRequestManager extends Component
 
     private function ensureAccountantApprovalAccess(): void
     {
-        abort_unless(auth()->check() && auth()->user()->hasRole('ke-toan'), 403);
+        abort_unless(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403);
     }
 
     private function resetRejectState(): void
@@ -225,10 +226,10 @@ class CommissionRequestManager extends Component
             'contractTypes' => CommissionRequest::CONTRACT_TYPE_LABELS,
             'summary'       => $summary,
             'requesters'    => $requesters,
-            'canApprove'    => auth()->check() && auth()->user()->hasRole('ke-toan'),
+            'canApprove'    => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),
             'canEdit'       => auth()->check()
                 && auth()->user()->can('commissions.edit')
-                && !auth()->user()->hasRole('ke-toan'),
+                && !auth()->user()->hasRole(Role::KE_TOAN->value),
             'canDelete'     => auth()->check() && auth()->user()->can('commissions.delete'),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Yêu cầu chi hoa hồng']);
     }

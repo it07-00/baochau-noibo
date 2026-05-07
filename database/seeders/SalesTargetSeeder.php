@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\SalesTarget;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -10,7 +11,7 @@ class SalesTargetSeeder extends Seeder
 {
     public function run(): void
     {
-        $kdUsers = User::whereHas('roles', fn($q) => $q->whereIn('name', ['kinh-doanh', 'tp-kinh-doanh']))->get();
+        $kdUsers = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->get();
         if ($kdUsers->isEmpty()) return;
 
         $year = (int) date('Y');

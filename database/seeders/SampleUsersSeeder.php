@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -21,63 +22,63 @@ class SampleUsersSeeder extends Seeder
                 'name'       => 'Quản trị hệ thống',
                 'username'   => 'admin',
                 'password'   => 'password',
-                'role'       => 'it',
+                'role'       => Role::IT->value,
                 'department' => 'admin',
             ],
             [
                 'name'       => 'Giám Đốc',
                 'username'   => 'giamdoc',
                 'password'   => 'password',
-                'role'       => 'giam-doc',
+                'role'       => Role::GIAM_DOC->value,
                 'department' => 'ban-giam-doc',
             ],
             [
                 'name'       => 'Trưởng Phòng KD',
                 'username'   => 'tpkd',
                 'password'   => 'password',
-                'role'       => 'tp-kinh-doanh',
+                'role'       => Role::TP_KINH_DOANH->value,
                 'department' => 'kinh-doanh',
             ],
             [
                 'name'       => 'Kinh Doanh',
                 'username'   => 'kinhdoanh',
                 'password'   => 'password',
-                'role'       => 'kinh-doanh',
+                'role'       => Role::KINH_DOANH->value,
                 'department' => 'kinh-doanh',
             ],
             [
                 'name'       => 'Kinh Doanh 2',
                 'username'   => 'kinhdoanh2',
                 'password'   => 'password',
-                'role'       => 'kinh-doanh',
+                'role'       => Role::KINH_DOANH->value,
                 'department' => 'kinh-doanh',
             ],
             [
                 'name'       => 'Tư Vấn',
                 'username'   => 'tuvan',
                 'password'   => 'password',
-                'role'       => 'tu-van',
+                'role'       => Role::TU_VAN->value,
                 'department' => 'tu-van-cskh',
             ],
             [
                 'name'       => 'Kỹ Thuật',
                 'username'   => 'kythuat',
                 'password'   => 'password',
-                'role'       => 'ky-thuat',
+                'role'       => Role::KY_THUAT->value,
                 'department' => 'ky-thuat',
             ],
             [
                 'name'       => 'Marketing',
                 'username'   => 'marketing',
                 'password'   => 'password',
-                'role'       => 'marketing',
+                'role'       => Role::MARKETING->value,
                 'department' => 'marketing',
             ],
             [
                 'name'       => 'Kế Toán',
                 'username'   => 'ketoan',
                 'password'   => 'password',
-                'role'       => 'ke-toan',
+                'role'       => Role::KE_TOAN->value,
                 'department' => 'ke-toan',
             ],
         ];

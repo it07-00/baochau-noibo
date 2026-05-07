@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\Role as RoleEnum;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class ItDashboard extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->user()->hasRole('it'), 403);
+        abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
     }
 
     public function setTab(string $tab): void
@@ -30,7 +31,7 @@ class ItDashboard extends Component
 
     public function clearCache(): void
     {
-        abort_unless(auth()->user()->hasRole('it'), 403);
+        abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
         try {
             Artisan::call('optimize:clear');
             $this->dispatch('swal:toast', type: 'success', message: 'Đã dọn dẹp cache & tối ưu hệ thống.');
@@ -42,7 +43,7 @@ class ItDashboard extends Component
 
     public function clearLogs(): void
     {
-        abort_unless(auth()->user()->hasRole('it'), 403);
+        abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
         try {
             $logFile = storage_path('logs/laravel.log');
             if (File::exists($logFile)) {

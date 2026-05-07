@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\Role;
 use App\Models\ContractResearch;
 use App\Models\ContractWaste;
 use App\Models\Customer;
@@ -177,13 +178,13 @@ class ContractCommercialManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
         if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
             return;
         }
 
-        if (!$user->hasAnyRole(['tp-kinh-doanh', 'giam-doc'])) {
+        if (!$user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value])) {
             $this->formData['staff_id'] = ($this->isEditing && $this->selectedDoc)
                 ? ($this->selectedDoc->staff_id ?: $user->id)
                 : $user->id;
@@ -204,7 +205,7 @@ class ContractCommercialManager extends Component
 
         $data = collect($this->formData)->map(fn($v) => $v === '' ? null : $v)->toArray();
 
-        $isAccountant = $user->hasRole('ke-toan');
+        $isAccountant = $user->hasRole(Role::KE_TOAN->value);
         if (!$this->isEditing) {
             // Số HĐ BC do kế toán bổ sung sau khi tạo.
             $data['shd_bc'] = null;
@@ -227,12 +228,12 @@ class ContractCommercialManager extends Component
     {
         $doc = ContractResearch::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
 
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         } else {
-            abort_if($user->hasAnyRole(['tu-van', 'ky-thuat']), 403);
+            abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
         }
         abort_unless($user->can('contracts-commercial.edit'), 403);
 
@@ -253,7 +254,7 @@ class ContractCommercialManager extends Component
     {
         $doc = ContractResearch::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
 
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
@@ -298,7 +299,7 @@ class ContractCommercialManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole('tp-kinh-doanh') && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly']);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
         $deletedCount = 0;
         $skippedCount = 0;
 
@@ -401,7 +402,7 @@ class ContractCommercialManager extends Component
 
         $contract = ContractResearch::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', ContractResearch::class)
             ->where('assignable_id', $contractId)
@@ -497,8 +498,8 @@ class ContractCommercialManager extends Component
     public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole('kinh-doanh')
-            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = ContractResearch::with(['customer', 'staff', 'department', 'handler'])
             ->when($this->search, function ($q) {
@@ -509,7 +510,7 @@ class ContractCommercialManager extends Component
                         });
                 });
             })
-            ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
+            ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         if ($this->filter['signed_from'])    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
@@ -545,8 +546,8 @@ class ContractCommercialManager extends Component
     public function render()
     {
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole('kinh-doanh')
-            && !$user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = ContractResearch::with(['customer', 'staff', 'department', 'assignments.user', 'handler'])
             ->when($this->search, function ($q) {
@@ -559,7 +560,7 @@ class ContractCommercialManager extends Component
             })
             ->when($isRestrictedSales,
                 fn($q) => $q->where('staff_id', $user->id))
-            ->when($user->hasAnyRole(['tu-van', 'ky-thuat']),
+            ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         if ($this->filter['signed_from'])    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
@@ -586,10 +587,10 @@ class ContractCommercialManager extends Component
         return view('livewire.admin.contracts.contract-commercial-manager', [
             'docs'               => $docs,
             'customers'          => Customer::orderBy('name')->get(),
-            'staffs'             => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
+            'staffs'             => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
             'departments'        => Department::all(),
             'assignable_users'   => \App\Models\User::whereHas('roles', fn($q) =>
-                $q->whereIn('name', ['tu-van']))->orderBy('name')->get(),
+                $q->whereIn('name', [Role::TU_VAN->value]))->orderBy('name')->get(),
             'provinces'          => ContractResearch::whereNotNull('province')->where('province', '!=', '')
                 ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'       => self::ALLOWED_STATUSES,

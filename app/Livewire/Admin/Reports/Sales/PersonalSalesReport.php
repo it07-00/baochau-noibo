@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
+use App\Enums\Role;
 use App\Models\ContractResearch;
 use App\Models\ContractLegal;
 use App\Models\ContractEmission;
@@ -30,7 +31,7 @@ class PersonalSalesReport extends Component
 
     private function canViewAllSalesStaff(): bool
     {
-        return auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly', 'tp-kinh-doanh']);
+        return auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value]);
     }
 
     public function mount(): void

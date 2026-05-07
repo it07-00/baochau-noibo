@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\InvoiceBaoChau;
 use App\Models\InvoiceHandler;
 use App\Models\ContractWaste;
@@ -14,7 +15,7 @@ class InvoiceSeeder extends Seeder
 {
     public function run(): void
     {
-        $creator = User::whereHas('roles', fn($q) => $q->where('name', 'ke-toan'))->first();
+        $creator = User::whereHas('roles', fn($q) => $q->where('name', Role::KE_TOAN->value))->first();
         if (!$creator) $creator = User::first();
         $contracts = ContractWaste::with(['customer', 'handler'])->limit(5)->get();
         if ($contracts->isEmpty()) return;

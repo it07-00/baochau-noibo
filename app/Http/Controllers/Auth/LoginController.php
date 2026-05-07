@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +30,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            $defaultRoute = $user->hasAnyRole(['it', 'giam-doc', 'admin', 'quan-ly', 'ke-toan'])
+            $defaultRoute = $user->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::KE_TOAN->value])
                 ? route('app.dashboard')
                 : route('app.home');
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
 use App\Models\ContractLegal;
@@ -13,7 +14,7 @@ class CommissionRequestSeeder extends Seeder
 {
     public function run(): void
     {
-        $kdUsers = User::whereHas('roles', fn($q) => $q->whereIn('name', ['kinh-doanh', 'tp-kinh-doanh']))->pluck('id')->toArray();
+        $kdUsers = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->pluck('id')->toArray();
         if (empty($kdUsers)) return;
 
         $statuses = ['Chờ chi', 'Đã chi', 'Từ chối'];

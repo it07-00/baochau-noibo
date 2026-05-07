@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
 use App\Models\ContractLegal;
@@ -31,7 +32,7 @@ class CommissionRequestForm extends Component
     public function mount($id = null)
     {
         if ($id) {
-            abort_if(auth()->check() && auth()->user()->hasRole('ke-toan'), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
+            abort_if(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
 
             $request = CommissionRequest::where('user_id', auth()->id())->findOrFail($id);
             $this->requestId = $request->id;
@@ -85,7 +86,7 @@ class CommissionRequestForm extends Component
 
         $contractLabel = (string) ($request->contract?->shd_bc ?: ('#' . $request->id));
 
-        $recipients = User::role('ke-toan')->get()->unique('id');
+        $recipients = User::role(Role::KE_TOAN->value)->get()->unique('id');
 
         foreach ($recipients as $recipient) {
             /** @var User $recipient */
@@ -104,7 +105,7 @@ class CommissionRequestForm extends Component
 
     public function save($exit = false)
     {
-        if ($this->requestId && auth()->check() && auth()->user()->hasRole('ke-toan')) {
+        if ($this->requestId && auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Kế toán không được sửa yêu cầu chi hoa hồng.']);
             return;
         }

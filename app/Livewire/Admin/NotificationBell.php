@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\Role;
 use App\Models\DailyReport;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -30,15 +31,15 @@ class NotificationBell extends Component
     {
         $contractSections = $this->contractSectionKeys();
 
-        if ($user->hasAnyRole(['giam-doc', 'tp-kinh-doanh'])) {
+        if ($user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value])) {
             return array_merge(['daily_report'], $contractSections);
         }
 
-        if ($user->hasRole('it')) {
+        if ($user->hasRole(Role::IT->value)) {
             return ['general'];
         }
 
-        if ($user->hasRole('kinh-doanh')) {
+        if ($user->hasRole(Role::KINH_DOANH->value)) {
             return array_merge($contractSections, ['general']);
         }
 
@@ -55,7 +56,7 @@ class NotificationBell extends Component
             'commercial'     => 'Hợp đồng thương mại',
             'sustainability' => 'Hợp đồng PTBV',
             'energy'         => 'Hợp đồng năng lượng',
-            'general'        => $user->hasRole('it') ? 'Thông báo hệ thống' : 'Thông báo chung',
+            'general'        => $user->hasRole(Role::IT->value) ? 'Thông báo hệ thống' : 'Thông báo chung',
         ];
 
         $allowedKeys = $this->allowedSectionKeysForUser($user);
@@ -212,7 +213,7 @@ class NotificationBell extends Component
         // DailyReport issues (giữ nguyên logic cũ)
         $issueReports = [];
         $issueCount   = 0;
-        if ($user->hasAnyRole(['giam-doc', 'tp-kinh-doanh'])) {
+        if ($user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value])) {
             $issueReports = DailyReport::with('user')
                 ->whereDate('date', date('Y-m-d'))
                 ->where(function ($q) {

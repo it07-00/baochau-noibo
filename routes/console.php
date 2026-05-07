@@ -106,7 +106,7 @@ Artisan::command('uploads:migrate {--from=public} {--path=*}', function () {
 // Nhắc nhở báo cáo ngày lúc 16:30 hằng ngày (trừ Chủ nhật)
 Schedule::call(function () {
     $usersWithoutReport = \App\Models\User::where('is_active', true)
-        ->whereDoesntHave('roles', fn ($q) => $q->where('name', 'giam-doc'))
+        ->whereDoesntHave('roles', fn ($q) => $q->where('name', \App\Enums\Role::GIAM_DOC->value))
         ->whereDoesntHave('dailyReports', fn ($q) => $q->whereDate('date', today()))
         ->get();
 

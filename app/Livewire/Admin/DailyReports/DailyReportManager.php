@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\DailyReports;
 
+use App\Enums\Role;
 use Livewire\Component;
 use App\Models\DailyReport;
 use App\Models\Department;
@@ -52,7 +53,7 @@ class DailyReportManager extends Component
         $this->monthFilter = (int)date('m');
         $this->yearFilter = (int)date('Y');
 
-        $this->isDirector = auth()->user()->hasRole('giam-doc');
+        $this->isDirector = auth()->user()->hasRole(Role::GIAM_DOC->value);
         $this->canSubmitOwnReport = !$this->isDirector;
         $this->isManager = $this->canManageReports();
 
@@ -71,15 +72,15 @@ class DailyReportManager extends Component
 
     private function canManageReports(): bool
     {
-        return auth()->user()->hasAnyRole(['giam-doc', 'tp-kinh-doanh']);
+        return auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value]);
     }
 
     private function scopedUsersQuery()
     {
         $query = User::query();
 
-        if (auth()->user()->hasRole('tp-kinh-doanh') && !auth()->user()->hasRole('giam-doc')) {
-            $query->role(['kinh-doanh', 'tp-kinh-doanh']);
+        if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && !auth()->user()->hasRole(Role::GIAM_DOC->value)) {
+            $query->role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]);
         }
 
         return $query;
@@ -190,14 +191,14 @@ class DailyReportManager extends Component
 
         // Gửi thông báo cho Giám đốc & TPKD
         $reporter = auth()->user();
-        $isSales = $reporter->hasRole('kinh-doanh');
+        $isSales = $reporter->hasRole(Role::KINH_DOANH->value);
 
         // Giám đốc luôn nhận được
-        $recipients = User::role('giam-doc')->get();
+        $recipients = User::role(Role::GIAM_DOC->value)->get();
 
         // TPKD nhận được báo cáo từ nhân viên kinh doanh
         if ($isSales) {
-            $recipients = $recipients->merge(User::role('tp-kinh-doanh')->get());
+            $recipients = $recipients->merge(User::role(Role::TP_KINH_DOANH->value)->get());
         }
 
         foreach ($recipients->unique('id') as $recipient) {

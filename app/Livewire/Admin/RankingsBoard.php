@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\Role;
 use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
 use App\Models\ContractPaymentSchedule;
@@ -28,10 +29,10 @@ class RankingsBoard extends Component
     public function render()
     {
         $currentUser = auth()->user();
-        $canSeeFinance    = $currentUser->hasAnyRole(['admin', 'ke-toan', 'giam-doc', 'quan-ly']);
-        $canSeeSales      = $currentUser->hasAnyRole(['giam-doc', 'tp-kinh-doanh', 'kinh-doanh', 'ke-toan']);
-        $canSeeConsulting = $currentUser->hasAnyRole(['giam-doc', 'tu-van']);
-        $canSeeTechnical  = $currentUser->hasAnyRole(['giam-doc', 'ky-thuat']);
+        $canSeeFinance    = $currentUser->hasAnyRole([Role::KE_TOAN->value, Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $canSeeSales      = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::KINH_DOANH->value, Role::KE_TOAN->value]);
+        $canSeeConsulting = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::TU_VAN->value]);
+        $canSeeTechnical  = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::KY_THUAT->value]);
 
         $salesRankings      = collect();
         $consultingRankings = collect();
@@ -66,7 +67,7 @@ class RankingsBoard extends Component
                 }
             }
 
-            $salesRankings = User::role(['kinh-doanh', 'tp-kinh-doanh'])->get()
+            $salesRankings = User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->get()
                 ->map(function ($user) use ($totalsByStaff) {
                     return [
                         'name'  => $user->name,
@@ -174,7 +175,7 @@ class RankingsBoard extends Component
                 ContractEmission::class,
             ];
 
-            $consultingRankings = User::role('tu-van')->get()
+            $consultingRankings = User::role(Role::TU_VAN->value)->get()
                 ->map(function ($user) use ($allContractTypes) {
                     $assignments = ContractAssignment::where('user_id', $user->id)
                         ->whereIn('assignable_type', $allContractTypes)
@@ -212,7 +213,7 @@ class RankingsBoard extends Component
 
         if ($canSeeTechnical) {
             // ── Xếp hạng nhân viên kỹ thuật (chỉ HĐ Pháp lý & Hồ sơ MT) ──
-            $technicalRankings = User::role('ky-thuat')->get()
+            $technicalRankings = User::role(Role::KY_THUAT->value)->get()
                 ->map(function ($user) {
                     $assignments = ContractAssignment::where('user_id', $user->id)
                         ->where('assignable_type', ContractLegal::class)

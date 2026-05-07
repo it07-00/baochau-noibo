@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\Role;
 use App\Models\ContractWorkflowStep;
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractAssignment;
@@ -42,7 +43,7 @@ class ContractWorkflowPanel extends Component
      */
     public function openStep(string $step): void
     {
-        if (!auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])) {
+        if (!auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
             return;
         }
         $this->activeStep  = $step;
@@ -55,13 +56,13 @@ class ContractWorkflowPanel extends Component
      */
     public function completeStep(): void
     {
-        if (!auth()->user()->hasAnyRole(['tu-van', 'ky-thuat'])) {
+        if (!auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
             return;
         }
 
         // Bộ phận kỹ thuật: survey, waiting_client, client_confirmed không bắt buộc upload file
-        $isKyThuat = auth()->user()->hasRole('ky-thuat');
+        $isKyThuat = auth()->user()->hasRole(Role::KY_THUAT->value);
         $kyThuatOptionalSteps = ['survey', 'waiting_client', 'client_confirmed'];
         $fileRequired = !($this->activeStep === 'receiving' || ($isKyThuat && in_array($this->activeStep, $kyThuatOptionalSteps)));
 
@@ -135,7 +136,7 @@ class ContractWorkflowPanel extends Component
         // Map contract type key từ model class
         $typeKey = array_search($modelClass, $this->modelMap) ?: $this->contractType;
 
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', ['giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $this->contractId)
@@ -182,10 +183,10 @@ class ContractWorkflowPanel extends Component
         $user = auth()->user();
         $userRole = null;
         if ($user) {
-            if ($user->hasRole('ky-thuat')) {
-                $userRole = 'ky-thuat';
-            } elseif ($user->hasRole('tu-van')) {
-                $userRole = 'tu-van';
+            if ($user->hasRole(Role::KY_THUAT->value)) {
+                $userRole = Role::KY_THUAT->value;
+            } elseif ($user->hasRole(Role::TU_VAN->value)) {
+                $userRole = Role::TU_VAN->value;
             }
         }
 
@@ -218,10 +219,10 @@ class ContractWorkflowPanel extends Component
         $user = auth()->user();
         $userRole = null;
         if ($user) {
-            if ($user->hasRole('ky-thuat')) {
-                $userRole = 'ky-thuat';
-            } elseif ($user->hasRole('tu-van')) {
-                $userRole = 'tu-van';
+            if ($user->hasRole(Role::KY_THUAT->value)) {
+                $userRole = Role::KY_THUAT->value;
+            } elseif ($user->hasRole(Role::TU_VAN->value)) {
+                $userRole = Role::TU_VAN->value;
             }
         }
 
@@ -234,7 +235,7 @@ class ContractWorkflowPanel extends Component
             'completedSteps' => $completedSteps,
             'currentStatus'  => $currentStatus,
             'filesByStep'    => $filesByStep,
-            'canEdit'        => auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']),
+            'canEdit'        => auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
         ]);
     }
 }

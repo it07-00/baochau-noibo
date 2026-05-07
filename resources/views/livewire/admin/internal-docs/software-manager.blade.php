@@ -11,11 +11,11 @@
                     <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
                         <i class="bi bi-search text-muted"></i>
                     </span>
-                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control border-start-0 ps-0 bg-light" 
+                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control border-start-0 ps-0 bg-light"
                         placeholder="Tìm kiếm phần mềm..." style="border-radius: 0 8px 8px 0; border: 1px solid #dee2e6;">
                 </div>
-                
-                @if(auth()->user()->hasRole('it'))
+
+                @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                     <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
                         <i class="bi bi-plus-lg"></i> Thêm mới
                     </button>
@@ -43,8 +43,8 @@
                                     @endif
                                 </div>
                             </div>
-                            
-                            @if(auth()->user()->hasRole('it'))
+
+                            @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -56,18 +56,18 @@
                                 </div>
                             @endif
                         </div>
-                        
+
                         <p class="card-text text-muted flex-grow-1" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                             {{ $sw->description ?: 'Không có mô tả.' }}
                         </p>
-                        
+
                         <div class="mt-3">
                             <a href="{{ $sw->url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 fw-medium" style="border-radius: 8px;">
                                 <i class="bi bi-link-45deg me-1"></i> Truy cập / Tải xuống
                             </a>
                         </div>
-                        
-                        @if(auth()->user()->hasRole('it'))
+
+                        @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                             <div class="mt-2 text-center">
                                 <span class="badge {{ $sw->is_active ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 text-{{ $sw->is_active ? 'success' : 'secondary' }} rounded-pill" style="font-size: 0.7rem;">
                                     {{ $sw->is_active ? 'Hoạt động' : 'Đã ẩn' }}
@@ -90,7 +90,7 @@
     </div>
 
     {{-- Create/Edit Modal --}}
-    @if(auth()->user()->hasRole('it'))
+    @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
         <div class="modal fade {{ $showModal ? 'show d-block' : '' }}" tabindex="-1" style="background: rgba(0,0,0,0.5);">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow" style="border-radius: 16px;">
@@ -108,7 +108,7 @@
                                 <input type="text" wire:model="name" class="form-control" placeholder="Tên phần mềm..." required>
                                 @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-muted">Đường dẫn / Link tải <span class="text-danger">*</span></label>
                                 <input type="url" wire:model="url" class="form-control" placeholder="https://..." required>
@@ -120,7 +120,7 @@
                                 <input type="text" wire:model="version" class="form-control" placeholder="Ví dụ: v1.0.0">
                                 @error('version') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-muted">Mô tả</label>
                                 <textarea wire:model="description" class="form-control" rows="3" placeholder="Thông tin thêm..."></textarea>

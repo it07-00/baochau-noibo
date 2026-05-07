@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Consulting;
 
+use App\Enums\Role;
 use App\Models\ContractResearch;
 use App\Models\ContractLegal;
 use App\Models\ContractEmission;
@@ -98,8 +99,8 @@ class ConsultingContractReport extends Component
     {
         $user ??= auth()->user();
 
-        return $user->hasRole('tu-van')
-            && ! $user->hasAnyRole(['admin', 'giam-doc', 'quan-ly', 'tp-kinh-doanh', 'it']);
+        return $user->hasRole(Role::TU_VAN->value)
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
     }
 
     private function baseQuery()

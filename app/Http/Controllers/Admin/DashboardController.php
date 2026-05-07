@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Models\ContractLegal;
 use App\Models\ContractWaste;
@@ -46,7 +47,7 @@ class DashboardController extends Controller
         $maxMonthly = $filtered ? max($filtered) : 1;
 
         // ── Top 5 nhân viên kinh doanh ───────────────────
-        $topStaff = User::role('kinh-doanh')->get()
+        $topStaff = User::role(Role::KINH_DOANH->value)->get()
             ->map(function ($user) use ($year) {
                 $total = (float) SalesRenewal::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('sales_amount')
                        + (float) SalesProgressive::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('amount');

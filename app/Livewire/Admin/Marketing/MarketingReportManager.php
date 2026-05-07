@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Marketing;
 
+use App\Enums\Role;
 use App\Models\MarketingDailyReport;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -37,8 +38,8 @@ class MarketingReportManager extends Component
     {
         $this->report_date = now()->format('Y-m-d');
         $this->filterMonth = now()->format('Y-m');
-        $this->isManager   = auth()->user()->hasAnyRole(['it', 'giam-doc', 'quan-ly']);
-        $this->isViewOnly  = auth()->user()->hasRole('tp-kinh-doanh');
+        $this->isManager   = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $this->isViewOnly  = auth()->user()->hasRole(Role::TP_KINH_DOANH->value);
         if ($this->isViewOnly) {
             $this->activeTab = 'history';
         }
@@ -137,7 +138,7 @@ class MarketingReportManager extends Component
             ->paginate(20);
 
         $users = ($this->isManager || $this->isViewOnly)
-            ? \App\Models\User::role('marketing')->orderBy('name')->get()
+            ? \App\Models\User::role(Role::MARKETING->value)->orderBy('name')->get()
             : collect();
 
         return view('livewire.admin.marketing.marketing-report-manager', [

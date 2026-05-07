@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\InternalDocs;
 
+use App\Enums\Role;
 use App\Models\InternalSoftware;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -43,7 +44,7 @@ class SoftwareManager extends Component
 
     public function openCreateModal()
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(Role::IT->value)) return;
         $this->resetValidation();
         $this->reset(['editingId', 'name', 'description', 'url', 'version', 'is_active']);
         $this->showModal = true;
@@ -51,7 +52,7 @@ class SoftwareManager extends Component
 
     public function edit($id)
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(Role::IT->value)) return;
         $software = InternalSoftware::findOrFail($id);
         $this->editingId = $software->id;
         $this->name = $software->name;
@@ -64,7 +65,7 @@ class SoftwareManager extends Component
 
     public function save()
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(Role::IT->value)) return;
         $this->validate();
 
         $data = [
@@ -88,7 +89,7 @@ class SoftwareManager extends Component
 
     public function delete($id)
     {
-        if (!auth()->user()->hasRole('it')) return;
+        if (!auth()->user()->hasRole(Role::IT->value)) return;
         InternalSoftware::findOrFail($id)->delete();
         $this->dispatch('swal:success', ['message' => 'Đã xóa phần mềm.']);
     }

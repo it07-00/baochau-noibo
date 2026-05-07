@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\Role;
 use App\Models\ContractPaymentSchedule;
 use App\Observers\ContractPaymentScheduleObserver;
 use Illuminate\Support\ServiceProvider;
@@ -16,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Support\Facades\Gate::before(function ($user) {
-            if ($user->hasRole('it')) {
+            if ($user->hasRole(Role::IT->value)) {
                 return true;
             }
         });

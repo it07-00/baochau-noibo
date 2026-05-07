@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Role;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SettingController;
@@ -117,7 +118,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::get('tien-do-thanh-toan', \App\Livewire\Admin\Sales\ProgressiveSalesManager::class)->name('progressive.index')->middleware('permission:sales-progressive.view');
         Route::get('dang-ky-muc-tieu', \App\Livewire\Admin\Sales\SalesTargetRegistration::class)
             ->name('target-registration')
-            ->middleware(['permission:sales-renewal.view', 'role:kinh-doanh,tp-kinh-doanh']);
+            ->middleware(['permission:sales-renewal.view', Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);
     });
 
     // Chuyển phát
@@ -126,7 +127,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Theo dõi báo giá
     Route::get('theo-doi-bao-gia', \App\Livewire\Admin\Quotations\QuotationManager::class)
         ->name('quotation-tracking.index')
-        ->middleware(['permission:quotation-tracking.view', 'role:kinh-doanh,tp-kinh-doanh,giam-doc']);
+        ->middleware(['permission:quotation-tracking.view', Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH, Role::GIAM_DOC)]);
 
     // Báo cáo Kinh doanh
     Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware('permission:reports-sales.view')->group(function () {
