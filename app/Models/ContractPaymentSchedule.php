@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentScheduleStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class ContractPaymentSchedule extends Model
@@ -29,12 +30,6 @@ class ContractPaymentSchedule extends Model
         'paid_date'   => 'date',
     ];
 
-    public const STATUSES = [
-        'pending' => 'Chờ thanh toán',
-        'partial' => 'Thanh toán 1 phần',
-        'paid'    => 'Đã thanh toán',
-        'overdue' => 'Quá hạn',
-    ];
 
 
 
@@ -50,7 +45,7 @@ class ContractPaymentSchedule extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return PaymentScheduleStatus::tryFrom($this->status)?->label() ?? $this->status;
     }
 
     public function getContractNumberAttribute(): ?string
@@ -63,12 +58,7 @@ class ContractPaymentSchedule extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match ($this->status) {
-            'paid'    => 'success',
-            'partial' => 'warning',
-            'overdue' => 'danger',
-            default   => 'secondary',
-        };
+        return PaymentScheduleStatus::tryFrom($this->status)?->color() ?? 'secondary';
     }
 
     public function getRemainingAttribute(): float

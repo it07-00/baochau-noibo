@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Invoices;
 
+use App\Enums\InvoiceStatus;
 use App\Enums\Permission;
 use App\Models\ContractWaste;
 use App\Models\Handler;
@@ -208,7 +209,7 @@ class InvoiceHandlerManager extends Component
 
         $handlers       = Handler::orderBy('name')->get();
         $contractWastes = ContractWaste::with('handler')->orderByDesc('signed_at')->get();
-        $statuses       = InvoiceHandler::STATUSES;
+        $statuses       = InvoiceStatus::map();
 
         return view('livewire.admin.invoices.invoice-handler-manager',
             compact('items', 'summary', 'handlers', 'contractWastes', 'statuses'))

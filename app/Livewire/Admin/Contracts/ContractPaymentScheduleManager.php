@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Contracts;
 
 use App\Enums\ContractType;
+use App\Enums\PaymentScheduleStatus;
 use App\Enums\Permission;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\ContractPaymentSchedule;
@@ -40,7 +41,7 @@ class ContractPaymentScheduleManager extends Component
             'form.due_date'         => 'nullable|date',
             'form.paid_date'        => 'nullable|date',
             'form.paid_amount'      => 'nullable|numeric|min:0|max:999999999999999',
-            'form.status'           => 'required|in:pending,partial,paid,overdue',
+            'form.status'           => 'required|in:' . PaymentScheduleStatus::validationRule(),
             'form.notes'            => 'nullable|string|max:1000',
         ];
     }
@@ -200,7 +201,7 @@ class ContractPaymentScheduleManager extends Component
             'schedules'   => $schedules,
             'totalAmount' => $totalAmount,
             'totalPaid'   => $totalPaid,
-            'statuses'    => ContractPaymentSchedule::STATUSES,
+            'statuses'    => PaymentScheduleStatus::map(),
         ]);
     }
 }

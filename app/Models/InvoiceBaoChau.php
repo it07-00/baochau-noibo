@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\InvoiceStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,13 +12,7 @@ class InvoiceBaoChau extends Model
     use SoftDeletes;
     protected $table = 'invoice_bao_chau';
 
-    const STATUSES = [
-        'unpaid'    => 'Chưa thanh toán',
-        'partial'   => 'TT một phần',
-        'paid'      => 'Đã thanh toán',
-        'overdue'   => 'Quá hạn',
-        'cancelled' => 'Đã hủy',
-    ];
+
 
     protected $fillable = [
         'contract_waste_id', 'customer_id', 'invoice_number',
@@ -53,18 +48,11 @@ class InvoiceBaoChau extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? $this->status;
+        return InvoiceStatus::tryFrom($this->status)?->label() ?? $this->status;
     }
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
-            'unpaid'    => 'warning',
-            'partial'   => 'info',
-            'paid'      => 'success',
-            'overdue'   => 'danger',
-            'cancelled' => 'secondary',
-            default     => 'secondary',
-        };
+        return InvoiceStatus::tryFrom($this->status)?->color() ?? 'secondary';
     }
 }

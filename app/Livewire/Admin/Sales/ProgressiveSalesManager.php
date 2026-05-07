@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Sales;
 
 use App\Enums\ContractType;
+use App\Enums\PaymentScheduleStatus;
 use App\Enums\Permission;
 use App\Models\ContractPaymentSchedule;
 use Livewire\Component;
@@ -52,7 +53,7 @@ class ProgressiveSalesManager extends Component
         return view('livewire.admin.sales.progressive-sales-manager', [
             'items'    => $query->paginate(20),
             'total'    => $total,
-            'statuses' => ContractPaymentSchedule::STATUSES,
+            'statuses' => PaymentScheduleStatus::map(),
         ])->layout('admin.layouts.app', ['title' => 'Doanh số theo tiến độ']);
     }
 
@@ -84,7 +85,7 @@ class ProgressiveSalesManager extends Component
             'percentage'       => 'nullable|numeric|min:0|max:100',
             'due_date'         => 'nullable|date',
             'paid_date'        => 'nullable|date',
-            'status'           => 'required|in:pending,partial,paid,overdue',
+            'status'           => 'required|in:' . PaymentScheduleStatus::validationRule(),
             'notes'            => 'nullable|string|max:1000',
         ], [
             'installment_name.required' => 'Vui lòng nhập tên đợt.',

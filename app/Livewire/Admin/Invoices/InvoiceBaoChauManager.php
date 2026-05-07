@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Invoices;
 
+use App\Enums\InvoiceStatus;
 use App\Enums\Permission;
 use App\Models\ContractWaste;
 use App\Models\Customer;
@@ -213,7 +214,7 @@ class InvoiceBaoChauManager extends Component
 
         $customers      = Customer::orderBy('name')->get();
         $contractWastes = ContractWaste::with('customer')->orderByDesc('signed_at')->get();
-        $statuses       = InvoiceBaoChau::STATUSES;
+        $statuses       = InvoiceStatus::map();
 
         return view('livewire.admin.invoices.invoice-bao-chau-manager',
             compact('items', 'summary', 'customers', 'contractWastes', 'statuses'))
