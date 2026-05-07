@@ -36,14 +36,7 @@ class ContractPaymentSchedule extends Model
         'overdue' => 'Quá hạn',
     ];
 
-    public const MODEL_MAP = [
-        'waste'          => ContractWaste::class,
-        'consulting'     => ContractLegal::class,
-        'project'        => ContractTechnical::class,
-        'commercial'     => ContractResearch::class,
-        'sustainability' => ContractSustainability::class,
-        'energy'         => ContractEmission::class,
-    ];
+
 
     public function contract()
     {

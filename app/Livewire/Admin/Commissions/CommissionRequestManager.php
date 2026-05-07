@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\ContractType;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\CommissionRequest;
@@ -224,7 +225,7 @@ class CommissionRequestManager extends Component
 
         return view('livewire.admin.commissions.commission-request-manager', [
             'requests'      => $requests,
-            'contractTypes' => CommissionRequest::CONTRACT_TYPE_LABELS,
+            'contractTypes' => ContractType::labelMap(),
             'summary'       => $summary,
             'requesters'    => $requesters,
             'canApprove'    => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),

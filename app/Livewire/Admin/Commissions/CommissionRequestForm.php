@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\ContractType;
 use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
@@ -59,11 +60,12 @@ class CommissionRequestForm extends Component
             return '';
         }
 
-        if (isset(CommissionRequest::CONTRACT_TYPES[$type])) {
-            return CommissionRequest::CONTRACT_TYPES[$type];
+        $ct = ContractType::tryFrom($type);
+        if ($ct) {
+            return $ct->modelClass();
         }
 
-        if (array_key_exists($type, CommissionRequest::CONTRACT_TYPE_LABELS)) {
+        if (ContractType::fromModelClass($type)) {
             return $type;
         }
 
@@ -117,7 +119,7 @@ class CommissionRequestForm extends Component
 
         $this->cleanMoneyProperties(['amount']);
 
-        $allowedTypes = array_keys(CommissionRequest::CONTRACT_TYPE_LABELS);
+        $allowedTypes = ContractType::modelClasses();
 
         $this->validate([
             'contract_type' => ['required', 'string', Rule::in($allowedTypes)],
@@ -186,7 +188,7 @@ class CommissionRequestForm extends Component
 
         return view('livewire.admin.commissions.commission-request-form', [
             'contracts'     => $contracts,
-            'contractTypes' => CommissionRequest::CONTRACT_TYPE_LABELS,
+            'contractTypes' => ContractType::labelMap(),
         ])->layout('admin.layouts.app', ['title' => $this->requestId ? 'Chỉnh sửa Yêu cầu chi hoa hồng' : 'Thêm mới Yêu cầu chi hoa hồng']);
     }
 }

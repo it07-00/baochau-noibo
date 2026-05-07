@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\ContractType;
 use App\Enums\Permission;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\ContractPaymentSchedule;
@@ -58,7 +59,7 @@ class ContractPaymentScheduleManager extends Component
     {
         $this->contractType       = $contractType;
         $this->contractId         = $contractId;
-        $this->contractModelClass = ContractPaymentSchedule::MODEL_MAP[$contractType] ?? '';
+        $this->contractModelClass = ContractType::tryFrom($contractType)?->modelClass() ?? '';
         $this->calculatePermissions();
     }
 

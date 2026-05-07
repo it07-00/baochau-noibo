@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Sales;
 
+use App\Enums\ContractType;
 use App\Enums\Permission;
 use App\Models\ContractPaymentSchedule;
 use Livewire\Component;
@@ -33,7 +34,7 @@ class ProgressiveSalesManager extends Component
             ->when($this->search, function ($q, $search) {
                 $q->where(function ($sub) use ($search) {
                     $sub->where('installment_name', 'like', "%$search%")
-                        ->orWhereHasMorph('contract', array_values(ContractPaymentSchedule::MODEL_MAP), function ($cq, $type) use ($search) {
+                        ->orWhereHasMorph('contract', ContractType::modelClasses(), function ($cq, $type) use ($search) {
                             $cq->where('shd_bc', 'like', "%$search%");
                             if ($type === \App\Models\ContractWaste::class) {
                                 $cq->orWhere('shd_cxl', 'like', "%$search%");

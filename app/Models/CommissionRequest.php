@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContractType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,23 +33,6 @@ class CommissionRequest extends Model
         'amount' => 'decimal:0',
     ];
 
-    public const CONTRACT_TYPES = [
-        'waste'          => ContractWaste::class,
-        'consulting'     => ContractLegal::class,
-        'project'        => ContractTechnical::class,
-        'commercial'     => ContractResearch::class,
-        'sustainability' => ContractSustainability::class,
-        'energy'         => ContractEmission::class,
-    ];
-
-    public const CONTRACT_TYPE_LABELS = [
-        ContractWaste::class          => 'Chất thải & Tiếng ồn',
-        ContractLegal::class      => 'Pháp lý & Hồ sơ MT',
-        ContractTechnical::class         => 'Kỹ thuật & Ứng phó SC',
-        ContractResearch::class      => 'NC & CĐ Công nghệ',
-        ContractSustainability::class  => 'TV & BC PTBV',
-        ContractEmission::class          => 'Phát thải & Năng lượng',
-    ];
 
     public function contract(): MorphTo
     {
@@ -62,6 +46,6 @@ class CommissionRequest extends Model
 
     public function getContractTypeLabelAttribute(): string
     {
-        return self::CONTRACT_TYPE_LABELS[$this->contract_type] ?? 'N/A';
+        return ContractType::fromModelClass($this->contract_type)?->label() ?? 'N/A';
     }
 }
