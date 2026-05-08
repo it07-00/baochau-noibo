@@ -179,6 +179,12 @@
 .ws-evt-chip.ws-chip-danger    { background: #fee2e2; border-left-color: #ef4444; color: #7f1d1d; }
 .ws-evt-chip.ws-chip-info      { background: #cffafe; border-left-color: #06b6d4; color: #164e63; }
 .ws-evt-chip.ws-chip-secondary { background: #f3f4f6; border-left-color: #6b7280; color: #374151; }
+.ws-evt-chip.ws-chip-pink      { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
+.ws-evt-chip.ws-chip-purple    { background: #ede9fe; border-left-color: #8b5cf6; color: #4c1d95; }
+.ws-evt-chip.ws-chip-indigo    { background: #e0e7ff; border-left-color: #6366f1; color: #312e81; }
+.ws-evt-chip.ws-chip-teal      { background: #ccfbf1; border-left-color: #14b8a6; color: #134e4a; }
+.ws-evt-chip.ws-chip-orange    { background: #ffedd5; border-left-color: #f97316; color: #7c2d12; }
+.ws-evt-chip.ws-chip-lime      { background: #ecfccb; border-left-color: #84cc16; color: #365314; }
 
 /* ── Dark Mode ───────────────────────────────────────────── */
 [data-bs-theme="dark"] .ws-cal-wrapper {
@@ -202,6 +208,12 @@
 [data-bs-theme="dark"] .ws-evt-chip.ws-chip-danger    { background: rgba(239,68,68,0.18); color: #fca5a5; }
 [data-bs-theme="dark"] .ws-evt-chip.ws-chip-info      { background: rgba(6,182,212,0.18); color: #67e8f9; }
 [data-bs-theme="dark"] .ws-evt-chip.ws-chip-secondary { background: rgba(107,114,128,0.22); color: #d1d5db; }
+[data-bs-theme="dark"] .ws-evt-chip.ws-chip-pink      { background: rgba(236,72,153,0.18); color: #f9a8d4; }
+[data-bs-theme="dark"] .ws-evt-chip.ws-chip-purple    { background: rgba(139,92,246,0.18); color: #c4b5fd; }
+[data-bs-theme="dark"] .ws-evt-chip.ws-chip-indigo    { background: rgba(99,102,241,0.18); color: #a5b4fc; }
+[data-bs-theme="dark"] .ws-evt-chip.ws-chip-teal      { background: rgba(20,184,166,0.18); color: #5eead4; }
+[data-bs-theme="dark"] .ws-evt-chip.ws-chip-orange    { background: rgba(249,115,22,0.18); color: #fdba74; }
+[data-bs-theme="dark"] .ws-evt-chip.ws-chip-lime      { background: rgba(132,204,22,0.18); color: #bef264; }
 
 
 .ws-calendar-toolbar {
@@ -522,6 +534,12 @@
 .ws-chip-danger    { background: #fee2e2; border-left-color: #ef4444; color: #7f1d1d; }
 .ws-chip-info      { background: #cffafe; border-left-color: #06b6d4; color: #164e63; }
 .ws-chip-secondary { background: #f3f4f6; border-left-color: #6b7280; color: #374151; }
+.ws-chip-pink      { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
+.ws-chip-purple    { background: #ede9fe; border-left-color: #8b5cf6; color: #4c1d95; }
+.ws-chip-indigo    { background: #e0e7ff; border-left-color: #6366f1; color: #312e81; }
+.ws-chip-teal      { background: #ccfbf1; border-left-color: #14b8a6; color: #134e4a; }
+.ws-chip-orange    { background: #ffedd5; border-left-color: #f97316; color: #7c2d12; }
+.ws-chip-lime      { background: #ecfccb; border-left-color: #84cc16; color: #365314; }
 
 /* Detail items */
 .ws-detail-primary   { background: #eff6ff; border-color: #bfdbfe !important; }
@@ -530,6 +548,12 @@
 .ws-detail-danger    { background: #fef2f2; border-color: #fecaca !important; }
 .ws-detail-info      { background: #ecfeff; border-color: #a5f3fc !important; }
 .ws-detail-secondary { background: #f9fafb; border-color: #e5e7eb !important; }
+.ws-detail-pink      { background: #fdf2f8; border-color: #fbcfe8 !important; }
+.ws-detail-purple    { background: #f5f3ff; border-color: #ddd6fe !important; }
+.ws-detail-indigo    { background: #eef2ff; border-color: #c7d2fe !important; }
+.ws-detail-teal      { background: #f0fdfa; border-color: #99f6e4 !important; }
+.ws-detail-orange    { background: #fff7ed; border-color: #fed7aa !important; }
+.ws-detail-lime      { background: #f7fee7; border-color: #d9f99d !important; }
 
 .ws-dept-badge {
     background-color: #edf2f7;

@@ -18,8 +18,14 @@ class WorkSchedule extends Model
         'success'   => ['label' => 'Xanh lá',    'hex' => '#10b981'],
         'warning'   => ['label' => 'Vàng cam',   'hex' => '#f59e0b'],
         'danger'    => ['label' => 'Đỏ',         'hex' => '#ef4444'],
-        'info'      => ['label' => 'Tím nhạt',   'hex' => '#06b6d4'],
+        'info'      => ['label' => 'Xanh lơ',    'hex' => '#06b6d4'],
         'secondary' => ['label' => 'Xám',        'hex' => '#6b7280'],
+        'pink'      => ['label' => 'Hồng',       'hex' => '#ec4899'],
+        'purple'    => ['label' => 'Tím',        'hex' => '#8b5cf6'],
+        'indigo'    => ['label' => 'Chàm',       'hex' => '#6366f1'],
+        'teal'      => ['label' => 'Ngọc',       'hex' => '#14b8a6'],
+        'orange'    => ['label' => 'Cam',        'hex' => '#f97316'],
+        'lime'      => ['label' => 'Xanh nõn',   'hex' => '#84cc16'],
     ];
 
     protected $casts = [
