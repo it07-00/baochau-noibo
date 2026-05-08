@@ -40,6 +40,30 @@ class WorkScheduleManager extends Component
         $this->yearFilter  = (int) date('Y');
     }
 
+    public function previousMonth(): void
+    {
+        if ($this->monthFilter === 1) {
+            $this->monthFilter = 12;
+            $this->yearFilter--;
+
+            return;
+        }
+
+        $this->monthFilter--;
+    }
+
+    public function nextMonth(): void
+    {
+        if ($this->monthFilter === 12) {
+            $this->monthFilter = 1;
+            $this->yearFilter++;
+
+            return;
+        }
+
+        $this->monthFilter++;
+    }
+
     public function openCreateModal(string $date = ''): void
     {
         $this->resetForm();

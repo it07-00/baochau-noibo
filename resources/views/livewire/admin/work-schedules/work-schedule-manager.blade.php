@@ -5,72 +5,128 @@
     }">
 
     {{-- Header --}}
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
-        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div class="ws-calendar-toolbar card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3 flex-wrap">
-                <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-calendar2-week me-2 text-primary"></i>Lịch công tác
+                <h5 class="ws-toolbar-title mb-0 fw-bold">
+                    <span class="ws-title-icon"><i class="bi bi-calendar2-week"></i></span>
+                    <span>Lịch công tác</span>
                 </h5>
 
                 <div class="vr mx-1 d-none d-md-block" style="height: 24px;"></div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <button wire:click="$set('monthFilter', {{ $monthFilter == 1 ? 12 : $monthFilter - 1 }})"
-                        @if($monthFilter == 1) wire:click="$set('yearFilter', {{ $yearFilter - 1 }})" @endif
-                        class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
-                        style="width: 30px; height: 30px;">
-                        <i class="bi bi-chevron-left" style="font-size: 0.7rem;"></i>
+                <div class="ws-calendar-controls d-flex align-items-center gap-2">
+                    <button wire:click="previousMonth"
+                        class="ws-nav-button btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                        title="Tháng trước">
+                        <i class="bi bi-chevron-left"></i>
                     </button>
-                    <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle"
-                        style="width: auto; border-radius: 6px;">
+                    <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle">
                         @for($m = 1; $m <= 12; $m++)
                             <option value="{{ $m }}">Tháng {{ $m }}</option>
                         @endfor
                     </select>
-                    <select wire:model.live="yearFilter" class="form-select form-select-sm border-light-subtle"
-                        style="width: auto; border-radius: 6px;">
+                    <select wire:model.live="yearFilter" class="form-select form-select-sm border-light-subtle">
                         @for($y = date('Y') - 1; $y <= date('Y') + 1; $y++)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endfor
                     </select>
-                    <button wire:click="$set('monthFilter', {{ $monthFilter == 12 ? 1 : $monthFilter + 1 }})"
-                        @if($monthFilter == 12) wire:click="$set('yearFilter', {{ $yearFilter + 1 }})" @endif
-                        class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
-                        style="width: 30px; height: 30px;">
-                        <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                    <button wire:click="nextMonth"
+                        class="ws-nav-button btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                        title="Tháng sau">
+                        <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-soft-info text-info px-3 py-2 rounded-pill fw-normal">
+            <div class="ws-toolbar-actions d-flex align-items-center gap-3">
+                <span class="ws-event-total badge bg-soft-info text-info px-3 py-2 rounded-pill fw-normal">
                     {{ $totalEvents }} sự kiện
                 </span>
-                <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
+                <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
                     <i class="bi bi-plus-lg"></i> Thêm sự kiện
                 </button>
             </div>
         </div>
     </div>
 
+    @php
+        $monthStart = \Carbon\Carbon::create($yearFilter, $monthFilter, 1);
+        $startOfCalendar = $monthStart->copy()->startOfWeek(\Carbon\Carbon::MONDAY);
+        $endOfCalendar = $monthStart->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SUNDAY);
+        $calendarDates = collect(\Carbon\CarbonPeriod::create($startOfCalendar, $endOfCalendar));
+        $mobileEventDays = $calendarDates->filter(function ($date) use ($monthFilter, $calendarData) {
+            $dayKey = $date->format('Y-m-d');
+
+            return $date->month == $monthFilter && collect($calendarData[$dayKey] ?? [])->isNotEmpty();
+        });
+    @endphp
+
+    {{-- Mobile Agenda --}}
+    <div class="ws-mobile-agenda d-md-none">
+        @forelse($mobileEventDays as $currentDate)
+            @php
+                $dayKey = $currentDate->format('Y-m-d');
+                $dayEvents = collect($calendarData[$dayKey] ?? []);
+                $isToday = $currentDate->isToday();
+                $canAddHere = !$currentDate->lt(today());
+            @endphp
+
+            <section class="ws-agenda-day bg-white shadow-sm">
+                <button type="button"
+                    class="ws-agenda-day-header"
+                    wire:click="openDayDetail('{{ $dayKey }}')">
+                    <span class="ws-agenda-date {{ $isToday ? 'is-today' : '' }}">
+                        <span class="ws-agenda-date-number">{{ $currentDate->format('d') }}</span>
+                        <span class="ws-agenda-date-meta">
+                            {{ $currentDate->translatedFormat('l') }}
+                            <small>{{ $currentDate->format('d/m/Y') }}</small>
+                        </span>
+                    </span>
+                    <span class="ws-agenda-count">{{ $dayEvents->count() }} sự kiện</span>
+                </button>
+
+                <div class="ws-agenda-events">
+                    @foreach($dayEvents as $evt)
+                        <button type="button"
+                            class="ws-agenda-event ws-chip-{{ $evt->color }}"
+                            wire:click="openDayDetail('{{ $dayKey }}')">
+                            <span class="ws-agenda-event-title">{{ $evt->title }}</span>
+                            <span class="ws-agenda-event-people">{{ $evt->participants->pluck('name')->join(', ') }}</span>
+                        </button>
+                    @endforeach
+                </div>
+
+                @if($canAddHere)
+                    <button type="button"
+                        class="ws-agenda-add btn btn-sm btn-outline-primary"
+                        wire:click="openCreateModal('{{ $dayKey }}')">
+                        <i class="bi bi-plus-lg me-1"></i> Thêm vào ngày này
+                    </button>
+                @endif
+            </section>
+        @empty
+            <div class="ws-agenda-empty bg-white shadow-sm">
+                <i class="bi bi-calendar2-week"></i>
+                <div class="fw-semibold">Chưa có sự kiện trong tháng này</div>
+                <button wire:click="openCreateModal" class="btn btn-primary btn-sm mt-2">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm sự kiện
+                </button>
+            </div>
+        @endforelse
+    </div>
+
     {{-- Calendar Grid --}}
-    <div class="calendar-container shadow-sm bg-white" style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none d-md-block">
         <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
             @php $daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']; @endphp
             @foreach($daysOfWeek as $dow)
-                <div class="calendar-header-cell fw-bold text-muted text-center py-2">{{ $dow }}</div>
+                <div class="calendar-header-cell fw-bold text-muted text-center">{{ $dow }}</div>
             @endforeach
         </div>
 
         <div class="calendar-body-grid">
-            @php
-                $monthStart = \Carbon\Carbon::create($yearFilter, $monthFilter, 1);
-                $startOfCalendar = $monthStart->copy()->startOfWeek(\Carbon\Carbon::MONDAY);
-                $endOfCalendar = $monthStart->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SUNDAY);
-                $period = \Carbon\CarbonPeriod::create($startOfCalendar, $endOfCalendar);
-            @endphp
-
-            @foreach ($period as $currentDate)
+            @foreach ($calendarDates as $currentDate)
                 @php
                     $dayKey = $currentDate->format('Y-m-d');
                     $dayNum = $currentDate->day;
@@ -84,43 +140,45 @@
 
                 <div class="calendar-day-cell position-relative
                     @if(!$isInsideMonth) bg-light opacity-50
-                    @else bg-white
+                    @else bg-white @if($isWeekend) bg-sunday @endif
                     @endif
                     border-start border-bottom border-light-subtle
                     @if($isInsideMonth && $dayEvents->isNotEmpty()) cursor-pointer @endif"
-                    style="min-height: 180px; transition: background 0.2s; padding: clamp(6px, 1.5vw, 12px); min-width: 0; overflow: hidden;"
                     @if($isInsideMonth && $dayEvents->isNotEmpty())
                         wire:click="openDayDetail('{{ $dayKey }}')"
                     @endif
                 >
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="fw-bold {{ $isToday ? 'bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center' : 'text-secondary opacity-75' }}"
-                            style="width: clamp(28px, 2.5vw, 32px); height: clamp(28px, 2.5vw, 32px); font-size: clamp(0.85rem, 1vw, 1.1rem); {{ $isToday ? 'box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);' : '' }}">
+                    <div class="ws-day-top d-flex justify-content-between align-items-start mb-2">
+                        <span class="ws-day-number fw-bold {{ $isToday ? 'is-today' : '' }} {{ !$isInsideMonth ? 'is-muted' : '' }}">
                             {{ $dayNum }}
                         </span>
 
-                        @if($canAddHere)
-                            <button wire:click.stop="openCreateModal('{{ $dayKey }}')"
-                                class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
-                                title="Thêm sự kiện"
-                                style="width: clamp(20px, 2vw, 24px); height: clamp(20px, 2vw, 24px); border-radius: 50%; font-size: clamp(0.65rem, 0.8vw, 0.9rem); opacity: 0; transition: opacity 0.2s;">
-                                <i class="bi bi-plus"></i>
-                            </button>
-                        @endif
+                        <div class="d-flex align-items-center gap-1">
+                            @if($isInsideMonth && $dayEvents->isNotEmpty())
+                                <span class="ws-day-event-count">{{ $dayEvents->count() }}</span>
+                            @endif
+
+                            @if($canAddHere)
+                                <button wire:click.stop="openCreateModal('{{ $dayKey }}')"
+                                    class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
+                                    title="Thêm sự kiện">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="calendar-day-content mt-1">
+                    <div class="calendar-day-content">
                         @if($isInsideMonth && $dayEvents->isNotEmpty())
                             @foreach($dayEvents->take(4) as $evt)
-                                <div class="mb-1 px-2 py-1 rounded ws-event-chip ws-chip-{{ $evt->color }}"
-                                    style="font-size: clamp(0.7rem, 0.85vw, 0.9rem); cursor: pointer; max-width: 100%; overflow: hidden;"
+                                <div class="ws-event-chip ws-chip-{{ $evt->color }}"
                                     wire:click.stop="openDayDetail('{{ $dayKey }}')">
-                                    <div class="fw-bold text-truncate" style="max-width: 100%;">{{ $evt->title }}</div>
-                                    <div class="ws-event-author text-truncate" style="font-size: clamp(0.6rem, 0.75vw, 0.8rem); opacity: 0.75; max-width: 100%;">{{ $evt->participants->pluck('name')->join(', ') }}</div>
+                                    <div class="ws-event-title fw-bold text-truncate">{{ $evt->title }}</div>
+                                    <div class="ws-event-author text-truncate">{{ $evt->participants->pluck('name')->join(', ') }}</div>
                                 </div>
                             @endforeach
                             @if($dayEvents->count() > 4)
-                                <div class="text-muted text-center" style="font-size: clamp(0.65rem, 0.8vw, 0.85rem);">
+                                <div class="ws-more-events text-muted text-center">
                                     +{{ $dayEvents->count() - 4 }} sự kiện khác
                                 </div>
                             @endif
@@ -299,4 +357,3 @@
         <link rel="stylesheet" href="{{ asset('assets/css/work-schedule.css') }}">
     @endpush
 </div>
-

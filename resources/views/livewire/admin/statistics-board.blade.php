@@ -1,6 +1,107 @@
 <div>
+    @push('styles')
+    <style>
+    @media (max-width: 767.98px) {
+        .statistics-page-header {
+            align-items: stretch !important;
+            gap: 14px !important;
+        }
+        .statistics-page-header > div:first-child,
+        .statistics-filter-bar {
+            width: 100%;
+        }
+        .statistics-filter-bar {
+            display: grid !important;
+            grid-template-columns: 1fr;
+            justify-content: stretch !important;
+            gap: 10px !important;
+        }
+        .statistics-filter-control,
+        .statistics-clear-date {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 42px;
+        }
+        .statistics-date-control::-webkit-calendar-picker-indicator {
+            margin-left: auto;
+        }
+        .it-dashboard-tabs {
+            width: 100%;
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .it-dashboard-tabs .nav-item,
+        .it-dashboard-tabs .nav-link {
+            width: 100%;
+        }
+        .it-dashboard-tabs .nav-link {
+            text-align: center;
+            white-space: nowrap;
+        }
+        .it-security-summary {
+            gap: 14px !important;
+        }
+        .it-security-alert-card .card-body {
+            padding: 20px 22px;
+        }
+        .it-security-alert-card .display-5 {
+            font-size: 2.25rem;
+        }
+        .it-top-user-card .card-body {
+            padding: 14px;
+        }
+        .it-top-user-list {
+            display: grid;
+            gap: 10px;
+        }
+        .it-top-user-item {
+            min-width: 0;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 10px;
+            background: color-mix(in srgb, var(--bs-body-bg) 88%, var(--bs-primary) 12%);
+            padding: 12px;
+        }
+        .it-top-user-name {
+            color: var(--bs-body-color);
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .it-top-user-count {
+            flex: 0 0 auto;
+            background: var(--bs-body-bg) !important;
+            color: var(--bs-body-color) !important;
+            border-color: rgba(148, 163, 184, 0.32) !important;
+        }
+    }
+
+    @media (min-width: 576px) and (max-width: 767.98px) {
+        .statistics-filter-bar {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .statistics-clear-date {
+            grid-column: span 2;
+        }
+    }
+
+    [data-bs-theme="dark"] .it-top-user-item {
+        background: #20313a;
+        border-color: rgba(125, 211, 252, 0.22);
+    }
+    [data-bs-theme="dark"] .it-top-user-name {
+        color: #e5edf7;
+    }
+    [data-bs-theme="dark"] .it-top-user-count {
+        background: #171717 !important;
+        color: #fff !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    </style>
+    @endpush
+
     @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-    <div class="page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div class="statistics-page-header page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
             <h4 class="mb-0">Bảng thống kê</h4>
             <nav aria-label="breadcrumb">
@@ -10,14 +111,14 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2 flex-wrap justify-content-end">
-            <select wire:model.live="month" class="form-select" style="width:auto; min-width: 170px; min-height: 42px;">
+        <div class="statistics-filter-bar d-flex gap-2 flex-wrap justify-content-end">
+            <select wire:model.live="month" class="form-select statistics-filter-control" style="width:auto; min-width: 170px; min-height: 42px;">
                 <option value="">Cả năm</option>
                 @for($m = 1; $m <= 12; $m++)
                     <option value="{{ $m }}">Tháng {{ $m }}</option>
                 @endfor
             </select>
-            <select wire:model.live="year" class="form-select" style="width:auto; min-width: 170px; min-height: 42px;">
+            <select wire:model.live="year" class="form-select statistics-filter-control" style="width:auto; min-width: 170px; min-height: 42px;">
                 @foreach($years as $y)
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
@@ -25,21 +126,21 @@
             <input
                 type="date"
                 wire:model.live="contractDateFrom"
-                class="form-control"
+                class="form-control statistics-filter-control statistics-date-control"
                 style="width:auto; min-width: 195px; min-height: 42px;"
                 title="Lọc hợp đồng từ ngày ký"
             >
             <input
                 type="date"
                 wire:model.live="contractDateTo"
-                class="form-control"
+                class="form-control statistics-filter-control statistics-date-control"
                 style="width:auto; min-width: 195px; min-height: 42px;"
                 title="Lọc hợp đồng đến ngày ký"
             >
             <button
                 type="button"
                 wire:click="clearContractDateFilter"
-                class="btn btn-outline-secondary px-3"
+                class="btn btn-outline-secondary px-3 statistics-clear-date"
                 style="min-height: 42px;"
                 @disabled($contractDateFrom === '' && $contractDateTo === '')
             >
@@ -209,7 +310,7 @@
             </div>
 
             {{-- Row 3: Activity Log --}}
-            <div class="row g-4 mb-4">
+            <div class="row g-4 mb-4 it-security-summary">
                 <div class="col-md-12">
                     <div class="card border-0 shadow-sm h-100 it-activity-card">
                         <div class="card-header py-3 d-flex align-items-center justify-content-between">
@@ -263,7 +364,7 @@
             {{-- ── IT DASHBOARD SECURITY ──────────────────────────────── --}}
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 it-panel-card">
+                    <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 it-panel-card it-security-alert-card">
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <div class="rounded-circle bg-soft-danger p-2">
@@ -277,22 +378,22 @@
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="card border-0 shadow-sm h-100 it-panel-card">
+                    <div class="card border-0 shadow-sm h-100 it-panel-card it-top-user-card">
                         <div class="card-header py-3">
                             <h6 class="mb-0 fw-bold">Người dùng hoạt động tích cực (7 ngày qua)</h6>
                         </div>
                         <div class="card-body">
-                            <div class="row g-3">
+                            <div class="row g-3 it-top-user-list">
                                 @foreach($itStats['top_users'] as $stat)
                                 <div class="col-md-6">
-                                    <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded border">
-                                        <div class="d-flex align-items-center gap-2">
+                                    <div class="it-top-user-item d-flex align-items-center justify-content-between gap-2">
+                                        <div class="d-flex align-items-center gap-2 min-w-0">
                                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:30px;height:30px;font-size:11px">
                                                 {{ $stat->causer ? strtoupper(substr($stat->causer->name, 0, 1)) : '?' }}
                                             </div>
-                                            <span class=" fw-bold">{{ $stat->causer ? $stat->causer->name : 'N/A' }}</span>
+                                            <span class="it-top-user-name fw-bold">{{ $stat->causer ? $stat->causer->name : 'N/A' }}</span>
                                         </div>
-                                        <span class="badge bg-white text-dark border">{{ $stat->total }} thao tác</span>
+                                        <span class="it-top-user-count badge border">{{ $stat->total }} thao tác</span>
                                     </div>
                                 </div>
                                 @endforeach

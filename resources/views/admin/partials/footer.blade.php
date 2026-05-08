@@ -5,48 +5,42 @@
     background: var(--bs-card-bg, #fff);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
+    text-align: center;
 }
-.app-footer-brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: .85rem;
-    color: var(--bs-body-color);
-    text-decoration: none;
-}
-.app-footer-brand img { height: 24px; width: auto; opacity: .85; }
 .app-footer-copy {
+    color: var(--bs-secondary-color, #6c757d);
     font-size: .9rem;
-    color: var(--bs-secondary-color, #6c757d);
+    line-height: 1.55;
+    max-width: min(100%, 760px);
 }
-.app-footer-copy span { color: var(--bs-primary, #0d6efd); font-weight: 600; }
-.app-footer-links {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-size: .8rem;
+.app-footer-copy .footer-company {
+    color: color-mix(in srgb, var(--bs-primary, #0d6efd) 78%, currentColor);
+    font-weight: 700;
 }
-.app-footer-links a {
-    color: var(--bs-secondary-color, #6c757d);
-    text-decoration: none;
-    transition: color .15s;
+.app-footer-copy .footer-segment {
+    display: inline;
 }
-.app-footer-links a:hover { color: var(--bs-primary, #0d6efd); }
 @media (max-width: 640px) {
-    .app-footer-redesign { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; }
-    .app-footer-links { display: none; }
+    .app-footer-redesign {
+        padding: 14px 16px;
+    }
+    .app-footer-copy {
+        font-size: .84rem;
+        line-height: 1.45;
+    }
+    .app-footer-copy .footer-segment {
+        display: block;
+    }
 }
 </style>
 
-<footer class="app-footer app-footer-redesign" style="justify-content: center; text-align: center;">
+<footer class="app-footer app-footer-redesign">
     <p class="app-footer-copy mb-0">
-        Bản quyền © <span id="footer-year"></span>
-        <span>Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu</span>.
-        Đã đăng ký mọi quyền.
+        <span class="footer-segment">Bản quyền © <span id="footer-year"></span></span>
+        <span class="footer-segment footer-company">Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu</span>
+        <span class="footer-segment">Đã đăng ký mọi quyền.</span>
     </p>
-
 </footer>
