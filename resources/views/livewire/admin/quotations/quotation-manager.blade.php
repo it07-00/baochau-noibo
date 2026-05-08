@@ -142,10 +142,10 @@
                                 {{ $item->status }}
                             </span>
                         </td>
-                        <td class="text-end ">{{ $item->original_value ? number_format($item->original_value) : '-' }}</td>
-                        <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value) : '-' }}</td>
-                        <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax) : '-' }}</td>
-                        <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value) : '-' }}</td>
+                        <td class="text-end ">{{ $item->original_value ? number_format($item->original_value, 0, ',', '.') : '-' }}</td>
+                        <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value, 0, ',', '.') : '-' }}</td>
+                        <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax, 0, ',', '.') : '-' }}</td>
+                        <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}</td>
                         @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
@@ -254,19 +254,19 @@
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị gốc</th>
-                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->original_value) }}đ</td>
+                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->original_value, 0, ',', '.') }}đ</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3 text-danger">Hoa hồng KH</th>
-                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_value) }}đ</td>
+                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_value, 0, ',', '.') }}đ</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3 text-danger">Thuế HH</th>
-                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_tax) }}đ</td>
+                                    <td class="px-4 py-3 fw-bold text-danger">{{ number_format($selectedQuotation->commission_tax, 0, ',', '.') }}đ</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị HĐ (có VAT)</th>
-                                    <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value) }}đ</td>
+                                    <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value, 0, ',', '.') }}đ</td>
                                 </tr>
                             </tbody>
                         </table>
