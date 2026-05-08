@@ -10,6 +10,8 @@ use Carbon\CarbonPeriod;
 
 class WorkScheduleManager extends Component
 {
+    private const MAX_EVENT_LANES = 3;
+
     // Calendar navigation
     public int $monthFilter;
     public int $yearFilter;
@@ -296,15 +298,123 @@ class WorkScheduleManager extends Component
 
         $totalEvents = $events->count();
 
+        $weeksLayout = $this->buildWeeksLayout($events, $monthStart);
+
         $allUsers = User::where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return view('livewire.admin.work-schedules.work-schedule-manager', [
             'calendarData' => $calendarData,
             'totalEvents'  => $totalEvents,
             'allUsers'     => $allUsers,
+            'weeksLayout'  => $weeksLayout,
         ])->layout('admin.layouts.app', [
             'title'     => 'Lịch công tác',
             'fullWidth' => true,
         ]);
+    }
+
+    private function buildWeeksLayout($events, Carbon $monthStart): array
+    {
+        $startOfCal       = $monthStart->copy()->startOfWeek(Carbon::MONDAY);
+        $endOfCal         = $monthStart->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
+        $weeksLayout      = [];
+        $currentWeekStart = $startOfCal->copy();
+
+        while ($currentWeekStart->lte($endOfCal)) {
+            $weekEnd   = $currentWeekStart->copy()->addDays(6);
+            $weekDates = [];
+            for ($i = 0; $i < 7; $i++) {
+                $weekDates[] = $currentWeekStart->copy()->addDays($i)->format('Y-m-d');
+            }
+
+            // Events overlapping this week
+            $weekEvents = $events->filter(function ($event) use ($currentWeekStart, $weekEnd) {
+                $effectiveEnd = $event->end_date ?? $event->start_date;
+
+                return $event->start_date->lte($weekEnd) && $effectiveEnd->gte($currentWeekStart);
+            })->sortBy('start_date')->values();
+
+            // Build placement data for each event
+            $placements = [];
+            foreach ($weekEvents as $event) {
+                $effectiveEnd = $event->end_date ?? $event->start_date;
+                $clippedStart = $event->start_date->lt($currentWeekStart)
+                    ? $currentWeekStart->copy()
+                    : $event->start_date->copy();
+                $clippedEnd = $effectiveEnd->gt($weekEnd)
+                    ? $weekEnd->copy()
+                    : $effectiveEnd->copy();
+                $startCol = (int) $currentWeekStart->diffInDays($clippedStart) + 1;
+                $endCol   = (int) $currentWeekStart->diffInDays($clippedEnd) + 1;
+                $span     = $endCol - $startCol + 1;
+
+                $placements[] = [
+                    'id'           => $event->id,
+                    'title'        => $event->title,
+                    'color'        => $event->color,
+                    'participants' => $event->participants->pluck('name')->join(', '),
+                    'startCol'     => $startCol,
+                    'endCol'       => $endCol,
+                    'span'         => $span,
+                    'startDate'    => $event->start_date->format('Y-m-d'),
+                ];
+            }
+
+            // Sort: earlier start first; longer span first within same start
+            usort($placements, fn ($a, $b) => $a['startCol'] !== $b['startCol']
+                ? $a['startCol'] - $b['startCol']
+                : $b['span'] - $a['span']);
+
+            // Greedy lane assignment (no two events in the same lane overlap columns)
+            $laneAssignments = [];
+            foreach ($placements as &$placement) {
+                $assignedLane = null;
+                foreach ($laneAssignments as $laneIdx => $lanePlacements) {
+                    $overlaps = false;
+                    foreach ($lanePlacements as $existing) {
+                        if ($placement['startCol'] <= $existing['endCol'] && $placement['endCol'] >= $existing['startCol']) {
+                            $overlaps = true;
+                            break;
+                        }
+                    }
+                    if (! $overlaps) {
+                        $assignedLane = $laneIdx;
+                        break;
+                    }
+                }
+                if ($assignedLane === null) {
+                    $assignedLane                    = count($laneAssignments);
+                    $laneAssignments[$assignedLane]  = [];
+                }
+                $placement['lane']               = $assignedLane;
+                $laneAssignments[$assignedLane][] = $placement;
+            }
+            unset($placement);
+
+            // Visible lanes (capped at MAX_EVENT_LANES)
+            $visibleLanes = array_slice($laneAssignments, 0, self::MAX_EVENT_LANES, true);
+
+            // Per-day overflow: count events hidden beyond MAX_EVENT_LANES
+            $overflowPerDay = array_fill_keys($weekDates, 0);
+            if (count($laneAssignments) > self::MAX_EVENT_LANES) {
+                foreach (array_slice($laneAssignments, self::MAX_EVENT_LANES) as $lanePlacements) {
+                    foreach ($lanePlacements as $p) {
+                        for ($col = $p['startCol']; $col <= $p['endCol']; $col++) {
+                            $overflowPerDay[$weekDates[$col - 1]]++;
+                        }
+                    }
+                }
+            }
+
+            $weeksLayout[] = [
+                'dates'          => $weekDates,
+                'lanes'          => $visibleLanes,
+                'overflowPerDay' => $overflowPerDay,
+            ];
+
+            $currentWeekStart->addWeek();
+        }
+
+        return $weeksLayout;
     }
 }
