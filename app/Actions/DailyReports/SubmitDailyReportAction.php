@@ -25,8 +25,8 @@ final class SubmitDailyReportAction
             [
                 'content' => clean($content),
                 'status'  => $status,
-                'plan'    => $plan ?: null,
-                'issues'  => $issues ?: null,
+                'plan'    => $plan,
+                'issues'  => $issues,
             ]
         );
 
