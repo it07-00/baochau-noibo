@@ -151,7 +151,7 @@
                                 <th>Loại hợp đồng</th>
                                 <th class="text-end">Doanh số (đ)</th>
                                 <th class="text-center" style="width: 110px;">Loại</th>
-                                <th class="text-center" style="width: 110px;">Ngày ký</th>
+                                <th class="text-center" style="width: 130px;">Ngày xuất HĐ</th>
                             </tr>
                         </thead>
                         <tbody>
