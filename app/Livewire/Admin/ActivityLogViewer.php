@@ -40,7 +40,7 @@ class ActivityLogViewer extends Component
 
     public function render()
     {
-        $query = Activity::with('causer', 'subject')
+        $query = Activity::with('causer')
             ->latest();
 
         if ($this->search) {
