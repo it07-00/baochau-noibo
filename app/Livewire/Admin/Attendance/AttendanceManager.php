@@ -27,8 +27,8 @@ class AttendanceManager extends Component
     public function import(): void
     {
         $this->validate([
-            'userFile'   => 'required|file|mimes:dat,txt,csv|max:2048',
-            'attlogFile' => 'required|file|mimes:dat,txt,log,csv|max:10240',
+            'userFile'   => 'required|file|extensions:dat,txt,csv|max:2048',
+            'attlogFile' => 'required|file|extensions:dat,txt,log,csv|max:10240',
         ]);
 
         // 1. Parse user.dat (binary)
