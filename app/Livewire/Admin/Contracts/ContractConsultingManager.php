@@ -643,7 +643,7 @@ class ContractConsultingManager extends Component
             'customers' => Customer::orderBy('name')->get(),
             'staffs' => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
             'departments' => Department::all(),
-            'assignable_users' => User::whereHas('roles', fn ($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value]))->orderBy('name')->get(),
+            'assignable_users' => User::whereHas('roles', fn ($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
             'provinces' => $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
                 ? ContractLegal::whereHas('assignments', fn ($q) => $q->where('user_id', $user->id))
                     ->whereNotNull('province')->where('province', '!=', '')

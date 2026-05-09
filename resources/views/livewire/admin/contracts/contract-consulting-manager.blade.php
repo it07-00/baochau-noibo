@@ -1035,8 +1035,7 @@
                             <label class="list-group-item list-group-item-action d-flex gap-2">
                                 <input class="form-check-input flex-shrink-0 mt-1" type="checkbox"
                                     value="{{ $u->id }}" wire:model="assignUserIds">
-                                <span>{{ $u->name }}<small
-                                        class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
+                                <span>{{ $u->name }}</span>
                             </label>
                         @endforeach
                     </div>
