@@ -43,7 +43,7 @@
                                 </svg>
                                 <span>Xuất chi tiết</span>
                             </a>
-                            <button wire:click="$set('showImportModal', true)"
+                            <button wire:click="openImportModal"
                                     class="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-1">
                                 <svg width="15" height="15" fill="none" viewBox="0 0 16 16">
                                     <path d="M8 2v8M4 6l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -183,46 +183,150 @@
 
     {{-- Modal Import --}}
     @if($showImportModal)
-        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);"
-             wire:click.self="$set('showImportModal', false)">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <form wire:submit="import">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Import dữ liệu chấm công</h5>
-                            <button type="button" class="btn-close"
-                                    wire:click="$set('showImportModal', false)"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">File user.dat <span class="text-danger">*</span></label>
-                                <input type="file" wire:model="userFile" class="form-control form-control-sm" accept=".dat">
-                                <div class="form-text">File danh sách nhân viên từ máy chấm công</div>
-                                @error('userFile') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered {{ $importStep === 2 ? 'modal-lg' : '' }}">
+                <div class="modal-content border-0 shadow-lg overflow-hidden">
+
+                    {{-- Header --}}
+                    <div class="modal-header bg-primary py-3">
+                        <div>
+                            <h5 class="modal-title fw-bold text-white mb-0">Import dữ liệu chấm công</h5>
+                            <div class="text-white-50" style="font-size:0.78rem;">
+                                Bước {{ $importStep }}/2 —
+                                {{ $importStep === 1 ? 'Chọn file' : 'Xem trước & xác nhận' }}
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">File attlog.dat <span class="text-danger">*</span></label>
-                                <input type="file" wire:model="attlogFile" class="form-control form-control-sm" accept=".dat">
-                                <div class="form-text">File log chấm công (tên có dạng 8116..._attlog.dat)</div>
-                                @error('attlogFile') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <button type="button" class="btn-close btn-close-white"
+                                wire:click="closeImportModal"></button>
+                    </div>
+
+                    {{-- Bước 1: Upload --}}
+                    @if($importStep === 1)
+                        <form wire:submit="analyze">
+                            <div class="modal-body p-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">File attlog.dat <span class="text-danger">*</span></label>
+                                    <input type="file" wire:model="attlogFile" class="form-control form-control-sm" accept=".dat,.txt,.log,.csv">
+                                    <div class="form-text">File log chấm công xuất từ máy (tên có dạng 8116..._attlog.dat)</div>
+                                    @error('attlogFile') <div class="text-danger mt-1" style="font-size:0.85rem;">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="alert alert-info py-2 mb-0" style="font-size:0.85rem;">
+                                    <strong>Lưu ý:</strong> Để đồng bộ danh sách nhân viên từ máy, vào <strong>Quản lý NV → Đồng bộ từ máy</strong>.
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                        wire:click="closeImportModal">Hủy</button>
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                        wire:loading.attr="disabled" wire:target="analyze">
+                                    <span wire:loading wire:target="analyze" class="spinner-border spinner-border-sm me-1"></span>
+                                    Phân tích file →
+                                </button>
+                            </div>
+                        </form>
+                    @endif
+
+                    {{-- Bước 2: Preview & Confirm --}}
+                    @if($importStep === 2)
+                        <div class="modal-body p-4">
+                            <div class="row g-3">
+
+                                {{-- Chọn tháng --}}
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">
+                                        Tháng trong file
+                                        <span class="badge bg-secondary ms-1">{{ count($detectedMonths) }}</span>
+                                    </label>
+                                    @error('selectedMonths')
+                                        <div class="text-danger mb-1" style="font-size:0.82rem;">{{ $message }}</div>
+                                    @enderror
+                                    <div class="border rounded p-2" style="font-size:0.9rem;">
+                                        @foreach($detectedMonths as $m)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       wire:model="selectedMonths" value="{{ $m }}"
+                                                       id="month_{{ $m }}">
+                                                <label class="form-check-label" for="month_{{ $m }}">
+                                                    {{ \Carbon\Carbon::parse($m . '-01')->translatedFormat('F Y') }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="form-text">Bỏ tick để bỏ qua tháng đó.</div>
+                                </div>
+
+                                {{-- Danh sách nhân viên --}}
+                                <div class="col-md-8">
+                                    <label class="form-label fw-semibold">
+                                        Nhân viên trong file
+                                        <span class="badge bg-secondary ms-1">{{ count($parsedEmployees) }} người</span>
+                                    </label>
+                                    <div class="border rounded" style="max-height:280px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover mb-0" style="font-size:0.85rem;">
+                                            <thead class="table-light sticky-top">
+                                                <tr>
+                                                    <th width="36" class="text-center">Nhập</th>
+                                                    <th width="70">Mã máy</th>
+                                                    <th>Tên nhân viên</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($parsedEmployees as $i => $emp)
+                                                    <tr wire:key="emp-preview-{{ $i }}"
+                                                        class="{{ $emp['is_blocked'] ? 'opacity-50 bg-light' : '' }}">
+                                                        <td class="text-center align-middle">
+                                                            @if($emp['is_blocked'])
+                                                                <span title="Đang bị chặn" style="font-size:0.8rem;">🚫</span>
+                                                            @else
+                                                                <input type="checkbox"
+                                                                       class="form-check-input"
+                                                                       wire:model="includedUids"
+                                                                       value="{{ $emp['uid'] }}">
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-muted align-middle">
+                                                            {{ str_pad($emp['uid'], 5, '0', STR_PAD_LEFT) }}
+                                                            @if($emp['is_unknown'])
+                                                                <span class="badge bg-secondary ms-1" style="font-size:0.6rem;">Mới</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            @if($emp['is_blocked'])
+                                                                <span class="text-muted">{{ $emp['name'] }}</span>
+                                                                <span class="badge bg-danger ms-1" style="font-size:0.65rem;">Bị chặn</span>
+                                                            @else
+                                                                <input type="text"
+                                                                       class="form-control form-control-sm border-0 bg-transparent px-1"
+                                                                       wire:model="parsedEmployees.{{ $i }}.name"
+                                                                       placeholder="{{ $emp['is_unknown'] ? 'Nhập tên để thêm mới...' : 'Tên nhân viên' }}">
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-text">Bỏ tick để bỏ qua logs của nhân viên đó trong lần import này.</div>
+                                </div>
                             </div>
 
-                            <div class="alert alert-info mb-0 py-2">
-                                <strong>Lưu ý:</strong> Import sẽ thay thế toàn bộ dữ liệu chấm công của tháng tương ứng.
+                            <div class="alert alert-warning py-2 mt-3 mb-0" style="font-size:0.83rem;">
+                                <strong>Lưu ý:</strong> Import sẽ thay thế toàn bộ log chấm công của các tháng được chọn.
+                                Nhân viên <em>Chưa đăng ký</em> sẽ bị bỏ qua — hãy đồng bộ danh sách trước.
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer bg-light">
                             <button type="button" class="btn btn-secondary btn-sm"
-                                    wire:click="$set('showImportModal', false)">Hủy</button>
-                            <button type="submit" class="btn btn-primary btn-sm"
-                                    wire:loading.attr="disabled">
-                                <span wire:loading wire:target="import">
-                                    <span class="spinner-border spinner-border-sm me-1"></span>
-                                </span>
-                                Import
+                                    wire:click="$set('importStep', 1)">← Quay lại</button>
+                            <button type="button" class="btn btn-primary btn-sm"
+                                    wire:click="import"
+                                    wire:loading.attr="disabled" wire:target="import">
+                                <span wire:loading wire:target="import" class="spinner-border spinner-border-sm me-1"></span>
+                                Xác nhận import
                             </button>
                         </div>
-                    </form>
+                    @endif
+
                 </div>
             </div>
         </div>

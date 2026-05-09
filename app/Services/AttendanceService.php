@@ -26,8 +26,8 @@ class AttendanceService
             ->groupBy('employee_id');
 
         $employees = $onlyWithLogs
-            ? AttendanceEmployee::whereIn('id', $logs->keys())->orderBy('device_uid')->get()
-            : AttendanceEmployee::orderBy('device_uid')->get();
+            ? AttendanceEmployee::where('is_active', true)->whereIn('id', $logs->keys())->orderBy('device_uid')->get()
+            : AttendanceEmployee::where('is_active', true)->orderBy('device_uid')->get();
 
         $dates = [];
         for ($d = 1; $d <= $daysInMonth; $d++) {

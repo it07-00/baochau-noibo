@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AttendanceEmployee extends Model
 {
-    protected $fillable = ['device_uid', 'name', 'department'];
+    protected $fillable = ['device_uid', 'name', 'department', 'is_active', 'is_blocked'];
 
     public function logs(): HasMany
     {

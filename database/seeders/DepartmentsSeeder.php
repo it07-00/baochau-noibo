@@ -15,7 +15,7 @@ class DepartmentsSeeder extends Seeder
             ['name' => 'Phòng Kinh doanh', 'slug' => 'kinh-doanh'],
             ['name' => 'Phòng Kỹ thuật', 'slug' => 'ky-thuat'],
             ['name' => 'Phòng Kế toán', 'slug' => 'ke-toan'],
-            ['name' => 'Phòng Tư vấn - CSKH', 'slug' => 'tu-van-cskh'],
+            ['name' => 'Phòng Tư vấn', 'slug' => 'tu-van-cskh'],
             ['name' => 'Phòng Marketing', 'slug' => 'marketing'],
             ['name' => 'Phòng Tổng hợp', 'slug' => 'tong-hop'],
         ];

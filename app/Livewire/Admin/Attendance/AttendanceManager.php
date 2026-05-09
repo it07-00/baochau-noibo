@@ -7,6 +7,7 @@ use App\Models\AttendanceImport;
 use App\Models\AttendanceLog;
 use App\Services\AttendanceService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -14,91 +15,170 @@ class AttendanceManager extends Component
 {
     use WithFileUploads;
 
-    public $userFile;
     public $attlogFile;
     public string $selectedMonth;
     public bool $showImportModal = false;
+
+    // Import 2-step
+    public int $importStep = 1;
+    public array $parsedEmployees = [];   // [['uid'=>x, 'name'=>y], ...]
+    public array $includedUids = [];      // UIDs được tích để import logs
+    public array $detectedMonths = [];
+    public array $selectedMonths = [];
+    public string $importCacheKey = '';
 
     public function mount(): void
     {
         $this->selectedMonth = now()->format('Y-m');
     }
 
-    public function import(): void
+    public function openImportModal(): void
+    {
+        $this->resetImport();
+        $this->showImportModal = true;
+    }
+
+    public function closeImportModal(): void
+    {
+        if ($this->importCacheKey) {
+            Cache::forget($this->importCacheKey);
+        }
+        $this->showImportModal = false;
+        $this->resetImport();
+    }
+
+    private function resetImport(): void
+    {
+        $this->importStep = 1;
+        $this->parsedEmployees = [];
+        $this->includedUids = [];
+        $this->detectedMonths = [];
+        $this->selectedMonths = [];
+        $this->importCacheKey = '';
+        $this->reset(['attlogFile']);
+    }
+
+    public function analyze(): void
     {
         $this->validate([
-            'userFile'   => 'required|file|extensions:dat,txt,csv|max:2048',
             'attlogFile' => 'required|file|extensions:dat,txt,log,csv|max:10240',
         ]);
 
-        // 1. Parse user.dat (binary)
-        $userContent = file_get_contents($this->userFile->getRealPath());
-        $employees = $this->parseUserDat($userContent);
-
-        // 2. Upsert employees
-        foreach ($employees as $uid => $name) {
-            AttendanceEmployee::updateOrCreate(
-                ['device_uid' => $uid],
-                ['name' => $name],
-            );
-        }
-
-        // 3. Parse attlog.dat (text)
         $attlogContent = file_get_contents($this->attlogFile->getRealPath());
         $logs = $this->parseAttlog($attlogContent);
 
-        // 4. Determine month from data
-        $firstLog = collect($logs)->first();
-        $month = $firstLog ? Carbon::parse($firstLog['datetime'])->format('Y-m') : now()->format('Y-m');
+        $uidsInLog = collect($logs)->pluck('uid')->unique()->toArray();
 
-        // 5. Delete old logs for this month then insert
-        $employeeMap = AttendanceEmployee::pluck('id', 'device_uid');
+        $existingEmployees = AttendanceEmployee::whereIn('device_uid', $uidsInLog)->get()->keyBy('device_uid');
+        $blockedUids = AttendanceEmployee::where('is_blocked', true)->pluck('device_uid')->toArray();
 
-        // Remove existing logs for the month
-        $startOfMonth = Carbon::parse($month . '-01')->startOfMonth();
-        $endOfMonth   = Carbon::parse($month . '-01')->endOfMonth();
+        $this->parsedEmployees = collect($uidsInLog)
+            ->map(fn($uid) => [
+                'uid'        => $uid,
+                'name'       => $existingEmployees[$uid]->name ?? '(Chưa đăng ký)',
+                'is_blocked' => in_array($uid, $blockedUids),
+                'is_unknown' => !isset($existingEmployees[$uid]),
+            ])
+            ->sortBy('uid')
+            ->values()
+            ->toArray();
 
-        AttendanceLog::whereBetween('checked_at', [$startOfMonth, $endOfMonth])->delete();
+        $this->includedUids = collect($this->parsedEmployees)
+            ->where('is_blocked', false)
+            ->where('is_unknown', false)
+            ->pluck('uid')
+            ->toArray();
 
-        // 6. Insert new logs
-        $inserted = 0;
-        $batchSize = 500;
-        $batch = [];
+        $this->detectedMonths = collect($logs)
+            ->map(fn($l) => Carbon::parse($l['datetime'])->format('Y-m'))
+            ->unique()->sort()->values()->toArray();
 
-        foreach ($logs as $log) {
-            $employeeId = $employeeMap[$log['uid']] ?? null;
-            if (!$employeeId) continue;
+        $this->selectedMonths = $this->detectedMonths;
 
-            $batch[] = [
-                'employee_id' => $employeeId,
-                'checked_at'  => $log['datetime'],
-                'created_at'  => now(),
-                'updated_at'  => now(),
-            ];
-            $inserted++;
+        $this->importCacheKey = 'att_import_' . auth()->id() . '_' . now()->timestamp;
+        Cache::put($this->importCacheKey, $logs, now()->addMinutes(30));
 
-            if (count($batch) >= $batchSize) {
-                AttendanceLog::insert($batch);
-                $batch = [];
+        $this->importStep = 2;
+        $this->reset(['attlogFile']);
+    }
+
+    public function import(): void
+    {
+        if (empty($this->selectedMonths)) {
+            $this->addError('selectedMonths', 'Vui lòng chọn ít nhất một tháng để import.');
+            return;
+        }
+
+        $logs = Cache::get($this->importCacheKey, []);
+
+        $blockedUids = AttendanceEmployee::where('is_blocked', true)->pluck('device_uid')->toArray();
+        $importUids  = array_values(array_diff($this->includedUids, $blockedUids));
+
+        // Tạo NV mới cho các UID chưa có trong DB (is_unknown) nếu đã điền tên
+        foreach ($this->parsedEmployees as $emp) {
+            if (!$emp['is_unknown'] || !in_array($emp['uid'], $importUids)) continue;
+            $name = trim($emp['name']);
+            if (!$name || $name === '(Chưa đăng ký)') continue;
+            AttendanceEmployee::firstOrCreate(
+                ['device_uid' => $emp['uid']],
+                ['name' => $name, 'is_active' => true, 'is_blocked' => false],
+            );
+        }
+
+        $employeeMap = AttendanceEmployee::whereIn('device_uid', $importUids)->pluck('id', 'device_uid');
+
+        $logsByMonth = collect($logs)
+            ->filter(fn($l) => in_array(Carbon::parse($l['datetime'])->format('Y-m'), $this->selectedMonths))
+            ->filter(fn($l) => in_array($l['uid'], $importUids))
+            ->groupBy(fn($l) => Carbon::parse($l['datetime'])->format('Y-m'));
+
+        $totalInserted = 0;
+
+        foreach ($logsByMonth as $month => $monthLogs) {
+            $start = Carbon::parse($month . '-01')->startOfMonth();
+            $end   = Carbon::parse($month . '-01')->endOfMonth();
+
+            AttendanceLog::whereBetween('checked_at', [$start, $end])
+                ->whereIn('employee_id', $employeeMap->values())
+                ->delete();
+
+            $batch = [];
+            foreach ($monthLogs as $log) {
+                $employeeId = $employeeMap[$log['uid']] ?? null;
+                if (!$employeeId) continue;
+
+                $batch[] = [
+                    'employee_id' => $employeeId,
+                    'checked_at'  => $log['datetime'],
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ];
+
+                if (count($batch) >= 500) {
+                    AttendanceLog::insert($batch);
+                    $totalInserted += count($batch);
+                    $batch = [];
+                }
             }
+
+            if (!empty($batch)) {
+                AttendanceLog::insert($batch);
+                $totalInserted += count($batch);
+            }
+
+            AttendanceImport::create([
+                'imported_by'   => auth()->id(),
+                'month'         => $month,
+                'total_records' => $monthLogs->count(),
+            ]);
         }
 
-        if (!empty($batch)) {
-            AttendanceLog::insert($batch);
-        }
+        $this->selectedMonth = collect($this->selectedMonths)->sort()->last() ?? now()->format('Y-m');
 
-        // 7. Record import
-        AttendanceImport::create([
-            'imported_by'   => auth()->id(),
-            'month'         => $month,
-            'total_records' => $inserted,
-        ]);
+        $monthCount = count($logsByMonth);
+        $this->closeImportModal();
 
-        $this->selectedMonth = $month;
-        $this->showImportModal = false;
-        $this->reset(['userFile', 'attlogFile']);
-
-        session()->flash('success', "Import thành công {$inserted} bản ghi cho tháng {$month}.");
+        session()->flash('success', "Import thành công {$totalInserted} bản ghi ({$monthCount} tháng).");
     }
 
     public function render()
@@ -123,34 +203,6 @@ class AttendanceManager extends Component
         ])->layout('admin.layouts.app');
     }
 
-    private function parseUserDat(string $binary): array
-    {
-        $employees = [];
-        $recordSize = 72; // Each record is 72 bytes in user.dat
-
-        $length = strlen($binary);
-        $offset = 0;
-
-        while ($offset + $recordSize <= $length) {
-            $record = substr($binary, $offset, $recordSize);
-
-            // UID is at bytes 0-1 (little-endian uint16)
-            $uid = unpack('v', substr($record, 0, 2))[1];
-
-            // Name starts at byte 11, null-terminated, up to ~24 chars
-            $nameRaw = substr($record, 11, 24);
-            $name = rtrim(explode("\x00", $nameRaw)[0]);
-
-            if ($uid > 0 && $name !== '') {
-                $employees[$uid] = $name;
-            }
-
-            $offset += $recordSize;
-        }
-
-        return $employees;
-    }
-
     private function parseAttlog(string $content): array
     {
         $logs = [];
@@ -167,10 +219,7 @@ class AttendanceManager extends Component
             $datetime = trim($parts[1]);
 
             if ($uid > 0 && strtotime($datetime)) {
-                $logs[] = [
-                    'uid'      => $uid,
-                    'datetime' => $datetime,
-                ];
+                $logs[] = ['uid' => $uid, 'datetime' => $datetime];
             }
         }
 
