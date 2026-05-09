@@ -489,7 +489,7 @@
     </div>
 
     <!-- Quick Report Modal (Add/Edit) -->
-    <div x-data="{ open: @entangle('showReportModal') }" 
+    <div x-data="{ open: @entangle('showReportModal') }"
          x-show="open" x-cloak
          style="position: fixed; inset: 0; z-index: 10000;"
          @keydown.escape.window="open = false">
