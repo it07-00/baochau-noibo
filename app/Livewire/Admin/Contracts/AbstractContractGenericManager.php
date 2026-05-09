@@ -590,7 +590,7 @@ abstract class AbstractContractGenericManager extends Component
             'customers'              => Customer::orderBy('name')->get(),
             'staffs'                 => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
             'departments'            => Department::all(),
-            'assignable_users'       => User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::TU_VAN->value]))->orderBy('name')->get(),
+            'assignable_users'       => User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
             'provinces'              => $modelClass::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'           => self::ALLOWED_STATUSES,
             'renewal_statuses'       => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
