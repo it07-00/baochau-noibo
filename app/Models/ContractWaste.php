@@ -69,9 +69,9 @@ class ContractWaste extends Model
         'is_offset' => 'boolean',
         'is_overdue' => 'boolean',
         'is_renewal' => 'boolean',
-        'value' => 'decimal:2',
-        'commission' => 'decimal:2',
-        'revenue' => 'decimal:2',
+        'value' => 'integer',
+        'commission' => 'integer',
+        'revenue' => 'integer',
     ];
 
     public function customer()

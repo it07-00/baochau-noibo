@@ -23,9 +23,9 @@ class ContractPaymentSchedule extends Model
     ];
 
     protected $casts = [
-        'percentage'  => 'decimal:2',
-        'amount'      => 'decimal:2',
-        'paid_amount' => 'decimal:2',
+        'percentage'  => 'integer',
+        'amount'      => 'integer',
+        'paid_amount' => 'integer',
         'due_date'    => 'date',
         'paid_date'   => 'date',
     ];

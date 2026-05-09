@@ -33,7 +33,7 @@ class EmployeeContract extends Model
         'signed_date' => 'date',
         'start_date'  => 'date',
         'end_date'    => 'date',
-        'salary'      => 'decimal:2',
+        'salary'      => 'integer',
     ];
 
     public function user(): BelongsTo

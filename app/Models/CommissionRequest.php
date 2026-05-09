@@ -30,7 +30,7 @@ class CommissionRequest extends Model
 
     protected $casts = [
         'processed_at' => 'datetime',
-        'amount' => 'decimal:2',
+        'amount' => 'integer',
     ];
 
 

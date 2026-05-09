@@ -83,9 +83,9 @@ class ContractLegal extends Model
     protected $casts = [
         'signed_at' => 'date',
         'submitted_at' => 'date',
-        'value' => 'decimal:2',
-        'commission' => 'decimal:2',
-        'revenue' => 'decimal:2',
+        'value' => 'integer',
+        'commission' => 'integer',
+        'revenue' => 'integer',
         'is_offset' => 'boolean',
         'has_room_fund' => 'boolean',
         'is_overdue' => 'boolean',

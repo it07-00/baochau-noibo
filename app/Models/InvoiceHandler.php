@@ -25,10 +25,10 @@ class InvoiceHandler extends Model
         'issue_date'  => 'date',
         'due_date'    => 'date',
         'paid_at'     => 'date',
-        'amount'      => 'decimal:2',
-        'vat_amount'  => 'decimal:2',
-        'total_amount'=> 'decimal:2',
-        'paid_amount' => 'decimal:2',
+        'amount'      => 'integer',
+        'vat_amount'  => 'integer',
+        'total_amount'=> 'integer',
+        'paid_amount' => 'integer',
     ];
 
     public function contractWaste(): BelongsTo

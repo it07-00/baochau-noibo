@@ -29,11 +29,11 @@ class Quotation extends Model
 
     protected $casts = [
         'date' => 'date',
-        'original_value' => 'decimal:2',
-        'value_inc_vat' => 'decimal:2',
-        'commission_value' => 'decimal:2',
-        'commission_tax' => 'decimal:2',
-        'total_value' => 'decimal:2',
+        'original_value' => 'integer',
+        'value_inc_vat' => 'integer',
+        'commission_value' => 'integer',
+        'commission_tax' => 'integer',
+        'total_value' => 'integer',
     ];
 
     public function staff()
