@@ -27,10 +27,10 @@ class SalesRenewal extends Model
 
     protected $casts = [
         'sales_month' => 'date',
-        'sales_value' => 'decimal:0',
-        'commission' => 'decimal:0',
+        'sales_value' => 'decimal:2',
+        'commission' => 'decimal:2',
         'sales_percentage' => 'decimal:2',
-        'sales_amount' => 'decimal:0',
+        'sales_amount' => 'decimal:2',
     ];
 
     public function creator(): BelongsTo

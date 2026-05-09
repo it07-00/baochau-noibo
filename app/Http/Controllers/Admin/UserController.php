@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Permission;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
-use App\Enums\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -26,48 +27,14 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        $departments = Department::where('is_active', true)->get();
+        $departments = $this->getActiveDepartments();
 
         return view('admin.pages.users.create', compact('roles', 'departments'));
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        abort_unless(auth()->user()->can(Permission::USERS_CREATE->value), 403);
-
-        $validated = $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'username'      => ['required', 'string', 'max:255', 'unique:users,username'],
-            'email'         => ['nullable', 'email', 'max:255', 'unique:users,email'],
-            'phone'         => ['nullable', 'string', 'max:30'],
-            'password'      => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
-            'gender'        => ['nullable', Rule::in(['male', 'female', 'other'])],
-            'department_id' => ['nullable', 'exists:departments,id'],
-            'role'          => ['required', 'exists:roles,name'],
-            'is_active'     => ['nullable', 'boolean'],
-        ], [
-            'name.required' => 'Vui lòng nhập họ và tên.',
-            'username.required' => 'Vui lòng nhập tên đăng nhập.',
-            'username.unique' => 'Tên đăng nhập đã tồn tại.',
-            'email.email' => 'Email không đúng định dạng.',
-            'email.unique' => 'Email đã tồn tại.',
-            'password.required' => 'Vui lòng nhập mật khẩu.',
-            'password.min' => 'Mật khẩu phải có ít nhất :min ký tự.',
-            'password.max' => 'Mật khẩu không được vượt quá :max ký tự.',
-            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
-            'department_id.exists' => 'Phòng ban không hợp lệ.',
-            'role.required' => 'Vui lòng chọn vai trò.',
-            'role.exists' => 'Vai trò không hợp lệ.',
-        ], [
-            'name' => 'họ và tên',
-            'username' => 'tên đăng nhập',
-            'email' => 'email',
-            'phone' => 'số điện thoại',
-            'password' => 'mật khẩu',
-            'password_confirmation' => 'xác nhận mật khẩu',
-            'department_id' => 'phòng ban',
-            'role' => 'vai trò',
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'name'          => $validated['name'],
@@ -90,34 +57,22 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        $departments = Department::where('is_active', true)->get();
+        $departments = $this->getActiveDepartments();
 
         return view('admin.pages.users.edit', compact('user', 'roles', 'departments'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        abort_unless(auth()->user()->can(Permission::USERS_EDIT->value), 403);
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'username'      => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($user->id)],
-            'email'         => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'phone'         => ['nullable', 'string', 'max:30'],
-            'password'      => ['nullable', 'string', 'min:8', 'max:255'],
-            'gender'        => ['nullable', Rule::in(['male', 'female', 'other'])],
-            'department_id' => ['nullable', 'exists:departments,id'],
-            'role'          => ['required', 'exists:roles,name'],
-            'is_active'     => ['nullable', 'boolean'],
-        ]);
-
-        $user->name = $validated['name'];
-        $user->username = $validated['username'];
-        $user->email = $validated['email'] ?? null;
-        $user->phone = $validated['phone'] ?? null;
-        $user->gender = $validated['gender'] ?? null;
+        $user->name          = $validated['name'];
+        $user->username      = $validated['username'];
+        $user->email         = $validated['email'] ?? null;
+        $user->phone         = $validated['phone'] ?? null;
+        $user->gender        = $validated['gender'] ?? null;
         $user->department_id = $validated['department_id'] ?? null;
-        $user->is_active = $request->boolean('is_active', true);
+        $user->is_active     = $request->boolean('is_active', true);
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
@@ -144,5 +99,10 @@ class UserController extends Controller
         return redirect()
             ->route('app.users.index')
             ->with('status', 'Xóa người dùng thành công.');
+    }
+
+    private function getActiveDepartments(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Department::where('is_active', true)->get();
     }
 }

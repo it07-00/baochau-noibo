@@ -18,12 +18,13 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
+use App\Livewire\Concerns\HasContractFilters;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
 
 class ContractWasteManager extends Component
 {
-    use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation;
+    use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation, HasContractFilters;
 
     private const ALLOWED_STATUSES = [
         'Đã trình ký nhà thầu phụ',
@@ -527,6 +528,18 @@ class ContractWasteManager extends Component
         $this->selectedDoc = null;
     }
 
+    private function applyFilters($query): void
+    {
+        $this->applyContractFilters($query);
+
+        $f = $this->filter;
+        if ($f['end_from'] ?? null)     $query->whereDate('end_at', '>=', $f['end_from']);
+        if ($f['end_to'] ?? null)       $query->whereDate('end_at', '<=', $f['end_to']);
+        if ($f['service_type'] ?? null) $query->where('service_type', $f['service_type']);
+        if ($f['waste_type'] ?? null)   $query->where('waste_type', $f['waste_type']);
+        if ($f['source'] ?? null)       $query->where('source', $f['source']);
+    }
+
     public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $user = auth()->user();
@@ -547,26 +560,7 @@ class ContractWasteManager extends Component
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
-        if ($this->filter['signed_from'] ?? null)    $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
-        if ($this->filter['signed_to'] ?? null)      $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
-        if ($this->filter['end_from'] ?? null)       $query->whereDate('end_at', '>=', $this->filter['end_from']);
-        if ($this->filter['end_to'] ?? null)         $query->whereDate('end_at', '<=', $this->filter['end_to']);
-        if ($this->filter['submitted_from'] ?? null) $query->whereDate('submitted_at', '>=', $this->filter['submitted_from']);
-        if ($this->filter['submitted_to'] ?? null)   $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
-        if ($this->filter['handler_id'] ?? null)     $query->where('handler_id', $this->filter['handler_id']);
-        if ($this->filter['department_id'] ?? null)  $query->where('department_id', $this->filter['department_id']);
-        if ($this->filter['province'] ?? null)       $query->where('province', $this->filter['province']);
-        if ($this->filter['staff_id'] ?? null)       $query->where('staff_id', $this->filter['staff_id']);
-        if ($this->filter['is_offset'] ?? null)      $query->where('is_offset', true);
-        if ($this->filter['is_overdue'] ?? null)     $query->where('is_overdue', true);
-        if ($this->filter['status'] ?? null)         $query->where('status', $this->filter['status']);
-        if ($this->filter['renewal_status'] ?? null) $query->where('renewal_status', $this->filter['renewal_status']);
-        if ($this->filter['service_type'] ?? null)   $query->where('service_type', $this->filter['service_type']);
-        if ($this->filter['waste_type'] ?? null)     $query->where('waste_type', $this->filter['waste_type']);
-        if ($this->filter['loai_dich_vu'] ?? null)   $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
-        if ($this->filter['voucher_status'] ?? null) $query->where('voucher_status', $this->filter['voucher_status']);
-        if ($this->filter['source'] ?? null)         $query->where('source', $this->filter['source']);
-        if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
+        $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs           = $query->orderBy('id', $orderDirection)->get();
@@ -602,29 +596,7 @@ class ContractWasteManager extends Component
                 fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
         // Apply filters
-        if ($this->filter['signed_from'] ?? null) $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
-        if ($this->filter['signed_to'] ?? null) $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
-        if ($this->filter['end_from'] ?? null) $query->whereDate('end_at', '>=', $this->filter['end_from']);
-        if ($this->filter['end_to'] ?? null) $query->whereDate('end_at', '<=', $this->filter['end_to']);
-        if ($this->filter['returned_from'] ?? null) $query->whereDate('submitted_at', '>=', $this->filter['returned_from']); // Assuming return date mapped to submitted_at for now
-        if ($this->filter['returned_to'] ?? null) $query->whereDate('submitted_at', '<=', $this->filter['returned_to']);
-        if ($this->filter['submitted_from'] ?? null) $query->whereDate('submitted_at', '>=', $this->filter['submitted_from']);
-        if ($this->filter['submitted_to'] ?? null) $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
-
-        if ($this->filter['handler_id'] ?? null) $query->where('handler_id', $this->filter['handler_id']);
-        if ($this->filter['department_id'] ?? null) $query->where('department_id', $this->filter['department_id']);
-        if ($this->filter['province'] ?? null) $query->where('province', $this->filter['province']);
-        if ($this->filter['staff_id'] ?? null) $query->where('staff_id', $this->filter['staff_id']);
-        if ($this->filter['is_offset'] ?? null) $query->where('is_offset', true);
-        if ($this->filter['is_overdue'] ?? null) $query->where('is_overdue', true);
-        if ($this->filter['status'] ?? null) $query->where('status', $this->filter['status']);
-        if ($this->filter['renewal_status'] ?? null) $query->where('renewal_status', $this->filter['renewal_status']);
-        if ($this->filter['service_type'] ?? null) $query->where('service_type', $this->filter['service_type']);
-        if ($this->filter['waste_type'] ?? null) $query->where('waste_type', $this->filter['waste_type']);
-        if ($this->filter['loai_dich_vu'] ?? null) $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
-        if ($this->filter['voucher_status'] ?? null) $query->where('voucher_status', $this->filter['voucher_status']);
-        if ($this->filter['source'] ?? null) $query->where('source', $this->filter['source']);
-        if ($this->filter['payment_method'] ?? null) $query->where('payment_method', $this->filter['payment_method']);
+        $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->paginate(10);

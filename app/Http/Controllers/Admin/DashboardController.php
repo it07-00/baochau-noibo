@@ -47,12 +47,20 @@ class DashboardController extends Controller
         $maxMonthly = $filtered ? max($filtered) : 1;
 
         // ── Top 5 nhân viên kinh doanh ───────────────────
-        $topStaff = User::role(Role::KINH_DOANH->value)->get()
-            ->map(function ($user) use ($year) {
-                $total = (float) SalesRenewal::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('sales_amount')
-                       + (float) SalesProgressive::whereYear('sales_month', $year)->where('user_id', $user->id)->sum('amount');
-                return ['name' => $user->name, 'total' => $total];
-            })
+        $topStaff = User::role(Role::KINH_DOANH->value)
+            ->withSum(
+                ['salesRenewals as renewal_sum' => fn ($q) => $q->whereYear('sales_month', $year)],
+                'sales_amount'
+            )
+            ->withSum(
+                ['salesProgressives as progressive_sum' => fn ($q) => $q->whereYear('sales_month', $year)],
+                'amount'
+            )
+            ->get()
+            ->map(fn ($user) => [
+                'name'  => $user->name,
+                'total' => (float) ($user->renewal_sum ?? 0) + (float) ($user->progressive_sum ?? 0),
+            ])
             ->sortByDesc('total')
             ->take(5)
             ->values();

@@ -12,7 +12,7 @@ trait CleanMoneyInput
     {
         if (is_string($value)) {
             $cleaned = str_replace('.', '', $value);
-            return is_numeric($cleaned) ? (int) $cleaned : $value;
+            return is_numeric($cleaned) ? (float) $cleaned : $value;
         }
         return $value;
     }

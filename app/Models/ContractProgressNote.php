@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ContractProgressNote extends Model
 {
@@ -17,5 +18,10 @@ class ContractProgressNote extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function contract(): MorphTo
+    {
+        return $this->morphTo('contract', 'contract_type', 'contract_id');
     }
 }

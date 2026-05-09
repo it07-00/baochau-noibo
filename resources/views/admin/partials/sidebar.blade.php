@@ -102,8 +102,8 @@
 
                     @if ($currentUser->hasRole(\App\Enums\Role::IT->value))
                         <li class="app-sidebar-menu-item">
-                            <a href="{{ route('app.dashboard') }}"
-                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active menu-current' : '' }}">
+                            <a href="{{ route('app.it-dashboard') }}"
+                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.it-dashboard') ? 'active menu-current' : '' }}">
                                 <span class="menu-icon flex-shrink-0">
                                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">

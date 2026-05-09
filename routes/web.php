@@ -177,6 +177,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Bảng thống kê & Bảng xếp hạng
     Route::get('thong-ke',    \App\Livewire\Admin\StatisticsBoard::class)->name('statistics')->middleware(Permission::toMiddleware(Permission::STATISTICS_VIEW));
     Route::get('xep-hang',    \App\Livewire\Admin\RankingsBoard::class)->name('rankings')->middleware(Permission::toMiddleware(Permission::RANKINGS_VIEW));
+    Route::get('he-thong',    \App\Livewire\Admin\ItDashboard::class)->name('it-dashboard')->middleware(Role::toMiddleware(Role::IT));
 
     // Nhật ký hoạt động
     Route::get('nhat-ky-hoat-dong', \App\Livewire\Admin\ActivityLogViewer::class)->name('activity-log')->middleware(Permission::toMiddleware(Permission::ACTIVITY_LOG_VIEW));

@@ -12,7 +12,7 @@ class SalesTarget extends Model
     protected $casts = [
         'year'          => 'integer',
         'month'         => 'integer',
-        'target_amount' => 'decimal:0',
+        'target_amount' => 'decimal:2',
     ];
 
     public function staff(): BelongsTo

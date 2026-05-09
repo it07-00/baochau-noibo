@@ -27,7 +27,7 @@ class SalesProgressive extends Model
     protected $casts = [
         'sales_month' => 'date',
         'percentage' => 'decimal:2',
-        'amount' => 'decimal:0',
+        'amount' => 'decimal:2',
     ];
 
     public function creator(): BelongsTo

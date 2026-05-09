@@ -60,9 +60,9 @@ class ContractEmission extends Model
     protected $casts = [
         'signed_at' => 'date',
         'submitted_at' => 'date',
-        'value' => 'decimal:0',
-        'commission' => 'decimal:0',
-        'revenue' => 'decimal:0',
+        'value' => 'decimal:2',
+        'commission' => 'decimal:2',
+        'revenue' => 'decimal:2',
         'is_offset' => 'boolean',
         'has_room_fund' => 'boolean',
         'is_overdue' => 'boolean',

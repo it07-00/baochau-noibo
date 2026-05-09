@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
@@ -27,7 +30,15 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'username', 'email', 'phone', 'is_active', 'department_id', 'employment_status'])
+            ->logOnlyDirty()
+            ->dontLogIfAttributesUnchanged();
+    }
 
     public const EMPLOYMENT_STATUSES = [
         'thu_viec'   => 'Thử việc',
@@ -66,6 +77,16 @@ class User extends Authenticatable
     public function dailyReports(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(DailyReport::class);
+    }
+
+    public function salesRenewals(): HasMany
+    {
+        return $this->hasMany(SalesRenewal::class);
+    }
+
+    public function salesProgressives(): HasMany
+    {
+        return $this->hasMany(SalesProgressive::class);
     }
 
     public function workSchedules(): \Illuminate\Database\Eloquent\Relations\HasMany

@@ -6,6 +6,7 @@ use App\Enums\ContractVoucherStatus;
 use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
+use App\Livewire\Concerns\HasContractFilters;
 use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
 use App\Models\ContractProgressNote;
@@ -28,7 +29,7 @@ use App\Enums\Permission;
 
 class ContractConsultingManager extends Component
 {
-    use CleanMoneyInput, ContractValidation, WithPagination;
+    use CleanMoneyInput, ContractValidation, WithPagination, HasContractFilters;
 
     private const ALLOWED_STATUSES = [
         'PTH đang kiểm tra',
@@ -542,57 +543,7 @@ class ContractConsultingManager extends Component
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
-        if ($this->filter['signed_from']) {
-            $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
-        }
-        if ($this->filter['signed_to']) {
-            $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
-        }
-        if ($this->filter['submitted_from']) {
-            $query->whereDate('submitted_at', '>=', $this->filter['submitted_from']);
-        }
-        if ($this->filter['submitted_to']) {
-            $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
-        }
-        if ($this->filter['province']) {
-            $query->where('province', $this->filter['province']);
-        }
-        if ($this->filter['department_id']) {
-            $query->where('department_id', $this->filter['department_id']);
-        }
-        if ($this->filter['staff_id']) {
-            $query->where('staff_id', $this->filter['staff_id']);
-        }
-        if ($this->filter['info_source']) {
-            $query->where('info_source', $this->filter['info_source']);
-        }
-        if ($this->filter['payment_method']) {
-            $query->where('payment_method', $this->filter['payment_method']);
-        }
-        if ($this->filter['status']) {
-            $query->where('status', $this->filter['status']);
-        }
-        if ($this->filter['renewal_status']) {
-            $query->where('renewal_status', $this->filter['renewal_status']);
-        }
-        if ($this->filter['voucher_status']) {
-            $query->where('voucher_status', $this->filter['voucher_status']);
-        }
-        if ($this->filter['is_offset']) {
-            $query->where('is_offset', true);
-        }
-        if ($this->filter['has_room_fund']) {
-            $query->where('has_room_fund', true);
-        }
-        if ($this->filter['is_overdue']) {
-            $query->where('is_overdue', true);
-        }
-        if ($this->filter['loai_dich_vu']) {
-            $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
-        }
-        if ($this->filter['handler_id']) {
-            $query->where('handler_id', $this->filter['handler_id']);
-        }
+        $this->applyContractFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->get();
@@ -679,57 +630,7 @@ class ContractConsultingManager extends Component
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
-        if ($this->filter['signed_from']) {
-            $query->whereDate('signed_at', '>=', $this->filter['signed_from']);
-        }
-        if ($this->filter['signed_to']) {
-            $query->whereDate('signed_at', '<=', $this->filter['signed_to']);
-        }
-        if ($this->filter['submitted_from']) {
-            $query->whereDate('submitted_at', '>=', $this->filter['submitted_from']);
-        }
-        if ($this->filter['submitted_to']) {
-            $query->whereDate('submitted_at', '<=', $this->filter['submitted_to']);
-        }
-        if ($this->filter['province']) {
-            $query->where('province', $this->filter['province']);
-        }
-        if ($this->filter['department_id']) {
-            $query->where('department_id', $this->filter['department_id']);
-        }
-        if ($this->filter['staff_id']) {
-            $query->where('staff_id', $this->filter['staff_id']);
-        }
-        if ($this->filter['info_source']) {
-            $query->where('info_source', $this->filter['info_source']);
-        }
-        if ($this->filter['payment_method']) {
-            $query->where('payment_method', $this->filter['payment_method']);
-        }
-        if ($this->filter['status']) {
-            $query->where('status', $this->filter['status']);
-        }
-        if ($this->filter['renewal_status']) {
-            $query->where('renewal_status', $this->filter['renewal_status']);
-        }
-        if ($this->filter['voucher_status']) {
-            $query->where('voucher_status', $this->filter['voucher_status']);
-        }
-        if ($this->filter['is_offset']) {
-            $query->where('is_offset', true);
-        }
-        if ($this->filter['has_room_fund']) {
-            $query->where('has_room_fund', true);
-        }
-        if ($this->filter['is_overdue']) {
-            $query->where('is_overdue', true);
-        }
-        if ($this->filter['loai_dich_vu']) {
-            $query->where('loai_dich_vu', $this->filter['loai_dich_vu']);
-        }
-        if ($this->filter['handler_id']) {
-            $query->where('handler_id', $this->filter['handler_id']);
-        }
+        $this->applyContractFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->paginate(10);
