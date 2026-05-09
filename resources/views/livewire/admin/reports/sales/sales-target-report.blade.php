@@ -105,7 +105,8 @@
                                     ? 'bg-secondary'
                                     : ($pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger'));
                             @endphp
-                            <tr class="{{ $target == 0 ? 'table-light' : '' }}">
+                            <tr class="{{ $target == 0 ? 'table-light' : '' }}"
+                                style="cursor:pointer;" wire:click="openDetail({{ $m }})">
                                 <td>
                                     <span class="fw-semibold">Tháng {{ $m }}</span>
                                 </td>
@@ -189,4 +190,80 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal chi tiết hợp đồng theo tháng --}}
+    <div wire:ignore.self class="modal fade" id="targetDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary py-3">
+                    <h5 class="modal-title fw-bold text-white">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        Chi tiết hợp đồng tháng {{ $filter_month }}/{{ $year }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    @if(empty($detail))
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            Không có hợp đồng nào
+                        </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th class="text-center" style="width:50px;">STT</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Loại hợp đồng</th>
+                                        <th>Nhân viên KD</th>
+                                        <th class="text-end">Doanh số (đ)</th>
+                                        <th class="text-center" style="width:110px;">Loại</th>
+                                        <th class="text-center" style="width:130px;">Ngày xuất HĐ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($detail as $i => $row)
+                                        <tr>
+                                            <td class="text-center text-muted">{{ $i + 1 }}</td>
+                                            <td class="fw-semibold">{{ $row['customer'] }}</td>
+                                            <td class="text-muted">{{ $row['type'] }}</td>
+                                            <td class="text-muted">{{ $row['staff'] }}</td>
+                                            <td class="text-end fw-semibold">{{ number_format($row['value'], 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                @if($row['is_renewal'])
+                                                    <span class="badge bg-success-subtle text-success">Tái ký</span>
+                                                @else
+                                                    <span class="badge bg-warning-subtle text-warning">HĐ mới</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center text-muted">{{ $row['date'] ?? '—' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="table-light fw-bold">
+                                    <tr>
+                                        <td colspan="4" class="text-end">Tổng tháng {{ $filter_month }}</td>
+                                        <td class="text-end">{{ number_format(array_sum(array_column($detail, 'value')), 0, ',', '.') }} đ</td>
+                                        <td colspan="2" class="text-center text-muted">{{ count($detail) }} hợp đồng</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('openDetailModal', () => {
+                new bootstrap.Modal(document.getElementById('targetDetailModal')).show();
+            });
+        });
+    </script>
 </div>

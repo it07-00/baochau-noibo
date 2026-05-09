@@ -16,6 +16,8 @@ class SalesTargetReport extends Component
 {
     public int $year;
     public string $filter_staff = '';
+    public int $filter_month = 0;
+    public array $detail = [];
 
     protected array $contractModels = [
         ContractWaste::class,
@@ -26,11 +28,54 @@ class SalesTargetReport extends Component
         ContractEmission::class,
     ];
 
+    protected array $contractTypeLabels = [
+        ContractWaste::class          => 'Chất thải & Tiếng ồn',
+        ContractLegal::class          => 'Pháp lý & Hồ sơ MT',
+        ContractTechnical::class      => 'Kỹ thuật & Ứng phó SC',
+        ContractResearch::class       => 'NC & CĐ Công nghệ',
+        ContractSustainability::class => 'TV & BC PTBV',
+        ContractEmission::class       => 'Phát thải & Năng lượng',
+    ];
+
     public function mount(): void
     {
         $this->year = (int) now()->format('Y');
         // Default to all sales staff so report totals are not accidentally scoped to one person.
         $this->filter_staff = '';
+    }
+
+    public function openDetail(int $month): void
+    {
+        $this->filter_month = $month;
+        $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+        $staffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+
+        $detail = collect();
+        if (!empty($staffIds)) {
+            foreach ($this->contractModels as $modelClass) {
+                $contracts = $modelClass::query()
+                    ->with('customer', 'staff')
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
+                    ->whereMonth('submitted_at', $month)
+                    ->whereIn('staff_id', $staffIds)
+                    ->get();
+
+                foreach ($contracts as $contract) {
+                    $detail->push([
+                        'customer'   => $contract->customer?->name ?? '—',
+                        'staff'      => $contract->staff?->name ?? '—',
+                        'type'       => $this->contractTypeLabels[$modelClass],
+                        'value'      => (float) $contract->revenue,
+                        'is_renewal' => (bool) $contract->is_renewal,
+                        'date'       => $contract->submitted_at?->format('d/m/Y'),
+                    ]);
+                }
+            }
+        }
+
+        $this->detail = $detail->sortByDesc('date')->values()->toArray();
+        $this->dispatch('openDetailModal');
     }
 
     public function render()
