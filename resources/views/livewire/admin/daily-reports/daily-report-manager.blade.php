@@ -374,7 +374,7 @@
                         $dayReports = collect($calendarData[$dayNum] ?? []);
                         $isPast = $currentDate->isPast() && !$currentDate->isToday();
                         $isToday = $currentDate->isToday();
-                        $isWeekend = $currentDate->isWeekend();
+                        $isWeekend = $currentDate->isSunday();
                         $isComplete = $dayReports->isNotEmpty();
                         $hasIssue = $dayReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->isNotEmpty();
 
