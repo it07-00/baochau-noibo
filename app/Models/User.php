@@ -36,8 +36,7 @@ class User extends Authenticatable
     {
         return LogOptions::defaults()
             ->logOnly(['name', 'username', 'email', 'phone', 'is_active', 'department_id', 'employment_status'])
-            ->logOnlyDirty()
-            ->dontLogIfAttributesUnchanged();
+            ->logOnlyDirty();
     }
 
     public const EMPLOYMENT_STATUSES = [
