@@ -27,7 +27,7 @@ return new class extends Migration
     {
         foreach ($this->columns as $table => $cols) {
             foreach ($cols as $col) {
-                DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,2) NULL");
+                DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,0) NOT NULL DEFAULT 0");
             }
         }
     }
@@ -36,7 +36,7 @@ return new class extends Migration
     {
         foreach ($this->columns as $table => $cols) {
             foreach ($cols as $col) {
-                DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,0) NULL");
+                DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,2) NULL");
             }
         }
     }

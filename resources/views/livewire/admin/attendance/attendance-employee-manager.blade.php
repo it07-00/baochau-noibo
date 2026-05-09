@@ -13,116 +13,142 @@
     <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
-                    <h3 class="pure-card-title m-0">Nhân viên chấm công</h3>
+                {{-- Header --}}
+                <div class="pure-card-header d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
+                    <h3 class="pure-card-title m-0 text-nowrap">Nhân viên chấm công</h3>
 
-                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-md-0">
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100" style="max-width:860px;">
+                        {{-- Search --}}
+                        <div class="input-group flex-grow-1" style="min-width:180px;">
+                            <span class="input-group-text bg-transparent border-end-0 pe-1">
+                                <i class="bi bi-search text-muted" style="font-size:0.85rem;"></i>
                             </span>
                             <input wire:model.live.debounce.300ms="search" type="text"
-                                   class="form-control border-start-0 ps-0" placeholder="Tìm tên hoặc mã...">
+                                   class="form-control border-start-0 ps-1"
+                                   placeholder="Tìm tên hoặc mã...">
                         </div>
 
-                        <select wire:model.live="filterDepartment" class="form-select">
+                        {{-- Department filter --}}
+                        <select wire:model.live="filterDepartment" class="form-select" style="min-width:160px;max-width:220px;">
                             <option value="">Tất cả phòng ban</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept }}">{{ $dept }}</option>
                             @endforeach
                         </select>
 
-                        {{-- Toggle hiển thị NV đã nghỉ --}}
-                        <div class="form-check form-switch d-flex align-items-center gap-2 mb-0 ms-1">
-                            <input class="form-check-input" type="checkbox" role="switch"
-                                   wire:model.live="showInactive" id="toggleInactive"
-                                   style="cursor:pointer;">
-                            <label class="form-check-label text-muted text-nowrap" for="toggleInactive"
-                                   style="font-size:0.85rem;">Hiện đã nghỉ</label>
+                        {{-- Toggle đã nghỉ --}}
+                        <div class="d-flex align-items-center gap-2 text-nowrap px-1">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                       wire:model.live="showInactive" id="toggleInactive"
+                                       style="cursor:pointer; width:2.2em; height:1.1em;">
+                            </div>
+                            <label class="form-check-label text-muted" for="toggleInactive"
+                                   style="font-size:0.83rem; cursor:pointer;">Hiện đã nghỉ</label>
                         </div>
 
-                        <button class="btn btn-outline-secondary" wire:click="openSyncModal">
-                            <i class="bi bi-arrow-repeat me-1"></i>Đồng bộ từ máy
-                        </button>
-                        <button class="btn btn-primary" wire:click="openCreate">
-                            <i class="bi bi-plus-circle me-1"></i>Thêm mới
-                        </button>
+                        {{-- Buttons --}}
+                        <div class="d-flex gap-2 flex-shrink-0">
+                            <button class="btn btn-outline-secondary text-nowrap" wire:click="openSyncModal">
+                                <i class="bi bi-arrow-repeat me-1"></i>Đồng bộ
+                            </button>
+                            <button class="btn btn-primary text-nowrap" wire:click="openCreate">
+                                <i class="bi bi-plus-circle me-1"></i>Thêm mới
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pure-card-body pb-3">
+                {{-- Table --}}
+                <div class="pure-card-body pb-2 px-0">
                     <div class="table-responsive">
-                        <table class="table text-nowrap align-middle table-hover table-sm">
-                            <thead class="table-light">
-                                <tr>
-                                    <th width="60">Mã máy</th>
-                                    <th>Họ và tên</th>
-                                    <th width="160" class="d-none d-sm-table-cell">Phòng ban</th>
-                                    <th width="110" class="text-center d-none d-md-table-cell">Ngày tạo</th>
-                                    <th width="110" class="text-end">Hành động</th>
+                        <table class="table align-middle table-hover mb-0" style="font-size:0.92rem;">
+                            <thead>
+                                <tr style="background:var(--bs-light,#f8f9fa); border-bottom:2px solid #e9ecef;">
+                                    <th class="px-4 py-3 text-muted fw-semibold" style="width:80px; font-size:0.8rem; letter-spacing:.03em;">MÃ MÁY</th>
+                                    <th class="py-3 text-muted fw-semibold" style="font-size:0.8rem; letter-spacing:.03em;">HỌ VÀ TÊN</th>
+                                    <th class="py-3 text-muted fw-semibold d-none d-sm-table-cell" style="width:180px; font-size:0.8rem; letter-spacing:.03em;">PHÒNG BAN</th>
+                                    <th class="py-3 text-muted fw-semibold text-center d-none d-md-table-cell" style="width:120px; font-size:0.8rem; letter-spacing:.03em;">NGÀY TẠO</th>
+                                    <th class="pe-4 py-3 text-end" style="width:110px;"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($employees as $emp)
                                     <tr wire:key="emp-{{ $emp->id }}"
-                                        class="{{ !$emp->is_active ? 'opacity-50' : '' }}">
-                                        <td class="fw-bold">{{ str_pad($emp->device_uid, 5, '0', STR_PAD_LEFT) }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="fw-bold">{{ $emp->name }}</span>
+                                        class="{{ !$emp->is_active ? 'opacity-50' : '' }}"
+                                        style="border-bottom:1px solid #f0f0f0;">
+                                        <td class="px-4 py-3">
+                                            <span class="fw-semibold text-muted" style="font-family:monospace; font-size:0.95rem; letter-spacing:.05em;">
+                                                {{ $emp->device_uid }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3">
+                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                <span class="fw-semibold">{{ $emp->name }}</span>
                                                 @if($emp->is_blocked)
-                                                    <span class="badge bg-warning text-dark" style="font-size:0.65rem;">Bị chặn</span>
+                                                    <span class="badge rounded-pill text-bg-warning" style="font-size:0.68rem; font-weight:600;">
+                                                        <i class="bi bi-slash-circle me-1" style="font-size:0.6rem;"></i>Bị chặn
+                                                    </span>
                                                 @elseif(!$emp->is_active)
-                                                    <span class="badge bg-secondary" style="font-size:0.65rem;">Đã nghỉ</span>
+                                                    <span class="badge rounded-pill text-bg-secondary" style="font-size:0.68rem; font-weight:600;">Đã nghỉ</span>
                                                 @endif
                                             </div>
                                             @if($emp->department)
-                                                <div class="d-sm-none">
-                                                    <span class="badge bg-label-primary px-2 py-1" style="font-size:0.7rem;">{{ $emp->department }}</span>
+                                                <div class="d-sm-none mt-1">
+                                                    <span class="badge bg-label-primary px-2" style="font-size:0.7rem;">{{ $emp->department }}</span>
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="d-none d-sm-table-cell">
+                                        <td class="py-3 d-none d-sm-table-cell">
                                             @if($emp->department)
-                                                <span class="badge bg-label-primary px-2 py-1">{{ $emp->department }}</span>
+                                                <span class="badge bg-label-primary px-2 py-1" style="font-size:0.78rem;">{{ $emp->department }}</span>
                                             @else
                                                 <span class="text-muted">—</span>
                                             @endif
                                         </td>
-                                        <td class="text-center text-muted d-none d-md-table-cell">{{ $emp->created_at?->format('d/m/Y') }}</td>
-                                        <td class="text-end">
-                                            @if($emp->is_blocked)
-                                                {{-- Bị chặn: chỉ cho bỏ chặn --}}
-                                                <button class="btn btn-sm btn-icon btn-light text-warning rounded-pill me-1"
-                                                        wire:click="unblock({{ $emp->id }})" title="Bỏ chặn">
-                                                    <i class="bi bi-unlock"></i>
-                                                </button>
-                                            @elseif(!$emp->is_active)
-                                                {{-- Đã nghỉ tự động: cho kích hoạt lại hoặc chặn hẳn --}}
-                                                <button class="btn btn-sm btn-icon btn-light text-success rounded-pill me-1"
-                                                        wire:click="reactivate({{ $emp->id }})" title="Kích hoạt lại">
-                                                    <i class="bi bi-arrow-repeat"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
-                                                        wire:click="confirmBlock({{ $emp->id }})" title="Chặn import">
-                                                    <i class="bi bi-slash-circle"></i>
-                                                </button>
-                                            @else
-                                                {{-- Đang hoạt động: sửa + chặn --}}
-                                                <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1"
-                                                        wire:click="openEdit({{ $emp->id }})" title="Sửa">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
-                                                        wire:click="confirmBlock({{ $emp->id }})" title="Chặn import">
-                                                    <i class="bi bi-slash-circle"></i>
-                                                </button>
-                                            @endif
+                                        <td class="py-3 text-center text-muted d-none d-md-table-cell" style="font-size:0.85rem;">
+                                            {{ $emp->created_at?->format('d/m/Y') }}
+                                        </td>
+                                        <td class="pe-4 py-3 text-end">
+                                            <div class="d-flex justify-content-end gap-1">
+                                                @if($emp->is_blocked)
+                                                    <button class="btn btn-sm btn-icon btn-light text-warning rounded-circle"
+                                                            wire:click="unblock({{ $emp->id }})"
+                                                            title="Bỏ chặn" style="width:32px;height:32px;">
+                                                        <i class="bi bi-unlock" style="font-size:0.85rem;"></i>
+                                                    </button>
+                                                @elseif(!$emp->is_active)
+                                                    <button class="btn btn-sm btn-icon btn-light text-success rounded-circle"
+                                                            wire:click="reactivate({{ $emp->id }})"
+                                                            title="Kích hoạt lại" style="width:32px;height:32px;">
+                                                        <i class="bi bi-arrow-repeat" style="font-size:0.85rem;"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
+                                                            wire:click="confirmBlock({{ $emp->id }})"
+                                                            title="Chặn" style="width:32px;height:32px;">
+                                                        <i class="bi bi-slash-circle" style="font-size:0.85rem;"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-sm btn-icon btn-light text-primary rounded-circle"
+                                                            wire:click="openEdit({{ $emp->id }})"
+                                                            title="Sửa" style="width:32px;height:32px;">
+                                                        <i class="bi bi-pencil" style="font-size:0.85rem;"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
+                                                            wire:click="confirmBlock({{ $emp->id }})"
+                                                            title="Chặn" style="width:32px;height:32px;">
+                                                        <i class="bi bi-slash-circle" style="font-size:0.85rem;"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-4 text-muted">Không có nhân viên nào.</td>
+                                        <td colspan="5" class="text-center py-5 text-muted">
+                                            <i class="bi bi-people d-block mb-2" style="font-size:2rem; opacity:.3;"></i>
+                                            Không có nhân viên nào.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -171,7 +197,7 @@
                                 @else
                                     <div class="col-md-4">
                                         <label class="form-label fw-bold text-muted">Mã máy</label>
-                                        <input type="text" class="form-control" value="{{ str_pad($editDeviceUid, 5, '0', STR_PAD_LEFT) }}" disabled>
+                                        <input type="text" class="form-control" value="{{ $editDeviceUid }}" disabled>
                                     </div>
                                     <div class="col-md-8">
                                         <label class="form-label fw-bold">Họ và tên <span class="text-danger">*</span></label>
