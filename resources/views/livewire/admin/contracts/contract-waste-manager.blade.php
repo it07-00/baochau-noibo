@@ -709,7 +709,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold text-white">Thông tin Hợp Đồng</h5>
+                    <h5 class="modal-title fw-bold text-white">HĐ {{ $contractTypeName }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">

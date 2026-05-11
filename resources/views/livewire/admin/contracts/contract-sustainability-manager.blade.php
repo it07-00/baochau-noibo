@@ -223,7 +223,7 @@
     <!-- Table Card -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 border-bottom">
-            <h6 class="mb-0 fw-bold">Danh sách HĐ Tư vấn & Báo cáo PTBV</h6>
+            <h6 class="mb-0 fw-bold">Danh sách HĐ {{ $contractTypeName }}</h6>
         </div>
         <div class="table-responsive" style="min-height:350px;">
             <table class="table table-hover align-middle mb-0 table-xs">
@@ -510,7 +510,14 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">Chi tiết HĐ Tư vấn & Báo cáo PTBV</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom">
+                        Chi tiết HĐ {{ $contractTypeName }}
+                        @if ($selectedDoc?->customer?->name)
+                            — {{ $selectedDoc->customer->name }}
+                        @elseif ($selectedDoc?->shd_cxl)
+                            #{{ $selectedDoc->shd_cxl }}
+                        @endif
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -735,7 +742,7 @@
                         @else
                             Thêm
                         @endif
-                        HĐ Tư vấn & Báo cáo PTBV
+                        HĐ {{ $contractTypeName }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>

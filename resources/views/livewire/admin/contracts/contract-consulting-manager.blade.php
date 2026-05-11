@@ -331,14 +331,48 @@
                                 </div>
                             </td>
                             @if (auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value))
-                                <td class="text-center align-middle">
+                                <td class="text-center align-middle"
+                                    x-data="inlineReportEdit({{ $doc->id }}, @js($doc->report_number))"
+                                    style="min-width: 110px;">
+                                    {{-- Mobile: hiển thị text + click để sửa --}}
+                                    <div class="d-md-none">
+                                        <div x-show="!editing" class="d-flex align-items-center justify-content-center gap-1">
+                                            <span class="fw-semibold text-primary" style="font-size: 0.82rem;"
+                                                x-text="value || '—'"></span>
+                                            <button @click="editing = true; $nextTick(() => $refs.reportInput.focus())"
+                                                class="btn btn-link btn-sm p-0 text-muted ms-1" title="Sửa báo cáo số">
+                                                <i class="bi bi-pencil-square" style="font-size: 0.72rem;"></i>
+                                            </button>
+                                        </div>
+                                        <div x-show="editing" class="d-flex flex-column gap-1 align-items-center">
+                                            <input type="text"
+                                                class="form-control form-control-sm text-center fw-semibold text-primary"
+                                                style="min-width: 90px; font-size: 0.82rem;"
+                                                x-model="value"
+                                                x-ref="reportInput"
+                                                placeholder="Nhập BC số..."
+                                                @keydown.enter="saveReport()"
+                                                @keydown.escape="editing = false; value = originalValue">
+                                            <div class="d-flex gap-1">
+                                                <button @click="saveReport()" class="btn btn-success btn-sm py-0 px-2"
+                                                    style="font-size: 0.72rem;" title="Lưu">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                                <button @click="editing = false; value = originalValue"
+                                                    class="btn btn-outline-secondary btn-sm py-0 px-2"
+                                                    style="font-size: 0.72rem;" title="Hủy">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{-- Desktop: input trực tiếp --}}
                                     <input type="text"
-                                           x-data="inlineReportEdit({{ $doc->id }}, @js($doc->report_number))"
-                                           class="form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light"
-                                           :value="value"
-                                           @change="updateReport"
-                                           placeholder="Nhập..."
-                                           title="Sửa trực tiếp">
+                                        class="d-none d-md-block form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light"
+                                        :value="value"
+                                        @change="updateReport"
+                                        placeholder="Nhập..."
+                                        title="Sửa trực tiếp">
                                 </td>
                             @endif
                             @unless ($this->isRestrictedRole)
@@ -545,7 +579,7 @@
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
                     <h5 class="modal-title fw-bold modal-title-custom">
-                        Chi tiết Hồ Sơ Môi Trường
+                        Chi tiết {{ $contractTypeName }}
                         @if ($selectedDoc?->customer?->name)
                             — {{ $selectedDoc->customer->name }}
                         @elseif ($selectedDoc?->shd_cxl)
@@ -789,7 +823,7 @@
                         @else
                             Thêm
                         @endif
-                        Hồ Sơ Môi Trường
+                        {{ $contractTypeName }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -1132,6 +1166,28 @@
             document.addEventListener('alpine:init', () => {
                 Alpine.data('inlineReportEdit', (docId, initialValue) => ({
                     value: initialValue,
+                    originalValue: initialValue,
+                    editing: false,
+                    saveReport() {
+                        let newVal = this.value;
+                        if (newVal === this.originalValue) { this.editing = false; return; }
+                        Swal.fire({
+                            title: 'Xác nhận lưu?',
+                            text: 'Cập nhật Báo cáo số thành: ' + (newVal || '(trống)') + ' ?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Đồng ý',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.originalValue = newVal;
+                                this.$wire.updateInlineReportNumber(docId, newVal);
+                            } else {
+                                this.value = this.originalValue;
+                            }
+                            this.editing = false;
+                        });
+                    },
                     updateReport(event) {
                         let newVal = event.target.value;
                         if (newVal === this.value) return;

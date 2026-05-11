@@ -38,6 +38,8 @@ class ContractWasteManager extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    public string $contractTypeName = 'Chất thải & Tiếng ồn';
+
     public $search = '';
     public $sortDirection = 'desc';
     public array $selectedDocIds = [];

@@ -508,7 +508,14 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">Chi tiết Hợp Đồng Dự Án</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom">
+                        Chi tiết HĐ {{ $contractTypeName }}
+                        @if ($selectedDoc?->customer?->name)
+                            — {{ $selectedDoc->customer->name }}
+                        @elseif ($selectedDoc?->shd_cxl)
+                            #{{ $selectedDoc->shd_cxl }}
+                        @endif
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -730,7 +737,7 @@
                         @else
                             Thêm
                         @endif
-                        Hợp Đồng Dự Án
+                        HĐ {{ $contractTypeName }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>

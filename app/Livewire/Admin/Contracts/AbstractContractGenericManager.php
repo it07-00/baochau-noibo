@@ -127,6 +127,12 @@ abstract class AbstractContractGenericManager extends Component
 
     abstract protected function getExportFilenamePrefix(): string;
 
+    #[Computed]
+    public function contractTypeName(): string
+    {
+        return $this->getPageTitle();
+    }
+
     // ── Common lifecycle ─────────────────────────────────────────────────────
 
     public function paginationView(): string

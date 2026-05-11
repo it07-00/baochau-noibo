@@ -42,6 +42,8 @@ class ContractConsultingManager extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    public string $contractTypeName = 'Hồ Sơ Môi Trường';
+
     public $search = '';
 
     public $sortDirection = 'desc';

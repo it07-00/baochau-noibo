@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    
+
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
@@ -284,10 +284,10 @@
                             </td>
                             @if (auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value))
                                 <td class="text-center align-middle">
-                                    <input type="text" 
+                                    <input type="text"
                                            x-data="inlineReportEdit({{ $doc->id }}, @js($doc->report_number))"
-                                           class="form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light" 
-                                           :value="value" 
+                                           class="form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light"
+                                           :value="value"
                                            @change="updateReport"
                                            placeholder="Nhập..."
                                            title="Sửa trực tiếp">
@@ -487,7 +487,14 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">Chi tiết Hợp Đồng Thương Mại</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom">
+                        Chi tiết HĐ {{ $contractTypeName }}
+                        @if ($selectedDoc?->customer?->name)
+                            — {{ $selectedDoc->customer->name }}
+                        @elseif ($selectedDoc?->shd_cxl)
+                            #{{ $selectedDoc->shd_cxl }}
+                        @endif
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -525,8 +532,8 @@
                                             <th class="bg-light">Báo cáo số</th>
                                             <td class="fw-bold p-2">
                                                 <div class="d-flex gap-2" x-data="inlineReportEdit({{ $selectedDoc->id }}, @js($selectedDoc->report_number))">
-                                                    <input type="text" 
-                                                           class="form-control form-control-sm fw-bold text-primary bg-light border" 
+                                                    <input type="text"
+                                                           class="form-control form-control-sm fw-bold text-primary bg-light border"
                                                            style="font-size: 0.8rem;"
                                                            x-model="value"
                                                            placeholder="Nhập báo cáo số...">
@@ -725,7 +732,7 @@
                         @else
                             Thêm
                         @endif
-                        Hợp Đồng Thương Mại
+                        HĐ {{ $contractTypeName }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -1072,7 +1079,7 @@
                     updateReport(event) {
                         let newVal = event.target.value;
                         if (newVal === this.value) return;
-                        
+
                         Swal.fire({
                             title: 'Xác nhận lưu?',
                             text: 'Cập nhật Báo cáo số thành: ' + newVal + ' ?',
