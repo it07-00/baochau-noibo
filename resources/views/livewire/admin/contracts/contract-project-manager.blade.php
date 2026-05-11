@@ -408,7 +408,7 @@
                                         wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                         <i class="bi bi-eye fs-5"></i>
                                     </button>
-                                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::IT->value]))
+                                    @if ($this->canAssign)
                                         <button class="btn btn-sm p-0 text-success"
                                             wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                             <i class="bi bi-person-check fs-5"></i>

@@ -18,6 +18,7 @@ use App\Notifications\ContractProgressNoteNotification;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Computed;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Livewire\Concerns\HasContractFilters;
@@ -383,8 +384,25 @@ abstract class AbstractContractGenericManager extends Component
         }
     }
 
+    #[Computed]
+    public function canAssign(): bool
+    {
+        return auth()->user()->hasAnyRole([
+            Role::GIAM_DOC->value,
+            Role::QUAN_LY->value,
+            Role::TP_KINH_DOANH->value,
+            Role::KINH_DOANH->value,
+            Role::IT->value,
+        ]);
+    }
+
     public function openAssign(int $id): void
     {
+        if (!$this->canAssign()) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+            return;
+        }
+
         $modelClass             = $this->getModelClass();
         $this->assignContractId = $id;
         $this->assignUserIds    = ContractAssignment::where('assignable_type', $modelClass)
@@ -396,6 +414,11 @@ abstract class AbstractContractGenericManager extends Component
 
     public function saveAssign(): void
     {
+        if (!$this->canAssign()) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+            return;
+        }
+
         $modelClass    = $this->getModelClass();
         $contractType  = $this->getContractType();
 

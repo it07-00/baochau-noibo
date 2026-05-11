@@ -378,6 +378,10 @@ class ContractConsultingManager extends Component
 
     public function openAssign(int $id): void
     {
+        if (!$this->canAssign()) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+            return;
+        }
         $this->assignContractId = $id;
         $this->assignUserIds = ContractAssignment::where('assignable_type', ContractLegal::class)
             ->where('assignable_id', $id)
@@ -388,6 +392,10 @@ class ContractConsultingManager extends Component
 
     public function saveAssign(): void
     {
+        if (!$this->canAssign()) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+            return;
+        }
         ContractAssignment::where('assignable_type', ContractLegal::class)
             ->where('assignable_id', $this->assignContractId)
             ->delete();
