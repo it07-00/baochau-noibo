@@ -11,11 +11,11 @@
             </nav>
         </div>
         <div class="d-flex gap-2 ms-auto justify-content-end">
-            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+            @can('contracts-commercial.create')
                 <button wire:click="create" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
                 </button>
-            @endunless
+            @endcan
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm theo SHD hoặc Tên KH"
                     wire:model.live.debounce.300ms="search">
@@ -31,11 +31,7 @@
     </div>
 
     @php
-        $canBulkDelete =
-            auth()->user()->can('contracts-commercial.delete') &&
-            !auth()
-                ->user()
-                ->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]);
+        $canBulkDelete = auth()->user()->can('contracts-commercial.delete');
     @endphp
 
     <!-- Filter Card -->

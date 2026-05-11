@@ -127,7 +127,11 @@ class ContractWasteManager extends Component
                 // Find or create customer
                 $customer = \App\Models\Customer::firstOrCreate(
                     ['name' => $quotation->company_name],
-                    ['address' => $quotation->address]
+                    [
+                        'address'        => $quotation->address,
+                        'province'       => $quotation->province ?? '',
+                        'representative' => $quotation->contact_person ?? '',
+                    ]
                 );
 
                 $this->formData['customer_id'] = $customer->id;
@@ -137,6 +141,7 @@ class ContractWasteManager extends Component
                 $this->formData['revenue'] = $quotation->original_value;
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
+                $this->formData['province'] = $quotation->province ?? '';
                 $this->formData['note'] = $quotation->notes;
                 $this->formData['source'] = 'MỚI';
                 $this->formData['status'] = self::ALLOWED_STATUSES[0];

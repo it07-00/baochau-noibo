@@ -134,12 +134,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware(Permission::toMiddleware(Permission::REPORTS_SALES_VIEW))->group(function () {
         Route::get('tong-hop',           \App\Livewire\Admin\Reports\Sales\SalesSummaryReport::class)->name('summary');
         Route::get('chi-tieu',           \App\Livewire\Admin\Reports\Sales\SalesTargetReport::class)->name('target');
-        Route::get('tong-quan',          \App\Livewire\Admin\Reports\Sales\SalesOverviewReport::class)->name('overview');
         Route::get('ca-nhan',            \App\Livewire\Admin\Reports\Sales\PersonalSalesReport::class)->name('personal');
-        Route::get('tai-ky-ca-nhan',     \App\Livewire\Admin\Reports\Sales\PersonalRenewalReport::class)->name('renewal-personal');
-        Route::get('thanh-tich',         \App\Livewire\Admin\Reports\Sales\SalesAchievementReport::class)->name('achievement');
-        Route::get('theo-doi',           \App\Livewire\Admin\Reports\Sales\SalesTrackingReport::class)->name('tracking');
-        Route::get('doanh-thu',          \App\Livewire\Admin\Reports\Sales\SalesRevenueReport::class)->name('revenue');
     });
 
     // Quản lý hóa đơn

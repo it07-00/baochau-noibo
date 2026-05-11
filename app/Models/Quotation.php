@@ -8,6 +8,7 @@ class Quotation extends Model
 {
     protected $fillable = [
         'date',
+        'quotation_number',
         'staff_id',
         'source',           // Nguồn
         'company_name',

@@ -38,7 +38,7 @@ class SalesAchievementReport extends Component
         $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
         $staffIds = $staffs->pluck('id')->all();
 
-        // ── Actual sales per staff from 6 contract types ──
+        // ΓöÇΓöÇ Actual sales per staff from 6 contract types ΓöÇΓöÇ
         // Doanh số tính theo cột "revenue", lọc theo tháng xuất hóa đơn (submitted_at)
         $actualByStaff = [];
         foreach ($this->contractModels as $modelClass) {
@@ -60,7 +60,7 @@ class SalesAchievementReport extends Component
             }
         }
 
-        // ── Targets per staff ──
+        // ΓöÇΓöÇ Targets per staff ΓöÇΓöÇ
         $targetByStaff = [];
         $targetQuery = SalesTarget::where('year', $this->year)
             ->whereIn('staff_id', $staffIds);
@@ -75,7 +75,7 @@ class SalesAchievementReport extends Component
             $targetByStaff[(int) $r->staff_id] = (float) $r->total_target;
         }
 
-        // ── Doanh Số rankings ──
+        // Doanh Số rankings
         $doanhSoRankings = $staffs->map(fn($user) => [
             'name'       => $user->name,
             'avatar_url' => $user->avatar_url,
@@ -84,7 +84,7 @@ class SalesAchievementReport extends Component
 
         $maxDoanhSo = $doanhSoRankings->max('total') ?: 1;
 
-        // ── KPI rankings ──
+        // ΓöÇΓöÇ KPI rankings ΓöÇΓöÇ
         $kpiRankings = $staffs->map(function ($user) use ($actualByStaff, $targetByStaff) {
             $actual = (float) ($actualByStaff[$user->id] ?? 0);
             $target = (float) ($targetByStaff[$user->id] ?? 0);
@@ -99,7 +99,7 @@ class SalesAchievementReport extends Component
 
         $maxKpi = $kpiRankings->max('pct') ?: 1;
 
-        // ── Company totals ──
+        // ΓöÇΓöÇ Company totals ΓöÇΓöÇ
         $companyTarget = array_sum($targetByStaff) ?: 0;
         $companyActual = array_sum($actualByStaff) ?: 0;
         $companyPct = $companyTarget > 0 ? round($companyActual / $companyTarget * 100, 0) : 0;
@@ -114,6 +114,6 @@ class SalesAchievementReport extends Component
             'companyPct'      => $companyPct,
             'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'months'          => range(1, 12),
-        ])->layout('admin.layouts.app', ['title' => 'Đường đua doanh số']);
+        ])->layout('admin.layouts.app', ['title' => 'Đường đua Doanh Số']);
     }
 }

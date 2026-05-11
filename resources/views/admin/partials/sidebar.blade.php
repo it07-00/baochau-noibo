@@ -483,11 +483,7 @@
                             'children' => [
                                 'Bảng tổng kết doanh số',
                                 'Bảng doanh số cam kết',
-                                'Bảng tổng kết',
                                 'Bảng doanh số cá nhân',
-                                'Bảng theo dõi tái ký cá nhân',
-                                'Bảng theo dõi doanh số',
-                                'Doanh số thực thu',
                             ],
                         ],
                         [
@@ -568,21 +564,9 @@
                     } elseif (request()->routeIs('app.reports.sales.target')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng doanh số cam kết';
-                    } elseif (request()->routeIs('app.reports.sales.overview')) {
-                        $activeGroup = 'Báo cáo Kinh doanh';
-                        $activeChild = 'Bảng tổng kết';
                     } elseif (request()->routeIs('app.reports.sales.personal')) {
                         $activeGroup = 'Báo cáo Kinh doanh';
                         $activeChild = 'Bảng doanh số cá nhân';
-                    } elseif (request()->routeIs('app.reports.sales.renewal-personal')) {
-                        $activeGroup = 'Báo cáo Kinh doanh';
-                        $activeChild = 'Bảng theo dõi tái ký cá nhân';
-                    } elseif (request()->routeIs('app.reports.sales.tracking')) {
-                        $activeGroup = 'Báo cáo Kinh doanh';
-                        $activeChild = 'Bảng theo dõi doanh số';
-                    } elseif (request()->routeIs('app.reports.sales.revenue')) {
-                        $activeGroup = 'Báo cáo Kinh doanh';
-                        $activeChild = 'Doanh số thực thu';
                     } elseif (request()->routeIs('app.reports.consulting-work.*')) {
                         $activeGroup = 'Báo cáo Tư vấn';
                         $activeChild = match (true) {
@@ -765,29 +749,9 @@
                                                     $href = route('app.reports.sales.target');
                                                 } elseif (
                                                     $menu['title'] === 'Báo cáo Kinh doanh' &&
-                                                    $child === 'Bảng tổng kết'
-                                                ) {
-                                                    $href = route('app.reports.sales.overview');
-                                                } elseif (
-                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
                                                     $child === 'Bảng doanh số cá nhân'
                                                 ) {
                                                     $href = route('app.reports.sales.personal');
-                                                } elseif (
-                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
-                                                    $child === 'Bảng theo dõi tái ký cá nhân'
-                                                ) {
-                                                    $href = route('app.reports.sales.renewal-personal');
-                                                } elseif (
-                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
-                                                    $child === 'Bảng theo dõi doanh số'
-                                                ) {
-                                                    $href = route('app.reports.sales.tracking');
-                                                } elseif (
-                                                    $menu['title'] === 'Báo cáo Kinh doanh' &&
-                                                    $child === 'Doanh số thực thu'
-                                                ) {
-                                                    $href = route('app.reports.sales.revenue');
                                                 } elseif (
                                                     $menu['title'] === 'Báo cáo Tư vấn' &&
                                                     $child === 'Chất thải & Tiếng ồn'

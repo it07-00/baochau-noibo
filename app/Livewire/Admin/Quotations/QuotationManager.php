@@ -45,6 +45,7 @@ class QuotationManager extends Component
 
     public $formData = [
         'date' => '',
+        'quotation_number' => '',
         'staff_id' => '',
         'source' => '',
         'company_name' => '',
@@ -66,6 +67,7 @@ class QuotationManager extends Component
 
     protected $rules = [
         'formData.date' => 'required|date',
+        'formData.quotation_number' => 'nullable|string|max:100',
         'formData.staff_id' => 'required|exists:users,id',
         'formData.company_name' => 'required|string|max:255',
         'formData.status' => 'required|string|max:100',
@@ -90,6 +92,7 @@ class QuotationManager extends Component
         return [
             'formData.date.required' => 'Vui lòng chọn ngày báo giá.',
             'formData.date.date' => 'Ngày báo giá không hợp lệ.',
+            'formData.quotation_number.max' => 'Số báo giá không vượt quá 100 ký tự.',
             'formData.staff_id.required' => 'Vui lòng chọn nhân viên sale.',
             'formData.staff_id.exists' => 'Nhân viên sale không tồn tại.',
             'formData.company_name.required' => 'Vui lòng nhập tên công ty.',
@@ -133,6 +136,7 @@ class QuotationManager extends Component
     {
         return [
             'formData.date' => 'ngày báo giá',
+            'formData.quotation_number' => 'số báo giá',
             'formData.staff_id' => 'nhân viên sale',
             'formData.company_name' => 'công ty',
             'formData.status' => 'tình hình',

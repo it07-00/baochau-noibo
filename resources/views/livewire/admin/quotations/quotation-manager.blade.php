@@ -78,6 +78,7 @@
                     <tr class="text-muted fw-bold">
                         <th class="ps-3" style="width: 40px;">STT</th>
                         <th style="width: 130px;">Sale</th>
+                        <th style="width: 110px;">Số báo giá</th>
                         <th style="width: 220px;">Công ty / Khách hàng</th>
                         <th style="width: 130px;">Dịch vụ</th>
                         <th style="width: 100px;">Ngành nghề</th>
@@ -102,6 +103,13 @@
                             <span class="badge bg-secondary bg-opacity-10 text-secondary border mt-1" style="font-size: 0.68rem;">{{ $item->source }}</span>
                             @endif
                             <div class="text-muted mt-1" style="font-size: 0.75rem; white-space: nowrap;">{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</div>
+                        </td>
+                        <td style="width: 110px;">
+                            @if($item->quotation_number)
+                            <span class="fw-semibold text-primary" style="font-size: 0.82rem;">{{ $item->quotation_number }}</span>
+                            @else
+                            <span class="text-muted">-</span>
+                            @endif
                         </td>
                         <td>
                             <div class="fw-bold text-primary text-capitalize" style="font-size: 0.85rem; line-height: 1.3;">{{ $item->company_name }}</div>
@@ -176,7 +184,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="12" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
+                        <td colspan="13" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -205,6 +213,10 @@
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3" style="width: 30%;">Nhân viên sale</th>
                                     <td class="px-4 py-3">{{ $selectedQuotation->staff?->name }} ({{ $selectedQuotation->date?->format('d/m/Y') }})</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3">Số báo giá</th>
+                                    <td class="px-4 py-3 fw-semibold text-primary">{{ $selectedQuotation->quotation_number ?: '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3">Nguồn</th>
@@ -297,6 +309,11 @@
                                 <label class="form-label fw-bold">Ngày <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" wire:model.defer="formData.date">
                             </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Số báo giá</label>
+                                <input type="text" class="form-control @error('formData.quotation_number') is-invalid @enderror" wire:model.defer="formData.quotation_number" placeholder="VD: BG2026-001">
+                                @error('formData.quotation_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Nhân viên sale <span class="text-danger">*</span></label>
                                 <select class="form-select @error('formData.staff_id') is-invalid @enderror" wire:model.defer="formData.staff_id">
@@ -306,7 +323,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Công ty <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('formData.company_name') is-invalid @enderror" wire:model.defer="formData.company_name" placeholder="Tên công ty niêm yết">
                             </div>
