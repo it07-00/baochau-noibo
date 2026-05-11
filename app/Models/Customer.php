@@ -22,8 +22,6 @@ class Customer extends Model
         'name',
         'slug',
         'tax_code',
-        'phone',
-        'email',
         'address',
         'province',
         'representative',

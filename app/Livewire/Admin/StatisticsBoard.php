@@ -10,7 +10,6 @@ use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\ContractAssignment;
-use App\Models\ContractPaymentSchedule;
 use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\DailyReport;
@@ -294,14 +293,7 @@ class StatisticsBoard extends Component
             $totalSales += (float) $modelQuery->sum('revenue');
         }
 
-        // ── Doanh số thực thu (từ lịch thanh toán) ────
-        $totalRevenue = (float) ContractPaymentSchedule::whereYear('paid_date', $this->year)
-            ->whereIn('status', ['paid', 'partial'])->sum('paid_amount');
-
-        $revenueByMonth = ContractPaymentSchedule::whereYear('paid_date', $this->year)
-            ->whereIn('status', ['paid', 'partial'])
-            ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
-            ->groupByRaw('MONTH(paid_date)')->get()->keyBy('m');
+        $totalRevenue = 0;
 
         // ── Theo tháng: tất cả 6 loại HĐ ký ─────────
         $monthlyModels = [
@@ -342,16 +334,8 @@ class StatisticsBoard extends Component
         }
 
         // ── Tiến độ thu tiền ────────────────────────
-        $paymentDueByMonth = ContractPaymentSchedule::whereYear('due_date', $this->year)
-            ->selectRaw('MONTH(due_date) as m, SUM(amount) as total')
-            ->groupByRaw('MONTH(due_date)')->get()->keyBy('m');
-
-        $paymentPaidByMonth = ContractPaymentSchedule::whereYear('paid_date', $this->year)
-            ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
-            ->groupByRaw('MONTH(paid_date)')->get()->keyBy('m');
-
-        $totalPaymentDue  = (float) ContractPaymentSchedule::whereYear('due_date', $this->year)->sum('amount');
-        $totalPaymentPaid = (float) ContractPaymentSchedule::whereYear('paid_date', $this->year)->sum('paid_amount');
+        $totalPaymentDue  = 0;
+        $totalPaymentPaid = 0;
 
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
@@ -359,9 +343,9 @@ class StatisticsBoard extends Component
                 'contracts'    => $contractMonthly[$m]['cnt'] ?? 0,
                 'value'        => (float) ($contractMonthly[$m]['val'] ?? 0),
                 'sales'        => (float) ($contractMonthly[$m]['rev'] ?? 0),
-                'revenue'      => (float) ($revenueByMonth->get($m)?->total ?? 0),
-                'payment_due'  => (float) ($paymentDueByMonth->get($m)?->total ?? 0),
-                'payment_paid' => (float) ($paymentPaidByMonth->get($m)?->total ?? 0),
+                'revenue'      => 0,
+                'payment_due'  => 0,
+                'payment_paid' => 0,
             ];
         }
 

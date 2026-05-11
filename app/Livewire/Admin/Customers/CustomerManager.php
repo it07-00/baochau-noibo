@@ -21,8 +21,6 @@ class CustomerManager extends Component
     public array $formData = [
         'name' => '',
         'tax_code' => '',
-        'phone' => '',
-        'email' => '',
         'address' => '',
         'province' => '',
         'representative' => '',
@@ -54,8 +52,6 @@ class CustomerManager extends Component
         $this->formData = [
             'name' => (string) $customer->name,
             'tax_code' => (string) ($customer->tax_code ?? ''),
-            'phone' => (string) ($customer->phone ?? ''),
-            'email' => (string) ($customer->email ?? ''),
             'address' => (string) ($customer->address ?? ''),
             'province' => (string) ($customer->province ?? ''),
             'representative' => (string) ($customer->representative ?? ''),
@@ -76,16 +72,12 @@ class CustomerManager extends Component
         $this->validate([
             'formData.name' => 'required|string|max:255|unique:customers,name' . ($this->editingId ? ',' . $this->editingId : ''),
             'formData.tax_code' => 'nullable|string|max:50',
-            'formData.phone' => 'nullable|string|max:30',
-            'formData.email' => 'nullable|email|max:255',
             'formData.address' => 'nullable|string|max:2000',
             'formData.province' => 'nullable|string|max:255',
             'formData.representative' => 'nullable|string|max:255',
         ], [], [
             'formData.name' => 'tên khách hàng',
             'formData.tax_code' => 'mã số thuế',
-            'formData.phone' => 'số điện thoại',
-            'formData.email' => 'email',
             'formData.address' => 'địa chỉ',
             'formData.province' => 'tỉnh thành',
             'formData.representative' => 'người đại diện',
@@ -94,8 +86,6 @@ class CustomerManager extends Component
         $data = [
             'name' => trim((string) $this->formData['name']),
             'tax_code' => $this->formData['tax_code'] !== '' ? trim((string) $this->formData['tax_code']) : null,
-            'phone' => $this->formData['phone'] !== '' ? trim((string) $this->formData['phone']) : null,
-            'email' => $this->formData['email'] !== '' ? trim((string) $this->formData['email']) : null,
             'address' => $this->formData['address'] !== '' ? trim((string) $this->formData['address']) : null,
             'province' => $this->formData['province'] !== '' ? trim((string) $this->formData['province']) : null,
             'representative' => $this->formData['representative'] !== '' ? trim((string) $this->formData['representative']) : null,
@@ -145,8 +135,6 @@ class CustomerManager extends Component
         $this->formData = [
             'name' => '',
             'tax_code' => '',
-            'phone' => '',
-            'email' => '',
             'address' => '',
             'province' => '',
             'representative' => '',
@@ -162,9 +150,7 @@ class CustomerManager extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('tax_code', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%');
+                        ->orWhere('tax_code', 'like', '%' . $this->search . '%');
                 });
             })
             ->orderBy('name')

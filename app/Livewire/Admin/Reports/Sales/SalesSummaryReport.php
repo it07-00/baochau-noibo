@@ -5,7 +5,6 @@ namespace App\Livewire\Admin\Reports\Sales;
 use App\Models\ContractResearch;
 use App\Models\ContractLegal;
 use App\Models\ContractEmission;
-use App\Models\ContractPaymentSchedule;
 use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
@@ -51,8 +50,6 @@ class SalesSummaryReport extends Component
                 'contract_total'   => 0,
                 'renewal_count'    => 0,
                 'progressive_count'=> 0,
-                'payment_due'      => 0,
-                'payment_paid'     => 0,
             ];
         }
 
@@ -91,34 +88,6 @@ class SalesSummaryReport extends Component
             }
         }
 
-        $paymentScheduleQuery = ContractPaymentSchedule::query();
-        if (!empty($targetStaffIds)) {
-            $paymentScheduleQuery->where(function ($q) use ($targetStaffIds) {
-                foreach ($this->contractModelClasses as $modelClass) {
-                    $q->orWhere(function ($sub) use ($modelClass, $targetStaffIds) {
-                        $sub->where('contract_type', $modelClass)
-                            ->whereIn('contract_id', $modelClass::query()
-                                ->whereIn('staff_id', $targetStaffIds)
-                                ->select('id'));
-                    });
-                }
-            });
-        } else {
-            $paymentScheduleQuery->whereRaw('1 = 0');
-        }
-
-        foreach ((clone $paymentScheduleQuery)->whereYear('due_date', $this->year)
-            ->selectRaw('MONTH(due_date) as m, SUM(amount) as total')
-            ->groupBy('m')->get() as $r) {
-            $months[$r->m]['payment_due'] = (float) $r->total;
-        }
-
-        foreach ((clone $paymentScheduleQuery)->whereYear('paid_date', $this->year)
-            ->selectRaw('MONTH(paid_date) as m, SUM(paid_amount) as total')
-            ->groupBy('m')->get() as $r) {
-            $months[$r->m]['payment_paid'] = (float) $r->total;
-        }
-
         for ($m = 1; $m <= 12; $m++) {
             $months[$m]['contract_total'] = $months[$m]['renewal'] + $months[$m]['progressive'];
         }
@@ -129,8 +98,6 @@ class SalesSummaryReport extends Component
             'contract_total'   => array_sum(array_column($months, 'contract_total')),
             'renewal_count'    => array_sum(array_column($months, 'renewal_count')),
             'progressive_count'=> array_sum(array_column($months, 'progressive_count')),
-            'payment_due'      => array_sum(array_column($months, 'payment_due')),
-            'payment_paid'     => array_sum(array_column($months, 'payment_paid')),
         ];
         $totals['grand'] = $totals['contract_total'];
 

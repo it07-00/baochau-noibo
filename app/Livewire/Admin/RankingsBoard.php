@@ -5,7 +5,6 @@ namespace App\Livewire\Admin;
 use App\Enums\Role;
 use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
-use App\Models\ContractPaymentSchedule;
 use App\Models\ContractWaste;
 use App\Models\ContractTechnical;
 use App\Models\ContractResearch;
@@ -38,9 +37,7 @@ class RankingsBoard extends Component
         $consultingRankings = collect();
         $technicalRankings  = collect();
         $topCustomers       = collect();
-        $topProvinces       = collect();
         $topServices        = collect();
-        $paymentStats       = ['due' => 0, 'paid' => 0, 'pending' => 0, 'partial' => 0, 'overdue' => 0];
 
         if ($canSeeSales) {
             // ── Xếp hạng nhân viên kinh doanh theo tổng tiền của 6 loại HĐ ──
@@ -98,42 +95,6 @@ class RankingsBoard extends Component
                 ->limit(15)
                 ->get();
 
-            // ── Top khu vực theo giá trị hợp đồng (6 loại HĐ) ───────────
-            $contractTables = [
-                'contract_wastes',
-                'contract_consultings',
-                'contract_projects',
-                'contract_commercials',
-                'contract_sustainabilities',
-                'contract_energies',
-            ];
-
-            $parts    = [];
-            $bindings = [];
-            foreach ($contractTables as $table) {
-                // Use COALESCE(contract.province, customer.province) so contracts
-                // without a province set fall back to the linked customer's province.
-                // Aggregate by signed year and contract value.
-                $parts[] = "SELECT COALESCE(NULLIF(c.province,''), cust.province) AS province,
-                    COUNT(DISTINCT c.id) AS cnt,
-                    COALESCE(SUM(c.value), 0) AS total
-                FROM `{$table}` c
-                LEFT JOIN customers cust ON cust.id = c.customer_id
-                WHERE YEAR(c.signed_at) = ?
-                  AND c.deleted_at IS NULL
-                GROUP BY COALESCE(NULLIF(c.province,''), cust.province)";
-                $bindings[] = $this->year;
-            }
-
-            $sql = "SELECT province, SUM(cnt) AS cnt, SUM(total) AS total
-                    FROM (" . implode(' UNION ALL ', $parts) . ") sub
-                    WHERE province IS NOT NULL AND province != ''
-                    GROUP BY province
-                    ORDER BY total DESC
-                    LIMIT 10";
-
-            $topProvinces = collect(DB::select($sql, $bindings));
-
             // ── Top dịch vụ theo báo giá ───────────
             $topServices = \App\Models\Quotation::whereYear('date', $this->year)
                 ->whereNotNull('service')
@@ -143,24 +104,6 @@ class RankingsBoard extends Component
                 ->orderByDesc('total')
                 ->limit(10)
                 ->get();
-
-            // ── Tiến độ thu tiền ─────────────────────────────
-            $paymentStats['due']  = (float) ContractPaymentSchedule::whereYear('due_date', $this->year)->sum('amount');
-            $paymentStats['paid'] = (float) ContractPaymentSchedule::whereYear('due_date', $this->year)->sum('paid_amount');
-
-            $statusCounts = ContractPaymentSchedule::whereYear('due_date', $this->year)
-                ->selectRaw("status, COUNT(*) as cnt, SUM(amount) as total")
-                ->groupBy('status')->get()->keyBy('status');
-
-            $paymentStats['pending_amount'] = (float) ($statusCounts->get('pending')?->total ?? 0);
-            $paymentStats['partial_amount'] = (float) ($statusCounts->get('partial')?->total ?? 0);
-            $paymentStats['paid_amount']    = (float) ($statusCounts->get('paid')?->total ?? 0);
-            $paymentStats['overdue_amount'] = (float) ($statusCounts->get('overdue')?->total ?? 0);
-
-            $paymentStats['pending_count'] = (int) ($statusCounts->get('pending')?->cnt ?? 0);
-            $paymentStats['partial_count'] = (int) ($statusCounts->get('partial')?->cnt ?? 0);
-            $paymentStats['paid_count']    = (int) ($statusCounts->get('paid')?->cnt ?? 0);
-            $paymentStats['overdue_count'] = (int) ($statusCounts->get('overdue')?->cnt ?? 0);
 
         }
 
@@ -253,7 +196,7 @@ class RankingsBoard extends Component
         return view('livewire.admin.rankings-board', compact(
             'canSeeSales', 'canSeeConsulting', 'canSeeTechnical', 'canSeeFinance',
             'salesRankings', 'consultingRankings', 'technicalRankings',
-            'topCustomers', 'topProvinces', 'topServices', 'paymentStats'
+            'topCustomers', 'topServices'
         ))->layout('admin.layouts.app');
     }
 }

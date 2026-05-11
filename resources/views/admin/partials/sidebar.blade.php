@@ -414,7 +414,6 @@
                             'permission' => 'sales-renewal.view',
                             'children' => [
                                 'Doanh số tái ký',
-                                'Doanh số theo tiến độ',
                                 'Bảng theo dõi báo giá',
                                 'Đăng ký mục tiêu doanh số',
                             ],
@@ -546,9 +545,6 @@
                     } elseif (request()->routeIs('app.sales.renewal.*')) {
                         $activeGroup = 'Bộ phận kinh doanh';
                         $activeChild = 'Doanh số tái ký';
-                    } elseif (request()->routeIs('app.sales.progressive.*')) {
-                        $activeGroup = 'Bộ phận kinh doanh';
-                        $activeChild = 'Doanh số theo tiến độ';
                     } elseif (request()->routeIs('app.postal-deliveries.*')) {
                         $activeGroup = 'Chuyển phát thư';
                         $activeChild = 'Quản lý chuyển phát';
@@ -720,11 +716,6 @@
                                                     $child === 'Doanh số tái ký'
                                                 ) {
                                                     $href = route('app.sales.renewal.index');
-                                                } elseif (
-                                                    $menu['title'] === 'Bộ phận kinh doanh' &&
-                                                    $child === 'Doanh số theo tiến độ'
-                                                ) {
-                                                    $href = route('app.sales.progressive.index');
                                                 } elseif (
                                                     $menu['title'] === 'Bộ phận kinh doanh' &&
                                                     $child === 'Đăng ký mục tiêu doanh số'

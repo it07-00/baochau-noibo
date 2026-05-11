@@ -488,14 +488,6 @@
                                     <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
                                 </button>
                             </li>
-                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
-                                <li class="nav-item">
-                                    <button class="nav-link fw-semibold" data-bs-toggle="tab"
-                                        data-bs-target="#tab-payment-commercial-{{ $selectedDoc->id }}" type="button">
-                                        <i class="bi bi-cash-stack me-1"></i>Lịch thanh toán
-                                    </button>
-                                </li>
-                            @endunless
                         </ul>
                         <div class="tab-content">
                             {{-- Tab 1: Thông tin HĐ --}}
@@ -675,15 +667,6 @@
                                 <livewire:admin.contracts.contract-workflow-progress :contractType="'commercial'" :contractId="$selectedDoc->id"
                                     :key="'progress-commercial-' . $selectedDoc->id" />
                             </div>
-
-                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
-                                {{-- Tab 3: Lịch thanh toán --}}
-                                <div class="tab-pane fade" id="tab-payment-commercial-{{ $selectedDoc->id }}"
-                                    role="tabpanel">
-                                    <livewire:admin.contracts.contract-payment-schedule-manager :contractType="'commercial'"
-                                        :contractId="$selectedDoc->id" :key="'payment-commercial-' . $selectedDoc->id" />
-                                </div>
-                            @endunless
                         </div>
 
                     @endif

@@ -116,7 +116,6 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Doanh số
     Route::prefix('doanh-so')->name('sales.')->group(function () {
         Route::get('tai-ky', \App\Livewire\Admin\Sales\RenewalSalesManager::class)->name('renewal.index')->middleware(Permission::toMiddleware(Permission::SALES_RENEWAL_VIEW));
-        Route::get('tien-do-thanh-toan', \App\Livewire\Admin\Sales\ProgressiveSalesManager::class)->name('progressive.index')->middleware(Permission::toMiddleware(Permission::SALES_PROGRESSIVE_VIEW));
         Route::get('dang-ky-muc-tieu', \App\Livewire\Admin\Sales\SalesTargetRegistration::class)
             ->name('target-registration')
             ->middleware([Permission::toMiddleware(Permission::SALES_RENEWAL_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);

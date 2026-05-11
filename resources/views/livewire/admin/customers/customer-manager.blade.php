@@ -20,7 +20,7 @@
                             <span class="input-group-text bg-transparent border-end-0">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             </span>
-                            <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm theo tên, MST, SĐT, email...">
+                            <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm theo tên, mã số thuế...">
                         </div>
 
                         @can('customers.create')
@@ -41,8 +41,6 @@
                                     <th>Tên khách hàng</th>
                                     <th class="d-none d-md-table-cell">Mã số thuế</th>
                                     <th class="d-none d-lg-table-cell">Tỉnh thành</th>
-                                    <th class="d-none d-lg-table-cell">Số điện thoại</th>
-                                    <th class="d-none d-xl-table-cell">Email</th>
                                     <th class="d-none d-md-table-cell">Người đại diện</th>
                                     <th class="text-center">Số HĐ</th>
                                     @canany(['customers.edit', 'customers.delete'])
@@ -69,8 +67,6 @@
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $customer->tax_code ?: '—' }}</td>
                                     <td class="d-none d-lg-table-cell">{{ $customer->province ?: '—' }}</td>
-                                    <td class="d-none d-lg-table-cell">{{ $customer->phone ?: '—' }}</td>
-                                    <td class="d-none d-xl-table-cell">{{ $customer->email ?: '—' }}</td>
                                     <td class="d-none d-md-table-cell">{{ $customer->representative ?: '—' }}</td>
                                     <td class="text-center">
                                         @if($totalContracts > 0)
@@ -143,9 +139,6 @@
                                 @if($customer->province)
                                     <span><i class="bi bi-geo-alt me-1"></i>{{ $customer->province }}</span>
                                 @endif
-                                @if($customer->phone)
-                                    <span><i class="bi bi-telephone me-1"></i>{{ $customer->phone }}</span>
-                                @endif
                                 @if($customer->representative)
                                     <span><i class="bi bi-person me-1"></i>{{ $customer->representative }}</span>
                                 @endif
@@ -202,16 +195,6 @@
                                 <label class="form-label fw-bold">Mã số thuế</label>
                                 <input type="text" class="form-control @error('formData.tax_code') is-invalid @enderror" wire:model.defer="formData.tax_code" placeholder="Nhập mã số thuế">
                                 @error('formData.tax_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Số điện thoại</label>
-                                <input type="text" class="form-control @error('formData.phone') is-invalid @enderror" wire:model.defer="formData.phone" placeholder="Nhập số điện thoại">
-                                @error('formData.phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control @error('formData.email') is-invalid @enderror" wire:model.defer="formData.email" placeholder="Nhập email">
-                                @error('formData.email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Người đại diện</label>

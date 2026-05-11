@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Enums\Role;
-use App\Models\ContractPaymentSchedule;
-use App\Observers\ContractPaymentScheduleObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,8 +24,6 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
         \Illuminate\Pagination\Paginator::useBootstrapFive();
-
-        ContractPaymentSchedule::observe(ContractPaymentScheduleObserver::class);
 
         \Illuminate\Support\Facades\Event::listen(
             [

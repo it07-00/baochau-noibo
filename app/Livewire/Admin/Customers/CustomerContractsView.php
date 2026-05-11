@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Customers;
 
 use App\Models\ContractEmission;
 use App\Models\ContractLegal;
+use App\Models\ContractProgressNote;
 use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
@@ -26,6 +27,11 @@ class CustomerContractsView extends Component
     public string $sortDir = 'desc';
     public string $dateFrom = '';
     public string $dateTo = '';
+
+    public ?object $selectedContract = null;
+    public string $selectedContractLabel = '';
+    public string $selectedContractType = '';
+    public $selectedProgressNotes = [];
 
     public function paginationView(): string
     {
@@ -60,15 +66,82 @@ class CustomerContractsView extends Component
         $this->resetPage();
     }
 
+    public function viewDetail(int $id, string $modelClass): void
+    {
+        $allowed = [
+            ContractWaste::class         => 'waste',
+            ContractLegal::class          => 'consulting',
+            ContractTechnical::class      => 'project',
+            ContractResearch::class       => 'commercial',
+            ContractSustainability::class => 'sustainability',
+            ContractEmission::class       => 'energy',
+        ];
+        if (!array_key_exists($modelClass, $allowed)) return;
+
+        $contract = $modelClass::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
+        if (!$contract || (int)$contract->customer_id !== $this->customer->id) return;
+
+        $typeLabels = [
+            'waste'          => 'Chất thải & Tiếng ồn',
+            'consulting'     => 'Hồ sơ môi trường',
+            'project'        => 'Kỹ thuật & Ứng phó SC',
+            'commercial'     => 'NC & CĐ Công nghệ',
+            'sustainability' => 'TV & BC PTBV',
+            'energy'         => 'Phát thải & Năng lượng',
+        ];
+
+        $contractType = $allowed[$modelClass];
+
+        $this->selectedContract = $contract;
+        $this->selectedContractType = $contractType;
+        $this->selectedContractLabel = $typeLabels[$contractType] ?? '';
+        $this->selectedProgressNotes = ContractProgressNote::where('contract_type', $contractType)
+            ->where('contract_id', $id)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $this->dispatch('open-contract-detail-modal');
+    }
+
+    public string $progressNote = '';
+
+    public function addProgressNote(int $contractId): void
+    {
+        if (!$this->selectedContractType) return;
+
+        $this->validate(
+            ['progressNote' => 'required|min:1|max:2000'],
+            ['progressNote.required' => 'Vui lòng nhập nội dung ghi chú.', 'progressNote.max' => 'Ghi chú không được vượt quá 2000 ký tự.'],
+            ['progressNote' => 'ghi chú']
+        );
+
+        ContractProgressNote::create([
+            'contract_type' => $this->selectedContractType,
+            'contract_id'   => $contractId,
+            'user_id'       => auth()->id(),
+            'note'          => $this->progressNote,
+        ]);
+
+        $this->progressNote = '';
+        $this->selectedProgressNotes = ContractProgressNote::where('contract_type', $this->selectedContractType)
+            ->where('contract_id', $contractId)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú tiến độ!']);
+    }
+
     private function fetchAll(): Collection
     {
         $types = [
-            ['model' => ContractWaste::class,          'label' => 'Chất thải & Tiếng ồn'],
-            ['model' => ContractLegal::class,           'label' => 'Hồ sơ môi trường'],
-            ['model' => ContractTechnical::class,       'label' => 'Kỹ thuật & Ứng phó SC'],
-            ['model' => ContractResearch::class,        'label' => 'NC & CĐ Công nghệ'],
-            ['model' => ContractSustainability::class,  'label' => 'TV & BC PTBV'],
-            ['model' => ContractEmission::class,        'label' => 'Phát thải & Năng lượng'],
+            ['model' => ContractWaste::class,          'label' => 'Chất thải & Tiếng ồn', 'route' => 'app.contracts.waste.index'],
+            ['model' => ContractLegal::class,           'label' => 'Hồ sơ môi trường',      'route' => 'app.contracts.consulting.index'],
+            ['model' => ContractTechnical::class,       'label' => 'Kỹ thuật & Ứng phó SC','route' => 'app.contracts.project.index'],
+            ['model' => ContractResearch::class,        'label' => 'NC & CĐ Công nghệ',    'route' => 'app.contracts.commercial.index'],
+            ['model' => ContractSustainability::class,  'label' => 'TV & BC PTBV',          'route' => 'app.contracts.sustainability.index'],
+            ['model' => ContractEmission::class,        'label' => 'Phát thải & Năng lượng','route' => 'app.contracts.energy.index'],
         ];
 
         $all = collect();
@@ -81,13 +154,16 @@ class CustomerContractsView extends Component
                 ->with('handler')
                 ->get()
                 ->map(fn ($contract) => (object) [
-                    'type_label' => $type['label'],
-                    'shd_cxl'   => $contract->shd_cxl,
-                    'shd_bc'    => $contract->shd_bc,
-                    'handler'   => $contract->handler?->name ?? '—',
-                    'signed_at' => $contract->signed_at,
-                    'value'     => $contract->value,
-                    'status'    => $contract->status,
+                    'type_label'     => $type['label'],
+                    'contract_route' => $type['route'],
+                    'contract_id'    => $contract->id,
+                    'model_class'    => $type['model'],
+                    'shd_cxl'        => $contract->shd_cxl,
+                    'shd_bc'         => $contract->shd_bc,
+                    'handler'        => $contract->handler?->name ?? '—',
+                    'signed_at'      => $contract->signed_at,
+                    'value'          => $contract->value,
+                    'status'         => $contract->status,
                 ]);
 
             $all = $all->concat($rows);

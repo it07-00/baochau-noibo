@@ -707,7 +707,6 @@
             const labels = Object.keys(monthly).map(m => 'Tháng ' + m);
             const contractData = Object.values(monthly).map(item => Number(item.contracts || 0));
             const salesData = Object.values(monthly).map(item => Number(item.sales || 0));
-            const revenueData = Object.values(monthly).map(item => Number(item.revenue || 0));
 
             const datasets = [{
                 label: 'Hợp đồng ký mới', type: 'bar', data: contractData,
@@ -719,7 +718,6 @@
 
             if (canSeeFinance) {
                 datasets.push({ label: 'Doanh số ghi nhận', type: 'bar', data: salesData, backgroundColor: 'rgba(240,82,82,0.7)', borderRadius: 4, yAxisID: 'y1' });
-                datasets.push({ label: 'Thực thu', type: 'line', data: revenueData, borderColor: '#2ec27e', backgroundColor: 'rgba(46,194,126,0.12)', fill: false, tension: 0.4, pointRadius: 4, yAxisID: 'y1' });
                 scales.y1 = { position: 'right', title: { display: true, text: 'Giá trị (VND)' }, grid: { drawOnChartArea: false }, ticks: { callback: v => compactCurrency(v) } };
             }
 
