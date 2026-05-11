@@ -28,6 +28,8 @@ class ContractResearch extends Model
         'Cung cấp giải pháp chuyển đổi công nghệ',
     ];
 
+    const TOTAL_STEPS = 6;
+
     protected $fillable = [
         'shd_cxl',
         'shd_bc',
@@ -54,6 +56,7 @@ class ContractResearch extends Model
         'loai_dich_vu',
         'is_renewal',
         'parent_contract_id',
+        'report_number',
     ];
 
     protected $casts = [
@@ -96,6 +99,51 @@ class ContractResearch extends Model
             'ĐÃ HỦY'         => 'Đã hủy',
             default          => $this->status ?? 'Không xác định',
         };
+    }
+
+    public function getDetailedStatusColorAttribute(): array
+    {
+        return match ($this->status) {
+            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => [
+                'bg' => '#cfe2ff',
+                'text' => '#0d6efd',
+            ],
+            'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+            'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+            'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+            'Hợp đồng hủy', 'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+            default => ['bg' => '#e9ecef', 'text' => '#6c757d'],
+        };
+    }
+
+    public function getVoucherBadgeInfoAttribute(): array
+    {
+        $value = trim((string) ($this->voucher_status ?? ''));
+        $key = mb_strtolower($value);
+
+        $class = match ($key) {
+            'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
+            'đã xuất hóa đơn' => 'bg-warning text-dark',
+            'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
+            'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
+            '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
+            default => 'bg-secondary text-white',
+        };
+
+        $label = match ($key) {
+            'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
+            'đã xuất hóa đơn' => 'Xuất hóa đơn',
+            'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
+            'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'BB nghiệm thu kết thúc HĐ',
+            '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
+            default => $value !== '' ? $value : 'Chưa chọn',
+        };
+
+        return [
+            'class' => $class,
+            'label' => $label,
+            'full_value' => $value !== '' ? $value : 'Chưa chọn',
+        ];
     }
 
     public function getStatusColorAttribute(): string

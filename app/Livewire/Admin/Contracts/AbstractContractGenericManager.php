@@ -402,6 +402,30 @@ abstract class AbstractContractGenericManager extends Component
 
     // ── View / detail / workflow ──────────────────────────────────────────────
 
+    #[Computed]
+    public function canBulkDelete(): bool
+    {
+        return auth()->user()->can($this->getPermDelete()->value);
+    }
+
+    #[Computed]
+    public function isRestrictedRole(): bool
+    {
+        return auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+    }
+
+    public function updateInlineReportNumber(int $docId, ?string $value): void
+    {
+        if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Chỉ nhân viên Kỹ thuật mới được cập nhật Báo cáo số.']);
+            return;
+        }
+
+        $modelClass = $this->getModelClass();
+        $modelClass::findOrFail($docId)->update(['report_number' => $value ?: null]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật Báo cáo số!']);
+    }
+
     public function viewDetail(int $id): void
     {
         $modelClass        = $this->getModelClass();

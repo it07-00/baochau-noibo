@@ -710,6 +710,29 @@ class ContractConsultingManager extends Component
         return $progress;
     }
 
+    #[Computed]
+    public function canBulkDelete(): bool
+    {
+        return auth()->user()->can(Permission::CONTRACTS_CONSULTING_DELETE->value);
+    }
+
+    #[Computed]
+    public function isRestrictedRole(): bool
+    {
+        return auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+    }
+
+    public function updateInlineReportNumber(int $docId, ?string $value): void
+    {
+        if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Chỉ nhân viên Kỹ thuật mới được cập nhật Báo cáo số.']);
+            return;
+        }
+
+        ContractLegal::findOrFail($docId)->update(['report_number' => $value ?: null]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật Báo cáo số!']);
+    }
+
     public function render()
     {
         $user = auth()->user();

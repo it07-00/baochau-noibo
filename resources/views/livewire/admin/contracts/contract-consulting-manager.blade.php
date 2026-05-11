@@ -30,23 +30,21 @@
         </div>
     </div>
 
-    @php
-        $canBulkDelete = auth()->user()->can('contracts-consulting.delete');
-    @endphp
+    
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
             <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-funnel-fill text-primary" style="font-size:13px;"></i>
-                <span class="fw-semibold" style="font-size:13px;">Bộ lọc Hồ sơ môi trường</span>
+                <i class="bi bi-funnel-fill text-primary" class="contract-text-13px"></i>
+                <span class="fw-semibold" class="contract-text-13px">Bộ lọc Hồ sơ môi trường</span>
             </div>
             <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#filterBodyConsulting" style="font-size:18px; line-height:1;">−</button>
+                data-bs-target="#filterBodyConsulting" class="fs-5 lh-1">−</button>
         </div>
         <div class="collapse show" id="filterBodyConsulting">
             <div class="card-body px-4 pt-3 pb-2">
-                @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                @unless ($this->isRestrictedRole)
                     {{-- ── Hàng 1: Ngày + Tỉnh thành + Cờ boolean ── --}}
                     <div class="row g-2 mb-2">
                         <div class="col-md-3">
@@ -54,7 +52,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.signed_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
+                                <span class="input-group-text px-2 text-muted bg-white" class="contract-text-11px">đến</span>
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.signed_to" title="Đến ngày">
                             </div>
@@ -64,7 +62,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
+                                <span class="input-group-text px-2 text-muted bg-white" class="contract-text-11px">đến</span>
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_to" title="Đến ngày">
                             </div>
@@ -81,19 +79,19 @@
                         <div class="col-md-4 d-flex align-items-end gap-2 pb-1">
                             <label
                                 class="d-flex align-items-center gap-1 px-3 py-1 rounded border mb-0 {{ $filter['is_offset'] ? 'border-primary text-primary bg-primary bg-opacity-10' : 'border-secondary text-muted' }}"
-                                style="font-size:12px; cursor:pointer;">
+                                class="contract-text-12px cursor-pointer">
                                 <input class="form-check-input m-0" type="checkbox" wire:model.live="filter.is_offset"> Có
                                 bù trừ
                             </label>
                             <label
                                 class="d-flex align-items-center gap-1 px-3 py-1 rounded border mb-0 {{ $filter['has_room_fund'] ? 'border-primary text-primary bg-primary bg-opacity-10' : 'border-secondary text-muted' }}"
-                                style="font-size:12px; cursor:pointer;">
+                                class="contract-text-12px cursor-pointer">
                                 <input class="form-check-input m-0" type="checkbox" wire:model.live="filter.has_room_fund">
                                 Quỹ phòng
                             </label>
                             <label
                                 class="d-flex align-items-center gap-1 px-3 py-1 rounded border mb-0 {{ $filter['is_overdue'] ? 'border-danger text-danger bg-danger bg-opacity-10' : 'border-secondary text-muted' }}"
-                                style="font-size:12px; cursor:pointer;">
+                                class="contract-text-12px cursor-pointer">
                                 <input class="form-check-input m-0" type="checkbox" wire:model.live="filter.is_overdue"> Trễ
                                 hạn
                             </label>
@@ -191,7 +189,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.signed_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
+                                <span class="input-group-text px-2 text-muted bg-white" class="contract-text-11px">đến</span>
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.signed_to" title="Đến ngày">
                             </div>
@@ -201,7 +199,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white" style="font-size:11px;">đến</span>
+                                <span class="input-group-text px-2 text-muted bg-white" class="contract-text-11px">đến</span>
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_to" title="Đến ngày">
                             </div>
@@ -250,14 +248,14 @@
                     <button class="btn btn-outline-secondary btn-sm px-3 btn-filter" wire:click="resetFilters">
                         <i class="bi bi-x-circle me-1"></i>Xóa lọc
                     </button>
-                    @if ($canBulkDelete)
+                    @if ($this->canBulkDelete)
                         <button class="btn btn-danger btn-sm px-3 btn-filter" wire:click="bulkDeleteSelected"
                             wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
                             @if (empty($selectedDocIds)) disabled @endif>
                             <i class="bi bi-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
                         </button>
                     @endif
-                    @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                    @unless ($this->isRestrictedRole)
                         <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
                             class="btn btn-success btn-sm px-3 btn-filter">
                             <span wire:loading wire:target="exportExcel"
@@ -280,16 +278,16 @@
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class=" text-muted fw-bold">
-                        @if ($canBulkDelete)
-                            <th class="text-center" style="width:42px;">Chọn</th>
+                        @if ($this->canBulkDelete)
+                            <th class="text-center" class="w-42px">Chọn</th>
                         @endif
-                        <th class="text-center" style="width:45px;">STT</th>
+                        <th class="text-center" class="w-45px">STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         @if (auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value))
                             <th class="text-center">Báo cáo số</th>
                         @endif
-                        @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                        @unless ($this->isRestrictedRole)
                             <th class="text-center">Giá trị hợp đồng</th>
                             <th class="text-center">Hoa hồng</th>
                             <th class="text-center">Doanh số</th>
@@ -297,7 +295,7 @@
                         <th class="text-center">Được giao</th>
                         <th class="text-center">Hạn chót</th>
                         <th class="text-center">Tình trạng</th>
-                        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                        @unless ($this->isRestrictedRole)
                         <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
                         @endunless
                         <th class="text-center pe-4">Thao tác</th>
@@ -306,7 +304,7 @@
                 <tbody>
                     @forelse($docs as $doc)
                         <tr class="border-bottom border-light" wire:key="consulting-row-{{ $doc->id }}">
-                            @if ($canBulkDelete)
+                            @if ($this->canBulkDelete)
                                 <td class="text-center">
                                     @if (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) || $doc->staff_id === auth()->id())
                                         <input class="form-check-input" type="checkbox"
@@ -333,11 +331,17 @@
                                 </div>
                             </td>
                             @if (auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value))
-                                <td class="text-center">
-                                    <span class="{{ $doc->report_number ? 'fw-semibold' : 'text-muted' }}">{{ $doc->report_number ?: '—' }}</span>
+                                <td class="text-center align-middle">
+                                    <input type="text" 
+                                           x-data="inlineReportEdit({{ $doc->id }}, @js($doc->report_number))"
+                                           class="form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light" 
+                                           :value="value" 
+                                           @change="updateReport"
+                                           placeholder="Nhập..."
+                                           title="Sửa trực tiếp">
                                 </td>
                             @endif
-                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                            @unless ($this->isRestrictedRole)
                                 <td class="text-center text-nowrap">
                                     <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
                                 </td>
@@ -348,10 +352,10 @@
                                     <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
                                 </td>
                             @endunless
-                            <td class="text-center" style="min-width: 140px;">
+                            <td class="text-center" class="min-w-140px">
                                 @php
                                     $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
-                                    $totalSteps = 6;
+                                    $totalSteps = \App\Models\ContractLegal::TOTAL_STEPS;
                                     $progressPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
                                     $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
                                 @endphp
@@ -362,8 +366,8 @@
                                                 <span class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }}" style="font-size:0.72rem;">
                                                     {{ $assign->user?->name ?? $assign->external_assignee ?? '?' }}
                                                 </span>
-                                                <small class="text-muted" style="font-size:0.6rem;">
-                                                    bởi {{ Str::limit($assign->assigner?->name ?? '—', 15) }}
+                                                <small class="text-muted contract-text-08">
+                                                    bởi {{ $assign->assigner?->name ?? '—' }}
                                                 </small>
                                             </div>
                                         @endforeach
@@ -372,10 +376,10 @@
                                     <span class="text-muted">—</span>
                                 @endif
                                 <div class="mt-2">
-                                    <div class="progress" style="height: 6px; width: 80px; margin: 0 auto;">
+                                    <div class="progress" class="h-6px w-80px mx-auto">
                                         <div class="progress-bar bg-{{ $progressColor }}" style="width: {{ $progressPercent }}%"></div>
                                     </div>
-                                    <span class="fw-semibold text-{{ $progressColor }}" style="font-size:0.72rem;">{{ $completedSteps }}/{{ $totalSteps }}</span>
+                                    <span class="fw-semibold text-{{ $progressColor }} contract-text-08">{{ $completedSteps }}/{{ $totalSteps }}</span>
                                 </div>
                             </td>
                             <td class="text-center">
@@ -388,16 +392,16 @@
                                 @endphp
                                 @if($deadline)
                                     @if($isFinished)
-                                        <span class="fw-semibold text-success" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <span class="fw-semibold text-success" class="contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
                                         <br><span class="badge bg-success" style="font-size:0.6rem;"><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
                                     @elseif($isOverdue)
-                                        <span class="fw-bold text-danger" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <span class="fw-bold text-danger" class="contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
                                         <br><span class="badge bg-danger" style="font-size:0.6rem;"><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
                                     @elseif($isNearDue)
-                                        <span class="fw-semibold text-warning" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <span class="fw-semibold text-warning" class="contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
                                         <br><span class="badge bg-warning text-dark" style="font-size:0.6rem;"><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
                                     @else
-                                        <span class="fw-semibold text-success" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <span class="fw-semibold text-success" class="contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
                                         <br><span class="badge bg-success bg-opacity-75" style="font-size:0.6rem;">Còn {{ $daysLeft }} ngày</span>
                                     @endif
                                 @else
@@ -406,19 +410,7 @@
                             </td>
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center">
-                                    @php
-                                        $statusColor = match ($doc->status) {
-                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => [
-                                                'bg' => '#cfe2ff',
-                                                'text' => '#0d6efd',
-                                            ],
-                                            'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
-                                            'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
-                                            'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
-                                            'Hợp đồng hủy', 'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
-                                            default => ['bg' => '#e9ecef', 'text' => '#6c757d'],
-                                        };
-                                    @endphp
+                                    @php $statusColor = $doc->detailed_status_color; @endphp
                                     @php
                                         $canUpdateStatus =
                                             !auth()
@@ -450,11 +442,11 @@
                                             </button>
                                             <div x-show="open" @click.away="open = false" x-cloak
                                                 class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1"
-                                                style="z-index:1050; min-width:200px; right:50%; transform:translateX(50%); max-height:250px; overflow-y:auto;">
+                                                class="dropdown-menu-status">
                                                 @foreach ($all_statuses as $opt)
                                                     <button type="button"
                                                         class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }}"
-                                                        style="font-size:0.8rem;"
+                                                        class="contract-text-08"
                                                         wire:click="updateStatus({{ $doc->id }}, '{{ $opt }}')"
                                                         @click="open = false">
                                                         {{ $opt }}
@@ -470,33 +462,12 @@
                                         class=" text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                                 </div>
                             </td>
-                            @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+                            @unless ($this->isRestrictedRole)
                             <td class="text-center voucher-status-cell">
-                                @php
-                                    $voucherStatusValue = trim((string) ($doc->voucher_status ?? ''));
-                                    $voucherStatusKey = mb_strtolower($voucherStatusValue);
-                                    $voucherBadgeClass = match ($voucherStatusKey) {
-                                        'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
-                                        'đã xuất hóa đơn' => 'bg-warning text-dark',
-                                        'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
-                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
-                                        '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
-                                        default => 'bg-secondary text-white',
-                                    };
-
-                                    $voucherBadgeLabel = match ($voucherStatusKey) {
-                                        'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
-                                        'đã xuất hóa đơn' => 'Xuất hóa đơn',
-                                        'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
-                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng'
-                                            => 'BB nghiệm thu kết thúc HĐ',
-                                        '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
-                                        default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
-                                    };
-                                @endphp
-                                <span class="badge voucher-status-badge {{ $voucherBadgeClass }}"
-                                    title="{{ $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn' }}">
-                                    {{ $voucherBadgeLabel }}
+                                @php $vInfo = $doc->voucher_badge_info; @endphp
+                                <span class="badge voucher-status-badge {{ $vInfo['class'] }}"
+                                    title="{{ $vInfo['full_value'] }}">
+                                    {{ $vInfo['label'] }}
                                 </span>
                             </td>
                             @endunless
@@ -512,7 +483,7 @@
                                             <i class="bi bi-person-check fs-5"></i>
                                         </button>
                                     @endif
-                                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                                    @if ($this->isRestrictedRole)
                                         <button class="btn btn-sm p-0 text-info"
                                             wire:click="openWorkflow({{ $doc->id }})" title="Cập nhật tiến độ">
                                             <i class="bi bi-diagram-3 fs-5"></i>
@@ -554,7 +525,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value])? 5: 8) +($canBulkDelete ? 1 : 0) +1 }}"
+                            <td colspan="{{ ($this->isRestrictedRole? 5: 8) +($this->canBulkDelete ? 1 : 0) +1 }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
@@ -656,7 +627,7 @@
                                             <th class="bg-light">Loại dịch vụ</th>
                                             <td>{{ $selectedDoc->loai_dich_vu ?: '-' }}</td>
                                         </tr>
-                                        @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                                        @unless ($this->isRestrictedRole)
                                             <tr>
                                                 <th class="bg-light">Giá trị hợp đồng</th>
                                                 <td class="text-danger fw-bold">{{ number_format($selectedDoc->value) }}đ
@@ -763,7 +734,7 @@
                                                     tiến độ nào.</td>
                                             </tr>
                                         @endif
-                                        @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                                        @if ($this->isRestrictedRole)
                                             <tr>
                                                 <td colspan="2" class="px-4 pb-3 pt-2">
                                                     <textarea class="form-control form-control-sm mb-2" rows="2" wire:model="progressNote"
@@ -1150,6 +1121,32 @@
             });
             window.addEventListener('openWorkflowModal', () => {
                 new bootstrap.Modal(document.getElementById('workflowModalConsulting')).show();
+            });
+
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('inlineReportEdit', (docId, initialValue) => ({
+                    value: initialValue,
+                    updateReport(event) {
+                        let newVal = event.target.value;
+                        if (newVal === this.value) return;
+                        
+                        Swal.fire({
+                            title: 'Xác nhận lưu?',
+                            text: 'Cập nhật Báo cáo số thành: ' + newVal + ' ?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Đồng ý',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.value = newVal;
+                                this.$wire.updateInlineReportNumber(docId, newVal);
+                            } else {
+                                event.target.value = this.value;
+                            }
+                        });
+                    }
+                }));
             });
         </script>
     @endpush

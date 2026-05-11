@@ -844,3 +844,35 @@
 .app-sidebar-footer span {
     color: rgba(148, 163, 184, 0.7) !important;
 }
+
+/* ================================================
+   Contract Management - UI Standardization (0.8rem)
+   ================================================ */
+.report-number-input {
+    font-size: 0.8rem;
+    max-width: 100px;
+    margin: 0 auto;
+    border: 1px dashed #adb5bd !important;
+    box-shadow: none !important;
+}
+.contract-text-08 { font-size: 0.8rem !important; }
+.contract-text-13px { font-size: 13px !important; }
+.contract-text-12px { font-size: 12px !important; }
+.contract-text-11px { font-size: 11px !important; }
+.w-42px { width: 42px !important; }
+.w-45px { width: 45px !important; }
+.min-w-180px { min-width: 180px !important; }
+.max-w-220px { max-width: 220px !important; }
+.max-w-260px { max-width: 260px !important; }
+.min-w-140px { min-width: 140px !important; }
+.w-80px { width: 80px !important; }
+.h-6px { height: 6px !important; }
+.cursor-pointer { cursor: pointer !important; }
+.dropdown-menu-status { 
+    z-index: 1050; 
+    min-width: 200px; 
+    right: 50%; 
+    transform: translateX(50%); 
+    max-height: 250px; 
+    overflow-y: auto; 
+}
