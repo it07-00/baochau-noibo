@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Handlers;
 
 use App\Models\ContractEmission;
 use App\Models\ContractLegal;
+use App\Models\ContractProgressNote;
 use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
@@ -27,6 +28,12 @@ class HandlerContractsView extends Component
 
     public string $dateFrom = '';
     public string $dateTo = '';
+
+    public ?object $selectedContract = null;
+    public string $selectedContractLabel = '';
+    public string $selectedContractType = '';
+    public $selectedProgressNotes = [];
+    public string $progressNote = '';
 
     public function updatingDateFrom(): void { $this->resetPage(); }
     public function updatingDateTo(): void { $this->resetPage(); }
@@ -61,6 +68,71 @@ class HandlerContractsView extends Component
         $this->resetPage();
     }
 
+    public function viewDetail(int $id, string $modelClass): void
+    {
+        $allowed = [
+            ContractWaste::class          => 'waste',
+            ContractLegal::class          => 'consulting',
+            ContractTechnical::class      => 'project',
+            ContractResearch::class       => 'commercial',
+            ContractSustainability::class => 'sustainability',
+            ContractEmission::class       => 'energy',
+        ];
+        if (!array_key_exists($modelClass, $allowed)) return;
+
+        $contract = $modelClass::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
+        if (!$contract || (int) $contract->handler_id !== $this->handler->id) return;
+
+        $typeLabels = [
+            'waste'          => 'Chất thải & Tiếng ồn',
+            'consulting'     => 'Hồ sơ môi trường',
+            'project'        => 'Kỹ thuật & Ứng phó SC',
+            'commercial'     => 'NC & CĐ Công nghệ',
+            'sustainability' => 'TV & BC PTBV',
+            'energy'         => 'Phát thải & Năng lượng',
+        ];
+
+        $contractType = $allowed[$modelClass];
+
+        $this->selectedContract      = $contract;
+        $this->selectedContractType  = $contractType;
+        $this->selectedContractLabel = $typeLabels[$contractType] ?? '';
+        $this->selectedProgressNotes = ContractProgressNote::where('contract_type', $contractType)
+            ->where('contract_id', $id)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $this->dispatch('open-contract-detail-modal');
+    }
+
+    public function addProgressNote(int $contractId): void
+    {
+        if (!$this->selectedContractType) return;
+
+        $this->validate(
+            ['progressNote' => 'required|min:1|max:2000'],
+            ['progressNote.required' => 'Vui lòng nhập nội dung ghi chú.', 'progressNote.max' => 'Ghi chú không được vượt quá 2000 ký tự.'],
+            ['progressNote' => 'ghi chú']
+        );
+
+        ContractProgressNote::create([
+            'contract_type' => $this->selectedContractType,
+            'contract_id'   => $contractId,
+            'user_id'       => auth()->id(),
+            'note'          => $this->progressNote,
+        ]);
+
+        $this->progressNote = '';
+        $this->selectedProgressNotes = ContractProgressNote::where('contract_type', $this->selectedContractType)
+            ->where('contract_id', $contractId)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú tiến độ!']);
+    }
+
     private function fetchAll(): Collection
     {
         $types = [
@@ -82,13 +154,15 @@ class HandlerContractsView extends Component
                 ->with('customer')
                 ->get()
                 ->map(fn ($contract) => (object) [
-                    'type_label' => $type['label'],
-                    'shd_cxl'   => $contract->shd_cxl,
-                    'shd_bc'    => $contract->shd_bc,
-                    'customer'  => $contract->customer?->name ?? '—',
-                    'signed_at' => $contract->signed_at,
-                    'value'     => $contract->value,
-                    'status'    => $contract->status,
+                    'type_label'  => $type['label'],
+                    'contract_id' => $contract->id,
+                    'model_class' => $type['model'],
+                    'shd_cxl'    => $contract->shd_cxl,
+                    'shd_bc'     => $contract->shd_bc,
+                    'customer'   => $contract->customer?->name ?? '—',
+                    'signed_at'  => $contract->signed_at,
+                    'value'      => $contract->value,
+                    'status'     => $contract->status,
                 ]);
 
             $all = $all->concat($rows);

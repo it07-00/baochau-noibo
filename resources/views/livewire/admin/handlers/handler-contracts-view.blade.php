@@ -122,11 +122,13 @@
                                         </button>
                                     </th>
                                     <th class="d-none d-sm-table-cell">Trạng thái</th>
+                                    <th style="width:40px;"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($contracts as $contract)
-                                <tr>
+                                <tr style="cursor:pointer;"
+                                    wire:click="viewDetail({{ $contract->contract_id }}, '{{ addslashes($contract->model_class) }}')">
                                     <td>
                                         <span class="badge bg-label-info px-2">{{ $contract->type_label }}</span>
                                     </td>
@@ -201,10 +203,18 @@
                                             —
                                         @endif
                                     </td>
+                                    <td onclick="event.stopPropagation()" class="text-center pe-3">
+                                        <button class="btn btn-sm p-0 text-primary"
+                                                wire:click.stop="viewDetail({{ $contract->contract_id }}, '{{ addslashes($contract->model_class) }}')"
+                                                onclick="event.stopPropagation()"
+                                                title="Xem chi tiết">
+                                            <i class="bi bi-eye fs-5"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">Không có hợp đồng nào.</td>
+                                    <td colspan="8" class="text-center py-4 text-muted">Không có hợp đồng nào.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -220,4 +230,203 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal chi tiết hợp đồng --}}
+    <div wire:ignore.self class="modal fade" id="handlerContractDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content overflow-hidden border-0 shadow-lg">
+                <div class="modal-header bg-dark py-3">
+                    <h5 class="modal-title fw-bold text-white">
+                        Thông tin Hợp Đồng
+                        @if($selectedContractLabel)
+                            <span class="badge bg-secondary ms-2 fw-normal fs-6">{{ $selectedContractLabel }}</span>
+                        @endif
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    @if ($selectedContract)
+                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active fw-semibold" data-bs-toggle="tab"
+                                    data-bs-target="#htab-info-{{ $selectedContractType }}-{{ $selectedContract->id }}" type="button">
+                                    <i class="bi bi-info-circle me-1"></i>Thông tin HĐ
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link fw-semibold" data-bs-toggle="tab"
+                                    data-bs-target="#htab-progress-{{ $selectedContractType }}-{{ $selectedContract->id }}" type="button">
+                                    <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            {{-- Tab 1: Thông tin HĐ --}}
+                            <div class="tab-pane fade show active"
+                                id="htab-info-{{ $selectedContractType }}-{{ $selectedContract->id }}"
+                                role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3" style="width:25%;">Khách hàng</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->customer?->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Nhà thầu phụ</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->handler?->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Số hợp đồng BC</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->shd_bc }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Số hợp đồng CXL</th>
+                                                <td class="px-4 py-3 fw-bold">{{ $selectedContract->shd_cxl }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Nội dung</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->content }}</td>
+                                            </tr>
+                                            @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                                                <tr>
+                                                    <th class="bg-light fw-bold px-4 py-3">Giá trị hợp đồng</th>
+                                                    <td class="px-4 py-3 fw-bold text-danger">
+                                                        {{ number_format($selectedContract->value) }}đ</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="bg-light fw-bold px-4 py-3">Hoa hồng</th>
+                                                    <td class="px-4 py-3 fw-bold text-danger">
+                                                        {{ number_format($selectedContract->commission) }}đ</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="bg-light fw-bold px-4 py-3">Doanh số</th>
+                                                    <td class="px-4 py-3 fw-bold text-danger">
+                                                        {{ number_format($selectedContract->revenue) }}đ</td>
+                                                </tr>
+                                            @endunless
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Phương thức thanh toán</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->payment_method }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Nhân viên chăm sóc</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->staff?->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Phòng ban</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->department?->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Ngày ký hợp đồng</th>
+                                                <td class="px-4 py-3">
+                                                    {{ $selectedContract->signed_at ? $selectedContract->signed_at->format('d/m/Y') : '—' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Ngày xuất hóa đơn</th>
+                                                <td class="px-4 py-3 text-danger">
+                                                    {{ $selectedContract->submitted_at ? $selectedContract->submitted_at->format('d/m/Y') : '—' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Trạng thái</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->status }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Ghi chú</th>
+                                                <td class="px-4 py-3">{{ $selectedContract->notes }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3">Người được giao</th>
+                                                <td class="px-4 py-3">
+                                                    @if ($selectedContract->assignments && $selectedContract->assignments->count() > 0)
+                                                        @foreach ($selectedContract->assignments as $assign)
+                                                            <div class="mb-1">
+                                                                <span class="badge bg-primary me-1">{{ $assign->user?->name }}</span>
+                                                                <small class="text-muted">— giao bởi
+                                                                    {{ $assign->assigner?->name }} lúc
+                                                                    {{ $assign->created_at?->format('d/m/Y H:i') }}</small>
+                                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        <span class="text-muted">Chưa giao việc</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light fw-bold px-4 py-3 align-middle" colspan="2">
+                                                    <i class="bi bi-journal-text me-1"></i> Ghi chú tiến độ
+                                                </th>
+                                            </tr>
+                                            @if ($selectedProgressNotes && count($selectedProgressNotes) > 0)
+                                                @foreach ($selectedProgressNotes as $pNote)
+                                                    <tr>
+                                                        <td colspan="2" class="py-2 ps-4">
+                                                            <div class="d-flex flex-column">
+                                                                <span class="fw-bold text-primary">{{ $pNote->user?->name }}
+                                                                    <span class="text-muted fw-normal">—
+                                                                        {{ $pNote->created_at?->format('d/m/Y H:i') }}</span>
+                                                                </span>
+                                                                <span class="mt-1">{{ $pNote->note }}</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="2" class="text-muted ps-4 py-2">Chưa có ghi chú tiến độ nào.</td>
+                                                </tr>
+                                            @endif
+                                            @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
+                                                <tr>
+                                                    <td colspan="2" class="px-4 pb-3 pt-2">
+                                                        <textarea class="form-control form-control-sm mb-2" rows="2"
+                                                            wire:model="progressNote"
+                                                            placeholder="Nhập ghi chú tiến độ..."></textarea>
+                                                        @error('progressNote')
+                                                            <div class="text-danger mb-1">{{ $message }}</div>
+                                                        @enderror
+                                                        <button class="btn btn-sm btn-primary"
+                                                            wire:click="addProgressNote({{ $selectedContract->id }})"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="addProgressNote">
+                                                            <span wire:loading wire:target="addProgressNote"
+                                                                class="spinner-border spinner-border-sm me-1"></span>
+                                                            <i class="bi bi-plus me-1"></i> Thêm ghi chú
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {{-- Tab 2: Tiến độ --}}
+                            <div class="tab-pane fade"
+                                id="htab-progress-{{ $selectedContractType }}-{{ $selectedContract->id }}"
+                                role="tabpanel">
+                                <livewire:admin.contracts.contract-workflow-progress
+                                    :contractType="$selectedContractType"
+                                    :contractId="$selectedContract->id"
+                                    :key="'hprogress-' . $selectedContractType . '-' . $selectedContract->id" />
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('open-contract-detail-modal', () => {
+            const el = document.getElementById('handlerContractDetailModal');
+            if (el) bootstrap.Modal.getOrCreateInstance(el).show();
+        });
+    });
+</script>
+@endpush
