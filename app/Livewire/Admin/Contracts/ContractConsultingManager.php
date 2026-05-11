@@ -22,6 +22,7 @@ use App\Notifications\ContractProgressNoteNotification;
 use App\Support\VietnamProvinces;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -374,6 +375,18 @@ class ContractConsultingManager extends Component
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
+    }
+
+    #[Computed]
+    public function canAssign(): bool
+    {
+        return auth()->user()->hasAnyRole([
+            Role::GIAM_DOC->value,
+            Role::QUAN_LY->value,
+            Role::TP_KINH_DOANH->value,
+            Role::KINH_DOANH->value,
+            Role::IT->value,
+        ]);
     }
 
     public function openAssign(int $id): void

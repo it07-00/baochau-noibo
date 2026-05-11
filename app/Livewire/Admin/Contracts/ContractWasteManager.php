@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Department;
 use App\Models\ContractAssignment;
 use App\Models\ContractProgressNote;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -385,6 +386,18 @@ class ContractWasteManager extends Component
             'parent_contract_id' => '',
         ];
         $this->selectedDoc = null;
+    }
+
+    #[Computed]
+    public function canAssign(): bool
+    {
+        return auth()->user()->hasAnyRole([
+            Role::GIAM_DOC->value,
+            Role::QUAN_LY->value,
+            Role::TP_KINH_DOANH->value,
+            Role::KINH_DOANH->value,
+            Role::IT->value,
+        ]);
     }
 
     public function openAssign(int $id): void
