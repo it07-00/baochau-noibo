@@ -296,7 +296,7 @@ class DailyReportManager extends Component
                     ->get()
                     ->keyBy('user_id');
 
-                $usersToDisplay = $this->scopedUsersQuery()->whereIn('id', $userIds)->get();
+                $usersToDisplay = $this->scopedUsersQuery()->whereIn('id', $userIds)->where('is_active', true)->get();
                 foreach ($usersToDisplay as $user) {
                     $report = $dailyReports->get($user->id);
                     $reports->push((object)['user' => $user, 'report' => $report]);
@@ -304,7 +304,7 @@ class DailyReportManager extends Component
 
                 $this->reportStats['total'] = $usersToDisplay->count();
                 $this->reportStats['issues'] = $dailyReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->count();
-                $this->reportStats['missing'] = $usersToDisplay->count() - $dailyReports->count();
+                $this->reportStats['missing'] = $usersToDisplay->whereNull(fn($u) => $dailyReports->get($u->id))->count();
             } else {
                 $monthReports = DailyReport::with('user')->whereIn('user_id', $userIds)
                     ->whereYear('date', $this->yearFilter)

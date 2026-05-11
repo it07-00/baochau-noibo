@@ -269,6 +269,11 @@
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
                             @if($viewType === 'day')
+                                @php
+                                    $daysDiff = (int) \Carbon\Carbon::parse($dateFilter)->startOfDay()
+                                        ->diffInDays(now()->startOfDay(), false);
+                                    // $daysDiff > 0 = ngày trong quá khứ
+                                @endphp
                                 @foreach($reports as $item)
                                     @if($item->report)
                                             <!-- Reported -->
@@ -321,19 +326,46 @@
                                             </div>
                                     @else
                                         <!-- Not Reported -->
-                                        <div class="list-group-item p-4 border-light-subtle border-dashed">
+                                        @php
+                                            if ($daysDiff >= 4) {
+                                                $lateItemClass   = 'border-danger-subtle';
+                                                $lateItemStyle   = 'background: rgba(220,53,69,0.05);';
+                                                $lateAvatarClass = 'bg-danger bg-opacity-10 text-danger fw-bold';
+                                                $lateNameClass   = 'text-danger fw-semibold';
+                                                $lateBadgeClass  = 'text-danger fw-bold';
+                                                $lateBadgeText   = "Chậm {$daysDiff} ngày";
+                                            } elseif ($daysDiff >= 1) {
+                                                $lateItemClass   = 'border-warning-subtle';
+                                                $lateItemStyle   = 'background: rgba(255,193,7,0.07);';
+                                                $lateAvatarClass = 'bg-warning bg-opacity-10 text-warning fw-bold';
+                                                $lateNameClass   = 'text-warning-emphasis fw-semibold';
+                                                $lateBadgeClass  = 'text-warning fw-bold';
+                                                $lateBadgeText   = "Chậm {$daysDiff} ngày";
+                                            } else {
+                                                $lateItemClass   = 'border-light-subtle border-dashed';
+                                                $lateItemStyle   = '';
+                                                $lateAvatarClass = 'bg-light text-muted fw-bold';
+                                                $lateNameClass   = 'text-muted opacity-75 fw-normal';
+                                                $lateBadgeClass  = 'text-warning fw-bold';
+                                                $lateBadgeText   = 'Chưa báo cáo';
+                                            }
+                                        @endphp
+                                        <div class="list-group-item p-4 {{ $lateItemClass }}"
+                                            style="{{ $lateItemStyle }}">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <div class="rounded-pill bg-light d-flex align-items-center justify-content-center fw-bold text-muted "
+                                                    <div class="rounded-pill d-flex align-items-center justify-content-center {{ $lateAvatarClass }}"
                                                         style="width: 38px; height: 38px;">
                                                         {{ strtoupper(substr($item->user->name, 0, 1)) }}
                                                     </div>
                                                     <div>
-                                                        <h6 class="mb-0 text-muted opacity-75 fw-normal">{{ $item->user->name }} &mdash;
-                                                            chưa gửi báo cáo</h6>
+                                                        <h6 class="mb-0 {{ $lateNameClass }}">
+                                                            {{ $item->user->name }}
+                                                            <span class="fw-normal opacity-75 ms-1">&mdash; chưa gửi báo cáo</span>
+                                                        </h6>
                                                     </div>
                                                 </div>
-                                                <span class="text-warning  fw-bold">Chưa báo cáo</span>
+                                                <span class="{{ $lateBadgeClass }}">{{ $lateBadgeText }}</span>
                                             </div>
                                         </div>
                                     @endif
