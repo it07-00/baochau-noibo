@@ -50,6 +50,11 @@ class ContractWasteManager extends Component
     public bool $showAssignModal = false;
     public ?int $assignContractId = null;
     public array $assignUserIds = [];
+    public ?string $assignDeadline = null;
+    public array $createAssignUserIds = [];
+    public ?string $createAssignDeadline = null;
+    public ?string $assignExternal = null;
+    public ?string $createAssignExternal = null;
     public string $progressNote = '';
     public $progressNotes = [];
     public ?int $workflowContractId = null;
@@ -184,7 +189,7 @@ class ContractWasteManager extends Component
     public function edit($id)
     {
         abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_EDIT->value), 403);
-        $doc = ContractWaste::findOrFail($id);
+        $doc = ContractWaste::with(['assignments.user'])->findOrFail($id);
         $this->selectedDoc = $doc;
         $this->formData = $doc->toArray();
         // Format dates for input
@@ -256,7 +261,34 @@ class ContractWasteManager extends Component
             return $value === '' ? null : $value;
         })->toArray();
 
-        [$_, $msg] = app(UpsertContractWasteAction::class)->execute($data, $user, $this->isEditing ? $this->selectedDoc : null);
+        [$newContract, $msg] = app(UpsertContractWasteAction::class)->execute($data, $user, $this->isEditing ? $this->selectedDoc : null);
+
+        if (!$this->isEditing && (count($this->createAssignUserIds) > 0 || !empty($this->createAssignExternal))) {
+            $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #' . $newContract->id);
+            foreach ($this->createAssignUserIds as $userId) {
+                ContractAssignment::create([
+                    'assignable_type' => ContractWaste::class,
+                    'assignable_id'   => $newContract->id,
+                    'user_id'         => (int) $userId,
+                    'assigned_by'     => auth()->id(),
+                    'deadline'        => $this->createAssignDeadline ?: null,
+                ]);
+                $assignedUser = User::find($userId);
+                if ($assignedUser && $assignedUser->id !== auth()->id()) {
+                    $assignedUser->notify(new ContractAssignedNotification('waste', $newContract->id, $contractLabel, auth()->user()->name));
+                }
+            }
+            if (!empty($this->createAssignExternal)) {
+                ContractAssignment::create([
+                    'assignable_type'   => ContractWaste::class,
+                    'assignable_id'     => $newContract->id,
+                    'user_id'           => null,
+                    'external_assignee' => $this->createAssignExternal,
+                    'assigned_by'       => auth()->id(),
+                    'deadline'          => $this->createAssignDeadline ?: null,
+                ]);
+            }
+        }
 
         $this->showModal = false;
         $this->dispatch('closeFormModal');
@@ -385,7 +417,10 @@ class ContractWasteManager extends Component
             'is_renewal' => false,
             'parent_contract_id' => '',
         ];
-        $this->selectedDoc = null;
+        $this->selectedDoc          = null;
+        $this->createAssignUserIds  = [];
+        $this->createAssignDeadline = null;
+        $this->createAssignExternal = null;
     }
 
     #[Computed]
@@ -407,10 +442,12 @@ class ContractWasteManager extends Component
             return;
         }
         $this->assignContractId = $id;
-        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractWaste::class)
+        $existing = ContractAssignment::where('assignable_type', ContractWaste::class)
             ->where('assignable_id', $id)
-            ->pluck('user_id')
-            ->toArray();
+            ->get();
+        $this->assignUserIds  = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
+        $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
         $this->dispatch('openAssignModal');
     }
 
@@ -429,6 +466,17 @@ class ContractWasteManager extends Component
                 'assignable_id'   => $this->assignContractId,
                 'user_id'         => (int) $userId,
                 'assigned_by'     => auth()->id(),
+                'deadline'        => $this->assignDeadline ?: null,
+            ]);
+        }
+        if (!empty($this->assignExternal)) {
+            ContractAssignment::create([
+                'assignable_type'   => ContractWaste::class,
+                'assignable_id'     => $this->assignContractId,
+                'user_id'           => null,
+                'external_assignee' => $this->assignExternal,
+                'assigned_by'       => auth()->id(),
+                'deadline'          => $this->assignDeadline ?: null,
             ]);
         }
         // Gửi thông báo đến users được giao
@@ -442,6 +490,8 @@ class ContractWasteManager extends Component
         }
         $this->assignContractId = null;
         $this->assignUserIds = [];
+        $this->assignExternal = null;
+        $this->assignDeadline = null;
         $this->dispatch('closeAssignModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
     }
@@ -471,6 +521,7 @@ class ContractWasteManager extends Component
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', ContractWaste::class)
             ->where('assignable_id', $contractId)
+            ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
             ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()
@@ -606,7 +657,7 @@ class ContractWasteManager extends Component
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        $query = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user'])
+        $query = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'workflowSteps'])
             ->when($this->search, function($q) {
                 $q->where(function($sq) {
                     $sq->where('shd_cxl', 'like', '%'.$this->search.'%')

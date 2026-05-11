@@ -63,11 +63,23 @@ class ContractConsultingManager extends Component
 
     public array $assignUserIds = [];
 
+    public ?string $assignDeadline = null;
+
+    public ?string $assignExternal = null;
+
+    public array $createAssignUserIds = [];
+
+    public ?string $createAssignDeadline = null;
+
+    public ?string $createAssignExternal = null;
+
     public string $progressNote = '';
 
     public $progressNotes = [];
 
     public ?int $workflowContractId = null;
+
+    public string $reportNumber = '';
 
     public ?int $quotation_id = null;
 
@@ -183,7 +195,7 @@ class ContractConsultingManager extends Component
     public function edit(int $id): void
     {
         abort_unless(auth()->user()->can(Permission::CONTRACTS_CONSULTING_EDIT->value), 403);
-        $this->selectedDoc = ContractLegal::findOrFail($id);
+        $this->selectedDoc = ContractLegal::with(['assignments.user'])->findOrFail($id);
         $this->formData = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
             $this->formData['signed_at'] = $this->selectedDoc->signed_at->format('Y-m-d');
@@ -246,7 +258,34 @@ class ContractConsultingManager extends Component
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
         } else {
-            ContractLegal::create($data);
+            $newContract = ContractLegal::create($data);
+
+            if (count($this->createAssignUserIds) > 0 || !empty($this->createAssignExternal)) {
+                $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #' . $newContract->id);
+                foreach ($this->createAssignUserIds as $userId) {
+                    ContractAssignment::create([
+                        'assignable_type' => ContractLegal::class,
+                        'assignable_id'   => $newContract->id,
+                        'user_id'         => (int) $userId,
+                        'assigned_by'     => auth()->id(),
+                        'deadline'        => $this->createAssignDeadline ?: null,
+                    ]);
+                    $assignedUser = User::find($userId);
+                    if ($assignedUser && $assignedUser->id !== auth()->id()) {
+                        $assignedUser->notify(new ContractAssignedNotification('consulting', $newContract->id, $contractLabel, auth()->user()->name));
+                    }
+                }
+                if (!empty($this->createAssignExternal)) {
+                    ContractAssignment::create([
+                        'assignable_type'   => ContractLegal::class,
+                        'assignable_id'     => $newContract->id,
+                        'user_id'           => null,
+                        'external_assignee' => $this->createAssignExternal,
+                        'assigned_by'       => auth()->id(),
+                        'deadline'          => $this->createAssignDeadline ?: null,
+                    ]);
+                }
+            }
         }
 
         $this->dispatch('closeFormModal');
@@ -367,6 +406,7 @@ class ContractConsultingManager extends Component
     {
         $this->selectedDoc = ContractLegal::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner', 'handler'])->find($id);
         if ($this->selectedDoc) {
+            $this->reportNumber = $this->selectedDoc->report_number ?? '';
             $this->progressNotes = ContractProgressNote::where('contract_type', 'consulting')
                 ->where('contract_id', $id)
                 ->with('user')
@@ -375,6 +415,21 @@ class ContractConsultingManager extends Component
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
+    }
+
+    public function saveReportNumber(): void
+    {
+        if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Chỉ nhân viên Kỹ thuật mới được cập nhật Báo cáo số.']);
+            return;
+        }
+
+        if (!$this->selectedDoc) {
+            return;
+        }
+
+        $this->selectedDoc->update(['report_number' => $this->reportNumber ?: null]);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật Báo cáo số!']);
     }
 
     #[Computed]
@@ -396,10 +451,12 @@ class ContractConsultingManager extends Component
             return;
         }
         $this->assignContractId = $id;
-        $this->assignUserIds = ContractAssignment::where('assignable_type', ContractLegal::class)
+        $existing = ContractAssignment::where('assignable_type', ContractLegal::class)
             ->where('assignable_id', $id)
-            ->pluck('user_id')
-            ->toArray();
+            ->get();
+        $this->assignUserIds  = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
+        $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
         $this->dispatch('openAssignModal');
     }
 
@@ -418,6 +475,17 @@ class ContractConsultingManager extends Component
                 'assignable_id' => $this->assignContractId,
                 'user_id' => (int) $userId,
                 'assigned_by' => auth()->id(),
+                'deadline'    => $this->assignDeadline ?: null,
+            ]);
+        }
+        if (!empty($this->assignExternal)) {
+            ContractAssignment::create([
+                'assignable_type'   => ContractLegal::class,
+                'assignable_id'     => $this->assignContractId,
+                'user_id'           => null,
+                'external_assignee' => $this->assignExternal,
+                'assigned_by'       => auth()->id(),
+                'deadline'          => $this->assignDeadline ?: null,
             ]);
         }
         // Gửi thông báo đến users được giao
@@ -431,6 +499,8 @@ class ContractConsultingManager extends Component
         }
         $this->assignContractId = null;
         $this->assignUserIds = [];
+        $this->assignExternal = null;
+        $this->assignDeadline = null;
         $this->dispatch('closeAssignModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
     }
@@ -460,6 +530,7 @@ class ContractConsultingManager extends Component
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', ContractLegal::class)
             ->where('assignable_id', $contractId)
+            ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
             ->flatMap(fn ($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()
@@ -549,6 +620,9 @@ class ContractConsultingManager extends Component
         ];
         $this->isDuplicating = false;
         $this->selectedDoc = null;
+        $this->createAssignUserIds  = [];
+        $this->createAssignDeadline = null;
+        $this->createAssignExternal = null;
     }
 
     public function exportExcel(): StreamedResponse
@@ -642,7 +716,7 @@ class ContractConsultingManager extends Component
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        $query = ContractLegal::with(['customer', 'staff', 'department', 'assignments.user', 'handler'])
+        $query = ContractLegal::with(['customer', 'staff', 'department', 'assignments.user', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%'.$this->search.'%')

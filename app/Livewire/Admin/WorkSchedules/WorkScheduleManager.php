@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\WorkSchedules;
 use Livewire\Component;
 use App\Models\WorkSchedule;
 use App\Models\User;
+use App\Notifications\WorkScheduleNotification;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -154,6 +155,13 @@ class WorkScheduleManager extends Component
             ]);
             $event->participants()->sync($this->selectedParticipants);
 
+            // Notify participants
+            foreach ($event->participants as $participant) {
+                if ($participant->id !== auth()->id()) {
+                    $participant->notify(new WorkScheduleNotification($event->title, auth()->user()->name, 'updated'));
+                }
+            }
+
             $this->dispatch('swal:success', ['message' => 'Cập nhật sự kiện thành công!']);
         } else {
             // Create new — must be today or future
@@ -172,6 +180,13 @@ class WorkScheduleManager extends Component
             ]);
             $event->participants()->sync($this->selectedParticipants);
 
+            // Notify participants
+            foreach ($event->participants as $participant) {
+                if ($participant->id !== auth()->id()) {
+                    $participant->notify(new WorkScheduleNotification($event->title, auth()->user()->name, 'created'));
+                }
+            }
+
             $this->dispatch('swal:success', ['message' => 'Thêm sự kiện thành công!']);
         }
 
@@ -185,6 +200,13 @@ class WorkScheduleManager extends Component
         if ($event->user_id !== auth()->id()) {
             $this->dispatch('swal:error', ['message' => 'Bạn chỉ có thể xóa sự kiện của mình.']);
             return;
+        }
+
+        // Notify participants before deleting
+        foreach ($event->participants as $participant) {
+            if ($participant->id !== auth()->id()) {
+                $participant->notify(new WorkScheduleNotification($event->title, auth()->user()->name, 'deleted'));
+            }
         }
 
         $event->delete();

@@ -29,34 +29,20 @@ class NotificationBell extends Component
 
     private function allowedSectionKeysForUser($user): array
     {
-        $contractSections = $this->contractSectionKeys();
-
-        if ($user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value])) {
-            return array_merge(['daily_report'], $contractSections);
-        }
-
-        if ($user->hasRole(Role::IT->value)) {
-            return ['general'];
-        }
-
-        if ($user->hasRole(Role::KINH_DOANH->value)) {
-            return array_merge($contractSections, ['general']);
-        }
-
-        return array_merge($contractSections, ['general']);
+        return array_merge(['daily_report', 'work_schedule'], $this->contractSectionKeys());
     }
 
     private function sectionLabelsForUser($user): array
     {
         $allLabels = [
             'daily_report'   => 'Báo cáo ngày',
-            'waste'          => 'Hợp đồng chất thải',
-            'consulting'     => 'Hợp đồng tư vấn',
-            'project'        => 'Hợp đồng dự án',
-            'commercial'     => 'Hợp đồng thương mại',
-            'sustainability' => 'Hợp đồng PTBV',
-            'energy'         => 'Hợp đồng năng lượng',
-            'general'        => $user->hasRole(Role::IT->value) ? 'Thông báo hệ thống' : 'Thông báo chung',
+            'work_schedule'  => 'Lịch công tác',
+            'waste'          => 'HĐ Chất thải và tiếng ồn',
+            'consulting'     => 'HĐ Pháp lý và hồ sơ MT',
+            'project'        => 'HĐ Kỹ thuật và ứng phó SC',
+            'commercial'     => 'HĐ NC và chuyển đổi CN',
+            'sustainability' => 'HĐ TV và báo cáo PTBV',
+            'energy'         => 'HĐ Phát thải và năng lượng',
         ];
 
         $allowedKeys = $this->allowedSectionKeysForUser($user);
@@ -74,18 +60,20 @@ class NotificationBell extends Component
     private function resolveSectionKey(array $data): string
     {
         $contractType = (string) ($data['contract_type'] ?? '');
-        $url = (string) ($data['url'] ?? '');
-        $contractLabel = (string) ($data['contract_label'] ?? '');
 
-        if (
-            $contractLabel === 'Báo cáo ngày'
-            || str_contains($url, '/daily-reports')
-        ) {
-            return 'daily_report';
+        $allKeys = array_merge(['daily_report', 'work_schedule'], $this->contractSectionKeys());
+
+        if (in_array($contractType, $allKeys, true)) {
+            return $contractType;
         }
 
-        if (in_array($contractType, $this->contractSectionKeys(), true)) {
-            return $contractType;
+        // Fallback for old notifications without contract_type
+        $url = (string) ($data['url'] ?? '');
+        if (str_contains($url, '/daily-reports')) {
+            return 'daily_report';
+        }
+        if (str_contains($url, '/lich-cong-tac')) {
+            return 'work_schedule';
         }
 
         return 'general';

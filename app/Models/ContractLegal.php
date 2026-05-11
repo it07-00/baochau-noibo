@@ -75,6 +75,7 @@ class ContractLegal extends Model
         'has_room_fund',
         'is_overdue',
         'notes',
+        'report_number',
         'loai_dich_vu',
         'is_renewal',
         'parent_contract_id',

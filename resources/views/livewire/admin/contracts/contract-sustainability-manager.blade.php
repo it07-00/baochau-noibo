@@ -242,8 +242,11 @@
                             <th class="text-center">Doanh số</th>
                         @endunless
                         <th class="text-center">Được giao</th>
+                        <th class="text-center">Hạn chót</th>
                         <th class="text-center">Tình trạng</th>
+                        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
+                        @endunless
                         <th class="text-center pe-4">Thao tác</th>
                     </tr>
                 </thead>
@@ -261,25 +264,19 @@
                             <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
-                            <td class="ps-4 py-4" style="min-width: 180px; max-width: 220px;">
+                            <td class="ps-3 py-2" style="min-width: 160px; max-width: 200px; font-size: 0.82rem;">
                                 <div class="d-flex flex-column">
-                                    <span class="">Số HĐ NTP:<span
-                                            class="fw-bold">{{ $doc->shd_cxl }}</span></span>
-                                    <span class="">Số HĐ BC:<span
-                                            class="fw-bold">{{ $doc->shd_bc ?: '-' }}</span></span>
-                                    <span class="">Ngày ký hợp đồng:</span>
-                                    <span
-                                        class=" fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span>
-                                    <span class="">Nhân viên CS: <span
-                                            class="fw-bold">{{ $doc->staff?->name }}</span></span>
+                                    <span>NTP: <span class="fw-bold">{{ $doc->shd_cxl ?: '-' }}</span></span>
+                                    <span>BC: <span class="fw-bold">{{ $doc->shd_bc ?: '-' }}</span></span>
+                                    <span>Ký: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
+                                    <span>CS: <span class="fw-bold">{{ $doc->staff?->name }}</span></span>
                                 </div>
                             </td>
-                            <td class="py-4" style="min-width: 180px; max-width: 260px;">
+                            <td class="py-2" style="min-width: 160px; max-width: 230px; font-size: 0.82rem;">
                                 <div class="d-flex flex-column">
                                     <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
-                                    <span class="">{{ $doc->customer?->representative }} -
-                                        {{ $doc->customer?->phone }} - {{ $doc->customer?->email }}</span>
-                                    <span class=" text-muted">{{ $doc->customer?->address }}</span>
+                                    <span class="">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
+                                    <span class="text-muted" style="font-size: 0.78rem;">{{ Str::limit($doc->customer?->address, 50) }}</span>
                                 </div>
                             </td>
                             <td>
@@ -298,19 +295,59 @@
                                 </td>
                             @endunless
                             <td class="text-center">
+                                @php
+                                    $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
+                                    $totalSteps = 6;
+                                    $progressPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
+                                    $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
+                                @endphp
                                 @if ($doc->assignments->count() > 0)
-                                    <div class="d-flex flex-wrap gap-1 justify-content-center">
-                                        @foreach ($doc->assignments->take(3) as $assign)
-                                            <span class="badge bg-secondary" style="font-size:0.65rem;"
-                                                title="{{ $assign->user?->name }}">{{ Str::limit($assign->user?->name ?? '?', 8) }}</span>
+                                    <div class="d-flex flex-column gap-1 align-items-center">
+                                        @foreach ($doc->assignments as $assign)
+                                            <div class="d-flex flex-column align-items-center">
+                                                <span class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }}" style="font-size:0.72rem;">
+                                                    {{ $assign->user?->name ?? $assign->external_assignee ?? '?' }}
+                                                </span>
+                                                <small class="text-muted" style="font-size:0.6rem;">
+                                                    bởi {{ Str::limit($assign->assigner?->name ?? '—', 15) }}
+                                                </small>
+                                            </div>
                                         @endforeach
-                                        @if ($doc->assignments->count() > 3)
-                                            <span class="badge bg-light text-dark"
-                                                style="font-size:0.65rem;">+{{ $doc->assignments->count() - 3 }}</span>
-                                        @endif
                                     </div>
                                 @else
-                                    <span class="text-muted ">—</span>
+                                    <span class="text-muted">—</span>
+                                @endif
+                                <div class="mt-2">
+                                    <div class="progress" style="height: 6px; width: 80px; margin: 0 auto;">
+                                        <div class="progress-bar bg-{{ $progressColor }}" style="width: {{ $progressPercent }}%"></div>
+                                    </div>
+                                    <span class="fw-semibold text-{{ $progressColor }}" style="font-size:0.72rem;">{{ $completedSteps }}/{{ $totalSteps }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                @php
+                                    $deadline = $doc->assignments->first()?->deadline;
+                                    $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH']);
+                                    $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
+                                    $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->startOfDay(), false) : null;
+                                    $isNearDue = $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3;
+                                @endphp
+                                @if($deadline)
+                                    @if($isFinished)
+                                        <span class="fw-semibold text-success" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-success" style="font-size:0.6rem;"><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
+                                    @elseif($isOverdue)
+                                        <span class="fw-bold text-danger" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-danger" style="font-size:0.6rem;"><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
+                                    @elseif($isNearDue)
+                                        <span class="fw-semibold text-warning" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-warning text-dark" style="font-size:0.6rem;"><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                                    @else
+                                        <span class="fw-semibold text-success" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-success bg-opacity-75" style="font-size:0.6rem;">Còn {{ $daysLeft }} ngày</span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -376,6 +413,7 @@
                                         class=" text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                                 </div>
                             </td>
+                            @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                             <td class="text-center voucher-status-cell">
                                 @php
                                     $voucherStatusValue = trim((string) ($doc->voucher_status ?? ''));
@@ -404,6 +442,7 @@
                                     {{ $voucherBadgeLabel }}
                                 </span>
                             </td>
+                            @endunless
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
                                     <button class="btn btn-sm p-0 text-primary"
@@ -605,10 +644,13 @@
                                                     @foreach ($selectedDoc->assignments as $assign)
                                                         <div class="mb-1">
                                                             <span
-                                                                class="badge bg-primary me-1">{{ $assign->user?->name }}</span>
+                                                                class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }} me-1">{{ $assign->user?->name ?? $assign->external_assignee }}{{ $assign->user_id ? '' : ' (Ngoài)' }}</span>
                                                             <small class="text-muted">— giao bởi
                                                                 {{ $assign->assigner?->name }} lúc
                                                                 {{ $assign->created_at?->format('d/m/Y H:i') }}</small>
+                                                            @if($assign->deadline)
+                                                                <br><small class="text-warning fw-semibold"><i class="bi bi-calendar-event me-1"></i>Hạn: {{ $assign->deadline->format('d/m/Y') }}</small>
+                                                            @endif
                                                         </div>
                                                     @endforeach
                                                 @else
@@ -973,6 +1015,15 @@
                                         class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
                             </label>
                         @endforeach
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label fw-semibold">Người ngoài công ty</label>
+                        <input type="text" class="form-control" wire:model="assignExternal"
+                            placeholder="Tên người ngoài (nếu có)">
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label fw-semibold">Hạn chót</label>
+                        <input type="date" class="form-control" wire:model="assignDeadline">
                     </div>
                 </div>
                 <div class="modal-footer">

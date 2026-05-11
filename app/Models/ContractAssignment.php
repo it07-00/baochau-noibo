@@ -13,7 +13,13 @@ class ContractAssignment extends Model
         'assignable_id',
         'user_id',
         'assigned_by',
+        'external_assignee',
         'note',
+        'deadline',
+    ];
+
+    protected $casts = [
+        'deadline' => 'date',
     ];
 
     public function assignable(): MorphTo

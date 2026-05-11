@@ -28,6 +28,7 @@ class DailyReportSubmittedNotification extends Notification
         return [
             'icon'           => 'bi-file-earmark-text-fill',
             'color'          => 'primary',
+            'contract_type'  => 'daily_report',
             'contract_label' => 'Báo cáo ngày',
             'message'        => "{$this->reporterName} đã gửi báo cáo ngày " . date('d/m/Y', strtotime($this->reportDate)),
             'url'            => route('app.daily-reports.index', ['dateFilter' => $this->reportDate, 'viewType' => 'day']),

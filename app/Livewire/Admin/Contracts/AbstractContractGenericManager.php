@@ -48,6 +48,11 @@ abstract class AbstractContractGenericManager extends Component
     public bool $showAssignModal = false;
     public ?int $assignContractId = null;
     public array $assignUserIds = [];
+    public ?string $assignDeadline = null;
+    public array $createAssignUserIds = [];
+    public ?string $createAssignDeadline = null;
+    public ?string $assignExternal = null;
+    public ?string $createAssignExternal = null;
     public string $progressNote = '';
     public $progressNotes = [];
     public ?int $workflowContractId = null;
@@ -190,7 +195,7 @@ abstract class AbstractContractGenericManager extends Component
     {
         abort_unless(auth()->user()->can($this->getPermEdit()->value), 403);
         $modelClass        = $this->getModelClass();
-        $this->selectedDoc = $modelClass::findOrFail($id);
+        $this->selectedDoc = $modelClass::with(['assignments.user'])->findOrFail($id);
         $this->formData    = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
             $this->formData['signed_at'] = $this->selectedDoc->signed_at->format('Y-m-d');
@@ -250,7 +255,35 @@ abstract class AbstractContractGenericManager extends Component
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
         } else {
-            $modelClass::create($data);
+            $newContract = $modelClass::create($data);
+
+            if (count($this->createAssignUserIds) > 0 || !empty($this->createAssignExternal)) {
+                $contractType  = $this->getContractType();
+                $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #' . $newContract->id);
+                foreach ($this->createAssignUserIds as $userId) {
+                    ContractAssignment::create([
+                        'assignable_type' => $modelClass,
+                        'assignable_id'   => $newContract->id,
+                        'user_id'         => (int) $userId,
+                        'assigned_by'     => auth()->id(),
+                        'deadline'        => $this->createAssignDeadline ?: null,
+                    ]);
+                    $assignedUser = User::find($userId);
+                    if ($assignedUser && $assignedUser->id !== auth()->id()) {
+                        $assignedUser->notify(new ContractAssignedNotification($contractType, $newContract->id, $contractLabel, auth()->user()->name));
+                    }
+                }
+                if (!empty($this->createAssignExternal)) {
+                    ContractAssignment::create([
+                        'assignable_type'   => $modelClass,
+                        'assignable_id'     => $newContract->id,
+                        'user_id'           => null,
+                        'external_assignee' => $this->createAssignExternal,
+                        'assigned_by'       => auth()->id(),
+                        'deadline'          => $this->createAssignDeadline ?: null,
+                    ]);
+                }
+            }
         }
 
         $this->dispatch('closeFormModal');
@@ -405,10 +438,12 @@ abstract class AbstractContractGenericManager extends Component
 
         $modelClass             = $this->getModelClass();
         $this->assignContractId = $id;
-        $this->assignUserIds    = ContractAssignment::where('assignable_type', $modelClass)
+        $existing               = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $id)
-            ->pluck('user_id')
-            ->toArray();
+            ->get();
+        $this->assignUserIds  = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
+        $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
         $this->dispatch('openAssignModal');
     }
 
@@ -432,6 +467,18 @@ abstract class AbstractContractGenericManager extends Component
                 'assignable_id'   => $this->assignContractId,
                 'user_id'         => (int) $userId,
                 'assigned_by'     => auth()->id(),
+                'deadline'        => $this->assignDeadline ?: null,
+            ]);
+        }
+
+        if (!empty($this->assignExternal)) {
+            ContractAssignment::create([
+                'assignable_type'   => $modelClass,
+                'assignable_id'     => $this->assignContractId,
+                'user_id'           => null,
+                'external_assignee' => $this->assignExternal,
+                'assigned_by'       => auth()->id(),
+                'deadline'          => $this->assignDeadline ?: null,
             ]);
         }
 
@@ -447,6 +494,8 @@ abstract class AbstractContractGenericManager extends Component
 
         $this->assignContractId = null;
         $this->assignUserIds    = [];
+        $this->assignExternal   = null;
+        $this->assignDeadline   = null;
         $this->dispatch('closeAssignModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
     }
@@ -484,6 +533,7 @@ abstract class AbstractContractGenericManager extends Component
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $contractId)
+            ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
             ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()
@@ -560,7 +610,7 @@ abstract class AbstractContractGenericManager extends Component
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        $query = $modelClass::with(['customer', 'staff', 'department', 'handler'])
+        $query = $modelClass::with(['customer', 'staff', 'department', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -595,7 +645,7 @@ abstract class AbstractContractGenericManager extends Component
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        $query = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'handler'])
+        $query = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('shd_bc', 'like', '%' . $this->search . '%')
@@ -666,7 +716,10 @@ abstract class AbstractContractGenericManager extends Component
             'is_renewal'         => false,
             'parent_contract_id' => '',
         ];
-        $this->isDuplicating = false;
-        $this->selectedDoc   = null;
+        $this->isDuplicating         = false;
+        $this->selectedDoc            = null;
+        $this->createAssignUserIds    = [];
+        $this->createAssignDeadline   = null;
+        $this->createAssignExternal   = null;
     }
 }

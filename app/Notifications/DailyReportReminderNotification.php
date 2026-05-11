@@ -19,6 +19,7 @@ class DailyReportReminderNotification extends Notification
         return [
             'icon'           => 'bi-clock-fill',
             'color'          => 'warning',
+            'contract_type'  => 'daily_report',
             'contract_label' => 'Báo cáo ngày',
             'message'        => 'Nhắc nhở: Bạn chưa gửi báo cáo ngày hôm nay. Vui lòng gửi trước khi kết thúc ngày làm việc.',
             'url'            => route('app.daily-reports.index'),

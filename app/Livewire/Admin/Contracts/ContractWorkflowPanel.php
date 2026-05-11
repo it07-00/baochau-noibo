@@ -68,14 +68,14 @@ class ContractWorkflowPanel extends Component
 
         $rules = [
             'uploadFiles'   => ($fileRequired ? 'required|array|max:10|min:1' : 'nullable|array|max:10'),
-            'uploadFiles.*' => 'file|max:20480|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            'uploadFiles.*' => 'file|max:102400|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
             'comment'       => 'nullable|string|max:1000',
         ];
 
         $messages = [
             'uploadFiles.required' => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
             'uploadFiles.min'      => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
-            'uploadFiles.*.max'        => 'Mỗi file không được vượt quá 20MB.',
+            'uploadFiles.*.max'        => 'Mỗi file không được vượt quá 100MB.',
             'uploadFiles.*.extensions' => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
         ];
 
@@ -140,6 +140,7 @@ class ContractWorkflowPanel extends Component
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $this->contractId)
+            ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
             ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()

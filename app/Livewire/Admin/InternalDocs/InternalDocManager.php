@@ -53,12 +53,12 @@ class InternalDocManager extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'newFiles' => ($this->docId ? 'nullable' : 'required') . '|array|max:10',
-            'newFiles.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png|max:20480',
+            'newFiles.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png|max:102400',
         ], [
             'newFiles.required' => 'Vui lòng đính kèm ít nhất 1 file.',
             'newFiles.max' => 'Tối đa 10 file mỗi lần.',
             'newFiles.*.mimes' => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
-            'newFiles.*.max' => 'Mỗi file không được vượt quá 20MB.',
+            'newFiles.*.max' => 'Mỗi file không được vượt quá 100MB.',
         ]);
 
         try {
