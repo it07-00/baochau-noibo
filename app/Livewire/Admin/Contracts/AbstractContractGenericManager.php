@@ -18,7 +18,6 @@ use App\Notifications\ContractProgressNoteNotification;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Computed;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Livewire\Concerns\HasContractFilters;
@@ -105,6 +104,8 @@ abstract class AbstractContractGenericManager extends Component
         'handler_id'     => '',
     ];
 
+    public string $contractTypeName = '';
+
     protected $queryString = ['search', 'quotation_id'];
 
     // ── Template methods (subclasses must implement) ─────────────────────────
@@ -127,12 +128,6 @@ abstract class AbstractContractGenericManager extends Component
 
     abstract protected function getExportFilenamePrefix(): string;
 
-    #[Computed]
-    public function contractTypeName(): string
-    {
-        return $this->getPageTitle();
-    }
-
     // ── Common lifecycle ─────────────────────────────────────────────────────
 
     public function paginationView(): string
@@ -142,6 +137,8 @@ abstract class AbstractContractGenericManager extends Component
 
     public function mount(): void
     {
+        $this->contractTypeName = $this->getPageTitle();
+
         if ($this->quotation_id) {
             $quotation = Quotation::find($this->quotation_id);
             if ($quotation) {
