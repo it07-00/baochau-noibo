@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    
+
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
@@ -332,10 +332,10 @@
                             </td>
                             @if (auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value))
                                 <td class="text-center align-middle">
-                                    <input type="text" 
+                                    <input type="text"
                                            x-data="inlineReportEdit({{ $doc->id }}, @js($doc->report_number))"
-                                           class="form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light" 
-                                           :value="value" 
+                                           class="form-control form-control-sm text-center fw-semibold text-primary report-number-input bg-light"
+                                           :value="value"
                                            @change="updateReport"
                                            placeholder="Nhập..."
                                            title="Sửa trực tiếp">
@@ -544,7 +544,14 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">Chi tiết Hợp Đồng Tư Vấn</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom">
+                        Chi tiết Hồ Sơ Môi Trường
+                        @if ($selectedDoc?->customer?->name)
+                            — {{ $selectedDoc->customer->name }}
+                        @elseif ($selectedDoc?->shd_cxl)
+                            #{{ $selectedDoc->shd_cxl }}
+                        @endif
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -577,6 +584,22 @@
                                         <tr>
                                             <th class="bg-light w-30">Số HĐ BC</th>
                                             <td class="fw-bold">{{ $selectedDoc->shd_bc }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Báo cáo số</th>
+                                            <td class="fw-bold p-2">
+                                                <div class="d-flex gap-2" x-data="inlineReportEdit({{ $selectedDoc->id }}, @js($selectedDoc->report_number))">
+                                                    <input type="text"
+                                                           class="form-control form-control-sm fw-bold text-primary bg-light border"
+                                                           style="font-size: 0.8rem;"
+                                                           x-model="value"
+                                                           placeholder="Nhập báo cáo số...">
+                                                    <button class="btn btn-sm btn-success d-flex align-items-center gap-1"
+                                                            @click="updateReportExplicit">
+                                                        <i class="bi bi-check2"></i>Lưu
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th class="bg-light">Nhà thầu phụ</th>
@@ -694,23 +717,6 @@
                                             <td>{{ $selectedDoc->notes }}</td>
                                         </tr>
                                         <tr>
-                                            <th class="bg-light align-middle">Báo cáo số</th>
-                                            <td>
-                                                @if (auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value))
-                                                    <div class="d-flex gap-2 align-items-center">
-                                                        <input type="text" class="form-control form-control-sm" style="max-width: 300px;"
-                                                            wire:model="reportNumber" placeholder="Nhập số báo cáo...">
-                                                        <button class="btn btn-sm btn-success" wire:click="saveReportNumber"
-                                                            wire:loading.attr="disabled" wire:target="saveReportNumber">
-                                                            <i class="bi bi-check-lg"></i> Lưu
-                                                        </button>
-                                                    </div>
-                                                @else
-                                                    <span>{{ $selectedDoc->report_number ?? '—' }}</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <th class="bg-light align-middle" colspan="2"><i
                                                     class="bi bi-journal-text me-1"></i> Ghi chú tiến độ</th>
                                         </tr>
@@ -783,7 +789,7 @@
                         @else
                             Thêm
                         @endif
-                        Hợp Đồng Tư Vấn
+                        Hồ Sơ Môi Trường
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -1129,7 +1135,7 @@
                     updateReport(event) {
                         let newVal = event.target.value;
                         if (newVal === this.value) return;
-                        
+
                         Swal.fire({
                             title: 'Xác nhận lưu?',
                             text: 'Cập nhật Báo cáo số thành: ' + newVal + ' ?',
@@ -1143,6 +1149,21 @@
                                 this.$wire.updateInlineReportNumber(docId, newVal);
                             } else {
                                 event.target.value = this.value;
+                            }
+                        });
+                    },
+                    updateReportExplicit() {
+                        let newVal = this.value;
+                        Swal.fire({
+                            title: 'Xác nhận lưu?',
+                            text: 'Cập nhật Báo cáo số thành: ' + newVal + ' ?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Đồng ý',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.$wire.updateInlineReportNumber(docId, newVal);
                             }
                         });
                     }

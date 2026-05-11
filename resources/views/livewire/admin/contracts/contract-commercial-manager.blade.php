@@ -522,6 +522,22 @@
                                             <td class="fw-bold">{{ $selectedDoc->shd_bc }}</td>
                                         </tr>
                                         <tr>
+                                            <th class="bg-light">Báo cáo số</th>
+                                            <td class="fw-bold p-2">
+                                                <div class="d-flex gap-2" x-data="inlineReportEdit({{ $selectedDoc->id }}, @js($selectedDoc->report_number))">
+                                                    <input type="text" 
+                                                           class="form-control form-control-sm fw-bold text-primary bg-light border" 
+                                                           style="font-size: 0.8rem;"
+                                                           x-model="value"
+                                                           placeholder="Nhập báo cáo số...">
+                                                    <button class="btn btn-sm btn-success d-flex align-items-center gap-1"
+                                                            @click="updateReportExplicit">
+                                                        <i class="bi bi-check2"></i>Lưu
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th class="bg-light">Nhà thầu phụ</th>
                                             <td class="fw-bold">{{ $selectedDoc->handler?->name }}</td>
                                         </tr>
@@ -1070,6 +1086,21 @@
                                 this.$wire.updateInlineReportNumber(docId, newVal);
                             } else {
                                 event.target.value = this.value;
+                            }
+                        });
+                    },
+                    updateReportExplicit() {
+                        let newVal = this.value;
+                        Swal.fire({
+                            title: 'Xác nhận lưu?',
+                            text: 'Cập nhật Báo cáo số thành: ' + newVal + ' ?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Đồng ý',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.$wire.updateInlineReportNumber(docId, newVal);
                             }
                         });
                     }

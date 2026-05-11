@@ -423,6 +423,11 @@ abstract class AbstractContractGenericManager extends Component
 
         $modelClass = $this->getModelClass();
         $modelClass::findOrFail($docId)->update(['report_number' => $value ?: null]);
+
+        if ($this->selectedDoc && $this->selectedDoc->id === $docId) {
+            $this->selectedDoc->report_number = $value ?: null;
+        }
+
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật Báo cáo số!']);
     }
 
