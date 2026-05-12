@@ -140,23 +140,23 @@
                 <!-- Employee History Header -->
                 <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
                     <div
-                        class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <h5 class="mb-0 fw-bold">Lịch sử báo cáo tháng {{ $monthFilter }}/{{ $yearFilter }}</h5>
-                            <div class="d-flex align-items-center gap-2">
-                                <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle"
-                                    style="width: auto; border-radius: 6px;">
+                        class="card-header daily-report-history-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="daily-report-history-main d-flex align-items-center gap-3">
+                            <h5 class="daily-report-history-title mb-0 fw-bold">Lịch sử báo cáo tháng {{ $monthFilter }}/{{ $yearFilter }}</h5>
+                            <div class="daily-report-history-filters d-flex align-items-center gap-2">
+                                <select wire:model.live="monthFilter" class="daily-report-history-select form-select form-select-sm border-light-subtle"
+                                    style="border-radius: 6px;">
                                     @for($m = 1; $m <= 12; $m++)
                                     <option value="{{ $m }}">Tháng {{ $m }}</option> @endfor
                                 </select>
-                                <select wire:model.live="yearFilter" class="form-select form-select-sm border-light-subtle"
-                                    style="width: auto; border-radius: 6px;">
+                                <select wire:model.live="yearFilter" class="daily-report-history-select form-select form-select-sm border-light-subtle"
+                                    style="border-radius: 6px;">
                                     @for($y = date('Y') - 1; $y <= date('Y'); $y++)
                                     <option value="{{ $y }}">{{ $y }}</option> @endfor
                                 </select>
                             </div>
                         </div>
-                        <div>
+                        <div class="daily-report-history-summary">
                             <span class="badge bg-soft-info text-info px-3 py-2 rounded-pill fw-normal">Đã gửi
                                 {{ $reportStats['total'] }} báo cáo</span>
                         </div>

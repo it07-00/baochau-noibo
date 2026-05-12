@@ -868,11 +868,77 @@
 .w-80px { width: 80px !important; }
 .h-6px { height: 6px !important; }
 .cursor-pointer { cursor: pointer !important; }
-.dropdown-menu-status { 
-    z-index: 1050; 
-    min-width: 200px; 
-    right: 50%; 
-    transform: translateX(50%); 
-    max-height: 250px; 
-    overflow-y: auto; 
+.dropdown-menu-status {
+    z-index: 1050;
+    min-width: 200px;
+    right: 50%;
+    transform: translateX(50%);
+    max-height: 250px;
+    overflow-y: auto;
 }
+
+/* ================================================
+   Activity Log Viewer
+   ================================================ */
+.activity-log-page {
+    --al-border: rgba(148, 163, 184, 0.22);
+    --al-soft: #f8fafc;
+    --al-radius: 12px;
+}
+.al-card { border-radius: var(--al-radius); overflow: hidden; }
+.al-header { padding: 18px 20px; gap: 14px; }
+.al-title { font-size: 1.05rem; font-weight: 800; color: var(--bs-body-color); }
+.al-toolbar { min-width: min(100%, 640px); }
+.al-search .input-group-text,
+.al-search .form-control {
+    min-height: 38px;
+    border-color: var(--al-border);
+    background: var(--bs-card-bg, #fff);
+}
+.al-search .input-group-text {
+    width: 42px;
+    justify-content: center;
+    color: var(--bs-secondary-color);
+    border-right: 0;
+    border-top-left-radius: 9px;
+    border-bottom-left-radius: 9px;
+}
+.al-search .form-control {
+    border-left: 0;
+    border-top-right-radius: 9px;
+    border-bottom-right-radius: 9px;
+    padding-left: .55rem !important;
+}
+.al-search .form-control:focus { box-shadow: none; border-color: var(--bs-primary); }
+.al-search:focus-within .input-group-text { border-color: var(--bs-primary); color: var(--bs-primary); }
+.al-select { min-height: 38px; }
+.al-table { margin-bottom: 0; }
+.al-table thead th {
+    background: var(--al-soft);
+    border-bottom: 1px solid var(--al-border);
+    color: var(--bs-secondary-color);
+    font-size: .76rem;
+    letter-spacing: 0;
+    padding: 12px 16px;
+    text-transform: uppercase;
+}
+.al-table tbody td { padding: 14px 16px; vertical-align: middle; }
+.al-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(var(--bs-primary-rgb), .1);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+    color: var(--bs-primary);
+    flex-shrink: 0;
+}
+[data-bs-theme="dark"] .activity-log-page {
+    --al-border: rgba(255,255,255,.12);
+    --al-soft: #151c26;
+}
+[data-bs-theme="dark"] .al-search .input-group-text,
+[data-bs-theme="dark"] .al-search .form-control {
+    background: #14161a;
+    border-color: rgba(255,255,255,.14);
+}
+[data-bs-theme="dark"] .al-table thead th { background: #151c26; }

@@ -29,11 +29,62 @@
     white-space: nowrap;
 }
 
+.daily-report-history-title {
+    line-height: 1.25;
+}
+
+.daily-report-history-select {
+    width: auto;
+    min-width: 120px;
+}
+
 @media (max-width: 768px) {
+    .daily-report-manager {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+
     .nav-pill-btn {
         padding: 5px 8px;
         font-size: 0.78rem;
     }
+
+    .daily-report-history-header {
+        align-items: stretch !important;
+    }
+
+    .daily-report-history-main,
+    .daily-report-history-filters,
+    .daily-report-history-summary {
+        width: 100%;
+    }
+
+    .daily-report-history-main {
+        align-items: stretch !important;
+        flex-direction: column;
+        gap: 0.875rem !important;
+    }
+
+    .daily-report-history-title {
+        font-size: 1.05rem;
+    }
+
+    .daily-report-history-filters {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .daily-report-history-select {
+        width: 100% !important;
+        min-width: 0;
+        min-height: 42px;
+    }
+
+    .daily-report-history-summary .badge {
+        white-space: normal;
+        text-align: center;
+    }
+
     .calendar-container {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;

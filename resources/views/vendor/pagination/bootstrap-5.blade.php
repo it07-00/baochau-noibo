@@ -1,7 +1,7 @@
 @if ($paginator->hasPages())
     <nav class="d-flex justify-items-center justify-content-between">
         <div class="d-flex justify-content-between flex-fill d-sm-none">
-            <ul class="pagination pagination-warning">
+            <ul class="pagination pagination-warning mb-0">
                 {{-- Previous Page Link --}}
                 @if ($paginator->onFirstPage())
                     <li class="page-item disabled" aria-disabled="true">
@@ -26,8 +26,8 @@
             </ul>
         </div>
 
-        <div class="d-none flex-sm-fill d-sm-flex align-items-sm-center justify-content-sm-between">
-            <div class=" text-muted">
+        <div class="d-none flex-sm-fill d-sm-flex align-items-sm-center justify-content-sm-between flex-wrap gap-2">
+            <div class="text-muted flex-shrink-0 text-nowrap">
                 {!! __('Showing') !!}
                 <span class="fw-semibold">{{ $paginator->firstItem() }}</span>
                 {!! __('to') !!}
@@ -37,8 +37,8 @@
                 {!! __('results') !!}
             </div>
 
-            <div>
-                <ul class="pagination pagination-warning">
+            <div class="flex-grow-1 d-flex justify-content-sm-end overflow-auto">
+                <ul class="pagination pagination-warning mb-0 flex-nowrap">
                     {{-- Previous Page Link --}}
                     @if ($paginator->onFirstPage())
                         <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
