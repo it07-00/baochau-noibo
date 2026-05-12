@@ -34,10 +34,10 @@ class ItDashboard extends Component
         abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
         try {
             Artisan::call('optimize:clear');
-            $this->dispatch('swal:toast', type: 'success', message: 'Đã dọn dẹp cache & tối ưu hệ thống.');
+            $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã dọn dẹp cache & tối ưu hệ thống.']);
         } catch (\Exception $e) {
             Log::error('ItDashboard clearCache: ' . $e->getMessage());
-            $this->dispatch('swal:toast', type: 'error', message: 'Lỗi khi xóa cache.');
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Lỗi khi xóa cache.']);
         }
     }
 
@@ -48,13 +48,13 @@ class ItDashboard extends Component
             $logFile = storage_path('logs/laravel.log');
             if (File::exists($logFile)) {
                 File::put($logFile, '');
-                $this->dispatch('swal:toast', type: 'success', message: 'Đã làm trống file log hệ thống.');
+                $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã làm trống file log hệ thống.']);
             } else {
-                $this->dispatch('swal:toast', type: 'info', message: 'Hiện không có file log nào.');
+                $this->dispatch('swal:toast', ['type' => 'info', 'message' => 'Hiện không có file log nào.']);
             }
         } catch (\Exception $e) {
             Log::error('ItDashboard clearLogs: ' . $e->getMessage());
-            $this->dispatch('swal:toast', type: 'error', message: 'Lỗi khi xóa log.');
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Lỗi khi xóa log.']);
         }
     }
 
