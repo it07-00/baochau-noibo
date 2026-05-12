@@ -92,13 +92,13 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Nhà thầu phụ</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
                                     @click.prevent="open = !open"
-                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                    >
                                     {{ $handlers->find($filter['handler_id'])?->name ?? 'Chọn nhà thầu phụ' }}
                                 </button>
-                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                    x-cloak style="max-height: 300px; overflow-y: auto;">
+                                <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false"
+                                    x-cloak >
                                     <input type="text" x-model="search" class="form-control form-control-sm mb-2"
                                         placeholder="Tìm kiếm..." @click.stop>
                                     <button class="dropdown-item @if (!$filter['handler_id']) active @endif"
@@ -110,7 +110,7 @@
                                             class="dropdown-item text-wrap @if ($filter['handler_id'] == $handler->id) active @endif"
                                             type="button"
                                             x-show="{{ json_encode(mb_strtolower($handler->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                            style="white-space: normal !important; word-break: break-all;"
+                                            class="text-break"
                                             wire:click="$set('filter.handler_id', {{ $handler->id }})"
                                             @click="open = false">
                                             {{ $handler->name }}
@@ -123,13 +123,13 @@
                             <div class="col-md-3">
                                 <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                    <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                    <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
                                         @click.prevent="open = !open"
-                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                        >
                                         {{ $staffs->find($filter['staff_id'])?->name ?? 'Chọn nhân viên' }}
                                     </button>
-                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                        x-cloak style="max-height: 300px; overflow-y: auto;">
+                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false"
+                                        x-cloak >
                                         <input type="text" x-model="search" class="form-control form-control-sm mb-2"
                                             placeholder="Tìm kiếm..." @click.stop>
                                         <button class="dropdown-item @if (!$filter['staff_id']) active @endif"
@@ -142,7 +142,7 @@
                                                 class="dropdown-item text-wrap @if ($filter['staff_id'] == $staff->id) active @endif"
                                                 type="button"
                                                 x-show="{{ json_encode(mb_strtolower($staff->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                style="white-space: normal !important; word-break: break-all;"
+                                                class="text-break"
                                                 wire:click="$set('filter.staff_id', {{ $staff->id }})"
                                                 @click="open = false">
                                                 {{ $staff->name }}
@@ -205,13 +205,13 @@
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap" type="button"
+                            <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
                                 @click.prevent="open = !open"
-                                style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                >
                                 {{ $filter['status'] ?: 'Chọn tình trạng' }}
                             </button>
-                            <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                x-cloak style="max-height: 300px; overflow-y: auto;">
+                            <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false"
+                                x-cloak >
                                 <input type="text" x-model="search" class="form-control form-control-sm mb-2"
                                     placeholder="Tìm kiếm..." @click.stop>
                                 <button class="dropdown-item @if (!$filter['status']) active @endif"
@@ -235,13 +235,13 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
                                     @click.prevent="open = !open"
-                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                    >
                                     {{ $filter['service_type'] ?: 'Chọn Loại dịch vụ' }}
                                 </button>
-                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                    x-cloak style="max-height: 300px; overflow-y: auto;">
+                                <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false"
+                                    x-cloak >
                                     <input type="text" x-model="search" class="form-control form-control-sm mb-2"
                                         placeholder="Tìm kiếm..." @click.stop>
                                     <button class="dropdown-item @if (!$filter['service_type']) active @endif"
@@ -262,13 +262,13 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Loại chất thải</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
                                     @click.prevent="open = !open"
-                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                    >
                                     {{ $filter['waste_type'] ?: 'Chọn Loại chất thải' }}
                                 </button>
-                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                    x-cloak style="max-height: 300px; overflow-y: auto;">
+                                <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false"
+                                    x-cloak >
                                     <input type="text" x-model="search" class="form-control form-control-sm mb-2"
                                         placeholder="Tìm kiếm..." @click.stop>
                                     <button class="dropdown-item @if (!$filter['waste_type']) active @endif"
@@ -289,13 +289,13 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Tình trạng tái ký</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap" type="button"
+                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
                                     @click.prevent="open = !open"
-                                    style="width: 100%; white-space: normal !important; height: auto !important; min-height: 31px;">
+                                    >
                                     {{ $filter['renewal_status'] ?: 'Chọn tình trạng' }}
                                 </button>
-                                <div class="dropdown-menu-custom w-100 p-2" x-show="open" @click.away="open = false"
-                                    x-cloak style="max-height: 300px; overflow-y: auto;">
+                                <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false"
+                                    x-cloak >
                                     <input type="text" x-model="search" class="form-control form-control-sm mb-2"
                                         placeholder="Tìm kiếm..." @click.stop>
                                     <button class="dropdown-item @if (!$filter['renewal_status']) active @endif"
@@ -400,14 +400,14 @@
         <div class="card-header bg-white py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng chất thải</h6>
         </div>
-        <div class="table-responsive" style="min-height:350px;">
+        <div class="table-responsive mh-350" >
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class=" text-muted fw-bold">
                         @if ($canBulkDelete)
-                            <th class="text-center" style="width:42px;">Chọn</th>
+                            <th class="text-center w-42px" >Chọn</th>
                         @endif
-                        <th class="text-center" style="width:45px;">STT</th>
+                        <th class="text-center w-45px" >STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
@@ -439,7 +439,7 @@
                             <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
-                            <td class="ps-3 py-2" style="min-width: 160px; max-width: 200px; font-size: 0.82rem;">
+                            <td class="ps-3 py-2 col-200" >
                                 <div class="d-flex flex-column">
                                     <span class="">Số HĐ NTP: <span
                                             class="fw-bold">{{ $doc->shd_cxl }}</span></span>
@@ -449,11 +449,11 @@
                                     <span>CS: <span class="fw-bold">{{ $doc->staff?->name }}</span></span>
                                 </div>
                             </td>
-                            <td class="py-2" style="min-width: 160px; max-width: 230px; font-size: 0.82rem;">
+                            <td class="py-2 col-230" >
                                 <div class="d-flex flex-column">
                                     <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
                                     <span class="">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
-                                    <span class="text-muted" style="font-size: 0.78rem;">{{ Str::limit($doc->customer?->address, 50) }}</span>
+                                    <span class="text-muted fs-78" >{{ Str::limit($doc->customer?->address, 50) }}</span>
                                 </div>
                             </td>
                             @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
@@ -521,10 +521,10 @@
                                     <div class="d-flex flex-column gap-1 align-items-center">
                                         @foreach ($doc->assignments as $assign)
                                             <div class="d-flex flex-column align-items-center">
-                                                <span class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }}" style="font-size:0.72rem;">
+                                                <span class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }} fs-72" >
                                                     {{ $assign->user?->name ?? $assign->external_assignee ?? '?' }}
                                                 </span>
-                                                <small class="text-muted" style="font-size:0.6rem;">
+                                                <small class="text-muted fs-60" >
                                                     bởi {{ Str::limit($assign->assigner?->name ?? '—', 15) }}
                                                 </small>
                                             </div>
@@ -534,10 +534,10 @@
                                     <span class="text-muted">—</span>
                                 @endif
                                 <div class="mt-2">
-                                    <div class="progress" style="height: 6px; width: 80px; margin: 0 auto;">
+                                    <div class="progress h-6px w-80px mx-auto" >
                                         <div class="progress-bar bg-{{ $progressColor }}" style="width: {{ $progressPercent }}%"></div>
                                     </div>
-                                    <span class="fw-semibold text-{{ $progressColor }}" style="font-size:0.72rem;">{{ $completedSteps }}/{{ $totalSteps }}</span>
+                                    <span class="fw-semibold text-{{ $progressColor }} fs-72" >{{ $completedSteps }}/{{ $totalSteps }}</span>
                                 </div>
                             </td>
                             <td class="text-center">
@@ -550,17 +550,17 @@
                                 @endphp
                                 @if($deadline)
                                     @if($isFinished)
-                                        <span class="fw-semibold text-success" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-success" style="font-size:0.6rem;"><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
+                                        <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-success fs-60" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
                                     @elseif($isOverdue)
-                                        <span class="fw-bold text-danger" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-danger" style="font-size:0.6rem;"><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
+                                        <span class="fw-bold text-danger fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
                                     @elseif($isNearDue)
-                                        <span class="fw-semibold text-warning" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-warning text-dark" style="font-size:0.6rem;"><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                                        <span class="fw-semibold text-warning fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
                                     @else
-                                        <span class="fw-semibold text-success" style="font-size:0.8rem;">{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-success bg-opacity-75" style="font-size:0.6rem;">Còn {{ $daysLeft }} ngày</span>
+                                        <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $daysLeft }} ngày</span>
                                     @endif
                                 @else
                                     <span class="text-muted">—</span>
@@ -598,15 +598,14 @@
                                     @endphp
 
                                     @if (!$canUpdateStatus)
-                                        <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0"
-                                            style="font-size:0.7rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }}; cursor:default;">
+                                        <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0 status-badge-view"
+                                            style="--sbc:{{ $statusColor['bg'] }}; --stc:{{ $statusColor['text'] }};">
                                             {{ $doc->status ?: '—' }}
                                         </span>
                                     @else
                                         <div class="position-relative" x-data="{ open: false }">
                                             <button type="button" @click="open = !open"
-                                                class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0"
-                                                style="font-size:0.7rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
+                                                class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0 status-badge-btn" style="--sbc:{{ $statusColor['bg'] }}; --stc:{{ $statusColor['text'] }};">
                                                 {{ $doc->status ?: '—' }}
                                                 <svg width="12" height="12" viewBox="0 0 12 12"
                                                     fill="currentColor">
@@ -615,12 +614,12 @@
                                                 </svg>
                                             </button>
                                             <div x-show="open" @click.away="open = false" x-cloak
-                                                class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1"
-                                                style="z-index:1050; min-width:200px; right:50%; transform:translateX(50%); max-height:250px; overflow-y:auto;">
+                                                class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1 dropdown-menu-status"
+                                                >
                                                 @foreach ($all_statuses as $opt)
                                                     <button type="button"
-                                                        class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }}"
-                                                        style="font-size:0.8rem;"
+                                                        class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }} fs-85"
+                                                        
                                                         wire:click="updateStatus({{ $doc->id }}, '{{ $opt }}')"
                                                         @click="open = false">
                                                         {{ $opt }}
@@ -737,7 +736,7 @@
                                     <table class="table table-bordered mb-0">
                                         <tbody>
                                             <tr>
-                                                <th class="bg-light fw-bold px-4 py-3" style="width: 25%;">Ghi chú
+                                                <th class="bg-light fw-bold px-4 py-3 w-25" >Ghi chú
                                                 </th>
                                                 <td class="px-4 py-3">Ghi chú : {{ $selectedDoc->note }}</td>
                                             </tr>
@@ -948,14 +947,14 @@
                                         class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button
-                                        class="form-select text-start text-wrap @error('formData.customer_id') is-invalid @enderror"
+                                        class="form-select text-start text-wrap @error('formData.customer_id') is-invalid @enderror select-full"
                                         type="button" @click.prevent="open = !open"
-                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                        >
                                         {{ $customers->find($formData['customer_id'] ?? '')?->name ?? 'Chọn khách hàng' }}
                                     </button>
-                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open"
+                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
                                         @click.away="open = false" x-cloak
-                                        style="max-height: 300px; overflow-y: auto;">
+                                        >
                                         <input type="text" x-model="search"
                                             class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
                                             @click.stop>
@@ -968,7 +967,7 @@
                                                 class="dropdown-item text-wrap @if (($formData['customer_id'] ?? '') == $customer->id) active @endif"
                                                 type="button"
                                                 x-show="{{ json_encode(mb_strtolower($customer->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                style="white-space: normal !important;"
+                                                class="text-wrap"
                                                 wire:click="$set('formData.customer_id', {{ $customer->id }})"
                                                 @click="open = false">
                                                 {{ $customer->name }}
@@ -985,14 +984,14 @@
                                 <label class="form-label fw-bold">Nhà thầu phụ <span class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button
-                                        class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror"
+                                        class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror select-full"
                                         type="button" @click.prevent="open = !open"
-                                        style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                        >
                                         {{ $handlers->find($formData['handler_id'] ?? '')?->name ?? 'Chọn nhà thầu phụ' }}
                                     </button>
-                                    <div class="dropdown-menu-custom w-100 p-2" x-show="open"
+                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
                                         @click.away="open = false" x-cloak
-                                        style="max-height: 300px; overflow-y: auto;">
+                                        >
                                         <input type="text" x-model="search"
                                             class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
                                             @click.stop>
@@ -1005,7 +1004,7 @@
                                                 class="dropdown-item text-wrap @if (($formData['handler_id'] ?? '') == $h->id) active @endif"
                                                 type="button"
                                                 x-show="{{ json_encode(mb_strtolower($h->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                style="white-space: normal !important;"
+                                                class="text-wrap"
                                                 wire:click="$set('formData.handler_id', {{ $h->id }})"
                                                 @click="open = false">
                                                 {{ $h->name }}
@@ -1023,14 +1022,14 @@
                                             class="text-danger">*</span></label>
                                     <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                         <button
-                                            class="form-select text-start text-wrap @error('formData.staff_id') is-invalid @enderror"
+                                            class="form-select text-start text-wrap @error('formData.staff_id') is-invalid @enderror select-full"
                                             type="button" @click.prevent="open = !open"
-                                            style="width: 100%; white-space: normal !important; height: auto !important; min-height: 38px;">
+                                            >
                                             {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? 'Chọn nhân viên' }}
                                         </button>
-                                        <div class="dropdown-menu-custom w-100 p-2" x-show="open"
+                                        <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
                                             @click.away="open = false" x-cloak
-                                            style="max-height: 300px; overflow-y: auto;">
+                                            >
                                             <input type="text" x-model="search"
                                                 class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
                                                 @click.stop>
@@ -1045,7 +1044,7 @@
                                                     class="dropdown-item text-wrap @if (($formData['staff_id'] ?? '') == $s->id) active @endif"
                                                     type="button"
                                                     x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                    style="white-space: normal !important;"
+                                                    class="text-wrap"
                                                     wire:click="$set('formData.staff_id', {{ $s->id }})"
                                                     @click="open = false">
                                                     {{ $s->name }}
@@ -1305,7 +1304,7 @@
                 </div>
                 <div class="modal-body p-4">
                     <p class="text-muted  mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
-                    <div class="list-group" style="max-height: 320px; overflow-y: auto;">
+                    <div class="list-group mh-320-scroll" >
                         @foreach ($assignable_users as $u)
                             @php
                                 $roleSlug = $u->roles->first()?->name ?? '';

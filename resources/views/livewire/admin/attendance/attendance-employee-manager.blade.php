@@ -17,11 +17,11 @@
                 <div class="pure-card-header d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
                     <h3 class="pure-card-title m-0 text-nowrap">Nhân viên chấm công</h3>
 
-                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100" style="max-width:860px;">
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100 mxw-860px" >
                         {{-- Search --}}
-                        <div class="input-group flex-grow-1" style="min-width:180px;">
+                        <div class="input-group flex-grow-1" class="mnw-180px">
                             <span class="input-group-text bg-transparent border-end-0 pe-1">
-                                <i class="bi bi-search text-muted" style="font-size:0.85rem;"></i>
+                                <i class="bi bi-search text-muted fs-85" ></i>
                             </span>
                             <input wire:model.live.debounce.300ms="search" type="text"
                                    class="form-control border-start-0 ps-1"
@@ -29,7 +29,7 @@
                         </div>
 
                         {{-- Department filter --}}
-                        <select wire:model.live="filterDepartment" class="form-select" style="min-width:160px;max-width:220px;">
+                        <select wire:model.live="filterDepartment" class="form-select mnw-160px mxw-220px" >
                             <option value="">Tất cả phòng ban</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept }}">{{ $dept }}</option>
@@ -43,8 +43,8 @@
                                        wire:model.live="showInactive" id="toggleInactive"
                                        style="cursor:pointer; width:2.2em; height:1.1em;">
                             </div>
-                            <label class="form-check-label text-muted" for="toggleInactive"
-                                   style="font-size:0.83rem; cursor:pointer;">Hiện đã nghỉ</label>
+                            <label class="form-check-label text-muted fs-83 cursor-pointer" for="toggleInactive"
+                                   >Hiện đã nghỉ</label>
                         </div>
 
                         {{-- Buttons --}}
@@ -62,21 +62,21 @@
                 {{-- Table --}}
                 <div class="pure-card-body pb-2 px-0">
                     <div class="table-responsive">
-                        <table class="table align-middle table-hover mb-0" style="font-size:0.92rem;">
+                        <table class="table align-middle table-hover mb-0 fs-92" >
                             <thead>
-                                <tr style="background:var(--bs-light,#f8f9fa); border-bottom:2px solid #e9ecef;">
-                                    <th class="px-4 py-3 text-muted fw-semibold" style="width:80px; font-size:0.8rem; letter-spacing:.03em;">MÃ MÁY</th>
-                                    <th class="py-3 text-muted fw-semibold" style="font-size:0.8rem; letter-spacing:.03em;">HỌ VÀ TÊN</th>
-                                    <th class="py-3 text-muted fw-semibold d-none d-sm-table-cell" style="width:180px; font-size:0.8rem; letter-spacing:.03em;">PHÒNG BAN</th>
-                                    <th class="py-3 text-muted fw-semibold text-center d-none d-md-table-cell" style="width:120px; font-size:0.8rem; letter-spacing:.03em;">NGÀY TẠO</th>
-                                    <th class="pe-4 py-3 text-end" style="width:110px;"></th>
+                                <tr class="bg-light border-bottom border-2">
+                                    <th class="px-4 py-3 text-muted fw-semibold w-80px fs-80 letter-003" >MÃ MÁY</th>
+                                    <th class="py-3 text-muted fw-semibold fs-80 letter-003" >HỌ VÀ TÊN</th>
+                                    <th class="py-3 text-muted fw-semibold d-none d-sm-table-cell w-180px fs-80 letter-003" >PHÒNG BAN</th>
+                                    <th class="py-3 text-muted fw-semibold text-center d-none d-md-table-cell w-120px fs-80 letter-003" >NGÀY TẠO</th>
+                                    <th class="pe-4 py-3 text-end w-110px" ></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($employees as $emp)
                                     <tr wire:key="emp-{{ $emp->id }}"
-                                        class="{{ !$emp->is_active ? 'opacity-50' : '' }}"
-                                        style="border-bottom:1px solid #f0f0f0;">
+                                        class="{{ !$emp->is_active ? 'opacity-50' : '' }} border-bottom-light"
+                                        >
                                         <td class="px-4 py-3">
                                             <span class="fw-semibold text-muted" style="font-family:monospace; font-size:0.95rem; letter-spacing:.05em;">
                                                 {{ $emp->device_uid }}
@@ -86,27 +86,27 @@
                                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                                 <span class="fw-semibold">{{ $emp->name }}</span>
                                                 @if($emp->is_blocked)
-                                                    <span class="badge rounded-pill text-bg-warning" style="font-size:0.68rem; font-weight:600;">
-                                                        <i class="bi bi-slash-circle me-1" style="font-size:0.6rem;"></i>Bị chặn
+                                                    <span class="badge rounded-pill text-bg-warning fs-68 fw-semibold" >
+                                                        <i class="bi bi-slash-circle me-1 fs-60" ></i>Bị chặn
                                                     </span>
                                                 @elseif(!$emp->is_active)
-                                                    <span class="badge rounded-pill text-bg-secondary" style="font-size:0.68rem; font-weight:600;">Đã nghỉ</span>
+                                                    <span class="badge rounded-pill text-bg-secondary fs-68 fw-semibold" >Đã nghỉ</span>
                                                 @endif
                                             </div>
                                             @if($emp->department)
                                                 <div class="d-sm-none mt-1">
-                                                    <span class="badge bg-label-primary px-2" style="font-size:0.7rem;">{{ $emp->department }}</span>
+                                                    <span class="badge bg-label-primary px-2 fs-70" >{{ $emp->department }}</span>
                                                 </div>
                                             @endif
                                         </td>
                                         <td class="py-3 d-none d-sm-table-cell">
                                             @if($emp->department)
-                                                <span class="badge bg-label-primary px-2 py-1" style="font-size:0.78rem;">{{ $emp->department }}</span>
+                                                <span class="badge bg-label-primary px-2 py-1 fs-78" >{{ $emp->department }}</span>
                                             @else
                                                 <span class="text-muted">—</span>
                                             @endif
                                         </td>
-                                        <td class="py-3 text-center text-muted d-none d-md-table-cell" style="font-size:0.85rem;">
+                                        <td class="py-3 text-center text-muted d-none d-md-table-cell fs-85" >
                                             {{ $emp->created_at?->format('d/m/Y') }}
                                         </td>
                                         <td class="pe-4 py-3 text-end">
@@ -114,30 +114,30 @@
                                                 @if($emp->is_blocked)
                                                     <button class="btn btn-sm btn-icon btn-light text-warning rounded-circle"
                                                             wire:click="unblock({{ $emp->id }})"
-                                                            title="Bỏ chặn" style="width:32px;height:32px;">
-                                                        <i class="bi bi-unlock" style="font-size:0.85rem;"></i>
+                                                            title="Bỏ chặn" class="icon-32">
+                                                        <i class="bi bi-unlock fs-85" ></i>
                                                     </button>
                                                 @elseif(!$emp->is_active)
                                                     <button class="btn btn-sm btn-icon btn-light text-success rounded-circle"
                                                             wire:click="reactivate({{ $emp->id }})"
-                                                            title="Kích hoạt lại" style="width:32px;height:32px;">
-                                                        <i class="bi bi-arrow-repeat" style="font-size:0.85rem;"></i>
+                                                            title="Kích hoạt lại" class="icon-32">
+                                                        <i class="bi bi-arrow-repeat fs-85" ></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
                                                             wire:click="confirmBlock({{ $emp->id }})"
-                                                            title="Chặn" style="width:32px;height:32px;">
-                                                        <i class="bi bi-slash-circle" style="font-size:0.85rem;"></i>
+                                                            title="Chặn" class="icon-32">
+                                                        <i class="bi bi-slash-circle fs-85" ></i>
                                                     </button>
                                                 @else
                                                     <button class="btn btn-sm btn-icon btn-light text-primary rounded-circle"
                                                             wire:click="openEdit({{ $emp->id }})"
-                                                            title="Sửa" style="width:32px;height:32px;">
-                                                        <i class="bi bi-pencil" style="font-size:0.85rem;"></i>
+                                                            title="Sửa" class="icon-32">
+                                                        <i class="bi bi-pencil fs-85" ></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
                                                             wire:click="confirmBlock({{ $emp->id }})"
-                                                            title="Chặn" style="width:32px;height:32px;">
-                                                        <i class="bi bi-slash-circle" style="font-size:0.85rem;"></i>
+                                                            title="Chặn" class="icon-32">
+                                                        <i class="bi bi-slash-circle fs-85" ></i>
                                                     </button>
                                                 @endif
                                             </div>
@@ -146,7 +146,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center py-5 text-muted">
-                                            <i class="bi bi-people d-block mb-2" style="font-size:2rem; opacity:.3;"></i>
+                                            <i class="bi bi-people d-block mb-2 fs-2rem opacity-25" ></i>
                                             Không có nhân viên nào.
                                         </td>
                                     </tr>
@@ -167,7 +167,7 @@
 
     {{-- Modal Thêm/Sửa --}}
     @if($showModal)
-        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);"
+        <div class="modal fade show d-block overlay-bg" tabindex="-1" 
              wire:click.self="$set('showModal', false)">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
@@ -237,7 +237,7 @@
 
     {{-- Confirm Block --}}
     @if($confirmingBlock)
-        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);"
+        <div class="modal fade show d-block overlay-bg" tabindex="-1" 
              wire:click.self="$set('confirmingBlock', false)" wire:key="modal-confirm-block">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
@@ -247,7 +247,7 @@
                     </div>
                     <div class="modal-body">
                         <p class="mb-1">Nhân viên sẽ bị <strong>bỏ qua trong mọi lần import</strong> tiếp theo.</p>
-                        <p class="mb-0 text-danger" style="font-size:0.85rem;"><strong>Toàn bộ lịch sử chấm công sẽ bị xóa vĩnh viễn.</strong></p>
+                        <p class="mb-0 text-danger fs-85" ><strong>Toàn bộ lịch sử chấm công sẽ bị xóa vĩnh viễn.</strong></p>
                     </div>
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-secondary btn-sm"
@@ -265,7 +265,7 @@
 
     {{-- Modal Đồng bộ từ máy --}}
     @if($showSyncModal)
-        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);"
+        <div class="modal fade show d-block overlay-bg" tabindex="-1" 
              wire:click.self="$set('showSyncModal', false)">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
@@ -279,9 +279,9 @@
                                 <label class="form-label fw-semibold">File user.dat <span class="text-danger">*</span></label>
                                 <input type="file" wire:model="syncFile" class="form-control form-control-sm" accept=".dat,.txt,.csv">
                                 <div class="form-text">File danh sách nhân viên xuất từ máy chấm công</div>
-                                @error('syncFile') <div class="text-danger mt-1" style="font-size:0.85rem;">{{ $message }}</div> @enderror
+                                @error('syncFile') <div class="text-danger mt-1 fs-85" >{{ $message }}</div> @enderror
                             </div>
-                            <div class="alert alert-info py-2 mb-0" style="font-size:0.83rem;">
+                            <div class="alert alert-info py-2 mb-0 fs-83" >
                                 Nhân viên có trong file sẽ được thêm/kích hoạt. Nhân viên không có trong file sẽ bị đánh dấu <strong>đã nghỉ</strong>. Nhân viên bị chặn không bị ảnh hưởng.
                             </div>
                         </div>

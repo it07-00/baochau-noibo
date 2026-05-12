@@ -45,8 +45,8 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width:120px">Tháng</th>
-                            <th class="text-end" style="width:180px">Mục tiêu (số BG)</th>
+                            <th class="w-120px">Tháng</th>
+                            <th class="text-end w-180px" >Mục tiêu (số BG)</th>
                             <th class="text-end">Thực tế (số BG)</th>
                             <th class="text-end">Doanh số thực</th>
                             <th class="text-end">% Đạt</th>
@@ -63,8 +63,8 @@
                                 <td class="text-end">
                                     @if($canEdit)
                                         <input type="number" wire:model="targets.{{ $m }}"
-                                            class="form-control form-control-sm text-end"
-                                            style="width:120px;display:inline-block"
+                                            class="form-control form-control-sm text-end w-120px d-inline-block"
+                                            
                                             placeholder="0" min="0">
                                     @else
                                         {{ $data['target'] > 0 ? $data['target'] : '—' }}

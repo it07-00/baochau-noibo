@@ -16,11 +16,11 @@
             <div class="pure-card rounded-custom card-bg shadow-custom p-3 p-md-4">
                 <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
                     <div class="d-flex align-items-center gap-3 flex-grow-1">
-                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                             style="width:48px;height:48px;">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 icon-48"
+                             >
                             <i class="bi bi-building fs-5 text-primary"></i>
                         </div>
-                        <div style="min-width:0;">
+                        <div class="min-w-0">
                             <div class="fw-bold fs-6 fs-md-5">{{ $handler->name }}</div>
                             <div class="text-muted small">
                                 @if($handler->phone) <i class="bi bi-telephone me-1"></i>{{ $handler->phone }} @endif
@@ -65,7 +65,7 @@
                         </div>
                         <div class="d-flex align-items-center gap-1">
                             <label class="form-label mb-0 small fw-semibold text-muted text-nowrap">Sắp xếp</label>
-                            <select class="form-select form-select-sm" wire:model.live="sortField" style="min-width:110px;">
+                            <select class="form-select form-select-sm mnw-110px" wire:model.live="sortField" >
                                 <option value="signed_at">Ngày ký</option>
                                 <option value="value">Giá trị</option>
                                 <option value="shd_cxl">Số HĐ NTP</option>
@@ -122,12 +122,12 @@
                                         </button>
                                     </th>
                                     <th class="d-none d-sm-table-cell">Trạng thái</th>
-                                    <th style="width:40px;"></th>
+                                    <th class="w-42px"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($contracts as $contract)
-                                <tr style="cursor:pointer;"
+                                <tr class="cursor-pointer"
                                     wire:click="viewDetail({{ $contract->contract_id }}, '{{ addslashes($contract->model_class) }}')">
                                     <td>
                                         <span class="badge bg-label-info px-2">{{ $contract->type_label }}</span>
@@ -137,7 +137,7 @@
                                         {{-- Mobile extras --}}
                                         <div class="d-sm-none mt-1">
                                             @if($contract->customer)
-                                                <div class="text-muted small text-wrap" style="max-width:150px;white-space:normal;">{{ $contract->customer }}</div>
+                                                <div class="text-muted small text-wrap mxw-150px text-wrap" >{{ $contract->customer }}</div>
                                             @endif
                                             @if($contract->status)
                                                 @php
@@ -164,7 +164,7 @@
                                         </div>
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $contract->shd_bc ?: '—' }}</td>
-                                    <td class="text-wrap d-none d-sm-table-cell" style="max-width:200px;">{{ $contract->customer }}</td>
+                                    <td class="text-wrap d-none d-sm-table-cell mxw-200px" >{{ $contract->customer }}</td>
                                     <td class="d-none d-md-table-cell">{{ $contract->signed_at ? $contract->signed_at->format('d/m/Y') : '—' }}</td>
                                     <td class="text-end">{{ $contract->value ? number_format($contract->value, 0, ',', '.') : '—' }}</td>
                                     <td class="d-none d-sm-table-cell">
@@ -269,7 +269,7 @@
                                     <table class="table table-bordered mb-0">
                                         <tbody>
                                             <tr>
-                                                <th class="bg-light fw-bold px-4 py-3" style="width:25%;">Khách hàng</th>
+                                                <th class="bg-light fw-bold px-4 py-3 w-25" >Khách hàng</th>
                                                 <td class="px-4 py-3">{{ $selectedContract->customer?->name }}</td>
                                             </tr>
                                             <tr>

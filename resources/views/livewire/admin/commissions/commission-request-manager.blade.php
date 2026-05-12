@@ -118,15 +118,15 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="text-center" style="min-width: 45px; width: 45px;">STT</th>
-                            <th class="ps-4" style="min-width: 300px;">Hợp đồng / Khách hàng</th>
-                            <th style="min-width: 220px;">Người nhận</th>
-                            <th class="text-center" style="min-width: 170px;">Loại hợp đồng</th>
-                            <th class="text-end" style="min-width: 150px;">Số tiền</th>
-                            <th class="text-center" style="min-width: 180px;">Tình trạng</th>
-                            <th class="text-center" style="min-width: 120px;">Ngày gửi</th>
+                            <th class="text-center mnw-45px w-45px" >STT</th>
+                            <th class="ps-4 mnw-300px" >Hợp đồng / Khách hàng</th>
+                            <th class="mnw-220px">Người nhận</th>
+                            <th class="text-center" class="mnw-170px">Loại hợp đồng</th>
+                            <th class="text-end mnw-150px" >Số tiền</th>
+                            <th class="text-center mnw-180px" >Tình trạng</th>
+                            <th class="text-center mnw-120px" >Ngày gửi</th>
                             @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
-                            <th class="text-end pe-4" style="min-width: 260px;">Thao tác</th>
+                            <th class="text-end pe-4 mnw-260px" >Thao tác</th>
                             @endcanany
                         </tr>
                     </thead>
@@ -138,7 +138,7 @@
                                     <div class="fw-semibold text-primary mb-1">BC {{ $request->contract->shd_bc ?? 'N/A' }}</div>
                                     @if($request->contract && $request->contract->customer)
                                         <div class="fw-semibold">{{ $request->contract->customer->name }}</div>
-                                        <div class=" text-muted text-truncate" style="max-width: 320px;">
+                                        <div class=" text-muted text-truncate mxw-320px" >
                                             {{ $request->contract->customer->address }}
                                         </div>
                                     @else
@@ -148,7 +148,7 @@
                                 <td>
                                     <div class="fw-semibold">{{ $request->receiver_name }}</div>
                                     <div class=" text-muted">{{ $request->receiver_phone ?: 'Chưa có số điện thoại' }}</div>
-                                    <div class=" text-muted text-truncate" style="max-width: 200px;">{{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}</div>
+                                    <div class=" text-muted text-truncate text-truncate-200" >{{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}</div>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge bg-soft-primary text-primary px-2 py-1">{{ $request->contract_type_label }}</span>
@@ -174,7 +174,7 @@
                                             <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
                                         @if($rejectionReason)
-                                            <div class=" text-muted mt-1" style="max-width: 190px;" title="{{ $rejectionReason }}">
+                                            <div class=" text-muted mt-1 mxw-190px"  title="{{ $rejectionReason }}">
                                                 Lý do: {{ \Illuminate\Support\Str::limit($rejectionReason, 70) }}
                                             </div>
                                         @endif

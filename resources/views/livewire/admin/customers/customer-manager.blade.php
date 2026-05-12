@@ -37,7 +37,7 @@
                         <table class="table text-nowrap align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-center" style="width:45px;">STT</th>
+                                    <th class="text-center w-45px" >STT</th>
                                     <th>Tên khách hàng</th>
                                     <th class="d-none d-md-table-cell">Mã số thuế</th>
                                     <th class="d-none d-lg-table-cell">Tỉnh thành</th>
@@ -118,7 +118,7 @@
                         @endphp
                         <div wire:key="customer-card-{{ $customer->id }}" class="border rounded-3 p-3 mb-2 bg-body">
                             <div class="d-flex justify-content-between align-items-start gap-2">
-                                <a href="{{ route('app.customers.contracts', $customer) }}" class="fw-bold text-body text-decoration-none" style="font-size: 0.9rem; line-height: 1.4;">
+                                <a href="{{ route('app.customers.contracts', $customer) }}" class="fw-bold text-body text-decoration-none fs-90 lh-base" >
                                     {{ $customer->name }}
                                 </a>
                                 <div class="flex-shrink-0">
@@ -132,7 +132,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="mt-2 d-flex flex-column gap-1" style="font-size: 0.8rem; color: var(--bs-secondary-color);">
+                            <div class="mt-2 d-flex flex-column gap-1 fs-80 text-muted" >
                                 @if($customer->tax_code)
                                     <span><i class="bi bi-card-text me-1"></i>MST: {{ $customer->tax_code }}</span>
                                 @endif

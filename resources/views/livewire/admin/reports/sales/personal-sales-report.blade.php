@@ -1,49 +1,4 @@
 <div class="personal-sales-board">
-    <style>
-        .personal-sales-board .board-title {
-            color: #0f172a;
-            letter-spacing: .2px;
-        }
-
-        .personal-sales-board .board-title-kpi { border-left: 4px solid #ec4899; padding-left: 12px; }
-
-        .personal-sales-board .board-table thead th {
-            color: #fff;
-            font-weight: 700;
-            border-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .personal-sales-board .table-kpi thead th {
-            background: linear-gradient(90deg, #ec4899 0%, #f43f5e 100%);
-        }
-
-        .personal-sales-board .board-table tbody tr:nth-child(even) {
-            background: #fafafa;
-        }
-
-        .personal-sales-board .board-table tbody tr:hover {
-            background: #f1f5f9;
-        }
-
-        .personal-sales-board .board-table tfoot tr {
-            background: linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%);
-            color: #fff;
-        }
-
-        /* Dark mode */
-        :root[data-bs-theme=dark] .personal-sales-board .board-title {
-            color: rgba(255, 255, 255, 0.9);
-        }
-        :root[data-bs-theme=dark] .personal-sales-board .board-table tbody tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.04);
-        }
-        :root[data-bs-theme=dark] .personal-sales-board .board-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-        :root[data-bs-theme=dark] .personal-sales-board .card-header.bg-white {
-            background-color: var(--bs-body-bg) !important;
-        }
-    </style>
 
     @php
         $scopeLabel = $staffDetail?->name ?? 'Tất cả nhân viên';
@@ -91,13 +46,13 @@
             <table class="table board-table table-kpi align-middle mb-0">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width:80px">Tháng</th>
+                        <th class="text-center w-80px" >Tháng</th>
                         <th class="text-end">DS cam kết</th>
                         <th class="text-end">DS cam kết lũy kế</th>
                         <th class="text-end">Thực tế (Doanh số từ HĐ) (đ)</th>
                         <th class="text-end">DS thực hiện lũy kế</th>
                         <th class="text-end">Còn thiếu</th>
-                        <th class="text-center" style="width:140px">% hoàn thành KPI</th>
+                        <th class="text-center w-120px" >% hoàn thành KPI</th>
                     </tr>
                 </thead>
                 <tbody>

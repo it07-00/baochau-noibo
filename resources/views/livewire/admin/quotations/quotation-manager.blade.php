@@ -18,7 +18,7 @@
                     data-bs-toggle="modal" data-bs-target="#importModal">
                 <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
             </button>
-            <div class="input-group" style="width: 230px;">
+            <div class="input-group w-230px" >
                 <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
             </div>
@@ -72,24 +72,24 @@
 
     <!-- Table Card -->
     <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="table-responsive" style="overflow-x: auto;">
+        <div class="table-responsive overflow-auto" >
             <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem; min-width: 1400px;">
                 <thead class="bg-light bg-opacity-50">
                     <tr class="text-muted fw-bold">
-                        <th class="ps-3" style="width: 40px;">STT</th>
-                        <th style="width: 130px;">Sale</th>
-                        <th style="width: 110px;">Số báo giá</th>
-                        <th style="width: 220px;">Công ty / Khách hàng</th>
-                        <th style="width: 130px;">Dịch vụ</th>
-                        <th style="width: 100px;">Ngành nghề</th>
+                        <th class="ps-3 w-40px" >STT</th>
+                        <th class="w-130px">Sale</th>
+                        <th class="w-110px">Số báo giá</th>
+                        <th class="text-truncate-220">Công ty / Khách hàng</th>
+                        <th class="w-130px">Dịch vụ</th>
+                        <th class="w-100px">Ngành nghề</th>
                         <th>Tình hình làm việc</th>
-                        <th class="text-center" style="width: 130px;">Tình hình</th>
-                        <th class="text-end" style="width: 110px;">Giá trị gốc</th>
-                        <th class="text-end" style="width: 100px;">Hoa hồng KH</th>
-                        <th class="text-end" style="width: 85px;">Thuế HH</th>
-                        <th class="text-end fw-bold" style="width: 120px;">Giá trị HĐ</th>
+                        <th class="text-center w-130px" >Tình hình</th>
+                        <th class="text-end w-110px" >Giá trị gốc</th>
+                        <th class="text-end w-100px" >Hoa hồng KH</th>
+                        <th class="text-end w-85px" >Thuế HH</th>
+                        <th class="text-end fw-bold w-120px" >Giá trị HĐ</th>
                         @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
-                        <th class="text-center pe-3" style="width: 110px;">#</th>
+                        <th class="text-center pe-3 w-110px" >#</th>
                         @endcanany
                     </tr>
                 </thead>
@@ -97,41 +97,41 @@
                     @forelse($quotations as $index => $item)
                     <tr class="border-bottom border-light">
                         <td class="ps-3">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
-                        <td class="" style="width: 130px;">
-                            <div class="fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
+                        <td class=" w-130px" >
+                            <div class="fw-semibold text-truncate"  title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
                             @if($item->source)
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary border mt-1" style="font-size: 0.68rem;">{{ $item->source }}</span>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border mt-1 fs-68" >{{ $item->source }}</span>
                             @endif
-                            <div class="text-muted mt-1" style="font-size: 0.75rem; white-space: nowrap;">{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</div>
+                            <div class="text-muted mt-1 fs-75 text-nowrap" >{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</div>
                         </td>
-                        <td style="width: 110px;">
+                        <td class="w-110px">
                             @if($item->quotation_number)
-                            <span class="fw-semibold text-primary" style="font-size: 0.82rem;">{{ $item->quotation_number }}</span>
+                            <span class="fw-semibold text-primary fs-82" >{{ $item->quotation_number }}</span>
                             @else
                             <span class="text-muted">-</span>
                             @endif
                         </td>
                         <td>
-                            <div class="fw-bold text-primary text-capitalize" style="font-size: 0.85rem; line-height: 1.3;">{{ $item->company_name }}</div>
+                            <div class="fw-bold text-primary text-capitalize fs-85 lh-sm" >{{ $item->company_name }}</div>
                             @if($item->contact_person)
                             <div class=" text-muted mt-1"><i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}</div>
                             @endif
                             @if($item->province)
-                            <span class="badge bg-info bg-opacity-10 text-info mt-1" style="font-size: 0.65rem;">{{ $item->province }}</span>
+                            <span class="badge bg-info bg-opacity-10 text-info mt-1 fs-65" >{{ $item->province }}</span>
                             @endif
                         </td>
-                        <td class=" text-wrap" style="max-width: 130px;">
-                            <div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->service }}">
+                        <td class=" text-wrap mxw-130px" >
+                            <div class="line-clamp-2" title="{{ $item->service }}">
                                 {{ $item->service ?: '-' }}
                             </div>
                         </td>
                         <td class="">
                             @if($item->industry)
-                            <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.7rem;">{{ $item->industry }}</span>
+                            <span class="badge bg-light text-dark border px-2 py-1 fs-70" >{{ $item->industry }}</span>
                             @else <span class="text-muted">-</span> @endif
                         </td>
-                        <td class="text-wrap " style="max-width: 200px;">
-                            <div style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $item->work_description }}">
+                        <td class="text-wrap  text-truncate-200" >
+                            <div class="line-clamp-3" title="{{ $item->work_description }}">
                                 {{ $item->work_description ?: '-' }}
                             </div>
                         </td>
@@ -146,7 +146,7 @@
                                     default => 'bg-secondary bg-opacity-10 text-secondary'
                                 };
                             @endphp
-                            <span class="badge rounded-pill {{ $colorClass }} px-2 py-1" style="font-size: 0.72rem;">
+                            <span class="badge rounded-pill {{ $colorClass }} px-2 py-1 fs-72" >
                                 {{ $item->status }}
                             </span>
                         </td>
@@ -211,7 +211,7 @@
                         <table class="table table-bordered mb-0">
                             <tbody>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3" style="width: 30%;">Nhân viên sale</th>
+                                    <th class="bg-light fw-bold px-4 py-3 w-30pct" >Nhân viên sale</th>
                                     <td class="px-4 py-3">{{ $selectedQuotation->staff?->name }} ({{ $selectedQuotation->date?->format('d/m/Y') }})</td>
                                 </tr>
                                 <tr>
@@ -381,21 +381,21 @@
                                 <label class="form-label fw-bold">Giá trị gốc</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.original_value">
-                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
+                                    <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Hoa hồng KH</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_value">
-                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
+                                    <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Thuế HH</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_tax">
-                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
+                                    <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -406,7 +406,7 @@
                                         class="form-control text-end fw-bold bg-light money-input"
                                         value="{{ number_format((float) ($formData['value_inc_vat'] ?? 0), 0, ',', '.') }}"
                                         readonly>
-                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
+                                    <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -417,7 +417,7 @@
                                         class="form-control text-end fw-bold text-danger bg-light money-input"
                                         value="{{ number_format((float) ($formData['total_value'] ?? 0), 0, ',', '.') }}"
                                         readonly>
-                                    <span class="input-group-text p-1" style="font-size: 0.7rem;">đ</span>
+                                    <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
 
@@ -512,7 +512,7 @@
                             <table class="table table-sm table-bordered align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width:50%">Tên cột trong file</th>
+                                        <th class="w-50">Tên cột trong file</th>
                                         <th>Tương ứng với trường dữ liệu</th>
                                     </tr>
                                 </thead>
@@ -539,7 +539,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">3. Xem trước dữ liệu (5 dòng đầu)</label>
                         <div class="table-responsive border rounded">
-                            <table class="table table-sm table-striped align-middle mb-0" style="font-size: 0.78rem;">
+                            <table class="table table-sm table-striped align-middle mb-0 fs-78" >
                                 <thead class="table-dark">
                                     <tr>
                                         @foreach($importColumnMap as $colIdx => $fieldKey)

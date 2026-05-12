@@ -16,7 +16,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0">
+                    <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
                     </div>
                     <div>
@@ -29,7 +29,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0">
+                    <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     </div>
                     <div>
@@ -42,7 +42,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0">
+                    <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
                     </div>
                     <div>
@@ -140,7 +140,7 @@
                             <tbody>
                                 @forelse($byService as $svc)
                                 <tr>
-                                    <td class=" text-muted" style="max-width:160px;">{{ $svc->service ?: '—' }}</td>
+                                    <td class=" text-muted mxw-160px" >{{ $svc->service ?: '—' }}</td>
                                     <td class="text-center">{{ $svc->count }}</td>
                                     <td class="text-end fw-semibold text-primary">{{ number_format($svc->total_sales, 0, ',', '.') }} đ</td>
                                 </tr>

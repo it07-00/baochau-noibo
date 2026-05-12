@@ -16,11 +16,11 @@
             <div class="pure-card rounded-custom card-bg shadow-custom p-3 p-md-4">
                 <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
                     <div class="d-flex align-items-center gap-3 flex-grow-1">
-                        <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                             style="width:48px;height:48px;">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 icon-48"
+                             >
                             <i class="bi bi-person-lines-fill fs-5 text-success"></i>
                         </div>
-                        <div style="min-width:0;">
+                        <div class="min-w-0">
                             <div class="fw-bold fs-6">{{ $customer->name }}</div>
                             <div class="text-muted small d-flex flex-wrap gap-2">
                                 @if($customer->tax_code)
@@ -71,7 +71,7 @@
                         </div>
                         <div class="d-flex align-items-center gap-1">
                             <label class="form-label mb-0 small fw-semibold text-muted text-nowrap">Sắp xếp</label>
-                            <select class="form-select form-select-sm" wire:model.live="sortField" style="min-width:110px;">
+                            <select class="form-select form-select-sm mnw-110px" wire:model.live="sortField" >
                                 <option value="signed_at">Ngày ký</option>
                                 <option value="value">Giá trị</option>
                                 <option value="shd_bc">Số HĐ BC</option>
@@ -128,12 +128,12 @@
                                         </button>
                                     </th>
                                     <th class="d-none d-sm-table-cell">Trạng thái</th>
-                                    <th style="width:40px;"></th>
+                                    <th class="w-42px"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($contracts as $contract)
-                                <tr style="cursor:pointer;" onclick="window.location='{{ route($contract->contract_route) }}'">
+                                <tr class="cursor-pointer" onclick="window.location='{{ route($contract->contract_route) }}'">
                                     <td>
                                         <span class="badge bg-label-info px-2">{{ $contract->type_label }}</span>
                                     </td>
@@ -142,7 +142,7 @@
                                         {{-- Mobile extras --}}
                                         <div class="d-sm-none mt-1">
                                             @if($contract->handler)
-                                                <div class="text-muted small text-wrap" style="max-width:140px;white-space:normal;">{{ $contract->handler }}</div>
+                                                <div class="text-muted small text-wrap mxw-140px text-wrap" >{{ $contract->handler }}</div>
                                             @endif
                                             @if($contract->status)
                                                 @php
@@ -163,7 +163,7 @@
                                         </div>
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $contract->shd_cxl ?: '—' }}</td>
-                                    <td class="text-wrap d-none d-sm-table-cell" style="max-width:180px;">{{ $contract->handler }}</td>
+                                    <td class="text-wrap d-none d-sm-table-cell max-w-180px" >{{ $contract->handler }}</td>
                                     <td class="d-none d-md-table-cell">{{ $contract->signed_at ? $contract->signed_at->format('d/m/Y') : '—' }}</td>
                                     <td class="text-end">{{ $contract->value ? number_format($contract->value, 0, ',', '.') : '—' }}</td>
                                     <td class="d-none d-sm-table-cell">
@@ -269,7 +269,7 @@
                                     <table class="table table-bordered mb-0">
                                         <tbody>
                                             <tr>
-                                                <th class="bg-light fw-bold px-4 py-3" style="width: 25%;">Ghi chú</th>
+                                                <th class="bg-light fw-bold px-4 py-3 w-25" >Ghi chú</th>
                                                 <td class="px-4 py-3">{{ $selectedContract->note }}</td>
                                             </tr>
                                             <tr>

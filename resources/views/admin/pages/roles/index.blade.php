@@ -43,7 +43,7 @@
                                     <td>{{ $role->id }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar bg-light-primary text-primary rounded me-3 d-flex align-items-center justify-content-center" style="width:36px; height:36px">
+                                            <div class="avatar bg-light-primary text-primary rounded me-3 d-flex align-items-center justify-content-center icon-36" >
                                                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4a2.5 2.5 0 11-5 0z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />

@@ -93,14 +93,14 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="text-center" style="width:45px;">STT</th>
+                            <th class="text-center w-45px" >STT</th>
                             <th>Số HĐ</th>
                             <th>Khách hàng</th>
                             <th>Loại dịch vụ</th>
                             <th>NV kinh doanh</th>
                             <th>NV kỹ thuật</th>
                             <th>Tỉnh/TP</th>
-                            <th style="min-width:180px">Tiến trình</th>
+                            <th class="mnw-180px">Tiến trình</th>
                             <th>Bước hiện tại</th>
                             <th>Ngày ký</th>
                             <th>Trạng thái</th>
@@ -113,19 +113,19 @@
                             <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="fw-semibold ">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
-                            <td class=" text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
+                            <td class=" text-muted max-w-180px" >{{ $item->loai_dich_vu ?: '—' }}</td>
                             <td class="">{{ $item->staff?->name ?? '—' }}</td>
                             <td class="">{{ $item->assignments->pluck('user.name')->filter()->implode(', ') ?: '—' }}</td>
                             <td class="">{{ $item->province ?: '—' }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="progress flex-grow-1" style="height:8px">
+                                    <div class="progress flex-grow-1 h-8px" >
                                         <div class="progress-bar {{ $wp['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
                                              role="progressbar" style="width:{{ $wp['percent'] }}%"
                                              aria-valuenow="{{ $wp['percent'] }}" aria-valuemin="0" aria-valuemax="100">
                                         </div>
                                     </div>
-                                    <span class=" text-muted" style="white-space:nowrap">{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
+                                    <span class=" text-muted text-nowrap" >{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
                                 </div>
                             </td>
                             <td class="">{{ $wp['current_label'] }}</td>

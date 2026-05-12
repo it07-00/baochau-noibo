@@ -24,6 +24,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/sweetalert2.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/animate.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/dept-race-board.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/sales-race-board.css') }}">
 
     @stack('styles')
     @livewireStyles

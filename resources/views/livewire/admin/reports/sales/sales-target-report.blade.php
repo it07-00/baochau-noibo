@@ -85,12 +85,12 @@
                 <table class="table align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width:120px">Tháng</th>
-                            <th class="text-end" style="width:220px">Mục tiêu (đ)</th>
-                            <th class="text-end" style="width:230px">Thực tế (Doanh số từ HĐ) (đ)</th>
-                            <th class="text-end" style="width:220px">Chênh lệch (đ)</th>
-                            <th style="min-width:220px">Tiến độ</th>
-                            <th class="text-center" style="width:140px">Trạng thái</th>
+                            <th class="w-120px">Tháng</th>
+                            <th class="text-end text-truncate-220" >Mục tiêu (đ)</th>
+                            <th class="text-end w-230px" >Thực tế (Doanh số từ HĐ) (đ)</th>
+                            <th class="text-end text-truncate-220" >Chênh lệch (đ)</th>
+                            <th class="mnw-220px">Tiến độ</th>
+                            <th class="text-center w-120px" >Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,8 +105,8 @@
                                     ? 'bg-secondary'
                                     : ($pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger'));
                             @endphp
-                            <tr class="{{ $target == 0 ? 'table-light' : '' }}"
-                                style="cursor:pointer;" wire:click="openDetail({{ $m }})">
+                            <tr class="{{ $target == 0 ? 'table-light' : '' }} cursor-pointer"
+                                 wire:click="openDetail({{ $m }})">
                                 <td>
                                     <span class="fw-semibold">Tháng {{ $m }}</span>
                                 </td>
@@ -122,10 +122,10 @@
                                 <td>
                                     @if($pct !== null)
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress flex-grow-1 h-8px" >
                                                 <div class="progress-bar {{ $progressClass }}" role="progressbar" style="width: {{ $progressWidth }}%"></div>
                                             </div>
-                                            <span class=" fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
+                                            <span class=" fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }} mnw-46px text-end" >
                                                 {{ $pct }}%
                                             </span>
                                         </div>
@@ -162,10 +162,10 @@
                                         $totalProgressWidth = max(0, min(100, $totalPct));
                                     @endphp
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                        <div class="progress flex-grow-1 h-8px" >
                                             <div class="progress-bar {{ $totalProgressClass }}" role="progressbar" style="width: {{ $totalProgressWidth }}%"></div>
                                         </div>
-                                        <span class=" fw-semibold {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}" style="min-width:46px; text-align:right;">
+                                        <span class=" fw-semibold {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }} mnw-46px text-end" >
                                             {{ $totalPct }}%
                                         </span>
                                     </div>
@@ -213,13 +213,13 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light sticky-top">
                                     <tr>
-                                        <th class="text-center" style="width:50px;">STT</th>
+                                        <th class="text-center w-50px" >STT</th>
                                         <th>Tên khách hàng</th>
                                         <th>Loại hợp đồng</th>
                                         <th>Nhân viên KD</th>
                                         <th class="text-end">Doanh số (đ)</th>
-                                        <th class="text-center" style="width:110px;">Loại</th>
-                                        <th class="text-center" style="width:130px;">Ngày xuất HĐ</th>
+                                        <th class="text-center w-110px" >Loại</th>
+                                        <th class="text-center w-130px" >Ngày xuất HĐ</th>
                                     </tr>
                                 </thead>
                                 <tbody>

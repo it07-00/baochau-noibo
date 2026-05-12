@@ -10,33 +10,6 @@
 
             <div class="app-content-wrapper {{ $fullWidth ?? false ? 'pt-4 pb-0 px-0' : 'pt-13 pb-13 px-5' }}">
                 <div class="{{ $fullWidth ?? false ? 'w-100 p-0' : 'container-fluid' }}">
-                    <style>
-                        .page-header > h1,
-                        .page-header > h2,
-                        .page-header > h3,
-                        .page-header > h4,
-                        .page-header > h5,
-                        .page-header > h6,
-                        .page-header nav[aria-label="breadcrumb"],
-                        .page-header .breadcrumb {
-                            display: none !important;
-                        }
-
-                        .page-header > div:has(> h1),
-                        .page-header > div:has(> h2),
-                        .page-header > div:has(> h3),
-                        .page-header > div:has(> h4),
-                        .page-header > div:has(> h5),
-                        .page-header > div:has(> h6) {
-                            display: none !important;
-                        }
-
-                        /* Fix date range inputs in filter d-flex containers */
-                        .card-body .d-flex > input[type="date"].form-control {
-                            min-width: 0;
-                            flex: 1 1 0;
-                        }
-                    </style>
 
                     <div class="page-content">
                         @yield('content')

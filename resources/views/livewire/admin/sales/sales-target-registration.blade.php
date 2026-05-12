@@ -63,7 +63,7 @@
                         <h4 class="mb-1 text-danger">{{ number_format($remaining, 0, ',', '.') }} đ</h4>
                         <small class="text-muted">Đã ký: {{ number_format($totals['actual'], 0, ',', '.') }} / {{ number_format($totals['target'], 0, ',', '.') }} đ</small>
                     </div>
-                    <div class="progress mt-3" role="progressbar" aria-label="year-progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $totalPct !== null ? min($totalPct, 100) : 0 }}" style="height: 8px;">
+                    <div class="progress mt-3 h-8px" role="progressbar" aria-label="year-progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $totalPct !== null ? min($totalPct, 100) : 0 }}" >
                         <div class="progress-bar {{ $totalPct !== null && $totalPct >= 100 ? 'bg-success' : ($totalPct !== null && $totalPct >= 70 ? 'bg-warning' : 'bg-danger') }}" style="width: {{ $totalPct !== null ? min($totalPct, 100) : 0 }}%"></div>
                     </div>
                 </div>
@@ -114,12 +114,12 @@
                 <table class="table align-middle mb-0 sales-target-table">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 160px;" class="ps-3">Tháng</th>
-                            <th class="text-end" style="width: 230px;">Cam kết (đ)</th>
-                            <th class="text-end" style="width: 230px;">Thực tế đã ký (đ)</th>
-                            <th class="text-end" style="width: 220px;">Chênh lệch (đ)</th>
-                            <th class="text-end" style="width: 190px;">% Đạt</th>
-                            <th class="text-center pe-3" style="width: 160px;">Trạng thái</th>
+                            <th class="w-min-160px ps-3" >Tháng</th>
+                            <th class="text-end w-230px" >Cam kết (đ)</th>
+                            <th class="text-end w-230px" >Thực tế đã ký (đ)</th>
+                            <th class="text-end text-truncate-220" >Chênh lệch (đ)</th>
+                            <th class="text-end w-190px" >% Đạt</th>
+                            <th class="text-center pe-3 w-min-160px" >Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -137,7 +137,7 @@
                                     <small class="text-muted">Quý {{ $quarter }}</small>
                                 </td>
                                 <td class="text-end">
-                                    <div class="input-group" style="max-width: 220px; margin-left: auto;">
+                                    <div class="input-group mxw-220px ms-auto" >
                                         <input
                                             type="text"
                                             wire:model.blur="targets.{{ $m }}"
@@ -160,7 +160,7 @@
                                 <td class="text-end">
                                     @if($pct !== null)
                                         <div class="fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}">{{ $pct }}%</div>
-                                        <div class="progress ms-auto" style="height: 6px; max-width: 140px;">
+                                        <div class="progress ms-auto h-6px mxw-140px" >
                                             <div class="progress-bar {{ $pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger') }}" style="width: {{ min($pct, 100) }}%"></div>
                                         </div>
                                     @else
@@ -200,43 +200,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .sales-target-registration .kpi-value {
-        font-size: 1.65rem;
-        line-height: 1.1;
-        font-weight: 700;
-    }
-
-    .sales-target-registration .sales-target-table th,
-    .sales-target-registration .sales-target-table td {
-        font-size: 1rem;
-        padding-top: 0.85rem;
-        padding-bottom: 0.85rem;
-    }
-
-    .sales-target-registration .sales-target-table .month-cell  {
-        font-size: 0.92rem;
-    }
-
-    .sales-target-registration .sales-target-table .badge {
-        font-size: 0.95rem;
-        font-weight: 600;
-        padding: 0.4rem 0.75rem;
-    }
-
-    .sales-target-registration .sales-target-table .progress {
-        height: 8px !important;
-    }
-
-    @media (max-width: 992px) {
-        .sales-target-registration .kpi-value {
-            font-size: 1.35rem;
-        }
-
-        .sales-target-registration .sales-target-table th,
-        .sales-target-registration .sales-target-table td {
-            font-size: 0.95rem;
-        }
-    }
-</style>

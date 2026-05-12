@@ -122,7 +122,7 @@
                     — chọn tháng để xem
                 @endif
             </h6>
-            <div style="width: 160px;">
+            <div class="w-min-160px">
                 <select wire:model.live="filter_month" class="form-select form-select-sm">
                     <option value="0">-- Chọn tháng --</option>
                     @for($m = 1; $m <= 12; $m++)
@@ -146,12 +146,12 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width: 50px;">STT</th>
+                                <th class="text-center w-50px" >STT</th>
                                 <th>Tên khách hàng</th>
                                 <th>Loại hợp đồng</th>
                                 <th class="text-end">Doanh số (đ)</th>
-                                <th class="text-center" style="width: 110px;">Loại</th>
-                                <th class="text-center" style="width: 130px;">Ngày xuất HĐ</th>
+                                <th class="text-center w-110px" >Loại</th>
+                                <th class="text-center w-130px" >Ngày xuất HĐ</th>
                             </tr>
                         </thead>
                         <tbody>

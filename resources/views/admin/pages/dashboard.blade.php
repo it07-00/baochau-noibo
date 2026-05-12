@@ -82,7 +82,7 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th style="width:100px">Tháng</th>
+                                    <th class="w-100px">Tháng</th>
                                     <th>Biểu đồ</th>
                                     <th class="text-end">Doanh số</th>
                                 </tr>
@@ -92,11 +92,11 @@
                                 <tr class="{{ $m == $month ? 'table-warning' : '' }}">
                                     <td class="fw-semibold ">
                                         {{ $monthNames[$m] }}
-                                        @if($m == $month)<span class="badge bg-warning text-dark ms-1" style="font-size:10px">Hiện tại</span>@endif
+                                        @if($m == $month)<span class="badge bg-warning text-dark ms-1 fs-10px" >Hiện tại</span>@endif
                                     </td>
                                     <td>
                                         @if($val > 0)
-                                        <div class="progress" style="height:8px;border-radius:4px;">
+                                        <div class="progress h-8px rounded" >
                                             <div class="progress-bar bg-primary" style="width:{{ round($val / $maxMonthly * 100) }}%"></div>
                                         </div>
                                         @else
@@ -135,7 +135,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width:40px">#</th>
+                                <th class="text-center w-42px" >#</th>
                                 <th>Nhân viên</th>
                                 <th class="text-end">Doanh số</th>
                             </tr>
@@ -192,7 +192,7 @@
                                     <td class="text-muted ">{{ $i + 1 }}</td>
                                     <td><span class="badge fs-3 {{ $c['badge'] }}">{{ $c['type'] }}</span></td>
                                     <td class="fw-medium text-custom-body">{{ $c['contract_no'] }}</td>
-                                    <td class="text-custom-body" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">{{ $c['customer'] }}</td>
+                                    <td class="text-custom-body text-truncate-220" >{{ $c['customer'] }}</td>
                                     <td class="text-custom-body ">{{ $c['staff'] }}</td>
                                     <td class="text-end fw-semibold text-primary ">
                                         {{ $c['value'] > 0 ? number_format($c['value'], 0, ',', '.') . ' đ' : '—' }}

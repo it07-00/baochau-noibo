@@ -30,12 +30,16 @@ final class SubmitDailyReportAction
             ]
         );
 
-        $this->notifyManagers($reporter, $date);
+        $lateDays = $report->created_at
+            ? max(0, (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false))
+            : 0;
+
+        $this->notifyManagers($reporter, $date, $lateDays);
 
         return $report;
     }
 
-    private function notifyManagers(User $reporter, string $date): void
+    private function notifyManagers(User $reporter, string $date, int $lateDays): void
     {
         $recipients = User::role(Role::GIAM_DOC->value)->get();
 
@@ -46,7 +50,7 @@ final class SubmitDailyReportAction
         foreach ($recipients->unique('id') as $recipient) {
             /** @var User $recipient */
             if ($recipient->id !== $reporter->id) {
-                $recipient->notify(new DailyReportSubmittedNotification($reporter->name, $date));
+                $recipient->notify(new DailyReportSubmittedNotification($reporter->name, $date, $lateDays));
             }
         }
     }

@@ -10,7 +10,7 @@
             </nav>
         </div>
         <div>
-            <select wire:model.live="year" class="form-select form-select-sm" style="width:auto">
+            <select wire:model.live="year" class="form-select form-select-sm w-auto" >
                 @foreach($years as $y)
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
@@ -35,7 +35,7 @@
                         data-totals='@json($salesRankings->pluck("total")->map(fn ($v) => (float) $v)->values())'>
                     </div>
 
-                    <div id="salesRankingBarChart" wire:ignore style="min-height: 360px;"></div>
+                    <div id="salesRankingBarChart" wire:ignore class="mnh-360px"></div>
 
                     <div class="mt-2">
                         <div class="border rounded-3 px-3 py-2 bg-light-subtle">
@@ -65,7 +65,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width:50px">Hạng</th>
+                                <th class="text-center w-42px" >Hạng</th>
                                 <th>Nhân viên</th>
                                 <th class="text-center">Số HĐ</th>
                                 <th class="text-center">Hoàn thành</th>
@@ -117,7 +117,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width:50px">Hạng</th>
+                                <th class="text-center w-42px" >Hạng</th>
                                 <th>Nhân viên</th>
                                 <th class="text-center">Số HĐ</th>
                                 <th class="text-center">Hoàn thành</th>
@@ -170,7 +170,7 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-center" style="width:40px">#</th>
+                                    <th class="text-center w-42px" >#</th>
                                     <th>Khách hàng</th>
                                     <th class="text-center">HĐ CT</th>
                                     <th class="text-end">GT Chất thải</th>
@@ -211,7 +211,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width:40px">#</th>
+                                <th class="text-center w-42px" >#</th>
                                 <th>Dịch vụ</th>
                                 <th class="text-center">Số BG</th>
                                 <th class="text-end">Doanh số</th>
@@ -221,7 +221,7 @@
                             @forelse($topServices as $i => $row)
                             <tr>
                                 <td class="text-center text-muted">{{ $i + 1 }}</td>
-                                <td class=" text-muted" style="max-width:180px;">{{ $row->service }}</td>
+                                <td class=" text-muted max-w-180px" >{{ $row->service }}</td>
                                 <td class="text-center">{{ $row->cnt }}</td>
                                 <td class="text-end fw-semibold text-success">{{ number_format($row->total, 0, ',', '.') }} đ</td>
                             </tr>

@@ -4,15 +4,15 @@
             <h5 class="fw-bold mb-0 fs-6">
                 <i class="bi bi-diagram-3 me-1 text-primary"></i> Tiến độ xử lý hợp đồng
             </h5>
-            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle"
-                style="font-size: 0.82rem; padding: 5px 10px; white-space: nowrap;">
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle fs-82 px-2 py-1 text-nowrap"
+                >
                 {{ count($completedSteps) }}/{{ count($stepKeys) }} bước
             </span>
         </div>
 
         {{-- Stepper ngang — desktop (md+) --}}
         <div class="d-none d-md-block mb-4">
-            <div class="d-flex align-items-start" style="gap: 0;">
+            <div class="d-flex align-items-start gap-0" >
                 @foreach ($stepKeys as $i => $key)
                     @php
                         $label = $steps[$key];
@@ -21,18 +21,18 @@
                         $canDo = $canEdit && ($isFirst ? true : in_array($stepKeys[$i - 1], $completedSteps));
                     @endphp
                     <div class="d-flex align-items-center flex-grow-1">
-                        <div class="d-flex flex-column align-items-center flex-shrink-0" style="width: 80px;">
+                        <div class="d-flex flex-column align-items-center flex-shrink-0 w-80px" >
                             @if ($canDo && !$isDone)
                                 <button wire:click="openStep('{{ $key }}')"
-                                    class="btn rounded-circle d-flex align-items-center justify-content-center mb-2 btn-primary"
-                                    style="width: 48px; height: 48px; font-size: 1rem; padding: 0;"
+                                    class="btn rounded-circle d-flex align-items-center justify-content-center mb-2 btn-primary wh-48 fs-6 p-0"
+                                    
                                     title="{{ $label }}">
                                     <span class="fw-bold">{{ $i + 1 }}</span>
                                 </button>
                             @else
                                 <div class="rounded-circle d-flex align-items-center justify-content-center mb-2
-                                    {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }}"
-                                    style="width: 48px; height: 48px; font-size: 1rem;"
+                                    {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-48 fs-6"
+                                    
                                     title="{{ $label }}{{ $isDone ? ' ✓' : '' }}">
                                     @if ($isDone)
                                         <i class="bi bi-check-lg fs-5"></i>
@@ -69,18 +69,18 @@
                 @endphp
                 <div class="d-flex align-items-stretch gap-3">
                     {{-- Cột trái: circle + đường dọc --}}
-                    <div class="d-flex flex-column align-items-center flex-shrink-0" style="width: 44px;">
+                    <div class="d-flex flex-column align-items-center flex-shrink-0 w-44px" >
                         @if ($canDo && !$isDone)
                             <button wire:click="openStep('{{ $key }}')"
-                                class="btn rounded-circle d-flex align-items-center justify-content-center btn-primary flex-shrink-0"
-                                style="width: 44px; height: 44px; font-size: 0.9rem; padding: 0;"
+                                class="btn rounded-circle d-flex align-items-center justify-content-center btn-primary flex-shrink-0 wh-44 fs-90 p-0"
+                                
                                 title="{{ $label }}">
                                 <span class="fw-bold">{{ $i + 1 }}</span>
                             </button>
                         @else
                             <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0
-                                {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }}"
-                                style="width: 44px; height: 44px; font-size: 0.9rem;">
+                                {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-44 fs-90"
+                                >
                                 @if ($isDone)
                                     <i class="bi bi-check-lg"></i>
                                 @else
@@ -103,9 +103,9 @@
                                 {{ $label }}
                             </span>
                             @if ($isDone)
-                                <span class="badge bg-success-subtle text-success" style="font-size: 0.68rem;">Hoàn thành</span>
+                                <span class="badge bg-success-subtle text-success fs-68" >Hoàn thành</span>
                             @elseif ($canDo)
-                                <span class="badge bg-primary-subtle text-primary" style="font-size: 0.68rem;">Có thể làm</span>
+                                <span class="badge bg-primary-subtle text-primary fs-68" >Có thể làm</span>
                             @endif
                         </div>
                     </div>
@@ -115,7 +115,7 @@
 
         {{-- Thông báo nếu không có quyền edit --}}
         @if (!$canEdit)
-            <div class="alert alert-light border d-flex align-items-start gap-2 py-2 px-3 mb-3" style="font-size: 0.85rem;">
+            <div class="alert alert-light border d-flex align-items-start gap-2 py-2 px-3 mb-3 fs-85" >
                 <i class="bi bi-info-circle text-muted mt-1 flex-shrink-0"></i>
                 <span class="text-muted">Chỉ nhân viên tư vấn và kỹ thuật được cập nhật tiến độ.</span>
             </div>
@@ -125,7 +125,7 @@
         @if ($activeStep)
             <div wire:key="confirm-{{ $activeStep }}" class="card border border-primary shadow-sm mt-3">
                 <div class="card-header bg-primary bg-opacity-10 py-2 px-3">
-                    <span class="fw-bold text-primary" style="font-size: 0.9rem;">
+                    <span class="fw-bold text-primary fs-90" >
                         <i class="bi bi-upload me-1"></i>
                         Xác nhận bước: {{ $steps[$activeStep] }}
                     </span>
@@ -141,22 +141,22 @@
                                 <span class="text-danger">*</span>
                             @endif
                         </label>
-                        <small class="d-block text-muted mb-2" style="font-size: 0.78rem;">PDF, Word, Excel, JPG, PNG — tối đa 200MB/file</small>
+                        <small class="d-block text-muted mb-2 fs-78" >PDF, Word, Excel, JPG, PNG — tối đa 200MB/file</small>
                         <input wire:model="uploadFiles" type="file" class="form-control form-control-sm" multiple
                             accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                         @error('uploadFiles')
-                            <div class="text-danger mt-1" style="font-size: 0.82rem;"><i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}</div>
+                            <div class="text-danger mt-1 fs-82" ><i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}</div>
                         @enderror
                         @error('uploadFiles.*')
-                            <div class="text-danger mt-1" style="font-size: 0.82rem;"><i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}</div>
+                            <div class="text-danger mt-1 fs-82" ><i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}</div>
                         @enderror
-                        <div wire:loading wire:target="uploadFiles" class="text-muted mt-1" style="font-size: 0.82rem;">
+                        <div wire:loading wire:target="uploadFiles" class="text-muted mt-1 fs-82" >
                             <div class="spinner-border spinner-border-sm me-1"></div> Đang tải lên...
                         </div>
                         @if (!empty($uploadFiles))
                             <div class="mt-2">
                                 @foreach ($uploadFiles as $f)
-                                    <div class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.78rem;">
+                                    <div class="d-flex align-items-center gap-1 text-muted fs-78" >
                                         <i class="bi bi-file-earmark text-primary flex-shrink-0"></i>
                                         <span class="text-truncate">{{ $f->getClientOriginalName() }}</span>
                                         <span class="text-muted flex-shrink-0">({{ round($f->getSize() / 1024) }} KB)</span>
@@ -192,14 +192,14 @@
         {{-- Danh sách file đã đính kèm --}}
         @if ($filesByStep->count() > 0)
             <div class="mt-4">
-                <h6 class="fw-semibold text-muted mb-3" style="font-size: 0.85rem;">
+                <h6 class="fw-semibold text-muted mb-3 fs-85" >
                     <i class="bi bi-paperclip me-1"></i> File đã đính kèm theo bước
                 </h6>
                 @foreach ($stepKeys as $key)
                     @if (isset($filesByStep[$key]))
                         <div class="mb-3">
-                            <span class="badge text-white mb-2 px-2 py-1"
-                                style="background: #0d6efd; font-size: 0.75rem; border-radius: 6px;">
+                            <span class="badge text-white mb-2 px-2 py-1 bg-primary fs-75 rounded-2"
+                                >
                                 <i class="bi bi-check-circle me-1"></i>{{ $steps[$key] }}
                             </span>
                             @foreach ($filesByStep[$key] as $f)
@@ -207,12 +207,12 @@
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-file-earmark-arrow-down text-success flex-shrink-0"></i>
                                         <a href="{{ $f->file_url }}" target="_blank"
-                                            class="fw-semibold text-decoration-none text-primary text-truncate"
-                                            style="font-size: 0.83rem;">
+                                            class="fw-semibold text-decoration-none text-primary text-truncate fs-83"
+                                            >
                                             {{ $f->original_name ?: 'Xem tệp đính kèm' }}
                                         </a>
                                     </div>
-                                    <div class="text-muted ps-4" style="font-size: 0.75rem;">
+                                    <div class="text-muted ps-4 fs-75" >
                                         {{ $f->uploader?->name }} &mdash; {{ $f->created_at?->format('d/m/Y H:i') }}
                                     </div>
                                 </div>

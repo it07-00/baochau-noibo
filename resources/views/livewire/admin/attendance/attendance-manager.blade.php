@@ -16,7 +16,7 @@
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
                     <div>
                         <h5 class="mb-1 fw-bold">Bảng chấm công</h5>
-                        <div class="text-muted" style="font-size:0.85rem;">
+                        <div class="text-muted fs-85" >
                             @if($lastImport)
                                 Cập nhật lần cuối: {{ $lastImport->created_at->format('d/m/Y H:i') }}
                                 · {{ $lastImport->total_records }} bản ghi
@@ -26,9 +26,9 @@
                         </div>
                     </div>
                     <div class="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center gap-2 mt-2 mt-md-0">
-                        <input type="month" wire:model.live="selectedMonth" class="form-control form-control-sm"
-                               style="max-width:100%;">
-                        <div class="d-grid d-sm-flex gap-2" style="grid-template-columns:1fr 1fr;">
+                        <input type="month" wire:model.live="selectedMonth" class="form-control form-control-sm mxw-100"
+                               >
+                        <div class="d-grid d-sm-flex gap-2 grid-2col" >
                             <a href="{{ route('app.attendance.export', ['month' => $selectedMonth]) }}"
                                class="btn btn-success btn-sm d-flex align-items-center justify-content-center gap-1">
                                 <svg width="15" height="15" fill="none" viewBox="0 0 16 16">
@@ -76,22 +76,22 @@
         {{-- Bảng chấm công --}}
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="table-responsive" style="max-height:80vh;-webkit-overflow-scrolling:touch;">
-                    <table class="table table-bordered table-hover table-sm mb-0 text-nowrap" style="font-size: 0.82rem;">
+                <div class="table-responsive mxh-80vh overflow-y-auto" >
+                    <table class="table table-bordered table-hover table-sm mb-0 text-nowrap fs-82" >
                         <thead style="position:sticky;top:0;z-index:2;background:var(--bs-secondary-bg);">
                             <tr>
                                 <th style="position:sticky;left:0;z-index:3;background:var(--bs-secondary-bg);min-width:32px;" class="text-center">#</th>
                                 <th style="position:sticky;left:32px;z-index:3;background:var(--bs-secondary-bg);min-width:100px;">Nhân viên</th>
                                 @foreach($dates as $date)
-                                    <th class="text-center {{ $date->isSunday() ? 'bg-light text-danger' : '' }}"
-                                        style="min-width:54px;">
+                                    <th class="text-center {{ $date->isSunday() ? 'bg-light text-danger' : '' }} mnw-54px"
+                                        >
                                         <div>{{ $date->format('d') }}</div>
-                                        <div class="fw-normal" style="font-size:0.7rem;">{{ $date->locale('vi')->shortDayName }}</div>
+                                        <div class="fw-normal fs-70" >{{ $date->locale('vi')->shortDayName }}</div>
                                     </th>
                                 @endforeach
-                                <th class="text-center" style="min-width:40px;background:var(--bs-secondary-bg);">Công</th>
-                                <th class="text-center" style="min-width:40px;background:var(--bs-secondary-bg);">Trễ</th>
-                                <th class="text-center" style="min-width:40px;background:var(--bs-secondary-bg);">Sớm</th>
+                                <th class="text-center min-w-40px bg-secondary-subtle" >Công</th>
+                                <th class="text-center min-w-40px bg-secondary-subtle" >Trễ</th>
+                                <th class="text-center min-w-40px bg-secondary-subtle" >Sớm</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,9 +109,9 @@
                                             $isSun = $date->isSunday();
                                         @endphp
                                         @if($isSun)
-                                            <td class="text-center bg-light" style="vertical-align:middle;padding:2px 3px;">
+                                            <td class="text-center bg-light align-middle px-1 py-0" >
                                                 @if($day)
-                                                    <div style="font-size:0.82rem;line-height:1.3;">
+                                                    <div class="fs-82 lh-sm">
                                                         <span>{{ $day['first'] }}</span>
                                                         @if($day['last'])<br><span>{{ $day['last'] }}</span>@endif
                                                     </div>
@@ -139,21 +139,21 @@
                                             @endphp
                                             <td class="text-center" style="vertical-align:middle;padding:2px 3px;background:{{ $cellBg }};color:{{ $cellColor }};">
                                                 @if($day)
-                                                    <div style="font-size:0.82rem;line-height:1.3;font-weight:600;">
+                                                    <div class="fs-82 lh-sm fw-semibold">
                                                         <span>{{ $day['first'] }}</span>
                                                         @if($day['last'])<br><span>{{ $day['last'] }}</span>@endif
                                                     </div>
                                                 @elseif($isAbsent)
-                                                    <span style="font-size:0.82rem;font-weight:700;">✗</span>
+                                                    <span class="fs-82 fw-bold">✗</span>
                                                 @endif
                                             </td>
                                         @endif
                                     @endforeach
-                                    <td class="text-center fw-bold" style="background:var(--bs-secondary-bg);">{{ $row['work_days'] }}</td>
-                                    <td class="text-center {{ $row['late_days'] > 0 ? 'text-danger fw-bold' : '' }}" style="background:var(--bs-secondary-bg);">
+                                    <td class="text-center fw-bold bg-secondary-subtle" >{{ $row['work_days'] }}</td>
+                                    <td class="text-center {{ $row['late_days'] > 0 ? 'text-danger fw-bold' : '' }} bg-secondary-subtle" >
                                         {{ $row['late_days'] }}
                                     </td>
-                                    <td class="text-center {{ $row['early_days'] > 0 ? 'text-warning fw-bold' : '' }}" style="background:var(--bs-secondary-bg);">
+                                    <td class="text-center {{ $row['early_days'] > 0 ? 'text-warning fw-bold' : '' }} bg-secondary-subtle" >
                                         {{ $row['early_days'] }}
                                     </td>
                                 </tr>
@@ -170,11 +170,11 @@
 
                 {{-- Legend --}}
                 @if(count($grid) > 0)
-                    <div class="p-2 p-md-3 border-top d-flex flex-wrap gap-2 gap-md-4" style="font-size:0.75rem;">
-                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#198754;vertical-align:middle;"></span> Đúng giờ</span>
-                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#fd7e14;vertical-align:middle;"></span> Đi trễ (&gt; 08:00)</span>
-                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#ffc107;vertical-align:middle;"></span> Về sớm (&lt; 17:00)</span>
-                        <span><span class="d-inline-block rounded" style="width:14px;height:14px;background:#dc3545;vertical-align:middle;"></span> Trễ + Sớm / Vắng</span>
+                    <div class="p-2 p-md-3 border-top d-flex flex-wrap gap-2 gap-md-4 fs-75" >
+                        <span><span class="d-inline-block rounded color-chip chip-success" ></span> Đúng giờ</span>
+                        <span><span class="d-inline-block rounded color-chip chip-orange" ></span> Đi trễ (&gt; 08:00)</span>
+                        <span><span class="d-inline-block rounded color-chip chip-warning" ></span> Về sớm (&lt; 17:00)</span>
+                        <span><span class="d-inline-block rounded color-chip chip-danger" ></span> Trễ + Sớm / Vắng</span>
                     </div>
                 @endif
             </div>
@@ -183,7 +183,7 @@
 
     {{-- Modal Import --}}
     @if($showImportModal)
-        <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);">
+        <div class="modal fade show d-block overlay-bg" tabindex="-1" >
             <div class="modal-dialog modal-dialog-centered {{ $importStep === 2 ? 'modal-lg' : '' }}">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
 
@@ -191,7 +191,7 @@
                     <div class="modal-header bg-primary py-3">
                         <div>
                             <h5 class="modal-title fw-bold text-white mb-0">Import dữ liệu chấm công</h5>
-                            <div class="text-white-50" style="font-size:0.78rem;">
+                            <div class="text-white-50 fs-78" >
                                 Bước {{ $importStep }}/2 —
                                 {{ $importStep === 1 ? 'Chọn file' : 'Xem trước & xác nhận' }}
                             </div>
@@ -208,9 +208,9 @@
                                     <label class="form-label fw-semibold">File attlog.dat <span class="text-danger">*</span></label>
                                     <input type="file" wire:model="attlogFile" class="form-control form-control-sm" accept=".dat,.txt,.log,.csv">
                                     <div class="form-text">File log chấm công xuất từ máy (tên có dạng 8116..._attlog.dat)</div>
-                                    @error('attlogFile') <div class="text-danger mt-1" style="font-size:0.85rem;">{{ $message }}</div> @enderror
+                                    @error('attlogFile') <div class="text-danger mt-1 fs-85" >{{ $message }}</div> @enderror
                                 </div>
-                                <div class="alert alert-info py-2 mb-0" style="font-size:0.85rem;">
+                                <div class="alert alert-info py-2 mb-0 fs-85" >
                                     <strong>Lưu ý:</strong> Để đồng bộ danh sách nhân viên từ máy, vào <strong>Quản lý NV → Đồng bộ từ máy</strong>.
                                 </div>
                             </div>
@@ -238,9 +238,9 @@
                                         <span class="badge bg-secondary ms-1">{{ count($detectedMonths) }}</span>
                                     </label>
                                     @error('selectedMonths')
-                                        <div class="text-danger mb-1" style="font-size:0.82rem;">{{ $message }}</div>
+                                        <div class="text-danger mb-1 fs-82" >{{ $message }}</div>
                                     @enderror
-                                    <div class="border rounded p-2" style="font-size:0.9rem;">
+                                    <div class="border rounded p-2 fs-90" >
                                         @foreach($detectedMonths as $m)
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox"
@@ -261,8 +261,8 @@
                                         Nhân viên trong file
                                         <span class="badge bg-secondary ms-1">{{ count($parsedEmployees) }} người</span>
                                     </label>
-                                    <div class="border rounded" style="max-height:280px;overflow-y:auto;">
-                                        <table class="table table-sm table-hover mb-0" style="font-size:0.85rem;">
+                                    <div class="border rounded mxh-280px overflow-y-auto" >
+                                        <table class="table table-sm table-hover mb-0 fs-85" >
                                             <thead class="table-light sticky-top">
                                                 <tr>
                                                     <th width="36" class="text-center">Nhập</th>
@@ -276,7 +276,7 @@
                                                         class="{{ $emp['is_blocked'] ? 'opacity-50 bg-light' : '' }}">
                                                         <td class="text-center align-middle">
                                                             @if($emp['is_blocked'])
-                                                                <span title="Đang bị chặn" style="font-size:0.8rem;">🚫</span>
+                                                                <span title="Đang bị chặn" class="fs-85">🚫</span>
                                                             @else
                                                                 <input type="checkbox"
                                                                        class="form-check-input"
@@ -287,13 +287,13 @@
                                                         <td class="text-muted align-middle">
                                                             {{ str_pad($emp['uid'], 5, '0', STR_PAD_LEFT) }}
                                                             @if($emp['is_unknown'])
-                                                                <span class="badge bg-secondary ms-1" style="font-size:0.6rem;">Mới</span>
+                                                                <span class="badge bg-secondary ms-1 fs-60" >Mới</span>
                                                             @endif
                                                         </td>
                                                         <td class="align-middle">
                                                             @if($emp['is_blocked'])
                                                                 <span class="text-muted">{{ $emp['name'] }}</span>
-                                                                <span class="badge bg-danger ms-1" style="font-size:0.65rem;">Bị chặn</span>
+                                                                <span class="badge bg-danger ms-1 fs-65" >Bị chặn</span>
                                                             @else
                                                                 <input type="text"
                                                                        class="form-control form-control-sm border-0 bg-transparent px-1"
@@ -310,7 +310,7 @@
                                 </div>
                             </div>
 
-                            <div class="alert alert-warning py-2 mt-3 mb-0" style="font-size:0.83rem;">
+                            <div class="alert alert-warning py-2 mt-3 mb-0 fs-83" >
                                 <strong>Lưu ý:</strong> Import sẽ thay thế toàn bộ log chấm công của các tháng được chọn.
                                 Nhân viên <em>Chưa đăng ký</em> sẽ bị bỏ qua — hãy đồng bộ danh sách trước.
                             </div>

@@ -12,7 +12,7 @@
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted" style="font-size: 0.75rem; font-weight: 600;">TỔNG NHÂN SỰ</div>
+                        <div class="text-muted fs-75 fw-semibold" >TỔNG NHÂN SỰ</div>
                         <div class="fw-bold fs-4">{{ $stats['total'] }}</div>
                     </div>
                 </div>
@@ -21,11 +21,11 @@
         <div class="col-6 col-md-3 col-xl">
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="hr-stat-icon" style="background: #dcfce7; color: #166534;">
+                    <div class="hr-stat-icon bg-green-pale text-green-dark" >
                         <i class="bi bi-person-check-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted" style="font-size: 0.75rem; font-weight: 600;">CHÍNH THỨC</div>
+                        <div class="text-muted fs-75 fw-semibold" >CHÍNH THỨC</div>
                         <div class="fw-bold fs-4">{{ $stats['active'] }}</div>
                     </div>
                 </div>
@@ -34,11 +34,11 @@
         <div class="col-6 col-md-3 col-xl">
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="hr-stat-icon" style="background: #fef9c3; color: #854d0e;">
+                    <div class="hr-stat-icon bg-yellow-pale text-yellow-dark" >
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
-                        <div class="text-muted" style="font-size: 0.75rem; font-weight: 600;">THỬ VIỆC</div>
+                        <div class="text-muted fs-75 fw-semibold" >THỬ VIỆC</div>
                         <div class="fw-bold fs-4">{{ $stats['probation'] }}</div>
                     </div>
                 </div>
@@ -47,11 +47,11 @@
         <div class="col-6 col-md-3 col-xl">
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="hr-stat-icon" style="background: #e0e7ff; color: #3730a3;">
+                    <div class="hr-stat-icon bg-indigo-pale text-indigo-dark" >
                         <i class="bi bi-mortarboard-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted" style="font-size: 0.75rem; font-weight: 600;">THỰC TẬP</div>
+                        <div class="text-muted fs-75 fw-semibold" >THỰC TẬP</div>
                         <div class="fw-bold fs-4">{{ $stats['intern'] }}</div>
                     </div>
                 </div>
@@ -60,11 +60,11 @@
         <div class="col-6 col-md-3 col-xl">
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="hr-stat-icon" style="background: #fee2e2; color: #991b1b;">
+                    <div class="hr-stat-icon bg-red-pale text-red-dark" >
                         <i class="bi bi-person-x-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted" style="font-size: 0.75rem; font-weight: 600;">ĐÃ NGHỈ</div>
+                        <div class="text-muted fs-75 fw-semibold" >ĐÃ NGHỈ</div>
                         <div class="fw-bold fs-4">{{ $stats['resigned'] }}</div>
                     </div>
                 </div>
@@ -74,20 +74,20 @@
 
     <!-- Filters & Search -->
     <div class="px-3 mb-3">
-        <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+        <div class="card border-0 shadow-sm rounded-12px" >
             <div class="card-body py-3">
                 <div class="row g-2 align-items-center">
                     <div class="col-md-4">
                         <div class="input-group input-group-sm">
                             <span class="input-group-text border-light-subtle"><i class="bi bi-search"></i></span>
                             <input type="text" wire:model.live.debounce.400ms="search"
-                                class="form-control border-light-subtle"
+                                class="form-control border-light-subtle rounded-end-2"
                                 placeholder="Tìm theo tên, mã NV, email, SĐT..."
-                                style="border-radius: 0 8px 8px 0;">
+                                >
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <select wire:model.live="departmentFilter" class="form-select form-select-sm border-light-subtle" style="border-radius: 8px;">
+                        <select wire:model.live="departmentFilter" class="form-select form-select-sm border-light-subtle rounded-8px" >
                             <option value="">Tất cả phòng ban</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}">{{ $dept->name }}</option>
@@ -95,7 +95,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select wire:model.live="statusFilter" class="form-select form-select-sm border-light-subtle" style="border-radius: 8px;">
+                        <select wire:model.live="statusFilter" class="form-select form-select-sm border-light-subtle rounded-8px" >
                             <option value="">Tất cả trạng thái</option>
                             @foreach(\App\Models\User::EMPLOYMENT_STATUSES as $val => $label)
                                 <option value="{{ $val }}">{{ $label }}</option>
@@ -103,7 +103,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select wire:model.live="workTypeFilter" class="form-select form-select-sm border-light-subtle" style="border-radius: 8px;">
+                        <select wire:model.live="workTypeFilter" class="form-select form-select-sm border-light-subtle rounded-8px" >
                             <option value="">Tất cả loại</option>
                             @foreach(\App\Models\User::WORK_TYPES as $val => $label)
                                 <option value="{{ $val }}">{{ $label }}</option>
@@ -117,12 +117,12 @@
 
     <!-- Employee Table -->
     <div class="px-3">
-        <div class="card border-0 shadow-sm hr-table" style="border-radius: 12px; overflow: hidden;">
+        <div class="card border-0 shadow-sm hr-table rounded-12px overflow-hidden" >
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th class="ps-3" style="width: 50px;">#</th>
+                            <th class="ps-3 w-50px" >#</th>
                             <th>Nhân viên</th>
                             <th>Mã NV</th>
                             <th>Phòng ban</th>
@@ -134,30 +134,30 @@
                     </thead>
                     <tbody>
                         @forelse($users as $u)
-                            <tr onclick="window.location='{{ route('app.hr.detail', $u) }}'" style="cursor: pointer;">
+                            <tr onclick="window.location='{{ route('app.hr.detail', $u) }}'" class="cursor-pointer">
                                 <td class="ps-3 text-muted">{{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: #f1f5f9;" class="flex-shrink-0">
+                                        <div class="wh-36 rounded-circle overflow-hidden bg-light flex-shrink-0" >
                                             @if($u->avatar_url)
-                                                <img src="{{ $u->avatar_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{{ $u->avatar_url }}" alt="" class="w-100 h-100 object-fit-cover">
                                             @else
-                                                <div class="d-flex align-items-center justify-content-center h-100 text-muted" style="font-size: 0.85rem; font-weight: 600;">
+                                                <div class="d-flex align-items-center justify-content-center h-100 text-muted fs-85 fw-semibold" >
                                                     {{ mb_substr($u->name, 0, 1) }}
                                                 </div>
                                             @endif
                                         </div>
                                         <div>
                                             <div class="fw-bold text-body">{{ $u->name }}</div>
-                                            <div class="text-muted" style="font-size: 0.78rem;">{{ $u->email }}</div>
+                                            <div class="text-muted fs-78" >{{ $u->email }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="text-muted fw-bold" style="font-size: 0.85rem;">{{ $u->employee_code ?: '—' }}</span>
+                                    <span class="text-muted fw-bold fs-85" >{{ $u->employee_code ?: '—' }}</span>
                                 </td>
                                 <td>
-                                    <span style="font-size: 0.85rem;">{{ $u->department->name ?? '—' }}</span>
+                                    <span class="fs-85">{{ $u->department->name ?? '—' }}</span>
                                 </td>
                                 <td @click.stop>
                                     <select class="form-select form-select-sm border-0 hr-inline-select hr-badge-{{ $u->employment_status }}"
@@ -176,10 +176,10 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <span style="font-size: 0.85rem;">{{ $u->start_date?->format('d/m/Y') ?? '—' }}</span>
+                                    <span class="fs-85">{{ $u->start_date?->format('d/m/Y') ?? '—' }}</span>
                                 </td>
                                 <td class="text-center">
-                                    <span style="font-size: 0.85rem;">{{ $u->phone ?? '—' }}</span>
+                                    <span class="fs-85">{{ $u->phone ?? '—' }}</span>
                                 </td>
                             </tr>
                         @empty

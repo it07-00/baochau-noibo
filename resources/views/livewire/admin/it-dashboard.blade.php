@@ -93,7 +93,7 @@
                             <div class="progress-bar {{ $disk['diskPercent'] >= 90 ? 'bg-danger' : ($disk['diskPercent'] >= 70 ? 'bg-warning' : 'bg-primary') }} progress-bar-striped progress-bar-animated"
                                  style="width:{{ $disk['diskPercent'] }}%"></div>
                         </div>
-                        <div class="d-flex justify-content-between text-muted" style="font-size:12px;">
+                        <div class="d-flex justify-content-between text-muted fs-12px" >
                             <span>Dùng: <b>{{ number_format($disk['diskUsed'] / (1024**3), 1) }} GB</b></span>
                             <span>Trống: <b>{{ number_format($disk['diskFree'] / (1024**3), 1) }} GB</b></span>
                         </div>
@@ -118,11 +118,11 @@
                             <div class="ms-auto d-flex gap-3">
                                 <div class="text-center">
                                     <div class="badge bg-soft-info text-info it-panel-badge">DB SIZE</div>
-                                    <div class="fw-bold" style="font-size:13px;">{{ number_format($dbSize, 1) }} MB</div>
+                                    <div class="fw-bold contract-text-13px" >{{ number_format($dbSize, 1) }} MB</div>
                                 </div>
                                 <div class="text-center">
                                     <div class="badge {{ $failedJobs > 0 ? 'bg-soft-danger text-danger' : 'bg-soft-warning text-warning' }} it-panel-badge">QUEUE</div>
-                                    <div class="fw-bold {{ $failedJobs > 0 ? 'text-danger' : '' }}" style="font-size:13px;">
+                                    <div class="fw-bold {{ $failedJobs > 0 ? 'text-danger' : '' }} contract-text-13px" >
                                         {{ $pendingJobs }}{{ $failedJobs > 0 ? ' / '.$failedJobs.' lỗi' : '' }}
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                 <div class="card border-0 h-100 it-panel-card">
                     <div class="card-body p-3">
                         <div class="it-panel-title mb-3">Môi trường</div>
-                        <div class="d-flex flex-column gap-2" style="font-size:13px;">
+                        <div class="d-flex flex-column gap-2 contract-text-13px" >
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-muted">Laravel</span>
                                 <span class="badge bg-light text-dark border fw-bold">{{ $laravelVersion }}</span>
@@ -158,18 +158,18 @@
         <div class="row g-3 mb-4">
             <div class="col-md-5">
                 <div class="card border-0 h-100 it-panel-card">
-                    <div class="card-header py-3 d-flex align-items-center justify-content-between" style="background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);border-bottom:1px solid #e2e8f0;">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between bg-gradient-white border-bottom" >
                         <h6 class="mb-0 fw-bold">Người dùng hệ thống</h6>
-                        <div class="d-flex gap-3 text-center" style="font-size:12px;">
+                        <div class="d-flex gap-3 text-center fs-12px" >
                             <div><div class="fw-bold text-success fs-6">{{ $activeUsers }}</div><div class="text-muted">Hoạt động</div></div>
                             <div><div class="fw-bold text-danger fs-6">{{ $lockedUsers }}</div><div class="text-muted">Bị khóa</div></div>
                         </div>
                     </div>
                     <div class="card-body p-0">
                         @foreach($roleDistribution as $r)
-                            <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom" style="font-size:13px;">
+                            <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom contract-text-13px" >
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="it-user-badge" style="width:24px;height:24px;font-size:10px;">{{ strtoupper(substr($r['name'], 0, 1)) }}</div>
+                                    <div class="it-user-badge wh-24 fs-10px" >{{ strtoupper(substr($r['name'], 0, 1)) }}</div>
                                     <span>{{ $r['name'] }}</span>
                                 </div>
                                 <span class="badge bg-light text-dark border fw-bold">{{ $r['count'] }} người</span>
@@ -242,7 +242,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-soft-info text-info text-uppercase" style="font-size:10px;">{{ $act->event }}</span>
+                                        <span class="badge bg-soft-info text-info text-uppercase fs-10px" >{{ $act->event }}</span>
                                         {{ $act->description }}
                                     </td>
                                     <td class="text-muted">{{ class_basename($act->subject_type ?? '') ?: '—' }}</td>
@@ -295,25 +295,25 @@
 
         {{-- Sessions theo giờ --}}
         <div class="card border-0 it-panel-card mb-4">
-            <div class="card-header py-3 d-flex align-items-center justify-content-between" style="background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);border-bottom:1px solid #e2e8f0;">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between bg-gradient-white border-bottom" >
                 <h6 class="mb-0 fw-bold">Phiên hoạt động theo giờ (24h gần nhất)</h6>
                 <span class="badge bg-primary">{{ $activeSessions }} sessions</span>
             </div>
             <div class="card-body">
                 @if(count($sessionsByHour) > 0)
                     @php $maxSession = max(array_values($sessionsByHour) ?: [1]); @endphp
-                    <div class="d-flex align-items-end gap-1" style="height:110px;">
+                    <div class="d-flex align-items-end gap-1 h-110px" >
                         @for($h = 0; $h <= 23; $h++)
                             @php
                                 $cnt = $sessionsByHour[$h] ?? 0;
                                 $hPct = $maxSession > 0 ? max(5, round(($cnt / $maxSession) * 100)) : 5;
                                 $isNow = $h == now()->hour;
                             @endphp
-                            <div class="flex-fill d-flex flex-column align-items-center justify-content-end" style="height:100%;">
+                            <div class="flex-fill d-flex flex-column align-items-center justify-content-end h-100" >
                                 <div class="rounded-top w-100 {{ $isNow ? 'bg-success' : 'bg-primary' }}"
                                      style="height:{{ $hPct }}%; min-height:5px; opacity:{{ $isNow ? 1 : 0.45 }}; transition:height 0.3s;"></div>
                                 @if($h % 6 === 0)
-                                    <small class="text-muted mt-1" style="font-size:0.62rem;">{{ str_pad($h, 2, '0', STR_PAD_LEFT) }}h</small>
+                                    <small class="text-muted mt-1 fs-62" >{{ str_pad($h, 2, '0', STR_PAD_LEFT) }}h</small>
                                 @endif
                             </div>
                         @endfor
@@ -344,7 +344,7 @@
                         @foreach($last7Days as $day => $cnt)
                             <tr>
                                 <td class="text-nowrap">{{ \Carbon\Carbon::parse($day)->locale('vi')->isoFormat('dddd, DD/MM') }}</td>
-                                <td style="width:55%;">
+                                <td class="w-55pct">
                                     <div class="it-disk-progress">
                                         <div class="progress-bar bg-primary" style="width:{{ $maxAct > 0 ? round(($cnt/$maxAct)*100) : 0 }}%"></div>
                                     </div>

@@ -40,6 +40,7 @@ class DailyReportManager extends Component
         'total' => 0,
         'missing' => 0,
         'issues' => 0,
+        'late' => 0,
     ];
 
     protected $queryString = [
@@ -305,6 +306,10 @@ class DailyReportManager extends Component
                 $this->reportStats['total'] = $usersToDisplay->count();
                 $this->reportStats['issues'] = $dailyReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->count();
                 $this->reportStats['missing'] = $usersToDisplay->whereNull(fn($u) => $dailyReports->get($u->id))->count();
+                $this->reportStats['late'] = $dailyReports->filter(function ($report) {
+                    return $report->created_at
+                        && $report->created_at->copy()->startOfDay()->gt($report->date->copy()->startOfDay());
+                })->count();
             } else {
                 $monthReports = DailyReport::with('user')->whereIn('user_id', $userIds)
                     ->whereYear('date', $this->yearFilter)

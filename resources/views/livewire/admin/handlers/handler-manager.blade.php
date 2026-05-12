@@ -57,7 +57,7 @@
                                         </a>
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $handler->phone ?: '—' }}</td>
-                                    <td class="d-none d-lg-table-cell" style="max-width: 220px;">
+                                    <td class="d-none d-lg-table-cell mxw-220px" >
                                         @if($handler->address)
                                             <span class="d-block text-truncate" title="{{ $handler->address }}">{{ $handler->address }}</span>
                                         @else
@@ -106,7 +106,7 @@
                         @forelse($handlers as $handler)
                         <div wire:key="handler-card-{{ $handler->id }}" class="border rounded-3 p-3 mb-2 bg-body">
                             <div class="d-flex justify-content-between align-items-start gap-2">
-                                <a href="{{ route('app.handlers.contracts', $handler) }}" class="fw-bold text-body text-decoration-none" style="font-size: 0.9rem; line-height: 1.4;">
+                                <a href="{{ route('app.handlers.contracts', $handler) }}" class="fw-bold text-body text-decoration-none fs-90 lh-base" >
                                     {{ $handler->name }}
                                 </a>
                                 <div class="d-flex gap-1 flex-shrink-0">
@@ -121,7 +121,7 @@
                                 </div>
                             </div>
                             @if($handler->phone || $handler->address)
-                            <div class="mt-2 d-flex flex-column gap-1" style="font-size: 0.8rem; color: var(--bs-secondary-color);">
+                            <div class="mt-2 d-flex flex-column gap-1 fs-80 text-muted" >
                                 @if($handler->phone)
                                     <span><i class="bi bi-telephone me-1"></i>{{ $handler->phone }}</span>
                                 @endif

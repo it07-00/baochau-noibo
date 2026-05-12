@@ -1,22 +1,22 @@
 <div class="software-manager w-100 px-2 px-md-3 pb-5">
     {{-- Header --}}
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
+    <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden" >
         <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h5 class="mb-0 fw-bold">
                 <i class="bi bi-laptop me-2 text-primary"></i>Phần mềm nội bộ
             </h5>
 
             <div class="d-flex align-items-center gap-3">
-                <div class="input-group" style="width: 250px;">
-                    <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
+                <div class="input-group w-250px" >
+                    <span class="input-group-text bg-light border-end-0 rounded-start-2" >
                         <i class="bi bi-search text-muted"></i>
                     </span>
-                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control border-start-0 ps-0 bg-light"
-                        placeholder="Tìm kiếm phần mềm..." style="border-radius: 0 8px 8px 0; border: 1px solid #dee2e6;">
+                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control border-start-0 ps-0 bg-light rounded-end-2 border"
+                        placeholder="Tìm kiếm phần mềm..." >
                 </div>
 
                 @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
-                    <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
+                    <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2 rounded-8px" >
                         <i class="bi bi-plus-lg"></i> Thêm mới
                     </button>
                 @endif
@@ -28,12 +28,12 @@
     <div class="row g-4">
         @forelse($softwares as $sw)
             <div class="col-md-4 col-sm-6">
-                <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; transition: transform 0.2s; cursor: pointer;"
+                <div class="card border-0 shadow-sm h-100 rounded-3 hover-lift cursor-pointer" 
                      onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.5rem;">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center wh-48 fs-5" >
                                     <i class="bi bi-box-seam"></i>
                                 </div>
                                 <div>
@@ -49,27 +49,27 @@
                                     <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="border-radius: 8px;">
-                                        <li><button wire:click="edit({{ $sw->id }})" class="dropdown-item py-2" style="font-size: 0.85rem;"><i class="bi bi-pencil me-2 text-primary"></i>Chỉnh sửa</button></li>
-                                        <li><button wire:click="delete({{ $sw->id }})" wire:confirm="Bạn có chắc muốn xóa phần mềm này?" class="dropdown-item py-2 text-danger" style="font-size: 0.85rem;"><i class="bi bi-trash me-2"></i>Xóa</button></li>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-8px" >
+                                        <li><button wire:click="edit({{ $sw->id }})" class="dropdown-item py-2 fs-85" ><i class="bi bi-pencil me-2 text-primary"></i>Chỉnh sửa</button></li>
+                                        <li><button wire:click="delete({{ $sw->id }})" wire:confirm="Bạn có chắc muốn xóa phần mềm này?" class="dropdown-item py-2 text-danger fs-85" ><i class="bi bi-trash me-2"></i>Xóa</button></li>
                                     </ul>
                                 </div>
                             @endif
                         </div>
 
-                        <p class="card-text text-muted flex-grow-1" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        <p class="card-text text-muted flex-grow-1 fs-90 line-clamp-3" >
                             {{ $sw->description ?: 'Không có mô tả.' }}
                         </p>
 
                         <div class="mt-3">
-                            <a href="{{ $sw->url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 fw-medium" style="border-radius: 8px;">
+                            <a href="{{ $sw->url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 fw-medium rounded-8px" >
                                 <i class="bi bi-link-45deg me-1"></i> Truy cập / Tải xuống
                             </a>
                         </div>
 
                         @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                             <div class="mt-2 text-center">
-                                <span class="badge {{ $sw->is_active ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 text-{{ $sw->is_active ? 'success' : 'secondary' }} rounded-pill" style="font-size: 0.7rem;">
+                                <span class="badge {{ $sw->is_active ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 text-{{ $sw->is_active ? 'success' : 'secondary' }} rounded-pill fs-70" >
                                     {{ $sw->is_active ? 'Hoạt động' : 'Đã ẩn' }}
                                 </span>
                             </div>
@@ -79,7 +79,7 @@
             </div>
         @empty
             <div class="col-12 text-center py-5">
-                <i class="bi bi-laptop text-muted opacity-25" style="font-size: 4rem;"></i>
+                <i class="bi bi-laptop text-muted opacity-25 fs-4rem" ></i>
                 <p class="text-muted mt-3 mb-0">Chưa có phần mềm nào.</p>
             </div>
         @endforelse
@@ -91,9 +91,9 @@
 
     {{-- Create/Edit Modal --}}
     @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
-        <div class="modal fade {{ $showModal ? 'show d-block' : '' }}" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal fade {{ $showModal ? 'show d-block' : '' }} bg-dark-50" tabindex="-1" >
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+                <div class="modal-content border-0 shadow rounded-16px" >
                     <div class="modal-header border-bottom py-3">
                         <h5 class="modal-title fw-bold">
                             <i class="bi bi-{{ $editingId ? 'pencil-square' : 'plus-circle' }} me-2 text-primary"></i>
@@ -133,8 +133,8 @@
                             </div>
                         </div>
                         <div class="modal-footer border-top py-3">
-                            <button type="button" class="btn btn-light" wire:click="$set('showModal', false)" style="border-radius: 8px;">Hủy</button>
-                            <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                            <button type="button" class="btn btn-light rounded-8px" wire:click="$set('showModal', false)" >Hủy</button>
+                            <button type="submit" class="btn btn-primary rounded-8px" >
                                 <i class="bi bi-save me-1"></i> Lưu lại
                             </button>
                         </div>

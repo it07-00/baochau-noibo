@@ -5,7 +5,7 @@
 
     <div class="px-3 pt-3">
         <!-- Back button -->
-        <a href="{{ route('app.hr.index') }}" class="btn btn-sm btn-outline-secondary mb-3" style="border-radius: 8px;">
+        <a href="{{ route('app.hr.index') }}" class="btn btn-sm btn-outline-secondary mb-3 rounded-8px" >
             <i class="bi bi-arrow-left me-1"></i> Danh sách nhân sự
         </a>
 
@@ -24,11 +24,11 @@
                             @endif
                         </div>
                         <h5 class="fw-bold mb-1">{{ $user->name }}</h5>
-                        <p class="text-muted mb-2" style="font-size: 0.85rem;">{{ $user->email }}</p>
+                        <p class="text-muted mb-2 fs-85" >{{ $user->email }}</p>
                         <span class="hr-badge hr-badge-{{ $user->employment_status }}">{{ $user->employment_status_label }}</span>
                         <span class="hr-badge hr-badge-{{ $user->work_type }} ms-1">{{ $user->work_type_label }}</span>
                     </div>
-                    <div class="border-top px-4 py-3" style="font-size: 0.85rem;">
+                    <div class="border-top px-4 py-3 fs-85" >
                         <div class="mb-2"><i class="bi bi-hash me-2 text-muted"></i><strong>Mã NV:</strong> {{ $user->employee_code ?: '—' }}</div>
                         <div class="mb-2"><i class="bi bi-building me-2 text-muted"></i><strong>Phòng ban:</strong> {{ $user->department->name ?? '—' }}</div>
                         <div class="mb-2"><i class="bi bi-telephone me-2 text-muted"></i><strong>SĐT:</strong> {{ $user->phone ?: '—' }}</div>
@@ -40,7 +40,7 @@
 
             <!-- RIGHT: Tabs Content -->
             <div class="col-md-9">
-                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="card border-0 shadow-sm rounded-16px" >
                     <!-- Tabs -->
                     <div class="card-header bg-white border-bottom p-0">
                         <ul class="nav hr-tabs">
@@ -176,11 +176,11 @@
 
                                 <div class="hr-info-field mb-4">
                                     <label>Ghi chú HR</label>
-                                    <textarea wire:model="hr_notes" class="form-control form-control-sm" rows="3" style="border-radius: 8px;"></textarea>
+                                    <textarea wire:model="hr_notes" class="form-control form-control-sm rounded-8px" rows="3" ></textarea>
                                 </div>
 
                                 @can('hr-profiles.edit')
-                                    <button type="submit" class="btn btn-primary px-4" style="border-radius: 8px;">
+                                    <button type="submit" class="btn btn-primary px-4 rounded-8px" >
                                         <i class="bi bi-check-lg me-1"></i> Lưu thông tin
                                     </button>
                                 @endcan
@@ -190,7 +190,7 @@
                         @elseif($activeTab === 'contracts')
                             @can('hr-profiles.edit')
                                 <div class="d-flex justify-content-end mb-3">
-                                    <button wire:click="openContractModal" class="btn btn-sm btn-primary" style="border-radius: 8px;">
+                                    <button wire:click="openContractModal" class="btn btn-sm btn-primary rounded-8px" >
                                         <i class="bi bi-plus-lg me-1"></i> Thêm hợp đồng
                                     </button>
                                 </div>
@@ -201,15 +201,15 @@
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                             <div class="fw-bold">{{ $c->contract_type_label }}</div>
-                                            <div class="text-muted" style="font-size: 0.82rem;">
+                                            <div class="text-muted fs-82" >
                                                 Số HĐ: {{ $c->contract_number ?: '—' }} &bull;
                                                 Ký ngày: {{ $c->signed_date->format('d/m/Y') }}
                                             </div>
-                                            <div class="text-muted" style="font-size: 0.82rem;">
+                                            <div class="text-muted fs-82" >
                                                 Hiệu lực: {{ $c->start_date->format('d/m/Y') }} → {{ $c->end_date?->format('d/m/Y') ?? 'Không thời hạn' }}
                                             </div>
                                             @if($c->salary)
-                                                <div style="font-size: 0.82rem;"><strong>Lương:</strong> {{ number_format($c->salary, 0, ',', '.') }} VNĐ</div>
+                                                <div class="fs-82"><strong>Lương:</strong> {{ number_format($c->salary, 0, ',', '.') }} VNĐ</div>
                                             @endif
                                         </div>
                                         <div class="d-flex gap-1 align-items-center">
@@ -217,17 +217,17 @@
                                                 {{ $c->status_label }}
                                             </span>
                                             @can('hr-profiles.edit')
-                                                <button wire:click="openContractModal({{ $c->id }})" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;">
+                                                <button wire:click="openContractModal({{ $c->id }})" class="btn btn-sm btn-outline-primary py-0 px-2 fs-75 rounded-2" >
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                             @endcan
                                             @if($c->file_path)
-                                                <button wire:click="downloadContract({{ $c->id }})" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;">
+                                                <button wire:click="downloadContract({{ $c->id }})" class="btn btn-sm btn-outline-secondary py-0 px-2 fs-75 rounded-2" >
                                                     <i class="bi bi-download"></i>
                                                 </button>
                                             @endif
                                             @can('hr-profiles.delete')
-                                                <button wire:click="deleteContract({{ $c->id }})" wire:confirm="Xóa hợp đồng này?" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;">
+                                                <button wire:click="deleteContract({{ $c->id }})" wire:confirm="Xóa hợp đồng này?" class="btn btn-sm btn-outline-danger py-0 px-2 fs-75 rounded-2" >
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             @endcan
@@ -245,7 +245,7 @@
                         @elseif($activeTab === 'documents')
                             @can('hr-profiles.edit')
                                 <div class="d-flex justify-content-end mb-3">
-                                    <button wire:click="openDocumentModal" class="btn btn-sm btn-primary" style="border-radius: 8px;">
+                                    <button wire:click="openDocumentModal" class="btn btn-sm btn-primary rounded-8px" >
                                         <i class="bi bi-cloud-upload me-1"></i> Tải lên giấy tờ
                                     </button>
                                 </div>
@@ -258,19 +258,19 @@
                                             <div class="hr-doc-icon">
                                                 <i class="bi bi-{{ $doc->is_image ? 'image' : 'file-earmark-pdf' }}"></i>
                                             </div>
-                                            <div class="flex-grow-1" style="min-width: 0;">
-                                                <div class="fw-bold text-truncate" style="font-size: 0.88rem;">{{ $doc->title }}</div>
-                                                <div class="text-muted" style="font-size: 0.75rem;">
+                                            <div class="flex-grow-1 min-w-0" >
+                                                <div class="fw-bold text-truncate fs-88" >{{ $doc->title }}</div>
+                                                <div class="text-muted fs-75" >
                                                     {{ $doc->document_type_label }} &bull; {{ $doc->file_size_formatted }}
                                                     @if($doc->issued_date) &bull; {{ $doc->issued_date->format('d/m/Y') }} @endif
                                                 </div>
                                             </div>
                                             <div class="d-flex gap-1">
-                                                <button wire:click="downloadDocument({{ $doc->id }})" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;" title="Tải về">
+                                                <button wire:click="downloadDocument({{ $doc->id }})" class="btn btn-sm btn-outline-primary py-0 px-2 fs-75 rounded-2"  title="Tải về">
                                                     <i class="bi bi-download"></i>
                                                 </button>
                                                 @can('hr-profiles.delete')
-                                                    <button wire:click="deleteDocument({{ $doc->id }})" wire:confirm="Xóa giấy tờ này?" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem; border-radius: 6px;" title="Xóa">
+                                                    <button wire:click="deleteDocument({{ $doc->id }})" wire:confirm="Xóa giấy tờ này?" class="btn btn-sm btn-outline-danger py-0 px-2 fs-75 rounded-2"  title="Xóa">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 @endcan
@@ -303,59 +303,59 @@
                 <form wire:submit.prevent="saveContract" class="p-4">
                     <div class="row g-3">
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Loại hợp đồng *</label>
-                            <select wire:model="contract_type" class="form-select form-select-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Loại hợp đồng *</label>
+                            <select wire:model="contract_type" class="form-select form-select-sm rounded-8px" >
                                 <option value="">-- Chọn --</option>
                                 @foreach(\App\Models\EmployeeContract::CONTRACT_TYPES as $val => $label)
                                     <option value="{{ $val }}">{{ $label }}</option>
                                 @endforeach
                             </select>
-                            @error('contract_type') <span class="text-danger" style="font-size: 0.78rem;">{{ $message }}</span> @enderror
+                            @error('contract_type') <span class="text-danger fs-78" >{{ $message }}</span> @enderror
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Số hợp đồng</label>
-                            <input type="text" wire:model="contract_number" class="form-control form-control-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Số hợp đồng</label>
+                            <input type="text" wire:model="contract_number" class="form-control form-control-sm rounded-8px" >
                         </div>
                         <div class="col-4">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Ngày ký *</label>
-                            <input type="date" wire:model="contract_signed_date" class="form-control form-control-sm" style="border-radius: 8px;">
-                            @error('contract_signed_date') <span class="text-danger" style="font-size: 0.78rem;">{{ $message }}</span> @enderror
+                            <label class="form-label fw-bold fs-82" >Ngày ký *</label>
+                            <input type="date" wire:model="contract_signed_date" class="form-control form-control-sm rounded-8px" >
+                            @error('contract_signed_date') <span class="text-danger fs-78" >{{ $message }}</span> @enderror
                         </div>
                         <div class="col-4">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Bắt đầu *</label>
-                            <input type="date" wire:model="contract_start_date" class="form-control form-control-sm" style="border-radius: 8px;">
-                            @error('contract_start_date') <span class="text-danger" style="font-size: 0.78rem;">{{ $message }}</span> @enderror
+                            <label class="form-label fw-bold fs-82" >Bắt đầu *</label>
+                            <input type="date" wire:model="contract_start_date" class="form-control form-control-sm rounded-8px" >
+                            @error('contract_start_date') <span class="text-danger fs-78" >{{ $message }}</span> @enderror
                         </div>
                         <div class="col-4">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Kết thúc</label>
-                            <input type="date" wire:model="contract_end_date" class="form-control form-control-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Kết thúc</label>
+                            <input type="date" wire:model="contract_end_date" class="form-control form-control-sm rounded-8px" >
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Lương (VNĐ)</label>
-                            <input type="number" wire:model="contract_salary" class="form-control form-control-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Lương (VNĐ)</label>
+                            <input type="number" wire:model="contract_salary" class="form-control form-control-sm rounded-8px" >
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Trạng thái</label>
-                            <select wire:model="contract_status" class="form-select form-select-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Trạng thái</label>
+                            <select wire:model="contract_status" class="form-select form-select-sm rounded-8px" >
                                 @foreach(\App\Models\EmployeeContract::STATUSES as $val => $label)
                                     <option value="{{ $val }}">{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">File scan HĐ</label>
-                            <input type="file" wire:model="contract_file" class="form-control form-control-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >File scan HĐ</label>
+                            <input type="file" wire:model="contract_file" class="form-control form-control-sm rounded-8px" >
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Ghi chú</label>
-                            <textarea wire:model="contract_notes" class="form-control form-control-sm" rows="2" style="border-radius: 8px;"></textarea>
+                            <label class="form-label fw-bold fs-82" >Ghi chú</label>
+                            <textarea wire:model="contract_notes" class="form-control form-control-sm rounded-8px" rows="2" ></textarea>
                         </div>
                     </div>
                     <div class="mt-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4" style="border-radius: 8px;">
+                        <button type="submit" class="btn btn-primary px-4 rounded-8px" >
                             <i class="bi bi-check-lg me-1"></i> {{ $editingContractId ? 'Cập nhật' : 'Thêm mới' }}
                         </button>
-                        <button type="button" wire:click="$set('showContractModal', false)" class="btn btn-outline-secondary" style="border-radius: 8px;">Hủy</button>
+                        <button type="button" wire:click="$set('showContractModal', false)" class="btn btn-outline-secondary rounded-8px" >Hủy</button>
                     </div>
                 </form>
             </div>
@@ -374,41 +374,41 @@
                 <form wire:submit.prevent="saveDocuments" class="p-4">
                     <div class="row g-3">
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Loại giấy tờ *</label>
-                            <select wire:model="document_type" class="form-select form-select-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Loại giấy tờ *</label>
+                            <select wire:model="document_type" class="form-select form-select-sm rounded-8px" >
                                 @foreach(\App\Models\EmployeeDocument::DOCUMENT_TYPES as $val => $label)
                                     <option value="{{ $val }}">{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Tên hiển thị</label>
-                            <input type="text" wire:model="document_title" class="form-control form-control-sm" placeholder="Tự động theo loại" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Tên hiển thị</label>
+                            <input type="text" wire:model="document_title" class="form-control form-control-sm rounded-8px" placeholder="Tự động theo loại" >
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Chọn file (nhiều file) *</label>
-                            <input type="file" wire:model="document_files" class="form-control form-control-sm" multiple style="border-radius: 8px;">
-                            @error('document_files') <span class="text-danger" style="font-size: 0.78rem;">{{ $message }}</span> @enderror
-                            @error('document_files.*') <span class="text-danger" style="font-size: 0.78rem;">{{ $message }}</span> @enderror
+                            <label class="form-label fw-bold fs-82" >Chọn file (nhiều file) *</label>
+                            <input type="file" wire:model="document_files" class="form-control form-control-sm rounded-8px" multiple >
+                            @error('document_files') <span class="text-danger fs-78" >{{ $message }}</span> @enderror
+                            @error('document_files.*') <span class="text-danger fs-78" >{{ $message }}</span> @enderror
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Ngày cấp</label>
-                            <input type="date" wire:model="document_issued_date" class="form-control form-control-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Ngày cấp</label>
+                            <input type="date" wire:model="document_issued_date" class="form-control form-control-sm rounded-8px" >
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Ngày hết hạn</label>
-                            <input type="date" wire:model="document_expiry_date" class="form-control form-control-sm" style="border-radius: 8px;">
+                            <label class="form-label fw-bold fs-82" >Ngày hết hạn</label>
+                            <input type="date" wire:model="document_expiry_date" class="form-control form-control-sm rounded-8px" >
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-bold" style="font-size: 0.82rem;">Ghi chú</label>
-                            <textarea wire:model="document_notes" class="form-control form-control-sm" rows="2" style="border-radius: 8px;"></textarea>
+                            <label class="form-label fw-bold fs-82" >Ghi chú</label>
+                            <textarea wire:model="document_notes" class="form-control form-control-sm rounded-8px" rows="2" ></textarea>
                         </div>
                     </div>
                     <div class="mt-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4" style="border-radius: 8px;">
+                        <button type="submit" class="btn btn-primary px-4 rounded-8px" >
                             <i class="bi bi-cloud-upload me-1"></i> Tải lên
                         </button>
-                        <button type="button" wire:click="$set('showDocumentModal', false)" class="btn btn-outline-secondary" style="border-radius: 8px;">Hủy</button>
+                        <button type="button" wire:click="$set('showDocumentModal', false)" class="btn btn-outline-secondary rounded-8px" >Hủy</button>
                     </div>
                 </form>
             </div>

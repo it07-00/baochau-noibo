@@ -1,103 +1,5 @@
 <div>
     @push('styles')
-    <style>
-    @media (max-width: 767.98px) {
-        .statistics-page-header {
-            align-items: stretch !important;
-            gap: 14px !important;
-        }
-        .statistics-page-header > div:first-child,
-        .statistics-filter-bar {
-            width: 100%;
-        }
-        .statistics-filter-bar {
-            display: grid !important;
-            grid-template-columns: 1fr;
-            justify-content: stretch !important;
-            gap: 10px !important;
-        }
-        .statistics-filter-control,
-        .statistics-clear-date {
-            width: 100% !important;
-            min-width: 0 !important;
-            min-height: 42px;
-        }
-        .statistics-date-control::-webkit-calendar-picker-indicator {
-            margin-left: auto;
-        }
-        .it-dashboard-tabs {
-            width: 100%;
-            display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-        .it-dashboard-tabs .nav-item,
-        .it-dashboard-tabs .nav-link {
-            width: 100%;
-        }
-        .it-dashboard-tabs .nav-link {
-            text-align: center;
-            white-space: nowrap;
-        }
-        .it-security-summary {
-            gap: 14px !important;
-        }
-        .it-security-alert-card .card-body {
-            padding: 20px 22px;
-        }
-        .it-security-alert-card .display-5 {
-            font-size: 2.25rem;
-        }
-        .it-top-user-card .card-body {
-            padding: 14px;
-        }
-        .it-top-user-list {
-            display: grid;
-            gap: 10px;
-        }
-        .it-top-user-item {
-            min-width: 0;
-            border: 1px solid rgba(148, 163, 184, 0.22);
-            border-radius: 10px;
-            background: color-mix(in srgb, var(--bs-body-bg) 88%, var(--bs-primary) 12%);
-            padding: 12px;
-        }
-        .it-top-user-name {
-            color: var(--bs-body-color);
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .it-top-user-count {
-            flex: 0 0 auto;
-            background: var(--bs-body-bg) !important;
-            color: var(--bs-body-color) !important;
-            border-color: rgba(148, 163, 184, 0.32) !important;
-        }
-    }
-
-    @media (min-width: 576px) and (max-width: 767.98px) {
-        .statistics-filter-bar {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-        .statistics-clear-date {
-            grid-column: span 2;
-        }
-    }
-
-    [data-bs-theme="dark"] .it-top-user-item {
-        background: #20313a;
-        border-color: rgba(125, 211, 252, 0.22);
-    }
-    [data-bs-theme="dark"] .it-top-user-name {
-        color: #e5edf7;
-    }
-    [data-bs-theme="dark"] .it-top-user-count {
-        background: #171717 !important;
-        color: #fff !important;
-        border-color: rgba(255, 255, 255, 0.12) !important;
-    }
-    </style>
     @endpush
 
     @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
@@ -112,13 +14,13 @@
             </nav>
         </div>
         <div class="statistics-filter-bar d-flex gap-2 flex-wrap justify-content-end">
-            <select wire:model.live="month" class="form-select statistics-filter-control" style="width:auto; min-width: 170px; min-height: 42px;">
+            <select wire:model.live="month" class="form-select statistics-filter-control mnw-170px min-h-42px" >
                 <option value="">Cả năm</option>
                 @for($m = 1; $m <= 12; $m++)
                     <option value="{{ $m }}">Tháng {{ $m }}</option>
                 @endfor
             </select>
-            <select wire:model.live="year" class="form-select statistics-filter-control" style="width:auto; min-width: 170px; min-height: 42px;">
+            <select wire:model.live="year" class="form-select statistics-filter-control mnw-170px min-h-42px" >
                 @foreach($years as $y)
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
@@ -126,22 +28,22 @@
             <input
                 type="date"
                 wire:model.live="contractDateFrom"
-                class="form-control statistics-filter-control statistics-date-control"
-                style="width:auto; min-width: 195px; min-height: 42px;"
+                class="form-control statistics-filter-control statistics-date-control mnw-195px min-h-42px"
+                
                 title="Lọc hợp đồng từ ngày ký"
             >
             <input
                 type="date"
                 wire:model.live="contractDateTo"
-                class="form-control statistics-filter-control statistics-date-control"
-                style="width:auto; min-width: 195px; min-height: 42px;"
+                class="form-control statistics-filter-control statistics-date-control mnw-195px min-h-42px"
+                
                 title="Lọc hợp đồng đến ngày ký"
             >
             <button
                 type="button"
                 wire:click="clearContractDateFilter"
-                class="btn btn-outline-secondary px-3 statistics-clear-date"
-                style="min-height: 42px;"
+                class="btn btn-outline-secondary px-3 statistics-clear-date min-h-42px"
+                
                 @disabled($contractDateFrom === '' && $contractDateTo === '')
             >
                 Xóa ngày
@@ -154,15 +56,15 @@
         $isIT = auth()->user()->hasRole('it');
     @endphp
     @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'kinh-doanh', 'tp-kinh-doanh']))
-        <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4" style="border-radius: 12px; border-left: 4px solid #f59e0b !important;">
-            <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+        <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4 rounded-3 border-start border-warning border-4" >
+            <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 wh-44" >
                 <i class="bi bi-clock-fill text-warning fs-5"></i>
             </div>
             <div class="flex-grow-1">
                 <h6 class="mb-0 fw-bold text-body">Bạn chưa gửi báo cáo ngày hôm nay</h6>
                 <p class="mb-0  text-muted">Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</p>
             </div>
-            <a href="{{ route('app.daily-reports.index') }}" class="btn btn-warning btn-sm px-3 fw-bold shadow-sm" style="border-radius: 8px;">
+            <a href="{{ route('app.daily-reports.index') }}" class="btn btn-warning btn-sm px-3 fw-bold shadow-sm rounded-8px" >
                 <i class="bi bi-pencil-square me-1"></i> Gửi báo cáo
             </a>
         </div>
@@ -340,7 +242,7 @@
                                             </td>
                                             <td>
                                                 <div class=" text-wrap">
-                                                    <span class="badge bg-soft-info text-info text-uppercase" style="font-size: 10px">{{ $activity->event }}</span>
+                                                    <span class="badge bg-soft-info text-info text-uppercase fs-10px" >{{ $activity->event }}</span>
                                                     {{ $activity->description }}
                                                 </div>
                                             </td>
@@ -388,7 +290,7 @@
                                 <div class="col-md-6">
                                     <div class="it-top-user-item d-flex align-items-center justify-content-between gap-2">
                                         <div class="d-flex align-items-center gap-2 min-w-0">
-                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:30px;height:30px;font-size:11px">
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center wh-30 fs-11px" >
                                                 {{ $stat->causer ? strtoupper(substr($stat->causer->name, 0, 1)) : '?' }}
                                             </div>
                                             <span class="it-top-user-name fw-bold">{{ $stat->causer ? $stat->causer->name : 'N/A' }}</span>
@@ -427,13 +329,13 @@
                                         <span class="fw-bold ">{{ $activity->causer ? $activity->causer->name : 'Hệ thống' }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-soft-{{ in_array($activity->event, ['login','logout']) ? 'success text-success' : ($activity->event == 'failed_login' ? 'danger text-danger' : 'info text-info') }} text-uppercase" style="font-size: 10px">{{ $activity->event }}</span>
+                                        <span class="badge bg-soft-{{ in_array($activity->event, ['login','logout']) ? 'success text-success' : ($activity->event == 'failed_login' ? 'danger text-danger' : 'info text-info') }} text-uppercase fs-10px" >{{ $activity->event }}</span>
                                     </td>
                                     <td class="">{{ $activity->description }}</td>
                                     <td class=" text-muted">
                                         <div class="d-flex flex-column">
                                             <span><i class="bi bi-geo-alt"></i> {{ $activity->getExtraProperty('ip') ?? 'N/A' }}</span>
-                                            <span class="text-truncate" style="max-width: 150px" title="{{ $activity->getExtraProperty('user_agent') }}">{{ $activity->getExtraProperty('user_agent') ?? 'N/A' }}</span>
+                                            <span class="text-truncate mxw-150px"  title="{{ $activity->getExtraProperty('user_agent') }}">{{ $activity->getExtraProperty('user_agent') ?? 'N/A' }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -566,7 +468,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
-                        <canvas id="monthlyOverviewChart" style="height:220px;" wire:ignore></canvas>
+                        <canvas id="monthlyOverviewChart" class="h-220px" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -582,7 +484,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="workloadChartConfig" class="d-none" data-by-type='@json($byType)'></div>
-                        <canvas id="teamWorkloadChart" style="height:220px;" wire:ignore></canvas>
+                        <canvas id="teamWorkloadChart" class="h-220px" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -601,7 +503,7 @@
                     </div>
                     <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="sourceSalesConfig" class="d-none" data-chart='@json($sourceSalesChart)'></div>
-                        <canvas id="sourceSalesChart" style="height:220px;" wire:ignore></canvas>
+                        <canvas id="sourceSalesChart" class="h-220px" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -616,7 +518,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="serviceInsightConfig" class="d-none" data-chart='@json($serviceInsightChart)'></div>
-                        <canvas id="serviceInsightChart" style="height:220px;" wire:ignore></canvas>
+                        <canvas id="serviceInsightChart" class="h-220px" wire:ignore></canvas>
                     </div>
                 </div>
             </div>
@@ -633,7 +535,7 @@
                     </div>
                     <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                         <div id="regionInsightConfig" class="d-none" data-chart='@json($regionInsightChart)'></div>
-                        <canvas id="regionInsightChart" style="height:220px;" wire:ignore></canvas>
+                        <canvas id="regionInsightChart" class="h-220px" wire:ignore></canvas>
                     </div>
                 </div>
             </div>

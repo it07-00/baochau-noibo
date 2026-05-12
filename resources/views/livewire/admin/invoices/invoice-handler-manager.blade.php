@@ -114,7 +114,7 @@
                             <th class="text-end">Đã chi</th>
                             <th>Trạng thái</th>
                             @canany(['handler-invoices.edit', 'handler-invoices.delete'])
-                            <th style="width:80px"></th>
+                            <th class="w-80px"></th>
                             @endcanany
                         </tr>
                     </thead>
@@ -162,7 +162,7 @@
 
     {{-- Modal tạo / chỉnh sửa --}}
     @if($showModal)
-    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,.45)">
+    <div class="modal show d-block overlay-bg-sm" tabindex="-1" >
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -255,7 +255,7 @@
 
     {{-- Modal xác nhận xóa --}}
     @if($showDeleteModal)
-    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,.45)">
+    <div class="modal show d-block overlay-bg-sm" tabindex="-1" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

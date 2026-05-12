@@ -13,7 +13,7 @@
             <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" wire:click="openCreateModal">
                 <i class="bi bi-plus-lg"></i> Thêm mới
             </button>
-            <div class="input-group" style="width: 230px;">
+            <div class="input-group w-230px" >
                 <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo SHD..." wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
             </div>
@@ -24,10 +24,10 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
             <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-funnel-fill text-primary" style="font-size:13px;"></i>
-                <span class="fw-semibold" style="font-size:13px;">Bộ lọc Doanh số tái ký</span>
+                <i class="bi bi-funnel-fill text-primary contract-text-13px" ></i>
+                <span class="fw-semibold contract-text-13px" >Bộ lọc Doanh số tái ký</span>
             </div>
-            <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" style="font-size:18px; line-height:1;">−</button>
+            <button class="btn btn-sm btn-link text-muted p-0 fs-18px lh-1" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" >−</button>
         </div>
         <div class="collapse show" id="filterCollapse">
             <div class="card-body px-4 py-3">
@@ -61,7 +61,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="text-center" style="width:45px;">STT</th>
+                        <th class="text-center w-45px" >STT</th>
                         <th class="ps-4">Thông tin hợp đồng</th>
                         <th>Khách hàng</th>
                         <th class="text-center">Tháng tính doanh số</th>

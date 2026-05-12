@@ -39,21 +39,21 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <select wire:model.live="subjectType" class="form-select form-select-sm al-select" style="min-width:160px;">
+                            <select wire:model.live="subjectType" class="form-select form-select-sm al-select mnw-160px" >
                                 <option value="">Tất cả đối tượng</option>
                                 @foreach ($subjectTypes as $st)
                                     <option value="{{ $st['value'] }}">{{ $st['label'] }}</option>
                                 @endforeach
                             </select>
 
-                            <select wire:model.live="event" class="form-select form-select-sm al-select" style="min-width:130px;">
+                            <select wire:model.live="event" class="form-select form-select-sm al-select mnw-130px" >
                                 <option value="">Tất cả sự kiện</option>
                                 @foreach ($events as $ev)
                                     <option value="{{ $ev }}">{{ ucfirst($ev) }}</option>
                                 @endforeach
                             </select>
 
-                            <select wire:model.live="perPage" class="form-select form-select-sm al-select" style="width:120px;">
+                            <select wire:model.live="perPage" class="form-select form-select-sm al-select w-120px" >
                                 <option value="20">20 dòng</option>
                                 <option value="50">50 dòng</option>
                                 <option value="100">100 dòng</option>
@@ -74,13 +74,13 @@
                         <table class="table al-table table-hover align-middle">
                             <thead>
                                 <tr>
-                                    <th style="width:56px;">ID</th>
+                                    <th class="w-56px">ID</th>
                                     <th>Người thực hiện</th>
-                                    <th style="width:120px;">Sự kiện</th>
+                                    <th class="w-120px">Sự kiện</th>
                                     <th>Đối tượng</th>
                                     <th>Mô tả</th>
-                                    <th style="width:90px;">Thay đổi</th>
-                                    <th style="width:160px;">Thời gian</th>
+                                    <th class="w-90px">Thay đổi</th>
+                                    <th class="w-min-160px">Thời gian</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,7 +122,7 @@
                                             @endif
                                         </td>
 
-                                        <td class="text-truncate" style="max-width:280px;" title="{{ $activity->description }}">
+                                        <td class="text-truncate max-w-260px"  title="{{ $activity->description }}">
                                             {{ $activity->description }}
                                         </td>
 
@@ -145,7 +145,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center py-5">
-                                            <i class="bi bi-inbox text-muted d-block mb-2" style="font-size:2.5rem;"></i>
+                                            <i class="bi bi-inbox text-muted d-block mb-2 fs-25rem" ></i>
                                             <span class="text-muted">
                                                 @if($search || $subjectType || $event || $dateFrom || $dateTo)
                                                     Không có kết quả phù hợp với bộ lọc.
@@ -190,9 +190,9 @@
                                     <table class="table table-sm table-bordered mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th style="width:30%">Trường</th>
-                                                <th style="width:35%"><span class="text-danger"><i class="bi bi-dash-circle-fill me-1"></i>Cũ</span></th>
-                                                <th style="width:35%"><span class="text-success"><i class="bi bi-plus-circle-fill me-1"></i>Mới</span></th>
+                                                <th class="w-30pct">Trường</th>
+                                                <th class="w-35pct"><span class="text-danger"><i class="bi bi-dash-circle-fill me-1"></i>Cũ</span></th>
+                                                <th class="w-35pct"><span class="text-success"><i class="bi bi-plus-circle-fill me-1"></i>Mới</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -219,7 +219,7 @@
                                     <table class="table table-sm table-bordered mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th style="width:40%">Trường</th>
+                                                <th class="w-40pct">Trường</th>
                                                 <th>Giá trị</th>
                                             </tr>
                                         </thead>

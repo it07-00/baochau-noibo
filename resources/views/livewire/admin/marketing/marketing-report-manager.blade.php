@@ -39,7 +39,7 @@
                         {{-- Ngày báo cáo --}}
                         <div class="mb-4">
                             <label class="form-label fw-bold ">Ngày báo cáo</label>
-                            <input type="date" class="form-control form-control-sm" style="max-width:200px;" wire:model="report_date">
+                            <input type="date" class="form-control form-control-sm mxw-200px"  wire:model="report_date">
                         </div>
 
                         {{-- Số lượng content theo kênh --}}
@@ -139,17 +139,17 @@
 
     <div class="card border-0 shadow-sm">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 table-sm" style="font-size:0.875rem;">
+            <table class="table table-hover align-middle mb-0 table-sm fs-875" >
                 <thead class="bg-light">
                     <tr class="text-muted fw-bold">
-                        <th class="ps-3" style="width:40px;">STT</th>
+                        <th class="ps-3 w-42px" >STT</th>
                         @if($isManager || $isViewOnly)<th>Nhân viên</th>@endif
-                        <th style="width:110px;">Ngày</th>
-                        <th class="text-center" style="width:80px;">Tổng bài</th>
-                        <th class="text-center" style="width:80px;"><i class="bi bi-facebook text-primary"></i></th>
-                        <th class="text-center" style="width:80px;"><i class="bi bi-chat-dots text-success"></i> Zalo</th>
-                        <th class="text-center" style="width:80px;"><i class="bi bi-globe text-info"></i> Web</th>
-                        <th class="text-center" style="width:80px;"><i class="bi bi-tiktok"></i></th>
+                        <th class="w-110px">Ngày</th>
+                        <th class="text-center w-80px" >Tổng bài</th>
+                        <th class="text-center w-80px" ><i class="bi bi-facebook text-primary"></i></th>
+                        <th class="text-center w-80px" ><i class="bi bi-chat-dots text-success"></i> Zalo</th>
+                        <th class="text-center w-80px" ><i class="bi bi-globe text-info"></i> Web</th>
+                        <th class="text-center w-80px" ><i class="bi bi-tiktok"></i></th>
                         <th>Nội dung</th>
                         <th>Banner</th>
                         <th>Chỉ tiêu</th>
@@ -166,9 +166,9 @@
                         <td class="text-center">{{ $row->zalo_count ?: '-' }}</td>
                         <td class="text-center">{{ $row->website_count ?: '-' }}</td>
                         <td class="text-center">{{ $row->tiktok_count ?: '-' }}</td>
-                        <td class=" text-muted" style="max-width:200px; white-space:pre-wrap;">{{ \Illuminate\Support\Str::limit($row->content_details, 80) }}</td>
-                        <td class=" text-muted" style="max-width:150px;">{{ \Illuminate\Support\Str::limit($row->banners, 60) }}</td>
-                        <td class=" text-muted" style="max-width:150px;">{{ \Illuminate\Support\Str::limit($row->targets_achieved, 60) }}</td>
+                        <td class=" text-muted mxw-200px" >{{ \Illuminate\Support\Str::limit($row->content_details, 80) }}</td>
+                        <td class=" text-muted mxw-150px" >{{ \Illuminate\Support\Str::limit($row->banners, 60) }}</td>
+                        <td class=" text-muted mxw-150px" >{{ \Illuminate\Support\Str::limit($row->targets_achieved, 60) }}</td>
                     </tr>
                     @empty
                     <tr>

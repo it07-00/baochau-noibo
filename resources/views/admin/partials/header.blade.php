@@ -38,83 +38,13 @@
     $todayLabel = $weekdays[now()->dayOfWeek] . ', ' . now()->format('d/m/Y');
 @endphp
 
-<style>
-.app-header-redesign {
-    background: var(--bs-card-bg, #fff);
-    border-bottom: 1px solid var(--bs-border-color, #e9ecef);
-    padding: 0 24px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 1px 8px rgba(0,0,0,.06);
-}
-
-.app-header-left-group { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-
-.app-header-greeting { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
-.app-header-greeting-name {
-    font-size: .95rem;
-    font-weight: 700;
-    color: var(--bs-body-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 220px;
-}
-.app-header-greeting-sub {
-    font-size: .78rem;
-    color: var(--bs-secondary-color, #6c757d);
-}
-
-.app-header-role-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: .75rem;
-    font-weight: 600;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.app-header-date {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: .82rem;
-    color: var(--bs-secondary-color, #6c757d);
-    padding: 5px 12px;
-    border-radius: 8px;
-    background: var(--bs-tertiary-bg, #f8f9fa);
-    border: 1px solid var(--bs-border-color, #e9ecef);
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.app-header-right-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-
-@media (max-width: 768px) {
-    .app-header-date { display: none !important; }
-    .app-header-greeting-name { max-width: 130px; }
-    .app-header-role-badge { display: none !important; }
-}
-@media (max-width: 480px) {
-    .app-header-redesign { padding: 0 12px; gap: 8px; }
-}
-</style>
-
 <div class="app-header app-header-redesign">
     {{-- LEFT: Hamburger + Greeting --}}
     <div class="app-header-left-group">
-        <button type="button" class="app-header-bar-btn app-sidebar-open-btn d-none d-xl-inline-flex align-items-center justify-content-center" style="flex-shrink:0;">
+        <button type="button" class="app-header-bar-btn app-sidebar-open-btn d-none d-xl-inline-flex align-items-center justify-content-center flex-shrink-0" >
             <span></span><span></span><span></span>
         </button>
-        <button type="button" class="app-header-bar-btn app-sidebar-mobile-open d-xl-none d-inline-flex align-items-center justify-content-center" style="flex-shrink:0;">
+        <button type="button" class="app-header-bar-btn app-sidebar-mobile-open d-xl-none d-inline-flex align-items-center justify-content-center flex-shrink-0" >
             <span></span><span></span><span></span>
         </button>
 
@@ -134,7 +64,7 @@
         </div>
 
         <span class="app-header-role-badge d-none d-md-inline-flex"
-              style="background: {{ $roleColor }}1a; color: {{ $roleColor }}; border: 1px solid {{ $roleColor }}40;">
+              style="--role-c:{{ $roleColor }};">
             <svg width="9" height="9" viewBox="0 0 9 9" fill="currentColor"><circle cx="4.5" cy="4.5" r="4.5"/></svg>
             {{ $roleLabel }}
         </span>
@@ -191,7 +121,7 @@
                                 <x-user-avatar :user="$currentUser" :size="48" />
                             </div>
                             <div class="flex-grow-1 text-start overflow-hidden">
-                                <h6 class="mb-0 text-truncate" style="max-width:180px;" title="{{ $currentUser?->name }}">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
+                                <h6 class="mb-0 text-truncate max-w-180px"  title="{{ $currentUser?->name }}">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
                                 <span class="text-muted">{{ $roleLabel }}</span>
                             </div>
                         </div>

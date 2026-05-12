@@ -136,6 +136,15 @@ class WorkScheduleManager extends Component
         if ($this->editingId) {
             // Update existing
             $event = WorkSchedule::findOrFail($this->editingId);
+            $previousParticipantIds = $event->participants()
+                ->pluck('users.id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
+            $selectedParticipantIds = collect($this->selectedParticipants)
+                ->map(fn ($id) => (int) $id)
+                ->unique()
+                ->values()
+                ->all();
 
             if ($event->user_id !== auth()->id()) {
                 abort(403, 'Bạn chỉ có thể chỉnh sửa sự kiện của mình.');
@@ -153,12 +162,20 @@ class WorkScheduleManager extends Component
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
                 'color'       => $this->color,
             ]);
-            $event->participants()->sync($this->selectedParticipants);
+            $event->participants()->sync($selectedParticipantIds);
+            $addedParticipantIds = array_values(array_diff($selectedParticipantIds, $previousParticipantIds));
+            $event->load('participants');
 
             // Notify participants
             foreach ($event->participants as $participant) {
                 if ($participant->id !== auth()->id()) {
-                    $participant->notify(new WorkScheduleNotification($event->title, auth()->user()->name, 'updated'));
+                    $action = in_array((int) $participant->id, $addedParticipantIds, true) ? 'added' : 'updated';
+                    $participant->notify(new WorkScheduleNotification(
+                        $event->title,
+                        auth()->user()->name,
+                        $action,
+                        $event->start_date->format('Y-m-d')
+                    ));
                 }
             }
 
@@ -178,12 +195,24 @@ class WorkScheduleManager extends Component
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
                 'color'       => $this->color,
             ]);
-            $event->participants()->sync($this->selectedParticipants);
+            $selectedParticipantIds = collect($this->selectedParticipants)
+                ->map(fn ($id) => (int) $id)
+                ->unique()
+                ->values()
+                ->all();
+
+            $event->participants()->sync($selectedParticipantIds);
+            $event->load('participants');
 
             // Notify participants
             foreach ($event->participants as $participant) {
                 if ($participant->id !== auth()->id()) {
-                    $participant->notify(new WorkScheduleNotification($event->title, auth()->user()->name, 'created'));
+                    $participant->notify(new WorkScheduleNotification(
+                        $event->title,
+                        auth()->user()->name,
+                        'added',
+                        $event->start_date->format('Y-m-d')
+                    ));
                 }
             }
 
@@ -205,7 +234,12 @@ class WorkScheduleManager extends Component
         // Notify participants before deleting
         foreach ($event->participants as $participant) {
             if ($participant->id !== auth()->id()) {
-                $participant->notify(new WorkScheduleNotification($event->title, auth()->user()->name, 'deleted'));
+                $participant->notify(new WorkScheduleNotification(
+                    $event->title,
+                    auth()->user()->name,
+                    'deleted',
+                    $event->start_date->format('Y-m-d')
+                ));
             }
         }
 

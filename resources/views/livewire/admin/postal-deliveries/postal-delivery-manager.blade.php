@@ -10,7 +10,7 @@
             </nav>
         </div>
         <div class="d-flex gap-2">
-            <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm" style="border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#deliveryModal" wire:click="resetFields">
+            <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm rounded-10px"  data-bs-toggle="modal" data-bs-target="#deliveryModal" wire:click="resetFields">
                 <i class="bi bi-plus-lg"></i>
                 <span class="fw-bold">Thêm mới</span>
             </button>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Filters Section -->
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+    <div class="card border-0 shadow-sm mb-4 rounded-15px" >
         <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
             <h6 class="fw-bold text-dark mb-0"><i class="bi bi-filter-left me-2 text-primary"></i>Bộ lọc Chuyển phát thư</h6>
         </div>
@@ -41,10 +41,10 @@
                     </select>
                 </div>
                 <div class="col-md-5 d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
-                    <button class="btn btn-primary px-4 shadow-sm" wire:click="$refresh" style="border-radius: 10px;">
+                    <button class="btn btn-primary px-4 shadow-sm rounded-10px" wire:click="$refresh" >
                         <i class="bi bi-search me-2"></i>Lọc
                     </button>
-                    <button class="btn btn-outline-primary px-4 shadow-sm fw-bold d-flex align-items-center gap-2" style="border-radius: 10px;">
+                    <button class="btn btn-outline-primary px-4 shadow-sm fw-bold d-flex align-items-center gap-2 rounded-10px" >
                         <i class="bi bi-file-earmark-text"></i> Quy trình
                     </button>
                 </div>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- List Table -->
-    <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+    <div class="card border-0 shadow-sm rounded-15px overflow-hidden" >
         <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
             <h6 class="fw-bold text-dark mb-0">Danh sách Chuyển phát thư</h6>
         </div>
@@ -61,13 +61,13 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="text-center" style="width:45px;">STT</th>
-                        <th class="ps-4" style="width: 28%;">Khách hàng</th>
-                        <th class="text-center" style="width: 13%;">Số bill Viettel Post</th>
-                        <th class="text-center" style="width: 13%;">Số bill 247</th>
-                        <th class="text-center" style="width: 12%;">Trạng thái VTP</th>
+                        <th class="text-center w-45px" >STT</th>
+                        <th class="ps-4 w-28pct" >Khách hàng</th>
+                        <th class="text-center w-13pct" >Số bill Viettel Post</th>
+                        <th class="text-center w-13pct" >Số bill 247</th>
+                        <th class="text-center w-12pct" >Trạng thái VTP</th>
                         <th class="text-center">Ngày tạo đơn</th>
-                        <th style="width: 15%;">Nội dung</th>
+                        <th class="w-15pct">Nội dung</th>
                         @canany(['mail-delivery.edit', 'mail-delivery.delete'])
                         <th class="text-end pe-4">Thao tác</th>
                         @endcanany
@@ -122,7 +122,7 @@
                                     {{ $delivery->vtp_status_name }}
                                 </span>
                                 @if($delivery->vtp_last_tracked_at)
-                                    <div class="text-muted mt-1" style="font-size: 10px;">
+                                    <div class="text-muted mt-1 fs-10px" >
                                         Cập nhật: {{ $delivery->vtp_last_tracked_at->format('H:i d/m') }}
                                     </div>
                                 @endif
@@ -134,7 +134,7 @@
                             <span class="text-muted ">{{ $delivery->created_at->format('d/m/Y') }}</span>
                         </td>
                         <td>
-                            <div class="text-dark " style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
+                            <div class="text-dark  line-clamp-2 lh-base" >
                                 {{ $delivery->content }}
                             </div>
                         </td>
@@ -211,7 +211,7 @@
     <div wire:ignore.self class="modal fade" id="deliveryModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <form wire:submit.prevent="save">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-content border-0 shadow-lg rounded-pill" >
                     <div class="modal-header border-0 pt-4 px-4 pb-0">
                         <h5 class="modal-title fw-bold text-dark">{{ $deliveryId ? 'Cập nhật Chuyển phát' : 'Thêm mới Chuyển phát' }}</h5>
                         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -330,8 +330,8 @@
                         </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0 justify-content-end gap-2">
-                        <button type="button" class="btn btn-light px-4 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Hủy bỏ</button>
-                        <button type="submit" class="btn btn-primary px-4 py-2 shadow-sm fw-bold" style="border-radius: 10px;" wire:loading.attr="disabled">
+                        <button type="button" class="btn btn-light px-4 py-2 rounded-10px" data-bs-dismiss="modal" >Hủy bỏ</button>
+                        <button type="submit" class="btn btn-primary px-4 py-2 shadow-sm fw-bold rounded-10px"  wire:loading.attr="disabled">
                             <span wire:loading wire:target="save">
                                 <span class="spinner-border spinner-border-sm me-1" role="status"></span>
                             </span>
@@ -347,7 +347,7 @@
     <!-- Modal Tracking VTP -->
     <div wire:ignore.self class="modal fade" id="trackingModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-content border-0 shadow-lg rounded-pill" >
                 <div class="modal-header border-0 pt-4 px-4 pb-2">
                     <h5 class="modal-title fw-bold text-dark">
                         <i class="bi bi-geo-alt-fill text-danger me-2"></i>Tracking Viettel Post
@@ -379,8 +379,8 @@
                     <div class="tracking-timeline">
                         @foreach($trackingData as $index => $item)
                         <div class="d-flex mb-3">
-                            <div class="me-3 text-center" style="min-width: 40px;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center {{ $index === 0 ? 'bg-primary text-white' : 'bg-light text-muted' }}" style="width: 32px; height: 32px; font-size: 14px;">
+                            <div class="me-3 text-center mnw-40px" >
+                                <div class="rounded-circle d-flex align-items-center justify-content-center {{ $index === 0 ? 'bg-primary text-white' : 'bg-light text-muted' }} wh-32 fs-14px" >
                                     @if($index === 0)
                                         <i class="bi bi-check-lg"></i>
                                     @else
@@ -388,7 +388,7 @@
                                     @endif
                                 </div>
                                 @if(!$loop->last)
-                                <div style="width: 2px; height: 30px; margin: 4px auto;" class="{{ $index === 0 ? 'bg-primary' : 'bg-secondary' }} opacity-25"></div>
+                                <div class="vr-30 {{ $index === 0 ? 'bg-primary' : 'bg-secondary' }} opacity-25" ></div>
                                 @endif
                             </div>
                             <div class="flex-grow-1 pb-2">
@@ -398,7 +398,7 @@
                                 <div class="text-muted ">
                                     {{ $item['NOTE'] ?? '' }}
                                 </div>
-                                <div class="text-muted" style="font-size: 11px;">
+                                <div class="text-muted fs-11px" >
                                     {{ $item['TIME'] ?? '' }}
                                 </div>
                             </div>
@@ -414,7 +414,7 @@
                     @endif
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light px-4 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Đóng</button>
+                    <button type="button" class="btn btn-light px-4 py-2 rounded-10px" data-bs-dismiss="modal" >Đóng</button>
                 </div>
             </div>
         </div>

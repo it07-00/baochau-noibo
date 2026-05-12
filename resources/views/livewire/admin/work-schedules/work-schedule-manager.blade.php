@@ -13,7 +13,7 @@
                     <span>Lịch công tác</span>
                 </h5>
 
-                <div class="vr mx-1 d-none d-md-block" style="height: 24px;"></div>
+                <div class="vr mx-1 d-none d-md-block h-24px" ></div>
 
                 <div class="ws-calendar-controls d-flex align-items-center gap-2">
                     <button wire:click="previousMonth"
@@ -191,9 +191,9 @@
 
     {{-- Day Detail Modal --}}
     <div x-show="showDetail" x-cloak
-         style="position: fixed; inset: 0; z-index: 9999;"
+         class="fixed-overlay-9999"
          @keydown.escape.window="showDetail && $wire.closeDayDetail()">
-        <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.4);" wire:click="closeDayDetail"></div>
+        <div class="modal-overlay-dark" wire:click="closeDayDetail"></div>
         <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; background: var(--ws-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
              @click.stop>
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
@@ -209,25 +209,25 @@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
                                     <span class="fw-bold text-body fs-5">{{ $evt['title'] }}</span>
-                                    <span class="ws-dept-badge badge ms-2 fw-normal" style="font-size: 0.85rem;">{{ $evt['department'] ?: 'Nhân viên' }}</span>
+                                    <span class="ws-dept-badge badge ms-2 fw-normal fs-85" >{{ $evt['department'] ?: 'Nhân viên' }}</span>
                                 </div>
                                 <div class="d-flex gap-2">
                                     @if($evt['is_owner'] && !$evt['is_past'])
                                         <button wire:click="edit({{ $evt['id'] }})"
-                                            class="btn btn-sm btn-outline-primary px-2" style="border-radius: 6px;">
+                                            class="btn btn-sm btn-outline-primary px-2 rounded-2" >
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                     @endif
                                     @if($evt['is_owner'])
                                         <button wire:click="delete({{ $evt['id'] }})"
                                             wire:confirm="Bạn chắc chắn muốn xóa sự kiện này?"
-                                            class="btn btn-sm btn-outline-danger px-2" style="border-radius: 6px;">
+                                            class="btn btn-sm btn-outline-danger px-2 rounded-2" >
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     @endif
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.95rem;">
+                            <div class="d-flex align-items-center gap-2 mb-2 fs-095" >
                                 <span class="text-muted"><i class="bi bi-person me-1"></i>{{ $evt['user_name'] }}</span>
                                 <span class="text-muted">•</span>
                                 <span class="text-muted">
@@ -239,14 +239,14 @@
                                 </span>
                             </div>
                             @if(!empty($evt['participants']))
-                                <div class="mb-2" style="font-size: 0.95rem;">
+                                <div class="mb-2 fs-095" >
                                     <i class="bi bi-people me-1 text-muted"></i>
                                     <span class="text-muted">Người tham gia:</span>
                                     <span class="fw-semibold">{{ $evt['participants'] }}</span>
                                 </div>
                             @endif
                             @if($evt['description'])
-                                <div class="text-body mt-2" style="white-space: pre-line; font-size: 1rem;">{{ $evt['description'] }}</div>
+                                <div class="text-body mt-2 text-preline" >{{ $evt['description'] }}</div>
                             @endif
                         </div>
                     @endforeach
@@ -258,7 +258,7 @@
                 @if($canAddToday)
                     <div class="text-center mt-4">
                         <button wire:click="openCreateModal('{{ $detailDate }}')"
-                            class="btn btn-outline-primary px-4 py-2 fw-semibold" style="border-radius: 10px; font-size: 1rem;">
+                            class="btn btn-outline-primary px-4 py-2 fw-semibold rounded-10px fs-6" >
                             <i class="bi bi-plus-lg me-2"></i> Thêm sự kiện vào ngày này
                         </button>
                     </div>
@@ -269,9 +269,9 @@
 
     {{-- Create/Edit Form Modal --}}
     <div x-show="showForm" x-cloak
-         style="position: fixed; inset: 0; z-index: 10000;"
+         class="fixed-overlay-10000"
          @keydown.escape.window="showForm && $wire.closeFormModal()">
-        <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.4);" wire:click="closeFormModal"></div>
+        <div class="modal-overlay-dark" wire:click="closeFormModal"></div>
         <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 550px; background: var(--ws-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
              @click.stop>
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
@@ -284,25 +284,25 @@
             <form wire:submit.prevent="save" class="p-4">
                 <div class="mb-3">
                     <label class="form-label fw-bold text-muted">Tiêu đề *</label>
-                    <input type="text" wire:model="title" class="form-control border-light-subtle"
-                        style="border-radius: 8px;" placeholder="Ví dụ: Họp giao ban, Công tác Hà Nội...">
-                    @error('title') <span class="text-danger" style="font-size: 0.8rem;">{{ $message }}</span> @enderror
+                    <input type="text" wire:model="title" class="form-control border-light-subtle rounded-8px"
+                         placeholder="Ví dụ: Họp giao ban, Công tác Hà Nội...">
+                    @error('title') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-muted">Ngày bắt đầu *</label>
-                        <input type="date" wire:model="startDate" class="form-control border-light-subtle"
-                            style="border-radius: 8px;"
+                        <input type="date" wire:model="startDate" class="form-control border-light-subtle rounded-8px"
+                            
                             min="{{ today()->format('Y-m-d') }}">
-                        @error('startDate') <span class="text-danger" style="font-size: 0.8rem;">{{ $message }}</span> @enderror
+                        @error('startDate') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-muted">Ngày kết thúc <span class="fw-normal text-muted">(tùy chọn)</span></label>
-                        <input type="date" wire:model="endDate" class="form-control border-light-subtle"
-                            style="border-radius: 8px;"
+                        <input type="date" wire:model="endDate" class="form-control border-light-subtle rounded-8px"
+                            
                             min="{{ $startDate ?: today()->format('Y-m-d') }}">
-                        @error('endDate') <span class="text-danger" style="font-size: 0.8rem;">{{ $message }}</span> @enderror
+                        @error('endDate') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -310,8 +310,8 @@
                     <label class="form-label fw-bold text-muted">Màu nhãn</label>
                     <div class="d-flex gap-2 flex-wrap">
                         @foreach(\App\Models\WorkSchedule::COLORS as $key => $c)
-                            <label class="ws-color-picker {{ $color === $key ? 'active' : '' }}"
-                                style="cursor: pointer;">
+                            <label class="ws-color-picker {{ $color === $key ? 'active' : '' }} cursor-pointer"
+                                >
                                 <input type="radio" wire:model.live="color" value="{{ $key }}" class="d-none">
                                 <span class="d-block rounded-circle border-2"
                                     style="width: 28px; height: 28px; background: {{ $c['hex'] }}; border: 3px solid {{ $color === $key ? $c['hex'] : 'transparent' }}; box-shadow: {{ $color === $key ? '0 0 0 2px #fff, 0 0 0 4px '.$c['hex'] : 'none' }};"
@@ -323,19 +323,19 @@
 
                 <div class="mb-4">
                     <label class="form-label fw-bold text-muted">Mô tả <span class="fw-normal text-muted">(tùy chọn)</span></label>
-                    <textarea wire:model="description" class="form-control border-light-subtle" rows="3"
-                        style="border-radius: 8px;" placeholder="Ghi chú thêm..."></textarea>
-                    @error('description') <span class="text-danger" style="font-size: 0.8rem;">{{ $message }}</span> @enderror
+                    <textarea wire:model="description" class="form-control border-light-subtle rounded-8px" rows="3"
+                         placeholder="Ghi chú thêm..."></textarea>
+                    @error('description') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label fw-bold text-muted"><i class="bi bi-people me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
                     <div class="border rounded-3 p-2 border-light-subtle" style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
                         @foreach($allUsers as $u)
-                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2" style="cursor: pointer; font-size: 0.88rem;"
+                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88" 
                                 onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
                                 <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
-                                    class="form-check-input m-0" style="border-radius: 4px;">
+                                    class="form-check-input m-0 rounded-1" >
                                 <span>{{ $u->name }}@if($u->id === auth()->id()) (Bạn) @endif</span>
                             </label>
                         @endforeach
@@ -343,8 +343,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <button type="button" wire:click="closeFormModal" class="btn btn-light px-4" style="border-radius: 8px;">Hủy</button>
-                    <button type="submit" class="btn btn-primary px-4" style="border-radius: 8px;">
+                    <button type="button" wire:click="closeFormModal" class="btn btn-light px-4 rounded-8px" >Hủy</button>
+                    <button type="submit" class="btn btn-primary px-4 rounded-8px" >
                         <i class="bi bi-{{ $editingId ? 'check-lg' : 'plus-lg' }} me-1"></i>
                         {{ $editingId ? 'Cập nhật' : 'Thêm sự kiện' }}
                     </button>

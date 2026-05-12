@@ -41,9 +41,9 @@
                 <table class="table table-hover align-middle mb-0 internal-doc-table">
                     <thead class="internal-doc-table-head">
                         <tr>
-                            <th class="text-center" style="width: 45px;">STT</th>
-                            <th class="ps-4" style="width: 50%;">Thông tin quy định</th>
-                            <th style="width: 35%;">Tập tin</th>
+                            <th class="text-center w-45px" >STT</th>
+                            <th class="ps-4 w-50" >Thông tin quy định</th>
+                            <th class="w-35pct">Tập tin</th>
                             @canany(['internal-docs.edit', 'internal-docs.delete'])
                             <th class="text-end pe-4">Thao tác</th>
                             @endcanany
@@ -52,7 +52,7 @@
                     <tbody>
                         @forelse($docs as $doc)
                         <tr>
-                            <td class="text-center text-muted  fw-semibold" style="width: 45px;">{{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}</td>
+                            <td class="text-center text-muted  fw-semibold w-45px" >{{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}</td>
                             <td class="ps-4">
                                 <span class="fw-bold">{{ $doc->title }}</span>
                             </td>
@@ -125,7 +125,7 @@
                             <div class="list-group internal-doc-file-list">
                                 @foreach($existingFiles as $index => $file)
                                 <div class="list-group-item d-flex justify-content-between align-items-center internal-doc-file-item">
-                                    <span class=" text-truncate" style="max-width: 80%;">{{ $file['name'] }}</span>
+                                    <span class=" text-truncate mxw-80pct" >{{ $file['name'] }}</span>
                                     <button type="button" class="btn btn-sm btn-outline-danger border-0" wire:click="removeExistingFile({{ $index }})">
                                         &times;
                                     </button>

@@ -8,8 +8,8 @@
             <a href="{{ $currentUser->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]) ? route('app.dashboard') : route('app.home') }}"
                 class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment"
-                    style="height: 40px; width: auto;">
-                <span class="fw-bolder fs-5 text-primary" style="letter-spacing: 1px;">BẢO CHÂU</span>
+                    class="h-40px-auto">
+                <span class="fw-bolder fs-5 text-primary letter-1" >BẢO CHÂU</span>
             </a>
 
             <button type="button" class="app-sidebar-close-btn app-sidebar-mobile-close d-xl-none">

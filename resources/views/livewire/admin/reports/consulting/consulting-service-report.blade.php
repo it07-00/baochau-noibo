@@ -17,7 +17,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0">
+                    <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
                     </div>
                     <div>
@@ -30,7 +30,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0">
+                    <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </div>
                     <div>
@@ -43,7 +43,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center" style="width:42px;height:42px;flex-shrink:0">
+                    <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     </div>
                     <div>
@@ -106,7 +106,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="text-center" style="width:45px;">STT</th>
+                            <th class="text-center w-45px" >STT</th>
                             <th>Số HĐ</th>
                             <th>Khách hàng</th>
                             <th>Loại dịch vụ</th>
@@ -123,7 +123,7 @@
                         <tr>
                             <td class="fw-semibold ">{{ $item->shd_bc ?: '—' }}</td>
                             <td>{{ $item->customer?->name ?? '—' }}</td>
-                            <td class=" text-muted" style="max-width:180px;">{{ $item->loai_dich_vu ?: '—' }}</td>
+                            <td class=" text-muted max-w-180px" >{{ $item->loai_dich_vu ?: '—' }}</td>
                             <td class="">{{ $item->staff?->name ?? '—' }}</td>
                             <td class="">{{ $item->consultant?->name ?? '—' }}</td>
                             <td class="">{{ $item->province ?: '—' }}</td>

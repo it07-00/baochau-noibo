@@ -90,7 +90,7 @@
 
         <div class="row g-4 mt-1">
             <div class="col-12 col-xl-4">
-                <div class="pure-card rounded-custom card-bg shadow-custom mb-4 position-sticky" style="top: 100px;">
+                <div class="pure-card rounded-custom card-bg shadow-custom mb-4 position-sticky top-100px" >
                     <div class="pure-card-header border-bottom">
                         <h5 class="pure-card-title m-0">Thông tin cơ bản</h5>
                     </div>
@@ -152,7 +152,7 @@
                                                 {{ $isChecked ? 'checked' : '' }}>
                                             <label class="form-check-label" for="perm_{{ $permission->id }}">
                                                 {{ $displayAction }}
-                                                <small class="d-block text-muted" style="font-size: 0.75rem">{{ $permission->name }}</small>
+                                                <small class="d-block text-muted fs-75" >{{ $permission->name }}</small>
                                             </label>
                                         </div>
                                     </div>
