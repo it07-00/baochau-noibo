@@ -1,38 +1,15 @@
 @php
     $currentUser = auth()->user();
 
-    $roleLabels = [
-        \App\Enums\Role::IT->value            => 'IT / Quản trị',
-        \App\Enums\Role::GIAM_DOC->value      => 'Giám đốc',
-        \App\Enums\Role::TP_KINH_DOANH->value => 'Trưởng phòng KD',
-        \App\Enums\Role::QUAN_LY->value       => 'Quản lý',
-        \App\Enums\Role::KINH_DOANH->value    => 'Nhân viên KD',
-        \App\Enums\Role::TU_VAN->value        => 'Tư vấn',
-        \App\Enums\Role::KY_THUAT->value      => 'Kỹ thuật',
-        \App\Enums\Role::MARKETING->value     => 'Marketing',
-        \App\Enums\Role::KE_TOAN->value       => 'Kế toán',
-    ];
-
-    $roleColors = [
-        \App\Enums\Role::IT->value            => '#6366f1',
-        \App\Enums\Role::GIAM_DOC->value      => '#f59e0b',
-        \App\Enums\Role::TP_KINH_DOANH->value => '#3b82f6',
-        \App\Enums\Role::QUAN_LY->value       => '#8b5cf6',
-        \App\Enums\Role::KINH_DOANH->value    => '#10b981',
-        \App\Enums\Role::TU_VAN->value        => '#06b6d4',
-        \App\Enums\Role::KY_THUAT->value      => '#f97316',
-        \App\Enums\Role::MARKETING->value     => '#ec4899',
-        \App\Enums\Role::KE_TOAN->value       => '#84cc16',
-    ];
-
-    $rolePriority = [\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::KE_TOAN->value, \App\Enums\Role::MARKETING->value, \App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value, \App\Enums\Role::KINH_DOANH->value];
-    $primaryRole  = collect($rolePriority)->first(fn ($role) => $currentUser?->hasRole($role));
+    $primaryRole = collect(\App\Enums\Role::priorityList())
+        ->first(fn ($r) => $currentUser?->hasRole($r));
     if (!$primaryRole) {
         $primaryRole = $currentUser?->roles?->first()?->name;
     }
 
-    $roleLabel = $roleLabels[$primaryRole] ?? 'Nhân viên';
-    $roleColor = $roleColors[$primaryRole] ?? '#64748b';
+    $roleEnum  = \App\Enums\Role::tryFrom($primaryRole ?? '');
+    $roleLabel = $roleEnum?->label() ?? 'Nhân viên';
+    $roleColor = $roleEnum?->color() ?? '#64748b';
 
     $weekdays = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
     $todayLabel = $weekdays[now()->dayOfWeek] . ', ' . now()->format('d/m/Y');
@@ -128,7 +105,9 @@
                         <div class="dropdown-body py-2">
                             <a class="dropdown-item" href="{{ route('app.profile.index') }}">Hồ sơ của tôi</a>
                             <a class="dropdown-item" href="{{ route('app.password.index') }}">Đổi mật khẩu</a>
+                            @can(\App\Enums\Permission::SETTINGS_VIEW->value)
                             <a class="dropdown-item" href="{{ route('app.settings.index') }}">Cài đặt hệ thống</a>
+                            @endcan
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="dropdown-item">Đăng xuất</button>

@@ -51,7 +51,7 @@
                                 wire:model.live="reportDate"
                                 max="{{ now()->format('Y-m-d') }}"
                                 class="form-control form-control-sm border-light-subtle w-auto rounded-2"
-                                
+
                             >
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                                     <label class="form-label  fw-bold text-muted">Kế hoạch ngày mai <span
                                             class="fw-normal text-muted">(không bắt buộc)</span></label>
                                     <textarea wire:model.live.debounce.500ms="plan" class="form-control border-light-subtle rounded-8px"
-                                        rows="5" 
+                                        rows="5"
                                         placeholder="Sẽ làm gì tiếp..."></textarea>
                                     @error('plan') <span class="text-danger ">{{ $message }}</span> @enderror
                                 </div>
@@ -109,7 +109,7 @@
                                 <label class="form-label  fw-bold text-muted">Vấn đề / Cần hỗ trợ <span
                                         class="fw-normal text-muted">(không bắt buộc)</span></label>
                                 <textarea wire:model.live.debounce.500ms="issues" class="form-control border-light-subtle rounded-8px"
-                                    rows="3" 
+                                    rows="3"
                                     placeholder="Nếu có vấn đề cần TPKD biết hoặc hỗ trợ, ghi ở đây..."></textarea>
                             </div>
 
@@ -713,14 +713,14 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold text-muted">Kế hoạch ngày mai</label>
                     <textarea wire:model="plan" class="form-control border-light-subtle rounded-3 fs-095" rows="3"
-                        
+
                         placeholder="Dự định công việc cho ngày mai..."></textarea>
                 </div>
 
                 <div class="mb-0">
                     <label class="form-label fw-bold text-muted">Vấn đề / Hỗ trợ</label>
                     <textarea wire:model="issues" class="form-control border-light-subtle rounded-3 fs-095" rows="2"
-                        
+
                         placeholder="Nếu có khó khăn cần giúp đỡ..."></textarea>
                 </div>
             </div>
