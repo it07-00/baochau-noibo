@@ -16,26 +16,29 @@ class ActivityLogViewer extends Component
     public $logName = '';
     public $subjectType = '';
     public $event = '';
+    public $dateFrom = '';
+    public $dateTo = '';
     public $perPage = 20;
 
-    public function updatingSearch()
+    public function updatingSearch() { $this->resetPage(); }
+    public function updatingLogName() { $this->resetPage(); }
+    public function updatingSubjectType() { $this->resetPage(); }
+    public function updatingEvent() { $this->resetPage(); }
+    public function updatingDateFrom() { $this->resetPage(); }
+    public function updatingDateTo() { $this->resetPage(); }
+    public function updatingPerPage() { $this->resetPage(); }
+
+    public function resetFilters(): void
     {
+        $this->reset(['search', 'logName', 'subjectType', 'event', 'dateFrom', 'dateTo']);
         $this->resetPage();
     }
 
-    public function updatingLogName()
+    public function getActiveFilterCountProperty(): int
     {
-        $this->resetPage();
-    }
-
-    public function updatingSubjectType()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingEvent()
-    {
-        $this->resetPage();
+        return collect([$this->search, $this->subjectType, $this->event, $this->dateFrom, $this->dateTo])
+            ->filter()
+            ->count();
     }
 
     public function render()
@@ -62,6 +65,14 @@ class ActivityLogViewer extends Component
 
         if ($this->event) {
             $query->where('event', $this->event);
+        }
+
+        if ($this->dateFrom) {
+            $query->whereDate('created_at', '>=', $this->dateFrom);
+        }
+
+        if ($this->dateTo) {
+            $query->whereDate('created_at', '<=', $this->dateTo);
         }
 
         $activities = $query->paginate($this->perPage);
