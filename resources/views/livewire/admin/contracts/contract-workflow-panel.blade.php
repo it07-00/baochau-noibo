@@ -141,7 +141,7 @@
                                 <span class="text-danger">*</span>
                             @endif
                         </label>
-                        <small class="d-block text-muted mb-2" style="font-size: 0.78rem;">PDF, Word, Excel, JPG, PNG — tối đa 20MB/file</small>
+                        <small class="d-block text-muted mb-2" style="font-size: 0.78rem;">PDF, Word, Excel, JPG, PNG — tối đa 200MB/file</small>
                         <input wire:model="uploadFiles" type="file" class="form-control form-control-sm" multiple
                             accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                         @error('uploadFiles')
