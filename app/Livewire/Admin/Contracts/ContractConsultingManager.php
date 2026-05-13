@@ -47,7 +47,9 @@ class ContractConsultingManager extends Component
 
     public $search = '';
 
-    public $sortDirection = 'desc';
+    public string $sortBy = 'id';
+
+    public $sortDirection = 'asc';
 
     public array $selectedDocIds = [];
 
@@ -184,6 +186,12 @@ class ContractConsultingManager extends Component
     public function updatedSortDirection($value): void
     {
         $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
+        $this->resetPage();
+    }
+
+    public function updatedSortBy($value): void
+    {
+        $this->sortBy = in_array($value, ['id', 'report_number'], true) ? $value : 'id';
         $this->resetPage();
     }
 
@@ -594,7 +602,8 @@ class ContractConsultingManager extends Component
             'handler_id'  => '',
         ];
         $this->selectedDocIds = [];
-        $this->sortDirection = 'desc';
+        $this->sortBy = 'id';
+        $this->sortDirection = 'asc';
         $this->resetPage();
     }
 
@@ -654,7 +663,8 @@ class ContractConsultingManager extends Component
         $this->applyContractFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
-        $docs = $query->orderBy('id', $orderDirection)->get();
+        $sortColumn = ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
+        $docs = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->get();
         $title = 'Hợp đồng tư vấn';
         $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
@@ -769,7 +779,8 @@ class ContractConsultingManager extends Component
         $this->applyContractFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
-        $docs = $query->orderBy('id', $orderDirection)->paginate(10);
+        $sortColumn = ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
+        $docs = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->paginate(10);
 
         $workflowProgress = $this->getWorkflowProgress($docs);
 
@@ -795,6 +806,7 @@ class ContractConsultingManager extends Component
             'info_sources' => ContractLegal::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractLegal::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
             'handlers' => Handler::orderBy('name')->get(),
+            'supports_report_number_sorting' => true,
         ])->layout('admin.layouts.app', ['title' => 'Hồ sơ môi trường']);
     }
 }

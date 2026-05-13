@@ -16,6 +16,7 @@ use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -39,6 +40,7 @@ abstract class AbstractContractGenericManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
+    public string $sortBy = 'id';
     public $sortDirection = 'desc';
     public array $selectedDocIds = [];
     public bool $showModal = false;
@@ -183,6 +185,12 @@ abstract class AbstractContractGenericManager extends Component
     public function updatedSortDirection($value): void
     {
         $this->sortDirection = $value === 'asc' ? 'asc' : 'desc';
+        $this->resetPage();
+    }
+
+    public function updatedSortBy($value): void
+    {
+        $this->sortBy = in_array($value, ['id', 'report_number'], true) ? $value : 'id';
         $this->resetPage();
     }
 
@@ -637,6 +645,7 @@ abstract class AbstractContractGenericManager extends Component
             'handler_id'     => '',
         ];
         $this->selectedDocIds = [];
+        $this->sortBy         = 'id';
         $this->sortDirection  = 'desc';
         $this->resetPage();
     }
@@ -665,7 +674,9 @@ abstract class AbstractContractGenericManager extends Component
         $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
-        $docs           = $query->orderBy('id', $orderDirection)->get();
+        $supportsReportNumberSorting = Schema::hasColumn((new $modelClass)->getTable(), 'report_number');
+        $sortColumn     = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
+        $docs           = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->get();
         $title          = $this->getExportTitle();
         $showFinancials = !$user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
@@ -701,7 +712,9 @@ abstract class AbstractContractGenericManager extends Component
         $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
-        $docs           = $query->orderBy('id', $orderDirection)->paginate(10);
+        $supportsReportNumberSorting = Schema::hasColumn((new $modelClass)->getTable(), 'report_number');
+        $sortColumn     = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
+        $docs           = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->paginate(10);
 
         return view('livewire.admin.contracts.' . $this->getViewName(), [
             'docs'                   => $docs,
@@ -719,6 +732,7 @@ abstract class AbstractContractGenericManager extends Component
             'info_sources'           => $modelClass::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts'        => $modelClass::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
             'handlers'               => Handler::orderBy('name')->get(),
+            'supports_report_number_sorting' => $supportsReportNumberSorting,
         ])->layout('admin.layouts.app', ['title' => $this->getPageTitle()]);
     }
 

@@ -175,7 +175,7 @@
                         </div>
                         <div class="col-md-2">
                             <label class="custom-filter-label fw-semibold d-block mb-1">Sắp xếp</label>
-                            <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                            <select class="form-select form-control-xs w-100" wire:model.live="sortDirection">
                                 <option value="desc">Mới nhất trước</option>
                                 <option value="asc">Cũ nhất trước</option>
                             </select>
@@ -184,60 +184,11 @@
                 @else
                     {{-- ── Bộ lọc cho tư vấn / kỹ thuật ── --}}
                     <div class="row g-2 mb-2">
-                        <div class="col-md-3">
-                            <label class="custom-filter-label fw-semibold d-block mb-1">Ngày ký hợp đồng</label>
-                            <div class="input-group input-group-sm">
-                                <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white contract-text-11px" >đến</span>
-                                <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_to" title="Đến ngày">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="custom-filter-label fw-semibold d-block mb-1">Ngày xuất hóa đơn</label>
-                            <div class="input-group input-group-sm">
-                                <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.submitted_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white contract-text-11px" >đến</span>
-                                <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.submitted_to" title="Đến ngày">
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="custom-filter-label fw-semibold d-block mb-1">Tỉnh thành</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.province">
-                                <option value="">Tất cả tỉnh thành</option>
-                                @foreach ($provinces as $p)
-                                    <option value="{{ $p }}">{{ $p }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="custom-filter-label fw-semibold d-block mb-1">Loại dịch vụ</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
-                                <option value="">Tất cả</option>
-                                @foreach ($loai_dich_vu_options as $opt)
-                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="custom-filter-label fw-semibold d-block mb-1">Nhà thầu phụ</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.handler_id">
-                                <option value="">Tất cả</option>
-                                @foreach ($handlers as $h)
-                                    <option value="{{ $h->id }}">{{ $h->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="custom-filter-label fw-semibold d-block mb-1">Sắp xếp</label>
-                            <select class="form-select form-control-xs" wire:model.live="sortDirection">
-                                <option value="desc">Mới nhất trước</option>
-                                <option value="asc">Cũ nhất trước</option>
-                            </select>
-                        </div>
+                        @include('livewire.admin.contracts.partials.restricted-contract-filters', [
+                            'labelClass' => 'custom-filter-label fw-semibold d-block mb-1',
+                            'provincePlaceholder' => 'Tất cả tỉnh thành',
+                            'servicePlaceholder' => 'Tất cả',
+                        ])
                     </div>
                 @endunless
                 {{-- ── Nút hành động ── --}}
@@ -395,16 +346,10 @@
                                 @endphp
                                 @if ($doc->assignments->count() > 0)
                                     <div class="d-flex flex-column gap-1 align-items-center">
-                                        @foreach ($doc->assignments as $assign)
-                                            <div class="d-flex flex-column align-items-center">
-                                                <span class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }} fs-72" >
-                                                    {{ $assign->user?->name ?? $assign->external_assignee ?? '?' }}
-                                                </span>
-                                                <small class="text-muted contract-text-08">
-                                                    bởi {{ $assign->assigner?->name ?? '—' }}
-                                                </small>
-                                            </div>
-                                        @endforeach
+                                        @include('livewire.admin.contracts.partials.assignment-compact-list', [
+                                            'assignments' => $doc->assignments,
+                                            'metaClass' => 'contract-text-08',
+                                        ])
                                     </div>
                                 @else
                                     <span class="text-muted">—</span>

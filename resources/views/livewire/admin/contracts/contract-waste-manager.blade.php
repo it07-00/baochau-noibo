@@ -183,25 +183,9 @@
                         </div>
                     @else
                         {{-- Bộ lọc cho tư vấn / kỹ thuật --}}
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
-                            <div class="d-flex gap-2">
-                                <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_from">
-                                <input type="date" class="form-control form-control-xs"
-                                    wire:model.live="filter.signed_to">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.province">
-                                <option value="">Chọn tỉnh thành</option>
-                                @foreach ($provinces as $p)
-                                    <option value="{{ $p }}">{{ $p }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        @include('livewire.admin.contracts.partials.restricted-contract-filters')
                     @endunless
+                    @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
@@ -357,11 +341,16 @@
 
                     <div class="col-md-3">
                         <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
-                        <select class="form-select form-control-xs" wire:model.live="sortDirection">
-                            <option value="desc">Từ trên xuống</option>
-                            <option value="asc">Từ dưới lên</option>
-                        </select>
+                        <div class="btn-group w-100">
+                            <button type="button" wire:click="$set('sortDirection', 'desc')" class="btn form-control-xs {{ $sortDirection === 'desc' ? 'btn-primary' : 'btn-outline-secondary' }}" title="Từ trên xuống">
+                                <i class="bi bi-sort-down"></i>
+                            </button>
+                            <button type="button" wire:click="$set('sortDirection', 'asc')" class="btn form-control-xs {{ $sortDirection === 'asc' ? 'btn-primary' : 'btn-outline-secondary' }}" title="Từ dưới lên">
+                                <i class="bi bi-sort-up"></i>
+                            </button>
+                        </div>
                     </div>
+                    @endunless
 
                     <div class="col-md-6 d-flex align-items-end gap-2 flex-wrap justify-content-start">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
@@ -519,16 +508,9 @@
                                 @endphp
                                 @if ($doc->assignments->count() > 0)
                                     <div class="d-flex flex-column gap-1 align-items-center">
-                                        @foreach ($doc->assignments as $assign)
-                                            <div class="d-flex flex-column align-items-center">
-                                                <span class="badge {{ $assign->user_id ? 'bg-primary' : 'bg-warning text-dark' }} fs-72" >
-                                                    {{ $assign->user?->name ?? $assign->external_assignee ?? '?' }}
-                                                </span>
-                                                <small class="text-muted fs-60" >
-                                                    bởi {{ Str::limit($assign->assigner?->name ?? '—', 15) }}
-                                                </small>
-                                            </div>
-                                        @endforeach
+                                        @include('livewire.admin.contracts.partials.assignment-compact-list', [
+                                            'assignments' => $doc->assignments,
+                                        ])
                                     </div>
                                 @else
                                     <span class="text-muted">—</span>
