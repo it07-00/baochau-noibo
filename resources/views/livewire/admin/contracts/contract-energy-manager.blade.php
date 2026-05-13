@@ -467,7 +467,7 @@
                                         @if ($canDelete)
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
-                                                onclick="return confirm('Xóa hợp đồng này?')" title="Xóa">
+                                                wire:confirm="Xác nhận xóa hợp đồng này?" title="Xóa">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
                                         @endif
@@ -1187,10 +1187,10 @@
             window.addEventListener('openDetailModal', () => {
                 new bootstrap.Modal(document.getElementById('detailModalEnergy')).show();
             });
-            Livewire.on('openFormModal', () => {
+            window.addEventListener('openFormModal', () => {
                 new bootstrap.Modal(document.getElementById('formModalEnergy')).show();
             });
-            Livewire.on('closeFormModal', () => {
+            window.addEventListener('closeFormModal', () => {
                 bootstrap.Modal.getInstance(document.getElementById('formModalEnergy'))?.hide();
             });
             window.addEventListener('openAssignModal', () => {
