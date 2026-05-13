@@ -162,14 +162,10 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
-                        <div class="btn-group w-100">
-                            <button type="button" wire:click="$set('sortDirection', 'desc')" class="btn form-control-xs {{ $sortDirection === 'desc' ? 'btn-primary' : 'btn-outline-secondary' }}" title="Từ trên xuống">
-                                <i class="bi bi-sort-down"></i>
-                            </button>
-                            <button type="button" wire:click="$set('sortDirection', 'asc')" class="btn form-control-xs {{ $sortDirection === 'asc' ? 'btn-primary' : 'btn-outline-secondary' }}" title="Từ dưới lên">
-                                <i class="bi bi-sort-up"></i>
-                            </button>
-                        </div>
+                        <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                            <option value="asc">Cũ nhất trước</option>
+                            <option value="desc">Mới nhất trước</option>
+                        </select>
                     </div>
                     @endunless
 
@@ -215,21 +211,20 @@
                             <th class="text-center w-42px" >Chọn</th>
                         @endif
                         <th class="text-center w-45px" >STT</th>
-                        <th class="ps-4">Thông tin hợp đồng</th>
-                        <th>Khách hàng</th>
+                        <th class="ps-4 col-ct-customer">Khách hàng</th>
                         <th>Loại dịch vụ</th>
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
-                            <th class="text-center">Giá trị hợp đồng</th>
-                            <th class="text-center">Hoa hồng</th>
-                            <th class="text-center">Doanh số</th>
+                            <th class="text-center col-ct-finance">Tài chính</th>
                         @endunless
-                        <th class="text-center">Được giao</th>
-                        <th class="text-center">Hạn chót</th>
-                        <th class="text-center">Tình trạng</th>
+                        @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                            <th class="text-center col-ct-assigned">Được giao</th>
+                            <th class="text-center col-ct-deadline">Hạn chót</th>
+                        @endunless
+                        <th class="text-center col-ct-status">Tình trạng</th>
                         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
                         @endunless
-                        <th class="text-center pe-4">Thao tác</th>
+                        <th class="text-center col-ct-actions pe-2">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -246,19 +241,19 @@
                             <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
-                            <td class="ps-3 py-2 col-200" >
-                                <div class="d-flex flex-column">
-                                    <span>NTP: <span class="fw-bold">{{ $doc->shd_cxl ?: '-' }}</span></span>
-                                    <span>BC: <span class="fw-bold">{{ $doc->shd_bc ?: '-' }}</span></span>
-                                    <span>Ký: <span class="fw-bold">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
-                                    <span>CS: <span class="fw-bold">{{ $doc->staff?->name }}</span></span>
-                                </div>
-                            </td>
-                            <td class="py-2 col-230" >
-                                <div class="d-flex flex-column">
-                                    <span class="fw-bold text-primary">{{ $doc->customer?->name }}</span>
-                                    <span class="">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
-                                    <span class="text-muted fs-78" >{{ Str::limit($doc->customer?->address, 50) }}</span>
+                            <td class="ps-3 py-2 col-ct-customer">
+                                <div class="d-flex flex-column gap-1">
+                                    <a href="{{ $doc->customer ? route('app.customers.contracts', $doc->customer->slug) : '#' }}" class="fw-bold text-primary text-decoration-none lh-sm">
+                                        {{ $doc->customer?->name }}
+                                    </a>
+                                    <span class="text-muted fs-85">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
+                                    <span class="text-muted fs-85">{{ Str::limit($doc->customer?->address, 50) }}</span>
+                                    <div class="d-flex gap-2 flex-wrap contract-text-08 border-top mt-1 pt-1 text-secondary">
+                                        <span>NTP: <span class="fw-semibold text-dark">{{ $doc->shd_cxl ?: '-' }}</span></span>
+                                        <span>BC: <span class="fw-semibold text-dark">{{ $doc->shd_bc ?: '-' }}</span></span>
+                                        <span>Ký: <span class="fw-semibold text-dark">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
+                                        <span>CS: <span class="fw-semibold text-dark">{{ $doc->staff?->name }}</span></span>
+                                    </div>
                                 </div>
                             </td>
                             <td>
@@ -266,65 +261,78 @@
                                     class="badge bg-success-subtle text-success border border-success-subtle ">{{ $doc->loai_dich_vu ?: '-' }}</span>
                             </td>
                             @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
-                                <td class="text-center text-nowrap">
-                                    <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
-                                </td>
-                                <td class="text-center text-nowrap">
-                                    <span class="fw-bold text-danger">{{ number_format($doc->commission) }}đ</span>
-                                </td>
-                                <td class="text-center text-nowrap">
-                                    <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
+                                <td class="py-2 px-3 col-ct-finance">
+                                    <div class="d-flex flex-column gap-1 contract-text-08">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Giá trị HĐ:</span>
+                                            <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Hoa hồng:</span>
+                                            <span class="fw-bold text-danger">{{ number_format($doc->commission) }}đ</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Doanh số:</span>
+                                            <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Chi nhà thầu phụ:</span>
+                                            <span class="fw-bold text-danger">{{ number_format($doc->ncc_payment ?? 0) }}đ</span>
+                                        </div>
+                                    </div>
                                 </td>
                             @endunless
-                            <td class="text-center">
-                                @php
-                                    $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
-                                    $totalSteps = 6;
-                                    $progressPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
-                                    $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
-                                @endphp
-                                @if ($doc->assignments->count() > 0)
-                                    <div class="d-flex flex-column gap-1 align-items-center">
-                                        @include('livewire.admin.contracts.partials.assignment-compact-list', [
-                                            'assignments' => $doc->assignments,
-                                        ])
-                                    </div>
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
-                                <div class="mt-2">
-                                    <div class="progress h-6px w-80px mx-auto" >
-                                        <div class="progress-bar bg-{{ $progressColor }}" style="width: {{ $progressPercent }}%"></div>
-                                    </div>
-                                    <span class="fw-semibold text-{{ $progressColor }} fs-72" >{{ $completedSteps }}/{{ $totalSteps }}</span>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                @php
-                                    $deadline = $doc->assignments->first()?->deadline;
-                                    $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH']);
-                                    $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
-                                    $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->startOfDay(), false) : null;
-                                    $isNearDue = $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3;
-                                @endphp
-                                @if($deadline)
-                                    @if($isFinished)
-                                        <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-success fs-60" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
-                                    @elseif($isOverdue)
-                                        <span class="fw-bold text-danger fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
-                                    @elseif($isNearDue)
-                                        <span class="fw-semibold text-warning fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                            @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                                <td class="text-center">
+                                    @php
+                                        $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
+                                        $totalSteps = 6;
+                                        $progressPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
+                                        $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
+                                    @endphp
+                                    @if ($doc->assignments->count() > 0)
+                                        <div class="d-flex flex-column gap-1 align-items-center">
+                                            @include('livewire.admin.contracts.partials.assignment-compact-list', [
+                                                'assignments' => $doc->assignments,
+                                            ])
+                                        </div>
                                     @else
-                                        <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $daysLeft }} ngày</span>
+                                        <span class="text-muted">—</span>
                                     @endif
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
-                            </td>
+                                    <div class="mt-2">
+                                        <div class="progress h-6px w-80px mx-auto" >
+                                            <div class="progress-bar bg-{{ $progressColor }}" style="width: {{ $progressPercent }}%"></div>
+                                        </div>
+                                        <span class="fw-semibold text-{{ $progressColor }} fs-72" >{{ $completedSteps }}/{{ $totalSteps }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @php
+                                        $deadline = $doc->assignments->first()?->deadline;
+                                        $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH']);
+                                        $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
+                                        $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->startOfDay(), false) : null;
+                                        $isNearDue = $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3;
+                                    @endphp
+                                    @if($deadline)
+                                        @if($isFinished)
+                                            <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-success fs-60" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
+                                        @elseif($isOverdue)
+                                            <span class="fw-bold text-danger fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
+                                        @elseif($isNearDue)
+                                            <span class="fw-semibold text-warning fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                                        @else
+                                            <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $daysLeft }} ngày</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                            @endunless
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center">
                                     @php
@@ -467,7 +475,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value])? 7: 10) + ($canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value])? 6: 9) + ($canBulkDelete ? 1 : 0) }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
@@ -534,7 +542,11 @@
                                         </tr>
                                         <tr>
                                             <th class="bg-light">Khách hàng</th>
-                                            <td class="fw-bold text-primary">{{ $selectedDoc->customer?->name }}</td>
+                                            <td class="fw-bold text-primary">
+                                                <a href="{{ $selectedDoc->customer ? route('app.customers.contracts', $selectedDoc->customer->slug) : '#' }}" class="text-decoration-none">
+                                                    {{ $selectedDoc->customer?->name }}
+                                                </a>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th class="bg-light">Người đại diện</th>
@@ -594,6 +606,11 @@
                                                 <th class="bg-light">Doanh số</th>
                                                 <td class="text-danger fw-bold">
                                                     {{ number_format($selectedDoc->revenue) }}đ</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Chi nhà thầu phụ</th>
+                                                <td class="text-danger fw-bold">
+                                                    {{ number_format($selectedDoc->ncc_payment ?? 0) }}đ</td>
                                             </tr>
                                         @endunless
                                         <tr>

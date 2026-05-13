@@ -83,7 +83,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <p class="text-muted mb-1" style="font-size:13px">Tổng chi NCC</p>
+                    <p class="text-muted mb-1" style="font-size:13px">Tổng chi Nhà Cung Cấp</p>
                     <h5 class="fw-bold text-danger mb-0">{{ number_format($totals['ncc_payment']) }}đ</h5>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                 <div class="card-body">
                     <p class="text-muted mb-1" style="font-size:13px">Tổng thực nhận</p>
                     <h5 class="fw-bold text-success mb-0">{{ number_format($totals['net_received']) }}đ</h5>
-                    <small class="text-muted">= DS - Hoa hồng - Chi NCC</small>
+                    <small class="text-muted">= DS - Hoa hồng - Chi Nhà Cung Cấp</small>
                 </div>
             </div>
         </div>
@@ -114,11 +114,11 @@
                             <th>Loại HĐ</th>
                             <th>Số HĐ BC</th>
                             <th>Khách hàng</th>
-                            <th>NV CS</th>
+                            <th>Nhân viên chăm sóc</th>
                             <th class="text-center">Ngày ký</th>
                             <th class="text-end">Doanh số</th>
                             <th class="text-end">Hoa hồng</th>
-                            <th class="text-end text-danger">Chi NCC</th>
+                            <th class="text-end text-danger">Chi Nhà Cung Cấp</th>
                             <th class="text-end text-success fw-bold">Thực nhận</th>
                         </tr>
                     </thead>
@@ -128,7 +128,15 @@
                             <td class="text-center text-muted">{{ $i + 1 }}</td>
                             <td><span class="badge bg-light text-dark border" style="font-size:11px">{{ $row['type'] }}</span></td>
                             <td class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</td>
-                            <td>{{ $row['customer'] ?? '—' }}</td>
+                            <td class="fw-bold text-primary">
+                                @if(!empty($row['customer_slug']))
+                                    <a href="{{ route('app.customers.contracts', $row['customer_slug']) }}" class="text-decoration-none">
+                                        {{ $row['customer'] }}
+                                    </a>
+                                @else
+                                    {{ $row['customer'] ?? '—' }}
+                                @endif
+                            </td>
                             <td>{{ $row['staff'] ?? '—' }}</td>
                             <td class="text-center">{{ $row['signed_at'] ?? '—' }}</td>
                             <td class="text-end">{{ $row['revenue'] > 0 ? number_format($row['revenue']) : '—' }}</td>

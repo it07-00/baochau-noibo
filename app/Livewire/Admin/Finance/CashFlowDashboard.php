@@ -54,7 +54,7 @@ class CashFlowDashboard extends Component
 
     private function buildQuery(string $modelClass)
     {
-        $query = $modelClass::query()->with(['customer:id,name', 'staff:id,name']);
+        $query = $modelClass::query()->with(['customer:id,name,slug', 'staff:id,name']);
 
         $query->whereNotNull('signed_at')->whereYear('signed_at', $this->filterYear);
 
@@ -82,6 +82,7 @@ class CashFlowDashboard extends Component
                     'type'         => $label,
                     'shd_bc'       => $contract->shd_bc,
                     'customer'     => $contract->customer?->name,
+                    'customer_slug'=> $contract->customer?->slug,
                     'staff'        => $contract->staff?->name,
                     'signed_at'    => $contract->signed_at?->format('d/m/Y'),
                     'revenue'      => (int) $contract->revenue,
