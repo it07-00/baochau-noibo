@@ -365,23 +365,27 @@
                                 @php
                                     $deadline = $doc->assignments->first()?->deadline;
                                     $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH']);
-                                    $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
                                     $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->startOfDay(), false) : null;
-                                    $isNearDue = $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3;
+                                    $isOverdue = $deadline && $daysLeft < 0 && !$isFinished;
+                                    $isDueToday = $deadline && $daysLeft === 0 && !$isFinished;
+                                    $isNearDue = $deadline && $daysLeft > 0 && $daysLeft <= 3 && !$isFinished;
                                 @endphp
                                 @if($deadline)
                                     @if($isFinished)
                                         <span class="fw-semibold text-success contract-text-08" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-success fs-60" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
+                                        <br><span class="badge bg-success contract-text-08" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
                                     @elseif($isOverdue)
                                         <span class="fw-bold text-danger contract-text-08" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
+                                        <br><span class="badge bg-danger contract-text-08" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
+                                    @elseif($isDueToday)
+                                        <span class="fw-bold text-danger contract-text-08" >{{ $deadline->format('d/m/Y') }}</span>
+                                        <br><span class="badge bg-warning text-dark contract-text-08" ><i class="bi bi-exclamation-circle me-1"></i>Đến hạn hôm nay</span>
                                     @elseif($isNearDue)
                                         <span class="fw-semibold text-warning contract-text-08" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                                        <br><span class="badge bg-warning text-dark contract-text-08" ><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
                                     @else
                                         <span class="fw-semibold text-success contract-text-08" >{{ $deadline->format('d/m/Y') }}</span>
-                                        <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $daysLeft }} ngày</span>
+                                        <br><span class="badge bg-success bg-opacity-75 contract-text-08" >Còn {{ $daysLeft }} ngày</span>
                                     @endif
                                 @else
                                     <span class="text-muted">—</span>

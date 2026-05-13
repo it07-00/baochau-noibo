@@ -716,18 +716,32 @@ abstract class AbstractContractGenericManager extends Component
         $sortColumn     = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
         $docs           = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->paginate(10);
 
+        $isRestrictedUser = $isRestrictedSales || $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+        $baseUserQuery = $modelClass::query()
+            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+
+        $loaiDichVuOptions = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('loai_dich_vu')->where('loai_dich_vu', '!=', '')->distinct()->pluck('loai_dich_vu')->toArray()
+            : $modelClass::SERVICE_TYPES;
+
+        $scopedProvinces = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray()
+            : $modelClass::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray();
+
         return view('livewire.admin.contracts.' . $this->getViewName(), [
             'docs'                   => $docs,
             'customers'              => Customer::orderBy('name')->get(),
             'staffs'                 => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
             'departments'            => Department::all(),
             'assignable_users'       => User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
-            'provinces'              => $modelClass::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray(),
+            'provinces'              => $scopedProvinces,
             'all_statuses'           => self::ALLOWED_STATUSES,
             'renewal_statuses'       => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_status_options' => ContractVoucherStatus::values(),
-            'loai_dich_vu_options'   => $modelClass::SERVICE_TYPES,
+            'loai_dich_vu_options'   => $loaiDichVuOptions,
             'payment_methods'        => ['Sau ký', 'Trước ký'],
             'info_sources'           => $modelClass::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts'        => $modelClass::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),

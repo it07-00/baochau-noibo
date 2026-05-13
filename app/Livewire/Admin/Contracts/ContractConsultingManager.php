@@ -784,6 +784,20 @@ class ContractConsultingManager extends Component
 
         $workflowProgress = $this->getWorkflowProgress($docs);
 
+        $isRestrictedUser = $isRestrictedSales || $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+        $baseUserQuery = ContractLegal::query()
+            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+
+        $loaiDichVuOptions = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('loai_dich_vu')->where('loai_dich_vu', '!=', '')->distinct()->pluck('loai_dich_vu')->toArray()
+            : ContractLegal::SERVICE_TYPES;
+
+        $scopedProvinces = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray()
+            : ContractLegal::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray();
+
         return view('livewire.admin.contracts.contract-consulting-manager', [
             'workflowProgress' => $workflowProgress,
             'docs' => $docs,
@@ -791,17 +805,12 @@ class ContractConsultingManager extends Component
             'staffs' => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
             'departments' => Department::all(),
             'assignable_users' => User::whereHas('roles', fn ($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
-            'provinces' => $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
-                ? ContractLegal::whereHas('assignments', fn ($q) => $q->where('user_id', $user->id))
-                    ->whereNotNull('province')->where('province', '!=', '')
-                    ->distinct()->orderBy('province')->pluck('province')->toArray()
-                : ContractLegal::whereNotNull('province')->where('province', '!=', '')
-                    ->distinct()->orderBy('province')->pluck('province')->toArray(),
+            'provinces' => $scopedProvinces,
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractLegal::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_status_options' => ContractVoucherStatus::values(),
-            'loai_dich_vu_options' => ContractLegal::SERVICE_TYPES,
+            'loai_dich_vu_options' => $loaiDichVuOptions,
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'info_sources' => ContractLegal::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractLegal::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),

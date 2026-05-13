@@ -697,6 +697,28 @@ class ContractWasteManager extends Component
             ->values()
             ->toArray();
 
+        $isRestrictedUser = $isRestrictedSales || $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+        $baseUserQuery = ContractWaste::query()
+            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
+                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+
+        $loaiDichVuOptions = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('loai_dich_vu')->where('loai_dich_vu', '!=', '')->distinct()->pluck('loai_dich_vu')->toArray()
+            : ContractWaste::SERVICE_TYPES;
+
+        $scopedProvinces = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray()
+            : ContractWaste::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray();
+
+        $scopedServiceTypes = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray()
+            : ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray();
+
+        $scopedWasteTypes = $isRestrictedUser
+            ? (clone $baseUserQuery)->whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray()
+            : ContractWaste::whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray();
+
         return view('livewire.admin.contracts.contract-waste-manager', [
             'docs' => $docs,
             'handlers' => Handler::orderBy('name')->get(),
@@ -706,17 +728,16 @@ class ContractWasteManager extends Component
             'assignable_users' => \App\Models\User::whereHas('roles', fn($q) =>
                 $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
             // Dynamic filter options
-            'service_types' => ContractWaste::whereNotNull('service_type')->where('service_type', '!=', '')->distinct()->pluck('service_type')->toArray(),
-            'waste_types' => ContractWaste::whereNotNull('waste_type')->where('waste_type', '!=', '')->distinct()->pluck('waste_type')->toArray(),
-            'loai_dich_vu_options' => ContractWaste::SERVICE_TYPES,
+            'service_types' => $scopedServiceTypes,
+            'waste_types' => $scopedWasteTypes,
+            'loai_dich_vu_options' => $loaiDichVuOptions,
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_statuses' => $voucherStatuses,
             'voucher_status_options' => ContractVoucherStatus::values(),
             'payment_methods' => ['Sau ký', 'Trước ký'],
-            'provinces' => ContractWaste::whereNotNull('province')->where('province', '!=', '')
-                ->distinct()->orderBy('province')->pluck('province')->toArray(),
+            'provinces' => $scopedProvinces,
             'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
             'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Chất thải & Tiếng ồn']);
