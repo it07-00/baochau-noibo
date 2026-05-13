@@ -415,10 +415,12 @@
                                                 $doc->staff_id === auth()->id();
                                         @endphp
                                         @if ($canEditDelete)
-                                            <button class="btn btn-sm p-0 text-secondary"
-                                                wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
-                                                <i class="bi bi-copy fs-5"></i>
-                                            </button>
+                                            @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                                                <button class="btn btn-sm p-0 text-secondary"
+                                                    wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
+                                                    <i class="bi bi-copy fs-5"></i>
+                                                </button>
+                                            @endif
                                             <button class="btn btn-sm p-0 text-warning"
                                                 wire:click="edit({{ $doc->id }})" title="Chỉnh sửa">
                                                 <i class="bi bi-pencil fs-5"></i>
