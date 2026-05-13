@@ -10,6 +10,7 @@ use App\Livewire\Concerns\ContractValidation;
 use App\Livewire\Concerns\HasContractFilters;
 use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
+use App\Models\ContractMilestoneFile;
 use App\Models\ContractProgressNote;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
@@ -21,17 +22,19 @@ use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
 use App\Support\VietnamProvinces;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Enums\Permission;
 
 class ContractConsultingManager extends Component
 {
-    use CleanMoneyInput, ContractValidation, WithPagination, HasContractFilters;
+    use CleanMoneyInput, ContractValidation, WithPagination, WithFileUploads, HasContractFilters;
 
     private const ALLOWED_STATUSES = [
         'PTH đang kiểm tra',
@@ -87,6 +90,9 @@ class ContractConsultingManager extends Component
     public string $reportNumber = '';
 
     public ?int $quotation_id = null;
+
+    public array $newContractFiles = [];
+    public $existingContractFiles = [];
 
     public $formData = [
         'shd_cxl' => '',
@@ -428,6 +434,13 @@ class ContractConsultingManager extends Component
                 ->with('user')
                 ->latest()
                 ->get();
+            $this->existingContractFiles = ContractMilestoneFile::where('contract_type', ContractLegal::class)
+                ->where('contract_id', $id)
+                ->where('milestone', 'contract_document')
+                ->with('uploader')
+                ->latest()
+                ->get();
+            $this->newContractFiles = [];
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
@@ -446,6 +459,63 @@ class ContractConsultingManager extends Component
 
         $this->selectedDoc->update(['report_number' => $this->reportNumber ?: null]);
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật Báo cáo số!']);
+    }
+
+    public function uploadContractFile(): void
+    {
+        $this->validate([
+            'newContractFiles'   => 'required|array|max:10',
+            'newContractFiles.*' => 'file|max:204800|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+        ], [
+            'newContractFiles.required' => 'Vui lòng chọn ít nhất 1 file.',
+            'newContractFiles.*.max'    => 'Mỗi file không được vượt quá 200MB.',
+            'newContractFiles.*.mimes'  => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
+        ]);
+
+        $disk = config('filesystems.upload_disk', 'public');
+
+        foreach ($this->newContractFiles as $file) {
+            $path = $file->storePublicly('contract-files/consulting/contract_document', $disk);
+            ContractMilestoneFile::create([
+                'contract_type' => ContractLegal::class,
+                'contract_id'   => $this->selectedDoc->id,
+                'milestone'     => 'contract_document',
+                'file_path'     => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'uploader_id'   => auth()->id(),
+            ]);
+        }
+
+        $this->newContractFiles = [];
+        $this->existingContractFiles = ContractMilestoneFile::where('contract_type', ContractLegal::class)
+            ->where('contract_id', $this->selectedDoc->id)
+            ->where('milestone', 'contract_document')
+            ->with('uploader')
+            ->latest()
+            ->get();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Tải file lên thành công!']);
+    }
+
+    public function deleteContractFile(int $fileId): void
+    {
+        $file = ContractMilestoneFile::findOrFail($fileId);
+        $disk = config('filesystems.upload_disk', 'public');
+
+        if (Storage::disk($disk)->exists($file->file_path)) {
+            Storage::disk($disk)->delete($file->file_path);
+        }
+
+        $file->delete();
+
+        $this->existingContractFiles = ContractMilestoneFile::where('contract_type', ContractLegal::class)
+            ->where('contract_id', $this->selectedDoc->id)
+            ->where('milestone', 'contract_document')
+            ->with('uploader')
+            ->latest()
+            ->get();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa file.']);
     }
 
     #[Computed]

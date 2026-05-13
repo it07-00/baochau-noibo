@@ -13,7 +13,9 @@ use App\Models\Handler;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\ContractAssignment;
+use App\Models\ContractMilestoneFile;
 use App\Models\ContractProgressNote;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -61,6 +63,8 @@ class ContractWasteManager extends Component
     public string $progressNote = '';
     public $progressNotes = [];
     public ?int $workflowContractId = null;
+    public array $newContractFiles = [];
+    public $existingContractFiles = [];
 
     public $formData = [
         'shd_cxl' => '',
@@ -602,6 +606,13 @@ class ContractWasteManager extends Component
                 ->with('user')
                 ->latest()
                 ->get();
+            $this->existingContractFiles = ContractMilestoneFile::where('contract_type', ContractWaste::class)
+                ->where('contract_id', $id)
+                ->where('milestone', 'contract_document')
+                ->with('uploader')
+                ->latest()
+                ->get();
+            $this->newContractFiles = [];
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
@@ -611,6 +622,63 @@ class ContractWasteManager extends Component
     {
         $this->showDetail = false;
         $this->selectedDoc = null;
+    }
+
+    public function uploadContractFile(): void
+    {
+        $this->validate([
+            'newContractFiles'   => 'required|array|max:10',
+            'newContractFiles.*' => 'file|max:204800|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+        ], [
+            'newContractFiles.required' => 'Vui lòng chọn ít nhất 1 file.',
+            'newContractFiles.*.max'    => 'Mỗi file không được vượt quá 200MB.',
+            'newContractFiles.*.mimes'  => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
+        ]);
+
+        $disk = config('filesystems.upload_disk', 'public');
+
+        foreach ($this->newContractFiles as $file) {
+            $path = $file->storePublicly('contract-files/waste/contract_document', $disk);
+            ContractMilestoneFile::create([
+                'contract_type' => ContractWaste::class,
+                'contract_id'   => $this->selectedDoc->id,
+                'milestone'     => 'contract_document',
+                'file_path'     => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'uploader_id'   => auth()->id(),
+            ]);
+        }
+
+        $this->newContractFiles = [];
+        $this->existingContractFiles = ContractMilestoneFile::where('contract_type', ContractWaste::class)
+            ->where('contract_id', $this->selectedDoc->id)
+            ->where('milestone', 'contract_document')
+            ->with('uploader')
+            ->latest()
+            ->get();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Tải file lên thành công!']);
+    }
+
+    public function deleteContractFile(int $fileId): void
+    {
+        $file = ContractMilestoneFile::findOrFail($fileId);
+        $disk = config('filesystems.upload_disk', 'public');
+
+        if (Storage::disk($disk)->exists($file->file_path)) {
+            Storage::disk($disk)->delete($file->file_path);
+        }
+
+        $file->delete();
+
+        $this->existingContractFiles = ContractMilestoneFile::where('contract_type', ContractWaste::class)
+            ->where('contract_id', $this->selectedDoc->id)
+            ->where('milestone', 'contract_document')
+            ->with('uploader')
+            ->latest()
+            ->get();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa file.']);
     }
 
     private function applyFilters($query): void
