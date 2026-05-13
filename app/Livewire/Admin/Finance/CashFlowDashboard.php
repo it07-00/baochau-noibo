@@ -9,6 +9,7 @@ use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -135,11 +136,22 @@ class CashFlowDashboard extends Component
 
     public function render()
     {
-        $rows   = $this->collectRows();
-        $totals = $this->buildTotals($rows);
+        $allRows = $this->collectRows();
+        $totals  = $this->buildTotals($allRows);
+
+        $perPage = 10;
+        $currentPage = $this->getPage();
+        $currentItems = array_slice($allRows, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedRows = new LengthAwarePaginator(
+            $currentItems,
+            count($allRows),
+            $perPage,
+            $currentPage,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'pageName' => 'page']
+        );
 
         return view('livewire.admin.finance.cash-flow-dashboard', [
-            'rows'           => $rows,
+            'rows'           => $paginatedRows,
             'totals'         => $totals,
             'periodLabel'    => $this->buildPeriodLabel(),
             'contractTypes'  => array_map(fn ($s) => $s[1], self::CONTRACT_SOURCES),

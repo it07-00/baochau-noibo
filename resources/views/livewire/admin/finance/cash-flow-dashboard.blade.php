@@ -155,6 +155,12 @@
                     @endif
                 </table>
             </div>
+            
+            @if ($rows instanceof \Illuminate\Pagination\LengthAwarePaginator && $rows->hasPages())
+                <div class="card-footer px-3 border-0 d-flex justify-content-center">
+                    {{ $rows->links('livewire.admin.users.pagination') }}
+                </div>
+            @endif
         </div>
     </div>
 </div>
