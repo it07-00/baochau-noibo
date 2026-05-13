@@ -843,6 +843,7 @@ abstract class AbstractContractGenericManager extends Component
             'value'              => 0,
             'commission'         => 0,
             'revenue'            => 0,
+            'ncc_payment'        => 0,
             'province'           => '',
             'info_source'        => 'MỚI',
             'payment_method'     => 'Sau ký',

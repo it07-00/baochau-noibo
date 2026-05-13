@@ -593,8 +593,6 @@ class ContractWasteManager extends Component
         ];
         $this->selectedDocIds = [];
         $this->sortDirection = 'desc';
-            $this->isDuplicating = false;
-            $this->selectedDoc = null;
     }
 
     public function viewDetail($id)

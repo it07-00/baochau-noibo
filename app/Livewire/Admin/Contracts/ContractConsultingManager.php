@@ -683,7 +683,7 @@ class ContractConsultingManager extends Component
             'shd_cxl' => '',
             'shd_bc' => '',
             'customer_id' => '',
-        'handler_id'     => '',
+            'handler_id'     => '',
             'staff_id' => auth()->id(),
             'department_id' => 3, // Phòng Kinh doanh
             'signed_at' => date('Y-m-d'),
@@ -691,6 +691,7 @@ class ContractConsultingManager extends Component
             'value' => 0,
             'commission' => 0,
             'revenue' => 0,
+            'ncc_payment' => 0,
             'province' => '',
             'info_source' => 'MỚI',
             'payment_method' => 'Sau ký',
