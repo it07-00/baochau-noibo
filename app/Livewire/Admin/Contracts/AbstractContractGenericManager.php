@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\ContractRenewalStatus;
 use App\Enums\ContractVoucherStatus;
 use App\Enums\Permission;
 use App\Enums\Role;
@@ -16,6 +17,7 @@ use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Livewire\Concerns\CleanMoneyInput;
@@ -69,6 +71,7 @@ abstract class AbstractContractGenericManager extends Component
         'value'              => 0,
         'commission'         => 0,
         'revenue'            => 0,
+        'ncc_payment'        => 0,
         'province'           => '',
         'info_source'        => 'MỚI',
         'payment_method'     => 'Sau ký',
@@ -206,6 +209,7 @@ abstract class AbstractContractGenericManager extends Component
         if ($this->selectedDoc->submitted_at) {
             $this->formData['submitted_at'] = $this->selectedDoc->submitted_at->format('Y-m-d');
         }
+        $this->normalizeContractEnumFields();
         $this->isEditing = true;
         $this->showModal = true;
         $this->dispatch('openFormModal');
@@ -233,8 +237,9 @@ abstract class AbstractContractGenericManager extends Component
                 : $user->id;
         }
 
-        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment']);
         $this->ensureDepartmentId();
+        $this->normalizeContractEnumFields();
 
         try {
             $this->validate($this->baseContractRules(), $this->contractValidationMessages());
@@ -251,8 +256,10 @@ abstract class AbstractContractGenericManager extends Component
         $isAccountant = $user->hasRole(Role::KE_TOAN->value);
         if (!$this->isEditing) {
             $data['shd_bc'] = null;
+            $data['ncc_payment'] = 0;
         } elseif (!$isAccountant && $this->selectedDoc) {
             $data['shd_bc'] = $this->selectedDoc->shd_bc;
+            $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
         }
 
         if ($this->isEditing && $this->selectedDoc) {
@@ -349,6 +356,7 @@ abstract class AbstractContractGenericManager extends Component
         $this->formData['shd_cxl']     = '';
         $this->formData['shd_bc']      = '';
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
+        $this->normalizeContractEnumFields();
         $this->isEditing     = false;
         $this->isDuplicating = true;
         $this->selectedDoc   = null;
@@ -704,6 +712,7 @@ abstract class AbstractContractGenericManager extends Component
             'provinces'              => $modelClass::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses'           => self::ALLOWED_STATUSES,
             'renewal_statuses'       => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_status_options' => ContractVoucherStatus::values(),
             'loai_dich_vu_options'   => $modelClass::SERVICE_TYPES,
             'payment_methods'        => ['Sau ký', 'Trước ký'],

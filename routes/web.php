@@ -103,6 +103,11 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::get('/{id}/chinh-sua', \App\Livewire\Admin\Commissions\CommissionRequestForm::class)->name('edit');
     });
 
+    // Dòng tiền
+    Route::get('tai-chinh/dong-tien', \App\Livewire\Admin\Finance\CashFlowDashboard::class)
+        ->name('finance.cash-flow')
+        ->middleware(Permission::toMiddleware(Permission::CASH_FLOW_VIEW));
+
     // Hợp đồng
     Route::prefix('hop-dong')->name('contracts.')->group(function () {
         Route::get('chat-thai-va-tieng-on', \App\Livewire\Admin\Contracts\ContractWasteManager::class)->name('waste.index')->middleware(Permission::toMiddleware(Permission::CONTRACTS_WASTE_VIEW));
@@ -135,10 +140,6 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         Route::get('chi-tieu',           \App\Livewire\Admin\Reports\Sales\SalesTargetReport::class)->name('target');
         Route::get('ca-nhan',            \App\Livewire\Admin\Reports\Sales\PersonalSalesReport::class)->name('personal');
     });
-
-    // Quản lý hóa đơn
-    Route::get('hoa-don/bao-chau',    \App\Livewire\Admin\Invoices\InvoiceBaoChauManager::class)->name('invoices.bao-chau')->middleware(Permission::toMiddleware(Permission::INVOICES_VIEW));
-    Route::get('hoa-don/chu-xu-ly',   \App\Livewire\Admin\Invoices\InvoiceHandlerManager::class)->name('invoices.handlers')->middleware(Permission::toMiddleware(Permission::HANDLER_INVOICES_VIEW));
 
     // Báo cáo Tư vấn
     Route::prefix('bao-cao/tu-van')->name('reports.consulting-work.')->middleware(Permission::toMiddleware(Permission::REPORTS_CONSULTING_VIEW))->group(function () {

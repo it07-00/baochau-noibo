@@ -69,15 +69,6 @@ enum Permission: string
     case PAYMENT_SCHEDULES_CREATE = 'payment-schedules.create';
     case PAYMENT_SCHEDULES_EDIT   = 'payment-schedules.edit';
     case PAYMENT_SCHEDULES_DELETE = 'payment-schedules.delete';
-    case INVOICES_VIEW            = 'invoices.view';
-    case INVOICES_CREATE          = 'invoices.create';
-    case INVOICES_EDIT            = 'invoices.edit';
-    case INVOICES_DELETE          = 'invoices.delete';
-    case HANDLER_INVOICES_VIEW    = 'handler-invoices.view';
-    case HANDLER_INVOICES_CREATE  = 'handler-invoices.create';
-    case HANDLER_INVOICES_EDIT    = 'handler-invoices.edit';
-    case HANDLER_INVOICES_DELETE  = 'handler-invoices.delete';
-
     // Sales
     case SALES_RENEWAL_VIEW        = 'sales-renewal.view';
     case SALES_RENEWAL_CREATE      = 'sales-renewal.create';
@@ -101,6 +92,10 @@ enum Permission: string
     case ADVANCE_REQUESTS_CREATE = 'advance-requests.create';
     case ADVANCE_REQUESTS_EDIT   = 'advance-requests.edit';
     case ADVANCE_REQUESTS_DELETE = 'advance-requests.delete';
+
+    // Cash Flow
+    case CASH_FLOW_VIEW   = 'cash-flow.view';
+    case CASH_FLOW_EXPORT = 'cash-flow.export';
 
     // Operations Requests
     case WASTE_REQUESTS_VIEW        = 'waste-requests.view';

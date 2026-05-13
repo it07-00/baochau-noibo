@@ -619,7 +619,7 @@
                                                 @foreach ($all_statuses as $opt)
                                                     <button type="button"
                                                         class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }} fs-85"
-                                                        
+
                                                         wire:click="updateStatus({{ $doc->id }}, '{{ $opt }}')"
                                                         @click="open = false">
                                                         {{ $opt }}
@@ -641,7 +641,7 @@
                                         wire:click="viewDetail({{ $doc->id }})">
                                         <i class="bi bi-eye fs-5"></i>
                                     </button>
-                                    @if ($this->canAssign)
+                                    @if ($this->canAssign())
                                         <button class="btn btn-sm p-0 text-success"
                                             wire:click="openAssign({{ $doc->id }})" title="Giao việc">
                                             <i class="bi bi-person-check fs-5"></i>
@@ -931,19 +931,24 @@
                 <form wire:submit.prevent="save">
                     <div class="modal-body p-4">
                         <div class="row g-3">
-                            <!-- Info -->
+                            <div class="col-12">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-file-earmark-text me-1"></i>Thông tin hợp đồng</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                </div>
+                            </div>
                             @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
-                                <div class="col-md-3">
-                                    <label class="form-label fw-bold">Số HĐ NTP</label>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Số HĐ NTP</label>
                                     <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
                                 </div>
-                                <div class="col-md-3">
-                                    <label class="form-label fw-bold">Số HĐ BC</label>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Số HĐ BC</label>
                                     <input type="text" class="form-control" wire:model.defer="formData.shd_bc">
                                 </div>
                             @endif
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Khách hàng <span
+                            <div class="{{ ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value)) ? 'col-md-4' : 'col-md-6' }}">
+                                <label class="form-label small fw-semibold">Khách hàng <span
                                         class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button
@@ -980,8 +985,8 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Nhà thầu phụ <span class="text-danger">*</span></label>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Nhà thầu phụ <span class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button
                                         class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror select-full"
@@ -1017,8 +1022,8 @@
                                 @enderror
                             </div>
                             @if (auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
-                                <div class="col-md-3">
-                                    <label class="form-label fw-bold">Nhân viên <span
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Nhân viên <span
                                             class="text-danger">*</span></label>
                                     <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                         <button
@@ -1057,8 +1062,16 @@
                                     @enderror
                                 </div>
                             @endif
+                            <div class="{{ auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]) ? 'col-md-4' : 'col-md-8' }}">
+                                <label class="form-label small fw-semibold">Nội dung</label>
+                                <textarea class="form-control @error('formData.content') is-invalid @enderror" rows="2"
+                                    wire:model.defer="formData.content"></textarea>
+                                @error('formData.content')
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <div class="col-md-3 d-none">
-                                <label class="form-label fw-bold">Phòng ban</label>
+                                <label class="form-label small fw-semibold">Phòng ban</label>
                                 <select class="form-select" wire:model.defer="formData.department_id">
                                     <option value="">Chọn phòng ban</option>
                                     @foreach ($departments as $d)
@@ -1067,18 +1080,14 @@
                                 </select>
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label fw-bold">Nội dung</label>
-                                <textarea class="form-control @error('formData.content') is-invalid @enderror" rows="2"
-                                    wire:model.defer="formData.content"></textarea>
-                                @error('formData.content')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
+                            <div class="col-12 mt-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-cash-coin me-1"></i>Giá trị & Tài chính</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                </div>
                             </div>
-
-                            <!-- Values -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Giá trị hợp đồng <span
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Giá trị hợp đồng <span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="text"
@@ -1090,8 +1099,8 @@
                                     <div class="text-danger  mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Hoa hồng</label>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Hoa hồng</label>
                                 <div class="input-group">
                                     <input type="text"
                                         class="form-control money-input @error('formData.commission') is-invalid @enderror"
@@ -1102,104 +1111,58 @@
                                     <div class="text-danger  mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Doanh số thực</label>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Doanh số thực</label>
                                 <div class="input-group">
                                     <input type="text"
                                         class="form-control money-input @error('formData.revenue') is-invalid @enderror"
                                         wire:model.defer="formData.revenue">
                                     <span class="input-group-text">đ</span>
                                 </div>
-                                @error('formData.revenue')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
+                            @error('formData.revenue')
+                                <div class="text-danger  mt-1">{{ $message }}</div>
+                            @enderror
                             </div>
 
-                            <!-- Dates -->
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Ngày ký</label>
-                                <input type="date" class="form-control" wire:model.defer="formData.signed_at">
+                            @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                            <div class="col-md-3"
+                                 x-data="{
+                                     ncc: {{ (int)($formData['ncc_payment'] ?? 0) }},
+                                     revenue: {{ (int)($formData['revenue'] ?? 0) }},
+                                     commission: {{ (int)($formData['commission'] ?? 0) }},
+                                     get net() { return Math.max(0, this.revenue - this.commission - this.ncc); },
+                                     fmt(n) { return new Intl.NumberFormat('vi-VN').format(n); }
+                                 }">
+                                <label class="form-label small fw-semibold">Chi Nhà Cung Cấp</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control money-input"
+                                           wire:model.defer="formData.ncc_payment"
+                                           x-on:input="ncc = parseInt($event.target.value.replace(/\D/g, '')) || 0"
+                                           placeholder="0">
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                                <small class="text-muted">Thực nhận: <strong class="text-success" x-text="fmt(net) + 'đ'"></strong></small>
                             </div>
+                            @elseif($selectedDoc && $selectedDoc->ncc_payment > 0)
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Ngày hiệu lực</label>
-                                <input type="date"
-                                    class="form-control @error('formData.effective_at') is-invalid @enderror"
-                                    wire:model.defer="formData.effective_at">
-                                @error('formData.effective_at')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
+                                <label class="form-label small fw-semibold">Chi Nhà Cung Cấp</label>
+                                <p class="mb-0 text-danger fw-bold">{{ number_format($selectedDoc->ncc_payment) }}đ</p>
+                                <small class="text-muted">Thực nhận: <strong class="text-success">{{ number_format($selectedDoc->revenue - $selectedDoc->commission - $selectedDoc->ncc_payment) }}đ</strong></small>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Ngày kết thúc</label>
-                                <input type="date"
-                                    class="form-control @error('formData.end_at') is-invalid @enderror"
-                                    wire:model.defer="formData.end_at">
-                                @error('formData.end_at')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Ngày xuất hóa đơn</label>
-                                <input type="date" class="form-control" wire:model.defer="formData.submitted_at">
-                            </div>
+                            @endif
 
-                            <!-- Addresses -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Địa chỉ xuất HĐ</label>
-                                <textarea class="form-control @error('formData.billing_address') is-invalid @enderror" rows="2"
-                                    wire:model.defer="formData.billing_address"></textarea>
-                                @error('formData.billing_address')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Địa chỉ thực hiện</label>
-                                <textarea class="form-control @error('formData.execution_address') is-invalid @enderror" rows="2"
-                                    wire:model.defer="formData.execution_address"></textarea>
-                                @error('formData.execution_address')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Địa chỉ gửi thư</label>
-                                <textarea class="form-control @error('formData.mailing_address') is-invalid @enderror" rows="2"
-                                    wire:model.defer="formData.mailing_address"></textarea>
-                                @error('formData.mailing_address')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Statuses -->
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Tình trạng</label>
-                                <select class="form-select" wire:model.defer="formData.status">
-                                    <option value="">Chọn tình trạng</option>
-                                    @foreach ($all_statuses as $status)
-                                        <option value="{{ $status }}">{{ $status }}</option>
+                                <label class="form-label small fw-semibold">PT thanh toán</label>
+                                <input class="form-control" wire:model.defer="formData.payment_method"
+                                    list="pm-options-waste" placeholder="VD: Sau ký, Trước ký...">
+                                <datalist id="pm-options-waste">
+                                    @foreach ($payment_methods as $pm)
+                                        <option value="{{ $pm }}">
                                     @endforeach
-                                </select>
+                                </datalist>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Tình trạng tái ký</label>
-                                <select class="form-select" wire:model.defer="formData.renewal_status">
-                                    <option value="">Chọn tình trạng</option>
-                                    <option value="CHƯA ĐẾN HẠN">Chưa đến hạn</option>
-                                    <option value="ĐÃ TÁI KÝ">Đã tái ký</option>
-                                    <option value="KHÔNG TÁI KÝ">Không tái ký</option>
-                                    <option value="CHỜ XÁC NHẬN">Chờ xác nhận</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Tình trạng chứng từ</label>
-                                <select class="form-select" wire:model.defer="formData.voucher_status">
-                                    <option value="">Chọn tình trạng</option>
-                                    @foreach ($voucher_status_options as $voucherStatus)
-                                        <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Nguồn thông tin</label>
+                                <label class="form-label small fw-semibold">Nguồn thông tin</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.source"
                                     list="source-list-waste" placeholder="Nhập hoặc chọn nguồn...">
                                 <datalist id="source-list-waste">
@@ -1208,49 +1171,164 @@
                                     @endforeach
                                 </datalist>
                             </div>
+
+                            <div class="col-12 mt-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-calendar3 me-1"></i>Thời gian</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                </div>
+                            </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">PT thanh toán</label>
-                                <input class="form-control" wire:model.defer="formData.payment_method"
-                                    list="pm-options" placeholder="VD: Sau ký, Trước ký...">
-                                <datalist id="pm-options">
-                                    @foreach ($payment_methods as $pm)
-                                        <option value="{{ $pm }}">
-                                    @endforeach
-                                </datalist>
+                                <label class="form-label small fw-semibold">Ngày ký</label>
+                                <input type="date" class="form-control" wire:model.defer="formData.signed_at">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Ngày hiệu lực</label>
+                                <input type="date"
+                                    class="form-control @error('formData.effective_at') is-invalid @enderror"
+                                    wire:model.defer="formData.effective_at">
+                                @error('formData.effective_at')
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Ngày kết thúc</label>
+                                <input type="date"
+                                    class="form-control @error('formData.end_at') is-invalid @enderror"
+                                    wire:model.defer="formData.end_at">
+                                @error('formData.end_at')
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Ngày xuất hóa đơn</label>
+                                <input type="date" class="form-control" wire:model.defer="formData.submitted_at">
                             </div>
 
+                            <div class="col-12 mt-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-geo-alt me-1"></i>Địa chỉ</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                </div>
+                            </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Tỉnh thành</label>
-                                <input type="text" class="form-control" wire:model="formData.province"
-                                    list="province-list-waste" autocomplete="off">
-                                <datalist id="province-list-waste">
-                                    @foreach ($provinces as $p)
-                                        <option value="{{ $p }}">
-                                    @endforeach
-                                </datalist>
+                                <label class="form-label small fw-semibold">Địa chỉ thực hiện</label>
+                                <textarea class="form-control @error('formData.execution_address') is-invalid @enderror" rows="3"
+                                    wire:model.defer="formData.execution_address"></textarea>
+                                @error('formData.execution_address')
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Địa chỉ gửi thư</label>
+                                <textarea class="form-control @error('formData.mailing_address') is-invalid @enderror" rows="3"
+                                    wire:model.defer="formData.mailing_address"></textarea>
+                                @error('formData.mailing_address')
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Địa chỉ xuất HĐ</label>
+                                <textarea class="form-control @error('formData.billing_address') is-invalid @enderror" rows="3"
+                                    wire:model.defer="formData.billing_address"></textarea>
+                                @error('formData.billing_address')
+                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Tỉnh thành</label>
+                                <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                    <button class="form-select text-start select-full" type="button"
+                                        @click.prevent="open = !open">
+                                        {{ $formData['province'] ?? 'Chọn tỉnh thành' }}
+                                    </button>
+                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
+                                        @click.away="open = false" x-cloak>
+                                        <input type="text" x-model="search" class="form-control form-control-sm mb-2"
+                                            placeholder="Tìm tỉnh thành..." @click.stop>
+                                        <button class="dropdown-item @if(empty($formData['province'])) active @endif"
+                                            type="button" x-show="!search.length"
+                                            wire:click="$set('formData.province', '')" @click="open = false">-- Chọn tỉnh thành --</button>
+                                        @foreach ($provinces as $p)
+                                            <button
+                                                class="dropdown-item @if(($formData['province'] ?? '') == $p) active @endif"
+                                                type="button"
+                                                x-show="{{ json_encode(mb_strtolower($p)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
+                                                wire:click="$set('formData.province', '{{ $p }}')"
+                                                @click="open = false">
+                                                {{ $p }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="col-md-6 d-flex align-items-center gap-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="form_offset"
-                                        wire:model.defer="formData.is_offset">
-                                    <label class="form-check-label" for="form_offset">Có bù trừ</label>
+                            <div class="col-12 mt-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-tags me-1"></i>Trạng thái & Phân loại</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="form_overdue"
-                                        wire:model.defer="formData.is_overdue">
-                                    <label class="form-check-label" for="form_overdue">Trễ hạn</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="form_wt_renewal"
-                                        wire:model="formData.is_renewal">
-                                    <label class="form-check-label" for="form_wt_renewal">Tái ký</label>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Tình trạng</label>
+                                <select class="form-select" wire:model.defer="formData.status">
+                                    <option value="">Chọn tình trạng</option>
+                                    @foreach ($all_statuses as $status)
+                                        <option value="{{ $status }}">{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Tình trạng tái ký</label>
+                                <select class="form-select" wire:model.defer="formData.renewal_status">
+                                    <option value="">Chọn tình trạng</option>
+                                    @foreach ($renewal_status_options as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Tình trạng chứng từ</label>
+                                <select class="form-select" wire:model.defer="formData.voucher_status">
+                                    <option value="">Chọn tình trạng</option>
+                                    @foreach ($voucher_status_options as $voucherStatus)
+                                        <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Hạng mục dịch vụ</label>
+                                <select class="form-select" wire:model.defer="formData.loai_dich_vu">
+                                    <option value="">Chọn hạng mục</option>
+                                    @foreach ($loai_dich_vu_options as $opt)
+                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap align-items-center gap-3 bg-light rounded-2 px-3 py-2">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" id="form_offset"
+                                            wire:model.defer="formData.is_offset">
+                                        <label class="form-check-label" for="form_offset">Có bù trừ</label>
+                                    </div>
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" id="form_overdue"
+                                            wire:model.defer="formData.is_overdue">
+                                        <label class="form-check-label" for="form_overdue">Trễ hạn</label>
+                                    </div>
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" id="form_wt_renewal"
+                                            wire:model="formData.is_renewal">
+                                        <label class="form-check-label" for="form_wt_renewal">Tái ký</label>
+                                    </div>
                                 </div>
                             </div>
 
                             @if ($formData['is_renewal'])
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">HĐ gốc (tái ký từ)</label>
+                                    <label class="form-label small fw-semibold">HĐ gốc (tái ký từ)</label>
                                     <select class="form-select" wire:model.defer="formData.parent_contract_id">
                                         <option value="">-- Chọn HĐ gốc --</option>
                                         @foreach ($parentContracts as $pc)
@@ -1261,20 +1339,15 @@
                                 </div>
                             @endif
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Hạng mục dịch vụ</label>
-                                <select class="form-select" wire:model.defer="formData.loai_dich_vu">
-                                    <option value="">Chọn hạng mục</option>
-                                    @foreach ($loai_dich_vu_options as $opt)
-                                        <option value="{{ $opt }}">{{ $opt }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-12 mt-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-pencil me-1"></i>Ghi chú</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                </div>
                             </div>
-
                             <div class="col-12">
-                                <label class="form-label fw-bold">Ghi chú</label>
-                                <textarea class="form-control @error('formData.note') is-invalid @enderror" rows="2"
-                                    wire:model.defer="formData.note"></textarea>
+                                <textarea class="form-control @error('formData.note') is-invalid @enderror" rows="3"
+                                    wire:model.defer="formData.note" placeholder="Nhập ghi chú..."></textarea>
                                 @error('formData.note')
                                     <div class="text-danger  mt-1">{{ $message }}</div>
                                 @enderror
@@ -1285,7 +1358,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm"></span>
-                            Lưu hợp đồng
+                            <i class="bi bi-floppy me-1"></i>Lưu
                         </button>
                     </div>
                 </form>

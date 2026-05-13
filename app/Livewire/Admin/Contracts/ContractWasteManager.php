@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Contracts;
 
 use App\Actions\Contracts\UpsertContractWasteAction;
+use App\Enums\ContractRenewalStatus;
 use App\Enums\ContractVoucherStatus;
 use App\Enums\Permission;
 use App\Enums\Role;
@@ -72,6 +73,7 @@ class ContractWasteManager extends Component
         'value' => 0,
         'commission' => 0,
         'revenue' => 0,
+        'ncc_payment' => 0,
         'payment_method' => 'Sau ký',
         'source' => 'MỚI',
         'signed_at' => '',
@@ -199,6 +201,7 @@ class ContractWasteManager extends Component
         $this->formData['effective_at'] = $doc->effective_at ? $doc->effective_at->format('Y-m-d') : '';
         $this->formData['end_at'] = $doc->end_at ? $doc->end_at->format('Y-m-d') : '';
         $this->formData['submitted_at'] = $doc->submitted_at ? $doc->submitted_at->format('Y-m-d') : '';
+        $this->normalizeContractEnumFields();
 
         $this->isEditing = true;
         $this->showModal = true;
@@ -218,6 +221,7 @@ class ContractWasteManager extends Component
         $this->formData['shd_cxl'] = '';
         $this->formData['shd_bc'] = '';
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
+        $this->normalizeContractEnumFields();
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedDoc = null;
@@ -246,8 +250,9 @@ class ContractWasteManager extends Component
                 : $user->id;
         }
 
-        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment']);
         $this->ensureDepartmentId();
+        $this->normalizeContractEnumFields();
 
         try {
             $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
@@ -400,6 +405,7 @@ class ContractWasteManager extends Component
             'value' => 0,
             'commission' => 0,
             'revenue' => 0,
+            'ncc_payment' => 0,
             'payment_method' => 'Sau ký',
             'source' => 'MỚI',
             'signed_at' => date('Y-m-d'),
@@ -705,6 +711,7 @@ class ContractWasteManager extends Component
             'loai_dich_vu_options' => ContractWaste::SERVICE_TYPES,
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractWaste::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_statuses' => $voucherStatuses,
             'voucher_status_options' => ContractVoucherStatus::values(),
             'payment_methods' => ['Sau ký', 'Trước ký'],

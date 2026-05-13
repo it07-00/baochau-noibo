@@ -203,21 +203,26 @@ class PermissionsSeeder extends Seeder
             // Dữ liệu nền: xem để tra cứu hóa đơn
             PermissionEnum::CUSTOMERS_VIEW->value,
             PermissionEnum::HANDLERS_VIEW->value,
-            // Hợp đồng: chỉ xem
+            // Hợp đồng: xem + sửa (để nhập chi NCC)
             PermissionEnum::CONTRACTS_WASTE_VIEW->value,
+            PermissionEnum::CONTRACTS_WASTE_EDIT->value,
             PermissionEnum::CONTRACTS_CONSULTING_VIEW->value,
+            PermissionEnum::CONTRACTS_CONSULTING_EDIT->value,
             PermissionEnum::CONTRACTS_PROJECT_VIEW->value,
+            PermissionEnum::CONTRACTS_PROJECT_EDIT->value,
             PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value,
+            PermissionEnum::CONTRACTS_COMMERCIAL_EDIT->value,
             PermissionEnum::CONTRACTS_SUSTAINABILITY_VIEW->value,
+            PermissionEnum::CONTRACTS_SUSTAINABILITY_EDIT->value,
             PermissionEnum::CONTRACTS_ENERGY_VIEW->value,
+            PermissionEnum::CONTRACTS_ENERGY_EDIT->value,
             // Lịch thanh toán: CRUD
             PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value, PermissionEnum::PAYMENT_SCHEDULES_DELETE->value,
-            // Hóa đơn: CRUD đầy đủ
-            PermissionEnum::INVOICES_VIEW->value, PermissionEnum::INVOICES_CREATE->value, PermissionEnum::INVOICES_EDIT->value, PermissionEnum::INVOICES_DELETE->value,
-            PermissionEnum::HANDLER_INVOICES_VIEW->value, PermissionEnum::HANDLER_INVOICES_CREATE->value, PermissionEnum::HANDLER_INVOICES_EDIT->value, PermissionEnum::HANDLER_INVOICES_DELETE->value,
             // Tài chính: CRUD (duyệt, xử lý)
             PermissionEnum::COMMISSIONS_VIEW->value, PermissionEnum::COMMISSIONS_CREATE->value, PermissionEnum::COMMISSIONS_EDIT->value, PermissionEnum::COMMISSIONS_DELETE->value,
             PermissionEnum::ADVANCE_REQUESTS_VIEW->value, PermissionEnum::ADVANCE_REQUESTS_CREATE->value, PermissionEnum::ADVANCE_REQUESTS_EDIT->value, PermissionEnum::ADVANCE_REQUESTS_DELETE->value,
+            // Dòng tiền
+            PermissionEnum::CASH_FLOW_VIEW->value, PermissionEnum::CASH_FLOW_EXPORT->value,
             // Thống kê & Báo cáo
             PermissionEnum::RANKINGS_VIEW->value, PermissionEnum::STATISTICS_VIEW->value, PermissionEnum::REPORTS_VIEW->value,
             // Nội bộ

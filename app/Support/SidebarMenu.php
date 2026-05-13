@@ -32,11 +32,55 @@ class SidebarMenu
         };
     }
 
+    // ── Accounting-specific menu (ke-toan role) ───────────────────────────────
+
+    private static function accountingMenu(): array
+    {
+        $accounting = [
+            [
+                'title'      => 'Dòng tiền',
+                'icon'       => 'stack',
+                'permission' => 'cash-flow.view',
+                'href'       => route('app.finance.cash-flow'),
+            ],
+            [
+                'title'      => 'Hoa hồng',
+                'icon'       => 'stack',
+                'permission' => 'commissions.view',
+                'children'   => ['Yêu cầu chi hoa hồng'],
+            ],
+            [
+                'title'      => 'Quản lý hợp đồng',
+                'icon'       => 'stack',
+                'permission' => 'payment-schedules.view',
+                'children'   => self::contractTypes(),
+            ],
+        ];
+
+        $operations = [
+            [
+                'title'      => 'Báo cáo ngày',
+                'icon'       => 'report',
+                'permission' => 'daily-reports.view',
+                'href'       => route('app.daily-reports.index'),
+            ],
+        ];
+
+        return array_merge(
+            array_map(fn ($m) => $m + ['section' => 'KẾ TOÁN'], $accounting),
+            array_map(fn ($m) => $m + ['section' => 'NGHIỆP VỤ'], $operations),
+        );
+    }
+
     // ── Menu definitions ──────────────────────────────────────────────────────
 
     /** @return array<int, array{title: string, icon: string, permission: string, section: string, href?: string, children?: string[]}> */
-    public static function all(): array
+    public static function all(?\App\Models\User $user = null): array
     {
+        if ($user && $user->hasRole(\App\Enums\Role::KE_TOAN->value)) {
+            return self::accountingMenu();
+        }
+
         $operations = [
             [
                 'title'      => 'Báo cáo ngày',
@@ -89,12 +133,6 @@ class SidebarMenu
         ];
 
         $finance = [
-            [
-                'title'      => 'Quản lý hóa đơn',
-                'icon'       => 'stack',
-                'permission' => 'invoices.view',
-                'children'   => ['Hóa đơn Bảo Châu', 'Hóa đơn nhà thầu phụ'],
-            ],
             [
                 'title'      => 'Hoa hồng',
                 'icon'       => 'stack',
@@ -151,6 +189,7 @@ class SidebarMenu
             'app.marketing.daily-report.*'               => ['Bộ phận Marketing',    'Báo cáo hàng ngày'],
             'app.daily-reports.*'                        => ['Báo cáo ngày',         'Báo cáo ngày'],
             'app.commissions.*'                          => ['Hoa hồng',             'Yêu cầu chi hoa hồng'],
+            'app.finance.cash-flow'                      => ['Dòng tiền',            'Dòng tiền'],
             'app.sales.renewal.*'                        => ['Bộ phận kinh doanh',   'Doanh số tái ký'],
             'app.postal-deliveries.*'                    => ['Chuyển phát thư',      'Quản lý chuyển phát'],
             'app.quotation-tracking.*'                   => ['Bộ phận kinh doanh',   'Bảng theo dõi báo giá'],
@@ -165,8 +204,6 @@ class SidebarMenu
             'app.reports.consulting-work.sustainability' => ['Báo cáo Tư vấn',       'TV & BC PTBV'],
             'app.reports.consulting-work.energy'         => ['Báo cáo Tư vấn',       'Phát thải & Năng lượng'],
             'app.reports.technical.consulting'           => ['Báo cáo Kỹ thuật',     'Hồ sơ môi trường'],
-            'app.invoices.bao-chau'                      => ['Quản lý hóa đơn',      'Hóa đơn Bảo Châu'],
-            'app.invoices.handlers'                      => ['Quản lý hóa đơn',      'Hóa đơn nhà thầu phụ'],
         ];
 
         [$group, $child] = [null, null];
@@ -232,10 +269,6 @@ class SidebarMenu
             ],
             'Báo cáo Kỹ thuật'   => ['Hồ sơ môi trường' => 'app.reports.technical.consulting'],
             'Bộ phận Marketing'  => ['Báo cáo hàng ngày' => 'app.marketing.daily-report.index'],
-            'Quản lý hóa đơn'    => [
-                'Hóa đơn Bảo Châu'     => 'app.invoices.bao-chau',
-                'Hóa đơn nhà thầu phụ' => 'app.invoices.handlers',
-            ],
         ];
 
         $routeName = $specific[$menuTitle][$child] ?? null;

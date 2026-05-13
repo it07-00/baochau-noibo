@@ -36,6 +36,29 @@ trait ContractValidation
         }
     }
 
+    protected function normalizeContractEnumFields(): void
+    {
+        if (!property_exists($this, 'formData') || !is_array($this->formData)) {
+            return;
+        }
+
+        if (!isset($this->formData['renewal_status']) || trim((string) $this->formData['renewal_status']) === '') {
+            return;
+        }
+
+        $current = trim((string) $this->formData['renewal_status']);
+
+        foreach (ContractRenewalStatus::cases() as $status) {
+            if (
+                mb_strtoupper($current, 'UTF-8') === $status->value ||
+                mb_strtolower($current, 'UTF-8') === mb_strtolower($status->label(), 'UTF-8')
+            ) {
+                $this->formData['renewal_status'] = $status->value;
+                return;
+            }
+        }
+    }
+
     /**
      * Rules chung cho 5 loại HĐ: consulting, commercial, project, sustainability, energy.
      */

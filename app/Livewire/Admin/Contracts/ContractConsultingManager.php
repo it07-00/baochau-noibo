@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Contracts;
 
+use App\Enums\ContractRenewalStatus;
 use App\Enums\ContractVoucherStatus;
 use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
@@ -97,6 +98,7 @@ class ContractConsultingManager extends Component
         'value' => 0,
         'commission' => 0,
         'revenue' => 0,
+        'ncc_payment' => 0,
         'province' => '',
         'info_source' => 'MỚI',
         'payment_method' => 'Sau ký',
@@ -205,6 +207,7 @@ class ContractConsultingManager extends Component
         if ($this->selectedDoc->submitted_at) {
             $this->formData['submitted_at'] = $this->selectedDoc->submitted_at->format('Y-m-d');
         }
+        $this->normalizeContractEnumFields();
         $this->isEditing = true;
         $this->showModal = true;
         $this->dispatch('openFormModal');
@@ -234,8 +237,9 @@ class ContractConsultingManager extends Component
                 : $user->id;
         }
 
-        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue']);
+        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment']);
         $this->ensureDepartmentId();
+        $this->normalizeContractEnumFields();
 
         try {
             $this->validate($this->baseContractRules(), $this->contractValidationMessages());
@@ -251,10 +255,11 @@ class ContractConsultingManager extends Component
 
         $isAccountant = $user->hasRole(Role::KE_TOAN->value);
         if (! $this->isEditing) {
-            // Số HĐ BC do kế toán bổ sung sau khi tạo.
-            $data['shd_bc'] = null;
+            $data['shd_bc']      = null;
+            $data['ncc_payment'] = 0;
         } elseif (! $isAccountant && $this->selectedDoc) {
-            $data['shd_bc'] = $this->selectedDoc->shd_bc;
+            $data['shd_bc']      = $this->selectedDoc->shd_bc;
+            $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
         }
 
         if ($this->isEditing && $this->selectedDoc) {
@@ -347,6 +352,7 @@ class ContractConsultingManager extends Component
         $this->formData['shd_cxl'] = '';
         $this->formData['shd_bc'] = '';
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
+        $this->normalizeContractEnumFields();
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedDoc = null;
@@ -782,6 +788,7 @@ class ContractConsultingManager extends Component
                     ->distinct()->orderBy('province')->pluck('province')->toArray(),
             'all_statuses' => self::ALLOWED_STATUSES,
             'renewal_statuses' => ContractLegal::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+            'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_status_options' => ContractVoucherStatus::values(),
             'loai_dich_vu_options' => ContractLegal::SERVICE_TYPES,
             'payment_methods' => ['Sau ký', 'Trước ký'],

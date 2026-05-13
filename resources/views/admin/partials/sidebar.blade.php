@@ -6,7 +6,7 @@
     $active      = SidebarMenu::resolveActive($currentUser);
     $activeGroup = $active['group'];
     $activeChild = $active['child'];
-    $allMenus    = SidebarMenu::all();
+    $allMenus    = SidebarMenu::all($currentUser);
 
     $primaryRole = collect(Role::priorityList())
         ->first(fn ($r) => $currentUser->hasRole($r))

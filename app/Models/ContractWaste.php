@@ -32,6 +32,7 @@ class ContractWaste extends Model
         'value',
         'commission',
         'revenue',
+        'ncc_payment',
         'payment_method',
         'source',
         'province',
@@ -72,6 +73,7 @@ class ContractWaste extends Model
         'value' => 'integer',
         'commission' => 'integer',
         'revenue' => 'integer',
+        'ncc_payment' => 'integer',
     ];
 
     public function customer()
