@@ -21,6 +21,7 @@ use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use Illuminate\Support\Facades\Schema;
 use App\Support\VietnamProvinces;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -275,6 +276,8 @@ class ContractConsultingManager extends Component
             $data['shd_bc']      = $this->selectedDoc->shd_bc;
             $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
         }
+
+        $data = $this->filterDataForModelTable($data);
 
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
@@ -711,6 +714,15 @@ class ContractConsultingManager extends Component
         $this->createAssignUserIds  = [];
         $this->createAssignDeadline = null;
         $this->createAssignExternal = null;
+    }
+
+    private function filterDataForModelTable(array $data): array
+    {
+        $table = (new ContractLegal)->getTable();
+
+        return collect($data)
+            ->filter(fn ($value, $column) => Schema::hasColumn($table, $column))
+            ->toArray();
     }
 
     public function exportExcel(): StreamedResponse
