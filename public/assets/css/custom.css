@@ -1138,9 +1138,47 @@
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line,
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line::after,
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line::before { background-color: rgba(148,163,184,0.25) !important; }
-.app-sidebar-footer          { border-top-color: rgba(255,255,255,0.08) !important; background-color: #0f172a !important; }
-.app-sidebar-footer h6       { color: rgba(255,255,255,0.9) !important; }
-.app-sidebar-footer span     { color: rgba(148,163,184,0.7) !important; }
+.app-sidebar-footer { 
+    border-top: 1px solid rgba(255,255,255,0.08) !important; 
+    background-color: #0f172a !important;
+    padding: 1.25rem !important;
+}
+.app-sidebar-footer .profile-link {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0.65rem;
+    margin: -0.65rem;
+    border-radius: 14px;
+}
+.app-sidebar-footer .profile-link:hover {
+    background-color: rgba(255,255,255,0.06);
+}
+.app-sidebar-footer h6 { 
+    color: #ffffff !important; 
+    font-size: 0.94rem;
+    letter-spacing: 0.2px;
+}
+.app-sidebar-footer span { 
+    color: rgba(148,163,184,0.85) !important; 
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+.app-sidebar-footer .btn-logout-sidebar {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255,255,255,0.04);
+    color: rgba(148,163,184,0.7) !important;
+    flex-shrink: 0;
+}
+.app-sidebar-footer .btn-logout-sidebar:hover {
+    background: rgba(239,68,68,0.18);
+    color: #f87171 !important;
+    transform: scale(1.05);
+}
 
 /* Responsive sidebar + table space (laptop / phone) */
 @media (max-width: 1366px) {

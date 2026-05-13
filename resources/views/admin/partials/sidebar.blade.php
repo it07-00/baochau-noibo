@@ -428,15 +428,31 @@
         </div>
 
         <div class="app-sidebar-footer">
-            <div class="d-flex align-items-center gap-3">
-                <div class="avatar rounded-pill">
-                    <x-user-avatar :user="$currentUser" :size="36" />
-                </div>
-                <div>
-                    <h6 class="mb-0">{{ $currentUser->name ?? 'Người dùng' }}</h6>
-                    <span class="text-muted">{{ Role::tryFrom($primaryRole ?? '')?->label() ?? 'Nhân viên' }}</span>
-                </div>
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <a href="{{ route('app.profile.index') }}" class="d-flex align-items-center gap-3 text-decoration-none flex-grow-1 overflow-hidden profile-link">
+                    <div class="avatar flex-shrink-0">
+                        <x-user-avatar :user="$currentUser" :size="40" class="border border-2 border-white border-opacity-10" />
+                    </div>
+                    <div class="overflow-hidden">
+                        <h6 class="mb-0 text-white text-truncate fw-bold">{{ $currentUser->name ?? 'Người dùng' }}</h6>
+                        <span class="text-muted small text-truncate d-block">{{ Role::tryFrom($primaryRole ?? '')?->label() ?? 'Nhân viên' }}</span>
+                    </div>
+                </a>
+                <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" class="d-none">
+                    @csrf
+                </form>
+                <a href="javascript:void(0)" 
+                   onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"
+                   class="btn-logout-sidebar text-muted ms-2" 
+                   title="Đăng xuất">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </a>
             </div>
         </div>
+
     </div>
 </div>
