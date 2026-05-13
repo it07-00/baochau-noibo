@@ -347,8 +347,8 @@
 }
 
 /* Contract table column widths */
-.col-ct-customer { min-width: 230px; max-width: 300px; }
-.col-ct-finance  { width: 170px;  min-width: 155px; font-size: 0.82rem; }
+.col-ct-customer { min-width: 200px; max-width: 260px; }
+.col-ct-finance  { width: 250px;  min-width: 250px; font-size: 0.82rem; }
 .col-ct-assigned { width: 130px;  min-width: 110px; }
 .col-ct-deadline { width: 108px;  min-width:  95px; }
 .col-ct-status   { width: 148px;  min-width: 130px; }

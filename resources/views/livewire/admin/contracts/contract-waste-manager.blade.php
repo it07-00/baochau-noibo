@@ -393,7 +393,7 @@
                             <th class="text-center w-42px" >Chọn</th>
                         @endif
                         <th class="text-center w-45px" >STT</th>
-                        <th class="ps-4 col-ct-customer">Khách hàng</th>
+                        <th class="ps-4 col-ct-customer">Thông tin hợp đồng</th>
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                             <th class="text-center col-ct-finance">Tài chính</th>
                         @endunless
@@ -428,13 +428,17 @@
                                     <a href="{{ $doc->customer ? route('app.customers.contracts', $doc->customer->slug) : '#' }}" class="fw-bold text-primary text-decoration-none lh-sm">
                                         {{ $doc->customer?->name }}
                                     </a>
-                                    <span class="text-muted fs-85">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
+                                    @if($doc->customer?->representative || $doc->customer?->phone)
+                                    <span class="text-muted fs-85">{{ implode(' - ', array_filter([$doc->customer?->representative, $doc->customer?->phone])) }}</span>
+                                    @endif
+                                    @if($doc->customer?->address)
                                     <span class="text-muted fs-85">{{ Str::limit($doc->customer?->address, 50) }}</span>
+                                    @endif
                                     <div class="d-flex gap-2 flex-wrap contract-text-08 border-top mt-1 pt-1 text-secondary">
-                                        <span>NTP: <span class="fw-semibold text-dark">{{ $doc->shd_cxl ?: '-' }}</span></span>
-                                        <span>BC: <span class="fw-semibold text-dark">{{ $doc->shd_bc ?: '-' }}</span></span>
-                                        <span>Ký: <span class="fw-semibold text-dark">{{ $doc->signed_at ? $doc->signed_at->format('d/m/Y') : '-' }}</span></span>
-                                        <span>CS: <span class="fw-semibold text-dark">{{ $doc->staff?->name }}</span></span>
+                                        @if($doc->shd_cxl)<span>NTP: <span class="fw-semibold text-dark">{{ $doc->shd_cxl }}</span></span>@endif
+                                        @if($doc->shd_bc)<span>BC: <span class="fw-semibold text-dark">{{ $doc->shd_bc }}</span></span>@endif
+                                        @if($doc->signed_at)<span>Ký: <span class="fw-semibold text-dark">{{ $doc->signed_at->format('d/m/Y') }}</span></span>@endif
+                                        @if($doc->staff?->name)<span>CS: <span class="fw-semibold text-dark">{{ $doc->staff->name }}</span></span>@endif
                                     </div>
                                 </div>
                             </td>
@@ -445,18 +449,24 @@
                                             <span class="text-muted">Giá trị HĐ:</span>
                                             <span class="fw-bold text-danger">{{ number_format($doc->value) }}đ</span>
                                         </div>
+                                        @if($doc->commission)
                                         <div class="d-flex justify-content-between">
                                             <span class="text-muted">Hoa hồng:</span>
                                             <span class="fw-bold text-danger">{{ number_format($doc->commission) }}đ</span>
                                         </div>
+                                        @endif
+                                        @if($doc->revenue)
                                         <div class="d-flex justify-content-between">
                                             <span class="text-muted">Doanh số:</span>
                                             <span class="fw-bold text-danger">{{ number_format($doc->revenue) }}đ</span>
                                         </div>
+                                        @endif
+                                        @if($doc->ncc_payment)
                                         <div class="d-flex justify-content-between">
-                                            <span class="text-muted">Chi nhà thầu phụ:</span>
-                                            <span class="fw-bold text-danger">{{ number_format($doc->ncc_payment ?? 0) }}đ</span>
+                                            <span class="text-muted">Chi nhà cung cấp:</span>
+                                            <span class="fw-bold text-danger">{{ number_format($doc->ncc_payment) }}đ</span>
                                         </div>
+                                        @endif
                                     </div>
                                 </td>
                             @endunless
@@ -774,7 +784,7 @@
                                                         {{ number_format($selectedDoc->revenue) }}đ</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="bg-light fw-bold px-4 py-3">Chi nhà thầu phụ</th>
+                                                    <th class="bg-light fw-bold px-4 py-3">Chi nhà cung cấp</th>
                                                     <td class="px-4 py-3 fw-bold text-danger">
                                                         {{ number_format($selectedDoc->ncc_payment ?? 0) }}đ</td>
                                                 </tr>
