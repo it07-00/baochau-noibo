@@ -915,7 +915,7 @@
                             </div>
 
                             {{-- Tab 2: Tiến độ --}}
-                            <div class="tab-pane" :class="{ 'show active': tab === 'progress' }" id="tab-progress-waste-{{ $selectedDoc->id }}"
+                            <div wire:ignore wire:key="progress-tab-waste-{{ $selectedDoc->id }}" class="tab-pane" :class="{ 'show active': tab === 'progress' }" id="tab-progress-waste-{{ $selectedDoc->id }}"
                                 role="tabpanel">
                                 <livewire:admin.contracts.contract-workflow-progress :contractType="'waste'" :contractId="$selectedDoc->id"
                                     :key="'progress-waste-' . $selectedDoc->id" />
@@ -1485,8 +1485,10 @@
                 </div>
                 <div class="modal-body p-0">
                     @if ($workflowContractId)
-                        <livewire:admin.contracts.contract-workflow-panel :contractType="'waste'" :contractId="$workflowContractId"
-                            :key="'wf-modal-waste-' . $workflowContractId" />
+                        <div wire:ignore wire:key="wf-panel-waste-{{ $workflowContractId }}">
+                            <livewire:admin.contracts.contract-workflow-panel :contractType="'waste'" :contractId="$workflowContractId"
+                                :key="'wf-modal-waste-' . $workflowContractId" />
+                            </div>
                     @endif
                 </div>
             </div>

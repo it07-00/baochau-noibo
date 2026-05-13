@@ -715,7 +715,7 @@
                             </div>
 
                             {{-- Tab 2: Tiến độ --}}
-                            <div class="tab-pane" :class="{ 'show active': tab === 'progress' }" id="tab-progress-sustainability-{{ $selectedDoc->id }}"
+                            <div wire:ignore wire:key="progress-tab-sustainability-{{ $selectedDoc->id }}" class="tab-pane" :class="{ 'show active': tab === 'progress' }" id="tab-progress-sustainability-{{ $selectedDoc->id }}"
                                 role="tabpanel">
                                 <livewire:admin.contracts.contract-workflow-progress :contractType="'sustainability'" :contractId="$selectedDoc->id"
                                     :key="'progress-sustainability-' . $selectedDoc->id" />
@@ -1170,8 +1170,10 @@
                 </div>
                 <div class="modal-body p-0">
                     @if ($workflowContractId)
-                        <livewire:admin.contracts.contract-workflow-panel :contractType="'sustainability'" :contractId="$workflowContractId"
-                            :key="'wf-modal-sustainability-' . $workflowContractId" />
+                        <div wire:ignore wire:key="wf-panel-sustainability-{{ $workflowContractId }}">
+                            <livewire:admin.contracts.contract-workflow-panel :contractType="'sustainability'" :contractId="$workflowContractId"
+                                :key="'wf-modal-sustainability-' . $workflowContractId" />
+                        </div>
                     @endif
                 </div>
             </div>
