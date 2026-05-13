@@ -142,7 +142,7 @@ abstract class AbstractContractGenericManager extends Component
 
     public function paginationView(): string
     {
-        return 'livewire.admin.users.pagination';
+        return 'livewire.admin.contracts.pagination';
     }
 
     public function mount(): void

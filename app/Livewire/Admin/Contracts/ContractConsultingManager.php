@@ -146,7 +146,7 @@ class ContractConsultingManager extends Component
 
     public function paginationView()
     {
-        return 'livewire.admin.users.pagination';
+        return 'livewire.admin.contracts.pagination';
     }
 
     public function mount(): void

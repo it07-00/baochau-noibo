@@ -1174,14 +1174,18 @@
     justify-content: center;
     border-radius: 12px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    background: rgba(255,255,255,0.04);
-    color: rgba(148,163,184,0.7) !important;
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    color: var(--app-sidebar-menu-color, var(--bs-secondary-color)) !important;
     flex-shrink: 0;
 }
 .app-sidebar-footer .btn-logout-sidebar:hover {
     background: rgba(239,68,68,0.18);
     color: #f87171 !important;
     transform: scale(1.05);
+}
+
+:root[data-bs-theme=dark] .app-sidebar-footer .btn-logout-sidebar {
+    color: rgba(203,213,225,0.78) !important;
 }
 
 /* Responsive sidebar + table space (laptop / phone) */

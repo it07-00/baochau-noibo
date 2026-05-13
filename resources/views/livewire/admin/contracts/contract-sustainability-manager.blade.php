@@ -484,7 +484,7 @@
         </div>
         @if ($docs->hasPages())
             <div class="px-4 py-3 border-top">
-                {{ $docs->links('livewire.admin.users.pagination') }}
+                {{ $docs->links('livewire.admin.contracts.pagination') }}
             </div>
         @endif
     </div>
