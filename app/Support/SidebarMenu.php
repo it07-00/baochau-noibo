@@ -134,6 +134,12 @@ class SidebarMenu
 
         $finance = [
             [
+                'title'      => 'Dòng tiền',
+                'icon'       => 'stack',
+                'permission' => 'cash-flow.view',
+                'href'       => route('app.finance.cash-flow'),
+            ],
+            [
                 'title'      => 'Hoa hồng',
                 'icon'       => 'stack',
                 'permission' => 'commissions.view',

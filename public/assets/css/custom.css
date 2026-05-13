@@ -1156,9 +1156,10 @@
     color: #ffffff !important; 
     font-size: 0.94rem;
     letter-spacing: 0.2px;
+    margin-bottom: 2px !important;
 }
-.app-sidebar-footer span { 
-    color: rgba(148,163,184,0.85) !important; 
+.app-sidebar-footer .profile-role { 
+    color: rgba(148, 163, 184, 0.85) !important; 
     font-size: 0.78rem;
     font-weight: 500;
 }

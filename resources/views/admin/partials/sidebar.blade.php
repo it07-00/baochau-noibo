@@ -435,7 +435,7 @@
                     </div>
                     <div class="overflow-hidden">
                         <h6 class="mb-0 text-white text-truncate fw-bold">{{ $currentUser->name ?? 'Người dùng' }}</h6>
-                        <span class="text-muted small text-truncate d-block">{{ Role::tryFrom($primaryRole ?? '')?->label() ?? 'Nhân viên' }}</span>
+                        <span class="profile-role text-truncate d-block">{{ Role::tryFrom($primaryRole ?? '')?->label() ?? 'Nhân viên' }}</span>
                     </div>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" class="d-none">
