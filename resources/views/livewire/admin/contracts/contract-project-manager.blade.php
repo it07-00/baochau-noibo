@@ -1,4 +1,4 @@
-﻿<div>
+<div>
 
     <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
