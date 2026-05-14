@@ -72,9 +72,10 @@ class PersonalSalesReport extends Component
         if (!empty($targetStaffIds)) {
             foreach ($this->contractModels as $modelClass) {
                 $rows = $modelClass::query()
-                    ->whereYear('signed_at', $this->year)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
-                    ->selectRaw('MONTH(signed_at) as m, SUM(revenue) as total')
+                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
 
