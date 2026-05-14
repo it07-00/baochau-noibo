@@ -511,7 +511,7 @@
                                         @if ($canDelete)
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
-                                                onclick="return confirm('Xóa hợp đồng này?')" title="Xóa">
+                                                wire:confirm="Xác nhận xóa hợp đồng này?" title="Xóa">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
                                         @endif
@@ -775,7 +775,7 @@
                             </div>
 
                             {{-- Tab 2: Tiến độ --}}
-                            <div class="tab-pane" :class="{ 'show active': tab === 'progress' }" id="tab-progress-consulting-{{ $selectedDoc->id }}"
+                            <div wire:ignore wire:key="progress-tab-consulting-{{ $selectedDoc->id }}" class="tab-pane" :class="{ 'show active': tab === 'progress' }" id="tab-progress-consulting-{{ $selectedDoc->id }}"
                                 role="tabpanel">
                                 <livewire:admin.contracts.contract-workflow-progress :contractType="'consulting'" :contractId="$selectedDoc->id"
                                     :key="'progress-consulting-' . $selectedDoc->id" />
@@ -1223,8 +1223,10 @@
                 </div>
                 <div class="modal-body p-0">
                     @if ($workflowContractId)
-                        <livewire:admin.contracts.contract-workflow-panel :contractType="'consulting'" :contractId="$workflowContractId"
-                            :key="'wf-modal-consulting-' . $workflowContractId" />
+                        <div wire:ignore wire:key="wf-panel-consulting-{{ $workflowContractId }}">
+                            <livewire:admin.contracts.contract-workflow-panel :contractType="'consulting'" :contractId="$workflowContractId"
+                                :key="'wf-modal-consulting-' . $workflowContractId" />
+                        </div>
                     @endif
                 </div>
             </div>
@@ -1236,10 +1238,10 @@
             window.addEventListener('openDetailModal', () => {
                 new bootstrap.Modal(document.getElementById('detailModalConsulting')).show();
             });
-            Livewire.on('openFormModal', () => {
+            window.addEventListener('openFormModal', () => {
                 new bootstrap.Modal(document.getElementById('formModalConsulting')).show();
             });
-            Livewire.on('closeFormModal', () => {
+            window.addEventListener('closeFormModal', () => {
                 bootstrap.Modal.getInstance(document.getElementById('formModalConsulting'))?.hide();
             });
             window.addEventListener('openAssignModal', () => {

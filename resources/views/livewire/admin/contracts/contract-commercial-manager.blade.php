@@ -489,7 +489,7 @@
                                         @if ($canDelete)
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
-                                                onclick="return confirm('Xóa hợp đồng này?')" title="Xóa">
+                                                wire:confirm="Xác nhận xóa hợp đồng này?" title="Xóa">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
                                         @endif
@@ -757,7 +757,7 @@
                                 </div>
 
                                 {{-- Tab 2: Tiến độ --}}
-                                <div class="tab-pane" :class="{ 'show active': tab === 'progress' }"
+                                <div wire:ignore wire:key="progress-tab-commercial-{{ $selectedDoc->id }}" class="tab-pane" :class="{ 'show active': tab === 'progress' }"
                                     id="tab-progress-commercial-{{ $selectedDoc->id }}" role="tabpanel">
                                     <livewire:admin.contracts.contract-workflow-progress :contractType="'commercial'"
                                         :contractId="$selectedDoc->id" :key="'progress-commercial-' . $selectedDoc->id" />
@@ -1223,8 +1223,10 @@
                 </div>
                 <div class="modal-body p-0">
                     @if ($workflowContractId)
-                        <livewire:admin.contracts.contract-workflow-panel :contractType="'commercial'" :contractId="$workflowContractId"
-                            :key="'wf-modal-commercial-' . $workflowContractId" />
+                        <div wire:ignore wire:key="wf-panel-commercial-{{ $workflowContractId }}">
+                            <livewire:admin.contracts.contract-workflow-panel :contractType="'commercial'" :contractId="$workflowContractId"
+                                :key="'wf-modal-commercial-' . $workflowContractId" />
+                        </div>
                     @endif
                 </div>
             </div>
@@ -1236,10 +1238,10 @@
             window.addEventListener('openDetailModal', () => {
                 new bootstrap.Modal(document.getElementById('detailModalCommercial')).show();
             });
-            Livewire.on('openFormModal', () => {
+            window.addEventListener('openFormModal', () => {
                 new bootstrap.Modal(document.getElementById('formModalCommercial')).show();
             });
-            Livewire.on('closeFormModal', () => {
+            window.addEventListener('closeFormModal', () => {
                 bootstrap.Modal.getInstance(document.getElementById('formModalCommercial'))?.hide();
             });
             window.addEventListener('openAssignModal', () => {

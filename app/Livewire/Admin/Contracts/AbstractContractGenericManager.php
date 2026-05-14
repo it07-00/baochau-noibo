@@ -275,6 +275,8 @@ abstract class AbstractContractGenericManager extends Component
             $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
         }
 
+        $data = $this->filterDataForModelTable($modelClass, $data);
+
         if ($this->isEditing && $this->selectedDoc) {
             $this->selectedDoc->update($data);
         } else {
@@ -843,6 +845,7 @@ abstract class AbstractContractGenericManager extends Component
             'value'              => 0,
             'commission'         => 0,
             'revenue'            => 0,
+            'ncc_payment'        => 0,
             'province'           => '',
             'info_source'        => 'MỚI',
             'payment_method'     => 'Sau ký',
@@ -862,5 +865,14 @@ abstract class AbstractContractGenericManager extends Component
         $this->createAssignUserIds    = [];
         $this->createAssignDeadline   = null;
         $this->createAssignExternal   = null;
+    }
+
+    private function filterDataForModelTable(string $modelClass, array $data): array
+    {
+        $table = (new $modelClass)->getTable();
+
+        return collect($data)
+            ->filter(fn ($value, $column) => Schema::hasColumn($table, $column))
+            ->toArray();
     }
 }

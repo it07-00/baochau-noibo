@@ -3,7 +3,6 @@
         <nav class="d-flex justify-items-center justify-content-between">
             <div class="d-flex justify-content-between flex-fill d-sm-none">
                 <ul class="pagination pagination-warning mb-0">
-                    {{-- Previous Page Link --}}
                     @if ($paginator->onFirstPage())
                         <li class="page-item disabled" aria-disabled="true">
                             <span class="page-link">@lang('pagination.previous')</span>
@@ -14,7 +13,6 @@
                         </li>
                     @endif
 
-                    {{-- Next Page Link --}}
                     @if ($paginator->hasMorePages())
                         <li class="page-item">
                             <button type="button" class="page-link" wire:click="nextPage('{{ $paginator->getPageName() }}')" wire:loading.attr="disabled">@lang('pagination.next')</button>
@@ -42,7 +40,6 @@
 
                 <div class="flex-grow-1 d-flex justify-content-sm-end overflow-auto">
                     <ul class="pagination pagination-warning mb-0 flex-nowrap">
-                        {{-- Previous Page Link --}}
                         @if ($paginator->onFirstPage())
                             <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
                                 <span class="page-link" aria-hidden="true">&lsaquo;</span>
@@ -53,14 +50,11 @@
                             </li>
                         @endif
 
-                        {{-- Pagination Elements --}}
                         @foreach ($elements as $element)
-                            {{-- "Three Dots" Separator --}}
                             @if (is_string($element))
                                 <li class="page-item disabled" aria-disabled="true"><span class="page-link">{{ $element }}</span></li>
                             @endif
 
-                            {{-- Array Of Links --}}
                             @if (is_array($element))
                                 @foreach ($element as $page => $url)
                                     @if ($page == $paginator->currentPage())
@@ -72,7 +66,6 @@
                             @endif
                         @endforeach
 
-                        {{-- Next Page Link --}}
                         @if ($paginator->hasMorePages())
                             <li class="page-item">
                                 <button type="button" class="page-link" wire:click="nextPage('{{ $paginator->getPageName() }}')" wire:loading.attr="disabled" aria-label="@lang('pagination.next')">&rsaquo;</button>
