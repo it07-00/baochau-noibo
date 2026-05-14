@@ -38,16 +38,15 @@ class SalesAchievementReport extends Component
         $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
         $staffIds = $staffs->pluck('id')->all();
 
-        // ΓöÇΓöÇ Actual sales per staff from 6 contract types ΓöÇΓöÇ
-        // Doanh số tính theo cột "revenue", lọc theo tháng xuất hóa đơn (submitted_at)
+        // Doanh số tính theo revenue, dùng COALESCE(submitted_at, signed_at) để khớp với dang-ky-muc-tieu
         $actualByStaff = [];
         foreach ($this->contractModels as $modelClass) {
-            $query = $modelClass::whereNotNull('submitted_at')
-                ->whereYear('submitted_at', $this->year)
+            $query = $modelClass::whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
+                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                 ->whereNotNull('staff_id');
 
             if ($this->filter_month) {
-                $query->whereMonth('submitted_at', $this->filter_month);
+                $query->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->filter_month);
             }
 
             $rows = $query->selectRaw('staff_id, COALESCE(SUM(revenue), 0) as total')
@@ -60,7 +59,7 @@ class SalesAchievementReport extends Component
             }
         }
 
-        // ΓöÇΓöÇ Targets per staff ΓöÇΓöÇ
+        // Targets per staff
         $targetByStaff = [];
         $targetQuery = SalesTarget::where('year', $this->year)
             ->whereIn('staff_id', $staffIds);
@@ -99,7 +98,7 @@ class SalesAchievementReport extends Component
 
         $maxKpi = $kpiRankings->max('pct') ?: 1;
 
-        // ΓöÇΓöÇ Company totals ΓöÇΓöÇ
+        // Company totals
         $companyTarget = array_sum($targetByStaff) ?: 0;
         $companyActual = array_sum($actualByStaff) ?: 0;
         $companyPct = $companyTarget > 0 ? round($companyActual / $companyTarget * 100, 0) : 0;
