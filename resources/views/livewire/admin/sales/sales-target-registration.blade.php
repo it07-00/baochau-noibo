@@ -1,13 +1,4 @@
 <div class="sales-target-registration">
-    @php
-        $totalPct  = $totals['target'] > 0 ? round($totals['actual'] / $totals['target'] * 100, 1) : null;
-        $remaining = max(0, $totals['target'] - $totals['actual']);
-
-        $monthTarget = (float) ($months[$viewMonth]['target'] ?? 0);
-        $monthActual = (float) ($months[$viewMonth]['actual'] ?? 0);
-        $monthPct    = $monthTarget > 0 ? round($monthActual / $monthTarget * 100, 1) : null;
-        $monthRemain = max(0, $monthTarget - $monthActual);
-    @endphp
 
     {{-- ── Page header ────────────────────────────────────────────── --}}
     <div class="page-header mb-4">
@@ -34,10 +25,19 @@
                 </div>
                 <div>
                     <label class="form-label fw-semibold mb-1 small text-muted text-uppercase">Nhân viên</label>
-                    <div class="d-flex align-items-center gap-2 form-control form-control-sm bg-light" style="min-width:180px;max-width:260px">
-                        <i class="bi bi-person-circle text-muted flex-shrink-0"></i>
-                        <span class="fw-semibold text-truncate">{{ auth()->user()->name }}</span>
-                    </div>
+                    @if($isTpkd)
+                        <select wire:model.live="selectedStaffId" class="form-select form-select-sm" style="min-width:200px;max-width:280px">
+                            <option value="{{ auth()->id() }}">{{ auth()->user()->name }} (tôi)</option>
+                            @foreach($staffList as $staff)
+                                <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <div class="d-flex align-items-center gap-2 form-control form-control-sm bg-light" style="min-width:180px;max-width:260px">
+                            <i class="bi bi-person-circle text-muted flex-shrink-0"></i>
+                            <span class="fw-semibold text-truncate">{{ auth()->user()->name }}</span>
+                        </div>
+                    @endif
                 </div>
                 <div class="ms-auto d-flex align-items-end gap-2">
                     <div>
@@ -55,7 +55,8 @@
                     </div>
                     <button wire:click="saveTargets"
                         wire:loading.attr="disabled" wire:target="saveTargets"
-                        class="btn btn-sm btn-primary d-flex align-items-center gap-2 px-3 fw-semibold">
+                        @if($isTpkd && $selectedStaffId !== auth()->id()) disabled title="Không thể lưu cam kết của nhân viên khác" @endif
+                        class="btn btn-sm {{ $isTpkd && $selectedStaffId !== auth()->id() ? 'btn-secondary' : 'btn-primary' }} d-flex align-items-center gap-2 px-3 fw-semibold">
                         <span wire:loading wire:target="saveTargets" class="spinner-border spinner-border-sm"></span>
                         <i wire:loading.remove wire:target="saveTargets" class="bi bi-floppy"></i>
                         Lưu cam kết
@@ -178,65 +179,59 @@
                                 <th class="text-end">Chênh lệch (đ)</th>
                                 <th class="text-end">% Đạt</th>
                                 <th class="text-center">Trạng thái</th>
-                                <th class="text-center pe-3"></th>
+                                <th class="text-center pe-3">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($months as $m => $data)
-                                @php
-                                    $t = (float) ($data['target'] ?? 0);
-                                    $a = (float) ($data['actual'] ?? 0);
-                                    $v = $a - $t;
-                                    $p = $t > 0 ? round($a / $t * 100, 1) : null;
-                                    $q = (int) ceil($m / 3);
-                                    $isCurrent = ($m === (int) now()->format('n') && $year === (int) now()->format('Y'));
-                                @endphp
-                                <tr class="{{ $isCurrent ? 'table-primary bg-opacity-25' : '' }}">
+                                <tr class="{{ $data['isCurrent'] ? 'table-primary bg-opacity-25' : '' }}">
                                     <td class="ps-3">
                                         <div class="d-flex align-items-center gap-2">
-                                            @if($isCurrent)
+                                            @if($data['isCurrent'])
                                                 <span class="badge bg-primary rounded-pill" style="font-size:0.6rem">Hiện tại</span>
                                             @endif
                                             <div>
                                                 <div class="fw-semibold">Tháng {{ $m }}</div>
-                                                <small class="text-muted">Quý {{ $q }}</small>
+                                                <small class="text-muted">Quý {{ $data['q'] }}</small>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="text-end">
                                         <div class="input-group mxw-220px ms-auto">
                                             <input type="text" wire:model.blur="targets.{{ $m }}"
-                                                class="form-control text-end fw-semibold money-input" placeholder="0">
+                                                class="form-control text-end fw-semibold money-input"
+                                                placeholder="0"
+                                                @if($isTpkd && $selectedStaffId !== auth()->id()) readonly @endif>
                                             <span class="input-group-text fw-semibold">đ</span>
                                         </div>
                                     </td>
-                                    <td class="text-end fw-semibold {{ $a > 0 ? 'text-success' : 'text-muted' }}">
-                                        {{ $a > 0 ? number_format($a, 0, ',', '.') : '—' }}
+                                    <td class="text-end fw-semibold {{ $data['a'] > 0 ? 'text-success' : 'text-muted' }}">
+                                        {{ $data['a'] > 0 ? number_format($data['a'], 0, ',', '.') : '—' }}
                                     </td>
-                                    <td class="text-end fw-semibold {{ $v >= 0 ? 'text-success' : 'text-danger' }}">
-                                        @if($t > 0 || $a > 0)
-                                            {{ $v >= 0 ? '+' : '-' }}{{ number_format(abs($v), 0, ',', '.') }}
+                                    <td class="text-end fw-semibold {{ $data['v'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                        @if($data['t'] > 0 || $data['a'] > 0)
+                                            {{ $data['v'] >= 0 ? '+' : '-' }}{{ number_format(abs($data['v']), 0, ',', '.') }}
                                         @else
                                             —
                                         @endif
                                     </td>
                                     <td class="text-end">
-                                        @if($p !== null)
-                                            <div class="fw-semibold {{ $p >= 100 ? 'text-success' : ($p >= 70 ? 'text-warning' : 'text-danger') }}">{{ $p }}%</div>
+                                        @if($data['p'] !== null)
+                                            <div class="fw-semibold {{ $data['p'] >= 100 ? 'text-success' : ($data['p'] >= 70 ? 'text-warning' : 'text-danger') }}">{{ $data['p'] }}%</div>
                                             <div class="progress ms-auto h-6px mxw-140px">
-                                                <div class="progress-bar {{ $p >= 100 ? 'bg-success' : ($p >= 70 ? 'bg-warning' : 'bg-danger') }}"
-                                                    style="width:{{ min($p, 100) }}%"></div>
+                                                <div class="progress-bar {{ $data['p'] >= 100 ? 'bg-success' : ($data['p'] >= 70 ? 'bg-warning' : 'bg-danger') }}"
+                                                    style="width:{{ min($data['p'], 100) }}%"></div>
                                             </div>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @if($p === null)
+                                        @if($data['p'] === null)
                                             <span class="badge bg-secondary-subtle text-body border border-secondary-subtle">Chưa cam kết</span>
-                                        @elseif($p >= 100)
+                                        @elseif($data['p'] >= 100)
                                             <span class="badge bg-success bg-opacity-10 text-success">Đạt</span>
-                                        @elseif($p >= 70)
+                                        @elseif($data['p'] >= 70)
                                             <span class="badge bg-warning bg-opacity-10 text-warning">Gần đạt</span>
                                         @else
                                             <span class="badge bg-danger bg-opacity-10 text-danger">Chưa đạt</span>
@@ -244,9 +239,9 @@
                                     </td>
                                     <td class="text-center pe-3">
                                         <button type="button" wire:click="viewMonthDetail({{ $m }})"
-                                            class="btn btn-sm btn-outline-primary py-0 px-2"
+                                            class="btn btn-sm p-0 text-primary"
                                             title="Xem chi tiết tháng {{ $m }}">
-                                            <i class="bi bi-search" style="font-size:0.75rem"></i>
+                                            <i class="bi bi-eye fs-5"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -303,7 +298,7 @@
                     </thead>
                     <tbody>
                         <tr class="text-center">
-                            <td class="fw-bold">{{ auth()->user()->name }}</td>
+                            <td class="fw-bold">{{ $selectedStaffName }}</td>
                             <td>{{ number_format($monthTarget, 0, ',', '.') }} đ</td>
                             <td class="text-success fw-bold">{{ number_format($monthActual, 0, ',', '.') }} đ</td>
                             <td class="text-danger fw-bold">{{ number_format($monthRemain, 0, ',', '.') }} đ</td>
@@ -338,23 +333,34 @@
                                 <th>PTTT</th>
                                 <th>CHẮC CHẮN (ĐÃ VỀ)</th>
                                 <th>DỰ KIẾN (CHỜ VỀ)</th>
-                                <th class="pe-3">TÌNH HÌNH</th>
+                                <th class="pe-3 text-center">TÌNH HÌNH</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($monthContracts as $c)
-                                <tr>
-                                    <td class="ps-3 fw-semibold">{{ $c['customer_name'] }}</td>
-                                    <td class="text-muted small">{{ $c['service'] }}</td>
-                                    <td class="text-end fw-semibold">{{ number_format($c['value'], 0, ',', '.') }}</td>
-                                    <td class="text-center">{{ $c['payment_method'] ?: '—' }}</td>
-                                    <td class="text-end text-success fw-semibold">
+                                <tr class="text-center">
+                                    <td class="ps-3 fw-semibold text-start">{{ $c['customer_name'] }}</td>
+                                    <td class="text-muted small text-start">{{ $c['service'] }}</td>
+                                    <td class="fw-semibold">{{ number_format($c['value'], 0, ',', '.') }}</td>
+                                    <td>{{ $c['payment_method'] ?: '—' }}</td>
+                                    <td class="text-success fw-semibold">
                                         {{ $c['revenue'] > 0 ? number_format($c['revenue'], 0, ',', '.') : '—' }}
                                     </td>
-                                    <td class="text-end text-warning fw-semibold">
+                                    <td class="text-warning fw-semibold">
                                         {{ $c['expected'] > 0 ? number_format($c['expected'], 0, ',', '.') : '—' }}
                                     </td>
-                                    <td class="pe-3 small text-muted">{{ $c['notes'] ?: '—' }}</td>
+                                    <td class="pe-3" style="min-width:160px">
+                                        @if($canEditNote)
+                                            <input type="text"
+                                                x-data
+                                                :value="'{{ addslashes($c['notes'] ?? '') }}'"
+                                                @blur="$wire.saveNote({{ $c['model_idx'] }}, {{ $c['id'] }}, $event.target.value)"
+                                                class="form-control form-control-sm border-0 bg-transparent px-0 small text-muted text-center"
+                                                placeholder="Nhập tình hình...">
+                                        @else
+                                            <span class="small text-muted">{{ $c['notes'] ?: '—' }}</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -364,12 +370,12 @@
                         </tbody>
                         @if($monthContracts->isNotEmpty())
                             <tfoot class="table-secondary fw-bold">
-                                <tr>
-                                    <td colspan="2" class="ps-3">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
-                                    <td class="text-end">{{ number_format($monthContracts->sum('value'), 0, ',', '.') }}</td>
+                                <tr class="text-center">
+                                    <td colspan="2" class="ps-3 text-start">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
+                                    <td>{{ number_format($monthContracts->sum('value'), 0, ',', '.') }}</td>
                                     <td></td>
-                                    <td class="text-end text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
-                                    <td class="text-end text-warning">{{ number_format($monthContracts->sum('expected'), 0, ',', '.') }}</td>
+                                    <td class="text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
+                                    <td class="text-warning">{{ number_format($monthContracts->sum('expected'), 0, ',', '.') }}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>
