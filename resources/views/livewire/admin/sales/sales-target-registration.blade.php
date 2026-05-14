@@ -288,10 +288,9 @@
                             <tr class="fw-bold small text-center">
                                 <th class="ps-3 text-start">TÊN CÔNG TY</th>
                                 <th class="text-start">DỊCH VỤ</th>
-                                <th>GIÁ TRỊ HỢP ĐỒNG<br><small class="fw-normal">(KO VAT, KO HH)</small></th>
+                                <th>GIÁ TRỊ HỢP ĐỒNG</th>
                                 <th>PTTT</th>
                                 <th>CHẮC CHẮN (ĐÃ VỀ)</th>
-                                <th>DỰ KIẾN (CHỜ VỀ)</th>
                                 <th class="pe-3 text-center">TÌNH HÌNH</th>
                             </tr>
                         </thead>
@@ -300,13 +299,10 @@
                                 <tr class="text-center">
                                     <td class="ps-3 fw-semibold text-start">{{ $c['customer_name'] }}</td>
                                     <td class="text-muted small text-start">{{ $c['service'] }}</td>
-                                    <td class="fw-semibold">{{ number_format($c['value'], 0, ',', '.') }}</td>
+                                    <td class="text-success fw-semibold">{{ $c['revenue'] > 0 ? number_format($c['revenue'], 0, ',', '.') : '—' }}</td>
                                     <td>{{ $c['payment_method'] ?: '—' }}</td>
                                     <td class="text-success fw-semibold">
                                         {{ $c['revenue'] > 0 ? number_format($c['revenue'], 0, ',', '.') : '—' }}
-                                    </td>
-                                    <td class="text-warning fw-semibold">
-                                        {{ $c['expected'] > 0 ? number_format($c['expected'], 0, ',', '.') : '—' }}
                                     </td>
                                     <td class="pe-3" style="min-width:160px">
                                         @if($canEditNote)
@@ -323,7 +319,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">Không có hợp đồng nào trong tháng này.</td>
+                                    <td colspan="6" class="text-center py-4 text-muted">Không có hợp đồng nào trong tháng này.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -331,10 +327,9 @@
                             <tfoot class="table-secondary fw-bold">
                                 <tr class="text-center">
                                     <td colspan="2" class="ps-3 text-start">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
-                                    <td>{{ number_format($monthContracts->sum('value'), 0, ',', '.') }}</td>
+                                    <td class="text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
                                     <td></td>
                                     <td class="text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
-                                    <td class="text-warning">{{ number_format($monthContracts->sum('expected'), 0, ',', '.') }}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>
