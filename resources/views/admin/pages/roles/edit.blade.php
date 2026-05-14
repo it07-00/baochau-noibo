@@ -34,7 +34,6 @@
         'handler-invoices'         => 'Hóa đơn nhà thầu phụ',
 
         // Kinh doanh
-        'sales-renewal'            => 'Doanh số tái ký',
         'sales-progressive'        => 'Doanh số tiến độ',
         'quotation-tracking'       => 'Theo dõi báo giá',
         'quotations'               => 'Báo giá',

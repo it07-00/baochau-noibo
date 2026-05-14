@@ -83,7 +83,6 @@ class PermissionsSeeder extends Seeder
             // Lịch thanh toán: CRUD
             PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value, PermissionEnum::PAYMENT_SCHEDULES_DELETE->value,
             // Kinh doanh: CRUD đầy đủ
-            PermissionEnum::SALES_RENEWAL_VIEW->value, PermissionEnum::SALES_RENEWAL_CREATE->value, PermissionEnum::SALES_RENEWAL_EDIT->value, PermissionEnum::SALES_RENEWAL_DELETE->value,
             PermissionEnum::SALES_PROGRESSIVE_VIEW->value, PermissionEnum::SALES_PROGRESSIVE_CREATE->value, PermissionEnum::SALES_PROGRESSIVE_EDIT->value, PermissionEnum::SALES_PROGRESSIVE_DELETE->value,
             PermissionEnum::QUOTATION_TRACKING_VIEW->value, PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
             // Tài chính
@@ -118,7 +117,6 @@ class PermissionsSeeder extends Seeder
             // Lịch thanh toán: xem + tạo/sửa
             PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value,
             // Kinh doanh: CRUD cá nhân
-            PermissionEnum::SALES_RENEWAL_VIEW->value, PermissionEnum::SALES_RENEWAL_CREATE->value, PermissionEnum::SALES_RENEWAL_EDIT->value, PermissionEnum::SALES_RENEWAL_DELETE->value,
             PermissionEnum::SALES_PROGRESSIVE_VIEW->value, PermissionEnum::SALES_PROGRESSIVE_CREATE->value, PermissionEnum::SALES_PROGRESSIVE_EDIT->value, PermissionEnum::SALES_PROGRESSIVE_DELETE->value,
             PermissionEnum::QUOTATION_TRACKING_VIEW->value, PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
             // Tài chính: tạo yêu cầu

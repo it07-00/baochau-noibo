@@ -70,10 +70,6 @@ enum Permission: string
     case PAYMENT_SCHEDULES_EDIT   = 'payment-schedules.edit';
     case PAYMENT_SCHEDULES_DELETE = 'payment-schedules.delete';
     // Sales
-    case SALES_RENEWAL_VIEW        = 'sales-renewal.view';
-    case SALES_RENEWAL_CREATE      = 'sales-renewal.create';
-    case SALES_RENEWAL_EDIT        = 'sales-renewal.edit';
-    case SALES_RENEWAL_DELETE      = 'sales-renewal.delete';
     case SALES_PROGRESSIVE_VIEW    = 'sales-progressive.view';
     case SALES_PROGRESSIVE_CREATE  = 'sales-progressive.create';
     case SALES_PROGRESSIVE_EDIT    = 'sales-progressive.edit';

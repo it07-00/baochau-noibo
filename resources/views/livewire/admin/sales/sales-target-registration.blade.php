@@ -1,202 +1,383 @@
 <div class="sales-target-registration">
     @php
-        $totalPct = $totals['target'] > 0 ? round($totals['actual'] / $totals['target'] * 100, 1) : null;
+        $totalPct  = $totals['target'] > 0 ? round($totals['actual'] / $totals['target'] * 100, 1) : null;
         $remaining = max(0, $totals['target'] - $totals['actual']);
+
+        $monthTarget = (float) ($months[$viewMonth]['target'] ?? 0);
+        $monthActual = (float) ($months[$viewMonth]['actual'] ?? 0);
+        $monthPct    = $monthTarget > 0 ? round($monthActual / $monthTarget * 100, 1) : null;
+        $monthRemain = max(0, $monthTarget - $monthActual);
     @endphp
 
-    <div class="page-header d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
-        <div>
-            <h4 class="mb-1 fw-bold fs-3">Đăng ký mục tiêu doanh số</h4>
-            <p class="text-muted mb-2 fs-6">Theo dõi cam kết theo tháng và mức độ hoàn thành thực tế trong năm {{ $year }}.</p>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Đăng ký mục tiêu doanh số</li>
-                </ol>
-            </nav>
-        </div>
-        <div class="d-flex align-items-center gap-2 ms-auto flex-wrap justify-content-end">
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-semibold">Năm {{ $year }}</span>
-            <button wire:click="saveTargets" class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 fw-semibold">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                Lưu cam kết
-            </button>
-        </div>
+    {{-- ── Page header ────────────────────────────────────────────── --}}
+    <div class="page-header mb-4">
+        <h4 class="mb-1 fw-bold">Đăng ký mục tiêu doanh số</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
+                <li class="breadcrumb-item active">Đăng ký mục tiêu doanh số</li>
+            </ol>
+        </nav>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-xl-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-12 col-md-4">
-                            <label class="form-label fw-semibold mb-2">Năm áp dụng</label>
-                            <select wire:model.live="year" class="form-select">
-                                @foreach($years as $y)
-                                    <option value="{{ $y }}">{{ $y }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-5">
-                            <label class="form-label fw-semibold mb-2">Nhân viên</label>
-                            <input type="text" class="form-control" value="{{ auth()->user()->name }}" disabled>
-                        </div>
-                        <div class="col-12 col-md-3">
-                            <div class="text-muted mb-1">Tỷ lệ hoàn thành năm</div>
-                            @if($totalPct !== null)
-                                <div class="h4 mb-0 {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
-                                    {{ $totalPct }}%
-                                </div>
-                            @else
-                                <div class="h4 mb-0 text-muted">—</div>
-                            @endif
-                        </div>
+    {{-- ── Controls bar ───────────────────────────────────────────── --}}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-end flex-wrap gap-3">
+                <div>
+                    <label class="form-label fw-semibold mb-1 small text-muted text-uppercase">Năm</label>
+                    <select wire:model.live="year" class="form-select form-select-sm" style="min-width:115px">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label fw-semibold mb-1 small text-muted text-uppercase">Nhân viên</label>
+                    <div class="d-flex align-items-center gap-2 form-control form-control-sm bg-light" style="min-width:180px;max-width:260px">
+                        <i class="bi bi-person-circle text-muted flex-shrink-0"></i>
+                        <span class="fw-semibold text-truncate">{{ auth()->user()->name }}</span>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-12 col-xl-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
+                <div class="ms-auto d-flex align-items-end gap-2">
                     <div>
-                        <p class="text-muted mb-2">Phần còn thiếu để đạt mục tiêu năm</p>
-                        <h4 class="mb-1 text-danger">{{ number_format($remaining, 0, ',', '.') }} đ</h4>
-                        <small class="text-muted">Đã ký: {{ number_format($totals['actual'], 0, ',', '.') }} / {{ number_format($totals['target'], 0, ',', '.') }} đ</small>
+                        <label class="form-label mb-1 small text-muted text-uppercase d-block">Chế độ xem</label>
+                        <div class="btn-group" role="group">
+                            <button type="button" wire:click="switchMode('year')"
+                                class="btn btn-sm {{ $viewMode === 'year' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                <i class="bi bi-table me-1"></i>Theo năm
+                            </button>
+                            <button type="button" wire:click="switchMode('month')"
+                                class="btn btn-sm {{ $viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                <i class="bi bi-calendar2-week me-1"></i>Chi tiết tháng
+                            </button>
+                        </div>
                     </div>
-                    <div class="progress mt-3 h-8px" role="progressbar" aria-label="year-progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $totalPct !== null ? min($totalPct, 100) : 0 }}" >
-                        <div class="progress-bar {{ $totalPct !== null && $totalPct >= 100 ? 'bg-success' : ($totalPct !== null && $totalPct >= 70 ? 'bg-warning' : 'bg-danger') }}" style="width: {{ $totalPct !== null ? min($totalPct, 100) : 0 }}%"></div>
-                    </div>
+                    <button wire:click="saveTargets"
+                        wire:loading.attr="disabled" wire:target="saveTargets"
+                        class="btn btn-sm btn-primary d-flex align-items-center gap-2 px-3 fw-semibold">
+                        <span wire:loading wire:target="saveTargets" class="spinner-border spinner-border-sm"></span>
+                        <i wire:loading.remove wire:target="saveTargets" class="bi bi-floppy"></i>
+                        Lưu cam kết
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="text-muted mb-1">Tổng cam kết năm {{ $year }}</div>
-                    <div class="kpi-value">{{ number_format($totals['target'], 0, ',', '.') }} đ</div>
+    {{-- ── KPI cards ──────────────────────────────────────────────── --}}
+    @if($viewMode === 'year')
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Tổng cam kết {{ $year }}</p>
+                        <div class="fs-5 fw-bold">{{ number_format($totals['target'], 0, ',', '.') }} đ</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="text-muted mb-1">Tổng thực tế đã ký</div>
-                    <div class="kpi-value text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Tổng thực tế đã ký</p>
+                        <div class="fs-5 fw-bold text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="text-muted mb-1">Mức độ hoàn thành</div>
-                    <div class="kpi-value {{ $totalPct !== null && $totalPct >= 100 ? 'text-success' : ($totalPct !== null && $totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
-                        {{ $totalPct !== null ? $totalPct.'%' : '—' }}
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Còn thiếu để đạt năm</p>
+                        <div class="fs-5 fw-bold text-danger">{{ number_format($remaining, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Mức độ hoàn thành năm</p>
+                        <div class="fs-5 fw-bold {{ $totalPct !== null && $totalPct >= 100 ? 'text-success' : ($totalPct !== null && $totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
+                            {{ $totalPct !== null ? $totalPct.'%' : '—' }}
+                        </div>
+                        @if($totalPct !== null)
+                            <div class="progress mt-2 h-6px">
+                                <div class="progress-bar {{ $totalPct >= 100 ? 'bg-success' : ($totalPct >= 70 ? 'bg-warning' : 'bg-danger') }}"
+                                    style="width:{{ min($totalPct, 100) }}%"></div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
-            <h6 class="mb-0 fw-bold fs-5">Chi tiết cam kết theo tháng</h6>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Đạt</span>
-                <span class="badge bg-warning bg-opacity-10 text-warning px-2 py-1">Gần đạt</span>
-                <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">Chưa đạt</span>
+    @else
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Cam kết tháng {{ $viewMonth }}</p>
+                        <div class="fs-5 fw-bold">{{ number_format($monthTarget, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Đã về tháng {{ $viewMonth }}</p>
+                        <div class="fs-5 fw-bold text-success">{{ number_format($monthActual, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Còn thiếu tháng {{ $viewMonth }}</p>
+                        <div class="fs-5 fw-bold text-danger">{{ number_format($monthRemain, 0, ',', '.') }} đ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Tỷ lệ hoàn thành</p>
+                        <div class="fs-5 fw-bold {{ $monthPct !== null && $monthPct >= 100 ? 'text-success' : ($monthPct !== null && $monthPct >= 70 ? 'text-warning' : 'text-danger') }}">
+                            {{ $monthPct !== null ? $monthPct.'%' : '—' }}
+                        </div>
+                        @if($monthPct !== null)
+                            <div class="progress mt-2 h-6px">
+                                <div class="progress-bar {{ $monthPct >= 100 ? 'bg-success' : ($monthPct >= 70 ? 'bg-warning' : 'bg-danger') }}"
+                                    style="width:{{ min($monthPct, 100) }}%"></div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table align-middle mb-0 sales-target-table">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="w-min-160px ps-3" >Tháng</th>
-                            <th class="text-end w-230px" >Cam kết (đ)</th>
-                            <th class="text-end w-230px" >Thực tế đã ký (đ)</th>
-                            <th class="text-end text-truncate-220" >Chênh lệch (đ)</th>
-                            <th class="text-end w-190px" >% Đạt</th>
-                            <th class="text-center pe-3 w-min-160px" >Trạng thái</th>
+    @endif
+
+    {{-- ════════════════════════════════════════════════════════════ --}}
+    {{-- MODE: THEO NĂM                                              --}}
+    {{-- ════════════════════════════════════════════════════════════ --}}
+    @if($viewMode === 'year')
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
+                <h6 class="mb-0 fw-bold">Chi tiết cam kết theo tháng — {{ $year }}</h6>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Đạt</span>
+                    <span class="badge bg-warning bg-opacity-10 text-warning px-2 py-1">Gần đạt</span>
+                    <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">Chưa đạt</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0 sales-target-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Tháng</th>
+                                <th class="text-end">Cam kết (đ)</th>
+                                <th class="text-end">Thực tế đã ký (đ)</th>
+                                <th class="text-end">Chênh lệch (đ)</th>
+                                <th class="text-end">% Đạt</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th class="text-center pe-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($months as $m => $data)
+                                @php
+                                    $t = (float) ($data['target'] ?? 0);
+                                    $a = (float) ($data['actual'] ?? 0);
+                                    $v = $a - $t;
+                                    $p = $t > 0 ? round($a / $t * 100, 1) : null;
+                                    $q = (int) ceil($m / 3);
+                                    $isCurrent = ($m === (int) now()->format('n') && $year === (int) now()->format('Y'));
+                                @endphp
+                                <tr class="{{ $isCurrent ? 'table-primary bg-opacity-25' : '' }}">
+                                    <td class="ps-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($isCurrent)
+                                                <span class="badge bg-primary rounded-pill" style="font-size:0.6rem">Hiện tại</span>
+                                            @endif
+                                            <div>
+                                                <div class="fw-semibold">Tháng {{ $m }}</div>
+                                                <small class="text-muted">Quý {{ $q }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="input-group mxw-220px ms-auto">
+                                            <input type="text" wire:model.blur="targets.{{ $m }}"
+                                                class="form-control text-end fw-semibold money-input" placeholder="0">
+                                            <span class="input-group-text fw-semibold">đ</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-end fw-semibold {{ $a > 0 ? 'text-success' : 'text-muted' }}">
+                                        {{ $a > 0 ? number_format($a, 0, ',', '.') : '—' }}
+                                    </td>
+                                    <td class="text-end fw-semibold {{ $v >= 0 ? 'text-success' : 'text-danger' }}">
+                                        @if($t > 0 || $a > 0)
+                                            {{ $v >= 0 ? '+' : '-' }}{{ number_format(abs($v), 0, ',', '.') }}
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td class="text-end">
+                                        @if($p !== null)
+                                            <div class="fw-semibold {{ $p >= 100 ? 'text-success' : ($p >= 70 ? 'text-warning' : 'text-danger') }}">{{ $p }}%</div>
+                                            <div class="progress ms-auto h-6px mxw-140px">
+                                                <div class="progress-bar {{ $p >= 100 ? 'bg-success' : ($p >= 70 ? 'bg-warning' : 'bg-danger') }}"
+                                                    style="width:{{ min($p, 100) }}%"></div>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($p === null)
+                                            <span class="badge bg-secondary-subtle text-body border border-secondary-subtle">Chưa cam kết</span>
+                                        @elseif($p >= 100)
+                                            <span class="badge bg-success bg-opacity-10 text-success">Đạt</span>
+                                        @elseif($p >= 70)
+                                            <span class="badge bg-warning bg-opacity-10 text-warning">Gần đạt</span>
+                                        @else
+                                            <span class="badge bg-danger bg-opacity-10 text-danger">Chưa đạt</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center pe-3">
+                                        <button type="button" wire:click="viewMonthDetail({{ $m }})"
+                                            class="btn btn-sm btn-outline-primary py-0 px-2"
+                                            title="Xem chi tiết tháng {{ $m }}">
+                                            <i class="bi bi-search" style="font-size:0.75rem"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr class="fw-bold">
+                                <td class="ps-3">Tổng năm {{ $year }}</td>
+                                <td class="text-end">{{ number_format($totals['target'], 0, ',', '.') }} đ</td>
+                                <td class="text-end text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</td>
+                                <td class="text-end {{ ($totals['actual'] - $totals['target']) >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ ($totals['actual'] - $totals['target']) >= 0 ? '+' : '-' }}{{ number_format(abs($totals['actual'] - $totals['target']), 0, ',', '.') }}
+                                </td>
+                                <td class="text-end {{ $totalPct !== null && $totalPct >= 100 ? 'text-success' : ($totalPct !== null && $totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
+                                    {{ $totalPct !== null ? $totalPct.'%' : '—' }}
+                                </td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ════════════════════════════════════════════════════════════ --}}
+    {{-- MODE: CHI TIẾT THÁNG                                        --}}
+    {{-- ════════════════════════════════════════════════════════════ --}}
+    @if($viewMode === 'month')
+
+        {{-- Summary table --}}
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-warning bg-opacity-10 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h6 class="mb-0 fw-bold">CAM KẾT DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="form-label mb-0 fw-semibold">Tháng:</label>
+                    <select wire:model.live="viewMonth" class="form-select form-select-sm" style="width:auto">
+                        @for($mi = 1; $mi <= 12; $mi++)
+                            <option value="{{ $mi }}">Tháng {{ str_pad($mi, 2, '0', STR_PAD_LEFT) }}</option>
+                        @endfor
+                    </select>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-warning">
+                        <tr class="text-center fw-bold small">
+                            <th>TÊN NHÂN VIÊN</th>
+                            <th>DOANH SỐ MỤC TIÊU</th>
+                            <th>DOANH SỐ ĐÃ VỀ</th>
+                            <th>DOANH SỐ TÌM MỚI (CÒN THIẾU)</th>
+                            <th>TỶ LỆ HOÀN THÀNH</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($months as $m => $data)
-                            @php
-                                $target = (float) ($data['target'] ?? 0);
-                                $actual = (float) ($data['actual'] ?? 0);
-                                $variance = $actual - $target;
-                                $pct = $target > 0 ? round($actual / $target * 100, 1) : null;
-                                $quarter = (int) ceil($m / 3);
-                            @endphp
-                            <tr>
-                                <td class="ps-3 month-cell">
-                                    <div class="fw-semibold">Tháng {{ $m }}</div>
-                                    <small class="text-muted">Quý {{ $quarter }}</small>
-                                </td>
-                                <td class="text-end">
-                                    <div class="input-group mxw-220px ms-auto" >
-                                        <input
-                                            type="text"
-                                            wire:model.blur="targets.{{ $m }}"
-                                            class="form-control text-end fw-semibold money-input"
-                                            placeholder="0"
-                                        >
-                                        <span class="input-group-text fw-semibold">đ</span>
-                                    </div>
-                                </td>
-                                <td class="text-end fw-semibold {{ $actual > 0 ? 'text-success' : 'text-muted' }}">
-                                    {{ $actual > 0 ? number_format($actual, 0, ',', '.') : '—' }}
-                                </td>
-                                <td class="text-end fw-semibold {{ $variance >= 0 ? 'text-success' : 'text-danger' }}">
-                                    @if($target > 0 || $actual > 0)
-                                        {{ $variance >= 0 ? '+' : '-' }}{{ number_format(abs($variance), 0, ',', '.') }}
-                                    @else
-                                        —
-                                    @endif
-                                </td>
-                                <td class="text-end">
-                                    @if($pct !== null)
-                                        <div class="fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}">{{ $pct }}%</div>
-                                        <div class="progress ms-auto h-6px mxw-140px" >
-                                            <div class="progress-bar {{ $pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger') }}" style="width: {{ min($pct, 100) }}%"></div>
-                                        </div>
-                                    @else
-                                        <span class="text-muted">—</span>
-                                    @endif
-                                </td>
-                                <td class="text-center pe-3">
-                                    @if($pct === null)
-                                        <span class="badge bg-secondary-subtle text-body border border-secondary-subtle">Chưa có cam kết</span>
-                                    @elseif($pct >= 100)
-                                        <span class="badge bg-success bg-opacity-10 text-success">Đạt</span>
-                                    @elseif($pct >= 70)
-                                        <span class="badge bg-warning bg-opacity-10 text-warning">Gần đạt</span>
-                                    @else
-                                        <span class="badge bg-danger bg-opacity-10 text-danger">Chưa đạt</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot class="table-secondary">
-                        <tr class="fw-bold">
-                            <td class="ps-3">Tổng năm {{ $year }}</td>
-                            <td class="text-end">{{ number_format($totals['target'], 0, ',', '.') }} đ</td>
-                            <td class="text-end text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</td>
-                            <td class="text-end {{ ($totals['actual'] - $totals['target']) >= 0 ? 'text-success' : 'text-danger' }}">
-                                {{ ($totals['actual'] - $totals['target']) >= 0 ? '+' : '-' }}{{ number_format(abs($totals['actual'] - $totals['target']), 0, ',', '.') }}
+                        <tr class="text-center">
+                            <td class="fw-bold">{{ auth()->user()->name }}</td>
+                            <td>{{ number_format($monthTarget, 0, ',', '.') }} đ</td>
+                            <td class="text-success fw-bold">{{ number_format($monthActual, 0, ',', '.') }} đ</td>
+                            <td class="text-danger fw-bold">{{ number_format($monthRemain, 0, ',', '.') }} đ</td>
+                            <td>
+                                @if($monthPct !== null)
+                                    <span class="fw-bold {{ $monthPct >= 100 ? 'text-success' : ($monthPct >= 70 ? 'text-warning' : 'text-danger') }}">
+                                        {{ $monthPct }}%
+                                    </span>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
                             </td>
-                            <td class="text-end {{ $totalPct !== null && $totalPct >= 100 ? 'text-success' : ($totalPct !== null && $totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
-                                {{ $totalPct !== null ? $totalPct.'%' : '—' }}
-                            </td>
-                            <td></td>
                         </tr>
-                    </tfoot>
+                    </tbody>
                 </table>
             </div>
         </div>
-    </div>
+
+        {{-- Contract detail table --}}
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-light py-3">
+                <h6 class="mb-0 fw-bold">CỤ THỂ DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 table-xs">
+                        <thead class="table-light">
+                            <tr class="fw-bold small text-center">
+                                <th class="ps-3 text-start">TÊN CÔNG TY</th>
+                                <th class="text-start">DỊCH VỤ</th>
+                                <th>GIÁ TRỊ HỢP ĐỒNG<br><small class="fw-normal">(KO VAT, KO HH)</small></th>
+                                <th>PTTT</th>
+                                <th>CHẮC CHẮN (ĐÃ VỀ)</th>
+                                <th>DỰ KIẾN (CHỜ VỀ)</th>
+                                <th class="pe-3">TÌNH HÌNH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($monthContracts as $c)
+                                <tr>
+                                    <td class="ps-3 fw-semibold">{{ $c['customer_name'] }}</td>
+                                    <td class="text-muted small">{{ $c['service'] }}</td>
+                                    <td class="text-end fw-semibold">{{ number_format($c['value'], 0, ',', '.') }}</td>
+                                    <td class="text-center">{{ $c['payment_method'] ?: '—' }}</td>
+                                    <td class="text-end text-success fw-semibold">
+                                        {{ $c['revenue'] > 0 ? number_format($c['revenue'], 0, ',', '.') : '—' }}
+                                    </td>
+                                    <td class="text-end text-warning fw-semibold">
+                                        {{ $c['expected'] > 0 ? number_format($c['expected'], 0, ',', '.') : '—' }}
+                                    </td>
+                                    <td class="pe-3 small text-muted">{{ $c['notes'] ?: '—' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">Không có hợp đồng nào trong tháng này.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                        @if($monthContracts->isNotEmpty())
+                            <tfoot class="table-secondary fw-bold">
+                                <tr>
+                                    <td colspan="2" class="ps-3">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
+                                    <td class="text-end">{{ number_format($monthContracts->sum('value'), 0, ',', '.') }}</td>
+                                    <td></td>
+                                    <td class="text-end text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
+                                    <td class="text-end text-warning">{{ number_format($monthContracts->sum('expected'), 0, ',', '.') }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        @endif
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
+
 </div>

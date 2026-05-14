@@ -120,10 +120,9 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
 
     // Doanh số
     Route::prefix('doanh-so')->name('sales.')->group(function () {
-        Route::get('tai-ky', \App\Livewire\Admin\Sales\RenewalSalesManager::class)->name('renewal.index')->middleware(Permission::toMiddleware(Permission::SALES_RENEWAL_VIEW));
         Route::get('dang-ky-muc-tieu', \App\Livewire\Admin\Sales\SalesTargetRegistration::class)
             ->name('target-registration')
-            ->middleware([Permission::toMiddleware(Permission::SALES_RENEWAL_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);
+            ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);
     });
 
     // Chuyển phát

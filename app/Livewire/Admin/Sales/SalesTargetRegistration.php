@@ -16,6 +16,8 @@ use Livewire\Component;
 class SalesTargetRegistration extends Component
 {
     public int $year;
+    public int $viewMonth;
+    public string $viewMode = 'year';
     public array $targets = [];
 
     protected array $contractModels = [
@@ -27,12 +29,47 @@ class SalesTargetRegistration extends Component
         ContractEmission::class,
     ];
 
+    protected array $contractTypeNames = [
+        ContractWaste::class          => 'Chất thải & Tiếng ồn',
+        ContractLegal::class          => 'Pháp lý & Hồ sơ MT',
+        ContractTechnical::class      => 'Kỹ thuật & Ứng phó SC',
+        ContractResearch::class       => 'NC & CĐ Công nghệ',
+        ContractSustainability::class => 'TV & BC PTBV',
+        ContractEmission::class       => 'Phát thải & Năng lượng',
+    ];
+
     public function mount(): void
     {
         abort_unless(auth()->user()->hasAnyRole([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]), 403);
 
-        $this->year = (int) now()->format('Y');
+        $this->year       = (int) now()->format('Y');
+        $this->viewMonth  = (int) now()->format('n');
         $this->loadTargets();
+    }
+
+    public function switchMode(string $mode): void
+    {
+        $this->viewMode = $mode;
+    }
+
+    public function viewMonthDetail(int $month): void
+    {
+        $this->viewMonth = $month;
+        $this->viewMode  = 'month';
+    }
+
+    public function prevMonth(): void
+    {
+        if ($this->viewMonth > 1) {
+            $this->viewMonth--;
+        }
+    }
+
+    public function nextMonth(): void
+    {
+        if ($this->viewMonth < 12) {
+            $this->viewMonth++;
+        }
     }
 
     public function updatedYear(): void
@@ -70,6 +107,33 @@ class SalesTargetRegistration extends Component
             ->where('staff_id', auth()->id())
             ->get()
             ->each(fn($t) => $this->targets[(int) $t->month] = number_format((int) $t->target_amount, 0, ',', '.'));
+    }
+
+    private function getMonthContracts(): \Illuminate\Support\Collection
+    {
+        $contracts = collect();
+
+        foreach ($this->contractModels as $modelClass) {
+            $rows = $modelClass::with('customer')
+                ->where('staff_id', auth()->id())
+                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                ->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->viewMonth)
+                ->get()
+                ->map(fn($c) => [
+                    'type'            => $this->contractTypeNames[$modelClass] ?? class_basename($modelClass),
+                    'customer_name'   => $c->customer?->name ?? '—',
+                    'service'         => $c->loai_dich_vu ?: ($this->contractTypeNames[$modelClass] ?? '—'),
+                    'value'           => (int) $c->value,
+                    'payment_method'  => $c->payment_method,
+                    'revenue'         => (int) $c->revenue,
+                    'expected'        => max(0, (int) $c->value - (int) $c->revenue),
+                    'notes'           => $c->notes,
+                ]);
+
+            $contracts = $contracts->merge($rows);
+        }
+
+        return $contracts;
     }
 
     public function saveTargets(): void
@@ -122,9 +186,10 @@ class SalesTargetRegistration extends Component
         }
 
         return view('livewire.admin.sales.sales-target-registration', [
-            'months' => $months,
-            'totals' => $totals,
-            'years'  => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'months'         => $months,
+            'totals'         => $totals,
+            'years'          => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'monthContracts' => $this->viewMode === 'month' ? $this->getMonthContracts() : collect(),
         ])->layout('admin.layouts.app', ['title' => 'Đăng ký mục tiêu doanh số']);
     }
 }

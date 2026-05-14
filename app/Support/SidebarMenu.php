@@ -97,8 +97,8 @@ class SidebarMenu
             [
                 'title'      => 'Bộ phận kinh doanh',
                 'icon'       => 'stack',
-                'permission' => 'sales-renewal.view',
-                'children'   => ['Doanh số tái ký', 'Bảng theo dõi báo giá', 'Đăng ký mục tiêu doanh số'],
+                'permission' => 'quotation-tracking.view',
+                'children'   => ['Bảng theo dõi báo giá', 'Đăng ký mục tiêu doanh số'],
             ],
             [
                 'title'      => 'Bộ phận tư vấn',
@@ -196,7 +196,6 @@ class SidebarMenu
             'app.daily-reports.*'                        => ['Báo cáo ngày',         'Báo cáo ngày'],
             'app.commissions.*'                          => ['Hoa hồng',             'Yêu cầu chi hoa hồng'],
             'app.finance.cash-flow'                      => ['Dòng tiền',            'Dòng tiền'],
-            'app.sales.renewal.*'                        => ['Bộ phận kinh doanh',   'Doanh số tái ký'],
             'app.postal-deliveries.*'                    => ['Chuyển phát thư',      'Quản lý chuyển phát'],
             'app.quotation-tracking.*'                   => ['Bộ phận kinh doanh',   'Bảng theo dõi báo giá'],
             'app.reports.sales.summary'                  => ['Báo cáo Kinh doanh',   'Bảng tổng kết doanh số'],
@@ -255,7 +254,6 @@ class SidebarMenu
             'Nội bộ'             => ['Quy định' => 'app.internal-docs.index', 'Phần mềm' => 'app.internal-software.index'],
             'Hoa hồng'           => ['Yêu cầu chi hoa hồng' => 'app.commissions.index'],
             'Bộ phận kinh doanh' => [
-                'Doanh số tái ký'            => 'app.sales.renewal.index',
                 'Đăng ký mục tiêu doanh số'  => 'app.sales.target-registration',
                 'Bảng theo dõi báo giá'      => 'app.quotation-tracking.index',
             ],
