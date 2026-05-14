@@ -45,11 +45,11 @@
                         <div class="btn-group" role="group">
                             <button type="button" wire:click="switchMode('year')"
                                 class="btn btn-sm {{ $viewMode === 'year' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                <i class="bi bi-table me-1"></i>Theo năm
+                                <i class="bi bi-table"></i><span class="d-none d-sm-inline ms-1">Theo năm</span>
                             </button>
                             <button type="button" wire:click="switchMode('month')"
                                 class="btn btn-sm {{ $viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                <i class="bi bi-calendar2-week me-1"></i>Chi tiết tháng
+                                <i class="bi bi-calendar2-week"></i><span class="d-none d-sm-inline ms-1">Chi tiết tháng</span>
                             </button>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                         class="btn btn-sm {{ $isTpkd && $selectedStaffId !== auth()->id() ? 'btn-secondary' : 'btn-primary' }} d-flex align-items-center gap-2 px-3 fw-semibold">
                         <span wire:loading wire:target="saveTargets" class="spinner-border spinner-border-sm"></span>
                         <i wire:loading.remove wire:target="saveTargets" class="bi bi-floppy"></i>
-                        Lưu cam kết
+                        <span class="d-none d-sm-inline">Lưu cam kết</span>
                     </button>
                 </div>
             </div>
@@ -116,7 +116,7 @@
     {{-- MODE: THEO NĂM                                              --}}
     {{-- ════════════════════════════════════════════════════════════ --}}
     @if($viewMode === 'year')
-        <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card border-0 shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
                 <h6 class="mb-0 fw-bold">Chi tiết cam kết theo tháng — {{ $year }}</h6>
                 <div class="d-flex align-items-center gap-2">
@@ -243,6 +243,7 @@
                 </div>
             </div>
             <div class="card-body p-0">
+                <div class="table-responsive">
                 <table class="table table-bordered mb-0">
                     <thead class="table-warning">
                         <tr class="text-center fw-bold small">
@@ -271,6 +272,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 

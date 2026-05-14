@@ -10,8 +10,8 @@
             </span>
         </div>
 
-        {{-- Stepper ngang — desktop (md+) --}}
-        <div class="d-none d-md-block mb-4">
+        {{-- Stepper ngang — desktop (lg+) --}}
+        <div class="d-none d-lg-block mb-4">
             <div class="d-flex align-items-start gap-0" >
                 @foreach ($stepKeys as $i => $key)
                     @php
@@ -25,14 +25,14 @@
                             @if ($canDo && !$isDone)
                                 <button wire:click="openStep('{{ $key }}')"
                                     class="btn rounded-circle d-flex align-items-center justify-content-center mb-2 btn-primary wh-48 fs-6 p-0"
-                                    
+
                                     title="{{ $label }}">
                                     <span class="fw-bold">{{ $i + 1 }}</span>
                                 </button>
                             @else
                                 <div class="rounded-circle d-flex align-items-center justify-content-center mb-2
                                     {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-48 fs-6"
-                                    
+
                                     title="{{ $label }}{{ $isDone ? ' ✓' : '' }}">
                                     @if ($isDone)
                                         <i class="bi bi-check-lg fs-5"></i>
@@ -58,8 +58,8 @@
             </div>
         </div>
 
-        {{-- Stepper dọc — mobile (< md) --}}
-        <div class="d-md-none mb-4">
+        {{-- Stepper dọc — tablet/mobile (< lg) --}}
+        <div class="d-lg-none mb-4">
             @foreach ($stepKeys as $i => $key)
                 @php
                     $label = $steps[$key];
@@ -73,7 +73,7 @@
                         @if ($canDo && !$isDone)
                             <button wire:click="openStep('{{ $key }}')"
                                 class="btn rounded-circle d-flex align-items-center justify-content-center btn-primary flex-shrink-0 wh-44 fs-90 p-0"
-                                
+
                                 title="{{ $label }}">
                                 <span class="fw-bold">{{ $i + 1 }}</span>
                             </button>
