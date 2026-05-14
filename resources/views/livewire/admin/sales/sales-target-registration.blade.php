@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    {{-- ── KPI cards ──────────────────────────────────────────────── --}}
+    {{-- ── KPI cards (year mode only) ─────────────────────────────── --}}
     @if($viewMode === 'year')
         <div class="row g-3 mb-4">
             <div class="col-sm-6 col-xl-3">
@@ -104,49 +104,6 @@
                             <div class="progress mt-2 h-6px">
                                 <div class="progress-bar {{ $totalPct >= 100 ? 'bg-success' : ($totalPct >= 70 ? 'bg-warning' : 'bg-danger') }}"
                                     style="width:{{ min($totalPct, 100) }}%"></div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    @else
-        <div class="row g-3 mb-4">
-            <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <p class="text-muted small mb-1">Cam kết tháng {{ $viewMonth }}</p>
-                        <div class="fs-5 fw-bold">{{ number_format($monthTarget, 0, ',', '.') }} đ</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <p class="text-muted small mb-1">Đã về tháng {{ $viewMonth }}</p>
-                        <div class="fs-5 fw-bold text-success">{{ number_format($monthActual, 0, ',', '.') }} đ</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <p class="text-muted small mb-1">Còn thiếu tháng {{ $viewMonth }}</p>
-                        <div class="fs-5 fw-bold text-danger">{{ number_format($monthRemain, 0, ',', '.') }} đ</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <p class="text-muted small mb-1">Tỷ lệ hoàn thành</p>
-                        <div class="fs-5 fw-bold {{ $monthPct !== null && $monthPct >= 100 ? 'text-success' : ($monthPct !== null && $monthPct >= 70 ? 'text-warning' : 'text-danger') }}">
-                            {{ $monthPct !== null ? $monthPct.'%' : '—' }}
-                        </div>
-                        @if($monthPct !== null)
-                            <div class="progress mt-2 h-6px">
-                                <div class="progress-bar {{ $monthPct >= 100 ? 'bg-success' : ($monthPct >= 70 ? 'bg-warning' : 'bg-danger') }}"
-                                    style="width:{{ min($monthPct, 100) }}%"></div>
                             </div>
                         @endif
                     </div>
