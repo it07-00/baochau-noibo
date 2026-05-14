@@ -10,6 +10,7 @@ use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\SalesTarget;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesTargetReport extends Component
@@ -55,9 +56,9 @@ class SalesTargetReport extends Component
             foreach ($this->contractModels as $modelClass) {
                 $contracts = $modelClass::query()
                     ->with('customer', 'staff')
-                    ->whereNotNull('submitted_at')
-                    ->whereYear('submitted_at', $this->year)
-                    ->whereMonth('submitted_at', $month)
+                    ->whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
+                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                    ->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $month)
                     ->whereIn('staff_id', $staffIds)
                     ->get();
 
@@ -68,7 +69,7 @@ class SalesTargetReport extends Component
                         'type'       => $this->contractTypeLabels[$modelClass],
                         'value'      => (float) $contract->revenue,
                         'is_renewal' => (bool) $contract->is_renewal,
-                        'date'       => $contract->submitted_at?->format('d/m/Y'),
+                        'date'       => ($contract->submitted_at ?? $contract->signed_at)?->format('d/m/Y'),
                     ]);
                 }
             }
@@ -103,14 +104,14 @@ class SalesTargetReport extends Component
 
             foreach ($this->contractModels as $modelClass) {
                 $rows = $modelClass::query()
-                    ->whereNotNull('submitted_at')
-                    ->whereYear('submitted_at', $this->year)
+                    ->whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
+                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->when(
                         $this->filter_staff !== '',
                         fn($q) => $q->where('staff_id', $this->filter_staff),
                         fn($q) => $q->whereIn('staff_id', $salesStaffIds)
                     )
-                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total')
+                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
 

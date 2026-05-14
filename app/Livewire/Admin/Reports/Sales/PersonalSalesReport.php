@@ -13,6 +13,7 @@ use App\Models\SalesProgressive;
 use App\Models\SalesRenewal;
 use App\Models\SalesTarget;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class PersonalSalesReport extends Component
@@ -72,10 +73,10 @@ class PersonalSalesReport extends Component
         if (!empty($targetStaffIds)) {
             foreach ($this->contractModels as $modelClass) {
                 $rows = $modelClass::query()
-                    ->whereNotNull('submitted_at')
-                    ->whereYear('submitted_at', $this->year)
+                    ->whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
+                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
-                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total')
+                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
 
