@@ -41,6 +41,7 @@
         // Tài chính
         'commissions'              => 'Yêu cầu hoa hồng',
         'advance-requests'         => 'Yêu cầu ứng tiền',
+        'cash-flow'                => 'Dòng tiền',
 
         // Vận hành
         'waste-requests'           => 'Yêu cầu chất thải',

@@ -125,7 +125,7 @@
                     <tbody>
                         @forelse($rows as $i => $row)
                         <tr>
-                            <td class="text-center text-muted">{{ $i + 1 }}</td>
+                            <td class="text-center text-muted">{{ ($rows->currentPage() - 1) * $rows->perPage() + $i + 1 }}</td>
                             <td><span class="badge bg-light text-dark border" style="font-size:11px">{{ $row['type'] }}</span></td>
                             <td class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</td>
                             <td class="fw-bold text-primary">
