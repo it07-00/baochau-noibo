@@ -1,61 +1,211 @@
-<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
 <head>
     <meta charset="UTF-8">
+    <!--[if gte mso 9]>
+    <xml>
+        <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+                <x:ExcelWorksheet>
+                    <x:Name>Dòng tiền</x:Name>
+                    <x:WorksheetOptions>
+                        <x:DisplayGridlines/>
+                        <x:FitToPage/>
+                        <x:Print>
+                            <x:FitWidth>1</x:FitWidth>
+                            <x:FitHeight>0</x:FitHeight>
+                        </x:Print>
+                    </x:WorksheetOptions>
+                </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+    </xml>
+    <![endif]-->
     <style>
-        body { font-family: Arial, sans-serif; font-size: 11pt; }
-        .header { background-color: #1a5276; color: #ffffff; font-weight: bold; text-align: center; border: 1px solid #aaa; padding: 6px; }
-        .cell { border: 1px solid #ccc; vertical-align: middle; padding: 4px 6px; }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #111827;
+        }
+
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .title {
+            background-color: #0f3d5c;
+            color: #ffffff;
+            font-size: 18pt;
+            font-weight: 700;
+            text-align: center;
+            padding: 12px 8px;
+            border: 1px solid #0f3d5c;
+        }
+
+        .subtitle {
+            background-color: #e8f2f8;
+            color: #334155;
+            font-size: 10pt;
+            text-align: center;
+            padding: 6px 8px;
+            border: 1px solid #9fb6c5;
+        }
+
+        .section {
+            background-color: #dbeafe;
+            color: #0f3d5c;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 6px 8px;
+            border: 1px solid #93c5fd;
+        }
+
+        .summary-label {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            border: 1px solid #cbd5e1;
+            padding: 6px 8px;
+        }
+
+        .summary-value {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 6px 8px;
+            font-weight: 700;
+        }
+
+        .header {
+            background-color: #1a5276;
+            color: #ffffff;
+            font-weight: 700;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #0f3d5c;
+            padding: 7px 6px;
+        }
+
+        .cell {
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+            padding: 5px 6px;
+            background-color: #ffffff;
+        }
+
+        .row-alt .cell {
+            background-color: #f8fafc;
+        }
+
+        .total-row td {
+            background-color: #dcfce7;
+            border: 1px solid #86efac;
+            font-weight: 700;
+            padding: 7px 6px;
+        }
+
         .text-center { text-align: center; }
         .text-right { text-align: right; }
-        .title-row td { font-size: 15pt; font-weight: bold; text-align: center; padding: 10px; }
-        .meta-row td { font-size: 9pt; color: #555; text-align: center; padding: 2px; }
-        .total-row td { background-color: #d5f5e3; font-weight: bold; border: 1px solid #aaa; }
-        tr:nth-child(even) td { background-color: #f9f9f9; }
+        .text-cell { mso-number-format: "\@"; }
+        .wrap { white-space: normal; }
+        .money {
+            mso-number-format: "\#\,\#\#0";
+            text-align: right;
+            white-space: nowrap;
+        }
+        .positive { color: #15803d; }
+        .negative { color: #b91c1c; }
+        .muted { color: #64748b; }
     </style>
 </head>
 <body>
     <table>
-        <tr class="title-row">
-            <td colspan="11">BÁO CÁO DÒNG TIỀN — {{ strtoupper($periodLabel) }}</td>
-        </tr>
-        <tr class="meta-row">
-            <td colspan="11">Xuất ngày: {{ now()->format('d/m/Y H:i') }} — Tổng: {{ $totals['count'] }} hợp đồng</td>
+        <col style="width:42px">
+        <col style="width:150px">
+        <col style="width:130px">
+        <col style="width:260px">
+        <col style="width:150px">
+        <col style="width:96px">
+        <col style="width:128px">
+        <col style="width:122px">
+        <col style="width:122px">
+        <col style="width:122px">
+        <col style="width:122px">
+
+        <tr>
+            <td class="title" colspan="11">BÁO CÁO DÒNG TIỀN</td>
         </tr>
         <tr>
-            <th class="header" style="width:40px;">STT</th>
-            <th class="header" style="width:160px;">Loại HĐ</th>
-            <th class="header" style="width:120px;">Số HĐ BC</th>
-            <th class="header" style="width:220px;">Khách hàng</th>
-            <th class="header" style="width:150px;">NV CS</th>
-            <th class="header" style="width:90px;">Ngày ký</th>
-            <th class="header" style="width:120px;">Giá trị chưa VAT</th>
-            <th class="header" style="width:110px;">Doanh số</th>
-            <th class="header" style="width:110px;">Hoa hồng</th>
-            <th class="header" style="width:110px;">Chi NCC</th>
-            <th class="header" style="width:110px;">Thực nhận</th>
+            <td class="subtitle" colspan="11">
+                Kỳ báo cáo: {{ $periodLabel }} | Xuất ngày: {{ now()->format('d/m/Y H:i') }}
+            </td>
         </tr>
-        @foreach($rows as $i => $row)
         <tr>
+            <td class="section" colspan="11">Tổng quan</td>
+        </tr>
+        <tr>
+            <td class="summary-label" colspan="2">Số hợp đồng</td>
+            <td class="summary-value text-center">{{ $totals['count'] }}</td>
+            <td class="summary-label" colspan="2">Giá trị chưa VAT</td>
+            <td class="summary-value money" colspan="2">{{ (int) $totals['value_without_vat'] }}</td>
+            <td class="summary-label" colspan="2">Doanh số</td>
+            <td class="summary-value money" colspan="2">{{ (int) $totals['revenue'] }}</td>
+        </tr>
+        <tr>
+            <td class="summary-label" colspan="2">Hoa hồng</td>
+            <td class="summary-value money">{{ (int) $totals['commission'] }}</td>
+            <td class="summary-label" colspan="2">Chi NCC</td>
+            <td class="summary-value money" colspan="2">{{ (int) $totals['ncc_payment'] }}</td>
+            <td class="summary-label" colspan="2">Thực nhận</td>
+            <td class="summary-value money {{ $totals['net_received'] >= 0 ? 'positive' : 'negative' }}" colspan="2">
+                {{ (int) $totals['net_received'] }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="11">&nbsp;</td>
+        </tr>
+        <tr>
+            <th class="header">STT</th>
+            <th class="header">Loại HĐ</th>
+            <th class="header">Số HĐ BC</th>
+            <th class="header">Khách hàng</th>
+            <th class="header">NV CS</th>
+            <th class="header">Ngày ký</th>
+            <th class="header">Giá trị chưa VAT</th>
+            <th class="header">Doanh số</th>
+            <th class="header">Hoa hồng</th>
+            <th class="header">Chi NCC</th>
+            <th class="header">Thực nhận</th>
+        </tr>
+
+        @forelse($rows as $i => $row)
+        <tr class="{{ $i % 2 === 1 ? 'row-alt' : '' }}">
             <td class="cell text-center">{{ $i + 1 }}</td>
-            <td class="cell">{{ $row['type'] }}</td>
-            <td class="cell">{{ $row['shd_bc'] ?: '' }}</td>
-            <td class="cell">{{ $row['customer'] ?? '' }}</td>
-            <td class="cell">{{ $row['staff'] ?? '' }}</td>
-            <td class="cell text-center">{{ $row['signed_at'] ?? '' }}</td>
-            <td class="cell text-right">{{ $row['value_without_vat'] > 0 ? number_format($row['value_without_vat']) : '' }}</td>
-            <td class="cell text-right">{{ number_format($row['revenue']) }}</td>
-            <td class="cell text-right">{{ $row['commission'] > 0 ? number_format($row['commission']) : '' }}</td>
-            <td class="cell text-right">{{ $row['ncc_payment'] > 0 ? number_format($row['ncc_payment']) : '' }}</td>
-            <td class="cell text-right">{{ number_format($row['net_received']) }}</td>
+            <td class="cell wrap">{{ $row['type'] }}</td>
+            <td class="cell text-cell">{{ $row['shd_bc'] ?: '' }}</td>
+            <td class="cell wrap">{{ $row['customer'] ?? '' }}</td>
+            <td class="cell wrap">{{ $row['staff'] ?? '' }}</td>
+            <td class="cell text-center text-cell">{{ $row['signed_at'] ?? '' }}</td>
+            <td class="cell money">{{ $row['value_without_vat'] > 0 ? (int) $row['value_without_vat'] : '' }}</td>
+            <td class="cell money">{{ $row['revenue'] > 0 ? (int) $row['revenue'] : '' }}</td>
+            <td class="cell money">{{ $row['commission'] > 0 ? (int) $row['commission'] : '' }}</td>
+            <td class="cell money">{{ $row['ncc_payment'] > 0 ? (int) $row['ncc_payment'] : '' }}</td>
+            <td class="cell money {{ $row['net_received'] >= 0 ? 'positive' : 'negative' }}">{{ (int) $row['net_received'] }}</td>
         </tr>
-        @endforeach
+        @empty
+        <tr>
+            <td class="cell text-center muted" colspan="11">Không có dữ liệu cho kỳ đã chọn.</td>
+        </tr>
+        @endforelse
+
         <tr class="total-row">
-            <td class="cell text-center" colspan="6">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
-            <td class="cell text-right">{{ number_format($totals['value_without_vat']) }}</td>
-            <td class="cell text-right">{{ number_format($totals['revenue']) }}</td>
-            <td class="cell text-right">{{ number_format($totals['commission']) }}</td>
-            <td class="cell text-right">{{ number_format($totals['ncc_payment']) }}</td>
-            <td class="cell text-right">{{ number_format($totals['net_received']) }}</td>
+            <td class="text-center" colspan="6">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
+            <td class="money">{{ (int) $totals['value_without_vat'] }}</td>
+            <td class="money">{{ (int) $totals['revenue'] }}</td>
+            <td class="money">{{ (int) $totals['commission'] }}</td>
+            <td class="money">{{ (int) $totals['ncc_payment'] }}</td>
+            <td class="money {{ $totals['net_received'] >= 0 ? 'positive' : 'negative' }}">{{ (int) $totals['net_received'] }}</td>
         </tr>
     </table>
 </body>

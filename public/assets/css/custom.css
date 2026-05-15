@@ -1138,12 +1138,17 @@
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line,
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line::after,
 .app-sidebar-menu ul .app-sidebar-menu-heading .app-sidebar-menu-heading-line::before { background-color: rgba(148,163,184,0.25) !important; }
-.app-sidebar-footer { 
-    border-top: 1px solid rgba(255,255,255,0.08) !important; 
+.app-sidebar-footer {
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
     background-color: #0f172a !important;
     padding: 1rem 1.25rem !important;
+    margin-bottom: 12px;
     height: auto !important;
     min-height: 72px;
+}
+
+.app-sidebar-menu {
+    padding-bottom: calc(var(--app-sidebar-footer-height) + 20px) !important;
 }
 
 .app-sidebar-footer .profile-link {
@@ -1155,14 +1160,14 @@
 .app-sidebar-footer .profile-link:hover {
     background-color: rgba(255,255,255,0.06);
 }
-.app-sidebar-footer h6 { 
-    color: #ffffff !important; 
+.app-sidebar-footer h6 {
+    color: #ffffff !important;
     font-size: 0.94rem;
     letter-spacing: 0.2px;
     margin-bottom: 2px !important;
 }
-.app-sidebar-footer .profile-role { 
-    color: rgba(148, 163, 184, 0.85) !important; 
+.app-sidebar-footer .profile-role {
+    color: rgba(148, 163, 184, 0.85) !important;
     font-size: 0.78rem;
     font-weight: 500;
 }

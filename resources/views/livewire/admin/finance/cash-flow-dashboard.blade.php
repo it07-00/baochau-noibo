@@ -49,6 +49,14 @@
                         @endforeach
                     </select>
                 </div>
+                @if($canManageNccPayment)
+                <div class="col-md-auto">
+                    <button wire:click="importAllNccPaymentsFromSheets" class="btn btn-primary fw-semibold px-3 py-2" wire:loading.attr="disabled" wire:target="importAllNccPaymentsFromSheets">
+                        <span wire:loading wire:target="importAllNccPaymentsFromSheets" class="spinner-border spinner-border-sm me-1"></span>
+                        <i class="bi bi-arrow-repeat me-2"></i> Đồng bộ
+                    </button>
+                </div>
+                @endif
                 @can('cash-flow.export')
                 <div class="col-md-auto ms-auto">
                     <button wire:click="exportExcel" class="btn btn-success btn-sm" wire:loading.attr="disabled">
@@ -111,56 +119,143 @@
                     <thead class="table-light">
                         <tr>
                             <th class="text-center" style="width:40px">STT</th>
-                            <th>Loại HĐ</th>
-                            <th>Số HĐ BC</th>
+                            <th style="width:190px">Hợp đồng</th>
                             <th>Khách hàng</th>
-                            <th>Nhân viên chăm sóc</th>
-                            <th class="text-center">Ngày ký</th>
                             <th class="text-end">Giá trị chưa VAT</th>
                             <th class="text-end">Doanh số</th>
                             <th class="text-end">Hoa hồng</th>
                             <th class="text-end text-danger">Chi Nhà Cung Cấp</th>
                             <th class="text-end text-success fw-bold">Thực nhận</th>
+                            <th class="text-center" style="width:140px">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($rows as $i => $row)
+                        @php($sheetStateKey = $row['source_key'] . '_' . $row['id'])
+                        @php($activeSheetUrl = $sheetUrls[$sheetStateKey] ?? $row['ncc_payment_sheet_url'])
+                        @php($sheetCollapseId = 'sheetEditor_' . $sheetStateKey)
                         <tr>
                             <td class="text-center text-muted">{{ ($rows->currentPage() - 1) * $rows->perPage() + $i + 1 }}</td>
-                            <td><span class="badge bg-light text-dark border" style="font-size:11px">{{ $row['type'] }}</span></td>
-                            <td class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</td>
-                            <td class="fw-bold text-primary">
+                            <td style="min-width:190px">
+                                @php($baoChauMessage = $baoChauInvoiceMessages[$sheetStateKey] ?? null)
+                                <div class="d-flex flex-column gap-2">
+                                    <span class="badge bg-light text-dark border align-self-start text-start" style="font-size:11px; white-space:normal">{{ $row['type'] }}</span>
+                                @if($canEditBaoChauInvoice)
+                                    <input type="text"
+                                           class="form-control form-control-sm fw-semibold text-center"
+                                           value="{{ $row['shd_bc'] }}"
+                                           placeholder="Nhập số HĐ BC"
+                                           wire:change="updateBaoChauInvoiceNumber('{{ $row['source_key'] }}', {{ $row['id'] }}, $event.target.value)">
+                                    @if($baoChauMessage)
+                                        <small class="{{ $baoChauMessage['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $baoChauMessage['text'] }}</small>
+                                    @endif
+                                @else
+                                        <span class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</span>
+                                @endif
+                                </div>
+                            </td>
+                            <td style="min-width:280px; max-width:380px">
                                 @if(!empty($row['customer_slug']))
-                                    <a href="{{ route('app.customers.contracts', $row['customer_slug']) }}" class="text-decoration-none">
+                                    <a href="{{ route('app.customers.contracts', ['customer' => $row['customer_slug']]) }}" class="text-decoration-none fw-bold text-primary">
                                         {{ $row['customer'] }}
                                     </a>
                                 @else
-                                    {{ $row['customer'] ?? '—' }}
+                                    <span class="fw-bold text-primary">{{ $row['customer'] ?? '—' }}</span>
+                                @endif
+                                <div class="d-flex flex-wrap gap-3 text-muted mt-1" style="font-size:12px">
+                                    <span>NV: {{ $row['staff'] ?? '—' }}</span>
+                                    <span>Ngày ký: {{ $row['signed_at'] ?? '—' }}</span>
+                                </div>
+                            </td>
+                            <td class="text-end text-nowrap">{{ $row['value_without_vat'] > 0 ? number_format($row['value_without_vat']) : '—' }}</td>
+                            <td class="text-end text-nowrap">{{ $row['revenue'] > 0 ? number_format($row['revenue']) : '—' }}</td>
+                            <td class="text-end text-warning text-nowrap">{{ $row['commission'] > 0 ? number_format($row['commission']) : '—' }}</td>
+                            <td class="text-end text-danger text-nowrap">
+                                <div class="d-inline-flex flex-column align-items-end gap-1">
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <span class="fw-semibold text-danger">{{ $row['ncc_payment'] > 0 ? number_format($row['ncc_payment']) : '—' }}</span>
+                                        @if(!empty($row['ncc_payment_sheet_url']))
+                                            <a href="{{ $row['ncc_payment_sheet_url'] }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm py-0 px-2" title="Mở Google Sheet">
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+                                        @endif
+                                    </div>
+                                    @if(!empty($row['ncc_payment_updated_at']))
+                                        <small class="text-muted">Cập nhật: {{ $row['ncc_payment_updated_at'] }}</small>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="text-end fw-bold text-nowrap {{ $row['net_received'] >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format($row['net_received']) }}</td>
+                            <td class="text-center">
+                                @if($canManageNccPayment)
+                                    <button type="button"
+                                            class="btn btn-outline-primary btn-sm"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#{{ $sheetCollapseId }}"
+                                            aria-expanded="false"
+                                            aria-controls="{{ $sheetCollapseId }}">
+                                        <i class="bi bi-link-45deg me-1"></i>Sheet
+                                    </button>
+                                @else
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
-                            <td>{{ $row['staff'] ?? '—' }}</td>
-                            <td class="text-center">{{ $row['signed_at'] ?? '—' }}</td>
-                            <td class="text-end">{{ $row['value_without_vat'] > 0 ? number_format($row['value_without_vat']) : '—' }}</td>
-                            <td class="text-end">{{ $row['revenue'] > 0 ? number_format($row['revenue']) : '—' }}</td>
-                            <td class="text-end text-warning">{{ $row['commission'] > 0 ? number_format($row['commission']) : '—' }}</td>
-                            <td class="text-end text-danger">{{ $row['ncc_payment'] > 0 ? number_format($row['ncc_payment']) : '—' }}</td>
-                            <td class="text-end fw-bold {{ $row['net_received'] >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format($row['net_received']) }}</td>
                         </tr>
+                        @if($canManageNccPayment)
+                        <tr class="bg-light-subtle">
+                            <td colspan="9" class="px-3 py-3">
+                                <div id="{{ $sheetCollapseId }}" class="collapse">
+                                    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+                                        <div class="small text-muted fw-semibold" style="min-width: 150px;">Link Google Sheet</div>
+                                        <div class="input-group input-group-sm">
+                                            <input type="url"
+                                                   class="form-control"
+                                                   wire:model.defer="sheetUrls.{{ $sheetStateKey }}"
+                                                   placeholder="Dan link Google Sheet cong khai">
+                                            <button type="button"
+                                                    class="btn btn-primary"
+                                                    wire:click="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                                <span wire:loading wire:target="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})" class="spinner-border spinner-border-sm me-1"></span>
+                                                Cập nhật
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#{{ $sheetCollapseId }}"
+                                                    aria-expanded="true"
+                                                    aria-controls="{{ $sheetCollapseId }}">
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 small text-muted mt-2">
+                                        <span>Lấy số ở dòng chứa "Tổng Cộng".</span>
+                                        @if(!empty($activeSheetUrl))
+                                            <span>Đã lưu link sheet cho dòng này.</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @endif
                         @empty
                         <tr>
-                            <td colspan="11" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
+                            <td colspan="9" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
                         </tr>
                         @endforelse
                     </tbody>
                     @if($totals['count'] > 0)
                     <tfoot class="table-light fw-bold">
                         <tr>
-                            <td colspan="6" class="text-end">Tổng cộng</td>
+                            <td colspan="3" class="text-end">Tổng cộng</td>
                             <td class="text-end">{{ number_format($totals['value_without_vat']) }}</td>
                             <td class="text-end text-primary">{{ number_format($totals['revenue']) }}</td>
                             <td class="text-end text-warning">{{ number_format($totals['commission']) }}</td>
                             <td class="text-end text-danger">{{ number_format($totals['ncc_payment']) }}</td>
                             <td class="text-end text-success">{{ number_format($totals['net_received']) }}</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                     @endif

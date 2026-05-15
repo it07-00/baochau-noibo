@@ -79,6 +79,7 @@ abstract class AbstractContractGenericManager extends Component
         'commission'         => 0,
         'revenue'            => 0,
         'ncc_payment'        => 0,
+        'ncc_payment_sheet_url' => '',
         'province'           => '',
         'info_source'        => 'MỚI',
         'payment_method'     => 'Sau ký',
@@ -270,9 +271,20 @@ abstract class AbstractContractGenericManager extends Component
         if (!$this->isEditing) {
             $data['shd_bc'] = null;
             $data['ncc_payment'] = 0;
+            $data['ncc_payment_sheet_url'] = null;
+            $data['ncc_payment_updated_at'] = null;
         } elseif (!$isAccountant && $this->selectedDoc) {
             $data['shd_bc'] = $this->selectedDoc->shd_bc;
             $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
+            $data['ncc_payment_sheet_url'] = $this->selectedDoc->ncc_payment_sheet_url;
+            $data['ncc_payment_updated_at'] = $this->selectedDoc->ncc_payment_updated_at;
+        } elseif ($isAccountant && $this->selectedDoc) {
+            $nccChanged = (int) ($data['ncc_payment'] ?? 0) !== (int) $this->selectedDoc->ncc_payment
+                || (string) ($data['ncc_payment_sheet_url'] ?? '') !== (string) ($this->selectedDoc->ncc_payment_sheet_url ?? '');
+
+            $data['ncc_payment_updated_at'] = $nccChanged
+                ? now()
+                : $this->selectedDoc->ncc_payment_updated_at;
         }
 
         $data = $this->filterDataForModelTable($modelClass, $data);
@@ -846,6 +858,7 @@ abstract class AbstractContractGenericManager extends Component
             'commission'         => 0,
             'revenue'            => 0,
             'ncc_payment'        => 0,
+            'ncc_payment_sheet_url' => '',
             'province'           => '',
             'info_source'        => 'MỚI',
             'payment_method'     => 'Sau ký',
