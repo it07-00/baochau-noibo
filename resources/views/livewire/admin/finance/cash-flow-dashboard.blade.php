@@ -126,6 +126,7 @@
                             <th class="text-end">Hoa hồng</th>
                             <th class="text-end text-danger">Chi Nhà Cung Cấp</th>
                             <th class="text-end text-success fw-bold">Thực nhận</th>
+                            <th class="text-center" style="width:190px">Tình trạng thanh toán</th>
                             <th class="text-center" style="width:140px">Hành động</th>
                         </tr>
                     </thead>
@@ -139,7 +140,7 @@
                             <td style="min-width:190px">
                                 @php($baoChauMessage = $baoChauInvoiceMessages[$sheetStateKey] ?? null)
                                 <div class="d-flex flex-column gap-2">
-                                    <span class="badge bg-light text-dark border align-self-start text-start" style="font-size:11px; white-space:normal">{{ $row['type'] }}</span>
+                                    <span class="badge bg-light text-dark border align-self-start text-start px-2 py-2" style="font-size:12px; white-space:normal">{{ $row['type'] }}</span>
                                 @if($canEditBaoChauInvoice)
                                     <input type="text"
                                            class="form-control form-control-sm fw-semibold text-center"
@@ -187,9 +188,34 @@
                             </td>
                             <td class="text-end fw-bold text-nowrap {{ $row['net_received'] >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format($row['net_received']) }}</td>
                             <td class="text-center">
+                                <div class="d-inline-flex flex-column align-items-center gap-1">
+                                    @if($canManageNccPayment)
+                                        <select class="form-select form-select-sm"
+                                                style="min-width: 170px;"
+                                                wire:model.live="paymentStatuses.{{ $sheetStateKey }}"
+                                                wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                            <option value="unpaid">Chưa thanh toán</option>
+                                            <option value="paid">Đã thanh toán</option>
+                                        </select>
+                                        @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
+                                            <input type="date"
+                                                   class="form-control form-control-sm"
+                                                   style="min-width: 170px;"
+                                                   wire:model.live="paymentDates.{{ $sheetStateKey }}"
+                                                   wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                        @endif
+                                    @else
+                                        <span class="badge {{ $row['ncc_payment_status_badge_class'] }} px-3 py-2" style="font-size:12px;">{{ $row['ncc_payment_status_label'] }}</span>
+                                        @if(!empty($row['ncc_payment_paid_at']))
+                                            <small class="text-muted">{{ $row['ncc_payment_paid_at'] }}</small>
+                                        @endif
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="text-center">
                                 @if($canManageNccPayment)
                                     <button type="button"
-                                            class="btn btn-outline-primary btn-sm"
+                                            class="btn btn-outline-primary btn-sm px-3 py-2 fw-semibold"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#{{ $sheetCollapseId }}"
                                             aria-expanded="false"
@@ -203,35 +229,66 @@
                         </tr>
                         @if($canManageNccPayment)
                         <tr class="bg-light-subtle">
-                            <td colspan="9" class="px-3 py-3">
+                            <td colspan="10" class="px-3 py-3">
                                 <div id="{{ $sheetCollapseId }}" class="collapse">
-                                    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
-                                        <div class="small text-muted fw-semibold" style="min-width: 150px;">Link Google Sheet</div>
-                                        <div class="input-group input-group-sm">
-                                            <input type="url"
-                                                   class="form-control"
-                                                   wire:model.defer="sheetUrls.{{ $sheetStateKey }}"
-                                                   placeholder="Dan link Google Sheet cong khai">
-                                            <button type="button"
-                                                    class="btn btn-primary"
-                                                    wire:click="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})"
-                                                    wire:loading.attr="disabled"
-                                                    wire:target="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})">
-                                                <span wire:loading wire:target="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})" class="spinner-border spinner-border-sm me-1"></span>
-                                                Cập nhật
-                                            </button>
-                                            <button type="button"
-                                                    class="btn btn-outline-secondary"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#{{ $sheetCollapseId }}"
-                                                    aria-expanded="true"
-                                                    aria-controls="{{ $sheetCollapseId }}">
-                                                Hủy
-                                            </button>
+                                    <div class="row g-3 align-items-start">
+                                        <div class="col-lg-7">
+                                            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 h-100">
+                                                <div class="text-muted fw-semibold" style="min-width: 170px; font-size:13px;">Link Google Sheet</div>
+                                                <div class="input-group">
+                                                    <input type="url"
+                                                           class="form-control py-2"
+                                                           wire:model.defer="sheetUrls.{{ $sheetStateKey }}"
+                                                           placeholder="Dan link Google Sheet cong khai">
+                                                    <button type="button"
+                                                            class="btn btn-primary px-3 fw-semibold"
+                                                            wire:click="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                                        <span wire:loading wire:target="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})" class="spinner-border spinner-border-sm me-1"></span>
+                                                        Cập nhật
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-outline-secondary px-3 fw-semibold"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#{{ $sheetCollapseId }}"
+                                                            aria-expanded="true"
+                                                            aria-controls="{{ $sheetCollapseId }}">
+                                                        Hủy
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3">
+                                                <div class="text-muted fw-semibold" style="min-width: 170px; font-size:13px;">Tình trạng thanh toán</div>
+                                                <div class="d-flex flex-column flex-sm-row gap-2 flex-grow-1">
+                                                    <select class="form-select py-2"
+                                                            style="min-width: 180px;"
+                                                            wire:model.live="paymentStatuses.{{ $sheetStateKey }}"
+                                                            wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                                        <option value="unpaid">Chưa thanh toán</option>
+                                                        <option value="paid">Đã thanh toán</option>
+                                                    </select>
+                                                    @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
+                                                        <input type="date"
+                                                               class="form-control py-2"
+                                                               style="min-width: 170px;"
+                                                               wire:model.live="paymentDates.{{ $sheetStateKey }}"
+                                                               wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                                    @endif
+                                                    <span class="text-success small d-inline-flex align-items-center px-2">
+                                                        <i class="bi bi-check2-circle me-1"></i>Tự động lưu
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex flex-wrap gap-3 small text-muted mt-2">
+                                    <div class="d-flex flex-wrap gap-3 text-muted mt-2" style="font-size:13px;">
                                         <span>Lấy số ở dòng chứa "Tổng Cộng".</span>
+                                        @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
+                                            <span>Ngày thanh toán sẽ hiển thị dưới badge trạng thái.</span>
+                                        @endif
                                         @if(!empty($activeSheetUrl))
                                             <span>Đã lưu link sheet cho dòng này.</span>
                                         @endif
@@ -242,7 +299,7 @@
                         @endif
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
+                            <td colspan="10" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -255,6 +312,7 @@
                             <td class="text-end text-warning">{{ number_format($totals['commission']) }}</td>
                             <td class="text-end text-danger">{{ number_format($totals['ncc_payment']) }}</td>
                             <td class="text-end text-success">{{ number_format($totals['net_received']) }}</td>
+                            <td></td>
                             <td></td>
                         </tr>
                     </tfoot>

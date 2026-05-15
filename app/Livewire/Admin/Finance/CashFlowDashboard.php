@@ -11,6 +11,7 @@ use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
+use Illuminate\Support\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Livewire\Component;
@@ -36,6 +37,10 @@ class CashFlowDashboard extends Component
 
     public array $sheetUrls = [];
 
+    public array $paymentStatuses = [];
+
+    public array $paymentDates = [];
+
     public array $baoChauInvoiceMessages = [];
 
     protected $paginationTheme = 'bootstrap';
@@ -48,6 +53,10 @@ class CashFlowDashboard extends Component
         'sustainability' => [ContractSustainability::class, 'TV & BC PTBV'],
         'energy' => [ContractEmission::class,      'Phát thải & Năng lượng'],
     ];
+
+    private const PAYMENT_STATUS_UNPAID = 'unpaid';
+
+    private const PAYMENT_STATUS_PAID = 'paid';
 
     public function mount(): void
     {
@@ -111,6 +120,9 @@ class CashFlowDashboard extends Component
                 $contractValue = (int) $contract->value;
                 $revenue = (int) $contract->revenue;
                 $nccPayment = (int) $contract->ncc_payment;
+                $paymentStatus = $contract->ncc_payment_status === self::PAYMENT_STATUS_PAID
+                    ? self::PAYMENT_STATUS_PAID
+                    : self::PAYMENT_STATUS_UNPAID;
 
                 $rows[] = [
                     'id' => $contract->id,
@@ -127,6 +139,11 @@ class CashFlowDashboard extends Component
                     'ncc_payment' => $nccPayment,
                     'ncc_payment_sheet_url' => (string) ($contract->ncc_payment_sheet_url ?? ''),
                     'ncc_payment_updated_at' => $contract->ncc_payment_updated_at?->format('d/m/Y H:i'),
+                    'ncc_payment_status' => $paymentStatus,
+                    'ncc_payment_status_label' => $paymentStatus === self::PAYMENT_STATUS_PAID ? 'Đã thanh toán' : 'Chưa thanh toán',
+                    'ncc_payment_status_badge_class' => $paymentStatus === self::PAYMENT_STATUS_PAID ? 'bg-success text-white' : 'bg-light text-dark border',
+                    'ncc_payment_paid_at' => $contract->ncc_payment_paid_at?->format('d/m/Y'),
+                    'ncc_payment_paid_at_input' => $contract->ncc_payment_paid_at?->format('Y-m-d'),
                     'net_received' => $revenue - $nccPayment,
                 ];
             }
@@ -139,7 +156,7 @@ class CashFlowDashboard extends Component
 
     public function updateBaoChauInvoiceNumber(string $sourceKey, int $contractId, mixed $invoiceNumber): void
     {
-        abort_unless(auth()->user()?->hasRole(Role::KE_TOAN->value), 403);
+        abort_unless($this->isAccountant(), 403);
         abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
 
         [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
@@ -176,7 +193,7 @@ class CashFlowDashboard extends Component
 
     public function importNccPaymentFromSheet(string $sourceKey, int $contractId): void
     {
-        abort_unless(auth()->user()?->hasRole(Role::KE_TOAN->value), 403);
+        abort_unless($this->isAccountant(), 403);
         abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
 
         $stateKey = $this->sheetStateKey($sourceKey, $contractId);
@@ -220,7 +237,7 @@ class CashFlowDashboard extends Component
 
     public function importAllNccPaymentsFromSheets(): void
     {
-        abort_unless(auth()->user()?->hasRole(Role::KE_TOAN->value), 403);
+        abort_unless($this->isAccountant(), 403);
 
         $rows = $this->collectRows();
         $this->primeSheetUrls($rows);
@@ -277,6 +294,59 @@ class CashFlowDashboard extends Component
         $this->dispatch('swal:toast', [
             'type' => $failedCount > 0 ? 'warning' : 'success',
             'message' => $message . '.',
+        ]);
+    }
+
+    public function updateNccPaymentStatus(string $sourceKey, int $contractId): void
+    {
+        abort_unless($this->isAccountant(), 403);
+        abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
+
+        $stateKey = $this->sheetStateKey($sourceKey, $contractId);
+        $status = (string) ($this->paymentStatuses[$stateKey] ?? self::PAYMENT_STATUS_UNPAID);
+        $paidAtInput = trim((string) ($this->paymentDates[$stateKey] ?? ''));
+
+        if (! in_array($status, [self::PAYMENT_STATUS_UNPAID, self::PAYMENT_STATUS_PAID], true)) {
+            $status = self::PAYMENT_STATUS_UNPAID;
+        }
+
+        $paidAt = null;
+        if ($status === self::PAYMENT_STATUS_PAID) {
+            if ($paidAtInput !== '') {
+                try {
+                    $paidAt = Carbon::createFromFormat('Y-m-d', $paidAtInput)->startOfDay();
+                } catch (Throwable) {
+                    $this->dispatch('swal:toast', [
+                        'type' => 'error',
+                        'message' => 'Ngày thanh toán không hợp lệ.',
+                    ]);
+
+                    return;
+                }
+            }
+        }
+
+        [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
+        $contract = $modelClass::query()->findOrFail($contractId);
+        $contract->forceFill([
+            'ncc_payment_status' => $status,
+            'ncc_payment_paid_at' => $paidAt,
+        ])->save();
+
+        $this->paymentStatuses[$stateKey] = $status;
+        $this->paymentDates[$stateKey] = $paidAt?->format('Y-m-d') ?? '';
+
+        if ($status === self::PAYMENT_STATUS_PAID && $paidAt !== null) {
+            $message = 'Đã cập nhật: Đã thanh toán (' . $paidAt->format('d/m/Y') . ').';
+        } elseif ($status === self::PAYMENT_STATUS_PAID) {
+            $message = 'Đã cập nhật: Đã thanh toán.';
+        } else {
+            $message = 'Đã cập nhật: Chưa thanh toán.';
+        }
+
+        $this->dispatch('swal:toast', [
+            'type' => 'success',
+            'message' => $message,
         ]);
     }
 
@@ -340,6 +410,7 @@ class CashFlowDashboard extends Component
     {
         $allRows = $this->collectRows();
         $this->primeSheetUrls($allRows);
+        $this->primePaymentStates($allRows);
         $totals = $this->buildTotals($allRows);
 
         $perPage = 10;
@@ -359,9 +430,24 @@ class CashFlowDashboard extends Component
             'periodLabel' => $this->buildPeriodLabel(),
             'contractTypes' => array_map(fn ($s) => $s[1], self::CONTRACT_SOURCES),
             'availableYears' => range((int) now()->format('Y'), 2024),
-            'canEditBaoChauInvoice' => auth()->user()->hasRole(Role::KE_TOAN->value),
-            'canManageNccPayment' => auth()->user()->hasRole(Role::KE_TOAN->value),
+            'canEditBaoChauInvoice' => $this->isAccountant(),
+            'canManageNccPayment' => $this->isAccountant(),
         ])->layout('admin.layouts.app', ['title' => 'Dòng tiền']);
+    }
+
+    private function isAccountant(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasAnyRole([
+            Role::KE_TOAN->value,
+            'ketoan',
+            'ke_toan',
+        ]);
     }
 
     private function sheetStateKey(string $sourceKey, int $contractId): string
@@ -381,6 +467,21 @@ class CashFlowDashboard extends Component
 
             if (! array_key_exists($stateKey, $this->sheetUrls)) {
                 $this->sheetUrls[$stateKey] = $row['ncc_payment_sheet_url'] ?? '';
+            }
+        }
+    }
+
+    private function primePaymentStates(array $rows): void
+    {
+        foreach ($rows as $row) {
+            $stateKey = $this->sheetStateKey($row['source_key'], $row['id']);
+
+            if (! array_key_exists($stateKey, $this->paymentStatuses)) {
+                $this->paymentStatuses[$stateKey] = $row['ncc_payment_status'] ?? self::PAYMENT_STATUS_UNPAID;
+            }
+
+            if (! array_key_exists($stateKey, $this->paymentDates)) {
+                $this->paymentDates[$stateKey] = $row['ncc_payment_paid_at_input'] ?? '';
             }
         }
     }
