@@ -16,10 +16,10 @@
 <body>
     <table>
         <tr class="title-row">
-            <td colspan="10">BÁO CÁO DÒNG TIỀN — {{ strtoupper($periodLabel) }}</td>
+            <td colspan="11">BÁO CÁO DÒNG TIỀN — {{ strtoupper($periodLabel) }}</td>
         </tr>
         <tr class="meta-row">
-            <td colspan="10">Xuất ngày: {{ now()->format('d/m/Y H:i') }} — Tổng: {{ $totals['count'] }} hợp đồng</td>
+            <td colspan="11">Xuất ngày: {{ now()->format('d/m/Y H:i') }} — Tổng: {{ $totals['count'] }} hợp đồng</td>
         </tr>
         <tr>
             <th class="header" style="width:40px;">STT</th>
@@ -28,6 +28,7 @@
             <th class="header" style="width:220px;">Khách hàng</th>
             <th class="header" style="width:150px;">NV CS</th>
             <th class="header" style="width:90px;">Ngày ký</th>
+            <th class="header" style="width:120px;">Giá trị chưa VAT</th>
             <th class="header" style="width:110px;">Doanh số</th>
             <th class="header" style="width:110px;">Hoa hồng</th>
             <th class="header" style="width:110px;">Chi NCC</th>
@@ -41,6 +42,7 @@
             <td class="cell">{{ $row['customer'] ?? '' }}</td>
             <td class="cell">{{ $row['staff'] ?? '' }}</td>
             <td class="cell text-center">{{ $row['signed_at'] ?? '' }}</td>
+            <td class="cell text-right">{{ $row['value_without_vat'] > 0 ? number_format($row['value_without_vat']) : '' }}</td>
             <td class="cell text-right">{{ number_format($row['revenue']) }}</td>
             <td class="cell text-right">{{ $row['commission'] > 0 ? number_format($row['commission']) : '' }}</td>
             <td class="cell text-right">{{ $row['ncc_payment'] > 0 ? number_format($row['ncc_payment']) : '' }}</td>
@@ -49,6 +51,7 @@
         @endforeach
         <tr class="total-row">
             <td class="cell text-center" colspan="6">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
+            <td class="cell text-right">{{ number_format($totals['value_without_vat']) }}</td>
             <td class="cell text-right">{{ number_format($totals['revenue']) }}</td>
             <td class="cell text-right">{{ number_format($totals['commission']) }}</td>
             <td class="cell text-right">{{ number_format($totals['ncc_payment']) }}</td>

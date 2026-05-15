@@ -17,6 +17,8 @@ class CashFlowDashboard extends Component
 {
     use WithPagination;
 
+    private const VAT_MULTIPLIER = 1.08;
+
     public int    $filterYear;
     public string $filterPeriodType  = 'year';  // year | quarter | month
     public int    $filterMonth       = 0;
@@ -78,17 +80,22 @@ class CashFlowDashboard extends Component
         $rows = [];
         foreach ($sources as $key => [$modelClass, $label]) {
             foreach ($this->buildQuery($modelClass)->get() as $contract) {
+                $contractValue = (int) $contract->value;
+                $revenue = (int) $contract->revenue;
+                $nccPayment = (int) $contract->ncc_payment;
+
                 $rows[] = [
-                    'type'         => $label,
-                    'shd_bc'       => $contract->shd_bc,
-                    'customer'     => $contract->customer?->name,
-                    'customer_slug'=> $contract->customer?->slug,
-                    'staff'        => $contract->staff?->name,
-                    'signed_at'    => $contract->signed_at?->format('d/m/Y'),
-                    'revenue'      => (int) $contract->revenue,
-                    'commission'   => (int) $contract->commission,
-                    'ncc_payment'  => (int) $contract->ncc_payment,
-                    'net_received' => (int) $contract->revenue - (int) $contract->commission - (int) $contract->ncc_payment,
+                    'type'              => $label,
+                    'shd_bc'            => $contract->shd_bc,
+                    'customer'          => $contract->customer?->name,
+                    'customer_slug'     => $contract->customer?->slug,
+                    'staff'             => $contract->staff?->name,
+                    'signed_at'         => $contract->signed_at?->format('d/m/Y'),
+                    'value_without_vat' => (int) round($contractValue / self::VAT_MULTIPLIER),
+                    'revenue'           => $revenue,
+                    'commission'        => (int) $contract->commission,
+                    'ncc_payment'       => $nccPayment,
+                    'net_received'      => $revenue - $nccPayment,
                 ];
             }
         }
@@ -118,11 +125,12 @@ class CashFlowDashboard extends Component
     private function buildTotals(array $rows): array
     {
         return [
-            'revenue'      => array_sum(array_column($rows, 'revenue')),
-            'commission'   => array_sum(array_column($rows, 'commission')),
-            'ncc_payment'  => array_sum(array_column($rows, 'ncc_payment')),
-            'net_received' => array_sum(array_column($rows, 'net_received')),
-            'count'        => count($rows),
+            'value_without_vat' => array_sum(array_column($rows, 'value_without_vat')),
+            'revenue'           => array_sum(array_column($rows, 'revenue')),
+            'commission'        => array_sum(array_column($rows, 'commission')),
+            'ncc_payment'       => array_sum(array_column($rows, 'ncc_payment')),
+            'net_received'      => array_sum(array_column($rows, 'net_received')),
+            'count'             => count($rows),
         ];
     }
 

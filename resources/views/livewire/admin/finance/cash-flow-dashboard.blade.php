@@ -93,7 +93,7 @@
                 <div class="card-body">
                     <p class="text-muted mb-1" style="font-size:13px">Tổng thực nhận</p>
                     <h5 class="fw-bold text-success mb-0">{{ number_format($totals['net_received']) }}đ</h5>
-                    <small class="text-muted">= DS - Hoa hồng - Chi Nhà Cung Cấp</small>
+                    <small class="text-muted">= DS - Chi Nhà Cung Cấp</small>
                 </div>
             </div>
         </div>
@@ -116,6 +116,7 @@
                             <th>Khách hàng</th>
                             <th>Nhân viên chăm sóc</th>
                             <th class="text-center">Ngày ký</th>
+                            <th class="text-end">Giá trị chưa VAT</th>
                             <th class="text-end">Doanh số</th>
                             <th class="text-end">Hoa hồng</th>
                             <th class="text-end text-danger">Chi Nhà Cung Cấp</th>
@@ -139,6 +140,7 @@
                             </td>
                             <td>{{ $row['staff'] ?? '—' }}</td>
                             <td class="text-center">{{ $row['signed_at'] ?? '—' }}</td>
+                            <td class="text-end">{{ $row['value_without_vat'] > 0 ? number_format($row['value_without_vat']) : '—' }}</td>
                             <td class="text-end">{{ $row['revenue'] > 0 ? number_format($row['revenue']) : '—' }}</td>
                             <td class="text-end text-warning">{{ $row['commission'] > 0 ? number_format($row['commission']) : '—' }}</td>
                             <td class="text-end text-danger">{{ $row['ncc_payment'] > 0 ? number_format($row['ncc_payment']) : '—' }}</td>
@@ -146,7 +148,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="10" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
+                            <td colspan="11" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -154,6 +156,7 @@
                     <tfoot class="table-light fw-bold">
                         <tr>
                             <td colspan="6" class="text-end">Tổng cộng</td>
+                            <td class="text-end">{{ number_format($totals['value_without_vat']) }}</td>
                             <td class="text-end text-primary">{{ number_format($totals['revenue']) }}</td>
                             <td class="text-end text-warning">{{ number_format($totals['commission']) }}</td>
                             <td class="text-end text-danger">{{ number_format($totals['ncc_payment']) }}</td>
