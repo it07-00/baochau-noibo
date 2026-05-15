@@ -192,7 +192,7 @@ class CashFlowDashboard extends Component
         }
 
         try {
-            $amount = $this->extractAmountFromSheetUrl($sheetUrl);
+            $amount = $this->extractAmountFromSheetUrl($sheetUrl, true);
         } catch (Throwable $e) {
             $this->dispatch('swal:toast', [
                 'type' => 'error',
@@ -239,7 +239,7 @@ class CashFlowDashboard extends Component
             }
 
             try {
-                $amount = $this->extractAmountFromSheetUrl($sheetUrl);
+                $amount = $this->extractAmountFromSheetUrl($sheetUrl, true);
 
                 [$modelClass] = self::CONTRACT_SOURCES[$row['source_key']];
                 $contract = $modelClass::query()->findOrFail($row['id']);
@@ -369,9 +369,9 @@ class CashFlowDashboard extends Component
         return $sourceKey . '_' . $contractId;
     }
 
-    private function extractAmountFromSheetUrl(string $sheetUrl): int
+    private function extractAmountFromSheetUrl(string $sheetUrl, bool $forceRefresh = false): int
     {
-        return app(GoogleSheetTotalExtractor::class)->extractTotalFromUrl($sheetUrl);
+        return app(GoogleSheetTotalExtractor::class)->extractTotalFromUrl($sheetUrl, $forceRefresh);
     }
 
     private function primeSheetUrls(array $rows): void

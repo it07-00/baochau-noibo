@@ -13,46 +13,60 @@ class GoogleSheetTotalExtractor
 {
     private const CACHE_TTL_MINUTES = 10;
 
-    public function extractTotalFromUrl(string $sheetUrl): int
+    public function extractTotalFromUrl(string $sheetUrl, bool $forceRefresh = false): int
     {
         $sheetUrl = trim($sheetUrl);
         $cacheKey = 'google_sheet_total:' . md5($sheetUrl);
 
+        if ($forceRefresh) {
+            Cache::forget($cacheKey);
+
+            $amount = $this->fetchTotalFromUrl($sheetUrl);
+            Cache::put($cacheKey, $amount, now()->addMinutes(self::CACHE_TTL_MINUTES));
+
+            return $amount;
+        }
+
         return Cache::remember($cacheKey, now()->addMinutes(self::CACHE_TTL_MINUTES), function () use ($sheetUrl) {
-            $csvUrl = $this->buildCsvExportUrl($sheetUrl);
+            return $this->fetchTotalFromUrl($sheetUrl);
+        });
+    }
 
-            try {
-                $response = Http::timeout(15)
-                    ->retry(2, 250)
-                    ->accept('text/csv,text/plain,*/*')
-                    ->get($csvUrl);
+    private function fetchTotalFromUrl(string $sheetUrl): int
+    {
+        $csvUrl = $this->buildCsvExportUrl($sheetUrl);
 
-                if (! $response->successful()) {
-                    Log::warning('GoogleSheetTotalExtractor request failed', [
-                        'sheet_url' => $sheetUrl,
-                        'csv_url' => $csvUrl,
-                        'status' => $response->status(),
-                        'body_preview' => Str::limit($response->body(), 500),
-                    ]);
+        try {
+            $response = Http::timeout(15)
+                ->retry(2, 250)
+                ->accept('text/csv,text/plain,*/*')
+                ->get($csvUrl);
 
-                    throw new RuntimeException('Không đọc được Google Sheet. Hãy kiểm tra link chia sẻ công khai.');
-                }
-
-                return $this->extractTotalFromCsv($response->body());
-            } catch (Throwable $e) {
-                Log::error('GoogleSheetTotalExtractor failed', [
+            if (! $response->successful()) {
+                Log::warning('GoogleSheetTotalExtractor request failed', [
                     'sheet_url' => $sheetUrl,
                     'csv_url' => $csvUrl,
-                    'message' => $e->getMessage(),
+                    'status' => $response->status(),
+                    'body_preview' => Str::limit($response->body(), 500),
                 ]);
 
-                if ($e instanceof RuntimeException) {
-                    throw $e;
-                }
-
-                throw new RuntimeException('Không đọc được Google Sheet. Hãy kiểm tra link chia sẻ công khai.', previous: $e);
+                throw new RuntimeException('Không đọc được Google Sheet. Hãy kiểm tra link chia sẻ công khai.');
             }
-        });
+
+            return $this->extractTotalFromCsv($response->body());
+        } catch (Throwable $e) {
+            Log::error('GoogleSheetTotalExtractor failed', [
+                'sheet_url' => $sheetUrl,
+                'csv_url' => $csvUrl,
+                'message' => $e->getMessage(),
+            ]);
+
+            if ($e instanceof RuntimeException) {
+                throw $e;
+            }
+
+            throw new RuntimeException('Không đọc được Google Sheet. Hãy kiểm tra link chia sẻ công khai.', previous: $e);
+        }
     }
 
     public function buildCsvExportUrl(string $sheetUrl): string
