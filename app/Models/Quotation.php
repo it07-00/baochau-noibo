@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quotation extends Model
 {
@@ -26,6 +27,7 @@ class Quotation extends Model
         'commission_tax',   // Thuế HH
         'total_value',      // Giá trị hợp đồng (có VAT)
         'notes',
+        'pdf_path',
     ];
 
     protected $casts = [
@@ -40,5 +42,10 @@ class Quotation extends Model
     public function staff()
     {
         return $this->belongsTo(User::class, 'staff_id');
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(QuotationFile::class)->latest();
     }
 }

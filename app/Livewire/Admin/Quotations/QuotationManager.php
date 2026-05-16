@@ -7,9 +7,11 @@ use App\Enums\Permission;
 use App\Enums\QuotationStatus;
 use App\Enums\Role;
 use App\Models\Quotation;
+use App\Models\QuotationFile;
 use App\Models\User;
 use App\Models\Customer;
 use App\Services\Quotations\QuotationImportService;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -32,6 +34,10 @@ class QuotationManager extends Component
     public $selectedId = null;
     public $selectedQuotation = null;
     public $convertingQuotation = null;
+
+    // PDF
+    public array $pdfFiles = [];
+    public array $editingFiles = []; // [['id'=>, 'name'=>, 'url'=>], ...]
 
     // Import
     public $importFile = null;
@@ -238,6 +244,57 @@ class QuotationManager extends Component
         $this->formData['total_value'] = round($preVatValue * 1.08);
     }
 
+    public function openFiles(int $id): void
+    {
+        $quotation = Quotation::with('files')->findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
+        $this->selectedId = $id;
+        $this->pdfFiles   = [];
+        $this->editingFiles = $quotation->files->map(fn ($f) => [
+            'id'   => $f->id,
+            'name' => $f->original_name,
+            'url'  => Storage::disk('spaces')->url($f->path),
+        ])->values()->toArray();
+
+        $this->dispatch('open-files-modal');
+    }
+
+    public function saveFiles(): void
+    {
+        if (empty($this->pdfFiles)) {
+            return;
+        }
+
+        $this->validate(
+            ['pdfFiles.*' => 'file|mimes:pdf|max:51200'],
+            [
+                'pdfFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
+                'pdfFiles.*.max'   => 'File PDF không được vượt quá 50MB.',
+            ]
+        );
+
+        $quotation = Quotation::findOrFail($this->selectedId);
+        $this->authorizeQuotationAccess($quotation);
+
+        foreach ($this->pdfFiles as $file) {
+            $path = $file->store('quotations', 'spaces');
+            $quotation->files()->create([
+                'path'          => $path,
+                'original_name' => $file->getClientOriginalName(),
+            ]);
+        }
+
+        $this->pdfFiles = [];
+        $this->editingFiles = $quotation->fresh('files')->files->map(fn ($f) => [
+            'id'   => $f->id,
+            'name' => $f->original_name,
+            'url'  => Storage::disk('spaces')->url($f->path),
+        ])->values()->toArray();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã lưu file PDF.']);
+    }
+
     public function create()
     {
         $this->resetForm();
@@ -253,6 +310,12 @@ class QuotationManager extends Component
 
         $this->selectedId = $id;
         $this->formData = $quotation->toArray();
+        unset($this->formData['pdf_path']);
+        $this->editingFiles = $quotation->files->map(fn ($f) => [
+            'id'   => $f->id,
+            'name' => $f->original_name,
+            'url'  => Storage::disk('spaces')->url($f->path),
+        ])->values()->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
         $this->recalculateTotals();
         $this->isEditing = true;
@@ -340,11 +403,56 @@ class QuotationManager extends Component
             throw $e;
         }
 
-        [$_, $msg] = app(UpsertQuotationAction::class)->execute($this->formData, $user, $existing);
+        [$quotation, $msg] = app(UpsertQuotationAction::class)->execute($this->formData, $user, $existing);
+
+        if (!empty($this->pdfFiles)) {
+            $this->validate(
+                ['pdfFiles.*' => 'file|mimes:pdf|max:51200'],
+                [
+                    'pdfFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
+                    'pdfFiles.*.max'   => 'File PDF không được vượt quá 50MB.',
+                ]
+            );
+            foreach ($this->pdfFiles as $file) {
+                $path = $file->store('quotations', 'spaces');
+                $quotation->files()->create([
+                    'path'          => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                ]);
+            }
+        }
 
         $this->dispatch('close-quotation-modal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => $msg]);
         $this->resetForm();
+    }
+
+    public function deleteFile(int $fileId): void
+    {
+        $file = QuotationFile::with('quotation')->findOrFail($fileId);
+        $this->authorizeQuotationAccess($file->quotation);
+
+        Storage::disk('spaces')->delete($file->path);
+        $file->delete();
+
+        $this->editingFiles = array_values(
+            array_filter($this->editingFiles, fn ($f) => $f['id'] !== $fileId)
+        );
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa file PDF.']);
+    }
+
+    public function deletePdf(int $id): void
+    {
+        $quotation = Quotation::findOrFail($id);
+        $this->authorizeQuotationAccess($quotation);
+
+        if ($quotation->pdf_path) {
+            Storage::disk('public')->delete($quotation->pdf_path);
+            $quotation->update(['pdf_path' => null]);
+        }
+
+        $this->editingFiles = [];
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa tài liệu PDF.']);
     }
 
     public function delete($id)
@@ -381,6 +489,8 @@ class QuotationManager extends Component
             'notes' => '',
         ];
         $this->selectedId = null;
+        $this->pdfFiles = [];
+        $this->editingFiles = [];
     }
 
     // ── IMPORT ────────────────────────────────────────────────────────────────────
@@ -457,7 +567,7 @@ class QuotationManager extends Component
     {
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
 
-        $query = Quotation::with('staff')
+        $query = Quotation::with('staff')->withCount('files')
             ->when($this->isKinhDoanh(), fn($q) => $q->where('staff_id', auth()->id()))
             ->when($this->search, function($q) {
                 $q->where(function($sq) {

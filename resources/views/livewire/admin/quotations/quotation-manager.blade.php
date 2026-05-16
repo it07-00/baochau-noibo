@@ -160,6 +160,20 @@
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
+                                @if($item->pdf_path)
+                                <a href="{{ Storage::disk('public')->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
+                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                </a>
+                                @elseif($item->files_count > 0)
+                                <button class="btn btn-sm p-0 text-danger position-relative" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
+                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
+                                </button>
+                                @else
+                                <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
+                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                </button>
+                                @endif
                                 @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
                                     <i class="bi bi-file-earmark-plus fs-5"></i>
@@ -279,6 +293,24 @@
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3 text-danger">Giá trị HĐ (có VAT)</th>
                                     <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value, 0, ',', '.') }}đ</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light fw-bold px-4 py-3"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</th>
+                                    <td class="px-4 py-3">
+                                        @php($files = $selectedQuotation->files)
+                                        @if($files->isNotEmpty())
+                                            <div class="d-flex flex-column gap-1">
+                                                @foreach($files as $f)
+                                                <a href="{{ Storage::disk('spaces')->url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
+                                                    <i class="bi bi-file-earmark-pdf"></i>
+                                                    <span class="text-truncate">{{ $f->original_name }}</span>
+                                                </a>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="text-muted">Chưa có tài liệu</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -425,6 +457,32 @@
                                 <label class="form-label fw-bold">Ghi chú thêm</label>
                                 <textarea class="form-control" rows="2" wire:model.defer="formData.notes"></textarea>
                             </div>
+
+                            <div class="col-12">
+                                <hr class="my-1">
+                                <label class="form-label fw-bold"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</label>
+
+                                @if(count($editingFiles) > 0)
+                                    <div class="d-flex flex-column gap-1 mb-2">
+                                        @foreach($editingFiles as $ef)
+                                        <div class="d-flex align-items-center gap-2 border rounded px-2 py-1">
+                                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                            <a href="{{ $ef['url'] }}" target="_blank" class="text-truncate flex-grow-1 small text-danger">{{ $ef['name'] }}</a>
+                                            <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteFile({{ $ef['id'] }})" wire:confirm="Xóa file này?">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <input type="file" class="form-control" wire:model="pdfFiles" accept=".pdf" multiple>
+                                <div wire:loading wire:target="pdfFiles" class="text-primary mt-1 small">
+                                    <span class="spinner-border spinner-border-sm me-1"></span> Đang tải...
+                                </div>
+                                <div class="form-text">Chỉ chấp nhận file PDF, tối đa 50MB mỗi file. Có thể chọn nhiều file cùng lúc.</div>
+                                @error('pdfFiles.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer bg-light px-4 py-3">
@@ -435,6 +493,62 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Files Modal -->
+    <div wire:ignore.self class="modal fade" id="filesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header py-3">
+                    <h6 class="modal-title fw-bold"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>FILE PDF BÁO GIÁ</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+                    @if(count($editingFiles) > 0)
+                        <div class="d-flex flex-column gap-2 mb-3">
+                            @foreach($editingFiles as $ef)
+                            <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
+                                <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                                <a href="{{ $ef['url'] }}" target="_blank" class="text-truncate flex-grow-1 small text-danger fw-semibold text-decoration-none">{{ $ef['name'] }}</a>
+                                <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteFile({{ $ef['id'] }})" wire:confirm="Xóa file này?">
+                                    <i class="bi bi-trash fs-5"></i>
+                                </button>
+                            </div>
+                            @endforeach
+                        </div>
+                    @elseif(count($pdfFiles) === 0)
+                        <p class="text-muted small mb-3">Chưa có file nào.</p>
+                    @endif
+
+                    @if(count($pdfFiles) > 0)
+                        <div class="d-flex flex-column gap-1 mb-3">
+                            <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($pdfFiles) }} file):</p>
+                            @foreach($pdfFiles as $pf)
+                            <div class="d-flex align-items-center gap-2 border border-primary rounded px-3 py-1 bg-light">
+                                <i class="bi bi-file-earmark-pdf text-primary"></i>
+                                <span class="small text-truncate flex-grow-1">{{ $pf->getClientOriginalName() }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <label class="form-label fw-semibold small">Thêm file PDF</label>
+                    <input type="file" class="form-control" wire:model="pdfFiles" accept=".pdf" multiple>
+                    <div wire:loading wire:target="pdfFiles" class="text-primary mt-1 small">
+                        <span class="spinner-border spinner-border-sm me-1"></span> Đang tải...
+                    </div>
+                    <div class="form-text">Tối đa 50MB mỗi file. Có thể chọn nhiều file cùng lúc.</div>
+                    @error('pdfFiles.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                </div>
+                <div class="modal-footer bg-light px-4 py-3">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" wire:click="saveFiles" wire:loading.attr="disabled" wire:target="saveFiles">
+                        <span wire:loading wire:target="saveFiles" class="spinner-border spinner-border-sm me-2"></span>
+                        Lưu file
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -582,12 +696,15 @@
             let detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
             let convertModal = new bootstrap.Modal(document.getElementById('convertModal'));
             let importModal = new bootstrap.Modal(document.getElementById('importModal'));
+            let filesModal = new bootstrap.Modal(document.getElementById('filesModal'));
 
             Livewire.on('open-quotation-modal', () => formModal.show());
             Livewire.on('close-quotation-modal', () => formModal.hide());
             Livewire.on('open-detail-modal', () => detailModal.show());
             Livewire.on('open-convert-modal', () => convertModal.show());
             Livewire.on('close-import-modal', () => importModal.hide());
+            Livewire.on('open-files-modal', () => filesModal.show());
+            Livewire.on('close-files-modal', () => filesModal.hide());
         });
     </script>
     @endpush
