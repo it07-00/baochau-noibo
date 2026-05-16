@@ -37,7 +37,7 @@ class ConsultingAchievementReport extends Component
 
     private function buildRankings(string $role): Collection
     {
-        $staffs = User::role($role)->orderBy('name')->get();
+        $staffs = User::role($role)->where('is_active', true)->orderBy('name')->get();
 
         return $staffs->map(function (User $user) {
             $total    = 0;

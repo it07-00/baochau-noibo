@@ -35,7 +35,7 @@ class SalesAchievementReport extends Component
 
     public function render()
     {
-        $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get();
+        $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get();
         $staffIds = $staffs->pluck('id')->all();
 
         // Doanh số tính theo revenue, dùng COALESCE(submitted_at, signed_at) để khớp với dang-ky-muc-tieu

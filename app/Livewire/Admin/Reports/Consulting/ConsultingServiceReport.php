@@ -73,7 +73,7 @@ class ConsultingServiceReport extends Component
                 SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed')
             ->first();
 
-        $staffs = User::orderBy('name')->get();
+        $staffs = User::where('is_active', true)->orderBy('name')->get();
         $serviceTypes = ContractLegal::SERVICE_TYPES;
 
         return view('livewire.admin.reports.consulting.consulting-service-report',

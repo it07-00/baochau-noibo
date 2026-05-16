@@ -71,7 +71,7 @@ class TechnicalFieldReport extends Component
                 SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
             ->first();
 
-        $staffs = User::orderBy('name')->get();
+        $staffs = User::where('is_active', true)->orderBy('name')->get();
         $monitoringTypes = ['Quan trắc môi trường', 'Quan trắc môi trường lao động và phân loại lao động'];
 
         return view('livewire.admin.reports.technical.technical-field-report',

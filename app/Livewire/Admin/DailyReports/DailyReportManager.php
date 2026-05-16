@@ -79,7 +79,7 @@ class DailyReportManager extends Component
 
     private function scopedUsersQuery()
     {
-        $query = User::query();
+        $query = User::where('is_active', true);
 
         $isTopLevel = auth()->user()->hasAnyRole([Role::GIAM_DOC->value]);
         if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && !$isTopLevel) {

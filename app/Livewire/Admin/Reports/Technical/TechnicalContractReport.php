@@ -235,7 +235,7 @@ class TechnicalContractReport extends Component
         $isRestricted = $this->isRestrictedTechnical();
         $staffs = $isRestricted
             ? User::where('id', auth()->id())->get()
-            : User::role('ky-thuat')->orderBy('name')->get();
+            : User::role('ky-thuat')->where('is_active', true)->orderBy('name')->get();
 
         $serviceTypes = defined("$modelClass::SERVICE_TYPES") ? $modelClass::SERVICE_TYPES : [];
 

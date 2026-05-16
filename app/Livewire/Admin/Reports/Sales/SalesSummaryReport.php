@@ -126,7 +126,7 @@ class SalesSummaryReport extends Component
             $detail = $detail->sortByDesc('date')->values();
         }
 
-        $staffs = User::query()->whereIn('id', $salesStaffIds)->orderBy('name')->get();
+        $staffs = User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
 
         return view('livewire.admin.reports.sales.sales-summary-report', [
             'months'  => $months,

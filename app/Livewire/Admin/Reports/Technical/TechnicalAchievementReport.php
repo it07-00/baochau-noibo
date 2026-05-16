@@ -38,7 +38,7 @@ class TechnicalAchievementReport extends Component
 
     private function buildRankings(): Collection
     {
-        $staffs = User::role('ky-thuat')->orderBy('name')->get();
+        $staffs = User::role('ky-thuat')->where('is_active', true)->orderBy('name')->get();
 
         return $staffs->map(function (User $user) {
             $total    = 0;

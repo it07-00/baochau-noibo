@@ -242,6 +242,7 @@ class ConsultingContractReport extends Component
 
         $staffs = User::role('tu-van')
             ->when($isRestrictedConsultant, fn ($q) => $q->where('id', $user->id))
+            ->where('is_active', true)
             ->orderBy('name')
             ->get();
         $serviceTypes = defined("$modelClass::SERVICE_TYPES") ? $modelClass::SERVICE_TYPES : [];

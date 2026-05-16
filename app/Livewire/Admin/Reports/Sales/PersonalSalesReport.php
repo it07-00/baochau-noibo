@@ -255,7 +255,7 @@ class PersonalSalesReport extends Component
             'forecastRows' => $forecastRows,
             'forecastTotals' => $forecastTotals,
             'staffDetail' => $staffDetail,
-            'staffs'      => User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
+            'staffs'      => User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get(),
             'years'       => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'hasStaffFilter' => (bool) $staffId,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cá nhân']);
