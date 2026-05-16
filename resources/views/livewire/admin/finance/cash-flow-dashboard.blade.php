@@ -153,7 +153,7 @@
                                 @php($subcontractorMessage = $subcontractorInvoiceMessages[$sheetStateKey] ?? null)
                                 <div class="d-flex flex-column gap-2">
                                     <div class="d-flex flex-column gap-1">
-                                        <span class="badge bg-light text-dark border align-self-start text-start px-2 py-2" style="font-size:12px; white-space:normal">{{ $row['type'] }}</span>
+                                        <span class="badge {{ $row['type_badge_class'] ?? 'bg-light text-dark border' }} align-self-start text-start px-2 py-2" style="font-size:12px; white-space:normal">{{ $row['type'] }}</span>
                                         @if(!empty($row['service_category']))
                                             <small class="text-muted">{{ $row['service_category'] }}</small>
                                         @endif
@@ -230,6 +230,13 @@
                             <td class="text-center">
                                 <div class="d-inline-flex flex-column align-items-center gap-1">
                                     @if($canManageNccPayment)
+                                        @php($currentPaymentStatus = $paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status'])
+                                        @php($currentPaymentBadgeClass = $currentPaymentStatus === 'paid'
+                                            ? 'bg-success-subtle text-success border border-success-subtle'
+                                            : 'bg-warning-subtle text-warning-emphasis border border-warning-subtle')
+                                        <span class="badge {{ $currentPaymentBadgeClass }} px-3 py-2" style="font-size:12px;">
+                                            {{ $currentPaymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                                        </span>
                                         <select class="form-select form-select-sm"
                                                 style="min-width: 170px;"
                                                 wire:model.live="paymentStatuses.{{ $sheetStateKey }}"

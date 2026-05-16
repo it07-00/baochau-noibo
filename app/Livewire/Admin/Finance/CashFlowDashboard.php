@@ -149,6 +149,7 @@ class CashFlowDashboard extends Component
                     'id' => $contract->id,
                     'source_key' => $key,
                     'type' => $label,
+                    'type_badge_class' => $this->contractTypeBadgeClass($key),
                     'service_category' => (string) ($contract->loai_dich_vu ?? ''),
                     'shd_bc' => $contract->shd_bc,
                     'shd_cxl' => (string) ($contract->shd_cxl ?? ''),
@@ -165,7 +166,9 @@ class CashFlowDashboard extends Component
                     'ncc_payment_updated_at' => $contract->ncc_payment_updated_at?->format('d/m/Y H:i'),
                     'ncc_payment_status' => $paymentStatus,
                     'ncc_payment_status_label' => $paymentStatus === self::PAYMENT_STATUS_PAID ? 'Đã thanh toán' : 'Chưa thanh toán',
-                    'ncc_payment_status_badge_class' => $paymentStatus === self::PAYMENT_STATUS_PAID ? 'bg-success text-white' : 'bg-light text-dark border',
+                    'ncc_payment_status_badge_class' => $paymentStatus === self::PAYMENT_STATUS_PAID
+                        ? 'bg-success-subtle text-success border border-success-subtle'
+                        : 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
                     'ncc_payment_paid_at' => $contract->ncc_payment_paid_at?->format('d/m/Y'),
                     'ncc_payment_paid_at_input' => $contract->ncc_payment_paid_at?->format('Y-m-d'),
                     'net_received' => $revenue - $nccPayment,
@@ -176,6 +179,19 @@ class CashFlowDashboard extends Component
         usort($rows, fn ($a, $b) => strcmp($b['signed_at'] ?? '', $a['signed_at'] ?? ''));
 
         return $rows;
+    }
+
+    private function contractTypeBadgeClass(string $sourceKey): string
+    {
+        return match ($sourceKey) {
+            'waste' => 'bg-success-subtle text-success border border-success-subtle',
+            'consulting' => 'bg-primary-subtle text-primary border border-primary-subtle',
+            'project' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+            'commercial' => 'bg-info-subtle text-info-emphasis border border-info-subtle',
+            'sustainability' => 'bg-secondary-subtle text-secondary border border-secondary-subtle',
+            'energy' => 'bg-danger-subtle text-danger border border-danger-subtle',
+            default => 'bg-light text-dark border',
+        };
     }
 
     private function serviceCategoryOptions(): array
