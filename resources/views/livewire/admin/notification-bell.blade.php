@@ -66,7 +66,7 @@
                         @foreach($section['items'] as $notif)
                             @php $data = $notif->data; @endphp
                             <div class="dropdown-item notification-item py-3 border-top d-flex align-items-start gap-2 {{ $notif->read_at ? '' : 'notification-item-unread' }} cursor-pointer"
-                                 
+
                                  wire:click="openNotification('{{ $notif->id }}')">
                                 <div class="notification-icon bg-{{ $data['color'] ?? 'primary' }}-subtle text-{{ $data['color'] ?? 'primary' }} rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
                                     <i class="bi {{ $data['icon'] ?? 'bi-bell-fill' }} "></i>

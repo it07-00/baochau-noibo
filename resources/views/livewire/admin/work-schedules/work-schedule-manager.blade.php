@@ -297,14 +297,14 @@
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-muted">Ngày bắt đầu *</label>
                         <input type="date" wire:model="startDate" class="form-control border-light-subtle rounded-8px"
-                            
+
                             min="{{ today()->format('Y-m-d') }}">
                         @error('startDate') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-muted">Ngày kết thúc <span class="fw-normal text-muted">(tùy chọn)</span></label>
                         <input type="date" wire:model="endDate" class="form-control border-light-subtle rounded-8px"
-                            
+
                             min="{{ $startDate ?: today()->format('Y-m-d') }}">
                         @error('endDate') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                     </div>
@@ -349,7 +349,7 @@
                     <label class="form-label fw-bold text-muted"><i class="bi bi-people me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
                     <div class="border rounded-3 p-2 border-light-subtle" style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
                         @foreach($allUsers as $u)
-                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88" 
+                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88"
                                 onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
                                 <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
                                     class="form-check-input m-0 rounded-1" >
