@@ -52,6 +52,7 @@ class ContractWasteManager extends Component
     public $isEditing = false;
     public $isDuplicating = false;
     public $selectedDoc = null;
+    public string $detailActiveTab = 'info';
     public bool $showAssignModal = false;
     public ?int $assignContractId = null;
     public array $assignUserIds = [];
@@ -602,6 +603,7 @@ class ContractWasteManager extends Component
 
     public function viewDetail($id)
     {
+        $this->detailActiveTab = 'info';
         $this->selectedDoc = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
         if ($this->selectedDoc) {
             $this->progressNotes = ContractProgressNote::where('contract_type', 'waste')
@@ -621,6 +623,13 @@ class ContractWasteManager extends Component
         }
     }
 
+    public function viewDetailDocs($id): void
+    {
+        $this->viewDetail($id);
+        $this->detailActiveTab = 'docs';
+        $this->dispatch('openDetailModal');
+    }
+
     public function closeDetail()
     {
         $this->showDetail = false;
@@ -631,11 +640,11 @@ class ContractWasteManager extends Component
     {
         $this->validate([
             'newContractFiles'   => 'required|array|max:10',
-            'newContractFiles.*' => 'file|max:204800|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            'newContractFiles.*' => 'file|max:51200|mimes:pdf',
         ], [
             'newContractFiles.required' => 'Vui lòng chọn ít nhất 1 file.',
-            'newContractFiles.*.max'    => 'Mỗi file không được vượt quá 200MB.',
-            'newContractFiles.*.mimes'  => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
+            'newContractFiles.*.max'    => 'File PDF không được vượt quá 50MB.',
+            'newContractFiles.*.mimes'  => 'Chỉ chấp nhận file PDF.',
         ]);
 
         $disk = config('filesystems.upload_disk', 'public');
@@ -660,7 +669,7 @@ class ContractWasteManager extends Component
             ->latest()
             ->get();
 
-        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Tải file lên thành công!']);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã lưu file PDF.']);
     }
 
     public function deleteContractFile(int $fileId): void

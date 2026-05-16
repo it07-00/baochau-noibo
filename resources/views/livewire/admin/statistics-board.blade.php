@@ -71,7 +71,7 @@
         <div class="card-body py-3 px-4 d-flex align-items-center gap-3 flex-wrap">
             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                 <i class="bi bi-calendar2-week text-primary fs-5"></i>
-                <span class="fw-bold text-body">Lịch công tác hôm nay</span>
+                <span class="fw-bold text-body">Lịch công tác của bạn</span>
             </div>
             <div class="vr opacity-25 d-none d-md-block flex-shrink-0"></div>
             <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
@@ -535,20 +535,6 @@
                                 </div>
                                 <div class="fw-bold text-primary fs-4 lh-1">{{ number_format($needsAction['unpaid_subcontractor_payment'] ?? 0) }}</div>
                                 <div class="text-muted" style="font-size:11px;">hợp đồng NTP chưa được thanh toán</div>
-                            </div>
-                        </a>
-                    </div>
-                    @endif
-                    @if($canSeeSalesTasks)
-                    <div class="col-6 col-md-3">
-                        <a href="{{ route('app.quotation-tracking.index') }}" class="text-decoration-none d-block">
-                            <div class="border border-info-subtle rounded-3 p-3 h-100 bg-info-subtle bg-opacity-50">
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <i class="bi bi-clipboard-check text-info-emphasis"></i>
-                                    <span class="text-info-emphasis fw-semibold small">Báo giá chờ ký HĐ</span>
-                                </div>
-                                <div class="fw-bold text-info-emphasis fs-4 lh-1">{{ number_format($needsAction['pending_quotations'] ?? 0) }}</div>
-                                <div class="text-muted" style="font-size:11px;">báo giá chưa chuyển thành hợp đồng</div>
                             </div>
                         </a>
                     </div>

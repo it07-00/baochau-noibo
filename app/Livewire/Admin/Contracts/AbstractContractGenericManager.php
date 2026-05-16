@@ -51,6 +51,7 @@ abstract class AbstractContractGenericManager extends Component
     public bool $isDuplicating = false;
     public $showDetail = false;
     public $selectedDoc = null;
+    public string $detailActiveTab = 'info';
     public bool $showAssignModal = false;
     public ?int $assignContractId = null;
     public array $assignUserIds = [];
@@ -482,6 +483,7 @@ abstract class AbstractContractGenericManager extends Component
 
     public function viewDetail(int $id): void
     {
+        $this->detailActiveTab = 'info';
         $modelClass        = $this->getModelClass();
         $this->selectedDoc = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner', 'handler'])->find($id);
         if ($this->selectedDoc) {
@@ -500,6 +502,13 @@ abstract class AbstractContractGenericManager extends Component
             $this->showDetail = true;
             $this->dispatch('openDetailModal');
         }
+    }
+
+    public function viewDetailDocs(int $id): void
+    {
+        $this->viewDetail($id);
+        $this->detailActiveTab = 'docs';
+        $this->dispatch('openDetailModal');
     }
 
     #[Computed]
@@ -796,11 +805,11 @@ abstract class AbstractContractGenericManager extends Component
     {
         $this->validate([
             'newContractFiles'   => 'required|array|max:10',
-            'newContractFiles.*' => 'file|max:204800|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+            'newContractFiles.*' => 'file|max:51200|mimes:pdf',
         ], [
             'newContractFiles.required'      => 'Vui lòng chọn ít nhất 1 file.',
-            'newContractFiles.*.max'         => 'Mỗi file không được vượt quá 200MB.',
-            'newContractFiles.*.mimes'       => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
+            'newContractFiles.*.max'         => 'File PDF không được vượt quá 50MB.',
+            'newContractFiles.*.mimes'       => 'Chỉ chấp nhận file PDF.',
         ]);
 
         $disk         = config('filesystems.upload_disk', 'public');
@@ -827,7 +836,7 @@ abstract class AbstractContractGenericManager extends Component
             ->latest()
             ->get();
 
-        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Tải file lên thành công!']);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã lưu file PDF.']);
     }
 
     public function deleteContractFile(int $fileId): void

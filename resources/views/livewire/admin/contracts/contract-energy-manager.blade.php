@@ -433,6 +433,10 @@
                                         wire:click="viewDetail({{ $doc->id }})" title="Xem chi tiết">
                                         <i class="bi bi-eye fs-5"></i>
                                     </button>
+                                    <button class="btn btn-sm p-0 text-danger"
+                                        wire:click="viewDetailDocs({{ $doc->id }})" title="Tải lên PDF hợp đồng">
+                                        <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    </button>
                                     @if ($this->canAssign())
                                         <button class="btn btn-sm p-0 text-success"
                                             wire:click="openAssign({{ $doc->id }})" title="Giao việc">
@@ -508,7 +512,7 @@
                 </div>
                 <div class="modal-body p-0">
                     @if ($selectedDoc)
-                        <div x-data="{ tab: 'info' }">
+                        <div x-data="{ tab: @js($detailActiveTab ?? 'info') }">
                         {{-- Tabs --}}
                         <ul class="nav nav-tabs px-4 pt-3 bg-white" role="tablist">
                             <li class="nav-item">
@@ -726,32 +730,7 @@
                             {{-- Tab 3: Tài liệu đính kèm --}}
                             <div class="tab-pane" :class="{ 'show active': tab === 'docs' }" id="tab-docs-energy-{{ $selectedDoc->id }}" role="tabpanel">
                                 <div class="p-3">
-                                    @forelse($existingContractFiles as $file)
-                                        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                                            <i class="bi bi-file-earmark-text text-primary"></i>
-                                            <a href="{{ $file->file_url }}" target="_blank" class="text-truncate" style="max-width:300px">{{ $file->original_name }}</a>
-                                            <small class="text-muted">{{ $file->created_at->format('d/m/Y H:i') }}</small>
-                                            @if($file->uploader)<small class="text-muted">({{ $file->uploader->name }})</small>@endif
-                                            <button wire:click="deleteContractFile({{ $file->id }})"
-                                                wire:confirm="Xác nhận xóa file này?"
-                                                class="btn btn-sm btn-outline-danger ms-auto">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    @empty
-                                        <p class="text-muted mb-3">Chưa có tài liệu nào.</p>
-                                    @endforelse
-                                    <div class="mt-3 border-top pt-3">
-                                        <label class="form-label fw-semibold">Tải lên tài liệu mới</label>
-                                        <input type="file" wire:model="newContractFiles" multiple
-                                            accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-                                            class="form-control mb-2">
-                                        @error('newContractFiles.*')<div class="text-danger small mb-1">{{ $message }}</div>@enderror
-                                        <button wire:click="uploadContractFile" wire:loading.attr="disabled" class="btn btn-primary btn-sm">
-                                            <span wire:loading wire:target="uploadContractFile" class="spinner-border spinner-border-sm me-1"></span>
-                                            <i class="bi bi-upload me-1"></i>Tải lên
-                                        </button>
-                                    </div>
+                                    @include('livewire.admin.contracts.partials.contract-pdf-files')
                                 </div>
                             </div>
                         </div>
