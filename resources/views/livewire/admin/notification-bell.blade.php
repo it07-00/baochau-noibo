@@ -77,6 +77,9 @@
                                         <span class="notification-time text-muted flex-shrink-0">{{ $notif->created_at->diffForHumans() }}</span>
                                     </div>
                                     <div class="notification-message text-muted">{{ $data['message'] ?? '' }}</div>
+                                    @if(($data['contract_type'] ?? '') === 'work_schedule' && !empty($data['time_label']) && $data['time_label'] !== 'Cả ngày')
+                                        <div class="text-muted small mt-1"><i class="bi bi-clock me-1"></i>{{ $data['time_label'] }}</div>
+                                    @endif
                                 </div>
                                 @if(!$notif->read_at)
                                     <span class="notification-unread-dot bg-primary rounded-circle flex-shrink-0 mt-2"></span>

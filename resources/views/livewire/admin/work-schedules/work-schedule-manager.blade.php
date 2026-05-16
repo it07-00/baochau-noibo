@@ -92,6 +92,7 @@
                             class="ws-agenda-event ws-chip-{{ $evt->color }}"
                             wire:click="openDayDetail('{{ $dayKey }}')">
                             <span class="ws-agenda-event-title">{{ $evt->title }}</span>
+                            <span class="ws-agenda-event-people">{{ $evt->time_range_label }}</span>
                             <span class="ws-agenda-event-people">{{ $evt->participants->pluck('name')->join(', ') }}</span>
                         </button>
                     @endforeach
@@ -174,7 +175,7 @@
                                 <div class="ws-event-chip ws-chip-{{ $evt->color }}"
                                     wire:click.stop="openDayDetail('{{ $dayKey }}')">
                                     <div class="ws-event-title fw-bold text-truncate">{{ $evt->title }}</div>
-                                    <div class="ws-event-author text-truncate">{{ $evt->participants->pluck('name')->join(', ') }}</div>
+                                    <div class="ws-event-author text-truncate">{{ $evt->time_range_label }} • {{ $evt->participants->pluck('name')->join(', ') }}</div>
                                 </div>
                             @endforeach
                             @if($dayEvents->count() > 4)
@@ -237,6 +238,9 @@
                                         → {{ $evt['end_date'] }}
                                     @endif
                                 </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-2 fs-095">
+                                <span class="text-muted"><i class="bi bi-clock me-1"></i>{{ $evt['time_label'] }}</span>
                             </div>
                             @if(!empty($evt['participants']))
                                 <div class="mb-2 fs-095" >
@@ -303,6 +307,19 @@
                             
                             min="{{ $startDate ?: today()->format('Y-m-d') }}">
                         @error('endDate') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-muted">Giờ bắt đầu <span class="fw-normal text-muted">(tùy chọn)</span></label>
+                        <input type="time" wire:model="startTime" class="form-control border-light-subtle rounded-8px">
+                        @error('startTime') <span class="text-danger fs-85">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-muted">Giờ kết thúc <span class="fw-normal text-muted">(tùy chọn)</span></label>
+                        <input type="time" wire:model="endTime" class="form-control border-light-subtle rounded-8px">
+                        @error('endTime') <span class="text-danger fs-85">{{ $message }}</span> @enderror
                     </div>
                 </div>
 

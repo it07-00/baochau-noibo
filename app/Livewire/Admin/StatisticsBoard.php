@@ -13,7 +13,9 @@ use App\Models\ContractAssignment;
 use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\DailyReport;
+use App\Models\WorkSchedule;
 use App\Models\User;
+use App\Enums\QuotationStatus;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -360,9 +362,228 @@ class StatisticsBoard extends Component
             $dailyReportReminder = !$hasReportToday;
         }
 
+        // ── Nhắc lịch công tác (mọi role) ─────────────────
+        $todayDate = today();
+        $nowTime = now();
+        $nextTwoHours = $nowTime->copy()->addHours(2);
+        $scheduleWindowStart = $todayDate->copy()->subDays(7)->toDateString();
+        $scheduleWindowEnd = $todayDate->copy()->addDays(14)->toDateString();
+
+        $workScheduleHasTime = Schema::hasColumn('work_schedules', 'start_time');
+        $workScheduleHasEndTime = Schema::hasColumn('work_schedules', 'end_time');
+
+        $applyWorkScheduleScope = function ($query) use ($currentUser) {
+            $query->where(function ($inner) use ($currentUser) {
+                $inner->where('user_id', $currentUser->id)
+                    ->orWhereHas('participants', fn ($q) => $q->where('users.id', $currentUser->id));
+            });
+        };
+
+        $workScheduleTodayTotal = WorkSchedule::query()
+            ->where($applyWorkScheduleScope)
+            ->whereDate('start_date', '<=', $todayDate)
+            ->where(function ($query) use ($todayDate) {
+                $query->whereDate('end_date', '>=', $todayDate)
+                    ->orWhere(function ($single) use ($todayDate) {
+                        $single->whereNull('end_date')
+                            ->whereDate('start_date', '=', $todayDate);
+                    });
+            })
+            ->count();
+
+        $workScheduleOverdueTotal = WorkSchedule::query()
+            ->where($applyWorkScheduleScope)
+            ->where(function ($query) use ($todayDate) {
+                $query->where(function ($multi) use ($todayDate) {
+                    $multi->whereNotNull('end_date')
+                        ->whereDate('end_date', '<', $todayDate);
+                })->orWhere(function ($single) use ($todayDate) {
+                    $single->whereNull('end_date')
+                        ->whereDate('start_date', '<', $todayDate);
+                });
+            })
+            ->count();
+
+        $workScheduleRaw = WorkSchedule::query()
+            ->with('user:id,name')
+            ->where($applyWorkScheduleScope)
+            ->where(function ($query) use ($scheduleWindowStart, $scheduleWindowEnd) {
+                $query->where(function ($overlap) use ($scheduleWindowStart, $scheduleWindowEnd) {
+                    $overlap->whereNotNull('end_date')
+                        ->whereDate('start_date', '<=', $scheduleWindowEnd)
+                        ->whereDate('end_date', '>=', $scheduleWindowStart);
+                })->orWhere(function ($single) use ($scheduleWindowStart, $scheduleWindowEnd) {
+                    $single->whereNull('end_date')
+                        ->whereBetween('start_date', [$scheduleWindowStart, $scheduleWindowEnd]);
+                });
+            })
+            ->orderBy('start_date')
+            ->orderBy('id')
+            ->take(80)
+            ->get();
+
+        $statusClassMap = [
+            'overdue' => 'bg-danger-subtle text-danger-emphasis border border-danger-subtle',
+            'in_progress' => 'bg-success-subtle text-success-emphasis border border-success-subtle',
+            'upcoming' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+        ];
+
+        $workScheduleItems = $workScheduleRaw->map(function (WorkSchedule $schedule) use (
+            $workScheduleHasTime,
+            $workScheduleHasEndTime,
+            $nowTime,
+            $statusClassMap
+        ) {
+            $startDate = $schedule->start_date->copy();
+            $effectiveEndDate = $schedule->effective_end_date->copy();
+
+            $startAt = $startDate->copy()->startOfDay();
+            $endAt = $effectiveEndDate->copy()->endOfDay();
+            $timeLabel = 'Cả ngày';
+
+            if ($workScheduleHasTime) {
+                $startTimeValue = $schedule->getAttribute('start_time');
+                $endTimeValue = $workScheduleHasEndTime ? $schedule->getAttribute('end_time') : null;
+
+                if (!empty($startTimeValue)) {
+                    $startAt = \Carbon\Carbon::parse($startDate->toDateString() . ' ' . $startTimeValue);
+                    $timeLabel = $startAt->format('H:i');
+                }
+
+                if (!empty($endTimeValue)) {
+                    $endAt = \Carbon\Carbon::parse($effectiveEndDate->toDateString() . ' ' . $endTimeValue);
+                    if ($endAt->lt($startAt)) {
+                        $endAt = $startAt->copy()->addHour();
+                    }
+
+                    $timeLabel = !empty($startTimeValue)
+                        ? $startAt->format('H:i') . ' - ' . $endAt->format('H:i')
+                        : $endAt->format('H:i');
+                } elseif (!empty($startTimeValue)) {
+                    $endAt = $startAt->copy()->addHour();
+                }
+            }
+
+            if ($endAt->lt($nowTime)) {
+                $statusKey = 'overdue';
+                $statusLabel = 'Quá hạn';
+                $sortPriority = 2;
+                $sortTimestamp = -$endAt->timestamp;
+            } elseif ($startAt->lte($nowTime) && $endAt->gte($nowTime)) {
+                $statusKey = 'in_progress';
+                $statusLabel = 'Đang diễn ra';
+                $sortPriority = 0;
+                $sortTimestamp = $startAt->timestamp;
+            } else {
+                $statusKey = 'upcoming';
+                $statusLabel = 'Sắp tới';
+                $sortPriority = 1;
+                $sortTimestamp = $startAt->timestamp;
+            }
+
+            return [
+                'id' => $schedule->id,
+                'title' => $schedule->title,
+                'description' => \Illuminate\Support\Str::limit((string) ($schedule->description ?? ''), 120),
+                'owner_name' => $schedule->user?->name ?? 'Hệ thống',
+                'time_label' => $timeLabel,
+                'date_label' => $startDate->format('d/m/Y') . ($effectiveEndDate->ne($startDate) ? ' - ' . $effectiveEndDate->format('d/m/Y') : ''),
+                'status_key' => $statusKey,
+                'status_label' => $statusLabel,
+                'status_class' => $statusClassMap[$statusKey],
+                'start_at' => $startAt,
+                'sort_priority' => $sortPriority,
+                'sort_timestamp' => $sortTimestamp,
+            ];
+        });
+
+        $workScheduleUpcomingTwoHours = $workScheduleItems
+            ->filter(fn ($item) => $item['status_key'] === 'upcoming')
+            ->filter(fn ($item) => $item['start_at']->greaterThanOrEqualTo($nowTime) && $item['start_at']->lessThanOrEqualTo($nextTwoHours))
+            ->count();
+
+        $workScheduleRecentItems = $workScheduleItems
+            ->sortBy([
+                ['sort_priority', 'asc'],
+                ['sort_timestamp', 'asc'],
+            ])
+            ->take(5)
+            ->values();
+
+        $workScheduleSummary = [
+            'today_total' => (int) $workScheduleTodayTotal,
+            'upcoming_two_hours' => (int) $workScheduleUpcomingTwoHours,
+            'overdue' => (int) $workScheduleOverdueTotal,
+        ];
+
         $canSeeTechnical  = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::KY_THUAT->value]);
         $canSeeConsulting = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TU_VAN->value, RoleEnum::TP_KINH_DOANH->value]);
-        $canSeeFinance    = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value]);
+        $canSeeFinance    = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value, RoleEnum::KE_TOAN->value]);
+
+        $needsAction = [
+            'missing_bao_chau_invoice' => 0,
+            'missing_subcontractor_invoice' => 0,
+            'unpaid_subcontractor_payment' => 0,
+            'pending_quotations' => 0,
+        ];
+
+        foreach ($contractTypes as $modelClass) {
+            $dateColumn = $resolveContractDateColumn($modelClass);
+            $table = (new $modelClass())->getTable();
+
+            if (Schema::hasColumn($table, 'shd_bc')) {
+                $missingBaoChauQuery = $modelClass::query()
+                    ->where(function ($query) {
+                        $query->whereNull('shd_bc')->orWhere('shd_bc', '');
+                    });
+                $applyContractDateFilter($missingBaoChauQuery, $selectedMonth, $dateColumn);
+                $needsAction['missing_bao_chau_invoice'] += (int) $missingBaoChauQuery->count();
+            }
+
+            if (Schema::hasColumn($table, 'handler_id') && Schema::hasColumn($table, 'shd_cxl')) {
+                $missingSubcontractorQuery = $modelClass::query()
+                    ->whereNotNull('handler_id')
+                    ->where('handler_id', '!=', 0)
+                    ->where(function ($query) {
+                        $query->whereNull('shd_cxl')->orWhere('shd_cxl', '');
+                    });
+                $applyContractDateFilter($missingSubcontractorQuery, $selectedMonth, $dateColumn);
+                $needsAction['missing_subcontractor_invoice'] += (int) $missingSubcontractorQuery->count();
+            }
+
+            if (Schema::hasColumn($table, 'ncc_payment') && Schema::hasColumn($table, 'ncc_payment_status')) {
+                $unpaidSubcontractorQuery = $modelClass::query()
+                    ->where('ncc_payment', '>', 0)
+                    ->where(function ($query) {
+                        $query->whereNull('ncc_payment_status')
+                            ->orWhere('ncc_payment_status', '!=', 'paid');
+                    });
+                $applyContractDateFilter($unpaidSubcontractorQuery, $selectedMonth, $dateColumn);
+                $needsAction['unpaid_subcontractor_payment'] += (int) $unpaidSubcontractorQuery->count();
+            }
+        }
+
+        $pendingQuotationQuery = Quotation::query()
+            ->whereIn('status', [
+                QuotationStatus::DANG_THEO_DOI->value,
+                QuotationStatus::HEN_BAO_GIA->value,
+            ]);
+
+        if ($contractDateFrom !== null || $contractDateTo !== null) {
+            if ($contractDateFrom !== null) {
+                $pendingQuotationQuery->whereDate('date', '>=', $contractDateFrom);
+            }
+            if ($contractDateTo !== null) {
+                $pendingQuotationQuery->whereDate('date', '<=', $contractDateTo);
+            }
+        } else {
+            $pendingQuotationQuery->whereYear('date', $this->year);
+            if ($selectedMonth !== null) {
+                $pendingQuotationQuery->whereMonth('date', $selectedMonth);
+            }
+        }
+
+        $needsAction['pending_quotations'] = (int) $pendingQuotationQuery->count();
 
         // ── Insight theo tháng: báo giá vs ký hợp đồng theo dịch vụ/khu vực ──
         $insightMonth = $selectedMonth ?? (int) now()->month;
@@ -449,6 +670,13 @@ class StatisticsBoard extends Component
             'Năng lượng'=> ContractEmission::class,
         ];
         $consultingChartData = [];
+        $consultingStats = collect();
+        $consultingSummary = [
+            'total' => 0,
+            'completed' => 0,
+            'processing' => 0,
+            'value' => 0,
+        ];
         if ($canSeeConsulting) {
             if ($this->chartMode === 'quarter') {
                 foreach ($consultingTypes as $label => $model) {
@@ -485,11 +713,42 @@ class StatisticsBoard extends Component
                     $consultingChartData[$label] = $yData;
                 }
             }
+
+            foreach ($consultingTypes as $label => $model) {
+                $dateColumn = $resolveContractDateColumn($model);
+                $statsQuery = $model::query();
+                $applyContractDateFilter($statsQuery, $selectedMonth, $dateColumn);
+                $rows = $statsQuery->get(['id', 'value', 'workflow_status']);
+
+                $count = $rows->count();
+                $completed = $rows->where('workflow_status', 'finished')->count();
+                $value = (float) $rows->sum('value');
+
+                $consultingStats->push([
+                    'label' => $label,
+                    'count' => $count,
+                    'value' => $value,
+                    'completed' => $completed,
+                    'processing' => max(0, $count - $completed),
+                ]);
+
+                $consultingSummary['total'] += $count;
+                $consultingSummary['completed'] += $completed;
+                $consultingSummary['value'] += $value;
+            }
+
+            $consultingSummary['processing'] = max(0, $consultingSummary['total'] - $consultingSummary['completed']);
         }
 
         $technicalStats = collect();
+        $technicalSummary = [
+            'total' => 0,
+            'completed' => 0,
+            'processing' => 0,
+            'value' => 0,
+            'completion_rate' => 0,
+        ];
         if ($canSeeTechnical) {
-            $techUsers = User::role('ky-thuat')->get();
             $typeLabels = [
                 ContractLegal::class      => 'Pháp lý & Hồ sơ MT',
             ];
@@ -513,6 +772,14 @@ class StatisticsBoard extends Component
                     'completed' => $completed,
                 ]);
             }
+
+            $technicalSummary['total'] = (int) $technicalStats->sum('count');
+            $technicalSummary['completed'] = (int) $technicalStats->sum('completed');
+            $technicalSummary['processing'] = max(0, $technicalSummary['total'] - $technicalSummary['completed']);
+            $technicalSummary['value'] = (float) $technicalStats->sum('value');
+            $technicalSummary['completion_rate'] = $technicalSummary['total'] > 0
+                ? round($technicalSummary['completed'] / $technicalSummary['total'] * 100)
+                : 0;
         }
 
         // ── IT Admin Stats ───────────────────────────
@@ -644,9 +911,10 @@ class StatisticsBoard extends Component
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
-            'byType', 'monthly', 'canSeeTechnical', 'technicalStats',
-            'canSeeConsulting', 'consultingChartData', 'canSeeFinance',
-            'isIT', 'itStats', 'envData', 'dailyReportReminder',
+            'byType', 'monthly', 'canSeeTechnical', 'technicalStats', 'technicalSummary',
+            'canSeeConsulting', 'consultingChartData', 'consultingStats', 'consultingSummary', 'canSeeFinance',
+            'isIT', 'itStats', 'envData', 'dailyReportReminder', 'needsAction',
+            'workScheduleSummary', 'workScheduleRecentItems', 'workScheduleHasTime',
             'insightMonth', 'serviceInsightChart', 'regionInsightChart',
             'sourceSalesChart'
         ))->layout('admin.layouts.app');

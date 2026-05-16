@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['user_id', 'title', 'description', 'start_date', 'end_date', 'color'])]
+#[Fillable(['user_id', 'title', 'description', 'start_date', 'start_time', 'end_date', 'end_time', 'color'])]
 class WorkSchedule extends Model
 {
     /** @use HasFactory */
@@ -51,11 +52,69 @@ class WorkSchedule extends Model
         return $this->end_date ?? $this->start_date;
     }
 
+    public function getFormattedStartTimeAttribute(): ?string
+    {
+        return $this->normalizeTimeString($this->start_time);
+    }
+
+    public function getFormattedEndTimeAttribute(): ?string
+    {
+        return $this->normalizeTimeString($this->end_time);
+    }
+
+    public function getStartsAtAttribute(): Carbon
+    {
+        if ($this->formatted_start_time !== null) {
+            return Carbon::parse($this->start_date->toDateString() . ' ' . $this->formatted_start_time);
+        }
+
+        return $this->start_date->copy()->startOfDay();
+    }
+
+    public function getEndsAtAttribute(): Carbon
+    {
+        if ($this->formatted_end_time !== null) {
+            return Carbon::parse($this->effective_end_date->toDateString() . ' ' . $this->formatted_end_time);
+        }
+
+        if ($this->end_date !== null && $this->end_date->ne($this->start_date)) {
+            return $this->effective_end_date->copy()->endOfDay();
+        }
+
+        if ($this->formatted_start_time !== null) {
+            return $this->starts_at->copy()->addHour();
+        }
+
+        return $this->effective_end_date->copy()->endOfDay();
+    }
+
+    public function getTimeRangeLabelAttribute(): string
+    {
+        if ($this->formatted_start_time !== null && $this->formatted_end_time !== null) {
+            return $this->formatted_start_time . ' - ' . $this->formatted_end_time;
+        }
+
+        if ($this->formatted_start_time !== null) {
+            return $this->formatted_start_time;
+        }
+
+        return 'Cả ngày';
+    }
+
     /**
      * Check if this event covers a given date.
      */
     public function coversDate(\Carbon\Carbon $date): bool
     {
         return $date->between($this->start_date, $this->effective_end_date);
+    }
+
+    private function normalizeTimeString(mixed $time): ?string
+    {
+        if ($time === null || $time === '') {
+            return null;
+        }
+
+        return substr((string) $time, 0, 5);
     }
 }

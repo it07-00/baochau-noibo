@@ -14,6 +14,7 @@ class WorkScheduleNotification extends Notification
         public string $userName,
         public string $action = 'created', // created, updated, deleted, added
         public ?string $eventDate = null,
+        public ?string $eventTimeLabel = null,
     ) {}
 
     public function via(object $notifiable): array
@@ -31,6 +32,7 @@ class WorkScheduleNotification extends Notification
         ];
 
         $label = $actionLabels[$this->action] ?? $this->action;
+        $timeLabel = $this->normalizeTimeLabel($this->eventTimeLabel);
         $urlParameters = [];
 
         if ($this->eventDate) {
@@ -52,7 +54,15 @@ class WorkScheduleNotification extends Notification
             'message'        => $this->action === 'added'
                 ? "{$this->userName} đã thêm bạn vào lịch công tác: \"{$this->eventTitle}\""
                 : "{$this->userName} đã {$label} lịch: \"{$this->eventTitle}\"",
+            'time_label'     => $timeLabel,
             'url'            => route('app.work-schedules.index', $urlParameters),
         ];
+    }
+
+    private function normalizeTimeLabel(?string $timeLabel): ?string
+    {
+        $value = trim((string) $timeLabel);
+
+        return $value !== '' ? $value : null;
     }
 }

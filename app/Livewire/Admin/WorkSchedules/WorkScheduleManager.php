@@ -22,7 +22,9 @@ class WorkScheduleManager extends Component
     public string $title = '';
     public string $description = '';
     public string $startDate = '';
+    public string $startTime = '';
     public string $endDate = '';
+    public string $endTime = '';
     public string $color = 'primary';
     public array $selectedParticipants = [];
 
@@ -108,7 +110,9 @@ class WorkScheduleManager extends Component
         $this->title       = $event->title;
         $this->description = $event->description ?? '';
         $this->startDate   = $event->start_date->format('Y-m-d');
+        $this->startTime   = $event->formatted_start_time ?? '';
         $this->endDate     = $event->effective_end_date->format('Y-m-d');
+        $this->endTime     = $event->formatted_end_time ?? '';
         $this->color       = $event->color;
         $this->selectedParticipants = $event->participants->pluck('id')->map(fn($id) => (string) $id)->toArray();
         $this->showFormModal = true;
@@ -120,18 +124,35 @@ class WorkScheduleManager extends Component
             'title'     => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
             'startDate' => 'required|date',
+            'startTime' => 'nullable|date_format:H:i|required_with:endTime',
             'endDate'   => 'nullable|date|after_or_equal:startDate',
+            'endTime'   => 'nullable|date_format:H:i',
             'color'     => 'required|in:' . implode(',', array_keys(WorkSchedule::COLORS)),
         ], [
             'title.required'          => 'Vui lòng nhập tiêu đề sự kiện.',
             'title.max'               => 'Tiêu đề không được vượt quá 255 ký tự.',
             'startDate.required'      => 'Vui lòng chọn ngày bắt đầu.',
+            'startTime.date_format'   => 'Giờ bắt đầu phải đúng định dạng HH:MM.',
+            'startTime.required_with' => 'Vui lòng nhập giờ bắt đầu khi đã có giờ kết thúc.',
             'endDate.after_or_equal'  => 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.',
+            'endTime.date_format'     => 'Giờ kết thúc phải đúng định dạng HH:MM.',
             'description.max'         => 'Mô tả không được vượt quá 5,000 ký tự.',
         ]);
 
         $startDate = Carbon::parse($this->startDate);
         $endDate   = $this->endDate ? Carbon::parse($this->endDate) : null;
+        $startTime = $this->normalizeTimeForStorage($this->startTime);
+        $endTime   = $this->normalizeTimeForStorage($this->endTime);
+
+        if ($startTime !== null && $endTime !== null && ($endDate === null || $endDate->isSameDay($startDate))) {
+            $startAt = Carbon::parse($startDate->toDateString() . ' ' . $startTime);
+            $endAt = Carbon::parse(($endDate ?? $startDate)->toDateString() . ' ' . $endTime);
+
+            if ($endAt->lte($startAt)) {
+                $this->addError('endTime', 'Giờ kết thúc phải sau giờ bắt đầu nếu sự kiện diễn ra trong cùng một ngày.');
+                return;
+            }
+        }
 
         if ($this->editingId) {
             // Update existing
@@ -159,7 +180,9 @@ class WorkScheduleManager extends Component
                 'title'       => $this->title,
                 'description' => $this->description ?: null,
                 'start_date'  => $startDate,
+                'start_time'  => $startTime,
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
+                'end_time'    => $endTime,
                 'color'       => $this->color,
             ]);
             $event->participants()->sync($selectedParticipantIds);
@@ -174,7 +197,8 @@ class WorkScheduleManager extends Component
                         $event->title,
                         auth()->user()->name,
                         $action,
-                        $event->start_date->format('Y-m-d')
+                        $event->start_date->format('Y-m-d'),
+                        $event->time_range_label
                     ));
                 }
             }
@@ -192,7 +216,9 @@ class WorkScheduleManager extends Component
                 'title'       => $this->title,
                 'description' => $this->description ?: null,
                 'start_date'  => $startDate,
+                'start_time'  => $startTime,
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
+                'end_time'    => $endTime,
                 'color'       => $this->color,
             ]);
             $selectedParticipantIds = collect($this->selectedParticipants)
@@ -211,7 +237,8 @@ class WorkScheduleManager extends Component
                         $event->title,
                         auth()->user()->name,
                         'added',
-                        $event->start_date->format('Y-m-d')
+                        $event->start_date->format('Y-m-d'),
+                        $event->time_range_label
                     ));
                 }
             }
@@ -238,7 +265,8 @@ class WorkScheduleManager extends Component
                     $event->title,
                     auth()->user()->name,
                     'deleted',
-                    $event->start_date->format('Y-m-d')
+                    $event->start_date->format('Y-m-d'),
+                    $event->time_range_label
                 ));
             }
         }
@@ -257,7 +285,7 @@ class WorkScheduleManager extends Component
         $this->detailDate = $date;
         $parsed = Carbon::parse($date);
 
-        $events = WorkSchedule::with('user', 'user.department')
+        $events = WorkSchedule::with('user', 'user.department', 'participants')
             ->where('start_date', '<=', $parsed)
             ->where(function ($q) use ($parsed) {
                 $q->where('end_date', '>=', $parsed)
@@ -267,6 +295,7 @@ class WorkScheduleManager extends Component
                   });
             })
             ->orderBy('start_date')
+            ->orderBy('start_time')
             ->get();
 
         $this->detailEvents = $events->map(fn ($e) => [
@@ -275,11 +304,12 @@ class WorkScheduleManager extends Component
             'description' => $e->description ?? '',
             'start_date'  => $e->start_date->format('d/m/Y'),
             'end_date'    => $e->effective_end_date->format('d/m/Y'),
+            'time_label'  => $e->time_range_label,
             'color'       => $e->color,
             'user_name'   => $e->user->name ?? '',
             'department'  => $e->user->department->name ?? '',
             'is_owner'    => $e->user_id === auth()->id(),
-            'is_past'     => $e->start_date->lt(today()),
+            'is_past'     => $e->ends_at->lt(now()),
             'is_multi_day' => $e->end_date !== null && $e->end_date->ne($e->start_date),
             'participants' => $e->participants->map(fn($p) => $p->name)->join(', '),
         ])->toArray();
@@ -306,7 +336,9 @@ class WorkScheduleManager extends Component
         $this->title       = '';
         $this->description = '';
         $this->startDate   = '';
+        $this->startTime   = '';
         $this->endDate     = '';
+        $this->endTime     = '';
         $this->color       = 'primary';
         $this->selectedParticipants = [(string) auth()->id()];
         $this->resetValidation();
@@ -332,6 +364,7 @@ class WorkScheduleManager extends Component
                 });
             })
             ->orderBy('start_date')
+            ->orderBy('start_time')
             ->get();
 
         // Build calendar data: map each day to its events
@@ -388,7 +421,10 @@ class WorkScheduleManager extends Component
                 $effectiveEnd = $event->end_date ?? $event->start_date;
 
                 return $event->start_date->lte($weekEnd) && $effectiveEnd->gte($currentWeekStart);
-            })->sortBy('start_date')->values();
+            })->sortBy([
+                fn ($event) => $event->start_date->format('Y-m-d'),
+                fn ($event) => $event->formatted_start_time ?? '00:00',
+            ])->values();
 
             // Build placement data for each event
             $placements = [];
@@ -407,6 +443,7 @@ class WorkScheduleManager extends Component
                 $placements[] = [
                     'id'           => $event->id,
                     'title'        => $event->title,
+                    'timeLabel'    => $event->time_range_label,
                     'color'        => $event->color,
                     'participants' => $event->participants->pluck('name')->join(', '),
                     'startCol'     => $startCol,
@@ -472,5 +509,14 @@ class WorkScheduleManager extends Component
         }
 
         return $weeksLayout;
+    }
+
+    private function normalizeTimeForStorage(?string $time): ?string
+    {
+        if ($time === null || trim($time) === '') {
+            return null;
+        }
+
+        return Carbon::createFromFormat('H:i', trim($time))->format('H:i:s');
     }
 }

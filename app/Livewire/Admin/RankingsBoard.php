@@ -65,7 +65,9 @@ class RankingsBoard extends Component
                 }
             }
 
-            $salesRankings = User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->get()
+            $salesRankings = User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])
+                ->where('is_active', true)
+                ->get()
                 ->map(function ($user) use ($totalsByStaff) {
                     return [
                         'name'  => $user->name,
@@ -119,7 +121,9 @@ class RankingsBoard extends Component
                 ContractEmission::class,
             ];
 
-            $consultingRankings = User::role(Role::TU_VAN->value)->get()
+            $consultingRankings = User::role(Role::TU_VAN->value)
+                ->where('is_active', true)
+                ->get()
                 ->map(function ($user) use ($allContractTypes) {
                     $assignments = ContractAssignment::where('user_id', $user->id)
                         ->whereIn('assignable_type', $allContractTypes)
@@ -157,7 +161,9 @@ class RankingsBoard extends Component
 
         if ($canSeeTechnical) {
             // ── Xếp hạng nhân viên kỹ thuật (chỉ HĐ Pháp lý & Hồ sơ MT) ──
-            $technicalRankings = User::role(Role::KY_THUAT->value)->get()
+            $technicalRankings = User::role(Role::KY_THUAT->value)
+                ->where('is_active', true)
+                ->get()
                 ->map(function ($user) {
                     $assignments = ContractAssignment::where('user_id', $user->id)
                         ->where('assignable_type', ContractLegal::class)

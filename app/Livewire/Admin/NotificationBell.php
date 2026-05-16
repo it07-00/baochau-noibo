@@ -116,11 +116,17 @@ class NotificationBell extends Component
         $this->lastRealtimeNotificationId = $latestId;
 
         $data = (array) ($latest->data ?? []);
+        $body = (string) ($data['message'] ?? 'Bạn có thông báo mới');
+        $timeLabel = trim((string) ($data['time_label'] ?? ''));
+
+        if (($data['contract_type'] ?? '') === 'work_schedule' && $timeLabel !== '' && $timeLabel !== 'Cả ngày') {
+            $body .= ' | Giờ: ' . $timeLabel;
+        }
 
         $this->dispatch(
             'browser-notification',
             title: (string) ($data['contract_label'] ?? 'Thông báo mới'),
-            body: (string) ($data['message'] ?? 'Bạn có thông báo mới'),
+            body: $body,
             url: (string) ($data['url'] ?? ''),
         );
     }

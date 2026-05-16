@@ -59,7 +59,7 @@
                     </li>
                 @endunless
 
-                @unless ($currentUser->hasAnyRole([...Role::dashboardAccessRoles(), ...Role::technicalConsultingRoles()]))
+                @unless ($currentUser->hasAnyRole(Role::dashboardAccessRoles()))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.dashboard') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active' : '' }}">

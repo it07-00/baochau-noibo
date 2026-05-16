@@ -1,7 +1,4 @@
 <div>
-    @push('styles')
-    @endpush
-
     @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
     <div class="statistics-page-header page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
@@ -29,21 +26,21 @@
                 type="date"
                 wire:model.live="contractDateFrom"
                 class="form-control statistics-filter-control statistics-date-control mnw-195px min-h-42px"
-                
+
                 title="Lọc hợp đồng từ ngày ký"
             >
             <input
                 type="date"
                 wire:model.live="contractDateTo"
                 class="form-control statistics-filter-control statistics-date-control mnw-195px min-h-42px"
-                
+
                 title="Lọc hợp đồng đến ngày ký"
             >
             <button
                 type="button"
                 wire:click="clearContractDateFilter"
                 class="btn btn-outline-secondary px-3 statistics-clear-date min-h-42px"
-                
+
                 @disabled($contractDateFrom === '' && $contractDateTo === '')
             >
                 Xóa ngày
@@ -69,6 +66,75 @@
             </a>
         </div>
     @endif
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h6 class="mb-0 fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar2-week text-primary"></i>
+                    <span>Lịch công tác hôm nay</span>
+                </h6>
+                <small class="text-muted">
+                    {{ $workScheduleHasTime
+                        ? 'Tổng lịch hôm nay, lịch sắp tới trong 2 giờ và các lịch cần ưu tiên xử lý'
+                        : 'Hệ thống lịch hiện đang theo ngày. Mốc 2 giờ sẽ chính xác hơn khi bổ sung giờ bắt đầu/kết thúc.' }}
+                </small>
+            </div>
+            <a href="{{ route('app.work-schedules.index') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-arrow-right-circle me-1"></i> Xem tất cả
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100 bg-primary-subtle border-primary-subtle">
+                        <div class="text-muted small text-uppercase fw-semibold">Tổng lịch</div>
+                        <div class="fs-3 fw-bold text-primary">{{ number_format($workScheduleSummary['today_total'] ?? 0) }}</div>
+                        <small class="text-muted">Lịch diễn ra trong hôm nay</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100 bg-warning-subtle border-warning-subtle">
+                        <div class="text-muted small text-uppercase fw-semibold">Sắp tới 2 giờ</div>
+                        <div class="fs-3 fw-bold text-warning-emphasis">{{ number_format($workScheduleSummary['upcoming_two_hours'] ?? 0) }}</div>
+                        <small class="text-muted">
+                            {{ $workScheduleHasTime ? 'Lịch chuẩn bị diễn ra trong 2 giờ tới' : 'Chưa có dữ liệu giờ để tách chính xác theo 2 giờ' }}
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100 bg-danger-subtle border-danger-subtle">
+                        <div class="text-muted small text-uppercase fw-semibold">Quá hạn</div>
+                        <div class="fs-3 fw-bold text-danger">{{ number_format($workScheduleSummary['overdue'] ?? 0) }}</div>
+                        <small class="text-muted">Lịch đã qua ngày hoặc quá thời điểm kết thúc</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group list-group-flush">
+                @forelse($workScheduleRecentItems as $item)
+                    <div class="list-group-item px-0 py-3 border-top d-flex align-items-start justify-content-between gap-3 flex-wrap">
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                <span class="badge rounded-pill {{ $item['status_class'] }}">{{ $item['status_label'] }}</span>
+                                <span class="badge bg-light text-dark border">{{ $item['time_label'] }}</span>
+                                <span class="small text-muted">{{ $item['date_label'] }}</span>
+                            </div>
+                            <div class="fw-semibold text-truncate mb-1">{{ $item['title'] }}</div>
+                            <div class="small text-muted text-truncate">{{ $item['description'] !== '' ? $item['description'] : 'Không có mô tả chi tiết.' }}</div>
+                        </div>
+                        <div class="small text-muted text-nowrap">{{ $item['owner_name'] }}</div>
+                    </div>
+                @empty
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-calendar-x d-block fs-4 mb-2"></i>
+                        Chưa có lịch công tác gần đây.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
 
     @if($isIT && $itStats)
         {{-- IT Tab Navigation --}}
@@ -454,6 +520,54 @@
         </div>
         @endunless
 
+        @if($canSeeFinance)
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div>
+                            <h6 class="mb-0 fw-bold">Cần xử lý</h6>
+                            <small class="text-muted">Các việc ảnh hưởng đến hợp đồng, dòng tiền và chuyển đổi báo giá</small>
+                        </div>
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Ưu tiên kiểm tra</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border rounded-3 p-3 h-100 bg-danger-subtle border-danger-subtle">
+                                    <div class="text-muted small">Chưa có số HĐ Bảo Châu</div>
+                                    <div class="fs-4 fw-bold text-danger">{{ number_format($needsAction['missing_bao_chau_invoice'] ?? 0) }}</div>
+                                    <small class="text-muted">Cần kế toán bổ sung</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border rounded-3 p-3 h-100 bg-warning-subtle border-warning-subtle">
+                                    <div class="text-muted small">Có NTP nhưng thiếu số HĐ NTP</div>
+                                    <div class="fs-4 fw-bold text-warning-emphasis">{{ number_format($needsAction['missing_subcontractor_invoice'] ?? 0) }}</div>
+                                    <small class="text-muted">Áp dụng hợp đồng có nhà thầu phụ</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border rounded-3 p-3 h-100 bg-primary-subtle border-primary-subtle">
+                                    <div class="text-muted small">Chi NTP chưa thanh toán</div>
+                                    <div class="fs-4 fw-bold text-primary">{{ number_format($needsAction['unpaid_subcontractor_payment'] ?? 0) }}</div>
+                                    <small class="text-muted">Theo trạng thái thanh toán nhà thầu phụ</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="border rounded-3 p-3 h-100 bg-info-subtle border-info-subtle">
+                                    <div class="text-muted small">Báo giá chưa chuyển HĐ</div>
+                                    <div class="fs-4 fw-bold text-info">{{ number_format($needsAction['pending_quotations'] ?? 0) }}</div>
+                                    <small class="text-muted">Đang theo dõi hoặc hẹn báo giá</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Trends & Charts Row --}}
         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
         <div class="row g-4 mb-4">
@@ -462,7 +576,11 @@
                     <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="mb-0 fw-bold">Tổng quan vận hành theo tháng</h6>
-                            <small class="text-muted">Biến động hợp đồng, doanh số và thực thu trong năm {{ $year }}</small>
+                            <small class="text-muted">
+                                {{ $canSeeFinance
+                                    ? 'Biến động hợp đồng, doanh số và thực thu trong năm ' . $year
+                                    : 'Biến động số lượng hợp đồng theo tháng trong năm ' . $year }}
+                            </small>
                         </div>
                         <span class="badge bg-light text-dark border">Năm {{ $year }}</span>
                     </div>
@@ -491,7 +609,7 @@
         </div>
         @endunless
 
-        @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+        @if($canSeeFinance)
         <div class="row g-4 mb-4">
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm h-100">
@@ -540,33 +658,123 @@
                 </div>
             </div>
         </div>
-        @endunless
+        @endif
 
-        @if($canSeeTechnical)
-        {{-- Technical Dept Row --}}
-        <div class="row g-4 mt-2">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom py-3">
-                        <h6 class="mb-0 fw-bold">Bộ phận Kỹ thuật — Năm {{ $year }}</h6>
+        @if($canSeeConsulting)
+        @php
+            $consultingRate = ($consultingSummary['total'] ?? 0) > 0
+                ? round(($consultingSummary['completed'] ?? 0) / $consultingSummary['total'] * 100)
+                : 0;
+        @endphp
+        <div class="role-dashboard-panel mb-4">
+            <div class="role-dashboard-header role-consulting">
+                <div>
+                    <h6 class="role-dashboard-title">Bộ phận Tư vấn</h6>
+                    <p class="role-dashboard-subtitle">Theo dõi hồ sơ theo nhóm dịch vụ và tiến độ xử lý</p>
+                </div>
+                <span class="role-dashboard-year">Năm {{ $year }}</span>
+            </div>
+
+            <div class="p-3 p-md-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-consulting-total h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-files"></i></div>
+                                <div>
+                                    <div class="role-kpi-label">Tổng hồ sơ</div>
+                                    <div class="role-kpi-value">{{ number_format($consultingSummary['total'] ?? 0) }}</div>
+                                    <p class="role-kpi-note">Tổng hợp hồ sơ tư vấn trong kỳ</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-consulting-completed h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-check2-circle"></i></div>
+                                <div>
+                                    <div class="role-kpi-label">Đã hoàn thành</div>
+                                    <div class="role-kpi-value">{{ number_format($consultingSummary['completed'] ?? 0) }}</div>
+                                    <p class="role-kpi-note">Đã kết thúc quy trình công việc</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-consulting-processing h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-hourglass-split"></i></div>
+                                <div>
+                                    <div class="role-kpi-label">Đang xử lý</div>
+                                    <div class="role-kpi-value">{{ number_format($consultingSummary['processing'] ?? 0) }}</div>
+                                    <p class="role-kpi-note">Cần tiếp tục giám sát tiến độ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-consulting-rate h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                                <div class="w-100">
+                                    <div class="role-kpi-label">Tỷ lệ hoàn thành</div>
+                                    <div class="role-kpi-value">{{ $consultingRate }}%</div>
+                                    @if($canSeeFinance)
+                                        <p class="role-kpi-note">Giá trị hồ sơ: {{ number_format($consultingSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
+                                    @endif
+                                    <div class="role-kpi-progress">
+                                        <span style="width: {{ $consultingRate }}%"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="role-table-card">
+                    <div class="card-header py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div>
+                            <h6 class="role-table-title">Chi tiết tiến độ hồ sơ tư vấn</h6>
+                            <p class="role-table-subtitle">Thống kê theo từng loại hợp đồng</p>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">{{ number_format($consultingSummary['total'] ?? 0) }} hồ sơ</span>
+                    </div>
+
                     <div class="card-body p-0">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                        <table class="table table-hover align-middle mb-0 role-data-table">
+                            <thead>
                                 <tr>
                                     <th>Loại HĐ</th>
                                     <th class="text-center">Số HĐ</th>
+                                    <th class="text-center">Đang xử lý</th>
                                     <th class="text-center">Hoàn thành</th>
+                                    <th class="text-center">Tiến độ</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($technicalStats as $row)
+                                @forelse($consultingStats as $row)
+                                @php
+                                    $rowRate = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0;
+                                @endphp
                                 <tr>
-                                    <td class="">{{ $row['label'] }}</td>
-                                    <td class="text-center fw-bold">{{ $row['count'] }}</td>
-                                    <td class="text-center text-success">{{ $row['completed'] }}</td>
+                                    <td class="fw-semibold">{{ $row['label'] }}</td>
+                                    <td class="text-center fw-bold">{{ number_format($row['count']) }}</td>
+                                    <td class="text-center text-warning-emphasis">{{ number_format($row['processing']) }}</td>
+                                    <td class="text-center text-success fw-semibold">{{ number_format($row['completed']) }}</td>
+                                    <td class="text-center">
+                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $rowRate }}%"></span></div>
+                                        <small class="text-muted fw-semibold">{{ $rowRate }}%</small>
+                                    </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Chưa có dữ liệu trong kỳ lọc hiện tại</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -575,10 +783,131 @@
         </div>
         @endif
 
+        @if($canSeeTechnical)
+        @php
+            $technicalRate = (int) ($technicalSummary['completion_rate'] ?? 0);
+        @endphp
+        <div class="role-dashboard-panel mb-4">
+            <div class="role-dashboard-header role-technical">
+                <div>
+                    <h6 class="role-dashboard-title">Bộ phận Kỹ thuật</h6>
+                    <p class="role-dashboard-subtitle">Tổng hợp khối lượng được giao và chất lượng hoàn tất</p>
+                </div>
+                <span class="role-dashboard-year">Năm {{ $year }}</span>
+            </div>
+
+            <div class="p-3 p-md-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-technical-total h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-journal-text"></i></div>
+                                <div>
+                                    <div class="role-kpi-label">Hồ sơ được giao</div>
+                                    <div class="role-kpi-value">{{ number_format($technicalSummary['total'] ?? 0) }}</div>
+                                    <p class="role-kpi-note">Tổng số đầu việc kỹ thuật đã tiếp nhận</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-technical-completed h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-patch-check"></i></div>
+                                <div>
+                                    <div class="role-kpi-label">Đã hoàn thành</div>
+                                    <div class="role-kpi-value">{{ number_format($technicalSummary['completed'] ?? 0) }}</div>
+                                    <p class="role-kpi-note">Đã đạt trạng thái hoàn tất quy trình</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-technical-processing h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-tools"></i></div>
+                                <div>
+                                    <div class="role-kpi-label">Đang xử lý</div>
+                                    <div class="role-kpi-value">{{ number_format($technicalSummary['processing'] ?? 0) }}</div>
+                                    <p class="role-kpi-note">Đang theo dõi để đảm bảo tiến độ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="role-kpi-card role-technical-rate h-100">
+                            <div class="role-kpi-body">
+                                <div class="role-kpi-icon"><i class="bi bi-bar-chart-line"></i></div>
+                                <div class="w-100">
+                                    <div class="role-kpi-label">Tỷ lệ hoàn thành</div>
+                                    <div class="role-kpi-value">{{ $technicalRate }}%</div>
+                                    @if($canSeeFinance)
+                                        <p class="role-kpi-note">Giá trị hồ sơ: {{ number_format($technicalSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
+                                    @endif
+                                    <div class="role-kpi-progress">
+                                        <span style="width: {{ $technicalRate }}%"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="role-table-card">
+                    <div class="card-header py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div>
+                            <h6 class="role-table-title">Chi tiết tiến độ hồ sơ kỹ thuật</h6>
+                            <p class="role-table-subtitle">Theo nhóm công việc được phân công</p>
+                        </div>
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">{{ number_format($technicalSummary['total'] ?? 0) }} hồ sơ</span>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0 role-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Loại HĐ</th>
+                                    <th class="text-center">Số HĐ</th>
+                                    <th class="text-center">Đang xử lý</th>
+                                    <th class="text-center">Hoàn thành</th>
+                                    <th class="text-center">Tiến độ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($technicalStats as $row)
+                                @php
+                                    $processingCount = max(0, $row['count'] - $row['completed']);
+                                    $rowRate = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0;
+                                @endphp
+                                <tr>
+                                    <td class="fw-semibold">{{ $row['label'] }}</td>
+                                    <td class="text-center fw-bold">{{ number_format($row['count']) }}</td>
+                                    <td class="text-center text-warning-emphasis">{{ number_format($processingCount) }}</td>
+                                    <td class="text-center text-success fw-semibold">{{ number_format($row['completed']) }}</td>
+                                    <td class="text-center">
+                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $rowRate }}%"></span></div>
+                                        <small class="text-muted fw-semibold">{{ $rowRate }}%</small>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Chưa có dữ liệu trong kỳ lọc hiện tại</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     @endif
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
     <script>
     (function () {
         const palette = ['#4f7cff', '#2ec27e', '#f5a524', '#f05252', '#7c3aed', '#0ea5e9', '#06b6d4', '#f97316'];

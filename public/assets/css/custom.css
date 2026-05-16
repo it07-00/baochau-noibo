@@ -662,6 +662,217 @@
 
 .statistics-filter-control { width: auto; }
 
+.role-dashboard-panel {
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.role-dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.role-dashboard-header.role-consulting {
+    background: linear-gradient(130deg, #e0f2fe, #f0f9ff 60%, #eef2ff);
+}
+
+.role-dashboard-header.role-technical {
+    background: linear-gradient(130deg, #ffedd5, #fff7ed 60%, #fffbeb);
+}
+
+.role-dashboard-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.role-dashboard-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.83rem;
+    color: #475569;
+}
+
+.role-dashboard-year {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid rgba(15, 23, 42, 0.16);
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.78);
+    white-space: nowrap;
+}
+
+.role-kpi-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+    min-height: 126px;
+}
+
+.role-kpi-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+}
+
+.role-kpi-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.role-kpi-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.role-kpi-value {
+    font-size: 1.5rem;
+    line-height: 1.1;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+
+.role-kpi-note {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.role-kpi-progress {
+    height: 6px;
+    border-radius: 99px;
+    overflow: hidden;
+    background: #e2e8f0;
+    margin-top: 8px;
+}
+
+.role-kpi-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #0ea5e9, #2563eb);
+}
+
+.role-kpi-card.role-consulting-total .role-kpi-icon {
+    color: #0369a1;
+    background: #e0f2fe;
+}
+
+.role-kpi-card.role-consulting-completed .role-kpi-icon {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.role-kpi-card.role-consulting-processing .role-kpi-icon {
+    color: #9a3412;
+    background: #ffedd5;
+}
+
+.role-kpi-card.role-consulting-rate .role-kpi-icon {
+    color: #1d4ed8;
+    background: #dbeafe;
+}
+
+.role-kpi-card.role-technical-total .role-kpi-icon {
+    color: #9a3412;
+    background: #ffedd5;
+}
+
+.role-kpi-card.role-technical-completed .role-kpi-icon {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.role-kpi-card.role-technical-processing .role-kpi-icon {
+    color: #92400e;
+    background: #fef3c7;
+}
+
+.role-kpi-card.role-technical-rate .role-kpi-icon {
+    color: #0f766e;
+    background: #ccfbf1;
+}
+
+.role-table-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.role-table-card .card-header {
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.role-table-title {
+    margin: 0;
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.role-table-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.79rem;
+    color: #64748b;
+}
+
+.role-data-table thead th {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #475569;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.role-data-table tbody td {
+    vertical-align: middle;
+}
+
+.role-data-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.role-progress-inline {
+    height: 5px;
+    border-radius: 99px;
+    background: #e2e8f0;
+    overflow: hidden;
+    margin-bottom: 4px;
+    min-width: 96px;
+}
+
+.role-progress-inline > span {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #10b981, #22c55e);
+}
+
 @media (max-width: 767.98px) {
     .statistics-page-header              { align-items: stretch !important; gap: 14px !important; }
     .statistics-page-header > div:first-child,
