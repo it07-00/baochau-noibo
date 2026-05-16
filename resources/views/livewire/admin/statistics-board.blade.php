@@ -492,7 +492,7 @@
         </div>
         @endunless
 
-        @if($canSeeInvoiceTasks || $canSeeSalesTasks)
+        @if(($needsActionTotal ?? 0) > 0)
         <div class="card border-0 shadow-sm mb-4 border-start border-3 border-warning">
             <div class="card-body py-3 px-4">
                 <div class="d-flex align-items-center gap-2 mb-3">
@@ -539,10 +539,38 @@
                         </a>
                     </div>
                     @endif
+                    @if(auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]) && (($needsAction['incomplete_assigned_contracts'] ?? 0) > 0))
+                    <div class="col-6 col-md-3">
+                        <a href="{{ auth()->user()->hasRole(\App\Enums\Role::KY_THUAT->value) ? route('app.reports.technical.achievement') : route('app.reports.consulting-work.achievement') }}" class="text-decoration-none d-block">
+                            <div class="border border-success-subtle rounded-3 p-3 h-100 bg-success-subtle bg-opacity-50">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-check2-circle text-success"></i>
+                                    <span class="text-success fw-semibold small">Sắp đến hạn hoàn thành</span>
+                                </div>
+                                <div class="fw-bold text-success fs-4 lh-1">{{ number_format($needsAction['incomplete_assigned_contracts'] ?? 0) }}</div>
+                                <div class="text-muted" style="font-size:11px;">Hồ sơ chưa hoàn thành, sắp đến hạn chót trong 15 ngày tới</div>
+                            </div>
+                        </a>
+                    </div>
+                    @endif
+                    @if($canSeeSalesTasks && (($needsAction['upcoming_renewals'] ?? 0) > 0))
+                    <div class="col-6 col-md-3">
+                        <a href="{{ route('app.contracts.waste.index') }}" class="text-decoration-none d-block">
+                            <div class="border border-info-subtle rounded-3 p-3 h-100 bg-info-subtle bg-opacity-50">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-arrow-repeat text-info"></i>
+                                    <span class="text-info fw-semibold small">Sắp đến kỳ tái ký</span>
+                                </div>
+                                <div class="fw-bold text-info fs-4 lh-1">{{ number_format($needsAction['upcoming_renewals'] ?? 0) }}</div>
+                                <div class="text-muted" style="font-size:11px;">hợp đồng gần đủ 1 năm, cần nhắc trước 1 tháng</div>
+                            </div>
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
-        @endif {{-- canSeeInvoiceTasks || canSeeSalesTasks --}}
+        @endif
 
         {{-- [4] Xu hướng & Phân tích --}}
         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))

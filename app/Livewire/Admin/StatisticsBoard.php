@@ -234,12 +234,12 @@ class StatisticsBoard extends Component
         $totalCustomers = (int) $customerQuery->count();
 
         $contractTypes = [
-            'Chất thải'   => ContractWaste::class,
-            'Tư vấn'      => ContractLegal::class,
-            'Dự án'       => ContractTechnical::class,
-            'Thương mại'  => ContractResearch::class,
-            'Năng lượng'  => ContractEmission::class,
-            'Bền vững'    => ContractSustainability::class,
+            'Chất thải & Tiếng ồn'   => ContractWaste::class,
+            'Pháp lý & Hồ sơ MT'     => ContractLegal::class,
+            'Kỹ thuật & Ứng phó SC'  => ContractTechnical::class,
+            'NC & CĐ Công nghệ'      => ContractResearch::class,
+            'TV & BC PTBV'           => ContractSustainability::class,
+            'Phát thải & Năng lượng' => ContractEmission::class,
         ];
 
         $byType = [];
@@ -514,7 +514,7 @@ class StatisticsBoard extends Component
         ];
 
         $canSeeTechnical  = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::KY_THUAT->value]);
-        $canSeeConsulting = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TU_VAN->value, RoleEnum::TP_KINH_DOANH->value]);
+        $canSeeConsulting = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TU_VAN->value]);
         $canSeeFinance        = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value]);
         $canSeeInvoiceTasks  = $currentUser->hasAnyRole([RoleEnum::KE_TOAN->value, RoleEnum::GIAM_DOC->value]);
         $canSeeSalesTasks    = $currentUser->hasAnyRole([RoleEnum::KINH_DOANH->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::GIAM_DOC->value]);
@@ -524,6 +524,8 @@ class StatisticsBoard extends Component
             'missing_subcontractor_invoice' => 0,
             'unpaid_subcontractor_payment' => 0,
             'pending_quotations' => 0,
+            'incomplete_assigned_contracts' => 0,
+            'upcoming_renewals' => 0,
         ];
 
         foreach ($contractTypes as $modelClass) {
@@ -583,6 +585,67 @@ class StatisticsBoard extends Component
         }
 
         $needsAction['pending_quotations'] = (int) $pendingQuotationQuery->count();
+
+        if ($currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value])) {
+            $completionDeadlineTo = now()->addDays(15)->endOfDay();
+
+            foreach (array_values($contractTypes) as $modelClass) {
+                $incompleteQuery = $modelClass::query()
+                    ->whereHas('assignments', fn ($query) => $query
+                        ->where('user_id', $currentUser->id)
+                        ->whereNotNull('deadline')
+                        ->whereDate('deadline', '<=', $completionDeadlineTo))
+                    ->where(function ($query) {
+                        $query->whereNull('workflow_status')
+                            ->orWhere('workflow_status', '!=', 'finished');
+                    });
+
+                $needsAction['incomplete_assigned_contracts'] += (int) $incompleteQuery->count();
+            }
+        }
+
+        if ($canSeeSalesTasks) {
+            $renewalReminderFrom = now()->subYear()->startOfDay();
+            $renewalReminderTo = now()->subMonths(11)->endOfDay();
+            $isRestrictedSales = $currentUser->hasRole(RoleEnum::KINH_DOANH->value)
+                && ! $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value]);
+
+            foreach (array_values($contractTypes) as $modelClass) {
+                $renewalQuery = $modelClass::query()
+                    ->whereBetween('signed_at', [$renewalReminderFrom, $renewalReminderTo])
+                    ->where(function ($query) {
+                        $query->whereNull('is_renewal')->orWhere('is_renewal', false);
+                    })
+                    ->where(function ($query) {
+                        $query->whereNull('renewal_status')
+                            ->orWhereNotIn('renewal_status', ['ĐÃ TÁI KÝ', 'ĐÃ KÝ', 'KHÔNG TÁI KÝ']);
+                    });
+
+                if ($isRestrictedSales) {
+                    $renewalQuery->where('staff_id', $currentUser->id);
+                }
+
+                $needsAction['upcoming_renewals'] += (int) $renewalQuery->count();
+            }
+        }
+
+        $visibleNeedsActionKeys = [];
+        if ($canSeeInvoiceTasks) {
+            $visibleNeedsActionKeys = array_merge($visibleNeedsActionKeys, [
+                'missing_bao_chau_invoice',
+                'missing_subcontractor_invoice',
+                'unpaid_subcontractor_payment',
+            ]);
+        }
+        if ($currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value])) {
+            $visibleNeedsActionKeys[] = 'incomplete_assigned_contracts';
+        }
+        if ($canSeeSalesTasks) {
+            $visibleNeedsActionKeys[] = 'upcoming_renewals';
+        }
+
+        $needsActionTotal = collect($visibleNeedsActionKeys)
+            ->sum(fn ($key) => (int) ($needsAction[$key] ?? 0));
 
         // ── Insight theo tháng: báo giá vs ký hợp đồng theo dịch vụ/khu vực ──
         $insightMonth = $selectedMonth ?? (int) now()->month;
@@ -662,11 +725,12 @@ class StatisticsBoard extends Component
 
         // ── Biểu đồ tư vấn: số dự án theo loại / quý hoặc cả năm ──
         $consultingTypes = [
-            'Tư vấn'    => ContractLegal::class,
-            'Dự án'     => ContractTechnical::class,
-            'Thương mại'=> ContractResearch::class,
-            'Bền vững'  => ContractSustainability::class,
-            'Năng lượng'=> ContractEmission::class,
+            'Chất thải & Tiếng ồn'   => ContractWaste::class,
+            'Pháp lý & Hồ sơ MT'     => ContractLegal::class,
+            'Kỹ thuật & Ứng phó SC'  => ContractTechnical::class,
+            'NC & CĐ Công nghệ'      => ContractResearch::class,
+            'TV & BC PTBV'           => ContractSustainability::class,
+            'Phát thải & Năng lượng' => ContractEmission::class,
         ];
         $consultingChartData = [];
         $consultingStats = collect();
@@ -716,6 +780,9 @@ class StatisticsBoard extends Component
             foreach ($consultingTypes as $label => $model) {
                 $dateColumn = $resolveContractDateColumn($model);
                 $statsQuery = $model::query();
+                if ($currentUser->hasRole(RoleEnum::TU_VAN->value)) {
+                    $statsQuery->whereHas('assignments', fn ($query) => $query->where('user_id', $currentUser->id));
+                }
                 $applyContractDateFilter($statsQuery, $selectedMonth, $dateColumn);
                 $rows = $statsQuery->get(['id', 'value', 'workflow_status']);
 
@@ -749,13 +816,14 @@ class StatisticsBoard extends Component
         ];
         if ($canSeeTechnical) {
             $typeLabels = [
-                ContractLegal::class      => 'Pháp lý & Hồ sơ MT',
+                ContractLegal::class      => 'Hồ sơ môi trường',
             ];
 
             foreach ($typeLabels as $modelClass => $label) {
                 $dateColumn = $resolveContractDateColumn($modelClass);
 
                 $assignments = ContractAssignment::where('assignable_type', $modelClass)
+                    ->when($currentUser->hasRole(RoleEnum::KY_THUAT->value), fn ($query) => $query->where('user_id', $currentUser->id))
                     ->whereHas('assignable', fn ($q) => $applyContractDateFilter($q, null, $dateColumn))
                     ->with('assignable')
                     ->get();
@@ -913,7 +981,7 @@ class StatisticsBoard extends Component
             'byType', 'monthly', 'canSeeTechnical', 'technicalStats', 'technicalSummary',
             'canSeeConsulting', 'consultingChartData', 'consultingStats', 'consultingSummary', 'canSeeFinance',
             'canSeeInvoiceTasks', 'canSeeSalesTasks',
-            'isIT', 'itStats', 'envData', 'dailyReportReminder', 'needsAction',
+            'isIT', 'itStats', 'envData', 'dailyReportReminder', 'needsAction', 'needsActionTotal',
             'workScheduleSummary', 'workScheduleRecentItems', 'workScheduleHasTime',
             'insightMonth', 'serviceInsightChart', 'regionInsightChart',
             'sourceSalesChart'
