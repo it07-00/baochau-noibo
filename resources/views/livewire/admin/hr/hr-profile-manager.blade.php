@@ -124,7 +124,6 @@
                         <tr>
                             <th class="ps-3 w-50px" >#</th>
                             <th>Nhân viên</th>
-                            <th>Mã NV</th>
                             <th>Phòng ban</th>
                             <th>Trạng thái</th>
                             <th>Loại</th>
@@ -152,9 +151,6 @@
                                             <div class="text-muted fs-78" >{{ $u->email }}</div>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <span class="text-muted fw-bold fs-85" >{{ $u->employee_code ?: '—' }}</span>
                                 </td>
                                 <td>
                                     <span class="fs-85">{{ $u->department->name ?? '—' }}</span>

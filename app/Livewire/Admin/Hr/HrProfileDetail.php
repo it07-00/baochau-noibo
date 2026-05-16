@@ -66,7 +66,7 @@ class HrProfileDetail extends Component
 
     public function savePersonalInfo(): void
     {
-        $this->authorize('edit', 'hr-profiles');
+        $this->checkPermission('edit', 'hr-profiles');
 
         $this->validate([
             'employee_code' => 'nullable|string|max:20|unique:users,employee_code,' . $this->user->id,
