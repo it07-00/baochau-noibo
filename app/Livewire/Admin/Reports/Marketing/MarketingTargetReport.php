@@ -18,7 +18,7 @@ class MarketingTargetReport extends Component
     {
         $this->year = now()->year;
         $this->years = range(now()->year, now()->year - 4);
-        $this->canEdit = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $this->canEdit = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value]);
         $this->loadTargets();
     }
 

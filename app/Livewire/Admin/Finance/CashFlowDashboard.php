@@ -167,8 +167,8 @@ class CashFlowDashboard extends Component
                     'ncc_payment_status' => $paymentStatus,
                     'ncc_payment_status_label' => $paymentStatus === self::PAYMENT_STATUS_PAID ? 'Đã thanh toán' : 'Chưa thanh toán',
                     'ncc_payment_status_badge_class' => $paymentStatus === self::PAYMENT_STATUS_PAID
-                        ? 'bg-success-subtle text-success border border-success-subtle'
-                        : 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+                        ? 'bg-success text-white'
+                        : 'bg-danger text-white',
                     'ncc_payment_paid_at' => $contract->ncc_payment_paid_at?->format('d/m/Y'),
                     'ncc_payment_paid_at_input' => $contract->ncc_payment_paid_at?->format('Y-m-d'),
                     'net_received' => $revenue - $nccPayment,
@@ -184,12 +184,12 @@ class CashFlowDashboard extends Component
     private function contractTypeBadgeClass(string $sourceKey): string
     {
         return match ($sourceKey) {
-            'waste' => 'bg-success-subtle text-success border border-success-subtle',
-            'consulting' => 'bg-primary-subtle text-primary border border-primary-subtle',
-            'project' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
-            'commercial' => 'bg-info-subtle text-info-emphasis border border-info-subtle',
-            'sustainability' => 'bg-secondary-subtle text-secondary border border-secondary-subtle',
-            'energy' => 'bg-danger-subtle text-danger border border-danger-subtle',
+            'waste' => 'bg-success text-white',
+            'consulting' => 'bg-primary text-white',
+            'project' => 'bg-warning text-dark',
+            'commercial' => 'bg-info text-dark',
+            'sustainability' => 'bg-secondary text-white',
+            'energy' => 'bg-danger text-white',
             default => 'bg-light text-dark border',
         };
     }

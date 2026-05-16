@@ -67,72 +67,40 @@
         </div>
     @endif
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <div>
-                <h6 class="mb-0 fw-bold d-flex align-items-center gap-2">
-                    <i class="bi bi-calendar2-week text-primary"></i>
-                    <span>Lịch công tác hôm nay</span>
-                </h6>
-                <small class="text-muted">
-                    {{ $workScheduleHasTime
-                        ? 'Tổng lịch hôm nay, lịch sắp tới trong 2 giờ và các lịch cần ưu tiên xử lý'
-                        : 'Hệ thống lịch hiện đang theo ngày. Mốc 2 giờ sẽ chính xác hơn khi bổ sung giờ bắt đầu/kết thúc.' }}
-                </small>
+    <div class="card border-0 shadow-sm mb-4 border-start border-3 border-primary">
+        <div class="card-body py-3 px-4 d-flex align-items-center gap-3 flex-wrap">
+            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                <i class="bi bi-calendar2-week text-primary fs-5"></i>
+                <span class="fw-bold text-body">Lịch công tác hôm nay</span>
             </div>
-            <a href="{{ route('app.work-schedules.index') }}" class="btn btn-outline-primary btn-sm">
+            <div class="vr opacity-25 d-none d-md-block flex-shrink-0"></div>
+            <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+                <span class="badge bg-primary text-white px-3 py-2 fs-12px">
+                    <i class="bi bi-calendar-check me-1"></i>Hôm nay: {{ number_format($workScheduleSummary['today_total'] ?? 0) }}
+                </span>
+                <span class="badge bg-warning text-dark px-3 py-2 fs-12px">
+                    <i class="bi bi-calendar-event me-1"></i>Ngày mai: {{ number_format($workScheduleSummary['upcoming_tomorrow'] ?? 0) }}
+                </span>
+                @if(($workScheduleSummary['overdue'] ?? 0) > 0)
+                <span class="badge bg-danger text-white px-3 py-2 fs-12px">
+                    <i class="bi bi-exclamation-circle me-1"></i>Quá hạn: {{ number_format($workScheduleSummary['overdue']) }}
+                </span>
+                @endif
+                @if($workScheduleRecentItems->isNotEmpty())
+                <div class="vr opacity-25 d-none d-md-block flex-shrink-0"></div>
+                @endif
+                @foreach($workScheduleRecentItems as $item)
+                <span class="badge rounded-pill {{ $item['status_class'] }} px-3 py-2 fs-12px text-truncate" style="max-width: 200px;" title="{{ $item['title'] }}">
+                    {{ $item['time_label'] !== 'Cả ngày' ? $item['time_label'] . ' · ' : '' }}{{ $item['title'] }}
+                </span>
+                @endforeach
+                @if($workScheduleRecentItems->isEmpty())
+                <span class="text-muted fst-italic">Chưa có lịch hôm nay.</span>
+                @endif
+            </div>
+            <a href="{{ route('app.work-schedules.index') }}" class="btn btn-outline-primary btn-sm flex-shrink-0">
                 <i class="bi bi-arrow-right-circle me-1"></i> Xem tất cả
             </a>
-        </div>
-
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <div class="border rounded-3 p-3 h-100 bg-primary-subtle border-primary-subtle">
-                        <div class="text-muted small text-uppercase fw-semibold">Tổng lịch</div>
-                        <div class="fs-3 fw-bold text-primary">{{ number_format($workScheduleSummary['today_total'] ?? 0) }}</div>
-                        <small class="text-muted">Lịch diễn ra trong hôm nay</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="border rounded-3 p-3 h-100 bg-warning-subtle border-warning-subtle">
-                        <div class="text-muted small text-uppercase fw-semibold">Sắp tới 2 giờ</div>
-                        <div class="fs-3 fw-bold text-warning-emphasis">{{ number_format($workScheduleSummary['upcoming_two_hours'] ?? 0) }}</div>
-                        <small class="text-muted">
-                            {{ $workScheduleHasTime ? 'Lịch chuẩn bị diễn ra trong 2 giờ tới' : 'Chưa có dữ liệu giờ để tách chính xác theo 2 giờ' }}
-                        </small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="border rounded-3 p-3 h-100 bg-danger-subtle border-danger-subtle">
-                        <div class="text-muted small text-uppercase fw-semibold">Quá hạn</div>
-                        <div class="fs-3 fw-bold text-danger">{{ number_format($workScheduleSummary['overdue'] ?? 0) }}</div>
-                        <small class="text-muted">Lịch đã qua ngày hoặc quá thời điểm kết thúc</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="list-group list-group-flush">
-                @forelse($workScheduleRecentItems as $item)
-                    <div class="list-group-item px-0 py-3 border-top d-flex align-items-start justify-content-between gap-3 flex-wrap">
-                        <div class="flex-grow-1 min-w-0">
-                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                                <span class="badge rounded-pill {{ $item['status_class'] }}">{{ $item['status_label'] }}</span>
-                                <span class="badge bg-light text-dark border">{{ $item['time_label'] }}</span>
-                                <span class="small text-muted">{{ $item['date_label'] }}</span>
-                            </div>
-                            <div class="fw-semibold text-truncate mb-1">{{ $item['title'] }}</div>
-                            <div class="small text-muted text-truncate">{{ $item['description'] !== '' ? $item['description'] : 'Không có mô tả chi tiết.' }}</div>
-                        </div>
-                        <div class="small text-muted text-nowrap">{{ $item['owner_name'] }}</div>
-                    </div>
-                @empty
-                    <div class="text-center text-muted py-4">
-                        <i class="bi bi-calendar-x d-block fs-4 mb-2"></i>
-                        Chưa có lịch công tác gần đây.
-                    </div>
-                @endforelse
-            </div>
         </div>
     </div>
 
@@ -416,8 +384,12 @@
     @else
         {{-- ── BUSINESS DASHBOARD VIEW ──────────────────────────────── --}}
 
-        {{-- KPI Cards --}}
+        {{-- [2] KPI Tổng quan --}}
         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+        <div class="d-flex align-items-center gap-2 mb-3 mt-1">
+            <span class="text-muted fw-semibold small text-uppercase">Tổng quan kinh doanh</span>
+            <hr class="flex-grow-1 m-0 opacity-25">
+        </div>
         <div class="row g-3 mb-4">
             <div class="col-md-3 col-6">
                 <div class="card kpi-modern-card h-100">
@@ -520,56 +492,78 @@
         </div>
         @endunless
 
-        @if($canSeeFinance)
-        <div class="row g-3 mb-4">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
-                        <div>
-                            <h6 class="mb-0 fw-bold">Cần xử lý</h6>
-                            <small class="text-muted">Các việc ảnh hưởng đến hợp đồng, dòng tiền và chuyển đổi báo giá</small>
-                        </div>
-                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Ưu tiên kiểm tra</span>
+        @if($canSeeInvoiceTasks || $canSeeSalesTasks)
+        <div class="card border-0 shadow-sm mb-4 border-start border-3 border-warning">
+            <div class="card-body py-3 px-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                    <span class="fw-bold text-body fs-6">Cần xử lý</span>
+                    <span class="badge bg-warning text-dark ms-1"><i class="bi bi-flag-fill me-1"></i>Ưu tiên kiểm tra</span>
+                </div>
+                <div class="row g-2">
+                    @if($canSeeInvoiceTasks)
+                    <div class="col-6 col-md-3">
+                        <a href="{{ auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value) ? route('app.finance.cash-flow') : route('app.contracts.waste.index') }}" class="text-decoration-none d-block">
+                            <div class="border border-danger-subtle rounded-3 p-3 h-100 bg-danger-subtle bg-opacity-50">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-file-earmark-x text-danger"></i>
+                                    <span class="text-danger fw-semibold small">Thiếu SHĐ Bảo Châu</span>
+                                </div>
+                                <div class="fw-bold text-danger fs-4 lh-1">{{ number_format($needsAction['missing_bao_chau_invoice'] ?? 0) }}</div>
+                                <div class="text-muted" style="font-size:11px;">hợp đồng chưa có số HĐ BC</div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-3 col-sm-6">
-                                <div class="border rounded-3 p-3 h-100 bg-danger-subtle border-danger-subtle">
-                                    <div class="text-muted small">Chưa có số HĐ Bảo Châu</div>
-                                    <div class="fs-4 fw-bold text-danger">{{ number_format($needsAction['missing_bao_chau_invoice'] ?? 0) }}</div>
-                                    <small class="text-muted">Cần kế toán bổ sung</small>
+                    <div class="col-6 col-md-3">
+                        <a href="{{ auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value) ? route('app.finance.cash-flow') : route('app.contracts.waste.index') }}" class="text-decoration-none d-block">
+                            <div class="border border-warning-subtle rounded-3 p-3 h-100 bg-warning-subtle bg-opacity-50">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-file-earmark-minus text-warning-emphasis"></i>
+                                    <span class="text-warning-emphasis fw-semibold small">Thiếu SHĐ NTP</span>
                                 </div>
+                                <div class="fw-bold text-warning-emphasis fs-4 lh-1">{{ number_format($needsAction['missing_subcontractor_invoice'] ?? 0) }}</div>
+                                <div class="text-muted" style="font-size:11px;">HĐ có NTP nhưng chưa có số HĐ NTP</div>
                             </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="border rounded-3 p-3 h-100 bg-warning-subtle border-warning-subtle">
-                                    <div class="text-muted small">Có NTP nhưng thiếu số HĐ NTP</div>
-                                    <div class="fs-4 fw-bold text-warning-emphasis">{{ number_format($needsAction['missing_subcontractor_invoice'] ?? 0) }}</div>
-                                    <small class="text-muted">Áp dụng hợp đồng có nhà thầu phụ</small>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="border rounded-3 p-3 h-100 bg-primary-subtle border-primary-subtle">
-                                    <div class="text-muted small">Chi NTP chưa thanh toán</div>
-                                    <div class="fs-4 fw-bold text-primary">{{ number_format($needsAction['unpaid_subcontractor_payment'] ?? 0) }}</div>
-                                    <small class="text-muted">Theo trạng thái thanh toán nhà thầu phụ</small>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="border rounded-3 p-3 h-100 bg-info-subtle border-info-subtle">
-                                    <div class="text-muted small">Báo giá chưa chuyển HĐ</div>
-                                    <div class="fs-4 fw-bold text-info">{{ number_format($needsAction['pending_quotations'] ?? 0) }}</div>
-                                    <small class="text-muted">Đang theo dõi hoặc hẹn báo giá</small>
-                                </div>
-                            </div>
-                        </div>
+                        </a>
                     </div>
+                    <div class="col-6 col-md-3">
+                        <a href="{{ auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value) ? route('app.finance.cash-flow') : route('app.contracts.waste.index') }}" class="text-decoration-none d-block">
+                            <div class="border border-primary-subtle rounded-3 p-3 h-100 bg-primary-subtle bg-opacity-50">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-cash-stack text-primary"></i>
+                                    <span class="text-primary fw-semibold small">Chi NTP chưa thanh toán</span>
+                                </div>
+                                <div class="fw-bold text-primary fs-4 lh-1">{{ number_format($needsAction['unpaid_subcontractor_payment'] ?? 0) }}</div>
+                                <div class="text-muted" style="font-size:11px;">hợp đồng NTP chưa được thanh toán</div>
+                            </div>
+                        </a>
+                    </div>
+                    @endif
+                    @if($canSeeSalesTasks)
+                    <div class="col-6 col-md-3">
+                        <a href="{{ route('app.quotation-tracking.index') }}" class="text-decoration-none d-block">
+                            <div class="border border-info-subtle rounded-3 p-3 h-100 bg-info-subtle bg-opacity-50">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-clipboard-check text-info-emphasis"></i>
+                                    <span class="text-info-emphasis fw-semibold small">Báo giá chờ ký HĐ</span>
+                                </div>
+                                <div class="fw-bold text-info-emphasis fs-4 lh-1">{{ number_format($needsAction['pending_quotations'] ?? 0) }}</div>
+                                <div class="text-muted" style="font-size:11px;">báo giá chưa chuyển thành hợp đồng</div>
+                            </div>
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
-        @endif
+        @endif {{-- canSeeInvoiceTasks || canSeeSalesTasks --}}
 
-        {{-- Trends & Charts Row --}}
+        {{-- [4] Xu hướng & Phân tích --}}
         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="text-muted fw-semibold small text-uppercase">Xu hướng &amp; Phân tích</span>
+            <hr class="flex-grow-1 m-0 opacity-25">
+        </div>
         <div class="row g-4 mb-4">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm h-100">
@@ -657,6 +651,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+        @endif
+
+        {{-- [5] Vận hành nội bộ --}}
+        @if($canSeeConsulting || $canSeeTechnical)
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="text-muted fw-semibold small text-uppercase">Vận hành nội bộ</span>
+            <hr class="flex-grow-1 m-0 opacity-25">
         </div>
         @endif
 

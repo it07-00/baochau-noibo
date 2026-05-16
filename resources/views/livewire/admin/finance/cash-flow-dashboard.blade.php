@@ -135,7 +135,7 @@
                             <th class="text-end">Hoa hồng</th>
                             <th class="text-end text-danger">Chi Nhà thầu phụ</th>
                             <th class="text-end text-success fw-bold">Thực nhận</th>
-                            <th class="text-center" style="width:190px">Tình trạng thanh toán</th>
+                            <th class="text-center" style="width:220px">Tình trạng thanh toán</th>
                             @if($canManageNccPayment)
                                 <th class="text-center" style="width:140px">Hành động</th>
                             @endif
@@ -162,6 +162,7 @@
                                     <label class="form-label small text-muted mb-0">Số HĐ Bảo Châu</label>
                                     <input type="text"
                                            class="form-control form-control-sm fw-semibold text-center"
+                                           style="font-size: 12px;"
                                            value="{{ $row['shd_bc'] }}"
                                            placeholder="Nhập số HĐ BC"
                                            wire:change="updateBaoChauInvoiceNumber('{{ $row['source_key'] }}', {{ $row['id'] }}, $event.target.value)">
@@ -182,6 +183,7 @@
                                                 <label class="form-label small text-muted mb-0 mt-1">Số HĐ/HĐ NTP</label>
                                                 <input type="text"
                                                        class="form-control form-control-sm fw-semibold text-center"
+                                                       style="font-size: 12px;"
                                                        value="{{ $row['shd_cxl'] }}"
                                                        placeholder="Nhập số HĐ NTP"
                                                        wire:change="updateSubcontractorInvoiceNumber('{{ $row['source_key'] }}', {{ $row['id'] }}, $event.target.value)">
@@ -231,14 +233,8 @@
                                 <div class="d-inline-flex flex-column align-items-center gap-1">
                                     @if($canManageNccPayment)
                                         @php($currentPaymentStatus = $paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status'])
-                                        @php($currentPaymentBadgeClass = $currentPaymentStatus === 'paid'
-                                            ? 'bg-success-subtle text-success border border-success-subtle'
-                                            : 'bg-warning-subtle text-warning-emphasis border border-warning-subtle')
-                                        <span class="badge {{ $currentPaymentBadgeClass }} px-3 py-2" style="font-size:12px;">
-                                            {{ $currentPaymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
-                                        </span>
-                                        <select class="form-select form-select-sm"
-                                                style="min-width: 170px;"
+                                        <select class="form-select"
+                                                style="width: 100%;"
                                                 wire:model.live="paymentStatuses.{{ $sheetStateKey }}"
                                                 wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
                                             <option value="unpaid">Chưa thanh toán</option>
@@ -246,8 +242,8 @@
                                         </select>
                                         @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
                                             <input type="date"
-                                                   class="form-control form-control-sm"
-                                                   style="min-width: 170px;"
+                                                   class="form-control"
+                                                   style="width: 100%;"
                                                    wire:model.live="paymentDates.{{ $sheetStateKey }}"
                                                    wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
                                         @endif

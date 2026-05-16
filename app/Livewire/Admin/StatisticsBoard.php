@@ -365,9 +365,7 @@ class StatisticsBoard extends Component
         // ── Nhắc lịch công tác (mọi role) ─────────────────
         $todayDate = today();
         $nowTime = now();
-        $nextTwoHours = $nowTime->copy()->addHours(2);
-        $scheduleWindowStart = $todayDate->copy()->subDays(7)->toDateString();
-        $scheduleWindowEnd = $todayDate->copy()->addDays(14)->toDateString();
+        $tomorrowDate = today()->addDay();
 
         $workScheduleHasTime = Schema::hasColumn('work_schedules', 'start_time');
         $workScheduleHasEndTime = Schema::hasColumn('work_schedules', 'end_time');
@@ -379,7 +377,7 @@ class StatisticsBoard extends Component
             });
         };
 
-        $workScheduleTodayTotal = WorkSchedule::query()
+        $workScheduleTodayQuery = WorkSchedule::query()
             ->where($applyWorkScheduleScope)
             ->whereDate('start_date', '<=', $todayDate)
             ->where(function ($query) use ($todayDate) {
@@ -388,8 +386,9 @@ class StatisticsBoard extends Component
                         $single->whereNull('end_date')
                             ->whereDate('start_date', '=', $todayDate);
                     });
-            })
-            ->count();
+            });
+
+        $workScheduleTodayTotal = (clone $workScheduleTodayQuery)->count();
 
         $workScheduleOverdueTotal = WorkSchedule::query()
             ->where($applyWorkScheduleScope)
@@ -404,22 +403,11 @@ class StatisticsBoard extends Component
             })
             ->count();
 
-        $workScheduleRaw = WorkSchedule::query()
+        $workScheduleRaw = (clone $workScheduleTodayQuery)
             ->with('user:id,name')
-            ->where($applyWorkScheduleScope)
-            ->where(function ($query) use ($scheduleWindowStart, $scheduleWindowEnd) {
-                $query->where(function ($overlap) use ($scheduleWindowStart, $scheduleWindowEnd) {
-                    $overlap->whereNotNull('end_date')
-                        ->whereDate('start_date', '<=', $scheduleWindowEnd)
-                        ->whereDate('end_date', '>=', $scheduleWindowStart);
-                })->orWhere(function ($single) use ($scheduleWindowStart, $scheduleWindowEnd) {
-                    $single->whereNull('end_date')
-                        ->whereBetween('start_date', [$scheduleWindowStart, $scheduleWindowEnd]);
-                });
-            })
             ->orderBy('start_date')
+            ->orderBy('start_time')
             ->orderBy('id')
-            ->take(80)
             ->get();
 
         $statusClassMap = [
@@ -467,18 +455,18 @@ class StatisticsBoard extends Component
             if ($endAt->lt($nowTime)) {
                 $statusKey = 'overdue';
                 $statusLabel = 'Quá hạn';
-                $sortPriority = 2;
-                $sortTimestamp = -$endAt->timestamp;
+                $statusOrder = 2;
+                $distanceToNow = (int) $endAt->diffInSeconds($nowTime);
             } elseif ($startAt->lte($nowTime) && $endAt->gte($nowTime)) {
                 $statusKey = 'in_progress';
                 $statusLabel = 'Đang diễn ra';
-                $sortPriority = 0;
-                $sortTimestamp = $startAt->timestamp;
+                $statusOrder = 0;
+                $distanceToNow = 0;
             } else {
                 $statusKey = 'upcoming';
                 $statusLabel = 'Sắp tới';
-                $sortPriority = 1;
-                $sortTimestamp = $startAt->timestamp;
+                $statusOrder = 1;
+                $distanceToNow = (int) $nowTime->diffInSeconds($startAt);
             }
 
             return [
@@ -492,33 +480,44 @@ class StatisticsBoard extends Component
                 'status_label' => $statusLabel,
                 'status_class' => $statusClassMap[$statusKey],
                 'start_at' => $startAt,
-                'sort_priority' => $sortPriority,
-                'sort_timestamp' => $sortTimestamp,
+                'start_timestamp' => $startAt->timestamp,
+                'status_order' => $statusOrder,
+                'distance_to_now' => $distanceToNow,
             ];
         });
 
-        $workScheduleUpcomingTwoHours = $workScheduleItems
-            ->filter(fn ($item) => $item['status_key'] === 'upcoming')
-            ->filter(fn ($item) => $item['start_at']->greaterThanOrEqualTo($nowTime) && $item['start_at']->lessThanOrEqualTo($nextTwoHours))
+        $workScheduleTomorrowTotal = WorkSchedule::query()
+            ->where($applyWorkScheduleScope)
+            ->whereDate('start_date', '<=', $tomorrowDate)
+            ->where(function ($query) use ($tomorrowDate) {
+                $query->whereDate('end_date', '>=', $tomorrowDate)
+                    ->orWhere(function ($single) use ($tomorrowDate) {
+                        $single->whereNull('end_date')
+                            ->whereDate('start_date', '=', $tomorrowDate);
+                    });
+            })
             ->count();
 
         $workScheduleRecentItems = $workScheduleItems
             ->sortBy([
-                ['sort_priority', 'asc'],
-                ['sort_timestamp', 'asc'],
+                ['status_order', 'asc'],
+                ['distance_to_now', 'asc'],
+                ['start_timestamp', 'asc'],
             ])
             ->take(5)
             ->values();
 
         $workScheduleSummary = [
-            'today_total' => (int) $workScheduleTodayTotal,
-            'upcoming_two_hours' => (int) $workScheduleUpcomingTwoHours,
-            'overdue' => (int) $workScheduleOverdueTotal,
+            'today_total'        => (int) $workScheduleTodayTotal,
+            'upcoming_tomorrow'  => (int) $workScheduleTomorrowTotal,
+            'overdue'            => (int) $workScheduleOverdueTotal,
         ];
 
         $canSeeTechnical  = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::KY_THUAT->value]);
         $canSeeConsulting = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TU_VAN->value, RoleEnum::TP_KINH_DOANH->value]);
-        $canSeeFinance    = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value, RoleEnum::KE_TOAN->value]);
+        $canSeeFinance        = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value]);
+        $canSeeInvoiceTasks  = $currentUser->hasAnyRole([RoleEnum::KE_TOAN->value, RoleEnum::GIAM_DOC->value]);
+        $canSeeSalesTasks    = $currentUser->hasAnyRole([RoleEnum::KINH_DOANH->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::GIAM_DOC->value]);
 
         $needsAction = [
             'missing_bao_chau_invoice' => 0,
@@ -913,6 +912,7 @@ class StatisticsBoard extends Component
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
             'byType', 'monthly', 'canSeeTechnical', 'technicalStats', 'technicalSummary',
             'canSeeConsulting', 'consultingChartData', 'consultingStats', 'consultingSummary', 'canSeeFinance',
+            'canSeeInvoiceTasks', 'canSeeSalesTasks',
             'isIT', 'itStats', 'envData', 'dailyReportReminder', 'needsAction',
             'workScheduleSummary', 'workScheduleRecentItems', 'workScheduleHasTime',
             'insightMonth', 'serviceInsightChart', 'regionInsightChart',

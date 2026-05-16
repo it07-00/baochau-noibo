@@ -219,7 +219,7 @@ class NotificationBell extends Component
             $issueCount = $issueReports->count();
         }
 
-            $sectionLabels = $this->sectionLabelsForUser($user);
+        $sectionLabels = $this->sectionLabelsForUser($user);
 
         $notificationSections = collect($sectionLabels)
             ->map(fn($label, $key) => [
@@ -229,27 +229,51 @@ class NotificationBell extends Component
             ]);
 
         foreach ($dbNotifications as $notification) {
-                $sectionKey = $this->resolveSectionKey((array) ($notification->data ?? []));
+            $sectionKey = $this->resolveSectionKey((array) ($notification->data ?? []));
 
-                if (!$notificationSections->has($sectionKey)) {
-                    continue;
-                }
+            if (!$notificationSections->has($sectionKey)) {
+                continue;
+            }
 
             $section = $notificationSections->get($sectionKey);
             $section['items']->push($notification);
             $notificationSections->put($sectionKey, $section);
         }
 
-        $notificationSections = $notificationSections->values();
+        $notificationSections = $notificationSections
+            ->map(function (array $section): array {
+                $items = $section['items']
+                    ->sortByDesc(fn ($notification) => optional($notification->created_at)->getTimestamp() ?? 0)
+                    ->values();
+
+                $section['items'] = $items;
+                $section['unread_count'] = $items->whereNull('read_at')->count();
+                $section['latest_timestamp'] = optional($items->first()?->created_at)->getTimestamp() ?? 0;
+                $section['has_items'] = $items->isNotEmpty();
+
+                return $section;
+            })
+            ->sortBy([
+                ['has_items', 'desc'],
+                ['unread_count', 'desc'],
+                ['latest_timestamp', 'desc'],
+                ['label', 'asc'],
+            ])
+            ->values()
+            ->map(function (array $section): array {
+                unset($section['latest_timestamp'], $section['has_items']);
+
+                return $section;
+            });
 
         return view('livewire.admin.notification-bell', [
             'dbNotifications' => $dbNotifications,
             'notificationSections' => $notificationSections,
-                'unreadCount'     => $visibleUnreadCount,
+            'unreadCount'     => $visibleUnreadCount,
             'issueReports'    => $issueReports,
             'issueCount'      => $issueCount,
-                'totalBadge'      => $visibleUnreadCount + $issueCount,
-                'hasMoreNotifications' => $allVisibleNotifications->count() > $dbNotifications->count(),
+            'totalBadge'      => $visibleUnreadCount + $issueCount,
+            'hasMoreNotifications' => $allVisibleNotifications->count() > $dbNotifications->count(),
         ]);
     }
 }

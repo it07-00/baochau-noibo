@@ -74,14 +74,14 @@ class DailyReportManager extends Component
 
     private function canManageReports(): bool
     {
-        return auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value]);
+        return auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value]);
     }
 
     private function scopedUsersQuery()
     {
         $query = User::query();
 
-        $isTopLevel = auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isTopLevel = auth()->user()->hasAnyRole([Role::GIAM_DOC->value]);
         if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && !$isTopLevel) {
             $query->role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]);
         }

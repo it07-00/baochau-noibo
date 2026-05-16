@@ -9,7 +9,7 @@ class HomeBoard extends Component
 {
     public function mount(): void
     {
-        if (auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::KE_TOAN->value])) {
+        if (auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::KE_TOAN->value])) {
             $this->redirect(route('app.dashboard'), navigate: true);
         }
     }

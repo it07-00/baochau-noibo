@@ -100,7 +100,7 @@ class ConsultingContractReport extends Component
         $user ??= auth()->user();
 
         return $user->hasRole(Role::TU_VAN->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
     }
 
     private function baseQuery()

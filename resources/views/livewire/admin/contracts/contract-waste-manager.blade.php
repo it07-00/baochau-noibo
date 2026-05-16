@@ -588,7 +588,7 @@
                                         $currentUser = auth()->user();
                                         $isRestrictedTpKd =
                                             $currentUser->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) &&
-                                            !$currentUser->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value]);
+                                            !$currentUser->hasAnyRole([\App\Enums\Role::GIAM_DOC->value]);
 
                                         $canUpdateStatus =
                                             !$currentUser->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]) &&
@@ -1434,7 +1434,6 @@
                                     'it' => 'IT Admin',
                                     'giam-doc' => 'Giám đốc',
                                     'tp-kinh-doanh' => 'Trưởng phòng KD',
-                                    'quan-ly' => 'Quản lý',
                                     'kinh-doanh' => 'Nhân viên KD',
                                     'ke-toan' => 'Kế toán',
                                     'tu-van' => 'Tư vấn',

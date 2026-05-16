@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Enums\Role as RoleEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -55,8 +56,17 @@ class WorkScheduleNotification extends Notification
                 ? "{$this->userName} đã thêm bạn vào lịch công tác: \"{$this->eventTitle}\""
                 : "{$this->userName} đã {$label} lịch: \"{$this->eventTitle}\"",
             'time_label'     => $timeLabel,
-            'url'            => route('app.work-schedules.index', $urlParameters),
+            'url'            => $this->resolveNotificationUrl($notifiable, $urlParameters),
         ];
+    }
+
+    private function resolveNotificationUrl(object $notifiable, array $urlParameters): string
+    {
+        if (method_exists($notifiable, 'hasRole') && $notifiable->hasRole(RoleEnum::GIAM_DOC->value)) {
+            return route('app.dashboard');
+        }
+
+        return route('app.work-schedules.index', $urlParameters);
     }
 
     private function normalizeTimeLabel(?string $timeLabel): ?string

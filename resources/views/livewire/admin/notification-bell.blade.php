@@ -51,7 +51,7 @@
             @endif
 
             @foreach($notificationSections as $section)
-                @php $sectionUnread = $section['items']->whereNull('read_at')->count(); @endphp
+                @php $sectionUnread = $section['unread_count'] ?? $section['items']->whereNull('read_at')->count(); @endphp
                 <div class="border-bottom" x-data="{ open: {{ $sectionUnread > 0 ? 'true' : 'false' }} }">
                     <button type="button" class="notification-section-toggle w-100 px-3 py-2 bg-light-subtle border-0 d-flex align-items-center justify-content-between gap-2"
                         @click="open = !open">
@@ -76,10 +76,10 @@
                                         <span class="notification-title fw-bold text-dark">{{ $data['contract_label'] ?? '' }}</span>
                                         <span class="notification-time text-muted flex-shrink-0">{{ $notif->created_at->diffForHumans() }}</span>
                                     </div>
-                                    <div class="notification-message text-muted">{{ $data['message'] ?? '' }}</div>
                                     @if(($data['contract_type'] ?? '') === 'work_schedule' && !empty($data['time_label']) && $data['time_label'] !== 'Cả ngày')
-                                        <div class="text-muted small mt-1"><i class="bi bi-clock me-1"></i>{{ $data['time_label'] }}</div>
+                                        <div class="text-muted small mb-1"><i class="bi bi-clock me-1"></i>{{ $data['time_label'] }}</div>
                                     @endif
+                                    <div class="notification-message text-muted">{{ $data['message'] ?? '' }}</div>
                                 </div>
                                 @if(!$notif->read_at)
                                     <span class="notification-unread-dot bg-primary rounded-circle flex-shrink-0 mt-2"></span>

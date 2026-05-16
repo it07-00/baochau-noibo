@@ -241,7 +241,7 @@ abstract class AbstractContractGenericManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
         if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
             return;
@@ -345,7 +345,7 @@ abstract class AbstractContractGenericManager extends Component
         $doc        = $modelClass::findOrFail($id);
         $user       = auth()->user();
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         } else {
@@ -372,7 +372,7 @@ abstract class AbstractContractGenericManager extends Component
         $doc        = $modelClass::findOrFail($id);
         $user       = auth()->user();
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         }
@@ -418,7 +418,7 @@ abstract class AbstractContractGenericManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
         $deletedCount     = 0;
         $skippedCount     = 0;
 
@@ -507,7 +507,6 @@ abstract class AbstractContractGenericManager extends Component
     {
         return auth()->user()->hasAnyRole([
             Role::GIAM_DOC->value,
-            Role::QUAN_LY->value,
             Role::TP_KINH_DOANH->value,
             Role::KINH_DOANH->value,
             Role::IT->value,
@@ -611,7 +610,6 @@ abstract class AbstractContractGenericManager extends Component
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #' . $contractId);
         $recipients    = User::whereHas('roles', fn($q) => $q->whereIn('name', [
             Role::GIAM_DOC->value,
-            Role::QUAN_LY->value,
             Role::TP_KINH_DOANH->value,
             Role::IT->value,
         ]))->get();
@@ -694,7 +692,7 @@ abstract class AbstractContractGenericManager extends Component
         $user             = auth()->user();
         $modelClass       = $this->getModelClass();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = $modelClass::with(['customer', 'staff', 'department', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {
@@ -731,7 +729,7 @@ abstract class AbstractContractGenericManager extends Component
         $user             = auth()->user();
         $modelClass       = $this->getModelClass();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {

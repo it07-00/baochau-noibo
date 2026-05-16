@@ -8,7 +8,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3 px-4">
             <div class="row g-3 align-items-end">
-                @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::QUAN_LY->value, \App\Enums\Role::TP_KINH_DOANH->value]) || auth()->user()->can('roles.view'))
+                @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::TP_KINH_DOANH->value]) || auth()->user()->can('roles.view'))
                 <div class="col-md-4 col-lg-4">
                     <label class="form-label fw-semibold mb-1  text-muted">Nhân viên</label>
                     <select wire:model.live="filter_staff" class="form-select">

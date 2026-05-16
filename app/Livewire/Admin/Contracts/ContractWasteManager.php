@@ -245,7 +245,7 @@ class ContractWasteManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
         if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
             return;
@@ -314,7 +314,7 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
 
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
@@ -341,7 +341,7 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
 
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
@@ -368,7 +368,7 @@ class ContractWasteManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
         $deletedCount = 0;
         $skippedCount = 0;
 
@@ -446,7 +446,6 @@ class ContractWasteManager extends Component
     {
         return auth()->user()->hasAnyRole([
             Role::GIAM_DOC->value,
-            Role::QUAN_LY->value,
             Role::TP_KINH_DOANH->value,
             Role::KINH_DOANH->value,
             Role::IT->value,
@@ -535,7 +534,7 @@ class ContractWasteManager extends Component
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractWaste::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', ContractWaste::class)
             ->where('assignable_id', $contractId)
@@ -701,7 +700,7 @@ class ContractWasteManager extends Component
     {
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = ContractWaste::with(['customer', 'handler', 'staff', 'department'])
             ->when($this->search, function ($q) {
@@ -735,7 +734,7 @@ class ContractWasteManager extends Component
     {
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'workflowSteps'])
             ->when($this->search, function($q) {

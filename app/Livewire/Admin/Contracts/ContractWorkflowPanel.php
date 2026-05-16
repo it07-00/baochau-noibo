@@ -136,7 +136,7 @@ class ContractWorkflowPanel extends Component
         // Map contract type key từ model class
         $typeKey = array_search($modelClass, $this->modelMap) ?: $this->contractType;
 
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
+        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $this->contractId)

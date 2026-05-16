@@ -58,7 +58,6 @@ class RoleManager extends Component
                 RoleEnum::IT->value             => 'IT / Quản trị',
                 RoleEnum::GIAM_DOC->value       => 'Giám đốc',
                 RoleEnum::TP_KINH_DOANH->value  => 'Trưởng phòng KD',
-                RoleEnum::QUAN_LY->value        => 'Quản lý (cũ)',
                 RoleEnum::KINH_DOANH->value     => 'Nhân viên KD',
                 RoleEnum::KE_TOAN->value        => 'Kế toán',
                 RoleEnum::TU_VAN->value         => 'Tư vấn',

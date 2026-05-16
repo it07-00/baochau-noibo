@@ -32,7 +32,7 @@ class PersonalSalesReport extends Component
 
     private function canViewAllSalesStaff(): bool
     {
-        return auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::TP_KINH_DOANH->value]);
+        return auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value]);
     }
 
     public function mount(): void

@@ -6,7 +6,6 @@ enum Role: string
 {
     case IT             = 'it';
     case GIAM_DOC       = 'giam-doc';
-    case QUAN_LY        = 'quan-ly';
     case TP_KINH_DOANH  = 'tp-kinh-doanh';
     case KINH_DOANH     = 'kinh-doanh';
     case TU_VAN         = 'tu-van';
@@ -20,7 +19,6 @@ enum Role: string
         return match($this) {
             self::IT            => 'IT / Quản trị',
             self::GIAM_DOC      => 'Giám đốc',
-            self::QUAN_LY       => 'Quản lý',
             self::TP_KINH_DOANH => 'Trưởng phòng KD',
             self::KINH_DOANH    => 'Nhân viên KD',
             self::TU_VAN        => 'Tư vấn',
@@ -36,7 +34,6 @@ enum Role: string
         return match($this) {
             self::IT            => '#6366f1',
             self::GIAM_DOC      => '#f59e0b',
-            self::QUAN_LY       => '#8b5cf6',
             self::TP_KINH_DOANH => '#3b82f6',
             self::KINH_DOANH    => '#10b981',
             self::TU_VAN        => '#06b6d4',
@@ -53,7 +50,6 @@ enum Role: string
         return [
             self::IT->value,
             self::GIAM_DOC->value,
-            self::QUAN_LY->value,
             self::TP_KINH_DOANH->value,
             self::HCNS->value,
             self::KE_TOAN->value,
@@ -72,13 +68,13 @@ enum Role: string
     /** Giám đốc + Quản lý — roles that use the dashboard as home. */
     public static function directorRoles(): array
     {
-        return [self::GIAM_DOC->value, self::QUAN_LY->value];
+        return [self::GIAM_DOC->value];
     }
 
     /** IT + Giám đốc + Quản lý — roles that redirect to dashboard in the logo link. */
     public static function dashboardAccessRoles(): array
     {
-        return [self::IT->value, self::GIAM_DOC->value, self::QUAN_LY->value];
+        return [self::IT->value, self::GIAM_DOC->value];
     }
 
     /** Kinh doanh + TP Kinh doanh — sales staff. */

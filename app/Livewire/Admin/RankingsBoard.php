@@ -28,7 +28,7 @@ class RankingsBoard extends Component
     public function render()
     {
         $currentUser = auth()->user();
-        $canSeeFinance    = $currentUser->hasAnyRole([Role::KE_TOAN->value, Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $canSeeFinance    = $currentUser->hasAnyRole([Role::KE_TOAN->value, Role::GIAM_DOC->value]);
         $canSeeSales      = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::KINH_DOANH->value, Role::KE_TOAN->value]);
         $canSeeConsulting = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::TU_VAN->value]);
         $canSeeTechnical  = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::KY_THUAT->value]);
@@ -74,7 +74,10 @@ class RankingsBoard extends Component
                         'total' => (float) ($totalsByStaff[$user->id] ?? 0),
                     ];
                 })
-                ->sortByDesc('total')
+                ->sortBy([
+                    ['total', 'desc'],
+                    ['name', 'asc'],
+                ])
                 ->values();
 
             // ── Top khách hàng theo giá trị HĐ ──────────────
@@ -95,6 +98,7 @@ class RankingsBoard extends Component
                 ->groupBy('customers.id', 'customers.name')
                 ->havingRaw('waste_count + consult_count > 0')
                 ->orderByRaw('waste_value + consult_value DESC')
+                ->orderBy('customers.name')
                 ->limit(15)
                 ->get();
 
@@ -105,6 +109,8 @@ class RankingsBoard extends Component
                 ->selectRaw('service, COUNT(*) as cnt, SUM(total_value) as total')
                 ->groupBy('service')
                 ->orderByDesc('total')
+                ->orderByDesc('cnt')
+                ->orderBy('service')
                 ->limit(10)
                 ->get();
 
@@ -155,7 +161,11 @@ class RankingsBoard extends Component
                         'completed' => $totalCompleted,
                     ];
                 })
-                ->sortByDesc('count')
+                ->sortBy([
+                    ['count', 'desc'],
+                    ['completed', 'desc'],
+                    ['name', 'asc'],
+                ])
                 ->values();
         }
 
@@ -196,7 +206,12 @@ class RankingsBoard extends Component
                         'completed' => $finishedIds->count(),
                     ];
                 })
-                ->sortByDesc('count')
+                ->sortBy([
+                    ['count', 'desc'],
+                    ['completed', 'desc'],
+                    ['value', 'desc'],
+                    ['name', 'asc'],
+                ])
                 ->values();
         }
 

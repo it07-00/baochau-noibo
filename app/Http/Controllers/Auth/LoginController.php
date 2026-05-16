@@ -30,7 +30,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            $defaultRoute = $user->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value, Role::KE_TOAN->value])
+            $defaultRoute = $user->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::KE_TOAN->value])
                 ? route('app.dashboard')
                 : route('app.home');
 

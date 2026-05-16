@@ -38,7 +38,7 @@ class MarketingReportManager extends Component
     {
         $this->report_date = now()->format('Y-m-d');
         $this->filterMonth = now()->format('Y-m');
-        $this->isManager   = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::QUAN_LY->value]);
+        $this->isManager   = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value]);
         $this->isViewOnly  = auth()->user()->hasRole(Role::TP_KINH_DOANH->value);
         if ($this->isViewOnly) {
             $this->activeTab = 'history';
