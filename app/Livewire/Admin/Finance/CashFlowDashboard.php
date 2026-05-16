@@ -14,6 +14,7 @@ use App\Models\ContractWaste;
 use Illuminate\Support\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -34,6 +35,8 @@ class CashFlowDashboard extends Component
     public int $filterQuarter = 0;
 
     public string $filterContractType = 'all';
+
+    public string $filterServiceCategory = 'all';
 
     public array $sheetUrls = [];
 
@@ -88,6 +91,12 @@ class CashFlowDashboard extends Component
 
     public function updatedFilterContractType(): void
     {
+        $this->filterServiceCategory = 'all';
+        $this->resetPage();
+    }
+
+    public function updatedFilterServiceCategory(): void
+    {
         $this->resetPage();
     }
 
@@ -105,6 +114,10 @@ class CashFlowDashboard extends Component
                 ->whereMonth('signed_at', '<=', $start + 2);
         }
 
+        if ($this->filterServiceCategory !== 'all' && $this->modelHasColumn($modelClass, 'loai_dich_vu')) {
+            $query->where('loai_dich_vu', $this->filterServiceCategory);
+        }
+
         return $query;
     }
 
@@ -112,10 +125,16 @@ class CashFlowDashboard extends Component
     {
         $sources = $this->filterContractType === 'all'
             ? self::CONTRACT_SOURCES
-            : [$this->filterContractType => self::CONTRACT_SOURCES[$this->filterContractType]];
+            : [$this->filterContractType => self::CONTRACT_SOURCES[$this->filterContractType] ?? null];
 
         $rows = [];
-        foreach ($sources as $key => [$modelClass, $label]) {
+        foreach ($sources as $key => $source) {
+            if (! $source) {
+                continue;
+            }
+
+            [$modelClass, $label] = $source;
+
             foreach ($this->buildQuery($modelClass)->get() as $contract) {
                 $contractValue = (int) $contract->value;
                 $revenue = (int) $contract->revenue;
@@ -128,6 +147,7 @@ class CashFlowDashboard extends Component
                     'id' => $contract->id,
                     'source_key' => $key,
                     'type' => $label,
+                    'service_category' => (string) ($contract->loai_dich_vu ?? ''),
                     'shd_bc' => $contract->shd_bc,
                     'customer' => $contract->customer?->name,
                     'customer_slug' => $contract->customer?->slug,
@@ -152,6 +172,48 @@ class CashFlowDashboard extends Component
         usort($rows, fn ($a, $b) => strcmp($b['signed_at'] ?? '', $a['signed_at'] ?? ''));
 
         return $rows;
+    }
+
+    private function serviceCategoryOptions(): array
+    {
+        $sources = $this->filterContractType === 'all'
+            ? self::CONTRACT_SOURCES
+            : [$this->filterContractType => self::CONTRACT_SOURCES[$this->filterContractType] ?? null];
+
+        $options = [];
+
+        foreach ($sources as $source) {
+            if (! $source) {
+                continue;
+            }
+
+            [$modelClass] = $source;
+
+            if (defined("$modelClass::SERVICE_TYPES")) {
+                $options = array_merge($options, $modelClass::SERVICE_TYPES);
+            }
+
+            if ($this->modelHasColumn($modelClass, 'loai_dich_vu')) {
+                $options = array_merge(
+                    $options,
+                    $modelClass::query()
+                        ->whereNotNull('loai_dich_vu')
+                        ->where('loai_dich_vu', '!=', '')
+                        ->distinct()
+                        ->pluck('loai_dich_vu')
+                        ->toArray()
+                );
+            }
+        }
+
+        $options = array_values(array_unique(array_filter(array_map(
+            static fn ($option) => trim((string) $option),
+            $options
+        ))));
+
+        sort($options, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $options;
     }
 
     public function updateBaoChauInvoiceNumber(string $sourceKey, int $contractId, mixed $invoiceNumber): void
@@ -429,6 +491,7 @@ class CashFlowDashboard extends Component
             'totals' => $totals,
             'periodLabel' => $this->buildPeriodLabel(),
             'contractTypes' => array_map(fn ($s) => $s[1], self::CONTRACT_SOURCES),
+            'serviceCategoryOptions' => $this->serviceCategoryOptions(),
             'availableYears' => range((int) now()->format('Y'), 2024),
             'canEditBaoChauInvoice' => $this->isAccountant(),
             'canManageNccPayment' => $this->isAccountant(),
@@ -458,6 +521,11 @@ class CashFlowDashboard extends Component
     private function extractAmountFromSheetUrl(string $sheetUrl, bool $forceRefresh = false): int
     {
         return app(GoogleSheetTotalExtractor::class)->extractTotalFromUrl($sheetUrl, $forceRefresh);
+    }
+
+    private function modelHasColumn(string $modelClass, string $column): bool
+    {
+        return Schema::hasColumn((new $modelClass)->getTable(), $column);
     }
 
     private function primeSheetUrls(array $rows): void

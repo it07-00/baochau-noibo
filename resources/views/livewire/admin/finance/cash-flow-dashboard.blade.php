@@ -49,6 +49,15 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold mb-1">Hạng mục dịch vụ</label>
+                    <select wire:model.live="filterServiceCategory" class="form-select form-select-sm">
+                        <option value="all">Tất cả hạng mục</option>
+                        @foreach($serviceCategoryOptions as $serviceCategory)
+                            <option value="{{ $serviceCategory }}">{{ $serviceCategory }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 @if($canManageNccPayment)
                 <div class="col-md-auto">
                     <button wire:click="importAllNccPaymentsFromSheets" class="btn btn-primary fw-semibold px-3 py-2" wire:loading.attr="disabled" wire:target="importAllNccPaymentsFromSheets">
@@ -120,6 +129,7 @@
                         <tr>
                             <th class="text-center" style="width:40px">STT</th>
                             <th style="width:190px">Hợp đồng</th>
+                            <th style="width:210px">Hạng mục dịch vụ</th>
                             <th>Khách hàng</th>
                             <th class="text-end">Giá trị chưa VAT</th>
                             <th class="text-end">Doanh số</th>
@@ -154,6 +164,9 @@
                                         <span class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</span>
                                 @endif
                                 </div>
+                            </td>
+                            <td style="min-width:210px">
+                                <span class="text-muted">{{ $row['service_category'] ?: '—' }}</span>
                             </td>
                             <td style="min-width:280px; max-width:380px">
                                 @if(!empty($row['customer_slug']))
@@ -229,7 +242,7 @@
                         </tr>
                         @if($canManageNccPayment)
                         <tr class="bg-light-subtle">
-                            <td colspan="10" class="px-3 py-3">
+                            <td colspan="11" class="px-3 py-3">
                                 <div id="{{ $sheetCollapseId }}" class="collapse">
                                     <div class="row g-3 align-items-start">
                                         <div class="col-lg-7">
@@ -299,14 +312,14 @@
                         @endif
                         @empty
                         <tr>
-                            <td colspan="10" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
+                            <td colspan="11" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
                         </tr>
                         @endforelse
                     </tbody>
                     @if($totals['count'] > 0)
                     <tfoot class="table-light fw-bold">
                         <tr>
-                            <td colspan="3" class="text-end">Tổng cộng</td>
+                            <td colspan="4" class="text-end">Tổng cộng</td>
                             <td class="text-end">{{ number_format($totals['value_without_vat']) }}</td>
                             <td class="text-end text-primary">{{ number_format($totals['revenue']) }}</td>
                             <td class="text-end text-warning">{{ number_format($totals['commission']) }}</td>

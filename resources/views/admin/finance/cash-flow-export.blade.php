@@ -3,6 +3,7 @@
       xmlns="http://www.w3.org/TR/REC-html40">
 <head>
     <meta charset="UTF-8">
+    @verbatim
     <!--[if gte mso 9]>
     <xml>
         <x:ExcelWorkbook>
@@ -22,6 +23,7 @@
         </x:ExcelWorkbook>
     </xml>
     <![endif]-->
+    @endverbatim
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -123,6 +125,7 @@
     <table>
         <col style="width:42px">
         <col style="width:150px">
+        <col style="width:210px">
         <col style="width:130px">
         <col style="width:260px">
         <col style="width:150px">
@@ -134,20 +137,20 @@
         <col style="width:122px">
 
         <tr>
-            <td class="title" colspan="11">BÁO CÁO DÒNG TIỀN</td>
+            <td class="title" colspan="12">BÁO CÁO DÒNG TIỀN</td>
         </tr>
         <tr>
-            <td class="subtitle" colspan="11">
+            <td class="subtitle" colspan="12">
                 Kỳ báo cáo: {{ $periodLabel }} | Xuất ngày: {{ now()->format('d/m/Y H:i') }}
             </td>
         </tr>
         <tr>
-            <td class="section" colspan="11">Tổng quan</td>
+            <td class="section" colspan="12">Tổng quan</td>
         </tr>
         <tr>
             <td class="summary-label" colspan="2">Số hợp đồng</td>
             <td class="summary-value text-center">{{ $totals['count'] }}</td>
-            <td class="summary-label" colspan="2">Giá trị chưa VAT</td>
+            <td class="summary-label" colspan="3">Giá trị chưa VAT</td>
             <td class="summary-value money" colspan="2">{{ (int) $totals['value_without_vat'] }}</td>
             <td class="summary-label" colspan="2">Doanh số</td>
             <td class="summary-value money" colspan="2">{{ (int) $totals['revenue'] }}</td>
@@ -155,7 +158,7 @@
         <tr>
             <td class="summary-label" colspan="2">Hoa hồng</td>
             <td class="summary-value money">{{ (int) $totals['commission'] }}</td>
-            <td class="summary-label" colspan="2">Chi NCC</td>
+            <td class="summary-label" colspan="3">Chi NCC</td>
             <td class="summary-value money" colspan="2">{{ (int) $totals['ncc_payment'] }}</td>
             <td class="summary-label" colspan="2">Thực nhận</td>
             <td class="summary-value money {{ $totals['net_received'] >= 0 ? 'positive' : 'negative' }}" colspan="2">
@@ -163,11 +166,12 @@
             </td>
         </tr>
         <tr>
-            <td colspan="11">&nbsp;</td>
+            <td colspan="12">&nbsp;</td>
         </tr>
         <tr>
             <th class="header">STT</th>
             <th class="header">Loại HĐ</th>
+            <th class="header">Hạng mục dịch vụ</th>
             <th class="header">Số HĐ BC</th>
             <th class="header">Khách hàng</th>
             <th class="header">NV CS</th>
@@ -183,6 +187,7 @@
         <tr class="{{ $i % 2 === 1 ? 'row-alt' : '' }}">
             <td class="cell text-center">{{ $i + 1 }}</td>
             <td class="cell wrap">{{ $row['type'] }}</td>
+            <td class="cell wrap">{{ $row['service_category'] ?? '' }}</td>
             <td class="cell text-cell">{{ $row['shd_bc'] ?: '' }}</td>
             <td class="cell wrap">{{ $row['customer'] ?? '' }}</td>
             <td class="cell wrap">{{ $row['staff'] ?? '' }}</td>
@@ -195,12 +200,12 @@
         </tr>
         @empty
         <tr>
-            <td class="cell text-center muted" colspan="11">Không có dữ liệu cho kỳ đã chọn.</td>
+            <td class="cell text-center muted" colspan="12">Không có dữ liệu cho kỳ đã chọn.</td>
         </tr>
         @endforelse
 
         <tr class="total-row">
-            <td class="text-center" colspan="6">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
+            <td class="text-center" colspan="7">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
             <td class="money">{{ (int) $totals['value_without_vat'] }}</td>
             <td class="money">{{ (int) $totals['revenue'] }}</td>
             <td class="money">{{ (int) $totals['commission'] }}</td>
