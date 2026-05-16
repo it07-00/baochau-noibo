@@ -46,6 +46,8 @@ class CashFlowDashboard extends Component
 
     public array $baoChauInvoiceMessages = [];
 
+    public array $subcontractorInvoiceMessages = [];
+
     protected $paginationTheme = 'bootstrap';
 
     private const CONTRACT_SOURCES = [
@@ -102,7 +104,7 @@ class CashFlowDashboard extends Component
 
     private function buildQuery(string $modelClass)
     {
-        $query = $modelClass::query()->with(['customer:id,name,slug', 'staff:id,name']);
+        $query = $modelClass::query()->with(['customer:id,name,slug', 'staff:id,name', 'handler:id,name']);
 
         $query->whereNotNull('signed_at')->whereYear('signed_at', $this->filterYear);
 
@@ -149,8 +151,10 @@ class CashFlowDashboard extends Component
                     'type' => $label,
                     'service_category' => (string) ($contract->loai_dich_vu ?? ''),
                     'shd_bc' => $contract->shd_bc,
+                    'shd_cxl' => (string) ($contract->shd_cxl ?? ''),
                     'customer' => $contract->customer?->name,
                     'customer_slug' => $contract->customer?->slug,
+                    'handler' => $contract->handler?->name,
                     'staff' => $contract->staff?->name,
                     'signed_at' => $contract->signed_at?->format('d/m/Y'),
                     'value_without_vat' => (int) round($contractValue / self::VAT_MULTIPLIER),
@@ -250,6 +254,43 @@ class CashFlowDashboard extends Component
         $this->dispatch('swal:toast', [
             'type' => 'success',
             'message' => 'Đã cập nhật số hóa đơn Bảo Châu.',
+        ]);
+    }
+
+    public function updateSubcontractorInvoiceNumber(string $sourceKey, int $contractId, mixed $invoiceNumber): void
+    {
+        abort_unless($this->isAccountant(), 403);
+        abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
+
+        [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
+        $value = substr(trim((string) $invoiceNumber), 0, 255);
+        $stateKey = $this->sheetStateKey($sourceKey, $contractId);
+
+        if ($value !== '' && $this->contractColumnValueExists('shd_cxl', $value, $sourceKey, $contractId)) {
+            $this->subcontractorInvoiceMessages[$stateKey] = [
+                'type' => 'error',
+                'text' => 'Số hóa đơn nhà thầu phụ này đã tồn tại.',
+            ];
+
+            $this->dispatch('swal:toast', [
+                'type' => 'error',
+                'message' => 'Số hóa đơn nhà thầu phụ này đã tồn tại.',
+            ]);
+
+            return;
+        }
+
+        $contract = $modelClass::query()->findOrFail($contractId);
+        $contract->forceFill(['shd_cxl' => $value !== '' ? $value : null])->save();
+
+        $this->subcontractorInvoiceMessages[$stateKey] = [
+            'type' => 'success',
+            'text' => 'Đã cập nhật số hóa đơn nhà thầu phụ.',
+        ];
+
+        $this->dispatch('swal:toast', [
+            'type' => 'success',
+            'message' => 'Đã cập nhật số hóa đơn nhà thầu phụ.',
         ]);
     }
 
@@ -414,9 +455,19 @@ class CashFlowDashboard extends Component
 
     private function baoChauInvoiceNumberExists(string $invoiceNumber, string $currentSourceKey, int $currentContractId): bool
     {
+        return $this->contractColumnValueExists('shd_bc', $invoiceNumber, $currentSourceKey, $currentContractId);
+    }
+
+    private function contractColumnValueExists(string $column, string $value, string $currentSourceKey, int $currentContractId): bool
+    {
         foreach (self::CONTRACT_SOURCES as $sourceKey => [$modelClass]) {
             $model = new $modelClass;
-            $query = $modelClass::query()->where('shd_bc', $invoiceNumber);
+
+            if (! Schema::hasColumn($model->getTable(), $column)) {
+                continue;
+            }
+
+            $query = $modelClass::query()->where($column, $value);
 
             if ($sourceKey === $currentSourceKey) {
                 $query->where($model->getKeyName(), '!=', $currentContractId);

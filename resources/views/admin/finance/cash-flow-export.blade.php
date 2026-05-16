@@ -124,9 +124,10 @@
 <body>
     <table>
         <col style="width:42px">
-        <col style="width:150px">
-        <col style="width:210px">
+        <col style="width:260px">
         <col style="width:130px">
+        <col style="width:130px">
+        <col style="width:190px">
         <col style="width:260px">
         <col style="width:150px">
         <col style="width:96px">
@@ -137,20 +138,20 @@
         <col style="width:122px">
 
         <tr>
-            <td class="title" colspan="12">BÁO CÁO DÒNG TIỀN</td>
+            <td class="title" colspan="13">BÁO CÁO DÒNG TIỀN</td>
         </tr>
         <tr>
-            <td class="subtitle" colspan="12">
+            <td class="subtitle" colspan="13">
                 Kỳ báo cáo: {{ $periodLabel }} | Xuất ngày: {{ now()->format('d/m/Y H:i') }}
             </td>
         </tr>
         <tr>
-            <td class="section" colspan="12">Tổng quan</td>
+            <td class="section" colspan="13">Tổng quan</td>
         </tr>
         <tr>
             <td class="summary-label" colspan="2">Số hợp đồng</td>
             <td class="summary-value text-center">{{ $totals['count'] }}</td>
-            <td class="summary-label" colspan="3">Giá trị chưa VAT</td>
+            <td class="summary-label" colspan="4">Giá trị chưa VAT</td>
             <td class="summary-value money" colspan="2">{{ (int) $totals['value_without_vat'] }}</td>
             <td class="summary-label" colspan="2">Doanh số</td>
             <td class="summary-value money" colspan="2">{{ (int) $totals['revenue'] }}</td>
@@ -158,7 +159,7 @@
         <tr>
             <td class="summary-label" colspan="2">Hoa hồng</td>
             <td class="summary-value money">{{ (int) $totals['commission'] }}</td>
-            <td class="summary-label" colspan="3">Chi NCC</td>
+            <td class="summary-label" colspan="4">Chi nhà thầu phụ</td>
             <td class="summary-value money" colspan="2">{{ (int) $totals['ncc_payment'] }}</td>
             <td class="summary-label" colspan="2">Thực nhận</td>
             <td class="summary-value money {{ $totals['net_received'] >= 0 ? 'positive' : 'negative' }}" colspan="2">
@@ -166,13 +167,14 @@
             </td>
         </tr>
         <tr>
-            <td colspan="12">&nbsp;</td>
+            <td colspan="13">&nbsp;</td>
         </tr>
         <tr>
             <th class="header">STT</th>
-            <th class="header">Loại HĐ</th>
-            <th class="header">Hạng mục dịch vụ</th>
+            <th class="header">Loại HĐ / Hạng mục</th>
             <th class="header">Số HĐ BC</th>
+            <th class="header">Số HĐ NTP</th>
+            <th class="header">Nhà thầu phụ</th>
             <th class="header">Khách hàng</th>
             <th class="header">NV CS</th>
             <th class="header">Ngày ký</th>
@@ -186,9 +188,12 @@
         @forelse($rows as $i => $row)
         <tr class="{{ $i % 2 === 1 ? 'row-alt' : '' }}">
             <td class="cell text-center">{{ $i + 1 }}</td>
-            <td class="cell wrap">{{ $row['type'] }}</td>
-            <td class="cell wrap">{{ $row['service_category'] ?? '' }}</td>
+            <td class="cell wrap">
+                {{ $row['type'] }}@if(!empty($row['service_category']))<br>{{ $row['service_category'] }}@endif
+            </td>
             <td class="cell text-cell">{{ $row['shd_bc'] ?: '' }}</td>
+            <td class="cell text-cell">{{ $row['shd_cxl'] ?? '' }}</td>
+            <td class="cell wrap">{{ $row['handler'] ?? '' }}</td>
             <td class="cell wrap">{{ $row['customer'] ?? '' }}</td>
             <td class="cell wrap">{{ $row['staff'] ?? '' }}</td>
             <td class="cell text-center text-cell">{{ $row['signed_at'] ?? '' }}</td>
@@ -200,12 +205,12 @@
         </tr>
         @empty
         <tr>
-            <td class="cell text-center muted" colspan="12">Không có dữ liệu cho kỳ đã chọn.</td>
+            <td class="cell text-center muted" colspan="13">Không có dữ liệu cho kỳ đã chọn.</td>
         </tr>
         @endforelse
 
         <tr class="total-row">
-            <td class="text-center" colspan="7">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
+            <td class="text-center" colspan="8">TỔNG CỘNG ({{ $totals['count'] }} hợp đồng)</td>
             <td class="money">{{ (int) $totals['value_without_vat'] }}</td>
             <td class="money">{{ (int) $totals['revenue'] }}</td>
             <td class="money">{{ (int) $totals['commission'] }}</td>

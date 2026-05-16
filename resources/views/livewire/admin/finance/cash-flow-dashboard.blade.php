@@ -100,7 +100,7 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <p class="text-muted mb-1" style="font-size:13px">Tổng chi Nhà Cung Cấp</p>
+                    <p class="text-muted mb-1" style="font-size:13px">Tổng chi Nhà thầu phụ</p>
                     <h5 class="fw-bold text-danger mb-0">{{ number_format($totals['ncc_payment']) }}đ</h5>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                 <div class="card-body">
                     <p class="text-muted mb-1" style="font-size:13px">Tổng thực nhận</p>
                     <h5 class="fw-bold text-success mb-0">{{ number_format($totals['net_received']) }}đ</h5>
-                    <small class="text-muted">= DS - Chi Nhà Cung Cấp</small>
+                    <small class="text-muted">= DS - Chi Nhà thầu phụ</small>
                 </div>
             </div>
         </div>
@@ -128,16 +128,17 @@
                     <thead class="table-light">
                         <tr>
                             <th class="text-center" style="width:40px">STT</th>
-                            <th style="width:190px">Hợp đồng</th>
-                            <th style="width:210px">Hạng mục dịch vụ</th>
+                            <th style="width:230px">Hợp đồng</th>
                             <th>Khách hàng</th>
                             <th class="text-end">Giá trị chưa VAT</th>
                             <th class="text-end">Doanh số</th>
                             <th class="text-end">Hoa hồng</th>
-                            <th class="text-end text-danger">Chi Nhà Cung Cấp</th>
+                            <th class="text-end text-danger">Chi Nhà thầu phụ</th>
                             <th class="text-end text-success fw-bold">Thực nhận</th>
                             <th class="text-center" style="width:190px">Tình trạng thanh toán</th>
-                            <th class="text-center" style="width:140px">Hành động</th>
+                            @if($canManageNccPayment)
+                                <th class="text-center" style="width:140px">Hành động</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -147,11 +148,18 @@
                         @php($sheetCollapseId = 'sheetEditor_' . $sheetStateKey)
                         <tr>
                             <td class="text-center text-muted">{{ ($rows->currentPage() - 1) * $rows->perPage() + $i + 1 }}</td>
-                            <td style="min-width:190px">
+                            <td style="min-width:230px">
                                 @php($baoChauMessage = $baoChauInvoiceMessages[$sheetStateKey] ?? null)
+                                @php($subcontractorMessage = $subcontractorInvoiceMessages[$sheetStateKey] ?? null)
                                 <div class="d-flex flex-column gap-2">
-                                    <span class="badge bg-light text-dark border align-self-start text-start px-2 py-2" style="font-size:12px; white-space:normal">{{ $row['type'] }}</span>
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="badge bg-light text-dark border align-self-start text-start px-2 py-2" style="font-size:12px; white-space:normal">{{ $row['type'] }}</span>
+                                        @if(!empty($row['service_category']))
+                                            <small class="text-muted">{{ $row['service_category'] }}</small>
+                                        @endif
+                                    </div>
                                 @if($canEditBaoChauInvoice)
+                                    <label class="form-label small text-muted mb-0">Số HĐ Bảo Châu</label>
                                     <input type="text"
                                            class="form-control form-control-sm fw-semibold text-center"
                                            value="{{ $row['shd_bc'] }}"
@@ -161,12 +169,31 @@
                                         <small class="{{ $baoChauMessage['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $baoChauMessage['text'] }}</small>
                                     @endif
                                 @else
-                                        <span class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</span>
+                                        <div>
+                                            <small class="text-muted d-block">Số HĐ Bảo Châu</small>
+                                            <span class="fw-semibold">{{ $row['shd_bc'] ?: '—' }}</span>
+                                        </div>
                                 @endif
+                                    @if(!empty($row['handler']) || !empty($row['shd_cxl']))
+                                        <div class="border-top pt-2">
+                                            <small class="text-muted d-block">Nhà thầu phụ</small>
+                                            <div class="fw-semibold text-dark">{{ $row['handler'] ?: '—' }}</div>
+                                            @if($canEditBaoChauInvoice)
+                                                <label class="form-label small text-muted mb-0 mt-1">Số HĐ/HĐ NTP</label>
+                                                <input type="text"
+                                                       class="form-control form-control-sm fw-semibold text-center"
+                                                       value="{{ $row['shd_cxl'] }}"
+                                                       placeholder="Nhập số HĐ NTP"
+                                                       wire:change="updateSubcontractorInvoiceNumber('{{ $row['source_key'] }}', {{ $row['id'] }}, $event.target.value)">
+                                                @if($subcontractorMessage)
+                                                    <small class="{{ $subcontractorMessage['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $subcontractorMessage['text'] }}</small>
+                                                @endif
+                                            @else
+                                                <small class="text-muted">Số HĐ NTP: <span class="fw-semibold text-dark">{{ $row['shd_cxl'] ?: '—' }}</span></small>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
-                            </td>
-                            <td style="min-width:210px">
-                                <span class="text-muted">{{ $row['service_category'] ?: '—' }}</span>
                             </td>
                             <td style="min-width:280px; max-width:380px">
                                 @if(!empty($row['customer_slug']))
@@ -225,8 +252,8 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="text-center">
-                                @if($canManageNccPayment)
+                            @if($canManageNccPayment)
+                                <td class="text-center">
                                     <button type="button"
                                             class="btn btn-outline-primary btn-sm px-3 py-2 fw-semibold"
                                             data-bs-toggle="collapse"
@@ -235,14 +262,12 @@
                                             aria-controls="{{ $sheetCollapseId }}">
                                         <i class="bi bi-link-45deg me-1"></i>Sheet
                                     </button>
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
-                            </td>
+                                </td>
+                            @endif
                         </tr>
                         @if($canManageNccPayment)
                         <tr class="bg-light-subtle">
-                            <td colspan="11" class="px-3 py-3">
+                            <td colspan="{{ $canManageNccPayment ? 10 : 9 }}" class="px-3 py-3">
                                 <div id="{{ $sheetCollapseId }}" class="collapse">
                                     <div class="row g-3 align-items-start">
                                         <div class="col-lg-7">
@@ -312,21 +337,23 @@
                         @endif
                         @empty
                         <tr>
-                            <td colspan="11" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
+                            <td colspan="{{ $canManageNccPayment ? 10 : 9 }}" class="text-center text-muted py-4">Không có dữ liệu cho kỳ đã chọn.</td>
                         </tr>
                         @endforelse
                     </tbody>
                     @if($totals['count'] > 0)
                     <tfoot class="table-light fw-bold">
                         <tr>
-                            <td colspan="4" class="text-end">Tổng cộng</td>
+                            <td colspan="3" class="text-end">Tổng cộng</td>
                             <td class="text-end">{{ number_format($totals['value_without_vat']) }}</td>
                             <td class="text-end text-primary">{{ number_format($totals['revenue']) }}</td>
                             <td class="text-end text-warning">{{ number_format($totals['commission']) }}</td>
                             <td class="text-end text-danger">{{ number_format($totals['ncc_payment']) }}</td>
                             <td class="text-end text-success">{{ number_format($totals['net_received']) }}</td>
                             <td></td>
-                            <td></td>
+                            @if($canManageNccPayment)
+                                <td></td>
+                            @endif
                         </tr>
                     </tfoot>
                     @endif
