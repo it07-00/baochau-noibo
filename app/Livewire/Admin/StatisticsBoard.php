@@ -43,6 +43,10 @@ class StatisticsBoard extends Component
 
     public function mount(): void
     {
+        if (auth()->user()->hasRole(RoleEnum::MARKETING->value)) {
+            $this->redirect(route('app.marketing.content.index'), navigate: true);
+        }
+
         $this->year = now()->year;
         $this->years = range(now()->year, now()->year - 4);
     }

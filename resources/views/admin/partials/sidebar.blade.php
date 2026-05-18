@@ -43,7 +43,7 @@
                     </span>
                 </li>
 
-                @unless ($currentUser->hasRole(Role::IT->value))
+                @unless ($currentUser->hasAnyRole([Role::IT->value, Role::MARKETING->value]))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ $currentUser->hasAnyRole(Role::directorRoles()) ? route('app.dashboard') : route('app.home') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || ($currentUser->hasAnyRole(Role::directorRoles()) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
@@ -59,7 +59,7 @@
                     </li>
                 @endunless
 
-                @unless ($currentUser->hasAnyRole(Role::dashboardAccessRoles()))
+                @unless ($currentUser->hasAnyRole(Role::dashboardAccessRoles()) || $currentUser->hasRole(Role::MARKETING->value))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.dashboard') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active' : '' }}">

@@ -99,8 +99,10 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Lịch công tác
     Route::get('lich-cong-tac', \App\Livewire\Admin\WorkSchedules\WorkScheduleManager::class)->name('work-schedules.index');
 
-    // Báo cáo hàng ngày Marketing
-    Route::get('marketing/bao-cao-hang-ngay', \App\Livewire\Admin\Marketing\MarketingReportManager::class)->name('marketing.daily-report.index')->middleware(Permission::toMiddleware(Permission::MARKETING_REPORTS_VIEW));
+    // Kế hoạch content Marketing
+    Route::get('marketing/ke-hoach-content', \App\Livewire\Admin\Marketing\MarketingContentManager::class)
+        ->name('marketing.content.index')
+        ->middleware(Role::toMiddleware(Role::MARKETING, Role::TP_KINH_DOANH, Role::GIAM_DOC, Role::IT));
 
     // Hoa hồng
     Route::prefix('hoa-hong')->name('commissions.')->middleware(Permission::toMiddleware(Permission::COMMISSIONS_VIEW))->group(function () {

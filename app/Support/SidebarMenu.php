@@ -116,7 +116,7 @@ class SidebarMenu
                 'title'      => 'Bộ phận Marketing',
                 'icon'       => 'users',
                 'permission' => 'marketing-reports.view',
-                'children'   => ['Báo cáo hàng ngày'],
+                'children'   => ['Kế hoạch content'],
             ],
             [
                 'title'      => 'Nội bộ',
@@ -192,7 +192,7 @@ class SidebarMenu
             'app.contracts.commercial.*'                 => ['Quản lý hợp đồng',     'HĐ Nghiên cứu và chuyển đổi công nghệ'],
             'app.contracts.sustainability.*'             => ['Quản lý hợp đồng',     'HĐ Phát triển bền vững'],
             'app.contracts.energy.*'                     => ['Quản lý hợp đồng',     'HĐ Giảm phát thải, tiết kiệm năng lượng'],
-            'app.marketing.daily-report.*'               => ['Bộ phận Marketing',    'Báo cáo hàng ngày'],
+            'app.marketing.content.*'                    => ['Bộ phận Marketing',    'Kế hoạch content'],
             'app.daily-reports.*'                        => ['Báo cáo ngày',         'Báo cáo ngày'],
             'app.commissions.*'                          => ['Hoa hồng',             'Yêu cầu chi hoa hồng'],
             'app.finance.cash-flow'                      => ['Dòng tiền',            'Dòng tiền'],
@@ -272,7 +272,7 @@ class SidebarMenu
                 'Giảm phát thải, tiết kiệm năng lượng'  => 'app.reports.consulting-work.energy',
             ],
             'Báo cáo Kỹ thuật'   => ['Quan trắc và hồ sơ môi trường' => 'app.reports.technical.consulting'],
-            'Bộ phận Marketing'  => ['Báo cáo hàng ngày' => 'app.marketing.daily-report.index'],
+            'Bộ phận Marketing'  => ['Kế hoạch content' => 'app.marketing.content.index'],
         ];
 
         $routeName = $specific[$menuTitle][$child] ?? null;
