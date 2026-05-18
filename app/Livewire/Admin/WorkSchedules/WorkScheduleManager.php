@@ -391,11 +391,22 @@ class WorkScheduleManager extends Component
 
         $allUsers = User::where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
+        $calendarDates = collect(CarbonPeriod::create(
+            $monthStart->copy()->startOfWeek(Carbon::MONDAY),
+            $monthStart->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY)
+        ));
+
+        $mobileEventDays = $calendarDates->filter(function ($date) use ($calendarData) {
+            return $date->month == $this->monthFilter && collect($calendarData[$date->format('Y-m-d')] ?? [])->isNotEmpty();
+        });
+
         return view('livewire.admin.work-schedules.work-schedule-manager', [
-            'calendarData' => $calendarData,
-            'totalEvents'  => $totalEvents,
-            'allUsers'     => $allUsers,
-            'weeksLayout'  => $weeksLayout,
+            'calendarData'     => $calendarData,
+            'calendarDates'    => $calendarDates,
+            'mobileEventDays'  => $mobileEventDays,
+            'totalEvents'      => $totalEvents,
+            'allUsers'         => $allUsers,
+            'weeksLayout'      => $weeksLayout,
         ])->layout('admin.layouts.app', [
             'title'     => 'Lịch công tác',
             'fullWidth' => true,

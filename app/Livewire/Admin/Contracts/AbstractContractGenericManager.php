@@ -453,6 +453,12 @@ abstract class AbstractContractGenericManager extends Component
     // ── View / detail / workflow ──────────────────────────────────────────────
 
     #[Computed]
+    public function canManageContractFiles(): bool
+    {
+        return auth()->user()->hasRole(Role::KE_TOAN->value);
+    }
+
+    #[Computed]
     public function canBulkDelete(): bool
     {
         return auth()->user()->can($this->getPermDelete()->value);

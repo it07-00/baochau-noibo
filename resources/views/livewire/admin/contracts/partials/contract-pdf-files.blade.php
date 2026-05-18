@@ -1,10 +1,4 @@
-@php
-    $canManageContractFiles = auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value);
-    $pendingContractFiles = $newContractFiles ?? [];
-    $existingContractFileCount = is_countable($existingContractFiles ?? []) ? count($existingContractFiles) : 0;
-@endphp
-
-    @if($existingContractFileCount > 0)
+    @if(count($existingContractFiles) > 0)
         <div class="d-flex flex-column gap-2 mb-3">
             @foreach($existingContractFiles as $file)
                 <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
@@ -12,7 +6,7 @@
                     <a href="{{ $file->file_url }}" target="_blank" class="text-truncate flex-grow-1 small text-danger fw-semibold text-decoration-none">
                         {{ $file->original_name }}
                     </a>
-                    @if($canManageContractFiles)
+                    @if($this->canManageContractFiles)
                         <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteContractFile({{ $file->id }})" wire:confirm="Xóa file này?">
                             <i class="bi bi-trash fs-5"></i>
                         </button>
@@ -20,14 +14,14 @@
                 </div>
             @endforeach
         </div>
-    @elseif(count($pendingContractFiles) === 0)
+    @elseif(count($newContractFiles) === 0)
         <p class="text-muted small mb-3">Chưa có file nào.</p>
     @endif
 
-    @if(count($pendingContractFiles) > 0)
+    @if(count($newContractFiles) > 0)
         <div class="d-flex flex-column gap-1 mb-3">
-            <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($pendingContractFiles) }} file):</p>
-            @foreach($pendingContractFiles as $file)
+            <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($newContractFiles) }} file):</p>
+            @foreach($newContractFiles as $file)
                 <div class="d-flex align-items-center gap-2 border border-primary rounded px-3 py-1 bg-light">
                     <i class="bi bi-file-earmark-pdf text-primary"></i>
                     <span class="small text-truncate flex-grow-1">{{ $file->getClientOriginalName() }}</span>
@@ -36,7 +30,7 @@
         </div>
     @endif
 
-@if($canManageContractFiles)
+@if($this->canManageContractFiles)
     <label class="form-label fw-semibold small">Thêm file PDF</label>
     <input type="file" class="form-control" wire:model="newContractFiles" accept=".pdf" multiple>
     <div wire:loading wire:target="newContractFiles" class="text-primary mt-1 small">

@@ -50,18 +50,6 @@
         </div>
     </div>
 
-    @php
-        $monthStart = \Carbon\Carbon::create($yearFilter, $monthFilter, 1);
-        $startOfCalendar = $monthStart->copy()->startOfWeek(\Carbon\Carbon::MONDAY);
-        $endOfCalendar = $monthStart->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SUNDAY);
-        $calendarDates = collect(\Carbon\CarbonPeriod::create($startOfCalendar, $endOfCalendar));
-        $mobileEventDays = $calendarDates->filter(function ($date) use ($monthFilter, $calendarData) {
-            $dayKey = $date->format('Y-m-d');
-
-            return $date->month == $monthFilter && collect($calendarData[$dayKey] ?? [])->isNotEmpty();
-        });
-    @endphp
-
     {{-- Mobile Agenda --}}
     <div class="ws-mobile-agenda d-md-none">
         @forelse($mobileEventDays as $currentDate)

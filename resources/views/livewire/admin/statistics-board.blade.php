@@ -49,9 +49,6 @@
     </div>
     @endunless
 
-    @php
-        $isIT = auth()->user()->hasRole('it');
-    @endphp
     @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'kinh-doanh', 'tp-kinh-doanh']))
         <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4 rounded-3 border-start border-warning border-4" >
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 wh-44" >
@@ -677,11 +674,6 @@
         @endif
 
         @if($canSeeConsulting)
-        @php
-            $consultingRate = ($consultingSummary['total'] ?? 0) > 0
-                ? round(($consultingSummary['completed'] ?? 0) / $consultingSummary['total'] * 100)
-                : 0;
-        @endphp
         <div class="role-dashboard-panel mb-4">
             <div class="role-dashboard-header role-consulting">
                 <div>
@@ -800,9 +792,6 @@
         @endif
 
         @if($canSeeTechnical)
-        @php
-            $technicalRate = (int) ($technicalSummary['completion_rate'] ?? 0);
-        @endphp
         <div class="role-dashboard-panel mb-4">
             <div class="role-dashboard-header role-technical">
                 <div>

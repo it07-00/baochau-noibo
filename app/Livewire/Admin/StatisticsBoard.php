@@ -849,6 +849,12 @@ class StatisticsBoard extends Component
                 : 0;
         }
 
+        $consultingRate = ($consultingSummary['total'] ?? 0) > 0
+            ? round(($consultingSummary['completed'] ?? 0) / $consultingSummary['total'] * 100)
+            : 0;
+
+        $technicalRate = (int) ($technicalSummary['completion_rate'] ?? 0);
+
         // ── IT Admin Stats ───────────────────────────
         $isIT = $currentUser->hasRole(RoleEnum::IT->value);
         $itStats = [];
@@ -978,8 +984,8 @@ class StatisticsBoard extends Component
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
-            'byType', 'monthly', 'canSeeTechnical', 'technicalStats', 'technicalSummary',
-            'canSeeConsulting', 'consultingChartData', 'consultingStats', 'consultingSummary', 'canSeeFinance',
+            'byType', 'monthly', 'canSeeTechnical', 'technicalStats', 'technicalSummary', 'technicalRate',
+            'canSeeConsulting', 'consultingChartData', 'consultingStats', 'consultingSummary', 'consultingRate', 'canSeeFinance',
             'canSeeInvoiceTasks', 'canSeeSalesTasks',
             'isIT', 'itStats', 'envData', 'dailyReportReminder', 'needsAction', 'needsActionTotal',
             'workScheduleSummary', 'workScheduleRecentItems', 'workScheduleHasTime',
