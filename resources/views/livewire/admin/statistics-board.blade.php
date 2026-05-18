@@ -912,7 +912,7 @@
     @endif
 
     @push('scripts')
-    <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
+    <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}?v={{ config('app.version') }}"></script>
     <script>
     (function () {
         const palette = ['#4f7cff', '#2ec27e', '#f5a524', '#f05252', '#7c3aed', '#0ea5e9', '#06b6d4', '#f97316'];

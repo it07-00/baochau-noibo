@@ -359,6 +359,6 @@
     </div>
 
     @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/css/work-schedule.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/work-schedule.css') }}?v={{ config('app.version') }}">
     @endpush
 </div>

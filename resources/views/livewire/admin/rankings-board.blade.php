@@ -239,7 +239,7 @@
 </div>
 
 @push('scripts')
-<script src="{{ asset('assets/js/apexcharts.js') }}"></script>
+<script src="{{ asset('assets/js/apexcharts.js') }}?v={{ config('app.version') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     window.rankingsBoardCharts = window.rankingsBoardCharts || {};

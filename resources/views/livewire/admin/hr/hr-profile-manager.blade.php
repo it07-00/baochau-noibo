@@ -1,6 +1,6 @@
 <div>
     @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/css/hr-profile.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/hr-profile.css') }}?v={{ config('app.version') }}">
     @endpush
 
     <div class="row g-3 mb-4 px-3 pt-3">

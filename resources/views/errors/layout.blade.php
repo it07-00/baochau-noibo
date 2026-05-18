@@ -7,9 +7,9 @@
     <title>Lỗi {{ $code }} | Conca</title>
 
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-    <link id="bootstrap-css" rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/perfect-scrollbar.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}">
+    <link id="bootstrap-css" rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/perfect-scrollbar.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}?v={{ config('app.version') }}">
 </head>
 
 <body>
@@ -31,9 +31,9 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/js/conca-sidebar.js') }}"></script>
-    <script src="{{ asset('assets/js/conca.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/conca-sidebar.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/conca.js') }}?v={{ config('app.version') }}"></script>
 </body>
 
 </html>
