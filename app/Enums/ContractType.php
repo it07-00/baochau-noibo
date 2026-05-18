@@ -34,7 +34,7 @@ enum ContractType: string
     {
         return match ($this) {
             self::WASTE          => 'Chất thải',
-            self::CONSULTING     => 'Quan trắc và hồ sơ môi trường',
+            self::CONSULTING     => 'Hồ sơ môi trường',
             self::PROJECT        => 'Ứng phó sự cố',
             self::COMMERCIAL     => 'Nghiên cứu và chuyển đổi công nghệ',
             self::SUSTAINABILITY => 'Phát triển bền vững',

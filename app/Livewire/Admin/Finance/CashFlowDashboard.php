@@ -4,13 +4,8 @@ namespace App\Livewire\Admin\Finance;
 
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Enums\ContractType;
 use App\Services\GoogleSheetTotalExtractor;
-use App\Models\ContractEmission;
-use App\Models\ContractLegal;
-use App\Models\ContractResearch;
-use App\Models\ContractSustainability;
-use App\Models\ContractTechnical;
-use App\Models\ContractWaste;
 use Illuminate\Support\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -50,15 +45,6 @@ class CashFlowDashboard extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    private const CONTRACT_SOURCES = [
-        'waste' => [ContractWaste::class,         'Chất thải'],
-        'consulting' => [ContractLegal::class,         'Pháp lý & Hồ sơ MT'],
-        'project' => [ContractTechnical::class,     'Ứng phó sự cố'],
-        'commercial' => [ContractResearch::class,      'Nghiên cứu và chuyển đổi công nghệ'],
-        'sustainability' => [ContractSustainability::class, 'Phát triển bền vững'],
-        'energy' => [ContractEmission::class,      'Giảm phát thải, tiết kiệm năng lượng'],
-    ];
-
     private const PAYMENT_STATUS_UNPAID = 'unpaid';
 
     private const PAYMENT_STATUS_PAID = 'paid';
@@ -67,6 +53,20 @@ class CashFlowDashboard extends Component
     {
         abort_unless(auth()->user()->can(Permission::CASH_FLOW_VIEW->value), 403);
         $this->filterYear = (int) now()->format('Y');
+    }
+
+    private function contractSources(): array
+    {
+        $sources = [];
+
+        foreach (ContractType::cases() as $contractType) {
+            $sources[$contractType->value] = [
+                $contractType->modelClass(),
+                $contractType->label(),
+            ];
+        }
+
+        return $sources;
     }
 
     public function updatedFilterPeriodType(): void
@@ -125,9 +125,10 @@ class CashFlowDashboard extends Component
 
     private function collectRows(): array
     {
+        $contractSources = $this->contractSources();
         $sources = $this->filterContractType === 'all'
-            ? self::CONTRACT_SOURCES
-            : [$this->filterContractType => self::CONTRACT_SOURCES[$this->filterContractType] ?? null];
+            ? $contractSources
+            : [$this->filterContractType => $contractSources[$this->filterContractType] ?? null];
 
         $rows = [];
         foreach ($sources as $key => $source) {
@@ -196,9 +197,10 @@ class CashFlowDashboard extends Component
 
     private function serviceCategoryOptions(): array
     {
+        $contractSources = $this->contractSources();
         $sources = $this->filterContractType === 'all'
-            ? self::CONTRACT_SOURCES
-            : [$this->filterContractType => self::CONTRACT_SOURCES[$this->filterContractType] ?? null];
+            ? $contractSources
+            : [$this->filterContractType => $contractSources[$this->filterContractType] ?? null];
 
         $options = [];
 
@@ -239,9 +241,10 @@ class CashFlowDashboard extends Component
     public function updateBaoChauInvoiceNumber(string $sourceKey, int $contractId, mixed $invoiceNumber): void
     {
         abort_unless($this->isAccountant(), 403);
-        abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
+        $contractSources = $this->contractSources();
+        abort_unless(array_key_exists($sourceKey, $contractSources), 404);
 
-        [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
+        [$modelClass] = $contractSources[$sourceKey];
         $value = substr(trim((string) $invoiceNumber), 0, 255);
         $stateKey = $this->sheetStateKey($sourceKey, $contractId);
 
@@ -276,9 +279,10 @@ class CashFlowDashboard extends Component
     public function updateSubcontractorInvoiceNumber(string $sourceKey, int $contractId, mixed $invoiceNumber): void
     {
         abort_unless($this->isAccountant(), 403);
-        abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
+        $contractSources = $this->contractSources();
+        abort_unless(array_key_exists($sourceKey, $contractSources), 404);
 
-        [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
+        [$modelClass] = $contractSources[$sourceKey];
         $value = substr(trim((string) $invoiceNumber), 0, 255);
         $stateKey = $this->sheetStateKey($sourceKey, $contractId);
 
@@ -313,7 +317,8 @@ class CashFlowDashboard extends Component
     public function importNccPaymentFromSheet(string $sourceKey, int $contractId): void
     {
         abort_unless($this->isAccountant(), 403);
-        abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
+        $contractSources = $this->contractSources();
+        abort_unless(array_key_exists($sourceKey, $contractSources), 404);
 
         $stateKey = $this->sheetStateKey($sourceKey, $contractId);
         $sheetUrl = trim((string) ($this->sheetUrls[$stateKey] ?? ''));
@@ -338,7 +343,7 @@ class CashFlowDashboard extends Component
             return;
         }
 
-        [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
+        [$modelClass] = $contractSources[$sourceKey];
         $contract = $modelClass::query()->findOrFail($contractId);
         $contract->forceFill([
             'ncc_payment' => $amount,
@@ -377,7 +382,7 @@ class CashFlowDashboard extends Component
             try {
                 $amount = $this->extractAmountFromSheetUrl($sheetUrl, true);
 
-                [$modelClass] = self::CONTRACT_SOURCES[$row['source_key']];
+                [$modelClass] = $this->contractSources()[$row['source_key']];
                 $contract = $modelClass::query()->findOrFail($row['id']);
                 $contract->forceFill([
                     'ncc_payment' => $amount,
@@ -419,7 +424,8 @@ class CashFlowDashboard extends Component
     public function updateNccPaymentStatus(string $sourceKey, int $contractId): void
     {
         abort_unless($this->isAccountant(), 403);
-        abort_unless(array_key_exists($sourceKey, self::CONTRACT_SOURCES), 404);
+        $contractSources = $this->contractSources();
+        abort_unless(array_key_exists($sourceKey, $contractSources), 404);
 
         $stateKey = $this->sheetStateKey($sourceKey, $contractId);
         $status = (string) ($this->paymentStatuses[$stateKey] ?? self::PAYMENT_STATUS_UNPAID);
@@ -445,7 +451,7 @@ class CashFlowDashboard extends Component
             }
         }
 
-        [$modelClass] = self::CONTRACT_SOURCES[$sourceKey];
+        [$modelClass] = $contractSources[$sourceKey];
         $contract = $modelClass::query()->findOrFail($contractId);
         $contract->forceFill([
             'ncc_payment_status' => $status,
@@ -476,7 +482,7 @@ class CashFlowDashboard extends Component
 
     private function contractColumnValueExists(string $column, string $value, string $currentSourceKey, int $currentContractId): bool
     {
-        foreach (self::CONTRACT_SOURCES as $sourceKey => [$modelClass]) {
+        foreach ($this->contractSources() as $sourceKey => [$modelClass]) {
             $model = new $modelClass;
 
             if (! Schema::hasColumn($model->getTable(), $column)) {
@@ -557,7 +563,7 @@ class CashFlowDashboard extends Component
             'rows' => $paginatedRows,
             'totals' => $totals,
             'periodLabel' => $this->buildPeriodLabel(),
-            'contractTypes' => array_map(fn ($s) => $s[1], self::CONTRACT_SOURCES),
+            'contractTypes' => array_map(fn ($s) => $s[1], $this->contractSources()),
             'serviceCategoryOptions' => $this->serviceCategoryOptions(),
             'availableYears' => range((int) now()->format('Y'), 2024),
             'canEditBaoChauInvoice' => $this->isAccountant(),
