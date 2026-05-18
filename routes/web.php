@@ -88,6 +88,11 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     Route::get('cong-van-noi-bo', \App\Livewire\Admin\InternalDocs\InternalDocManager::class)->name('internal-docs.index')->middleware(Permission::toMiddleware(Permission::INTERNAL_DOCS_VIEW));
     Route::get('phan-mem-noi-bo', \App\Livewire\Admin\InternalDocs\SoftwareManager::class)->name('internal-software.index');
 
+    // Thông báo nội bộ
+    Route::get('thong-bao-noi-bo', \App\Livewire\Admin\InternalNotifications\InternalNotificationManager::class)
+        ->name('internal-notifications.index')
+        ->middleware(Role::toMiddleware(Role::IT, Role::GIAM_DOC));
+
     // Nhật ký công việc
     Route::get('nhat-ky-cong-viec', \App\Livewire\Admin\DailyReports\DailyReportManager::class)->name('daily-reports.index')->middleware(Permission::toMiddleware(Permission::DAILY_REPORTS_VIEW));
 

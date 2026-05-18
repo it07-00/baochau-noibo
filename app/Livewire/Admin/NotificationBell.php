@@ -12,12 +12,15 @@ class NotificationBell extends Component
     public int $limit = 20;
     public ?string $lastRealtimeNotificationId = null;
     public bool $realtimeInitialized = false;
+    public ?string $lastAutoShownInternalId = null;
+    public bool $internalAutoShowInitialized = false;
 
     private const MAX_FETCH = 500;
 
     private function contractSectionKeys(): array
     {
         return [
+            'internal',
             'waste',
             'consulting',
             'project',
@@ -35,6 +38,7 @@ class NotificationBell extends Component
     private function sectionLabelsForUser($user): array
     {
         $allLabels = [
+            'internal'       => 'Thông báo nội bộ',
             'daily_report'   => 'Báo cáo ngày',
             'work_schedule'  => 'Lịch công tác',
             'waste'          => 'HĐ Chất thải và tiếng ồn',
@@ -98,6 +102,44 @@ class NotificationBell extends Component
             : $notifications;
     }
 
+    private function autoShowInternalNotifIfNeeded(Collection $notifications): void
+    {
+        $newest = $notifications
+            ->first(function ($n) {
+                $data = (array) ($n->data ?? []);
+                return ($data['contract_type'] ?? '') === 'internal' && $n->read_at === null;
+            });
+
+        if (!$this->internalAutoShowInitialized) {
+            $this->internalAutoShowInitialized = true;
+            $this->lastAutoShownInternalId = $newest?->id;
+            if ($newest) {
+                $this->doDispatchInternalModal($newest);
+            }
+            return;
+        }
+
+        if (!$newest || $newest->id === $this->lastAutoShownInternalId) {
+            return;
+        }
+
+        $this->lastAutoShownInternalId = $newest->id;
+        $this->doDispatchInternalModal($newest);
+    }
+
+    private function doDispatchInternalModal($notification): void
+    {
+        $notification->markAsRead();
+        $data = (array) ($notification->data ?? []);
+
+        $this->dispatch('openInternalNotifModal',
+            title:      $data['contract_label'] ?? '',
+            body:       $data['message'] ?? '',
+            senderName: $data['sender_name'] ?? '',
+            createdAt:  $notification->created_at?->format('d/m/Y H:i') ?? '',
+        );
+    }
+
     private function dispatchBrowserNotificationIfNeeded(Collection $notifications): void
     {
         $latest = $notifications->first();
@@ -135,6 +177,24 @@ class NotificationBell extends Component
     {
         $notification = auth()->user()->notifications()->find($id);
         $notification?->markAsRead();
+    }
+
+    public function openInternalModal(string $id): void
+    {
+        $notification = auth()->user()->notifications()->find($id);
+        if (!$notification) {
+            return;
+        }
+
+        $notification->markAsRead();
+        $data = (array) ($notification->data ?? []);
+
+        $this->dispatch('openInternalNotifModal',
+            title:      $data['contract_label'] ?? '',
+            body:       $data['message'] ?? '',
+            senderName: $data['sender_name'] ?? '',
+            createdAt:  $notification->created_at?->format('d/m/Y H:i') ?? '',
+        );
     }
 
     public function openNotification(string $id): mixed
@@ -201,6 +261,7 @@ class NotificationBell extends Component
 
         $allVisibleNotifications = $this->visibleNotificationsForUser($user);
         $this->dispatchBrowserNotificationIfNeeded($allVisibleNotifications);
+        $this->autoShowInternalNotifIfNeeded($allVisibleNotifications);
         $dbNotifications = $allVisibleNotifications->take($this->limit)->values();
         $visibleUnreadCount = $allVisibleNotifications->whereNull('read_at')->count();
 

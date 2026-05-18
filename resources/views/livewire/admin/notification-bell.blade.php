@@ -66,8 +66,11 @@
                         @foreach($section['items'] as $notif)
                             @php $data = $notif->data; @endphp
                             <div class="dropdown-item notification-item py-3 border-top d-flex align-items-start gap-2 {{ $notif->read_at ? '' : 'notification-item-unread' }} cursor-pointer"
-
-                                 wire:click="openNotification('{{ $notif->id }}')">
+                                 @if(($data['contract_type'] ?? '') === 'internal')
+                                     wire:click.stop="openInternalModal('{{ $notif->id }}')"
+                                 @else
+                                     wire:click="openNotification('{{ $notif->id }}')"
+                                 @endif>
                                 <div class="notification-icon bg-{{ $data['color'] ?? 'primary' }}-subtle text-{{ $data['color'] ?? 'primary' }} rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
                                     <i class="bi {{ $data['icon'] ?? 'bi-bell-fill' }} "></i>
                                 </div>
@@ -105,6 +108,38 @@
             @endif
         </div>
     </div>
+
+    {{-- Internal Notification Detail Modal — teleported to body to avoid header stacking context --}}
+    <template x-teleport="body">
+        <div class="modal fade" id="internalNotifModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg overflow-hidden">
+                    <div class="modal-header bg-info py-3">
+                        <h5 class="modal-title fw-bold text-white">
+                            <i class="bi bi-megaphone-fill me-2"></i>
+                            <span id="internalNotifTitle"></span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="d-flex align-items-center gap-2 mb-3 text-muted small">
+                            <i class="bi bi-person-circle"></i>
+                            <span id="internalNotifSender"></span>
+                            <span class="ms-auto">
+                                <i class="bi bi-clock me-1"></i>
+                                <span id="internalNotifTime"></span>
+                            </span>
+                        </div>
+                        <hr class="my-2">
+                        <div id="internalNotifBody" style="white-space: pre-wrap;"></div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>
 
 @once
@@ -150,6 +185,20 @@
                         }
                     });
                 }
+            });
+
+            window.addEventListener('openInternalNotifModal', function (event) {
+                const d = event.detail || {};
+                document.getElementById('internalNotifTitle').textContent  = d.title      || '';
+                document.getElementById('internalNotifSender').textContent = d.senderName || '';
+                document.getElementById('internalNotifTime').textContent   = d.createdAt  || '';
+                document.getElementById('internalNotifBody').textContent   = d.body       || '';
+
+                const el = document.getElementById('internalNotifModal');
+                if (!el) return;
+                const existing = bootstrap.Modal.getInstance(el);
+                if (existing) existing.dispose();
+                new bootstrap.Modal(el).show();
             });
         })();
     </script>

@@ -238,6 +238,20 @@
                         </li>
                     @endif
 
+                    @if ($currentUser->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value]))
+                        <li class="app-sidebar-menu-item">
+                            <a href="{{ route('app.internal-notifications.index') }}"
+                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.internal-notifications.*') ? 'active menu-current' : '' }}">
+                                <span class="menu-icon flex-shrink-0">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 11l19-9-9 19-2-8-8-2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                                <span class="menu-title flex-grow-1">Thông báo nội bộ</span>
+                            </a>
+                        </li>
+                    @endif
+
                 @endif
 
                 {{-- ── TỔ CHỨC ──────────────────────────────────────── --}}
