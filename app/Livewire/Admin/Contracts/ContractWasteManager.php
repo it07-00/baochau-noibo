@@ -453,6 +453,12 @@ class ContractWasteManager extends Component
         ]);
     }
 
+    #[Computed]
+    public function canManageContractFiles(): bool
+    {
+        return auth()->user()->hasRole(Role::KE_TOAN->value);
+    }
+
     public function openAssign(int $id): void
     {
         if (!$this->canAssign()) {
