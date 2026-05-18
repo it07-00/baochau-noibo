@@ -22,10 +22,10 @@ class ContractSustainability extends Model
     }
 
     const SERVICE_TYPES = [
-        'Tư vấn, lập báo cáo ESG',
-        'Tư vấn tiêu chí cảng xanh',
-        'Lập báo cáo CBAM',
-        'Đánh giá vòng đời sản phẩm (ISO 14067)',
+        'Báo cáo ESG',
+        'Tiêu chí cảng xanh',
+        'Báo cáo CBAM',
+        'Đánh giá vòng đời sản phẩm',
         'Tín chỉ Carbon',
     ];
 

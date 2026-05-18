@@ -2,11 +2,11 @@
 
     <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
-            <h4 class="mb-0">NC & CĐ Công nghệ</h4>
+            <h4 class="mb-0">Nghiên cứu và chuyển đổi công nghệ</h4>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng thống kê</a></li>
-                    <li class="breadcrumb-item active">NC & CĐ Công nghệ</li>
+                    <li class="breadcrumb-item active">Nghiên cứu và chuyển đổi công nghệ</li>
                 </ol>
             </nav>
         </div>

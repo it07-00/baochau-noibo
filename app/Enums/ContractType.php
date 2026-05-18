@@ -33,12 +33,12 @@ enum ContractType: string
     public function label(): string
     {
         return match ($this) {
-            self::WASTE          => 'Chất thải & Tiếng ồn',
-            self::CONSULTING     => 'Pháp lý & Hồ sơ MT',
-            self::PROJECT        => 'Kỹ thuật & Ứng phó SC',
-            self::COMMERCIAL     => 'NC & CĐ Công nghệ',
-            self::SUSTAINABILITY => 'TV & BC PTBV',
-            self::ENERGY         => 'Phát thải & Năng lượng',
+            self::WASTE          => 'Chất thải',
+            self::CONSULTING     => 'Quan trắc và hồ sơ môi trường',
+            self::PROJECT        => 'Ứng phó sự cố',
+            self::COMMERCIAL     => 'Nghiên cứu và chuyển đổi công nghệ',
+            self::SUSTAINABILITY => 'Phát triển bền vững',
+            self::ENERGY         => 'Giảm phát thải, tiết kiệm năng lượng',
         };
     }
 

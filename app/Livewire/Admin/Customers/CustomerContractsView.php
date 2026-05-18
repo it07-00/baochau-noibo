@@ -82,12 +82,12 @@ class CustomerContractsView extends Component
         if (!$contract || (int)$contract->customer_id !== $this->customer->id) return;
 
         $typeLabels = [
-            'waste'          => 'Chất thải & Tiếng ồn',
-            'consulting'     => 'Hồ sơ môi trường',
-            'project'        => 'Kỹ thuật & Ứng phó SC',
-            'commercial'     => 'NC & CĐ Công nghệ',
-            'sustainability' => 'TV & BC PTBV',
-            'energy'         => 'Phát thải & Năng lượng',
+            'waste'          => 'Chất thải',
+            'consulting'     => 'Quan trắc và hồ sơ môi trường',
+            'project'        => 'Ứng phó sự cố',
+            'commercial'     => 'Nghiên cứu và chuyển đổi công nghệ',
+            'sustainability' => 'Phát triển bền vững',
+            'energy'         => 'Giảm phát thải, tiết kiệm năng lượng',
         ];
 
         $contractType = $allowed[$modelClass];
@@ -136,12 +136,12 @@ class CustomerContractsView extends Component
     private function fetchAll(): Collection
     {
         $types = [
-            ['model' => ContractWaste::class,          'label' => 'Chất thải & Tiếng ồn', 'route' => 'app.contracts.waste.index'],
-            ['model' => ContractLegal::class,           'label' => 'Hồ sơ môi trường',      'route' => 'app.contracts.consulting.index'],
-            ['model' => ContractTechnical::class,       'label' => 'Kỹ thuật & Ứng phó SC','route' => 'app.contracts.project.index'],
-            ['model' => ContractResearch::class,        'label' => 'NC & CĐ Công nghệ',    'route' => 'app.contracts.commercial.index'],
-            ['model' => ContractSustainability::class,  'label' => 'TV & BC PTBV',          'route' => 'app.contracts.sustainability.index'],
-            ['model' => ContractEmission::class,        'label' => 'Phát thải & Năng lượng','route' => 'app.contracts.energy.index'],
+            ['model' => ContractWaste::class,          'label' => 'Chất thải',                             'route' => 'app.contracts.waste.index'],
+            ['model' => ContractLegal::class,           'label' => 'Quan trắc và hồ sơ môi trường',         'route' => 'app.contracts.consulting.index'],
+            ['model' => ContractTechnical::class,       'label' => 'Ứng phó sự cố',                         'route' => 'app.contracts.project.index'],
+            ['model' => ContractResearch::class,        'label' => 'Nghiên cứu và chuyển đổi công nghệ',    'route' => 'app.contracts.commercial.index'],
+            ['model' => ContractSustainability::class,  'label' => 'Phát triển bền vững',                   'route' => 'app.contracts.sustainability.index'],
+            ['model' => ContractEmission::class,        'label' => 'Giảm phát thải, tiết kiệm năng lượng',  'route' => 'app.contracts.energy.index'],
         ];
 
         $all = collect();

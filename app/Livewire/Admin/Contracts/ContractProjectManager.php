@@ -13,7 +13,7 @@ class ContractProjectManager extends AbstractContractGenericManager
     protected function getPermEdit(): Permission      { return Permission::CONTRACTS_PROJECT_EDIT; }
     protected function getPermDelete(): Permission    { return Permission::CONTRACTS_PROJECT_DELETE; }
     protected function getViewName(): string          { return 'contract-project-manager'; }
-    protected function getPageTitle(): string         { return 'Kỹ thuật & Ứng phó SC'; }
+    protected function getPageTitle(): string         { return 'Ứng phó sự cố'; }
     protected function getExportTitle(): string       { return 'Hợp đồng dự án'; }
     protected function getExportFilenamePrefix(): string { return 'HopDong_DuAn'; }
 }

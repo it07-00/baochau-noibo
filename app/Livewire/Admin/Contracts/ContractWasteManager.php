@@ -41,7 +41,7 @@ class ContractWasteManager extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public string $contractTypeName = 'Chất thải & Tiếng ồn';
+    public string $contractTypeName = 'Chất thải';
 
     public $search = '';
     public $sortDirection = 'desc';
@@ -809,9 +809,9 @@ class ContractWasteManager extends Component
             'docs' => $docs,
             'handlers' => Handler::orderBy('name')->get(),
             'customers' => Customer::orderBy('name')->get(),
-            'staffs' => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
+            'staffs' => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->where('is_active', true)->orderBy('name')->get(),
             'departments' => Department::all(),
-            'assignable_users' => \App\Models\User::whereHas('roles', fn($q) =>
+            'assignable_users' => \App\Models\User::where('is_active', true)->whereHas('roles', fn($q) =>
                 $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
             // Dynamic filter options
             'service_types' => $scopedServiceTypes,
@@ -826,6 +826,6 @@ class ContractWasteManager extends Component
             'provinces' => $scopedProvinces,
             'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
             'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-        ])->layout('admin.layouts.app', ['title' => 'Chất thải & Tiếng ồn']);
+        ])->layout('admin.layouts.app', ['title' => 'Chất thải']);
     }
 }

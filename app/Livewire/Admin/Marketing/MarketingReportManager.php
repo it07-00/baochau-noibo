@@ -138,7 +138,7 @@ class MarketingReportManager extends Component
             ->paginate(20);
 
         $users = ($this->isManager || $this->isViewOnly)
-            ? \App\Models\User::role(Role::MARKETING->value)->orderBy('name')->get()
+            ? \App\Models\User::role(Role::MARKETING->value)->where('is_active', true)->orderBy('name')->get()
             : collect();
 
         return view('livewire.admin.marketing.marketing-report-manager', [

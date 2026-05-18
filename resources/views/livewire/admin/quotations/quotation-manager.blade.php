@@ -565,22 +565,22 @@
                     <p class="mb-4">Hệ thống sẽ chuyển dữ liệu từ báo giá này sang trang tạo hợp đồng mới.</p>
                     <div class="d-grid gap-3">
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('waste')">
-                            <i class="bi bi-trash3 me-2"></i> Chất thải & Tiếng ồn
+                            <i class="bi bi-trash3 me-2"></i> Chất thải
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('consulting')">
                             <i class="bi bi-chat-dots me-2"></i> Hồ sơ môi trường
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('project')">
-                            <i class="bi bi-building me-2"></i> Kỹ thuật & Ứng phó SC
+                            <i class="bi bi-building me-2"></i> Ứng phó sự cố
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('commercial')">
-                            <i class="bi bi-cart3 me-2"></i> NC & CĐ Công nghệ
+                            <i class="bi bi-cart3 me-2"></i> Nghiên cứu và chuyển đổi công nghệ
                         </button>
                         <button class="btn btn-outline-success py-3 fw-bold" wire:click="convertTo('sustainability')">
-                            <i class="bi bi-tree me-2"></i> TV & BC PTBV
+                            <i class="bi bi-tree me-2"></i> Phát triển bền vững
                         </button>
                         <button class="btn btn-outline-warning py-3 fw-bold" wire:click="convertTo('energy')">
-                            <i class="bi bi-lightning me-2"></i> Phát thải & Năng lượng
+                            <i class="bi bi-lightning me-2"></i> Giảm phát thải, tiết kiệm năng lượng
                         </button>
                     </div>
                 </div>

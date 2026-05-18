@@ -13,7 +13,7 @@ class ContractEnergyManager extends AbstractContractGenericManager
     protected function getPermEdit(): Permission      { return Permission::CONTRACTS_ENERGY_EDIT; }
     protected function getPermDelete(): Permission    { return Permission::CONTRACTS_ENERGY_DELETE; }
     protected function getViewName(): string          { return 'contract-energy-manager'; }
-    protected function getPageTitle(): string         { return 'Phát thải & Năng lượng'; }
+    protected function getPageTitle(): string         { return 'Giảm phát thải, tiết kiệm năng lượng'; }
     protected function getExportTitle(): string       { return 'HĐ Năng lượng'; }
     protected function getExportFilenamePrefix(): string { return 'HopDong_NangLuong'; }
 }

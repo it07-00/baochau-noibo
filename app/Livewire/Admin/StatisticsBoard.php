@@ -234,12 +234,12 @@ class StatisticsBoard extends Component
         $totalCustomers = (int) $customerQuery->count();
 
         $contractTypes = [
-            'Chất thải & Tiếng ồn'   => ContractWaste::class,
+            'Chất thải'              => ContractWaste::class,
             'Pháp lý & Hồ sơ MT'     => ContractLegal::class,
-            'Kỹ thuật & Ứng phó SC'  => ContractTechnical::class,
-            'NC & CĐ Công nghệ'      => ContractResearch::class,
-            'TV & BC PTBV'           => ContractSustainability::class,
-            'Phát thải & Năng lượng' => ContractEmission::class,
+            'Ứng phó sự cố'          => ContractTechnical::class,
+            'Nghiên cứu và chuyển đổi công nghệ' => ContractResearch::class,
+            'Phát triển bền vững'    => ContractSustainability::class,
+            'Giảm phát thải, tiết kiệm năng lượng' => ContractEmission::class,
         ];
 
         $byType = [];
@@ -725,12 +725,12 @@ class StatisticsBoard extends Component
 
         // ── Biểu đồ tư vấn: số dự án theo loại / quý hoặc cả năm ──
         $consultingTypes = [
-            'Chất thải & Tiếng ồn'   => ContractWaste::class,
+            'Chất thải'              => ContractWaste::class,
             'Pháp lý & Hồ sơ MT'     => ContractLegal::class,
-            'Kỹ thuật & Ứng phó SC'  => ContractTechnical::class,
-            'NC & CĐ Công nghệ'      => ContractResearch::class,
-            'TV & BC PTBV'           => ContractSustainability::class,
-            'Phát thải & Năng lượng' => ContractEmission::class,
+            'Ứng phó sự cố'          => ContractTechnical::class,
+            'Nghiên cứu và chuyển đổi công nghệ' => ContractResearch::class,
+            'Phát triển bền vững'    => ContractSustainability::class,
+            'Giảm phát thải, tiết kiệm năng lượng' => ContractEmission::class,
         ];
         $consultingChartData = [];
         $consultingStats = collect();

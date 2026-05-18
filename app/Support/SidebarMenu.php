@@ -110,7 +110,7 @@ class SidebarMenu
                 'title'      => 'Bộ phận kỹ thuật',
                 'icon'       => 'stack',
                 'permission' => 'technical-requests.view',
-                'children'   => ['HĐ Pháp lý & Hồ sơ MT'],
+                'children'   => ['HĐ Quan trắc và hồ sơ môi trường'],
             ],
             [
                 'title'      => 'Bộ phận Marketing',
@@ -158,13 +158,13 @@ class SidebarMenu
                 'title'      => 'Báo cáo Tư vấn',
                 'icon'       => 'users',
                 'permission' => 'reports-consulting.view',
-                'children'   => ['Chất thải & Tiếng ồn', 'Pháp lý & Hồ sơ MT', 'Kỹ thuật & Ứng phó SC', 'NC & CĐ Công nghệ', 'TV & BC PTBV', 'Phát thải & Năng lượng'],
+                'children'   => ['Chất thải', 'Quan trắc và hồ sơ môi trường', 'Ứng phó sự cố', 'Nghiên cứu và chuyển đổi công nghệ', 'Phát triển bền vững', 'Giảm phát thải, tiết kiệm năng lượng'],
             ],
             [
                 'title'      => 'Báo cáo Kỹ thuật',
                 'icon'       => 'users',
                 'permission' => 'reports-technical.view',
-                'children'   => ['Hồ sơ môi trường'],
+                'children'   => ['Quan trắc và hồ sơ môi trường'],
             ],
         ];
 
@@ -186,12 +186,12 @@ class SidebarMenu
         $map = [
             'app.internal-docs.*'                        => ['Nội bộ',               'Quy định'],
             'app.internal-software.*'                    => ['Nội bộ',               'Phần mềm'],
-            'app.contracts.waste.*'                      => ['Quản lý hợp đồng',     'HĐ Chất thải & Tiếng ồn'],
-            'app.contracts.consulting.*'                 => ['Quản lý hợp đồng',     'HĐ Pháp lý & Hồ sơ MT'],
-            'app.contracts.project.*'                    => ['Quản lý hợp đồng',     'HĐ Kỹ thuật & Ứng phó SC'],
-            'app.contracts.commercial.*'                 => ['Quản lý hợp đồng',     'HĐ NC & CĐ Công nghệ'],
-            'app.contracts.sustainability.*'             => ['Quản lý hợp đồng',     'HĐ TV & BC PTBV'],
-            'app.contracts.energy.*'                     => ['Quản lý hợp đồng',     'HĐ Phát thải & Năng lượng'],
+            'app.contracts.waste.*'                      => ['Quản lý hợp đồng',     'HĐ Chất thải'],
+            'app.contracts.consulting.*'                 => ['Quản lý hợp đồng',     'HĐ Quan trắc và hồ sơ môi trường'],
+            'app.contracts.project.*'                    => ['Quản lý hợp đồng',     'HĐ Ứng phó sự cố'],
+            'app.contracts.commercial.*'                 => ['Quản lý hợp đồng',     'HĐ Nghiên cứu và chuyển đổi công nghệ'],
+            'app.contracts.sustainability.*'             => ['Quản lý hợp đồng',     'HĐ Phát triển bền vững'],
+            'app.contracts.energy.*'                     => ['Quản lý hợp đồng',     'HĐ Giảm phát thải, tiết kiệm năng lượng'],
             'app.marketing.daily-report.*'               => ['Bộ phận Marketing',    'Báo cáo hàng ngày'],
             'app.daily-reports.*'                        => ['Báo cáo ngày',         'Báo cáo ngày'],
             'app.commissions.*'                          => ['Hoa hồng',             'Yêu cầu chi hoa hồng'],
@@ -202,13 +202,13 @@ class SidebarMenu
             'app.sales.target-registration'              => ['Bộ phận kinh doanh',   'Đăng ký mục tiêu doanh số'],
             'app.reports.sales.target'                   => ['Báo cáo Kinh doanh',   'Bảng doanh số cam kết'],
             'app.reports.sales.personal'                 => ['Báo cáo Kinh doanh',   'Bảng doanh số cá nhân'],
-            'app.reports.consulting-work.waste'          => ['Báo cáo Tư vấn',       'Chất thải & Tiếng ồn'],
-            'app.reports.consulting-work.consulting'     => ['Báo cáo Tư vấn',       'Pháp lý & Hồ sơ MT'],
-            'app.reports.consulting-work.project'        => ['Báo cáo Tư vấn',       'Kỹ thuật & Ứng phó SC'],
-            'app.reports.consulting-work.commercial'     => ['Báo cáo Tư vấn',       'NC & CĐ Công nghệ'],
-            'app.reports.consulting-work.sustainability' => ['Báo cáo Tư vấn',       'TV & BC PTBV'],
-            'app.reports.consulting-work.energy'         => ['Báo cáo Tư vấn',       'Phát thải & Năng lượng'],
-            'app.reports.technical.consulting'           => ['Báo cáo Kỹ thuật',     'Hồ sơ môi trường'],
+            'app.reports.consulting-work.waste'          => ['Báo cáo Tư vấn',       'Chất thải'],
+            'app.reports.consulting-work.consulting'     => ['Báo cáo Tư vấn',       'Quan trắc và hồ sơ môi trường'],
+            'app.reports.consulting-work.project'        => ['Báo cáo Tư vấn',       'Ứng phó sự cố'],
+            'app.reports.consulting-work.commercial'     => ['Báo cáo Tư vấn',       'Nghiên cứu và chuyển đổi công nghệ'],
+            'app.reports.consulting-work.sustainability' => ['Báo cáo Tư vấn',       'Phát triển bền vững'],
+            'app.reports.consulting-work.energy'         => ['Báo cáo Tư vấn',       'Giảm phát thải, tiết kiệm năng lượng'],
+            'app.reports.technical.consulting'           => ['Báo cáo Kỹ thuật',     'Quan trắc và hồ sơ môi trường'],
         ];
 
         [$group, $child] = [null, null];
@@ -238,12 +238,12 @@ class SidebarMenu
     {
         // Contract type children appear across multiple parent menus
         $contractRoutes = [
-            'HĐ Chất thải & Tiếng ồn'  => 'app.contracts.waste.index',
-            'HĐ Pháp lý & Hồ sơ MT'    => 'app.contracts.consulting.index',
-            'HĐ Kỹ thuật & Ứng phó SC'  => 'app.contracts.project.index',
-            'HĐ NC & CĐ Công nghệ'      => 'app.contracts.commercial.index',
-            'HĐ TV & BC PTBV'           => 'app.contracts.sustainability.index',
-            'HĐ Phát thải & Năng lượng' => 'app.contracts.energy.index',
+            'HĐ Chất thải'                               => 'app.contracts.waste.index',
+            'HĐ Quan trắc và hồ sơ môi trường'          => 'app.contracts.consulting.index',
+            'HĐ Ứng phó sự cố'                           => 'app.contracts.project.index',
+            'HĐ Nghiên cứu và chuyển đổi công nghệ'     => 'app.contracts.commercial.index',
+            'HĐ Phát triển bền vững'                     => 'app.contracts.sustainability.index',
+            'HĐ Giảm phát thải, tiết kiệm năng lượng'   => 'app.contracts.energy.index',
         ];
 
         if (isset($contractRoutes[$child])) {
@@ -264,14 +264,14 @@ class SidebarMenu
                 'Bảng doanh số cá nhân'  => 'app.reports.sales.personal',
             ],
             'Báo cáo Tư vấn'     => [
-                'Chất thải & Tiếng ồn'   => 'app.reports.consulting-work.waste',
-                'Pháp lý & Hồ sơ MT'     => 'app.reports.consulting-work.consulting',
-                'Kỹ thuật & Ứng phó SC'  => 'app.reports.consulting-work.project',
-                'NC & CĐ Công nghệ'      => 'app.reports.consulting-work.commercial',
-                'TV & BC PTBV'           => 'app.reports.consulting-work.sustainability',
-                'Phát thải & Năng lượng' => 'app.reports.consulting-work.energy',
+                'Chất thải'                              => 'app.reports.consulting-work.waste',
+                'Quan trắc và hồ sơ môi trường'         => 'app.reports.consulting-work.consulting',
+                'Ứng phó sự cố'                          => 'app.reports.consulting-work.project',
+                'Nghiên cứu và chuyển đổi công nghệ'    => 'app.reports.consulting-work.commercial',
+                'Phát triển bền vững'                    => 'app.reports.consulting-work.sustainability',
+                'Giảm phát thải, tiết kiệm năng lượng'  => 'app.reports.consulting-work.energy',
             ],
-            'Báo cáo Kỹ thuật'   => ['Hồ sơ môi trường' => 'app.reports.technical.consulting'],
+            'Báo cáo Kỹ thuật'   => ['Quan trắc và hồ sơ môi trường' => 'app.reports.technical.consulting'],
             'Bộ phận Marketing'  => ['Báo cáo hàng ngày' => 'app.marketing.daily-report.index'],
         ];
 
@@ -291,12 +291,12 @@ class SidebarMenu
 
         if (in_array($menuTitle, $contractParents, true)) {
             return match ($child) {
-                'HĐ Chất thải & Tiếng ồn'  => 'Chất thải & Tiếng ồn',
-                'HĐ Pháp lý & Hồ sơ MT'    => 'Hồ sơ môi trường',
-                'HĐ Kỹ thuật & Ứng phó SC'  => 'Kỹ thuật & Ứng phó SC',
-                'HĐ NC & CĐ Công nghệ'      => 'NC & CĐ Công nghệ',
-                'HĐ TV & BC PTBV'           => 'TV & BC PTBV',
-                'HĐ Phát thải & Năng lượng' => 'Phát thải & Năng lượng',
+                'HĐ Chất thải'                              => 'Chất thải',
+                'HĐ Quan trắc và hồ sơ môi trường'         => 'Quan trắc và hồ sơ môi trường',
+                'HĐ Ứng phó sự cố'                          => 'Ứng phó sự cố',
+                'HĐ Nghiên cứu và chuyển đổi công nghệ'    => 'Nghiên cứu và chuyển đổi công nghệ',
+                'HĐ Phát triển bền vững'                    => 'Phát triển bền vững',
+                'HĐ Giảm phát thải, tiết kiệm năng lượng'  => 'Giảm phát thải, tiết kiệm năng lượng',
                 default                     => $child,
             };
         }
@@ -325,12 +325,12 @@ class SidebarMenu
     private static function contractTypes(): array
     {
         return [
-            'HĐ Chất thải & Tiếng ồn',
-            'HĐ Pháp lý & Hồ sơ MT',
-            'HĐ Kỹ thuật & Ứng phó SC',
-            'HĐ NC & CĐ Công nghệ',
-            'HĐ TV & BC PTBV',
-            'HĐ Phát thải & Năng lượng',
+            'HĐ Chất thải',
+            'HĐ Quan trắc và hồ sơ môi trường',
+            'HĐ Ứng phó sự cố',
+            'HĐ Nghiên cứu và chuyển đổi công nghệ',
+            'HĐ Phát triển bền vững',
+            'HĐ Giảm phát thải, tiết kiệm năng lượng',
         ];
     }
 }

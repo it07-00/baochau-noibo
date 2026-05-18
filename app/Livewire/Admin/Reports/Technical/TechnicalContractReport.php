@@ -35,12 +35,12 @@ class TechnicalContractReport extends Component
     public array $years = [];
 
     private const TYPE_MAP = [
-        'waste' => ['model' => ContractWaste::class,          'label' => 'BC Chất thải & Tiếng ồn'],
+        'waste' => ['model' => ContractWaste::class,          'label' => 'BC Chất thải'],
         'consulting' => ['model' => ContractLegal::class,     'label' => 'Hồ sơ môi trường'],
-        'project' => ['model' => ContractTechnical::class,        'label' => 'BC Kỹ thuật & Ứng phó SC'],
-        'commercial' => ['model' => ContractResearch::class,     'label' => 'BC NC & CĐ Công nghệ'],
-        'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC TV & BC PTBV'],
-        'energy' => ['model' => ContractEmission::class,         'label' => 'BC Phát thải & Năng lượng'],
+        'project' => ['model' => ContractTechnical::class,        'label' => 'BC Ứng phó sự cố'],
+        'commercial' => ['model' => ContractResearch::class,     'label' => 'BC Nghiên cứu và chuyển đổi công nghệ'],
+        'sustainability' => ['model' => ContractSustainability::class, 'label' => 'BC Phát triển bền vững'],
+        'energy' => ['model' => ContractEmission::class,         'label' => 'BC Giảm phát thải, tiết kiệm năng lượng'],
     ];
 
     public function mount(): void

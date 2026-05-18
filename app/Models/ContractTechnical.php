@@ -24,9 +24,13 @@ class ContractTechnical extends Model
     }
 
     const SERVICE_TYPES = [
-        'Tư vấn, thiết kế và thi công hệ thống xử lý khí thải, nước thải',
-        'Ứng phó sự cố hóa chất, tràn dầu',
-        'Tư vấn, thiết kế và thi công hệ thống quan trắc tự động',
+        'Ứng phó sự cố hóa chất',
+        'Ứng phó sự cố môi trường',
+        'Lập kế hoạch ứng phó sự cố hóa chất',
+        'Lập biện pháp ứng phó sự cố hóa chất',
+        'Diễn tập UPDCHC/MT',
+        'Hệ thống xử lý khí thải, nước thải',
+        'Xây dựng bản đồ tiếng ồn',
     ];
 
     protected $fillable = [

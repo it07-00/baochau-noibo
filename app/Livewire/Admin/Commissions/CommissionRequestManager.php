@@ -190,6 +190,7 @@ class CommissionRequestManager extends Component
         ];
 
         $requesters = User::query()
+            ->where('is_active', true)
             ->whereIn('id', CommissionRequest::query()->select('user_id')->distinct())
             ->orderBy('name')
             ->get(['id', 'name']);

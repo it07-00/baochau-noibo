@@ -25,8 +25,9 @@ class ContractLegal extends Model
     }
 
     const SERVICE_TYPES = [
-        'Tư vấn, lập ĐTM, GPMT, DKMT',
         'Quan trắc môi trường',
+        'QTMT và BCCTBVMT',
+        'Hồ sơ môi trường',
         'Quan trắc môi trường lao động',
         'Phân loại lao động',
     ];

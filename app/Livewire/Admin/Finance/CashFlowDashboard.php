@@ -51,12 +51,12 @@ class CashFlowDashboard extends Component
     protected $paginationTheme = 'bootstrap';
 
     private const CONTRACT_SOURCES = [
-        'waste' => [ContractWaste::class,         'Chất thải & Tiếng ồn'],
+        'waste' => [ContractWaste::class,         'Chất thải'],
         'consulting' => [ContractLegal::class,         'Pháp lý & Hồ sơ MT'],
-        'project' => [ContractTechnical::class,     'Kỹ thuật & Ứng phó SC'],
-        'commercial' => [ContractResearch::class,      'NC & CĐ Công nghệ'],
-        'sustainability' => [ContractSustainability::class, 'TV & BC PTBV'],
-        'energy' => [ContractEmission::class,      'Phát thải & Năng lượng'],
+        'project' => [ContractTechnical::class,     'Ứng phó sự cố'],
+        'commercial' => [ContractResearch::class,      'Nghiên cứu và chuyển đổi công nghệ'],
+        'sustainability' => [ContractSustainability::class, 'Phát triển bền vững'],
+        'energy' => [ContractEmission::class,      'Giảm phát thải, tiết kiệm năng lượng'],
     ];
 
     private const PAYMENT_STATUS_UNPAID = 'unpaid';

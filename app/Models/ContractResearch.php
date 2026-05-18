@@ -24,8 +24,9 @@ class ContractResearch extends Model
     }
 
     const SERVICE_TYPES = [
-        'Nghiên cứu khoa học về môi trường',
+        'Nghiên cứu khoa học môi trường',
         'Cung cấp giải pháp chuyển đổi công nghệ',
+        'Hội thảo',
     ];
 
     const TOTAL_STEPS = 6;

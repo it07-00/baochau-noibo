@@ -13,7 +13,7 @@ class ContractCommercialManager extends AbstractContractGenericManager
     protected function getPermEdit(): Permission      { return Permission::CONTRACTS_COMMERCIAL_EDIT; }
     protected function getPermDelete(): Permission    { return Permission::CONTRACTS_COMMERCIAL_DELETE; }
     protected function getViewName(): string          { return 'contract-commercial-manager'; }
-    protected function getPageTitle(): string         { return 'NC & CĐ Công nghệ'; }
+    protected function getPageTitle(): string         { return 'Nghiên cứu và chuyển đổi công nghệ'; }
     protected function getExportTitle(): string       { return 'Hợp đồng thương mại'; }
     protected function getExportFilenamePrefix(): string { return 'HopDong_ThuongMai'; }
 }

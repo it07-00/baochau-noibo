@@ -32,12 +32,12 @@ class SalesTargetRegistration extends Component
     ];
 
     protected array $contractTypeNames = [
-        ContractWaste::class          => 'Chất thải & Tiếng ồn',
+        ContractWaste::class          => 'Chất thải',
         ContractLegal::class          => 'Pháp lý & Hồ sơ MT',
-        ContractTechnical::class      => 'Kỹ thuật & Ứng phó SC',
-        ContractResearch::class       => 'NC & CĐ Công nghệ',
-        ContractSustainability::class => 'TV & BC PTBV',
-        ContractEmission::class       => 'Phát thải & Năng lượng',
+        ContractTechnical::class      => 'Ứng phó sự cố',
+        ContractResearch::class       => 'Nghiên cứu và chuyển đổi công nghệ',
+        ContractSustainability::class => 'Phát triển bền vững',
+        ContractEmission::class       => 'Giảm phát thải, tiết kiệm năng lượng',
     ];
 
     public function mount(): void
@@ -232,7 +232,7 @@ class SalesTargetRegistration extends Component
 
         $isTpkd    = auth()->user()->hasRole(Role::TP_KINH_DOANH->value);
         $staffList = $isTpkd
-            ? User::role(Role::KINH_DOANH->value)->orderBy('name')->get(['id', 'name'])
+            ? User::role(Role::KINH_DOANH->value)->where('is_active', true)->orderBy('name')->get(['id', 'name'])
             : collect();
 
         if ($this->selectedStaffId === auth()->id()) {

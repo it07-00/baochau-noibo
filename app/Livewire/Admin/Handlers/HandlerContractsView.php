@@ -84,12 +84,12 @@ class HandlerContractsView extends Component
         if (!$contract || (int) $contract->handler_id !== $this->handler->id) return;
 
         $typeLabels = [
-            'waste'          => 'Chất thải & Tiếng ồn',
-            'consulting'     => 'Hồ sơ môi trường',
-            'project'        => 'Kỹ thuật & Ứng phó SC',
-            'commercial'     => 'NC & CĐ Công nghệ',
-            'sustainability' => 'TV & BC PTBV',
-            'energy'         => 'Phát thải & Năng lượng',
+            'waste'          => 'Chất thải',
+            'consulting'     => 'Quan trắc và hồ sơ môi trường',
+            'project'        => 'Ứng phó sự cố',
+            'commercial'     => 'Nghiên cứu và chuyển đổi công nghệ',
+            'sustainability' => 'Phát triển bền vững',
+            'energy'         => 'Giảm phát thải, tiết kiệm năng lượng',
         ];
 
         $contractType = $allowed[$modelClass];
@@ -136,12 +136,12 @@ class HandlerContractsView extends Component
     private function fetchAll(): Collection
     {
         $types = [
-            ['model' => ContractWaste::class,          'label' => 'Chất thải & Tiếng ồn'],
-            ['model' => ContractLegal::class,           'label' => 'Hồ sơ môi trường'],
-            ['model' => ContractTechnical::class,       'label' => 'Kỹ thuật & Ứng phó SC'],
-            ['model' => ContractResearch::class,        'label' => 'NC & CĐ Công nghệ'],
-            ['model' => ContractSustainability::class,  'label' => 'TV & BC PTBV'],
-            ['model' => ContractEmission::class,        'label' => 'Phát thải & Năng lượng'],
+            ['model' => ContractWaste::class,          'label' => 'Chất thải'],
+            ['model' => ContractLegal::class,           'label' => 'Quan trắc và hồ sơ môi trường'],
+            ['model' => ContractTechnical::class,       'label' => 'Ứng phó sự cố'],
+            ['model' => ContractResearch::class,        'label' => 'Nghiên cứu và chuyển đổi công nghệ'],
+            ['model' => ContractSustainability::class,  'label' => 'Phát triển bền vững'],
+            ['model' => ContractEmission::class,        'label' => 'Giảm phát thải, tiết kiệm năng lượng'],
         ];
 
         $all = collect();

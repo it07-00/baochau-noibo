@@ -783,9 +783,9 @@ abstract class AbstractContractGenericManager extends Component
         return view('livewire.admin.contracts.' . $this->getViewName(), [
             'docs'                   => $docs,
             'customers'              => Customer::orderBy('name')->get(),
-            'staffs'                 => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->orderBy('name')->get(),
+            'staffs'                 => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->where('is_active', true)->orderBy('name')->get(),
             'departments'            => Department::all(),
-            'assignable_users'       => User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
+            'assignable_users'       => User::where('is_active', true)->whereHas('roles', fn($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
             'provinces'              => $scopedProvinces,
             'all_statuses'           => self::ALLOWED_STATUSES,
             'renewal_statuses'       => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),

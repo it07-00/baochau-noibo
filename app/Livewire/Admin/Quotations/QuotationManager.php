@@ -584,8 +584,8 @@ class QuotationManager extends Component
         return view('livewire.admin.quotations.quotation-manager', [
             'quotations' => $query->orderBy('date', $orderDirection)->orderBy('id', $orderDirection)->paginate(15),
             'staffs' => $this->isKinhDoanh()
-                ? User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('id', auth()->id())->orderBy('name')->get()
-                : User::role(['kinh-doanh', 'tp-kinh-doanh'])->orderBy('name')->get(),
+                ? User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->where('id', auth()->id())->orderBy('name')->get()
+                : User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get(),
             'statuses' => QuotationStatus::values(),
             'availableFields' => $this->availableFields,
         ])->layout('admin.layouts.app', ['title' => 'Theo dõi Báo giá']);

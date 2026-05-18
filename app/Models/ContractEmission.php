@@ -24,9 +24,10 @@ class ContractEmission extends Model
     }
 
     const SERVICE_TYPES = [
-        'Kiểm kê khí nhà kính NĐ 06/2022 và ISO 14064-1',
-        'Kiểm toán năng lượng, giải pháp tiết kiệm năng lượng, và giảm phát thải khí nhà kính',
-        'Tư vấn, thiết kế hệ thống điện mặt trời',
+        'Kiểm kê KNK',
+        'Giảm phát thải KNK',
+        'Kiểm toán năng lượng',
+        'Hệ thống solar',
     ];
 
     protected $fillable = [

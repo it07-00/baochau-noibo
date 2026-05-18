@@ -62,8 +62,9 @@ class ContractWaste extends Model
     ];
 
     const SERVICE_TYPES = [
-        'Thu gom, xử lý chất thải nguy hại và công nghiệp',
-        'Xây dựng bản đồ tiếng ồn',
+        'Thu gom CTNH',
+        'CTCN',
+        'Hủy hàng',
     ];
 
     protected $casts = [
