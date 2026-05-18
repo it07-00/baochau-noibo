@@ -8,11 +8,11 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-2">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Sơ đồ luồng</li>
+                    <li class="breadcrumb-item active" aria-current="page">Workflow</li>
                 </ol>
             </nav>
-            <h1 class="flow-map-title">Sơ đồ luồng nghiệp vụ</h1>
-            <p class="flow-map-subtitle">Nhìn nhanh các module đang nối với nhau như thế nào, từ đầu vào đến báo cáo cuối cùng.</p>
+            <h1 class="flow-map-title">Workflow</h1>
+            <p class="flow-map-subtitle">Nhìn nhanh luồng chính, nhánh phụ và điểm ra báo cáo.</p>
         </div>
         <div class="flow-map-actions">
             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="flow-map-tabs" role="tablist" aria-label="Nhóm luồng nghiệp vụ">
+    <div class="flow-map-tabs" role="tablist" aria-label="Workflow">
         @foreach($maps as $key => $map)
             <button
                 type="button"

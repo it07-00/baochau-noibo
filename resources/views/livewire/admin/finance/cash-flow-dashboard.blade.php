@@ -58,14 +58,6 @@
                         @endforeach
                     </select>
                 </div>
-                @if($canManageNccPayment)
-                <div class="col-md-auto">
-                    <button wire:click="importAllNccPaymentsFromSheets" class="btn btn-primary fw-semibold px-3 py-2" wire:loading.attr="disabled" wire:target="importAllNccPaymentsFromSheets">
-                        <span wire:loading wire:target="importAllNccPaymentsFromSheets" class="spinner-border spinner-border-sm me-1"></span>
-                        <i class="bi bi-arrow-repeat me-2"></i> Đồng bộ
-                    </button>
-                </div>
-                @endif
                 @can('cash-flow.export')
                 <div class="col-md-auto ms-auto">
                     <button wire:click="exportExcel" class="btn btn-success btn-sm" wire:loading.attr="disabled">

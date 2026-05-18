@@ -114,3 +114,8 @@ Schedule::call(function () {
         $user->notify(new \App\Notifications\DailyReportReminderNotification());
     }
 })->weekdays()->dailyAt('16:30')->name('daily-report-reminder');
+
+Schedule::command('contracts:sync-ncc-payments-from-sheets')
+    ->hourly()
+    ->withoutOverlapping()
+    ->name('contracts-sync-ncc-payments-from-sheets');

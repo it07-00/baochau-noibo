@@ -25,7 +25,7 @@ class FlowMapBoard extends Component
         return view('livewire.admin.flow-map-board', [
             'maps' => $maps,
             'current' => $maps[$this->activeMap],
-        ])->layout('admin.layouts.app', ['title' => 'Sơ đồ luồng nghiệp vụ']);
+        ])->layout('admin.layouts.app', ['title' => 'Workflow']);
     }
 
     private function maps(): array
@@ -34,8 +34,8 @@ class FlowMapBoard extends Component
             'contract' => [
                 'label' => 'Hợp đồng',
                 'icon' => 'doc',
-                'title' => 'Luồng hợp đồng & thanh toán',
-                'summary' => 'Từ khách hàng, báo giá, hợp đồng đến lịch thanh toán, dòng tiền và báo cáo.',
+                'title' => 'Hợp đồng & thanh toán',
+                'summary' => 'Từ khách hàng, báo giá, hợp đồng đến dòng tiền và báo cáo.',
                 'metrics' => [
                     ['label' => 'Loại hợp đồng', 'value' => '6'],
                     ['label' => 'Điểm giao việc', 'value' => '2'],
@@ -51,8 +51,8 @@ class FlowMapBoard extends Component
                     'Báo cáo',
                 ],
                 'notes' => [
-                    'Tư vấn và kỹ thuật dùng cùng nguồn hợp đồng nhưng khác góc nhìn xử lý.',
-                    'Kế toán theo dõi thanh toán, hoa hồng và dòng tiền sau khi hợp đồng phát sinh.',
+                    'Bảo Châu ở luồng chính; nhà thầu phụ ở nhánh phụ.',
+                    'Kế toán theo dõi thanh toán, hoa hồng và dòng tiền.',
                 ],
                 'steps' => [
                     [
@@ -60,14 +60,14 @@ class FlowMapBoard extends Component
                         'label' => 'Tiếp nhận',
                         'nodes' => [
                             $this->node('Khách hàng', 'Hồ sơ, liên hệ, lịch sử hợp đồng', 'app.customers.index', 'primary'),
-                            $this->node('Nhà thầu phụ', 'Đối tác xử lý và hợp đồng liên quan', 'app.handlers.index', 'muted', true),
+                            $this->node('Nhà thầu phụ', 'Đối tác xử lý', 'app.handlers.index', 'muted', true),
                         ],
                     ],
                     [
                         'phase' => '02',
                         'label' => 'Báo giá',
                         'nodes' => [
-                            $this->node('Theo dõi báo giá', 'Pipeline kinh doanh trước hợp đồng', 'app.quotation-tracking.index', 'primary'),
+                            $this->node('Theo dõi báo giá', 'Pipeline trước hợp đồng', 'app.quotation-tracking.index', 'primary'),
                             $this->node('Mục tiêu doanh số', 'Cam kết và kế hoạch doanh thu', 'app.sales.target-registration', 'muted', true),
                         ],
                     ],
@@ -75,10 +75,13 @@ class FlowMapBoard extends Component
                         'phase' => '03',
                         'label' => 'Ký hợp đồng',
                         'nodes' => [
-                            $this->node('Chất thải', 'Thu gom CTNH, CTCN, hủy hàng', 'app.contracts.waste.index', 'primary'),
-                            $this->node('Quan trắc & hồ sơ MT', 'Quan trắc MT, QTMT, hồ sơ MT, lao động', 'app.contracts.consulting.index', 'primary'),
-                            $this->node('Ứng phó sự cố', 'Ứng phó HC, MT, lập KH, diễn tập, hệ thống XLKT/NT, bản đồ ồn', 'app.contracts.project.index', 'primary'),
-                            $this->node('Giảm phát thải, TKNL', 'Kiểm kê KNK, giảm phát thải, kiểm toán NL, solar', 'app.contracts.energy.index', 'muted', true),
+                            $this->node('Hồ sơ MT & lao động', 'QTMTLĐ, PLLĐ, BCCTBVMT: Bảo Châu', 'app.contracts.consulting.index', 'primary'),
+                            $this->node('Ứng phó sự cố', 'Ứng phó HC, MT, lập KH, diễn tập, bản đồ ồn', 'app.contracts.project.index', 'primary'),
+                            $this->node('Báo cáo KK KNK; GPT', 'Bảo Châu', 'app.contracts.energy.index', 'primary'),
+                            $this->node('Chất thải', 'CTNH, CTCN, hủy hàng: thầu phụ', 'app.contracts.waste.index', 'muted', true),
+                            $this->node('QTMT', 'Thầu phụ', 'app.contracts.consulting.index', 'muted', true),
+                            $this->node('HTXL nước thải, khí thải', 'Thầu phụ', 'app.contracts.project.index', 'muted', true),
+                            $this->node('KTNL, solar', 'Thầu phụ', 'app.contracts.energy.index', 'muted', true),
                             $this->node('Phát triển bền vững', 'ESG, cảng xanh, CBAM, vòng đời SP, tín chỉ carbon', 'app.contracts.sustainability.index', 'muted', true),
                             $this->node('Nghiên cứu & CĐ CN', 'Nghiên cứu MT, giải pháp CĐ CN, hội thảo', 'app.contracts.commercial.index', 'muted', true),
                         ],
@@ -112,18 +115,18 @@ class FlowMapBoard extends Component
             'sales' => [
                 'label' => 'Kinh doanh',
                 'icon' => 'chart',
-                'title' => 'Luồng kinh doanh',
-                'summary' => 'Từ mục tiêu, tạo khách hàng, báo giá, ký hợp đồng đến phân công xử lý và theo dõi kết quả.',
+                'title' => 'Kinh doanh',
+                'summary' => 'Từ mục tiêu, khách hàng, báo giá đến phân công và kết quả.',
                 'metrics' => [
                     ['label' => 'Điểm vào', 'value' => 'KH'],
                     ['label' => 'Chuyển đổi', 'value' => 'BG → HĐ'],
-                    ['label' => 'Bộ phận nhận', 'value' => '4'],
+                    ['label' => 'Bộ phận nhận', 'value' => '3+'],
                     ['label' => 'Báo cáo', 'value' => '3'],
                 ],
                 'ledger' => ['Mục tiêu', 'Khách hàng', 'Báo giá', 'Hợp đồng', 'Phân công', 'Kết quả'],
                 'notes' => [
-                    'Báo giá là điểm chuyển đổi trung tâm — khi khách chốt, báo giá trở thành hợp đồng.',
-                    'Sau ký HĐ, công việc được giao tùy tính chất: tư vấn, kỹ thuật, kinh doanh hoặc đơn vị ngoài.',
+                    'Báo giá chốt sẽ chuyển thành hợp đồng.',
+                    'Việc chính giao Bảo Châu; thầu phụ đi nhánh riêng.',
                 ],
                 'steps' => [
                     [
@@ -145,23 +148,24 @@ class FlowMapBoard extends Component
                         'phase' => '03',
                         'label' => 'Báo giá',
                         'nodes' => [
-                            $this->node('Theo dõi báo giá', 'Pipeline cơ hội, trạng thái và chuyển đổi', 'app.quotation-tracking.index', 'primary'),
+                            $this->node('Theo dõi báo giá', 'Cơ hội và chuyển đổi', 'app.quotation-tracking.index', 'primary'),
                         ],
                     ],
                     [
                         'phase' => '04',
                         'label' => 'Ký hợp đồng',
                         'nodes' => [
-                            $this->node('Hợp đồng dịch vụ', 'Báo giá được chốt chuyển thành hợp đồng', 'app.contracts.waste.index', 'primary'),
+                            $this->node('Hợp đồng dịch vụ', 'Phân loại chính/phụ theo nhóm dịch vụ', 'app.contracts.consulting.index', 'primary'),
                         ],
                     ],
                     [
                         'phase' => '05',
                         'label' => 'Phân công',
                         'nodes' => [
-                            $this->node('Bộ phận tư vấn', 'Hồ sơ MT, quan trắc, PTBV, năng lượng', 'app.reports.consulting-work.consulting', 'primary'),
-                            $this->node('Bộ phận kỹ thuật', 'Ứng phó sự cố, hệ thống XLKT/NT', 'app.reports.technical.consulting', 'primary'),
-                            $this->node('Đơn vị ngoài', 'Nhà thầu phụ xử lý chất thải', 'app.handlers.index', 'muted', true),
+                            $this->node('Bộ phận tư vấn', 'Hồ sơ MT, lao động, Bảo Châu', 'app.reports.consulting-work.consulting', 'primary'),
+                            $this->node('Bộ phận kỹ thuật', 'Ứng phó sự cố, kế hoạch, diễn tập, bản đồ ồn', 'app.reports.technical.consulting', 'primary'),
+                            $this->node('Báo cáo KK KNK; GPT', 'Bảo Châu xử lý', 'app.contracts.energy.index', 'primary'),
+                            $this->node('Nhà thầu phụ', 'Chất thải, QTMT, HTXL nước/khí, KTNL, solar', 'app.handlers.index', 'muted', true),
                             $this->node('Kinh doanh', 'Hợp đồng tự thực hiện (R&D, hội thảo)', 'app.contracts.commercial.index', 'muted', true),
                         ],
                     ],
@@ -179,8 +183,8 @@ class FlowMapBoard extends Component
             'operations' => [
                 'label' => 'Tư vấn/Kỹ thuật',
                 'icon' => 'stack',
-                'title' => 'Luồng xử lý chuyên môn',
-                'summary' => 'Các hợp đồng sau khi ký được chuyển thành khối lượng xử lý, theo dõi tiến độ và báo cáo.',
+                'title' => 'Tư vấn/Kỹ thuật',
+                'summary' => 'Xử lý hợp đồng, tiến độ và báo cáo.',
                 'metrics' => [
                     ['label' => 'Nhóm dịch vụ', 'value' => '6'],
                     ['label' => 'Bộ phận', 'value' => '2'],
@@ -189,17 +193,19 @@ class FlowMapBoard extends Component
                 ],
                 'ledger' => ['Hợp đồng', 'Phân công', 'Thực hiện', 'Bàn giao', 'Báo cáo', 'Thống kê'],
                 'notes' => [
-                    'TPKD hoặc nhân sự kinh doanh giao việc dựa trên tính chất hợp đồng — không qua bộ phận nhân sự.',
-                    'Nhật ký công việc ghi nhận bằng chứng thực hiện hằng ngày.',
+                    'Kinh doanh giao việc theo tính chất hợp đồng.',
+                    'Tách rõ việc Bảo Châu và việc thầu phụ.',
                 ],
                 'steps' => [
                     [
                         'phase' => '01',
                         'label' => 'Nguồn việc',
                         'nodes' => [
-                            $this->node('Quan trắc & hồ sơ MT', 'Nguồn việc tư vấn chính', 'app.contracts.consulting.index', 'primary'),
+                            $this->node('Hồ sơ MT & lao động', 'Nguồn việc Bảo Châu', 'app.contracts.consulting.index', 'primary'),
                             $this->node('Ứng phó sự cố', 'Nguồn việc kỹ thuật chính', 'app.contracts.project.index', 'primary'),
-                            $this->node('Các nhóm còn lại', 'Chất thải, PTBV, năng lượng, R&D', 'app.contracts.waste.index', 'muted', true),
+                            $this->node('Báo cáo KK KNK; GPT', 'Nguồn việc Bảo Châu', 'app.contracts.energy.index', 'primary'),
+                            $this->node('Nhà thầu phụ', 'Chất thải, QTMT, HTXL nước/khí, KTNL, solar', 'app.handlers.index', 'muted', true),
+                            $this->node('Nhóm tham chiếu', 'PTBV, R&D, hội thảo', 'app.contracts.sustainability.index', 'muted', true),
                         ],
                     ],
                     [
@@ -245,8 +251,8 @@ class FlowMapBoard extends Component
             'finance' => [
                 'label' => 'Kế toán',
                 'icon' => 'money',
-                'title' => 'Luồng tài chính',
-                'summary' => 'Kế toán cập nhật số hóa đơn trên hợp đồng, theo dõi thanh toán nhà thầu phụ và cập nhật trạng thái dòng tiền.',
+                'title' => 'Tài chính',
+                'summary' => 'Cập nhật hóa đơn, thanh toán thầu phụ và dòng tiền.',
                 'metrics' => [
                     ['label' => 'Cập nhật', 'value' => 'Hóa đơn'],
                     ['label' => 'NCC', 'value' => 'Nếu có'],
@@ -255,31 +261,34 @@ class FlowMapBoard extends Component
                 ],
                 'ledger' => ['Hợp đồng', 'Hóa đơn', 'NCC', 'Dòng tiền', 'Hoa hồng', 'Báo cáo'],
                 'notes' => [
-                    'Kế toán vào từng hợp đồng để cập nhật số hóa đơn và trạng thái thanh toán nhà thầu phụ (nếu có).',
-                    'Sau khi cập nhật hóa đơn, dòng tiền phản ánh trạng thái thu chi thực tế.',
+                    'Cập nhật hóa đơn và thanh toán thầu phụ nếu có.',
+                    'Dòng tiền phản ánh thu chi thực tế.',
                 ],
                 'steps' => [
                     [
                         'phase' => '01',
                         'label' => 'Phát sinh',
                         'nodes' => [
-                            $this->node('Hợp đồng dịch vụ', 'Nguồn phát sinh doanh thu và công nợ', 'app.contracts.waste.index', 'primary'),
+                            $this->node('Hợp đồng chính', 'Doanh thu và công nợ Bảo Châu', 'app.contracts.consulting.index', 'primary'),
+                            $this->node('Hạng mục thầu phụ', 'Theo dõi phần chi nếu có', 'app.handlers.index', 'muted', true),
                         ],
                     ],
                     [
                         'phase' => '02',
                         'label' => 'Cập nhật hóa đơn',
                         'nodes' => [
-                            $this->node('Quan trắc & hồ sơ MT', 'Cập nhật số HĐ và trạng thái thanh toán', 'app.contracts.consulting.index', 'primary'),
-                            $this->node('Ứng phó sự cố', 'Cập nhật số HĐ và trạng thái thanh toán', 'app.contracts.project.index', 'primary'),
-                            $this->node('Các loại còn lại', 'Chất thải, PTBV, năng lượng, R&D', 'app.contracts.waste.index', 'muted', true),
+                            $this->node('Hồ sơ MT & lao động', 'Số HĐ và thanh toán', 'app.contracts.consulting.index', 'primary'),
+                            $this->node('Ứng phó sự cố', 'Số HĐ và thanh toán', 'app.contracts.project.index', 'primary'),
+                            $this->node('Báo cáo KK KNK; GPT', 'Số HĐ và thanh toán', 'app.contracts.energy.index', 'primary'),
+                            $this->node('Nhà thầu phụ', 'Chất thải, QTMT, HTXL nước/khí, KTNL, solar', 'app.handlers.index', 'muted', true),
+                            $this->node('Nhóm tham chiếu', 'PTBV, R&D, hội thảo', 'app.contracts.sustainability.index', 'muted', true),
                         ],
                     ],
                     [
                         'phase' => '03',
                         'label' => 'Nhà thầu phụ',
                         'nodes' => [
-                            $this->node('Thanh toán NCC', 'Cập nhật trạng thái chi NCC trên hợp đồng', 'app.handlers.index', 'primary'),
+                            $this->node('Thanh toán NCC', 'Cập nhật chi thầu phụ', 'app.handlers.index', 'muted', true),
                         ],
                     ],
                     [
