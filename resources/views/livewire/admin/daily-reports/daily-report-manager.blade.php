@@ -736,7 +736,7 @@
     </div>
 
     @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/css/daily-report.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/daily-report.css') }}?v={{ config('app.version') }}">
     @endpush
 
     <script>

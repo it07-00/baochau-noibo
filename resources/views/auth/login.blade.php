@@ -10,9 +10,9 @@
     <link rel="icon" href="{{ asset('assets/images/favicon-192x192.png') }}" sizes="192x192" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/apple-touch-icon.png') }}">
 
-    <link id="bootstrap-css" rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/perfect-scrollbar.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}">
+    <link id="bootstrap-css" rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/perfect-scrollbar.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}?v={{ config('app.version') }}">
 </head>
 <body>
     <div class="auth-main">
@@ -113,10 +113,10 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/js/jquery.js') }}"></script>
-    <script src="{{ asset('assets/js/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/js/conca-sidebar.js') }}"></script>
-    <script src="{{ asset('assets/js/conca.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/perfect-scrollbar.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/conca-sidebar.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/conca.js') }}?v={{ config('app.version') }}"></script>
 </body>
 </html>

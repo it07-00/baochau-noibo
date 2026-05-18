@@ -1,10 +1,10 @@
-<script src="{{ asset('assets/js/jquery.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/perfect-scrollbar.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/bootstrap.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/conca-sidebar.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/conca.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/sweetalert2.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/ckeditor.js') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/jquery.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/perfect-scrollbar.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/bootstrap.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/conca-sidebar.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/conca.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/sweetalert2.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/ckeditor.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 
 <script>
     // ── Strip diacritics helper (dùng cho Alpine x-show search) ──

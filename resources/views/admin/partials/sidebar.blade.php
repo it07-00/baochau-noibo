@@ -101,6 +101,24 @@
                     </a>
                 </li>
 
+                <li class="app-sidebar-menu-item">
+                    <a href="{{ route('app.flow-maps') }}"
+                        class="menu-link d-flex align-items-center {{ request()->routeIs('app.flow-maps') ? 'active menu-current' : '' }}">
+                        <span class="menu-icon flex-shrink-0">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 7H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M14 7H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M5 17H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M14 17H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M10 7C12.5 7 11.5 17 14 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M10 17C12.5 17 11.5 7 14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 3"/>
+                            </svg>
+                        </span>
+                        <span class="menu-title flex-grow-1">Sơ đồ luồng</span>
+                    </a>
+                </li>
+
                 {{-- ── QUẢN TRỊ ─────────────────────────────────────── --}}
                 @if ($currentUser->hasRole(Role::IT->value) || $currentUser->canany(['users.view', 'roles.view', 'activity-log.view']))
                     <li class="app-sidebar-menu-heading">
