@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\Marketing;
 
+use App\Enums\Permission;
 use App\Enums\Role;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\MarketingContent;
 use Illuminate\Support\Facades\Storage;
@@ -56,6 +58,8 @@ class MarketingContentManager extends Component
 
     public function openCreate(): void
     {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_CREATE);
+
         $this->resetForm();
         $this->isEditing = false;
         $this->editingId = null;
@@ -64,6 +68,8 @@ class MarketingContentManager extends Component
 
     public function openEdit(int $id): void
     {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
+
         $record = $this->authorizeOwn($id);
         if (!$record || !$record->isEditable()) {
             return;
@@ -83,6 +89,10 @@ class MarketingContentManager extends Component
 
     public function save(): void
     {
+        $this->authorizeMarketingPermission(
+            $this->isEditing ? Permission::ARTICLES_EDIT : Permission::ARTICLES_CREATE
+        );
+
         $this->validate();
 
         $user = auth()->user();
@@ -135,6 +145,8 @@ class MarketingContentManager extends Component
 
     public function submitForReview(int $id): void
     {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
+
         $record = $this->authorizeOwn($id);
         if (!$record || !$record->isDraft()) {
             return;
@@ -146,13 +158,22 @@ class MarketingContentManager extends Component
 
     public function openReview(int $id): void
     {
-        $this->reviewingId = $id;
+        $this->authorizeReviewerAction();
+
+        $record = MarketingContent::find($id);
+        if (!$record || !$record->isPending()) {
+            return;
+        }
+
+        $this->reviewingId = $record->id;
         $this->reviewNote = '';
         $this->dispatch('openReviewModal');
     }
 
     public function approve(): void
     {
+        $this->authorizeReviewerAction();
+
         $record = MarketingContent::find($this->reviewingId);
         if (!$record || !$record->isPending()) {
             return;
@@ -172,6 +193,8 @@ class MarketingContentManager extends Component
 
     public function reject(): void
     {
+        $this->authorizeReviewerAction();
+
         $this->validate(['reviewNote' => 'required|string|max:500'], [
             'reviewNote.required' => 'Vui lòng nhập lý do từ chối.',
         ]);
@@ -196,12 +219,19 @@ class MarketingContentManager extends Component
 
     public function openDetail(int $id): void
     {
-        $this->detailId = $id;
+        $record = $this->authorizeOwn($id);
+        if (!$record) {
+            return;
+        }
+
+        $this->detailId = $record->id;
         $this->dispatch('openDetailModal');
     }
 
     public function deleteContent(int $id): void
     {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_DELETE);
+
         $record = $this->authorizeOwn($id);
         if (!$record || !$record->isDraft()) {
             return;
@@ -217,13 +247,32 @@ class MarketingContentManager extends Component
 
     public function removeExistingImage(string $path): void
     {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
+
         $this->imagesToRemove[] = $path;
         $this->existingImages = array_values(array_filter($this->existingImages, fn ($p) => $p !== $path));
     }
 
     public function removeNewImage(int $index): void
     {
+        $this->authorizeMarketingPermission(
+            $this->isEditing ? Permission::ARTICLES_EDIT : Permission::ARTICLES_CREATE
+        );
+
         array_splice($this->newImages, $index, 1);
+    }
+
+    private function authorizeMarketingPermission(Permission $permission): void
+    {
+        $user = auth()->user();
+
+        abort_unless($user && $user->hasRole(Role::MARKETING->value), 403);
+        abort_unless($user->can($permission->value), 403);
+    }
+
+    private function authorizeReviewerAction(): void
+    {
+        abort_unless(auth()->check() && $this->isReviewer(), 403);
     }
 
     private function buildScopedQuery(bool $isMarketing): Builder
@@ -267,6 +316,74 @@ class MarketingContentManager extends Component
         ]);
     }
 
+    public function listScheduleIcon(?CarbonInterface $scheduledAt): string
+    {
+        if (! $scheduledAt) {
+            return 'bi bi-calendar3';
+        }
+
+        if ($scheduledAt->isToday()) {
+            return 'bi bi-lightning-charge';
+        }
+
+        if ($scheduledAt->isPast()) {
+            return 'bi bi-exclamation-circle';
+        }
+
+        if ($scheduledAt->diffInDays(now()) <= 7) {
+            return 'bi bi-calendar-week';
+        }
+
+        return 'bi bi-calendar3';
+    }
+
+    public function listScheduleText(?CarbonInterface $scheduledAt): string
+    {
+        if (! $scheduledAt) {
+            return 'Chưa chốt lịch đăng';
+        }
+
+        if ($scheduledAt->isToday()) {
+            return 'Đăng hôm nay';
+        }
+
+        if ($scheduledAt->isPast()) {
+            return 'Quá lịch ' . $scheduledAt->format('d/m');
+        }
+
+        if ($scheduledAt->diffInDays(now()) <= 7) {
+            return 'Trong ' . $scheduledAt->diffInDays(now()) . ' ngày';
+        }
+
+        return 'Lên lịch ' . $scheduledAt->format('d/m');
+    }
+
+    public function detailScheduleValue(?CarbonInterface $scheduledAt): string
+    {
+        return $scheduledAt?->format('d/m/Y') ?? 'Chưa chốt lịch';
+    }
+
+    public function detailScheduleHint(?CarbonInterface $scheduledAt): string
+    {
+        if (! $scheduledAt) {
+            return 'Chưa có ngày đăng chính thức';
+        }
+
+        if ($scheduledAt->isToday()) {
+            return 'Dự kiến đăng hôm nay';
+        }
+
+        if ($scheduledAt->isPast()) {
+            return 'Đã quá lịch đăng';
+        }
+
+        if ($scheduledAt->diffInDays(now()) <= 7) {
+            return 'Dự kiến đăng trong ' . $scheduledAt->diffInDays(now()) . ' ngày';
+        }
+
+        return 'Đã lên lịch đăng';
+    }
+
     public function render()
     {
         $user = auth()->user();
@@ -279,8 +396,10 @@ class MarketingContentManager extends Component
             ->latest()
             ->paginate(12);
 
-        $detailRecord = $this->detailId ? MarketingContent::with(['user', 'reviewer'])->find($this->detailId) : null;
-        $reviewRecord = $this->reviewingId ? MarketingContent::with('user')->find($this->reviewingId) : null;
+        $detailRecord = $this->detailId ? $this->authorizeOwn($this->detailId) : null;
+        $reviewRecord = ($this->reviewingId && $this->isReviewer())
+            ? MarketingContent::with('user')->find($this->reviewingId)
+            : null;
 
         return view('livewire.admin.marketing.marketing-content-manager', [
             'contents'     => $contents,

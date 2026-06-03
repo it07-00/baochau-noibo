@@ -459,6 +459,137 @@ class ContractWasteManager extends Component
         return auth()->user()->hasRole(Role::KE_TOAN->value);
     }
 
+    #[Computed]
+    public function canBulkDelete(): bool
+    {
+        return auth()->user()->can(Permission::CONTRACTS_WASTE_DELETE->value);
+    }
+
+    #[Computed]
+    public function isRestrictedRole(): bool
+    {
+        return auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+    }
+
+    public function canManageOwnedDoc($doc): bool
+    {
+        return !auth()->user()->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === auth()->id();
+    }
+
+    public function canUpdateStatusForDoc($doc): bool
+    {
+        $currentUser = auth()->user();
+        $isRestrictedTpKd =
+            $currentUser->hasRole(Role::TP_KINH_DOANH->value) &&
+            !$currentUser->hasAnyRole([Role::GIAM_DOC->value]);
+
+        return !$currentUser->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
+            && (!$isRestrictedTpKd || $doc->staff_id === $currentUser->id);
+    }
+
+    public function workflowProgressMeta($doc): array
+    {
+        $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
+        $totalSteps = 6;
+        $progressPercent = $totalSteps > 0 ? (int) round(($completedSteps / $totalSteps) * 100) : 0;
+        $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
+
+        return [
+            'completedSteps' => $completedSteps,
+            'totalSteps' => $totalSteps,
+            'progressPercent' => $progressPercent,
+            'progressColor' => $progressColor,
+        ];
+    }
+
+    public function deadlineMeta($doc): array
+    {
+        $deadline = $doc->assignments->first()?->deadline;
+        $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH'], true);
+        $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
+        $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->copy()->startOfDay(), false) : null;
+
+        return [
+            'deadline' => $deadline,
+            'daysLeft' => $daysLeft,
+            'isFinished' => $isFinished,
+            'isOverdue' => $isOverdue,
+            'isNearDue' => $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3,
+        ];
+    }
+
+    public function voucherBadgeInfoForDoc($doc): array
+    {
+        $voucherStatusValue = trim((string) ($doc->voucher_status ?? ''));
+        $voucherStatusKey = mb_strtolower($voucherStatusValue);
+        $voucherBadgeClass = match ($voucherStatusKey) {
+            'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
+            'đã xuất hóa đơn' => 'bg-warning text-dark',
+            'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
+            'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
+            '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
+            default => 'bg-secondary text-white',
+        };
+
+        $voucherBadgeLabel = match ($voucherStatusKey) {
+            'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
+            'đã xuất hóa đơn' => 'Xuất hóa đơn',
+            'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
+            'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'BB nghiệm thu kết thúc HĐ',
+            '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
+            default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
+        };
+
+        return [
+            'class' => $voucherBadgeClass,
+            'label' => $voucherBadgeLabel,
+            'full_value' => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
+        ];
+    }
+
+    public function renewalBadgeClassForDoc($doc): string
+    {
+        $renewalStatusKey = mb_strtolower(trim((string) ($doc->renewal_status ?? '')));
+
+        return match ($renewalStatusKey) {
+            'đã tái ký' => 'bg-success text-white',
+            'chưa tái ký' => 'bg-danger text-white',
+            'chưa đến hạn' => 'bg-warning text-dark',
+            '', 'chưa chọn' => 'bg-light text-dark border',
+            default => 'bg-secondary text-white',
+        };
+    }
+
+    public function wasteStatusColorForDoc($doc): array
+    {
+        $statusKey = mb_strtolower(trim((string) ($doc->status ?? '')));
+
+        return match ($statusKey) {
+            'hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+            'đã hủy', 'hợp đồng hủy', 'hủy bỏ' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+            'đã trình ký nhà thầu phụ' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+            'nhà thầu phụ đã gửi về' => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
+            'đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+            'đang thực hiện', '' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+            default => ['bg' => '#e9ecef', 'text' => '#495057'],
+        };
+    }
+
+    public function roleDisplayFromSlug(string $roleSlug): string
+    {
+        return match ($roleSlug) {
+            'it' => 'IT Admin',
+            'giam-doc' => 'Giám đốc',
+            'tp-kinh-doanh' => 'Trưởng phòng KD',
+            'kinh-doanh' => 'Nhân viên KD',
+            'ke-toan' => 'Kế toán',
+            'tu-van' => 'Tư vấn',
+            'ky-thuat' => 'Kỹ thuật',
+            'marketing' => 'Marketing',
+            default => $roleSlug,
+        };
+    }
+
     public function openAssign(int $id): void
     {
         if (!$this->canAssign()) {

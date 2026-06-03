@@ -1,9 +1,4 @@
 <div>
-    @php
-        $totalPct = $totals['target'] > 0 ? round(($totals['actual'] / $totals['target']) * 100, 1) : null;
-        $totalDelta = $totals['actual'] - $totals['target'];
-    @endphp
-
     {{-- Bộ lọc --}}
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3 px-4">
@@ -56,8 +51,8 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class=" text-muted fw-semibold mb-2">Chênh lệch</div>
-                    <div class="fs-5 fw-bold {{ $totalDelta >= 0 ? 'text-success' : 'text-danger' }}">
-                        {{ $totalDelta >= 0 ? '+' : '−' }}{{ number_format(abs($totalDelta), 0, ',', '.') }} đ
+                    <div class="fs-5 fw-bold {{ $this->totalDelta($totals) >= 0 ? 'text-success' : 'text-danger' }}">
+                        {{ $this->totalDelta($totals) >= 0 ? '+' : '−' }}{{ number_format(abs($this->totalDelta($totals)), 0, ',', '.') }} đ
                     </div>
                 </div>
             </div>
@@ -66,8 +61,8 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class=" text-muted fw-semibold mb-2">Tỷ lệ hoàn thành</div>
-                    <div class="fs-5 fw-bold {{ ($totalPct ?? 0) >= 100 ? 'text-success' : (($totalPct ?? 0) >= 70 ? 'text-warning' : 'text-danger') }}">
-                        {{ $totalPct !== null ? $totalPct . '%' : '—' }}
+                    <div class="fs-5 fw-bold {{ $this->pctTextClass($this->totalPct($totals)) }}">
+                        {{ $this->totalPct($totals) !== null ? $this->totalPct($totals) . '%' : '—' }}
                     </div>
                 </div>
             </div>
@@ -95,38 +90,28 @@
                     </thead>
                     <tbody>
                         @foreach($months as $m => $data)
-                            @php
-                                $target = (float) $data['target'];
-                                $actual = (float) $data['actual'];
-                                $pct = $target > 0 ? round($actual / $target * 100, 1) : null;
-                                $delta = $actual - $target;
-                                $progressWidth = $pct !== null ? max(0, min(100, $pct)) : 0;
-                                $progressClass = $pct === null
-                                    ? 'bg-secondary'
-                                    : ($pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger'));
-                            @endphp
-                            <tr class="{{ $target == 0 ? 'table-light' : '' }} cursor-pointer"
+                            <tr class="{{ $this->monthMetrics($data)['target'] == 0 ? 'table-light' : '' }} cursor-pointer"
                                  wire:click="openDetail({{ $m }})">
                                 <td>
                                     <span class="fw-semibold">Tháng {{ $m }}</span>
                                 </td>
-                                <td class="text-end fw-semibold {{ $target > 0 ? 'text-dark' : 'text-muted' }}">
-                                    {{ $target > 0 ? number_format($target, 0, ',', '.') : '—' }}
+                                <td class="text-end fw-semibold {{ $this->monthMetrics($data)['target'] > 0 ? 'text-dark' : 'text-muted' }}">
+                                    {{ $this->monthMetrics($data)['target'] > 0 ? number_format($this->monthMetrics($data)['target'], 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="text-end fw-semibold {{ $actual > 0 ? 'text-success' : 'text-muted' }}">
-                                    {{ $actual > 0 ? number_format($actual, 0, ',', '.') : '—' }}
+                                <td class="text-end fw-semibold {{ $this->monthMetrics($data)['actual'] > 0 ? 'text-success' : 'text-muted' }}">
+                                    {{ $this->monthMetrics($data)['actual'] > 0 ? number_format($this->monthMetrics($data)['actual'], 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="text-end fw-semibold {{ $delta >= 0 ? 'text-success' : 'text-danger' }}">
-                                    {{ $target > 0 || $actual > 0 ? ($delta >= 0 ? '+' : '−') . number_format(abs($delta), 0, ',', '.') : '—' }}
+                                <td class="text-end fw-semibold {{ $this->monthMetrics($data)['delta'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ $this->monthMetrics($data)['target'] > 0 || $this->monthMetrics($data)['actual'] > 0 ? ($this->monthMetrics($data)['delta'] >= 0 ? '+' : '−') . number_format(abs($this->monthMetrics($data)['delta']), 0, ',', '.') : '—' }}
                                 </td>
                                 <td>
-                                    @if($pct !== null)
+                                    @if($this->monthMetrics($data)['pct'] !== null)
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="progress flex-grow-1 h-8px" >
-                                                <div class="progress-bar {{ $progressClass }}" role="progressbar" style="width: {{ $progressWidth }}%"></div>
+                                                <div class="progress-bar {{ $this->monthMetrics($data)['progressClass'] }}" role="progressbar" style="width: {{ $this->monthMetrics($data)['progressWidth'] }}%"></div>
                                             </div>
-                                            <span class=" fw-semibold {{ $pct >= 100 ? 'text-success' : ($pct >= 70 ? 'text-warning' : 'text-danger') }} mnw-46px text-end" >
-                                                {{ $pct }}%
+                                            <span class=" fw-semibold {{ $this->pctTextClass($this->monthMetrics($data)['pct']) }} mnw-46px text-end" >
+                                                {{ $this->monthMetrics($data)['pct'] }}%
                                             </span>
                                         </div>
                                     @else
@@ -134,11 +119,11 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($pct === null)
+                                    @if($this->monthMetrics($data)['pct'] === null)
                                         <span class="badge bg-soft-secondary text-secondary ">Chưa có mục tiêu</span>
-                                    @elseif($pct >= 100)
+                                    @elseif($this->monthMetrics($data)['pct'] >= 100)
                                         <span class="badge bg-soft-success text-success ">Đạt</span>
-                                    @elseif($pct >= 70)
+                                    @elseif($this->monthMetrics($data)['pct'] >= 70)
                                         <span class="badge bg-soft-warning text-warning ">Gần đạt</span>
                                     @else
                                         <span class="badge bg-soft-danger text-danger ">Chưa đạt</span>
@@ -152,21 +137,17 @@
                             <td>Tổng năm {{ $year }}</td>
                             <td class="text-end">{{ number_format($totals['target'], 0, ',', '.') }} đ</td>
                             <td class="text-end text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</td>
-                            <td class="text-end {{ $totalDelta >= 0 ? 'text-success' : 'text-danger' }}">
-                                {{ $totalDelta >= 0 ? '+' : '−' }}{{ number_format(abs($totalDelta), 0, ',', '.') }} đ
+                            <td class="text-end {{ $this->totalDelta($totals) >= 0 ? 'text-success' : 'text-danger' }}">
+                                {{ $this->totalDelta($totals) >= 0 ? '+' : '−' }}{{ number_format(abs($this->totalDelta($totals)), 0, ',', '.') }} đ
                             </td>
                             <td>
-                                @if($totalPct !== null)
-                                    @php
-                                        $totalProgressClass = $totalPct >= 100 ? 'bg-success' : ($totalPct >= 70 ? 'bg-warning' : 'bg-danger');
-                                        $totalProgressWidth = max(0, min(100, $totalPct));
-                                    @endphp
+                                @if($this->totalPct($totals) !== null)
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="progress flex-grow-1 h-8px" >
-                                            <div class="progress-bar {{ $totalProgressClass }}" role="progressbar" style="width: {{ $totalProgressWidth }}%"></div>
+                                            <div class="progress-bar {{ $this->monthMetrics($totals)['progressClass'] }}" role="progressbar" style="width: {{ $this->monthMetrics($totals)['progressWidth'] }}%"></div>
                                         </div>
-                                        <span class=" fw-semibold {{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }} mnw-46px text-end" >
-                                            {{ $totalPct }}%
+                                        <span class=" fw-semibold {{ $this->pctTextClass($this->totalPct($totals)) }} mnw-46px text-end" >
+                                            {{ $this->totalPct($totals) }}%
                                         </span>
                                     </div>
                                 @else
@@ -174,11 +155,11 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if($totalPct === null)
+                                @if($this->totalPct($totals) === null)
                                     <span class="badge bg-soft-secondary text-secondary ">Chưa có mục tiêu</span>
-                                @elseif($totalPct >= 100)
+                                @elseif($this->totalPct($totals) >= 100)
                                     <span class="badge bg-soft-success text-success ">Đạt</span>
-                                @elseif($totalPct >= 70)
+                                @elseif($this->totalPct($totals) >= 70)
                                     <span class="badge bg-soft-warning text-warning ">Gần đạt</span>
                                 @else
                                     <span class="badge bg-soft-danger text-danger ">Chưa đạt</span>

@@ -79,6 +79,71 @@ class SalesTargetReport extends Component
         $this->dispatch('openDetailModal');
     }
 
+    public function totalPct(array $totals): ?float
+    {
+        $target = (float) ($totals['target'] ?? 0);
+        $actual = (float) ($totals['actual'] ?? 0);
+
+        return $target > 0 ? round(($actual / $target) * 100, 1) : null;
+    }
+
+    public function totalDelta(array $totals): float
+    {
+        return (float) ($totals['actual'] ?? 0) - (float) ($totals['target'] ?? 0);
+    }
+
+    public function monthMetrics(array $data): array
+    {
+        $target = (float) ($data['target'] ?? 0);
+        $actual = (float) ($data['actual'] ?? 0);
+        $pct = $target > 0 ? round($actual / $target * 100, 1) : null;
+
+        return [
+            'target' => $target,
+            'actual' => $actual,
+            'pct' => $pct,
+            'delta' => $actual - $target,
+            'progressWidth' => $pct !== null ? max(0, min(100, $pct)) : 0,
+            'progressClass' => $pct === null
+                ? 'bg-secondary'
+                : ($pct >= 100 ? 'bg-success' : ($pct >= 70 ? 'bg-warning' : 'bg-danger')),
+        ];
+    }
+
+    public function pctTextClass(?float $pct): string
+    {
+        if ($pct === null) {
+            return 'text-danger';
+        }
+
+        if ($pct >= 100) {
+            return 'text-success';
+        }
+
+        if ($pct >= 70) {
+            return 'text-warning';
+        }
+
+        return 'text-danger';
+    }
+
+    public function pctBadgeClass(?float $pct): string
+    {
+        if ($pct === null) {
+            return 'bg-soft-secondary text-secondary';
+        }
+
+        if ($pct >= 100) {
+            return 'bg-soft-success text-success';
+        }
+
+        if ($pct >= 70) {
+            return 'bg-soft-warning text-warning';
+        }
+
+        return 'bg-soft-danger text-danger';
+    }
+
     public function render()
     {
         $months = [];

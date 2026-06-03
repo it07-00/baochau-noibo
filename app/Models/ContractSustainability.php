@@ -14,6 +14,8 @@ class ContractSustainability extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
 
+    const TOTAL_STEPS = 6;
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

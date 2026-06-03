@@ -5,13 +5,6 @@
     @push('styles')
     @endpush
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Người dùng']
-        ];
-    @endphp
-
     <div class="row g-3 user-summary-grid px-2 px-md-0">
         <div class="col-lg-4 col-md-6">
             <x-admin.summary-card title="Tổng người dùng" value="{{ $totalUsers }}" badge="Tổng hệ thống" iconClass="bg-glow-primary" />

@@ -9,6 +9,7 @@ use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\User;
 use App\Services\CommissionService;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -165,6 +166,20 @@ class CommissionRequestManager extends Component
 
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Kế toán đã từ chối yêu cầu chi hoa hồng.']);
         $this->cancelReject();
+    }
+
+    public function rejectionReason(?string $notes): string
+    {
+        if (empty($notes) || !str_contains($notes, 'Lý do từ chối (kế toán):')) {
+            return '';
+        }
+
+        return trim(Str::afterLast($notes, 'Lý do từ chối (kế toán):'));
+    }
+
+    public function rejectionReasonPreview(?string $notes, int $limit = 70): string
+    {
+        return Str::limit($this->rejectionReason($notes), $limit);
     }
 
     public function render()

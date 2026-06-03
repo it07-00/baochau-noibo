@@ -3,15 +3,6 @@
 @section('title', 'Hồ sơ của tôi')
 @section('page_title', 'Hồ sơ của tôi')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Hồ sơ của tôi'],
-    ];
-
-    $user = auth()->user();
-@endphp
-
 @section('content')
     @if (session('status'))
         <div class="alert alert-success mt-3" role="alert">
@@ -41,7 +32,7 @@
                         <div class="mb-4">
                             <label class="form-label" for="avatar">Ảnh đại diện</label>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <x-user-avatar :user="$user" :size="64" />
+                                <x-user-avatar :user="auth()->user()" :size="64" />
                                 <span class="text-muted">JPG, PNG, WEBP. Tối đa 2MB.</span>
                             </div>
                             <input

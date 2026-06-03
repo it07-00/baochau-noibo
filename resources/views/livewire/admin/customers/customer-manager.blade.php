@@ -2,13 +2,6 @@
     @section('title', 'Quản lý khách hàng')
     @section('page_title', 'Danh sách khách hàng')
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Khách hàng']
-        ];
-    @endphp
-
     <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
@@ -50,14 +43,6 @@
                             </thead>
                             <tbody>
                                 @forelse($customers as $customer)
-                                @php
-                                    $totalContracts = $customer->contracts_count
-                                        + $customer->contracts_consulting_count
-                                        + $customer->contracts_commercial_count
-                                        + $customer->contracts_project_count
-                                        + $customer->contracts_energy_count
-                                        + $customer->contracts_sustainability_count;
-                                @endphp
                                 <tr wire:key="customer-{{ $customer->id }}">
                                     <td class="text-center text-muted fw-semibold">{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}</td>
                                     <td class="fw-bold">
@@ -69,10 +54,10 @@
                                     <td class="d-none d-lg-table-cell">{{ $customer->province ?: '—' }}</td>
                                     <td class="d-none d-md-table-cell">{{ $customer->representative ?: '—' }}</td>
                                     <td class="text-center">
-                                        @if($totalContracts > 0)
+                                        @if($this->totalContractsCount($customer) > 0)
                                             <a href="{{ route('app.customers.contracts', $customer) }}"
                                                class="badge bg-label-primary px-2 py-1 text-decoration-none">
-                                                {{ $totalContracts }}
+                                                {{ $this->totalContractsCount($customer) }}
                                             </a>
                                         @else
                                             <span class="badge bg-label-secondary px-2 py-1">0</span>
@@ -89,7 +74,7 @@
                                         <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
                                                 wire:click="delete({{ $customer->id }})"
                                                 wire:confirm="Xác nhận xóa khách hàng này?"
-                                                title="Xóa" {{ $totalContracts > 0 ? 'disabled' : '' }}>
+                                                title="Xóa" {{ $this->totalContractsCount($customer) > 0 ? 'disabled' : '' }}>
                                             <i class="bi bi-trash"></i>
                                         </button>
                                         @endcan
@@ -108,24 +93,16 @@
                     {{-- Mobile: Card list --}}
                     <div class="d-sm-none px-3 pb-3">
                         @forelse($customers as $customer)
-                        @php
-                            $totalContracts = $customer->contracts_count
-                                + $customer->contracts_consulting_count
-                                + $customer->contracts_commercial_count
-                                + $customer->contracts_project_count
-                                + $customer->contracts_energy_count
-                                + $customer->contracts_sustainability_count;
-                        @endphp
                         <div wire:key="customer-card-{{ $customer->id }}" class="border rounded-3 p-3 mb-2 bg-body">
                             <div class="d-flex justify-content-between align-items-start gap-2">
                                 <a href="{{ route('app.customers.contracts', $customer) }}" class="fw-bold text-body text-decoration-none fs-90 lh-base" >
                                     {{ $customer->name }}
                                 </a>
                                 <div class="flex-shrink-0">
-                                    @if($totalContracts > 0)
+                                    @if($this->totalContractsCount($customer) > 0)
                                         <a href="{{ route('app.customers.contracts', $customer) }}"
                                            class="badge bg-label-primary px-2 py-1 text-decoration-none">
-                                            {{ $totalContracts }} HĐ
+                                            {{ $this->totalContractsCount($customer) }} HĐ
                                         </a>
                                     @else
                                         <span class="badge bg-label-secondary px-2 py-1">0 HĐ</span>
@@ -154,7 +131,7 @@
                                 <button class="btn btn-sm btn-outline-danger flex-fill"
                                         wire:click="delete({{ $customer->id }})"
                                         wire:confirm="Xác nhận xóa khách hàng này?"
-                                        {{ $totalContracts > 0 ? 'disabled' : '' }}>
+                                        {{ $this->totalContractsCount($customer) > 0 ? 'disabled' : '' }}>
                                     <i class="bi bi-trash me-1"></i>Xóa
                                 </button>
                                 @endcan

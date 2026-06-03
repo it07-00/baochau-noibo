@@ -3,86 +3,6 @@
 @section('title', 'Thêm vai trò')
 @section('page_title', 'Tạo vai trò mới')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Vai trò', 'url' => route('app.roles.index')],
-        ['label' => 'Tạo mới'],
-    ];
-    $moduleNames = [
-        // Quản trị hệ thống
-        'users'                    => 'Người dùng',
-        'roles'                    => 'Vai trò & Phân quyền',
-        'departments'              => 'Phòng ban',
-        'settings'                 => 'Cài đặt hệ thống',
-        'master-data'              => 'Dữ liệu chuẩn',
-
-        // Dữ liệu nền
-        'handlers'                 => 'Nhà thầu phụ',
-        'customers'                => 'Khách hàng',
-
-        // Hợp đồng
-        'contracts-waste'          => 'Hợp đồng chất thải',
-        'contracts-consulting'     => 'Hợp đồng tư vấn',
-        'contracts-project'        => 'Hợp đồng dự án',
-        'contracts-commercial'     => 'Hợp đồng thương mại',
-        'contracts-sustainability' => 'HĐ Phát triển bền vững',
-        'contracts-energy'         => 'HĐ Giảm phát thải & NL',
-
-        // Hóa đơn
-        'invoices'                 => 'Hóa đơn Bảo Châu',
-        'handler-invoices'         => 'Hóa đơn nhà thầu phụ',
-
-        // Kinh doanh
-        'sales-progressive'        => 'Doanh số tiến độ',
-        'quotation-tracking'       => 'Theo dõi báo giá',
-        'quotations'               => 'Báo giá',
-
-        // Tài chính
-        'commissions'              => 'Yêu cầu hoa hồng',
-        'advance-requests'         => 'Yêu cầu ứng tiền',
-        'cash-flow'                => 'Dòng tiền',
-
-        // Vận hành
-        'waste-requests'           => 'Yêu cầu chất thải',
-        'consulting-requests'      => 'Yêu cầu tư vấn',
-        'project-requests'         => 'Yêu cầu dự án',
-        'commercial-requests'      => 'Yêu cầu thương mại',
-        'technical-requests'       => 'Yêu cầu kỹ thuật',
-
-        // Chuyển phát
-        'mail-delivery'            => 'Chuyển phát thư',
-
-        // Thanh toán
-        'payment-schedules'        => 'Lịch thanh toán HĐ',
-
-        // Thống kê & Báo cáo
-        'rankings'                 => 'Bảng xếp hạng',
-        'statistics'               => 'Bảng thống kê',
-        'reports'                  => 'Báo cáo tổng hợp',
-        'reports-consulting'       => 'Báo cáo tư vấn',
-        'reports-technical'        => 'Báo cáo kỹ thuật',
-        'reports-sales'            => 'Báo cáo kinh doanh',
-        'daily-reports'            => 'Báo cáo ngày',
-
-        // Kinh doanh bổ sung
-        'sales-quotation'          => 'Báo giá kinh doanh',
-
-        // Chấm công & Nhân sự
-        'cham-cong'                => 'Chấm công',
-        'hr-profiles'              => 'Hồ sơ nhân sự',
-
-        // Vận hành bổ sung
-        'mail-delivery-admin'      => 'Quản trị chuyển phát',
-        'marketing-reports'        => 'Báo cáo Marketing',
-
-        // Nhật ký & Nội bộ
-        'activity-log'             => 'Nhật ký hoạt động',
-        'internal-docs'            => 'Tài liệu nội bộ',
-        'articles'                 => 'Bài viết / Marketing',
-    ];
-@endphp
-
 @section('content')
     <form action="{{ route('app.roles.store') }}" method="POST">
         @csrf
@@ -121,25 +41,9 @@
                     <div class="pure-card-body p-0">
                         @foreach($permissions as $module => $modulePermissions)
                         <div class="permission-group border-bottom p-4">
-                            <h6 class="fw-bold mb-3 text-primary">{{ $moduleNames[$module] ?? strtoupper($module) }}</h6>
+                            <h6 class="fw-bold mb-3 text-primary">{{ \App\Support\RolePermissionViewData::moduleName($module) }}</h6>
                             <div class="row g-3">
                                 @foreach($modulePermissions as $permission)
-                                    @php
-                                        // Rút gọn tên permission để hiển thị đẹp hơn
-                                        $displayParts = explode('.', $permission->name);
-                                        $action = isset($displayParts[1]) ? $displayParts[1] : $displayParts[0];
-                                        $actionLabels = [
-                                            'view'     => 'Xem danh sách',
-                                            'view-all' => 'Xem tất cả',
-                                            'create'   => 'Thêm mới',
-                                            'edit'     => 'Chỉnh sửa',
-                                            'delete'   => 'Xóa',
-                                            'approve'  => 'Phê duyệt',
-                                            'export'   => 'Xuất dữ liệu',
-                                            'report'   => 'Xem báo cáo',
-                                        ];
-                                        $displayAction = $actionLabels[$action] ?? ucfirst($action);
-                                    @endphp
                                     <div class="col-md-4 col-sm-6">
                                         <div class="form-check custom-checkbox">
                                             <input class="form-check-input perm-check" type="checkbox"
@@ -148,7 +52,7 @@
                                                 id="perm_{{ $permission->id }}"
                                                 {{ (is_array(old('permissions')) && in_array($permission->name, old('permissions'))) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="perm_{{ $permission->id }}">
-                                                {{ $displayAction }}
+                                                {{ \App\Support\RolePermissionViewData::actionLabel($permission->name) }}
                                                 <small class="d-block text-muted fs-75" >{{ $permission->name }}</small>
                                             </label>
                                         </div>

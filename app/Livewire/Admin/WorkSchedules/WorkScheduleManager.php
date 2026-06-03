@@ -344,6 +344,36 @@ class WorkScheduleManager extends Component
         $this->resetValidation();
     }
 
+    public function weekdayShortNames(): array
+    {
+        return ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    }
+
+    public function calendarDayKey(Carbon $date): string
+    {
+        return $date->format('Y-m-d');
+    }
+
+    public function eventsForDate(array $calendarData, Carbon $date): array
+    {
+        return $calendarData[$this->calendarDayKey($date)] ?? [];
+    }
+
+    public function isInsideCurrentMonth(Carbon $date): bool
+    {
+        return $date->month === $this->monthFilter;
+    }
+
+    public function canAddInCalendarDate(Carbon $date): bool
+    {
+        return !$date->lt(today()) && $this->isInsideCurrentMonth($date);
+    }
+
+    public function canAddForDetailDate(?string $date): bool
+    {
+        return !empty($date) && !Carbon::parse($date)->lt(today());
+    }
+
     public function render()
     {
         $monthStart = Carbon::create($this->yearFilter, $this->monthFilter, 1);

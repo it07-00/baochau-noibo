@@ -2,14 +2,6 @@
     @section('title', 'Quản lý nhân viên chấm công')
     @section('page_title', 'Nhân viên chấm công')
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Chấm công', 'url' => route('app.attendance.index')],
-            ['label' => 'Nhân viên'],
-        ];
-    @endphp
-
     <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">
@@ -167,7 +159,7 @@
 
     {{-- Modal Thêm/Sửa --}}
     @if($showModal)
-        <div class="modal fade show d-block overlay-bg" tabindex="-1" 
+        <div class="modal fade show d-block overlay-bg" tabindex="-1"
              wire:click.self="$set('showModal', false)">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
@@ -237,7 +229,7 @@
 
     {{-- Confirm Block --}}
     @if($confirmingBlock)
-        <div class="modal fade show d-block overlay-bg" tabindex="-1" 
+        <div class="modal fade show d-block overlay-bg" tabindex="-1"
              wire:click.self="$set('confirmingBlock', false)" wire:key="modal-confirm-block">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
@@ -265,7 +257,7 @@
 
     {{-- Modal Đồng bộ từ máy --}}
     @if($showSyncModal)
-        <div class="modal fade show d-block overlay-bg" tabindex="-1" 
+        <div class="modal fade show d-block overlay-bg" tabindex="-1"
              wire:click.self="$set('showSyncModal', false)">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">

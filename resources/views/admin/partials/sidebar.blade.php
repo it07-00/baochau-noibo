@@ -1,22 +1,7 @@
-@php
-    use App\Enums\Role;
-    use App\Support\SidebarMenu;
-
-    $currentUser = auth()->user();
-    $active      = SidebarMenu::resolveActive($currentUser);
-    $activeGroup = $active['group'];
-    $activeChild = $active['child'];
-    $allMenus    = SidebarMenu::all($currentUser);
-
-    $primaryRole = collect(Role::priorityList())
-        ->first(fn ($r) => $currentUser->hasRole($r))
-        ?? $currentUser->roles?->first()?->name;
-@endphp
-
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ $currentUser->hasAnyRole(Role::dashboardAccessRoles()) ? route('app.dashboard') : route('app.home') }}"
+            <a href="{{ auth()->user()->hasAnyRole(\App\Enums\Role::dashboardAccessRoles()) ? route('app.dashboard') : route('app.home') }}"
                 class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment"
                     class="h-40px-auto">
@@ -43,10 +28,10 @@
                     </span>
                 </li>
 
-                @unless ($currentUser->hasAnyRole([Role::IT->value, Role::MARKETING->value]))
+                @unless (auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::MARKETING->value]))
                     <li class="app-sidebar-menu-item">
-                        <a href="{{ $currentUser->hasAnyRole(Role::directorRoles()) ? route('app.dashboard') : route('app.home') }}"
-                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || ($currentUser->hasAnyRole(Role::directorRoles()) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
+                        <a href="{{ auth()->user()->hasAnyRole(\App\Enums\Role::directorRoles()) ? route('app.dashboard') : route('app.home') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.home') || request()->is('/') || (auth()->user()->hasAnyRole(\App\Enums\Role::directorRoles()) && request()->routeIs('app.dashboard')) ? 'active menu-current' : '' }}">
                             <span class="menu-icon flex-shrink-0">
                                 <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -54,12 +39,12 @@
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </span>
-                            <span class="menu-title flex-grow-1">{{ $currentUser->hasAnyRole(Role::directorRoles()) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
+                            <span class="menu-title flex-grow-1">{{ auth()->user()->hasAnyRole(\App\Enums\Role::directorRoles()) ? 'Bảng điều khiển' : 'Bảng xếp hạng' }}</span>
                         </a>
                     </li>
                 @endunless
 
-                @unless ($currentUser->hasAnyRole(Role::dashboardAccessRoles()) || $currentUser->hasRole(Role::MARKETING->value))
+                @unless (auth()->user()->hasAnyRole(\App\Enums\Role::dashboardAccessRoles()) || auth()->user()->hasRole(\App\Enums\Role::MARKETING->value))
                     <li class="app-sidebar-menu-item">
                         <a href="{{ route('app.dashboard') }}"
                             class="menu-link d-flex align-items-center {{ request()->routeIs('app.dashboard') ? 'active' : '' }}">
@@ -120,7 +105,7 @@
                 </li>
 
                 {{-- ── QUẢN TRỊ ─────────────────────────────────────── --}}
-                @if ($currentUser->hasRole(Role::IT->value) || $currentUser->canany(['users.view', 'roles.view', 'activity-log.view']))
+                @if (auth()->user()->hasRole(\App\Enums\Role::IT->value) || auth()->user()->canany(['users.view', 'roles.view', 'activity-log.view']))
                     <li class="app-sidebar-menu-heading">
                         <span>
                             <span class="app-sidebar-menu-heading-line"></span>
@@ -128,11 +113,10 @@
                         </span>
                     </li>
 
-                    @if ($currentUser->hasRole(Role::IT->value))
-                        @php $hethongActive = request()->routeIs('app.it-dashboard') || request()->is('log-viewer*'); @endphp
+                    @if (auth()->user()->hasRole(\App\Enums\Role::IT->value))
                         <li class="app-sidebar-menu-item">
                             <a href="javascript:void(0)"
-                                class="menu-link d-flex align-items-center {{ $hethongActive ? 'active' : '' }}">
+                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.it-dashboard') || request()->is('log-viewer*') ? 'active' : '' }}">
                                 <span class="menu-icon flex-shrink-0">
                                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
@@ -146,7 +130,7 @@
                                     <span class="menu-arrow"><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 1.5L5.5 6L1.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                 </span>
                             </a>
-                            <ul class="app-sidebar-submenu" style="display: {{ $hethongActive ? 'block' : 'none' }};">
+                            <ul class="app-sidebar-submenu" style="display: {{ request()->routeIs('app.it-dashboard') || request()->is('log-viewer*') ? 'block' : 'none' }};">
                                 <li>
                                     <a href="{{ route('app.it-dashboard') }}"
                                         class="menu-link d-flex align-items-center {{ request()->routeIs('app.it-dashboard') ? 'menu-current active' : '' }}">
@@ -177,11 +161,10 @@
                         </li>
                     @endif
 
-                    @if ($currentUser->canAny(['users.view', 'roles.view', 'activity-log.view']))
-                        @php $phanquyenActive = request()->routeIs('app.users.*') || request()->routeIs('app.roles.*') || request()->routeIs('app.activity-log'); @endphp
+                    @if (auth()->user()->canAny(['users.view', 'roles.view', 'activity-log.view']))
                         <li class="app-sidebar-menu-item">
                             <a href="javascript:void(0)"
-                                class="menu-link d-flex align-items-center {{ $phanquyenActive ? 'active' : '' }}">
+                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.users.*') || request()->routeIs('app.roles.*') || request()->routeIs('app.activity-log') ? 'active' : '' }}">
                                 <span class="menu-icon flex-shrink-0">
                                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M8.5 1.5L2.5 4.5V8.5C2.5 12.5 5.5 15.5 8.5 16.5C11.5 15.5 14.5 12.5 14.5 8.5V4.5L8.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -192,7 +175,7 @@
                                     <span class="menu-arrow"><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 1.5L5.5 6L1.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                 </span>
                             </a>
-                            <ul class="app-sidebar-submenu" style="display: {{ $phanquyenActive ? 'block' : 'none' }};">
+                            <ul class="app-sidebar-submenu" style="display: {{ request()->routeIs('app.users.*') || request()->routeIs('app.roles.*') || request()->routeIs('app.activity-log') ? 'block' : 'none' }};">
                                 @can('users.view')
                                     <li>
                                         <a href="{{ route('app.users.index') }}"
@@ -238,7 +221,7 @@
                         </li>
                     @endif
 
-                    @if ($currentUser->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value]))
+                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value]))
                         <li class="app-sidebar-menu-item">
                             <a href="{{ route('app.internal-notifications.index') }}"
                                 class="menu-link d-flex align-items-center {{ request()->routeIs('app.internal-notifications.*') ? 'active menu-current' : '' }}">
@@ -256,7 +239,7 @@
 
                 {{-- ── TỔ CHỨC ──────────────────────────────────────── --}}
                 @if (
-                        $currentUser->canany([
+                    auth()->user()->canany([
                             'departments.view',
                             'handlers.view',
                             'customers.view',
@@ -289,11 +272,10 @@
                             </li>
                         @endcan
 
-                        @if ($currentUser->canAny(['customers.view', 'handlers.view']))
-                            @php $doitacActive = request()->routeIs('app.customers.*') || request()->routeIs('app.handlers.*'); @endphp
+                        @if (auth()->user()->canAny(['customers.view', 'handlers.view']))
                             <li class="app-sidebar-menu-item">
                                 <a href="javascript:void(0)"
-                                    class="menu-link d-flex align-items-center {{ $doitacActive ? 'active' : '' }}">
+                                    class="menu-link d-flex align-items-center {{ request()->routeIs('app.customers.*') || request()->routeIs('app.handlers.*') ? 'active' : '' }}">
                                     <span class="menu-icon flex-shrink-0">
                                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -307,7 +289,7 @@
                                         <span class="menu-arrow"><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 1.5L5.5 6L1.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                     </span>
                                 </a>
-                                <ul class="app-sidebar-submenu" style="display: {{ $doitacActive ? 'block' : 'none' }};">
+                                <ul class="app-sidebar-submenu" style="display: {{ request()->routeIs('app.customers.*') || request()->routeIs('app.handlers.*') ? 'block' : 'none' }};">
                                     @can('customers.view')
                                         <li>
                                             <a href="{{ route('app.customers.index') }}"
@@ -343,11 +325,10 @@
                             </li>
                         @endif
 
-                        @if ($currentUser->canAny(['hr-profiles.view', 'cham-cong.view', 'cham-cong.edit']))
-                            @php $nhansuActive = request()->routeIs('app.hr.*') || request()->routeIs('app.attendance.*'); @endphp
+                        @if (auth()->user()->canAny(['hr-profiles.view', 'cham-cong.view', 'cham-cong.edit']))
                             <li class="app-sidebar-menu-item">
                                 <a href="javascript:void(0)"
-                                    class="menu-link d-flex align-items-center {{ $nhansuActive ? 'active' : '' }}">
+                                    class="menu-link d-flex align-items-center {{ request()->routeIs('app.hr.*') || request()->routeIs('app.attendance.*') ? 'active' : '' }}">
                                     <span class="menu-icon flex-shrink-0">
                                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -361,7 +342,7 @@
                                         <span class="menu-arrow"><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 1.5L5.5 6L1.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                     </span>
                                 </a>
-                                <ul class="app-sidebar-submenu" style="display: {{ $nhansuActive ? 'block' : 'none' }};">
+                                <ul class="app-sidebar-submenu" style="display: {{ request()->routeIs('app.hr.*') || request()->routeIs('app.attendance.*') ? 'block' : 'none' }};">
                                     @can('hr-profiles.view')
                                         <li>
                                             <a href="{{ route('app.hr.index') }}"
@@ -414,7 +395,7 @@
                         @endif
                 @endif
 
-                @if ($currentUser->hasRole(Role::IT->value))
+                @if (auth()->user()->hasRole(\App\Enums\Role::IT->value))
                     @can('daily-reports.view')
                         <li class="app-sidebar-menu-heading">
                             <span>
@@ -424,68 +405,62 @@
                         </li>
                         <li class="app-sidebar-menu-item">
                             <a href="{{ route('app.daily-reports.index') }}"
-                                class="menu-link d-flex align-items-center {{ $activeGroup === 'Báo cáo ngày' ? 'active' : '' }}">
-                                <span class="menu-icon flex-shrink-0">{!! SidebarMenu::icon('report') !!}</span>
+                                class="menu-link d-flex align-items-center {{ \App\Support\SidebarMenu::activeGroup(auth()->user()) === 'Báo cáo ngày' ? 'active' : '' }}">
+                                <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon('report') !!}</span>
                                 <span class="menu-title flex-grow-1">Báo cáo ngày</span>
                             </a>
                         </li>
                     @endcan
                 @endif
 
-                @unless ($currentUser->hasRole(Role::IT->value))
-                    @php $currentSection = null; @endphp
-                    @foreach ($allMenus as $menu)
-                        @can($menu['permission'])
-                            @if ($menu['section'] !== $currentSection)
-                                @php $currentSection = $menu['section']; @endphp
-                                <li class="app-sidebar-menu-heading">
-                                    <span>
-                                        <span class="app-sidebar-menu-heading-line"></span>
-                                        {{ $currentSection }}
-                                    </span>
+                @unless (auth()->user()->hasRole(\App\Enums\Role::IT->value))
+                    @foreach (\App\Support\SidebarMenu::groupedBySection(auth()->user()) as $section => $sectionMenus)
+                        <li class="app-sidebar-menu-heading">
+                            <span>
+                                <span class="app-sidebar-menu-heading-line"></span>
+                                {{ $section }}
+                            </span>
+                        </li>
+
+                        @foreach ($sectionMenus as $menu)
+                            @can($menu['permission'])
+                                <li class="app-sidebar-menu-item">
+                                    @if (isset($menu['href']))
+                                        <a href="{{ $menu['href'] }}"
+                                            class="menu-link d-flex align-items-center {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'active' : '' }}">
+                                            <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon($menu['icon']) !!}</span>
+                                            <span class="menu-title flex-grow-1">{{ $menu['title'] }}</span>
+                                        </a>
+                                    @else
+                                        <a href="javascript:void(0)"
+                                            class="menu-link d-flex align-items-center {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'active' : '' }}">
+                                            <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon($menu['icon']) !!}</span>
+                                            <span class="menu-title flex-grow-1">
+                                                {{ $menu['title'] }}
+                                                <span class="menu-arrow">{!! \App\Support\SidebarMenu::icon('chevron') !!}</span>
+                                            </span>
+                                        </a>
+
+                                        <ul class="app-sidebar-submenu"
+                                            style="display: {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'block' : 'none' }};">
+                                            @foreach ($menu['children'] as $child)
+                                                @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
+                                                @continue($child === 'Tạo báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
+                                                @continue($child === 'Đăng ký mục tiêu doanh số' && !auth()->user()->hasAnyRole(\App\Enums\Role::salesRoles()))
+
+                                                <li>
+                                                    <a href="{{ \App\Support\SidebarMenu::childHref($menu['title'], $child) }}"
+                                                        class="menu-link d-flex align-items-center {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) && $child === \App\Support\SidebarMenu::activeChild(auth()->user()) ? 'menu-current active' : '' }}">
+                                                        <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::childIcon($menu['title'], $menu['section']) !!}</span>
+                                                        <span class="menu-title flex-grow-1">{{ \App\Support\SidebarMenu::childLabel($menu['title'], $child) }}</span>
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
                                 </li>
-                            @endif
-                            <li class="app-sidebar-menu-item">
-                                @if (isset($menu['href']))
-                                    <a href="{{ $menu['href'] }}"
-                                        class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
-                                        <span class="menu-icon flex-shrink-0">{!! SidebarMenu::icon($menu['icon']) !!}</span>
-                                        <span class="menu-title flex-grow-1">{{ $menu['title'] }}</span>
-                                    </a>
-                                @else
-                                    <a href="javascript:void(0)"
-                                        class="menu-link d-flex align-items-center {{ $menu['title'] === $activeGroup ? 'active' : '' }}">
-                                        <span class="menu-icon flex-shrink-0">{!! SidebarMenu::icon($menu['icon']) !!}</span>
-                                        <span class="menu-title flex-grow-1">
-                                            {{ $menu['title'] }}
-                                            <span class="menu-arrow">{!! SidebarMenu::icon('chevron') !!}</span>
-                                        </span>
-                                    </a>
-
-                                    <ul class="app-sidebar-submenu"
-                                        style="display: {{ $menu['title'] === $activeGroup ? 'block' : 'none' }};">
-                                        @foreach ($menu['children'] as $child)
-                                            @continue($child === 'Bảng theo dõi báo giá' && !$currentUser->hasAnyRole([...Role::salesRoles(), Role::GIAM_DOC->value]))
-                                            @continue($child === 'Đăng ký mục tiêu doanh số' && !$currentUser->hasAnyRole(Role::salesRoles()))
-
-                                            @php
-                                                $childActive = $menu['title'] === $activeGroup && $child === $activeChild;
-                                                $childHref   = SidebarMenu::childHref($menu['title'], $child);
-                                                $childLabel  = SidebarMenu::childLabel($menu['title'], $child);
-                                                $childIcon   = SidebarMenu::childIcon($menu['title'], $menu['section']);
-                                            @endphp
-                                            <li>
-                                                <a href="{{ $childHref }}"
-                                                    class="menu-link d-flex align-items-center {{ $childActive ? 'menu-current active' : '' }}">
-                                                    <span class="menu-icon flex-shrink-0">{!! $childIcon !!}</span>
-                                                    <span class="menu-title flex-grow-1">{{ $childLabel }}</span>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </li>
-                        @endcan
+                            @endcan
+                        @endforeach
                     @endforeach
                 @endunless
             </ul>
@@ -495,11 +470,11 @@
             <div class="d-flex align-items-center justify-content-between w-100 mb-2">
                 <a href="{{ route('app.profile.index') }}" class="d-flex align-items-center gap-3 text-decoration-none flex-grow-1 overflow-hidden profile-link">
                     <div class="avatar flex-shrink-0">
-                        <x-user-avatar :user="$currentUser" :size="40" class="border border-2 border-white border-opacity-10" />
+                        <x-user-avatar :user="auth()->user()" :size="40" class="border border-2 border-white border-opacity-10" />
                     </div>
                     <div class="overflow-hidden">
-                        <h6 class="mb-0 text-white text-truncate fw-bold">{{ $currentUser->name ?? 'Người dùng' }}</h6>
-                        <span class="profile-role text-truncate d-block">{{ Role::tryFrom($primaryRole ?? '')?->label() ?? 'Nhân viên' }}</span>
+                        <h6 class="mb-0 text-white text-truncate fw-bold">{{ auth()->user()->name ?? 'Người dùng' }}</h6>
+                        <span class="profile-role text-truncate d-block">{{ \App\Support\SidebarMenu::roleLabel(auth()->user()) }}</span>
                     </div>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" class="d-none">

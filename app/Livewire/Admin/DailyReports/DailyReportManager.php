@@ -10,6 +10,8 @@ use App\Models\DailyReport;
 use App\Models\Department;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Collection;
 
 class DailyReportManager extends Component
 {
@@ -208,6 +210,178 @@ class DailyReportManager extends Component
 
         $report->delete();
         $this->dispatch('swal:success', ['message' => 'Xóa báo cáo thành công!']);
+    }
+
+    public function shouldRenderCalendar(): bool
+    {
+        return ($this->canSubmitOwnReport && $this->activeTab === 'history')
+            || ($this->activeTab === 'management' && $this->isManager && $this->viewType === 'month');
+    }
+
+    public function monthStart(): Carbon
+    {
+        return Carbon::create((int) $this->yearFilter, (int) $this->monthFilter, 1);
+    }
+
+    public function weekdayShortNames(): array
+    {
+        return ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    }
+
+    public function mobileReportDays(array $calendarData): Collection
+    {
+        $monthStart = $this->monthStart();
+
+        return collect(range(1, $monthStart->daysInMonth))
+            ->map(function ($day) use ($monthStart, $calendarData) {
+                $date = $monthStart->copy()->day($day);
+                $reportsForDay = collect($calendarData[$day] ?? []);
+
+                return [
+                    'date' => $date,
+                    'reports' => $reportsForDay,
+                ];
+            })
+            ->filter(fn ($day) => $day['reports']->isNotEmpty())
+            ->values();
+    }
+
+    public function calendarPeriod(): CarbonPeriod
+    {
+        $monthStart = $this->monthStart();
+
+        return CarbonPeriod::create(
+            $monthStart->copy()->startOfWeek(Carbon::MONDAY),
+            $monthStart->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY)
+        );
+    }
+
+    public function dayReportsForDate(array $calendarData, Carbon $currentDate): Collection
+    {
+        return collect($calendarData[(int) $currentDate->day] ?? []);
+    }
+
+    public function dayIssueCount(Collection $reports): int
+    {
+        return $reports->where('status', DailyReportStatus::GAP_VAN_DE->value)->count();
+    }
+
+    public function reportLateDays(DailyReport $report): int
+    {
+        if (!$report->created_at) {
+            return 0;
+        }
+
+        return max(0, (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false));
+    }
+
+    public function dayLateCount(Collection $reports): int
+    {
+        return $reports->filter(fn (DailyReport $report) => $this->reportLateDays($report) > 0)->count();
+    }
+
+    public function dayNamesPreview(Collection $reports, int $limit = 3): string
+    {
+        $names = $reports->pluck('user.name')->filter()->take($limit)->join(', ');
+        return $names . ($reports->count() > $limit ? '...' : '');
+    }
+
+    public function reportPayload(Collection $reports): string
+    {
+        return $reports->map(function (DailyReport $report) {
+            return [
+                'id' => $report->id,
+                'user_id' => $report->user_id,
+                'date' => $report->date->format('Y-m-d'),
+                'name' => $report->user->name ?? '',
+                'department' => $report->user->department->name ?? '',
+                'status' => $report->status,
+                'content' => $report->content,
+                'plan' => $report->plan ?? '',
+                'issues' => $report->issues ?? '',
+                'submitted_at' => $report->created_at?->format('d/m/Y H:i'),
+                'late_days' => $this->reportLateDays($report),
+            ];
+        })->toJson();
+    }
+
+    public function statusLabelClass(?string $status): string
+    {
+        if ($status === DailyReportStatus::GAP_VAN_DE->value) {
+            return 'text-danger';
+        }
+
+        if ($status === DailyReportStatus::HOAN_THANH_MOT_PHAN->value) {
+            return 'text-warning';
+        }
+
+        return 'text-success';
+    }
+
+    public function daysDiffFromDateFilter(): int
+    {
+        return (int) Carbon::parse($this->dateFilter)->startOfDay()->diffInDays(now()->startOfDay(), false);
+    }
+
+    public function lateMissingMeta(int $daysDiff): array
+    {
+        if ($daysDiff >= 4) {
+            return [
+                'itemClass' => 'border-danger-subtle',
+                'itemStyle' => 'background: rgba(220,53,69,0.05);',
+                'avatarClass' => 'bg-danger bg-opacity-10 text-danger fw-bold',
+                'nameClass' => 'text-danger fw-semibold',
+                'badgeClass' => 'text-danger fw-bold',
+                'badgeText' => "Chậm {$daysDiff} ngày",
+            ];
+        }
+
+        if ($daysDiff >= 1) {
+            return [
+                'itemClass' => 'border-warning-subtle',
+                'itemStyle' => 'background: rgba(255,193,7,0.07);',
+                'avatarClass' => 'bg-warning bg-opacity-10 text-warning fw-bold',
+                'nameClass' => 'text-warning-emphasis fw-semibold',
+                'badgeClass' => 'text-warning fw-bold',
+                'badgeText' => "Chậm {$daysDiff} ngày",
+            ];
+        }
+
+        return [
+            'itemClass' => 'border-light-subtle border-dashed',
+            'itemStyle' => '',
+            'avatarClass' => 'bg-light text-muted fw-bold',
+            'nameClass' => 'text-muted opacity-75 fw-normal',
+            'badgeClass' => 'text-warning fw-bold',
+            'badgeText' => 'Chưa báo cáo',
+        ];
+    }
+
+    public function dayDotColor(Carbon $currentDate, Collection $dayReports): string
+    {
+        $isInsideMonth = $currentDate->month == (int) $this->monthFilter;
+        $isPast = $currentDate->isPast() && !$currentDate->isToday();
+        $isWeekend = $currentDate->isSunday();
+        $isComplete = $dayReports->isNotEmpty();
+        $hasIssue = $dayReports->where('status', DailyReportStatus::GAP_VAN_DE->value)->isNotEmpty();
+
+        if (!$isInsideMonth) {
+            return 'secondary';
+        }
+
+        if ($isComplete) {
+            return $hasIssue ? 'danger' : 'success';
+        }
+
+        if ($isWeekend) {
+            return 'secondary opacity-25';
+        }
+
+        if ($isPast) {
+            return 'danger';
+        }
+
+        return 'warning';
     }
 
     public function export()

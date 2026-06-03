@@ -28,6 +28,10 @@ class QuotationManager extends Component
     public $date_to = '';
     public $sortDirection = 'desc';
 
+    protected $queryString = [
+        'search' => ['except' => ''],
+    ];
+
     public $showModal = false;
     public $isEditing = false;
     public $isDuplicating = false;
@@ -341,7 +345,7 @@ class QuotationManager extends Component
 
     public function viewDetail($id)
     {
-        $quotation = Quotation::with('staff')->findOrFail($id);
+        $quotation = Quotation::with(['staff', 'files', 'quotationDocuments'])->findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
 
         $this->selectedQuotation = $quotation;
@@ -370,6 +374,18 @@ class QuotationManager extends Component
         };
 
         return redirect()->route($route, ['quotation_id' => $this->convertingQuotation->id]);
+    }
+
+    public function statusBadgeClass(?string $status): string
+    {
+        return match ($status) {
+            QuotationStatus::HEN_BAO_GIA->value => 'bg-info bg-opacity-10 text-info',
+            QuotationStatus::DANG_THEO_DOI->value => 'bg-success bg-opacity-10 text-success',
+            QuotationStatus::ROT_BAO_GIA->value => 'bg-dark bg-opacity-10 text-dark',
+            QuotationStatus::KY_HOP_DONG->value => 'bg-danger bg-opacity-10 text-danger',
+            QuotationStatus::THAM_KHAO->value => 'bg-warning bg-opacity-10 text-warning',
+            default => 'bg-secondary bg-opacity-10 text-secondary',
+        };
     }
 
     public function save()
@@ -567,13 +583,15 @@ class QuotationManager extends Component
     {
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
 
-        $query = Quotation::with('staff')->withCount('files')
+        $query = Quotation::with(['staff', 'quotationDocuments'])->withCount('files')
             ->when($this->isKinhDoanh(), fn($q) => $q->where('staff_id', auth()->id()))
             ->when($this->search, function($q) {
                 $q->where(function($sq) {
                     $sq->where('company_name', 'like', '%'.$this->search.'%')
+                      ->orWhere('quotation_number', 'like', '%'.$this->search.'%')
                       ->orWhere('contact_person', 'like', '%'.$this->search.'%')
-                      ->orWhere('industry', 'like', '%'.$this->search.'%');
+                      ->orWhere('industry', 'like', '%'.$this->search.'%')
+                      ->orWhere('service', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->filter_staff, fn($q) => $q->where('staff_id', $this->filter_staff))

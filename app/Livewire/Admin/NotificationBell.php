@@ -255,6 +255,16 @@ class NotificationBell extends Component
             ->update(['read_at' => now()]);
     }
 
+    public function sectionUnreadCount(array $section): int
+    {
+        return (int) ($section['unread_count'] ?? $section['items']->whereNull('read_at')->count());
+    }
+
+    public function notificationData($notification): array
+    {
+        return (array) ($notification->data ?? []);
+    }
+
     public function render()
     {
         $user = auth()->user();

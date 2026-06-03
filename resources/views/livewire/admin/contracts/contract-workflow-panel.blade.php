@@ -14,27 +14,21 @@
         <div class="d-none d-lg-block mb-4">
             <div class="d-flex align-items-start gap-0" >
                 @foreach ($stepKeys as $i => $key)
-                    @php
-                        $label = $steps[$key];
-                        $isDone = in_array($key, $completedSteps);
-                        $isFirst = $i === 0;
-                        $canDo = $canEdit && ($isFirst ? true : in_array($stepKeys[$i - 1], $completedSteps));
-                    @endphp
                     <div class="d-flex align-items-center flex-grow-1">
                         <div class="d-flex flex-column align-items-center flex-shrink-0 w-80px" >
-                            @if ($canDo && !$isDone)
+                            @if (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) && !in_array($key, $completedSteps))
                                 <button wire:click="openStep('{{ $key }}')"
                                     class="btn rounded-circle d-flex align-items-center justify-content-center mb-2 btn-primary wh-48 fs-6 p-0"
 
-                                    title="{{ $label }}">
+                                    title="{{ $steps[$key] }}">
                                     <span class="fw-bold">{{ $i + 1 }}</span>
                                 </button>
                             @else
                                 <div class="rounded-circle d-flex align-items-center justify-content-center mb-2
-                                    {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-48 fs-6"
+                                    {{ in_array($key, $completedSteps) ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-48 fs-6"
 
-                                    title="{{ $label }}{{ $isDone ? ' ✓' : '' }}">
-                                    @if ($isDone)
+                                    title="{{ $steps[$key] }}{{ in_array($key, $completedSteps) ? ' ✓' : '' }}">
+                                    @if (in_array($key, $completedSteps))
                                         <i class="bi bi-check-lg fs-5"></i>
                                     @else
                                         <span class="fw-bold">{{ $i + 1 }}</span>
@@ -43,15 +37,15 @@
                             @endif
                             <span class="text-center"
                                 style="font-size: 0.7rem; line-height: 1.2; width: 80px; word-break: break-word;
-                                color: {{ $isDone ? '#198754' : ($canDo ? '#0d6efd' : '#aaa') }};
-                                font-weight: {{ $isDone || $canDo ? '600' : '400' }};">
-                                {{ $label }}
+                                color: {{ in_array($key, $completedSteps) ? '#198754' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '#0d6efd' : '#aaa') }};
+                                font-weight: {{ in_array($key, $completedSteps) || ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '600' : '400' }};">
+                                {{ $steps[$key] }}
                             </span>
                         </div>
                         @if (!$loop->last)
                             <div class="flex-grow-1"
                                 style="height: 2px; margin-top: -30px; min-width: 20px;
-                                background: {{ $isDone ? '#198754' : '#dee2e6' }};"></div>
+                                background: {{ in_array($key, $completedSteps) ? '#198754' : '#dee2e6' }};"></div>
                         @endif
                     </div>
                 @endforeach
@@ -61,27 +55,21 @@
         {{-- Stepper dọc — tablet/mobile (< lg) --}}
         <div class="d-lg-none mb-4">
             @foreach ($stepKeys as $i => $key)
-                @php
-                    $label = $steps[$key];
-                    $isDone = in_array($key, $completedSteps);
-                    $isFirst = $i === 0;
-                    $canDo = $canEdit && ($isFirst ? true : in_array($stepKeys[$i - 1], $completedSteps));
-                @endphp
                 <div class="d-flex align-items-stretch gap-3">
                     {{-- Cột trái: circle + đường dọc --}}
                     <div class="d-flex flex-column align-items-center flex-shrink-0 w-44px" >
-                        @if ($canDo && !$isDone)
+                        @if (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) && !in_array($key, $completedSteps))
                             <button wire:click="openStep('{{ $key }}')"
                                 class="btn rounded-circle d-flex align-items-center justify-content-center btn-primary flex-shrink-0 wh-44 fs-90 p-0"
 
-                                title="{{ $label }}">
+                                title="{{ $steps[$key] }}">
                                 <span class="fw-bold">{{ $i + 1 }}</span>
                             </button>
                         @else
                             <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0
-                                {{ $isDone ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-44 fs-90"
+                                {{ in_array($key, $completedSteps) ? 'bg-success text-white' : 'bg-light text-muted border border-secondary' }} wh-44 fs-90"
                                 >
-                                @if ($isDone)
+                                @if (in_array($key, $completedSteps))
                                     <i class="bi bi-check-lg"></i>
                                 @else
                                     <span class="fw-bold">{{ $i + 1 }}</span>
@@ -91,20 +79,20 @@
                         @if (!$loop->last)
                             <div class="flex-grow-1 my-1"
                                 style="width: 2px; min-height: 20px;
-                                background: {{ $isDone ? '#198754' : '#dee2e6' }};"></div>
+                                background: {{ in_array($key, $completedSteps) ? '#198754' : '#dee2e6' }};"></div>
                         @endif
                     </div>
                     {{-- Cột phải: tên bước + badge trạng thái --}}
                     <div class="pb-3 pt-2 flex-grow-1">
                         <div class="d-flex align-items-center flex-wrap gap-1">
                             <span style="font-size: 0.875rem;
-                                font-weight: {{ $isDone || $canDo ? '600' : '400' }};
-                                color: {{ $isDone ? '#198754' : ($canDo ? '#0d6efd' : '#aaa') }};">
-                                {{ $label }}
+                                font-weight: {{ in_array($key, $completedSteps) || ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '600' : '400' }};
+                                color: {{ in_array($key, $completedSteps) ? '#198754' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '#0d6efd' : '#aaa') }};">
+                                {{ $steps[$key] }}
                             </span>
-                            @if ($isDone)
+                            @if (in_array($key, $completedSteps))
                                 <span class="badge bg-success-subtle text-success fs-68" >Hoàn thành</span>
-                            @elseif ($canDo)
+                            @elseif ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)))
                                 <span class="badge bg-primary-subtle text-primary fs-68" >Có thể làm</span>
                             @endif
                         </div>

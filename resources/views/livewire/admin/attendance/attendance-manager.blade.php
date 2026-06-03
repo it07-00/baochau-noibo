@@ -2,13 +2,6 @@
     @section('title', 'Chấm công')
     @section('page_title', 'Bảng chấm công')
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Chấm công'],
-        ];
-    @endphp
-
     <div class="row g-3 mt-1 px-2 px-md-4">
         {{-- Header --}}
         <div class="col-12">
@@ -104,46 +97,23 @@
                                         {{ $row['employee']->name }}
                                     </td>
                                     @foreach($dates as $date)
-                                        @php
-                                            $day = $row['days'][$date->day] ?? null;
-                                            $isSun = $date->isSunday();
-                                        @endphp
-                                        @if($isSun)
+                                        @if($date->isSunday())
                                             <td class="text-center bg-light align-middle px-1 py-0" >
-                                                @if($day)
+                                                @if($this->dayData($row, $date))
                                                     <div class="fs-82 lh-sm">
-                                                        <span>{{ $day['first'] }}</span>
-                                                        @if($day['last'])<br><span>{{ $day['last'] }}</span>@endif
+                                                        <span>{{ $this->dayData($row, $date)['first'] }}</span>
+                                                        @if($this->dayData($row, $date)['last'])<br><span>{{ $this->dayData($row, $date)['last'] }}</span>@endif
                                                     </div>
                                                 @endif
                                             </td>
                                         @else
-                                            @php
-                                                $isLate  = $day && $day['first'] > '08:00';
-                                                $isEarly = $day && $day['last'] && $day['last'] < '17:00';
-                                                $isAbsent = !$day && $date->lte(now());
-
-                                                if ($isAbsent) {
-                                                    $cellBg = '#dc3545'; $cellColor = '#fff';
-                                                } elseif ($day && $isLate && $isEarly) {
-                                                    $cellBg = '#dc3545'; $cellColor = '#fff';
-                                                } elseif ($day && $isLate) {
-                                                    $cellBg = '#fd7e14'; $cellColor = '#fff';
-                                                } elseif ($day && $isEarly) {
-                                                    $cellBg = '#ffc107'; $cellColor = '#000';
-                                                } elseif ($day) {
-                                                    $cellBg = '#198754'; $cellColor = '#fff';
-                                                } else {
-                                                    $cellBg = 'transparent'; $cellColor = 'inherit';
-                                                }
-                                            @endphp
-                                            <td class="text-center" style="vertical-align:middle;padding:2px 3px;background:{{ $cellBg }};color:{{ $cellColor }};">
-                                                @if($day)
+                                            <td class="text-center" style="vertical-align:middle;padding:2px 3px;background:{{ $this->attendanceCellStyle($this->dayData($row, $date), $date)['bg'] }};color:{{ $this->attendanceCellStyle($this->dayData($row, $date), $date)['color'] }};">
+                                                @if($this->dayData($row, $date))
                                                     <div class="fs-82 lh-sm fw-semibold">
-                                                        <span>{{ $day['first'] }}</span>
-                                                        @if($day['last'])<br><span>{{ $day['last'] }}</span>@endif
+                                                        <span>{{ $this->dayData($row, $date)['first'] }}</span>
+                                                        @if($this->dayData($row, $date)['last'])<br><span>{{ $this->dayData($row, $date)['last'] }}</span>@endif
                                                     </div>
-                                                @elseif($isAbsent)
+                                                @elseif($this->isAbsent($this->dayData($row, $date), $date))
                                                     <span class="fs-82 fw-bold">✗</span>
                                                 @endif
                                             </td>

@@ -73,12 +73,8 @@
                         </thead>
                         <tbody>
                             @forelse($consultingRankings as $i => $row)
-                            @php
-                                $rank  = $i + 1;
-                                $medal = match($rank) { 1 => '🥇', 2 => '🥈', 3 => '🥉', default => $rank };
-                            @endphp
                             <tr class="{{ $row['count'] == 0 ? 'text-muted' : '' }}">
-                                <td class="text-center fw-bold">{{ $medal }}</td>
+                                <td class="text-center fw-bold">{{ $this->rankMedal($i) }}</td>
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
                                 <td class="text-center">{{ $row['count'] > 0 ? $row['count'] : '—' }}</td>
                                 <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>
@@ -125,12 +121,8 @@
                         </thead>
                         <tbody>
                             @forelse($technicalRankings as $i => $row)
-                            @php
-                                $rank  = $i + 1;
-                                $medal = match($rank) { 1 => '🥇', 2 => '🥈', 3 => '🥉', default => $rank };
-                            @endphp
                             <tr class="{{ ($canSeeFinance && $row['value'] == 0) || (!$canSeeFinance && $row['count'] == 0) ? 'text-muted' : '' }}">
-                                <td class="text-center fw-bold">{{ $medal }}</td>
+                                <td class="text-center fw-bold">{{ $this->rankMedal($i) }}</td>
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
                                 <td class="text-center">{{ $row['count'] > 0 ? $row['count'] : '—' }}</td>
                                 <td class="text-center text-success">{{ $row['completed'] > 0 ? $row['completed'] : '—' }}</td>

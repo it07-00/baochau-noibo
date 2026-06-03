@@ -48,4 +48,9 @@ class Quotation extends Model
     {
         return $this->hasMany(QuotationFile::class)->latest();
     }
+
+    public function quotationDocuments(): HasMany
+    {
+        return $this->hasMany(QuotationDocument::class)->latest();
+    }
 }

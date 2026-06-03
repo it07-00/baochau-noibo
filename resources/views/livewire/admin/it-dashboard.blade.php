@@ -15,8 +15,9 @@
             </li>
             <li class="nav-item">
                 <button wire:click="setTab('sessions')" class="nav-link {{ $activeTab === 'sessions' ? 'active' : '' }}">Phiên & Truy cập</button>
-            </li>
-        </ul>
+            </li>            <li class="nav-item">
+                <button wire:click="setTab('backup')" class="nav-link {{ $activeTab === 'backup' ? 'active' : '' }}">Backup DB</button>
+            </li>        </ul>
     </div>
 
     {{-- ═══ TAB: TỔNG QUAN ═══ --}}
@@ -301,17 +302,11 @@
             </div>
             <div class="card-body">
                 @if(count($sessionsByHour) > 0)
-                    @php $maxSession = max(array_values($sessionsByHour) ?: [1]); @endphp
                     <div class="d-flex align-items-end gap-1 h-110px" >
                         @for($h = 0; $h <= 23; $h++)
-                            @php
-                                $cnt = $sessionsByHour[$h] ?? 0;
-                                $hPct = $maxSession > 0 ? max(5, round(($cnt / $maxSession) * 100)) : 5;
-                                $isNow = $h == now()->hour;
-                            @endphp
                             <div class="flex-fill d-flex flex-column align-items-center justify-content-end h-100" >
-                                <div class="rounded-top w-100 {{ $isNow ? 'bg-success' : 'bg-primary' }}"
-                                     style="height:{{ $hPct }}%; min-height:5px; opacity:{{ $isNow ? 1 : 0.45 }}; transition:height 0.3s;"></div>
+                                <div class="rounded-top w-100 {{ $this->sessionHourMeta($sessionsByHour, $h, $this->maxSessionCount($sessionsByHour))['is_now'] ? 'bg-success' : 'bg-primary' }}"
+                                     style="height:{{ $this->sessionHourMeta($sessionsByHour, $h, $this->maxSessionCount($sessionsByHour))['height_pct'] }}%; min-height:5px; opacity:{{ $this->sessionHourMeta($sessionsByHour, $h, $this->maxSessionCount($sessionsByHour))['is_now'] ? 1 : 0.45 }}; transition:height 0.3s;"></div>
                                 @if($h % 6 === 0)
                                     <small class="text-muted mt-1 fs-62" >{{ str_pad($h, 2, '0', STR_PAD_LEFT) }}h</small>
                                 @endif
@@ -340,13 +335,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $maxAct = max(array_values($last7Days) ?: [1]); @endphp
                         @foreach($last7Days as $day => $cnt)
                             <tr>
                                 <td class="text-nowrap">{{ \Carbon\Carbon::parse($day)->locale('vi')->isoFormat('dddd, DD/MM') }}</td>
                                 <td class="w-55pct">
                                     <div class="it-disk-progress">
-                                        <div class="progress-bar bg-primary" style="width:{{ $maxAct > 0 ? round(($cnt/$maxAct)*100) : 0 }}%"></div>
+                                        <div class="progress-bar bg-primary" style="width:{{ $this->activityBarPct((int) $cnt, $this->maxActivityCount($last7Days)) }}%"></div>
                                     </div>
                                 </td>
                                 <td class="text-end fw-bold">{{ number_format($cnt) }}</td>
@@ -357,5 +351,97 @@
             </div>
         </div>
 
+    @endif
+
+    {{-- ═══ TAB: BACKUP DB ═══ --}}
+    @if($activeTab === 'backup')
+        <div class="card border-0 it-panel-card">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between bg-gradient-white border-bottom">
+                <div>
+                    <h6 class="mb-0 fw-bold">Sao lưu cơ sở dữ liệu</h6>
+                    <small class="text-muted">File backup được lưu tại <code>storage/app/backups/</code></small>
+                </div>
+                <button wire:click="backupDatabase"
+                        wire:loading.attr="disabled"
+                        wire:confirm="Tạo backup database ngay bây giờ?"
+                        class="btn btn-sm btn-primary fw-semibold d-flex align-items-center gap-2">
+                    <span wire:loading wire:target="backupDatabase" class="spinner-border spinner-border-sm"></span>
+                    <svg wire:loading.remove wire:target="backupDatabase" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Tạo backup
+                </button>
+            </div>
+            <div class="card-body p-0">
+                @if(count($backupList) === 0)
+                    <div class="text-center text-muted py-5">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-3 d-block mx-auto opacity-50">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        </svg>
+                        <div class="fw-semibold">Chưa có file backup nào</div>
+                        <small>Nhấn "Tạo backup" để bắt đầu.</small>
+                    </div>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 it-activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Tên file</th>
+                                    <th>Kích thước</th>
+                                    <th>Ngày tạo</th>
+                                    <th class="text-end">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($backupList as $backup)
+                                    <tr>
+                                        <td class="fw-semibold">{{ $backup['name'] }}</td>
+                                        <td class="text-muted">
+                                            @if($backup['size'] >= 1048576)
+                                                {{ number_format($backup['size'] / 1048576, 2) }} MB
+                                            @else
+                                                {{ number_format($backup['size'] / 1024, 1) }} KB
+                                            @endif
+                                        </td>
+                                        <td class="text-muted">
+                                            {{ \Carbon\Carbon::createFromTimestamp($backup['mtime'])->format('d/m/Y H:i:s') }}
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex gap-2 justify-content-end">
+                                                <button wire:click="downloadBackup('{{ $backup['name'] }}')"
+                                                        wire:loading.attr="disabled"
+                                                        class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                    </svg>
+                                                    Tải
+                                                </button>
+                                                <button wire:click="deleteBackup('{{ $backup['name'] }}')"
+                                                        wire:loading.attr="disabled"
+                                                        wire:confirm="Xóa file backup này?"
+                                                        class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path d="M19 6l-1 14H6L5 6"></path>
+                                                        <path d="M10 11v6M14 11v6M9 6V4h6v2"></path>
+                                                    </svg>
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
     @endif
 </div>

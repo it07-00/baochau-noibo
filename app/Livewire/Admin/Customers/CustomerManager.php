@@ -62,6 +62,16 @@ class CustomerManager extends Component
         $this->dispatch('openCustomerFormModal');
     }
 
+    public function totalContractsCount(Customer $customer): int
+    {
+        return (int) $customer->contracts_count
+            + (int) $customer->contracts_consulting_count
+            + (int) $customer->contracts_commercial_count
+            + (int) $customer->contracts_project_count
+            + (int) $customer->contracts_energy_count
+            + (int) $customer->contracts_sustainability_count;
+    }
+
     public function save(): void
     {
         abort_unless(

@@ -41,6 +41,32 @@ class ActivityLogViewer extends Component
             ->count();
     }
 
+    public function eventBadge(?string $event): array
+    {
+        return match ($event) {
+            'created' => ['cls' => 'bg-label-success', 'icon' => 'bi-plus-circle-fill', 'label' => 'Tạo mới'],
+            'updated' => ['cls' => 'bg-label-primary', 'icon' => 'bi-pencil-fill', 'label' => 'Cập nhật'],
+            'deleted' => ['cls' => 'bg-label-danger', 'icon' => 'bi-trash-fill', 'label' => 'Xóa'],
+            default => ['cls' => 'bg-label-secondary', 'icon' => 'bi-circle-fill', 'label' => ucfirst($event ?? 'N/A')],
+        };
+    }
+
+    public function hasChangedValue(mixed $oldVal, mixed $newVal): bool
+    {
+        return $oldVal !== $newVal;
+    }
+
+    public function displayValue(mixed $value): string
+    {
+        if ($value === null) {
+            return '—';
+        }
+
+        return is_array($value)
+            ? json_encode($value, JSON_UNESCAPED_UNICODE)
+            : (string) $value;
+    }
+
     public function render()
     {
         $query = Activity::with('causer')

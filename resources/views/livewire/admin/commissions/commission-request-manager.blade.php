@@ -162,20 +162,14 @@
                                             <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
                                     @elseif($request->status === 'Từ chối')
-                                        @php
-                                            $rejectionReason = '';
-                                            if (!empty($request->notes) && str_contains($request->notes, 'Lý do từ chối (kế toán):')) {
-                                                $rejectionReason = trim(\Illuminate\Support\Str::afterLast($request->notes, 'Lý do từ chối (kế toán):'));
-                                            }
-                                        @endphp
                                         <span class="badge bg-soft-danger text-danger px-3 py-2">
                                             Từ chối
                                             <br>
                                             <small>{{ $request->processed_at?->format('d/m/Y') }}</small>
                                         </span>
-                                        @if($rejectionReason)
-                                            <div class=" text-muted mt-1 mxw-190px"  title="{{ $rejectionReason }}">
-                                                Lý do: {{ \Illuminate\Support\Str::limit($rejectionReason, 70) }}
+                                        @if($this->rejectionReason($request->notes))
+                                            <div class=" text-muted mt-1 mxw-190px"  title="{{ $this->rejectionReason($request->notes) }}">
+                                                Lý do: {{ $this->rejectionReasonPreview($request->notes, 70) }}
                                             </div>
                                         @endif
                                     @else

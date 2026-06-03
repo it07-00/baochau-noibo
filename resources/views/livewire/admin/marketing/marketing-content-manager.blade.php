@@ -5,10 +5,6 @@
 @endonce
 
 <div class="marketing-content-page">
-    @php
-        $tableColspan = $isMarketing ? 8 : 9;
-    @endphp
-
     <div class="mc-page-header page-header d-flex align-items-start align-items-lg-center justify-content-between flex-wrap gap-3 mb-4">
         <div>
             <h4 class="mb-1">Kế hoạch content Marketing</h4>
@@ -43,30 +39,6 @@
                 </thead>
                 <tbody>
                     @forelse($contents as $item)
-                        @php
-                            $color = $statusColors[$item->status] ?? 'secondary';
-                            $label = $statusLabels[$item->status] ?? $item->status;
-                            $imgs = $item->images ?? [];
-                            $scheduledAt = $item->scheduled_at;
-                            $scheduleIcon = 'bi bi-calendar3';
-                            $scheduleText = 'Chưa chốt lịch đăng';
-
-                            if ($scheduledAt) {
-                                if ($scheduledAt->isToday()) {
-                                    $scheduleIcon = 'bi bi-lightning-charge';
-                                    $scheduleText = 'Đăng hôm nay';
-                                } elseif ($scheduledAt->isPast()) {
-                                    $scheduleIcon = 'bi bi-exclamation-circle';
-                                    $scheduleText = 'Quá lịch ' . $scheduledAt->format('d/m');
-                                } elseif ($scheduledAt->diffInDays(now()) <= 7) {
-                                    $scheduleIcon = 'bi bi-calendar-week';
-                                    $scheduleText = 'Trong ' . $scheduledAt->diffInDays(now()) . ' ngày';
-                                } else {
-                                    $scheduleText = 'Lên lịch ' . $scheduledAt->format('d/m');
-                                }
-                            }
-                        @endphp
-
                         <tr wire:key="marketing-content-row-{{ $item->id }}">
                             <td class="ps-3 text-muted small">{{ ($contents->currentPage() - 1) * $contents->perPage() + $loop->iteration }}</td>
                             <td>
@@ -74,9 +46,9 @@
                                 <div class="mc-table-caption">{{ \Illuminate\Support\Str::limit($item->content, 180) }}</div>
                             </td>
                             <td>
-                                <div class="mc-table-date">{{ $scheduledAt?->format('d/m/Y') ?? 'Chưa chọn' }}</div>
+                                <div class="mc-table-date">{{ $item->scheduled_at?->format('d/m/Y') ?? 'Chưa chọn' }}</div>
                                 <div class="mc-table-subtext">
-                                    <i class="{{ $scheduleIcon }} me-1"></i>{{ $scheduleText }}
+                                    <i class="{{ $this->listScheduleIcon($item->scheduled_at) }} me-1"></i>{{ $this->listScheduleText($item->scheduled_at) }}
                                 </div>
                             </td>
                             @if(!$isMarketing)
@@ -86,14 +58,14 @@
                                 </td>
                             @endif
                             <td class="text-center">
-                                <span class="mc-status-badge mc-status-badge-{{ $color }}">
-                                    <span class="mc-status-dot bg-{{ $color }}"></span>
-                                    {{ $label }}
+                                <span class="mc-status-badge mc-status-badge-{{ $statusColors[$item->status] ?? 'secondary' }}">
+                                    <span class="mc-status-dot bg-{{ $statusColors[$item->status] ?? 'secondary' }}"></span>
+                                    {{ $statusLabels[$item->status] ?? $item->status }}
                                 </span>
                             </td>
                             <td class="text-center">
-                                @if(count($imgs) > 0)
-                                    <span class="mc-file-count">{{ count($imgs) }} ảnh</span>
+                                @if(count($item->images ?? []) > 0)
+                                    <span class="mc-file-count">{{ count($item->images ?? []) }} ảnh</span>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
@@ -140,7 +112,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ $tableColspan }}" class="text-center py-5 text-muted">Không có kế hoạch content phù hợp</td>
+                            <td colspan="{{ $isMarketing ? 8 : 9 }}" class="text-center py-5 text-muted">Không có kế hoạch content phù hợp</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -362,27 +334,6 @@
     @endif
 
     @if($detailRecord)
-        @php
-            $detailColor = $statusColors[$detailRecord->status] ?? 'secondary';
-            $detailStatusLabel = $statusLabels[$detailRecord->status] ?? $detailRecord->status;
-            $detailImages = $detailRecord->images ?? [];
-            $detailScheduledAt = $detailRecord->scheduled_at;
-            $detailScheduleValue = $detailScheduledAt?->format('d/m/Y') ?? 'Chưa chốt lịch';
-            $detailScheduleHint = 'Chưa có ngày đăng chính thức';
-
-            if ($detailScheduledAt) {
-                if ($detailScheduledAt->isToday()) {
-                    $detailScheduleHint = 'Dự kiến đăng hôm nay';
-                } elseif ($detailScheduledAt->isPast()) {
-                    $detailScheduleHint = 'Đã quá lịch đăng';
-                } elseif ($detailScheduledAt->diffInDays(now()) <= 7) {
-                    $detailScheduleHint = 'Dự kiến đăng trong ' . $detailScheduledAt->diffInDays(now()) . ' ngày';
-                } else {
-                    $detailScheduleHint = 'Đã lên lịch đăng';
-                }
-            }
-        @endphp
-
         <div wire:ignore.self class="modal fade" id="detailModal" tabindex="-1">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
@@ -404,17 +355,17 @@
                                             <h6 class="mc-detail-heading mb-2">{{ $detailRecord->title }}</h6>
 
                                             <div class="d-flex flex-wrap gap-2">
-                                                <span class="mc-status-badge mc-status-badge-{{ $detailColor }}">
-                                                    <span class="mc-status-dot bg-{{ $detailColor }}"></span>
-                                                    {{ $detailStatusLabel }}
+                                                <span class="mc-status-badge mc-status-badge-{{ $statusColors[$detailRecord->status] ?? 'secondary' }}">
+                                                    <span class="mc-status-dot bg-{{ $statusColors[$detailRecord->status] ?? 'secondary' }}"></span>
+                                                    {{ $statusLabels[$detailRecord->status] ?? $detailRecord->status }}
                                                 </span>
                                             </div>
                                         </div>
 
                                         <div class="mc-detail-datebox">
                                             <div class="mc-detail-datebox-label">Lịch đăng</div>
-                                            <div class="mc-detail-datebox-value">{{ $detailScheduleValue }}</div>
-                                            <div class="mc-detail-datebox-note">{{ $detailScheduleHint }}</div>
+                                            <div class="mc-detail-datebox-value">{{ $this->detailScheduleValue($detailRecord->scheduled_at) }}</div>
+                                            <div class="mc-detail-datebox-note">{{ $this->detailScheduleHint($detailRecord->scheduled_at) }}</div>
                                         </div>
                                     </div>
 
@@ -428,13 +379,13 @@
                                             <div class="mc-detail-section-label">Media</div>
                                             <h6 class="mb-0 fw-semibold">Thư viện ảnh</h6>
                                         </div>
-                                        <span class="mc-file-count">{{ count($detailImages) }} ảnh</span>
+                                        <span class="mc-file-count">{{ count($detailRecord->images ?? []) }} ảnh</span>
                                     </div>
 
-                                    @if(!empty($detailImages))
+                                    @if(!empty($detailRecord->images))
                                         <div id="detailCarousel-{{ $detailRecord->id }}" class="carousel slide mc-detail-carousel" data-bs-interval="false">
                                             <div class="carousel-inner">
-                                                @foreach($detailImages as $path)
+                                                @foreach($detailRecord->images as $path)
                                                     <div class="carousel-item @if($loop->first) active @endif">
                                                         <div class="mc-detail-slide">
                                                             <img src="{{ asset('storage/' . $path) }}" alt="Hình ảnh bài viết {{ $loop->iteration }}">
@@ -443,7 +394,7 @@
                                                 @endforeach
                                             </div>
 
-                                            @if(count($detailImages) > 1)
+                                            @if(count($detailRecord->images) > 1)
                                                 <button class="carousel-control-prev mc-detail-carousel-control" type="button" data-bs-target="#detailCarousel-{{ $detailRecord->id }}" data-bs-slide="prev">
                                                     <span class="mc-detail-carousel-arrow" aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
                                                     <span class="visually-hidden">Ảnh trước</span>
@@ -475,9 +426,9 @@
                                                <div class="mc-detail-fact">
                                                    <div class="mc-detail-fact-label">Trạng thái</div>
                                                    <div class="mc-detail-fact-value">
-                                                       <span class="mc-status-badge mc-status-badge-{{ $detailColor }}">
-                                                           <span class="mc-status-dot bg-{{ $detailColor }}"></span>
-                                                           {{ $detailStatusLabel }}
+                                                       <span class="mc-status-badge mc-status-badge-{{ $statusColors[$detailRecord->status] ?? 'secondary' }}">
+                                                           <span class="mc-status-dot bg-{{ $statusColors[$detailRecord->status] ?? 'secondary' }}"></span>
+                                                           {{ $statusLabels[$detailRecord->status] ?? $detailRecord->status }}
                                                        </span>
                                                    </div>
                                                    @if($detailRecord->reviewed_at)
@@ -487,8 +438,8 @@
 
                                             <div class="mc-detail-fact">
                                                 <div class="mc-detail-fact-label">Lịch đăng</div>
-                                                <div class="mc-detail-fact-value">{{ $detailScheduleValue }}</div>
-                                                <div class="mc-detail-fact-note">{{ $detailScheduleHint }}</div>
+                                                    <div class="mc-detail-fact-value">{{ $this->detailScheduleValue($detailRecord->scheduled_at) }}</div>
+                                                    <div class="mc-detail-fact-note">{{ $this->detailScheduleHint($detailRecord->scheduled_at) }}</div>
                                             </div>
 
                                             <div class="mc-detail-fact">

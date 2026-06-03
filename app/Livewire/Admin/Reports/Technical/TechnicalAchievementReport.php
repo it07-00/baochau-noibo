@@ -10,6 +10,7 @@ use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
+use App\Models\DailyReport;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,24 @@ class TechnicalAchievementReport extends Component
     {
         $this->year  = now()->year;
         $this->years = range(now()->year, now()->year - 4);
+    }
+
+    public function deptInitials(string $name): string
+    {
+        $parts = array_values(array_filter(explode(' ', trim($name)), fn ($word) => $word !== ''));
+        if (count($parts) === 0) {
+            return '?';
+        }
+
+        $last = array_slice($parts, -2);
+        return strtoupper(implode('', array_map(fn ($word) => mb_substr($word, 0, 1), $last)));
+    }
+
+    public function hasDailyReportToday(): bool
+    {
+        return DailyReport::where('user_id', auth()->id())
+            ->whereDate('date', today())
+            ->exists();
     }
 
     private function buildRankings(): Collection

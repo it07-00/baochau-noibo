@@ -55,16 +55,13 @@
                     </thead>
                     <tbody>
                         @foreach($months as $m => $data)
-                            @php
-                                $pct = $data['target'] > 0 ? round($data['actual'] / $data['target'] * 100, 1) : null;
-                            @endphp
                             <tr>
                                 <td class="fw-semibold">Tháng {{ $m }}</td>
                                 <td class="text-end">
                                     @if($canEdit)
                                         <input type="number" wire:model="targets.{{ $m }}"
                                             class="form-control form-control-sm text-end w-120px d-inline-block"
-                                            
+
                                             placeholder="0" min="0">
                                     @else
                                         {{ $data['target'] > 0 ? $data['target'] : '—' }}
@@ -77,19 +74,19 @@
                                     {{ $data['actual_sales'] > 0 ? number_format($data['actual_sales'], 0, ',', '.') . ' đ' : '—' }}
                                 </td>
                                 <td class="text-end">
-                                    @if($pct !== null)
-                                        <span class="{{ $pct >= 100 ? 'text-success fw-bold' : ($pct >= 70 ? 'text-warning' : 'text-danger') }}">
-                                            {{ $pct }}%
+                                    @if($this->percentValue($data['actual'], $data['target']) !== null)
+                                        <span class="{{ $this->percentClass($this->percentValue($data['actual'], $data['target'])) }}">
+                                            {{ $this->percentValue($data['actual'], $data['target']) }}%
                                         </span>
                                     @else —
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($pct === null)
+                                    @if($this->percentValue($data['actual'], $data['target']) === null)
                                         <span class="badge bg-soft-secondary text-secondary ">Chưa có mục tiêu</span>
-                                    @elseif($pct >= 100)
+                                    @elseif($this->percentValue($data['actual'], $data['target']) >= 100)
                                         <span class="badge bg-soft-success text-success ">Đạt</span>
-                                    @elseif($pct >= 70)
+                                    @elseif($this->percentValue($data['actual'], $data['target']) >= 70)
                                         <span class="badge bg-soft-warning text-warning ">Gần đạt</span>
                                     @else
                                         <span class="badge bg-soft-danger text-danger ">Chưa đạt</span>
@@ -106,9 +103,8 @@
                             <td class="text-end text-success">{{ number_format($totals['actual_sales'], 0, ',', '.') }} đ</td>
                             <td class="text-end">
                                 @if($totals['target'] > 0)
-                                    @php $totalPct = round($totals['actual'] / $totals['target'] * 100, 1); @endphp
-                                    <span class="{{ $totalPct >= 100 ? 'text-success' : ($totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
-                                        {{ $totalPct }}%
+                                    <span class="{{ $this->percentClass($this->percentValue($totals['actual'], $totals['target'])) }}">
+                                        {{ $this->percentValue($totals['actual'], $totals['target']) }}%
                                     </span>
                                 @else —
                                 @endif

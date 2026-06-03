@@ -1,19 +1,4 @@
-@php
-    $currentUser = auth()->user();
-
-    $primaryRole = collect(\App\Enums\Role::priorityList())
-        ->first(fn ($r) => $currentUser?->hasRole($r));
-    if (!$primaryRole) {
-        $primaryRole = $currentUser?->roles?->first()?->name;
-    }
-
-    $roleEnum  = \App\Enums\Role::tryFrom($primaryRole ?? '');
-    $roleLabel = $roleEnum?->label() ?? 'Nhân viên';
-    $roleColor = $roleEnum?->color() ?? '#64748b';
-
-    $weekdays = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
-    $todayLabel = $weekdays[now()->dayOfWeek] . ', ' . now()->format('d/m/Y');
-@endphp
+@inject('headerView', 'App\Support\HeaderViewData')
 
 <div class="app-header app-header-redesign">
     {{-- LEFT: Hamburger + Greeting --}}
@@ -25,25 +10,15 @@
             <span></span><span></span><span></span>
         </button>
 
-        @php
-            $hour = now()->hour;
-            $wish = match(true) {
-                $hour >= 5  && $hour < 11 => 'Chúc bạn buổi sáng làm việc hiệu quả! ☀️',
-                $hour >= 11 && $hour < 13 => 'Chúc bạn buổi trưa vui vẻ! 🌤️',
-                $hour >= 13 && $hour < 18 => 'Chúc bạn buổi chiều làm việc tốt lành! 🌿',
-                $hour >= 18 && $hour < 22 => 'Chúc bạn buổi tối thư giãn! 🌙',
-                default                   => 'Chúc bạn một ngày tốt lành! ✨',
-            };
-        @endphp
         <div class="app-header-greeting d-none d-sm-flex">
-            <span class="app-header-greeting-name">{{ $currentUser?->name ?? 'Người dùng' }}</span>
-            <span class="app-header-greeting-sub">{{ $wish }}</span>
+            <span class="app-header-greeting-name">{{ $headerView->displayName(auth()->user()) }}</span>
+            <span class="app-header-greeting-sub">{{ $headerView->wish() }}</span>
         </div>
 
         <span class="app-header-role-badge d-none d-md-inline-flex"
-              style="--role-c:{{ $roleColor }};">
+              style="--role-c:{{ $headerView->roleColor(auth()->user()) }};">
             <svg width="9" height="9" viewBox="0 0 9 9" fill="currentColor"><circle cx="4.5" cy="4.5" r="4.5"/></svg>
-            {{ $roleLabel }}
+            {{ $headerView->roleLabel(auth()->user()) }}
         </span>
     </div>
 
@@ -53,7 +28,7 @@
             <rect x="1.5" y="2.5" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
             <path d="M5 1v3M11 1v3M1.5 6.5h13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        {{ $todayLabel }}
+        {{ $headerView->todayLabel() }}
     </div>
 
     {{-- RIGHT: Actions --}}
@@ -90,16 +65,16 @@
 
                 <li class="header-nav-item header-user me-0">
                     <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
-                        <x-user-avatar :user="$currentUser" :size="34" />
+                        <x-user-avatar :user="auth()->user()" :size="34" />
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg py-0">
                         <div class="dropdown-header d-flex align-items-center border-bottom py-4">
                             <div class="me-3 flex-shrink-0">
-                                <x-user-avatar :user="$currentUser" :size="48" />
+                                <x-user-avatar :user="auth()->user()" :size="48" />
                             </div>
                             <div class="flex-grow-1 text-start overflow-hidden">
-                                <h6 class="mb-0 text-truncate max-w-180px"  title="{{ $currentUser?->name }}">{{ $currentUser?->name ?? 'Người dùng' }}</h6>
-                                <span class="text-muted">{{ $roleLabel }}</span>
+                                <h6 class="mb-0 text-truncate max-w-180px"  title="{{ auth()->user()?->name }}">{{ $headerView->displayName(auth()->user()) }}</h6>
+                                <span class="text-muted">{{ $headerView->roleLabel(auth()->user()) }}</span>
                             </div>
                         </div>
                         <div class="dropdown-body py-2">

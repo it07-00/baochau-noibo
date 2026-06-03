@@ -14,6 +14,8 @@ class ContractEmission extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
 
+    const TOTAL_STEPS = 6;
+
     protected $table = 'contract_energies';
 
     public function getActivitylogOptions(): LogOptions

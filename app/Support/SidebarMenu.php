@@ -98,7 +98,7 @@ class SidebarMenu
                 'title'      => 'Bộ phận kinh doanh',
                 'icon'       => 'stack',
                 'permission' => 'quotation-tracking.view',
-                'children'   => ['Bảng theo dõi báo giá', 'Đăng ký mục tiêu doanh số'],
+                'children'   => ['Bảng theo dõi báo giá', 'Tạo báo giá', 'Đăng ký mục tiêu doanh số'],
             ],
             [
                 'title'      => 'Bộ phận tư vấn',
@@ -175,6 +175,51 @@ class SidebarMenu
         );
     }
 
+    /**
+     * Returns menus grouped by section while preserving section order.
+     *
+     * @return array<string, array<int, array{title: string, icon: string, permission: string, section: string, href?: string, children?: string[]}>>
+     */
+    public static function groupedBySection(?\App\Models\User $user = null): array
+    {
+        $grouped = [];
+
+        foreach (self::all($user) as $menu) {
+            $section = $menu['section'];
+
+            if (!isset($grouped[$section])) {
+                $grouped[$section] = [];
+            }
+
+            $grouped[$section][] = $menu;
+        }
+
+        return $grouped;
+    }
+
+    public static function roleLabel(?\App\Models\User $user): string
+    {
+        if (!$user) {
+            return 'Nhân viên';
+        }
+
+        $primaryRole = collect(Role::priorityList())
+            ->first(fn ($r) => $user->hasRole($r))
+            ?? $user->roles?->first()?->name;
+
+        return Role::tryFrom($primaryRole ?? '')?->label() ?? 'Nhân viên';
+    }
+
+    public static function activeGroup(?\App\Models\User $user): ?string
+    {
+        return self::resolveActive($user)['group'];
+    }
+
+    public static function activeChild(?\App\Models\User $user): ?string
+    {
+        return self::resolveActive($user)['child'];
+    }
+
     // ── Active state resolution ───────────────────────────────────────────────
 
     /**
@@ -198,6 +243,7 @@ class SidebarMenu
             'app.finance.cash-flow'                      => ['Dòng tiền',            'Dòng tiền'],
             'app.postal-deliveries.*'                    => ['Chuyển phát thư',      'Quản lý chuyển phát'],
             'app.quotation-tracking.*'                   => ['Bộ phận kinh doanh',   'Bảng theo dõi báo giá'],
+            'app.quotation-docs.*'                       => ['Bộ phận kinh doanh',   'Tạo báo giá'],
             'app.reports.sales.summary'                  => ['Báo cáo Kinh doanh',   'Bảng tổng kết doanh số'],
             'app.sales.target-registration'              => ['Bộ phận kinh doanh',   'Đăng ký mục tiêu doanh số'],
             'app.reports.sales.target'                   => ['Báo cáo Kinh doanh',   'Bảng doanh số cam kết'],
@@ -256,6 +302,7 @@ class SidebarMenu
             'Bộ phận kinh doanh' => [
                 'Đăng ký mục tiêu doanh số'  => 'app.sales.target-registration',
                 'Bảng theo dõi báo giá'      => 'app.quotation-tracking.index',
+                'Tạo báo giá'                => 'app.quotation-docs.index',
             ],
             'Chuyển phát thư'    => ['Quản lý chuyển phát' => 'app.postal-deliveries.index'],
             'Báo cáo Kinh doanh' => [

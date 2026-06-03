@@ -53,32 +53,25 @@
     {{-- Mobile Agenda --}}
     <div class="ws-mobile-agenda d-md-none">
         @forelse($mobileEventDays as $currentDate)
-            @php
-                $dayKey = $currentDate->format('Y-m-d');
-                $dayEvents = collect($calendarData[$dayKey] ?? []);
-                $isToday = $currentDate->isToday();
-                $canAddHere = !$currentDate->lt(today());
-            @endphp
-
             <section class="ws-agenda-day bg-white shadow-sm">
                 <button type="button"
                     class="ws-agenda-day-header"
-                    wire:click="openDayDetail('{{ $dayKey }}')">
-                    <span class="ws-agenda-date {{ $isToday ? 'is-today' : '' }}">
+                    wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
+                    <span class="ws-agenda-date {{ $currentDate->isToday() ? 'is-today' : '' }}">
                         <span class="ws-agenda-date-number">{{ $currentDate->format('d') }}</span>
                         <span class="ws-agenda-date-meta">
                             {{ $currentDate->translatedFormat('l') }}
                             <small>{{ $currentDate->format('d/m/Y') }}</small>
                         </span>
                     </span>
-                    <span class="ws-agenda-count">{{ $dayEvents->count() }} sự kiện</span>
+                    <span class="ws-agenda-count">{{ count($this->eventsForDate($calendarData, $currentDate)) }} sự kiện</span>
                 </button>
 
                 <div class="ws-agenda-events">
-                    @foreach($dayEvents as $evt)
+                    @foreach($this->eventsForDate($calendarData, $currentDate) as $evt)
                         <button type="button"
                             class="ws-agenda-event ws-chip-{{ $evt->color }}"
-                            wire:click="openDayDetail('{{ $dayKey }}')">
+                            wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                             <span class="ws-agenda-event-title">{{ $evt->title }}</span>
                             <span class="ws-agenda-event-people">{{ $evt->time_range_label }}</span>
                             <span class="ws-agenda-event-people">{{ $evt->participants->pluck('name')->join(', ') }}</span>
@@ -86,10 +79,10 @@
                     @endforeach
                 </div>
 
-                @if($canAddHere)
+                @if(!$currentDate->lt(today()))
                     <button type="button"
                         class="ws-agenda-add btn btn-sm btn-outline-primary"
-                        wire:click="openCreateModal('{{ $dayKey }}')">
+                        wire:click="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')">
                         <i class="bi bi-plus-lg me-1"></i> Thêm vào ngày này
                     </button>
                 @endif
@@ -108,47 +101,35 @@
     {{-- Calendar Grid --}}
     <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none d-md-block">
         <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
-            @php $daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']; @endphp
-            @foreach($daysOfWeek as $dow)
+            @foreach($this->weekdayShortNames() as $dow)
                 <div class="calendar-header-cell fw-bold text-muted text-center">{{ $dow }}</div>
             @endforeach
         </div>
 
         <div class="calendar-body-grid">
             @foreach ($calendarDates as $currentDate)
-                @php
-                    $dayKey = $currentDate->format('Y-m-d');
-                    $dayNum = $currentDate->day;
-                    $isInsideMonth = $currentDate->month == $monthFilter;
-                    $dayEvents = collect($calendarData[$dayKey] ?? []);
-                    $isToday = $currentDate->isToday();
-                    $isWeekend = $currentDate->isWeekend();
-                    $isPast = $currentDate->lt(today());
-                    $canAddHere = !$isPast && $isInsideMonth;
-                @endphp
-
                 <div class="calendar-day-cell position-relative
-                    @if(!$isInsideMonth) bg-light opacity-50
-                    @else bg-white @if($isWeekend) bg-sunday @endif
+                    @if(!$this->isInsideCurrentMonth($currentDate)) bg-light opacity-50
+                    @else bg-white @if($currentDate->isWeekend()) bg-sunday @endif
                     @endif
                     border-start border-bottom border-light-subtle
-                    @if($isInsideMonth && $dayEvents->isNotEmpty()) cursor-pointer @endif"
-                    @if($isInsideMonth && $dayEvents->isNotEmpty())
-                        wire:click="openDayDetail('{{ $dayKey }}')"
+                    @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0) cursor-pointer @endif"
+                    @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0)
+                        wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')"
                     @endif
                 >
                     <div class="ws-day-top d-flex justify-content-between align-items-start mb-2">
-                        <span class="ws-day-number fw-bold {{ $isToday ? 'is-today' : '' }} {{ !$isInsideMonth ? 'is-muted' : '' }}">
-                            {{ $dayNum }}
+                        <span class="ws-day-number fw-bold {{ $currentDate->isToday() ? 'is-today' : '' }} {{ !$this->isInsideCurrentMonth($currentDate) ? 'is-muted' : '' }}">
+                            {{ $currentDate->day }}
                         </span>
 
                         <div class="d-flex align-items-center gap-1">
-                            @if($isInsideMonth && $dayEvents->isNotEmpty())
-                                <span class="ws-day-event-count">{{ $dayEvents->count() }}</span>
+                            @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0)
+                                <span class="ws-day-event-count">{{ count($this->eventsForDate($calendarData, $currentDate)) }}</span>
                             @endif
 
-                            @if($canAddHere)
-                                <button wire:click.stop="openCreateModal('{{ $dayKey }}')"
+                            @if($this->canAddInCalendarDate($currentDate))
+                                <button wire:click.stop="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')"
                                     class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
                                     title="Thêm sự kiện">
                                     <i class="bi bi-plus"></i>
@@ -158,17 +139,17 @@
                     </div>
 
                     <div class="calendar-day-content">
-                        @if($isInsideMonth && $dayEvents->isNotEmpty())
-                            @foreach($dayEvents->take(4) as $evt)
+                        @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0)
+                            @foreach(collect($this->eventsForDate($calendarData, $currentDate))->take(4) as $evt)
                                 <div class="ws-event-chip ws-chip-{{ $evt->color }}"
-                                    wire:click.stop="openDayDetail('{{ $dayKey }}')">
+                                    wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                                     <div class="ws-event-title fw-bold text-truncate">{{ $evt->title }}</div>
                                     <div class="ws-event-author text-truncate">{{ $evt->time_range_label }} • {{ $evt->participants->pluck('name')->join(', ') }}</div>
                                 </div>
                             @endforeach
-                            @if($dayEvents->count() > 4)
+                            @if(count($this->eventsForDate($calendarData, $currentDate)) > 4)
                                 <div class="ws-more-events text-muted text-center">
-                                    +{{ $dayEvents->count() - 4 }} sự kiện khác
+                                    +{{ count($this->eventsForDate($calendarData, $currentDate)) - 4 }} sự kiện khác
                                 </div>
                             @endif
                         @endif
@@ -246,8 +227,7 @@
                     <div class="text-muted text-center py-4">Không có sự kiện nào.</div>
                 @endif
 
-                @php $canAddToday = $detailDate && !\Carbon\Carbon::parse($detailDate)->lt(today()); @endphp
-                @if($canAddToday)
+                @if($this->canAddForDetailDate($detailDate))
                     <div class="text-center mt-4">
                         <button wire:click="openCreateModal('{{ $detailDate }}')"
                             class="btn btn-outline-primary px-4 py-2 fw-semibold rounded-10px fs-6" >

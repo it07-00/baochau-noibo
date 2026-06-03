@@ -30,10 +30,6 @@
         </div>
     </div>
 
-    @php
-        $canBulkDelete = auth()->user()->can('contracts-energy.delete');
-    @endphp
-
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
@@ -176,7 +172,7 @@
                         <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
                             <i class="bi bi-x-circle me-1"></i>Xóa lọc
                         </button>
-                        @if ($canBulkDelete)
+                        @if ($this->canBulkDelete)
                             <button class="btn btn-danger px-4 btn-filter" wire:click="bulkDeleteSelected"
                                 wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
                                 @if (empty($selectedDocIds)) disabled @endif>
@@ -207,7 +203,7 @@
             <table class="table table-hover align-middle mb-0 table-xs">
                 <thead class="bg-light bg-opacity-50">
                     <tr class=" text-muted fw-bold">
-                        @if ($canBulkDelete)
+                        @if ($this->canBulkDelete)
                             <th class="text-center w-42px" >Chọn</th>
                         @endif
                         <th class="text-center w-45px" >STT</th>
@@ -230,7 +226,7 @@
                 <tbody>
                     @forelse($docs as $doc)
                         <tr class="border-bottom border-light" wire:key="energy-row-{{ $doc->id }}">
-                            @if ($canBulkDelete)
+                            @if ($this->canBulkDelete)
                                 <td class="text-center">
                                     @if (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) || $doc->staff_id === auth()->id())
                                         <input class="form-check-input" type="checkbox"
@@ -286,12 +282,6 @@
                             @endunless
                             @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                                 <td class="text-center">
-                                    @php
-                                        $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
-                                        $totalSteps = 6;
-                                        $progressPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
-                                        $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
-                                    @endphp
                                     @if ($doc->assignments->count() > 0)
                                         <div class="d-flex flex-column gap-1 align-items-center">
                                             @include('livewire.admin.contracts.partials.assignment-compact-list', [
@@ -303,32 +293,25 @@
                                     @endif
                                     <div class="mt-2">
                                         <div class="progress h-6px w-80px mx-auto" >
-                                            <div class="progress-bar bg-{{ $progressColor }}" style="width: {{ $progressPercent }}%"></div>
+                                            <div class="progress-bar bg-{{ $this->workflowProgressMeta($doc)['progressColor'] }}" style="width: {{ $this->workflowProgressMeta($doc)['progressPercent'] }}%"></div>
                                         </div>
-                                        <span class="fw-semibold text-{{ $progressColor }} fs-72" >{{ $completedSteps }}/{{ $totalSteps }}</span>
+                                        <span class="fw-semibold text-{{ $this->workflowProgressMeta($doc)['progressColor'] }} fs-72" >{{ $this->workflowProgressMeta($doc)['completedSteps'] }}/{{ $this->workflowProgressMeta($doc)['totalSteps'] }}</span>
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    @php
-                                        $deadline = $doc->assignments->first()?->deadline;
-                                        $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH']);
-                                        $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
-                                        $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->startOfDay(), false) : null;
-                                        $isNearDue = $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3;
-                                    @endphp
-                                    @if($deadline)
-                                        @if($isFinished)
-                                            <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
+                                    @if($this->deadlineMeta($doc)['deadline'])
+                                        @if($this->deadlineMeta($doc)['isFinished'])
+                                            <span class="fw-semibold text-success fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
                                             <br><span class="badge bg-success fs-60" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
-                                        @elseif($isOverdue)
-                                            <span class="fw-bold text-danger fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                            <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($daysLeft) }} ngày</span>
-                                        @elseif($isNearDue)
-                                            <span class="fw-semibold text-warning fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                            <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                                        @elseif($this->deadlineMeta($doc)['isOverdue'])
+                                            <span class="fw-bold text-danger fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($this->deadlineMeta($doc)['daysLeft']) }} ngày</span>
+                                        @elseif($this->deadlineMeta($doc)['isNearDue'])
+                                            <span class="fw-semibold text-warning fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
                                         @else
-                                            <span class="fw-semibold text-success fs-85" >{{ $deadline->format('d/m/Y') }}</span>
-                                            <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $daysLeft }} ngày</span>
+                                            <span class="fw-semibold text-success fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
+                                            <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
                                         @endif
                                     @else
                                         <span class="text-muted">—</span>
@@ -337,37 +320,15 @@
                             @endunless
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center">
-                                    @php
-                                        $statusColor = match ($doc->status) {
-                                            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => [
-                                                'bg' => '#cfe2ff',
-                                                'text' => '#0d6efd',
-                                            ],
-                                            'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
-                                            'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
-                                            'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
-                                            'Hợp đồng hủy', 'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
-                                            default => ['bg' => '#e9ecef', 'text' => '#6c757d'],
-                                        };
-                                    @endphp
-                                    @php
-                                        $canUpdateStatus =
-                                            !auth()
-                                                ->user()
-                                                ->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]) &&
-                                            (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
-                                                $doc->staff_id === auth()->id());
-                                    @endphp
-
-                                    @if (!$canUpdateStatus)
+                                    @if (!$this->canUpdateStatusForDoc($doc))
                                         <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0 status-badge-view"
-                                            style="--sbc:{{ $statusColor['bg'] }}; --stc:{{ $statusColor['text'] }};">
+                                            style="--sbc:{{ $this->statusColorForDoc($doc)['bg'] }}; --stc:{{ $this->statusColorForDoc($doc)['text'] }};">
                                             {{ $doc->status ?: '—' }}
                                         </span>
                                     @else
                                         <div class="position-relative" x-data="{ open: false }">
                                             <button type="button" @click="open = !open"
-                                                class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0 status-badge-btn" style="--sbc:{{ $statusColor['bg'] }}; --stc:{{ $statusColor['text'] }};">
+                                                class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0 status-badge-btn" style="--sbc:{{ $this->statusColorForDoc($doc)['bg'] }}; --stc:{{ $this->statusColorForDoc($doc)['text'] }};">
                                                 {{ $doc->status ?: '—' }}
                                                 <svg width="12" height="12" viewBox="0 0 12 12"
                                                     fill="currentColor">
@@ -399,31 +360,9 @@
                             </td>
                             @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                             <td class="text-center voucher-status-cell">
-                                @php
-                                    $voucherStatusValue = trim((string) ($doc->voucher_status ?? ''));
-                                    $voucherStatusKey = mb_strtolower($voucherStatusValue);
-                                    $voucherBadgeClass = match ($voucherStatusKey) {
-                                        'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
-                                        'đã xuất hóa đơn' => 'bg-warning text-dark',
-                                        'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
-                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
-                                        '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
-                                        default => 'bg-secondary text-white',
-                                    };
-
-                                    $voucherBadgeLabel = match ($voucherStatusKey) {
-                                        'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
-                                        'đã xuất hóa đơn' => 'Xuất hóa đơn',
-                                        'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
-                                        'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng'
-                                            => 'BB nghiệm thu kết thúc HĐ',
-                                        '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
-                                        default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
-                                    };
-                                @endphp
-                                <span class="badge voucher-status-badge {{ $voucherBadgeClass }}"
-                                    title="{{ $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn' }}">
-                                    {{ $voucherBadgeLabel }}
+                                <span class="badge voucher-status-badge {{ $this->voucherBadgeInfoForDoc($doc)['class'] }}"
+                                    title="{{ $this->voucherBadgeInfoForDoc($doc)['full_value'] }}">
+                                    {{ $this->voucherBadgeInfoForDoc($doc)['label'] }}
                                 </span>
                             </td>
                             @endunless
@@ -444,12 +383,7 @@
                                         </button>
                                     @endif
                                     @can('contracts-energy.edit')
-                                        @php
-                                            $canEditDelete =
-                                                !auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
-                                                $doc->staff_id === auth()->id();
-                                        @endphp
-                                        @if ($canEditDelete)
+                                        @if ($this->canManageOwnedDoc($doc))
                                             @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                                                 <button class="btn btn-sm p-0 text-secondary"
                                                     wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
@@ -463,12 +397,7 @@
                                         @endif
                                     @endcan
                                     @can('contracts-energy.delete')
-                                        @php
-                                            $canDelete =
-                                                !auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
-                                                $doc->staff_id === auth()->id();
-                                        @endphp
-                                        @if ($canDelete)
+                                        @if ($this->canManageOwnedDoc($doc))
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
                                                 wire:confirm="Xác nhận xóa hợp đồng này?" title="Xóa">
@@ -481,7 +410,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value])? 6: 9) + ($canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ ($this->isRestrictedRole ? 6 : 9) + ($this->canBulkDelete ? 1 : 0) }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse

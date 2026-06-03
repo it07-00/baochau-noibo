@@ -3,14 +3,6 @@
 @section('title', 'Đổi mật khẩu')
 @section('page_title', 'Đổi mật khẩu')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Hồ sơ của tôi', 'url' => route('app.profile.index')],
-        ['label' => 'Đổi mật khẩu'],
-    ];
-@endphp
-
 @section('content')
     @if (session('status'))
         <div class="alert alert-success mt-3" role="alert">

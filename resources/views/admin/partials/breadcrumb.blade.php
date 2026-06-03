@@ -1,11 +1,7 @@
-@php
-    $breadcrumbs = $breadcrumbs ?? [];
-@endphp
-
-@if (!empty($breadcrumbs))
+@if (!empty($breadcrumbs ?? []))
     <nav aria-label="breadcrumb" class="pt-2">
         <ol class="breadcrumb mb-0">
-            @foreach ($breadcrumbs as $breadcrumb)
+            @foreach (($breadcrumbs ?? []) as $breadcrumb)
                 @if (isset($breadcrumb['url']))
                     <li class="breadcrumb-item">
                         <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['label'] }}</a>

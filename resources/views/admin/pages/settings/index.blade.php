@@ -3,13 +3,6 @@
 @section('title', 'Cài đặt hệ thống')
 @section('page_title', 'Cài đặt hệ thống')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Cài đặt hệ thống'],
-    ];
-@endphp
-
 @section('content')
     <div class="row g-3 mt-1">
         <div class="col-lg-4 col-md-6">

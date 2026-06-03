@@ -2,13 +2,6 @@
     @section('title', 'Quản lý Nhà thầu phụ')
     @section('page_title', 'Danh sách Nhà thầu phụ')
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Nhà thầu phụ']
-        ];
-    @endphp
-
     <div class="row g-3 mt-1 px-2 px-md-0">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">

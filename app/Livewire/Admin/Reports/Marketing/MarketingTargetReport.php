@@ -58,6 +58,28 @@ class MarketingTargetReport extends Component
         $this->dispatch('notify', ['type' => 'success', 'message' => 'Đã lưu mục tiêu báo giá!']);
     }
 
+    public function percentValue(int $actual, int $target): ?float
+    {
+        if ($target <= 0) {
+            return null;
+        }
+
+        return round(($actual / $target) * 100, 1);
+    }
+
+    public function percentClass(?float $percent): string
+    {
+        if ($percent === null) {
+            return 'text-danger';
+        }
+
+        if ($percent >= 100) {
+            return 'text-success fw-bold';
+        }
+
+        return $percent >= 70 ? 'text-warning' : 'text-danger';
+    }
+
     public function render()
     {
         $actualRows = Quotation::whereYear('date', $this->year)

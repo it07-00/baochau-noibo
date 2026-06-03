@@ -109,16 +109,7 @@
                         </td>
                         <td class="text-center">
                             @if($delivery->vtp_status_name)
-                                @php
-                                    $statusColor = match(true) {
-                                        str_contains($delivery->vtp_status ?? '', '5') => 'success',   // Đã giao
-                                        str_contains($delivery->vtp_status ?? '', '4') => 'info',      // Đang giao
-                                        str_contains($delivery->vtp_status ?? '', '1') => 'warning',   // Đã tiếp nhận
-                                        $delivery->vtp_status === 'created' => 'primary',
-                                        default => 'secondary',
-                                    };
-                                @endphp
-                                <span class="badge bg-{{ $statusColor }}-subtle text-{{ $statusColor }} px-3 py-2 rounded-pill ">
+                                <span class="badge bg-{{ str_contains($delivery->vtp_status ?? '', '5') ? 'success' : (str_contains($delivery->vtp_status ?? '', '4') ? 'info' : (str_contains($delivery->vtp_status ?? '', '1') ? 'warning' : (($delivery->vtp_status ?? '') === 'created' ? 'primary' : 'secondary'))) }}-subtle text-{{ str_contains($delivery->vtp_status ?? '', '5') ? 'success' : (str_contains($delivery->vtp_status ?? '', '4') ? 'info' : (str_contains($delivery->vtp_status ?? '', '1') ? 'warning' : (($delivery->vtp_status ?? '') === 'created' ? 'primary' : 'secondary'))) }} px-3 py-2 rounded-pill ">
                                     {{ $delivery->vtp_status_name }}
                                 </span>
                                 @if($delivery->vtp_last_tracked_at)

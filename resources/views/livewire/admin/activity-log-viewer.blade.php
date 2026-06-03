@@ -2,13 +2,6 @@
     @section('title', 'Nhật ký hoạt động')
     @section('page_title', 'Nhật ký hoạt động')
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Nhật ký hoạt động']
-        ];
-    @endphp
-
     <div class="row g-3 mt-1">
         <div class="col-12">
             <div class="pure-card al-card card-bg shadow-custom">
@@ -102,16 +95,8 @@
                                         </td>
 
                                         <td>
-                                            @php
-                                                $badge = match($activity->event) {
-                                                    'created' => ['cls' => 'bg-label-success', 'icon' => 'bi-plus-circle-fill', 'label' => 'Tạo mới'],
-                                                    'updated' => ['cls' => 'bg-label-primary',  'icon' => 'bi-pencil-fill',      'label' => 'Cập nhật'],
-                                                    'deleted' => ['cls' => 'bg-label-danger',   'icon' => 'bi-trash-fill',       'label' => 'Xóa'],
-                                                    default   => ['cls' => 'bg-label-secondary','icon' => 'bi-circle-fill',      'label' => ucfirst($activity->event ?? 'N/A')],
-                                                };
-                                            @endphp
-                                            <span class="badge {{ $badge['cls'] }}">
-                                                <i class="bi {{ $badge['icon'] }} me-1"></i>{{ $badge['label'] }}
+                                            <span class="badge {{ $this->eventBadge($activity->event)['cls'] }}">
+                                                <i class="bi {{ $this->eventBadge($activity->event)['icon'] }} me-1"></i>{{ $this->eventBadge($activity->event)['label'] }}
                                             </span>
                                         </td>
 
@@ -197,17 +182,13 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($activity->properties['attributes'] as $key => $newVal)
-                                                @php
-                                                    $oldVal  = $activity->properties['old'][$key] ?? null;
-                                                    $changed = $oldVal !== $newVal;
-                                                @endphp
-                                                <tr class="{{ $changed ? '' : 'opacity-50' }}">
+                                                <tr class="{{ $this->hasChangedValue($activity->properties['old'][$key] ?? null, $newVal) ? '' : 'opacity-50' }}">
                                                     <td class="fw-semibold font-monospace">{{ $key }}</td>
-                                                    <td class="{{ $changed ? 'text-danger bg-danger-subtle' : 'text-muted' }}">
-                                                        {{ $oldVal !== null ? (is_array($oldVal) ? json_encode($oldVal) : $oldVal) : '—' }}
+                                                    <td class="{{ $this->hasChangedValue($activity->properties['old'][$key] ?? null, $newVal) ? 'text-danger bg-danger-subtle' : 'text-muted' }}">
+                                                        {{ $this->displayValue($activity->properties['old'][$key] ?? null) }}
                                                     </td>
-                                                    <td class="{{ $changed ? 'text-success bg-success-subtle' : 'text-muted' }}">
-                                                        {{ is_array($newVal) ? json_encode($newVal) : $newVal }}
+                                                    <td class="{{ $this->hasChangedValue($activity->properties['old'][$key] ?? null, $newVal) ? 'text-success bg-success-subtle' : 'text-muted' }}">
+                                                        {{ $this->displayValue($newVal) }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -227,7 +208,7 @@
                                             @foreach ($activity->properties['attributes'] as $key => $val)
                                                 <tr>
                                                     <td class="fw-semibold font-monospace">{{ $key }}</td>
-                                                    <td>{{ is_array($val) ? json_encode($val) : $val }}</td>
+                                                    <td>{{ $this->displayValue($val) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

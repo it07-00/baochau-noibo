@@ -184,6 +184,16 @@ class TechnicalContractReport extends Component
         return $progress;
     }
 
+    public function workflowProgressRow(int $contractId, array $workflowProgress): array
+    {
+        return $workflowProgress[$contractId] ?? [
+            'percent' => 0,
+            'current_label' => 'Chưa bắt đầu',
+            'completed_count' => 0,
+            'total_steps' => 6,
+        ];
+    }
+
     public function render()
     {
         $items = $this->baseQuery()

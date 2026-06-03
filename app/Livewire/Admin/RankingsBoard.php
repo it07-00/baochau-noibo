@@ -25,6 +25,18 @@ class RankingsBoard extends Component
         $this->years = range(now()->year, now()->year - 4);
     }
 
+    public function rankMedal(int $index): string
+    {
+        $rank = $index + 1;
+
+        return match ($rank) {
+            1 => '🥇',
+            2 => '🥈',
+            3 => '🥉',
+            default => (string) $rank,
+        };
+    }
+
     public function render()
     {
         $currentUser = auth()->user();

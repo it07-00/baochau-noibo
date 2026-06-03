@@ -12,14 +12,6 @@
         $wireYearModel  - wire model string e.g. "year"
 --}}
 <div class="dept-race-board" x-data>
-    @php
-        function deptInitials($name) {
-            $parts = explode(' ', trim($name));
-            $last = array_slice($parts, -2);
-            return strtoupper(implode('', array_map(fn($w) => mb_substr($w, 0, 1), $last)));
-        }
-    @endphp
-
     {{-- NEBULA BLOBS --}}
     <div class="dept-nebula dept-nebula-1"></div>
     <div class="dept-nebula dept-nebula-2"></div>
@@ -31,11 +23,7 @@
     <div class="dept-wrapper">
 
         {{-- DAILY REPORT REMINDER (dark-themed, chỉ hiện nếu chưa gửi báo cáo ngày) --}}
-        @php
-            $hasReportToday = \App\Models\DailyReport::where('user_id', auth()->id())
-                ->whereDate('date', today())->exists();
-        @endphp
-        @if(!$hasReportToday)
+        @if(!$this->hasDailyReportToday())
         <div class="dept-reminder">
             <div class="dept-reminder-icon">⏰</div>
             <div class="dept-reminder-text">
@@ -78,62 +66,59 @@
                     <div class="dept-podium">
                         {{-- #2 --}}
                         <div class="dept-podium-slot dept-podium-2">
-                            @php $p = $rateRankings[1]; @endphp
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-md dept-border-silver">
-                                    @if($p['avatar_url'])
-                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @if($rateRankings[1]['avatar_url'])
+                                        <img src="{{ $rateRankings[1]['avatar_url'] }}" alt="{{ $rateRankings[1]['name'] }}">
                                     @else
-                                        {{ deptInitials($p['name']) }}
+                                        {{ $this->deptInitials($rateRankings[1]['name']) }}
                                     @endif
                                 </div>
                                 <div class="dept-medal dept-medal-silver">2</div>
                             </div>
                             <div class="dept-pedestal dept-pedestal-2">
-                                <div class="dept-podium-name">{{ $p['name'] }}</div>
-                                <div class="dept-podium-value">{{ $p['pct'] }}%</div>
-                                <div class="dept-podium-sub">{{ $p['finished'] }}/{{ $p['total'] }} HĐ</div>
+                                <div class="dept-podium-name">{{ $rateRankings[1]['name'] }}</div>
+                                <div class="dept-podium-value">{{ $rateRankings[1]['pct'] }}%</div>
+                                <div class="dept-podium-sub">{{ $rateRankings[1]['finished'] }}/{{ $rateRankings[1]['total'] }} HĐ</div>
                             </div>
                         </div>
 
                         {{-- #1 --}}
                         <div class="dept-podium-slot dept-podium-1">
-                            @php $p = $rateRankings[0]; @endphp
                             <div class="dept-crown">👑</div>
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-lg dept-border-gold">
-                                    @if($p['avatar_url'])
-                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @if($rateRankings[0]['avatar_url'])
+                                        <img src="{{ $rateRankings[0]['avatar_url'] }}" alt="{{ $rateRankings[0]['name'] }}">
                                     @else
-                                        {{ deptInitials($p['name']) }}
+                                        {{ $this->deptInitials($rateRankings[0]['name']) }}
                                     @endif
                                 </div>
                                 <div class="dept-medal dept-medal-gold">1</div>
                             </div>
                             <div class="dept-pedestal dept-pedestal-1">
-                                <div class="dept-podium-name dept-name-gold">{{ $p['name'] }}</div>
-                                <div class="dept-podium-value dept-value-gold">{{ $p['pct'] }}%</div>
-                                <div class="dept-podium-sub">{{ $p['finished'] }}/{{ $p['total'] }} HĐ</div>
+                                <div class="dept-podium-name dept-name-gold">{{ $rateRankings[0]['name'] }}</div>
+                                <div class="dept-podium-value dept-value-gold">{{ $rateRankings[0]['pct'] }}%</div>
+                                <div class="dept-podium-sub">{{ $rateRankings[0]['finished'] }}/{{ $rateRankings[0]['total'] }} HĐ</div>
                             </div>
                         </div>
 
                         {{-- #3 --}}
                         <div class="dept-podium-slot dept-podium-3">
-                            @php $p = $rateRankings[2]; @endphp
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-md dept-border-bronze">
-                                    @if($p['avatar_url'])
-                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @if($rateRankings[2]['avatar_url'])
+                                        <img src="{{ $rateRankings[2]['avatar_url'] }}" alt="{{ $rateRankings[2]['name'] }}">
                                     @else
-                                        {{ deptInitials($p['name']) }}
+                                        {{ $this->deptInitials($rateRankings[2]['name']) }}
                                     @endif
                                 </div>
                                 <div class="dept-medal dept-medal-bronze">3</div>
                             </div>
                             <div class="dept-pedestal dept-pedestal-3">
-                                <div class="dept-podium-name">{{ $p['name'] }}</div>
-                                <div class="dept-podium-value">{{ $p['pct'] }}%</div>
-                                <div class="dept-podium-sub">{{ $p['finished'] }}/{{ $p['total'] }} HĐ</div>
+                                <div class="dept-podium-name">{{ $rateRankings[2]['name'] }}</div>
+                                <div class="dept-podium-value">{{ $rateRankings[2]['pct'] }}%</div>
+                                <div class="dept-podium-sub">{{ $rateRankings[2]['finished'] }}/{{ $rateRankings[2]['total'] }} HĐ</div>
                             </div>
                         </div>
                     </div>
@@ -141,14 +126,13 @@
 
                     @foreach($rateRankings->values() as $i => $row)
                         @if($rateRankings->count() >= 3 && $i < 3) @continue @endif
-                        @php $rank = $i + 1; @endphp
                         <div class="dept-rank-card">
-                            <div class="dept-rank-num">{{ $rank }}.</div>
+                            <div class="dept-rank-num">{{ $i + 1 }}.</div>
                             <div class="dept-avatar dept-avatar-sm">
                                 @if($row['avatar_url'])
                                     <img src="{{ $row['avatar_url'] }}" alt="{{ $row['name'] }}">
                                 @else
-                                    {{ deptInitials($row['name']) }}
+                                    {{ $this->deptInitials($row['name']) }}
                                 @endif
                             </div>
                             <div class="dept-card-name">{{ $row['name'] }}</div>
@@ -171,62 +155,59 @@
                     <div class="dept-podium">
                         {{-- #2 --}}
                         <div class="dept-podium-slot dept-podium-2">
-                            @php $p = $completionRankings[1]; @endphp
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-md dept-border-silver">
-                                    @if($p['avatar_url'])
-                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @if($completionRankings[1]['avatar_url'])
+                                        <img src="{{ $completionRankings[1]['avatar_url'] }}" alt="{{ $completionRankings[1]['name'] }}">
                                     @else
-                                        {{ deptInitials($p['name']) }}
+                                        {{ $this->deptInitials($completionRankings[1]['name']) }}
                                     @endif
                                 </div>
                                 <div class="dept-medal dept-medal-silver">2</div>
                             </div>
                             <div class="dept-pedestal dept-pedestal-2">
-                                <div class="dept-podium-name">{{ $p['name'] }}</div>
-                                <div class="dept-podium-value">{{ $p['finished'] }} HĐ</div>
-                                <div class="dept-podium-sub">/ {{ $p['total'] }} tổng</div>
+                                <div class="dept-podium-name">{{ $completionRankings[1]['name'] }}</div>
+                                <div class="dept-podium-value">{{ $completionRankings[1]['finished'] }} HĐ</div>
+                                <div class="dept-podium-sub">/ {{ $completionRankings[1]['total'] }} tổng</div>
                             </div>
                         </div>
 
                         {{-- #1 --}}
                         <div class="dept-podium-slot dept-podium-1">
-                            @php $p = $completionRankings[0]; @endphp
                             <div class="dept-crown">👑</div>
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-lg dept-border-gold">
-                                    @if($p['avatar_url'])
-                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @if($completionRankings[0]['avatar_url'])
+                                        <img src="{{ $completionRankings[0]['avatar_url'] }}" alt="{{ $completionRankings[0]['name'] }}">
                                     @else
-                                        {{ deptInitials($p['name']) }}
+                                        {{ $this->deptInitials($completionRankings[0]['name']) }}
                                     @endif
                                 </div>
                                 <div class="dept-medal dept-medal-gold">1</div>
                             </div>
                             <div class="dept-pedestal dept-pedestal-1">
-                                <div class="dept-podium-name dept-name-gold">{{ $p['name'] }}</div>
-                                <div class="dept-podium-value dept-value-gold">{{ $p['finished'] }} HĐ</div>
-                                <div class="dept-podium-sub">/ {{ $p['total'] }} tổng</div>
+                                <div class="dept-podium-name dept-name-gold">{{ $completionRankings[0]['name'] }}</div>
+                                <div class="dept-podium-value dept-value-gold">{{ $completionRankings[0]['finished'] }} HĐ</div>
+                                <div class="dept-podium-sub">/ {{ $completionRankings[0]['total'] }} tổng</div>
                             </div>
                         </div>
 
                         {{-- #3 --}}
                         <div class="dept-podium-slot dept-podium-3">
-                            @php $p = $completionRankings[2]; @endphp
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-md dept-border-bronze">
-                                    @if($p['avatar_url'])
-                                        <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                    @if($completionRankings[2]['avatar_url'])
+                                        <img src="{{ $completionRankings[2]['avatar_url'] }}" alt="{{ $completionRankings[2]['name'] }}">
                                     @else
-                                        {{ deptInitials($p['name']) }}
+                                        {{ $this->deptInitials($completionRankings[2]['name']) }}
                                     @endif
                                 </div>
                                 <div class="dept-medal dept-medal-bronze">3</div>
                             </div>
                             <div class="dept-pedestal dept-pedestal-3">
-                                <div class="dept-podium-name">{{ $p['name'] }}</div>
-                                <div class="dept-podium-value">{{ $p['finished'] }} HĐ</div>
-                                <div class="dept-podium-sub">/ {{ $p['total'] }} tổng</div>
+                                <div class="dept-podium-name">{{ $completionRankings[2]['name'] }}</div>
+                                <div class="dept-podium-value">{{ $completionRankings[2]['finished'] }} HĐ</div>
+                                <div class="dept-podium-sub">/ {{ $completionRankings[2]['total'] }} tổng</div>
                             </div>
                         </div>
                     </div>
@@ -234,14 +215,13 @@
 
                     @foreach($completionRankings->values() as $i => $row)
                         @if($completionRankings->count() >= 3 && $i < 3) @continue @endif
-                        @php $rank = $i + 1; @endphp
                         <div class="dept-rank-card">
-                            <div class="dept-rank-num">{{ $rank }}.</div>
+                            <div class="dept-rank-num">{{ $i + 1 }}.</div>
                             <div class="dept-avatar dept-avatar-sm">
                                 @if($row['avatar_url'])
                                     <img src="{{ $row['avatar_url'] }}" alt="{{ $row['name'] }}">
                                 @else
-                                    {{ deptInitials($row['name']) }}
+                                    {{ $this->deptInitials($row['name']) }}
                                 @endif
                             </div>
                             <div class="dept-card-name">{{ $row['name'] }}</div>

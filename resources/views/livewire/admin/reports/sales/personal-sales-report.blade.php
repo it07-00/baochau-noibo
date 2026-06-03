@@ -1,9 +1,5 @@
 <div class="personal-sales-board">
 
-    @php
-        $scopeLabel = $staffDetail?->name ?? 'Tất cả nhân viên';
-    @endphp
-
     {{-- Bộ lọc --}}
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3 px-4">
@@ -35,7 +31,7 @@
     </div>
 
     <div class="mb-4  text-muted fw-semibold">
-        Dữ liệu theo: <span class="text-dark">{{ $scopeLabel }}</span> - Năm {{ $year }}
+        Dữ liệu theo: <span class="text-dark">{{ $staffDetail?->name ?? 'Tất cả nhân viên' }}</span> - Năm {{ $year }}
     </div>
 
     <div class="card border-0 shadow-sm mb-4">

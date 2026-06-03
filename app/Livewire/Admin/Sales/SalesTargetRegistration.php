@@ -11,14 +11,13 @@ use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\SalesTarget;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesTargetRegistration extends Component
 {
     public int $year;
     public int $viewMonth;
-    public string $viewMode = 'year';
+    public string $viewMode = 'month';
     public array $targets = [];
     public ?int $selectedStaffId = null;
 
@@ -129,8 +128,8 @@ class SalesTargetRegistration extends Component
         foreach ($this->contractModels as $modelClass) {
             $rows = $modelClass::with('customer')
                 ->where('staff_id', $this->selectedStaffId)
-                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
-                ->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->viewMonth)
+                ->whereYear('signed_at', $this->year)
+                ->whereMonth('signed_at', $this->viewMonth)
                 ->get()
                 ->map(fn($c) => [
                     'id'              => $c->id,
@@ -198,9 +197,9 @@ class SalesTargetRegistration extends Component
 
         foreach ($this->contractModels as $modelClass) {
             $rows = $modelClass::query()
-                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                ->whereYear('signed_at', $this->year)
                 ->where('staff_id', $this->selectedStaffId)
-                ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total')
+                ->selectRaw('MONTH(signed_at) as m, SUM(revenue) as total')
                 ->groupBy('m')
                 ->get();
 

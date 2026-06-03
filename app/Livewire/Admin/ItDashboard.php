@@ -14,7 +14,9 @@ use Spatie\Permission\Models\Role;
 
 class ItDashboard extends Component
 {
-    public string $activeTab = 'overview'; // overview | logs | sessions
+    public string $activeTab = 'overview'; // overview | logs | sessions | backup
+
+    public array $backupList = [];
 
     public function mount(): void
     {
@@ -23,10 +25,39 @@ class ItDashboard extends Component
 
     public function setTab(string $tab): void
     {
-        if (!in_array($tab, ['overview', 'logs', 'sessions'], true)) {
+        if (!in_array($tab, ['overview', 'logs', 'sessions', 'backup'], true)) {
             return;
         }
         $this->activeTab = $tab;
+        if ($tab === 'backup') {
+            $this->backupList = $this->getBackupList();
+        }
+    }
+
+    public function maxSessionCount(array $sessionsByHour): int
+    {
+        return max(array_values($sessionsByHour) ?: [1]);
+    }
+
+    public function sessionHourMeta(array $sessionsByHour, int $hour, int $maxSession): array
+    {
+        $count = (int) ($sessionsByHour[$hour] ?? 0);
+
+        return [
+            'count' => $count,
+            'height_pct' => $maxSession > 0 ? max(5, (int) round(($count / $maxSession) * 100)) : 5,
+            'is_now' => $hour === now()->hour,
+        ];
+    }
+
+    public function maxActivityCount(array $last7Days): int
+    {
+        return max(array_values($last7Days) ?: [1]);
+    }
+
+    public function activityBarPct(int $count, int $maxActivity): int
+    {
+        return $maxActivity > 0 ? (int) round(($count / $maxActivity) * 100) : 0;
     }
 
     public function clearCache(): void
@@ -56,6 +87,81 @@ class ItDashboard extends Component
             Log::error('ItDashboard clearLogs: ' . $e->getMessage());
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Lỗi khi xóa log.']);
         }
+    }
+
+    public function backupDatabase(): void
+    {
+        abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
+
+        try {
+            $exitCode = Artisan::call('db:backup', ['--keep' => 30]);
+        } catch (\Exception $e) {
+            Log::error('ItDashboard backupDatabase: ' . $e->getMessage());
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Backup thất bại: ' . $e->getMessage()]);
+            return;
+        }
+
+        if ($exitCode !== 0) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Backup thất bại. Kiểm tra log hệ thống để biết chi tiết.']);
+            return;
+        }
+
+        $this->backupList = $this->getBackupList();
+        $latest = $this->backupList[0] ?? null;
+        $msg = $latest
+            ? "Backup thành công: {$latest['name']} (" . number_format($latest['size'] / 1048576, 2) . ' MB)'
+            : 'Backup thành công.';
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => $msg]);
+    }
+
+    public function downloadBackup(string $file): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
+
+        $file = basename($file);
+        abort_unless((bool) preg_match('/^backup_[\d_-]+\.sql$/', $file), 403);
+
+        $path = storage_path('app/backups/' . $file);
+        abort_unless(File::exists($path), 404);
+
+        return response()->download($path, $file);
+    }
+
+    public function deleteBackup(string $file): void
+    {
+        abort_unless(auth()->user()->hasRole(RoleEnum::IT->value), 403);
+
+        $file = basename($file);
+        abort_unless((bool) preg_match('/^backup_[\d_-]+\.sql$/', $file), 403);
+
+        $path = storage_path('app/backups/' . $file);
+        if (File::exists($path)) {
+            File::delete($path);
+        }
+
+        $this->backupList = $this->getBackupList();
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa file backup.']);
+    }
+
+    private function getBackupList(): array
+    {
+        $backupDir = storage_path('app/backups');
+        if (!File::isDirectory($backupDir)) {
+            return [];
+        }
+
+        $files = File::glob($backupDir . DIRECTORY_SEPARATOR . 'backup_*.sql');
+        $list  = [];
+        foreach ($files as $f) {
+            $list[] = [
+                'name'  => basename($f),
+                'size'  => File::size($f),
+                'mtime' => File::lastModified($f),
+            ];
+        }
+        usort($list, fn ($a, $b) => $b['mtime'] - $a['mtime']);
+
+        return $list;
     }
 
     public function render()

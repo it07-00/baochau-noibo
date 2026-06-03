@@ -70,24 +70,18 @@
         </thead>
         <tbody>
             @foreach($reports as $report)
-                @php
-                    $isSunday = $report->date->dayOfWeek === 0;
-                    $rowStyle = $isSunday ? 'background-color: #f2f2f2;' : '';
-                @endphp
-                <tr style="{{ $rowStyle }}">
+                <tr style="{{ $report->date->dayOfWeek === 0 ? 'background-color: #f2f2f2;' : '' }}">
                     <td class="cell">{{ $report->user->name }}</td>
                     <td class="cell">{{ $report->user->department->name ?? 'N/A' }}</td>
                     <td class="cell text-center">{{ $report->date->format('d/m/Y') }}</td>
                     <td class="cell">{!! $report->content !!}</td>
                     <td class="cell text-center">
-                        @php
-                            $color = '#000000';
-                            if ($report->status == 'Hoàn thành đúng kế hoạch') $color = '#198754';
-                            elseif ($report->status == 'Gặp vấn đề, cần hỗ trợ') $color = '#dc3545';
-                            elseif ($report->status == 'Hoàn thành một phần') $color = '#ffc107';
-                            if ($isSunday && !$report->content) $color = '#6c757d';
-                        @endphp
-                        <span style="color: {{ $color }}; font-weight: bold;">{{ $report->status }}</span>
+                        <span style="color: {{ $report->date->dayOfWeek === 0 && !$report->content ? '#6c757d' : match ($report->status) {
+                            'Hoàn thành đúng kế hoạch' => '#198754',
+                            'Gặp vấn đề, cần hỗ trợ' => '#dc3545',
+                            'Hoàn thành một phần' => '#ffc107',
+                            default => '#000000',
+                        } }}; font-weight: bold;">{{ $report->status }}</span>
                     </td>
                     <td class="cell">{!! nl2br(e($report->plan)) !!}</td>
                     <td class="cell text-center" style="color: #dc3545;">{{ $report->issues }}</td>

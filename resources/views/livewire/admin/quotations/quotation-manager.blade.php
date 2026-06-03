@@ -74,7 +74,7 @@
     <div class="card border-0 shadow-sm overflow-hidden">
         <div class="table-responsive overflow-auto" >
             <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem; min-width: 1400px;">
-                <thead class="bg-light bg-opacity-50">
+                <thead class="bg-light bg-opacity-50" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
                     <tr class="text-muted fw-bold">
                         <th class="ps-3 w-40px" >STT</th>
                         <th class="w-130px">Sale</th>
@@ -110,6 +110,11 @@
                             @else
                             <span class="text-muted">-</span>
                             @endif
+                            @if($item->quotationDocuments->first())
+                            <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="badge bg-success bg-opacity-10 text-success border mt-1 text-decoration-none d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-file-earmark-pdf"></i> Word/PDF
+                            </a>
+                            @endif
                         </td>
                         <td>
                             <div class="fw-bold text-primary text-capitalize fs-85 lh-sm" >{{ $item->company_name }}</div>
@@ -136,17 +141,7 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            @php
-                                $colorClass = match($item->status) {
-                                    'hẹn báo giá thời gian sau' => 'bg-info bg-opacity-10 text-info',
-                                    'Đang theo dõi' => 'bg-success bg-opacity-10 text-success',
-                                    'Rớt báo giá' => 'bg-dark bg-opacity-10 text-dark',
-                                    'Ký hợp đồng' => 'bg-danger bg-opacity-10 text-danger',
-                                    'Tham khảo' => 'bg-warning bg-opacity-10 text-warning',
-                                    default => 'bg-secondary bg-opacity-10 text-secondary'
-                                };
-                            @endphp
-                            <span class="badge rounded-pill {{ $colorClass }} px-2 py-1 fs-72" >
+                            <span class="badge rounded-pill {{ $this->statusBadgeClass($item->status) }} px-2 py-1 fs-72" >
                                 {{ $item->status }}
                             </span>
                         </td>
@@ -173,6 +168,11 @@
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
                                     <i class="bi bi-file-earmark-pdf fs-5"></i>
                                 </button>
+                                @endif
+                                @if($item->quotationDocuments->first())
+                                <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
+                                    <i class="bi bi-file-earmark-richtext fs-5"></i>
+                                </a>
                                 @endif
                                 @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
@@ -297,17 +297,22 @@
                                 <tr>
                                     <th class="bg-light fw-bold px-4 py-3"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</th>
                                     <td class="px-4 py-3">
-                                        @php($files = $selectedQuotation->files)
-                                        @if($files->isNotEmpty())
+                                        @if($selectedQuotation->quotationDocuments->first())
+                                            <a href="{{ route('app.quotation-docs.export-pdf', $selectedQuotation->quotationDocuments->first()->id) }}" target="_blank" class="d-inline-flex align-items-center gap-2 text-success text-decoration-none small mb-2">
+                                                <i class="bi bi-file-earmark-richtext"></i>
+                                                <span>Báo giá Word/PDF gốc: {{ $selectedQuotation->quotationDocuments->first()->document_number }}</span>
+                                            </a>
+                                        @endif
+                                        @if($selectedQuotation->files->isNotEmpty())
                                             <div class="d-flex flex-column gap-1">
-                                                @foreach($files as $f)
+                                                @foreach($selectedQuotation->files as $f)
                                                 <a href="{{ Storage::disk('spaces')->url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
                                                     <i class="bi bi-file-earmark-pdf"></i>
                                                     <span class="text-truncate">{{ $f->original_name }}</span>
                                                 </a>
                                                 @endforeach
                                             </div>
-                                        @else
+                                        @elseif(! $selectedQuotation->quotationDocuments->first())
                                             <span class="text-muted">Chưa có tài liệu</span>
                                         @endif
                                     </td>
@@ -624,7 +629,7 @@
                         <label class="form-label fw-bold">2. Kiểm tra & điều chỉnh mapping cột</label>
                         <div class="table-responsive">
                             <table class="table table-sm table-bordered align-middle">
-                                <thead class="table-light">
+                                <thead class="table-light" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
                                     <tr>
                                         <th class="w-50">Tên cột trong file</th>
                                         <th>Tương ứng với trường dữ liệu</th>
@@ -654,7 +659,7 @@
                         <label class="form-label fw-bold">3. Xem trước dữ liệu (5 dòng đầu)</label>
                         <div class="table-responsive border rounded">
                             <table class="table table-sm table-striped align-middle mb-0 fs-78" >
-                                <thead class="table-dark">
+                                <thead class="table-dark" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
                                     <tr>
                                         @foreach($importColumnMap as $colIdx => $fieldKey)
                                         <th>{{ $availableFields[$fieldKey] ?? $importHeaders[array_search($colIdx, array_keys($importColumnMap))] ?? $colIdx }}</th>

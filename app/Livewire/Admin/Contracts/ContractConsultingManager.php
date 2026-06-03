@@ -864,6 +864,52 @@ class ContractConsultingManager extends Component
         return auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
     }
 
+    public function workflowProgressMeta(ContractLegal $doc): array
+    {
+        $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
+        $totalSteps = ContractLegal::TOTAL_STEPS;
+        $progressPercent = $totalSteps > 0 ? (int) round(($completedSteps / $totalSteps) * 100) : 0;
+        $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
+
+        return [
+            'completedSteps' => $completedSteps,
+            'totalSteps' => $totalSteps,
+            'progressPercent' => $progressPercent,
+            'progressColor' => $progressColor,
+        ];
+    }
+
+    public function deadlineMeta(ContractLegal $doc): array
+    {
+        $deadline = $doc->assignments->first()?->deadline;
+        $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH'], true);
+        $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->copy()->startOfDay(), false) : null;
+
+        return [
+            'deadline' => $deadline,
+            'daysLeft' => $daysLeft,
+            'isFinished' => $isFinished,
+            'isOverdue' => $deadline && $daysLeft < 0 && ! $isFinished,
+            'isDueToday' => $deadline && $daysLeft === 0 && ! $isFinished,
+            'isNearDue' => $deadline && $daysLeft > 0 && $daysLeft <= 3 && ! $isFinished,
+        ];
+    }
+
+    public function canUpdateStatusForDoc(ContractLegal $doc): bool
+    {
+        $user = auth()->user();
+
+        return ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
+            && (! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id);
+    }
+
+    public function canManageOwnedDoc(ContractLegal $doc): bool
+    {
+        $user = auth()->user();
+
+        return ! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id;
+    }
+
     public function updateInlineReportNumber(int $docId, ?string $value): void
     {
         if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {

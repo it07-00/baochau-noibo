@@ -3,14 +3,6 @@
 @section('title', 'Sửa người dùng')
 @section('page_title', 'Chỉnh sửa tài khoản: ' . $user->name)
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Người dùng', 'url' => route('app.users.index')],
-        ['label' => 'Chỉnh sửa'],
-    ];
-@endphp
-
 @section('content')
     <div class="row g-3 mt-1">
         <div class="col-12 col-xl-8 mx-auto">
@@ -69,9 +61,8 @@
                                     <label class="form-label fw-medium">Vai trò hệ thống <span class="text-danger">*</span></label>
                                     <select name="role" class="form-select @error('role') is-invalid @enderror" required>
                                         <option value="">-- Chọn vai trò --</option>
-                                        @php $currentRole = $user->roles->first()?->name; @endphp
                                         @foreach($roles as $role)
-                                            <option value="{{ $role->name }}" {{ old('role', $currentRole) == $role->name ? 'selected' : '' }}>{{ $role->name }}</option>
+                                            <option value="{{ $role->name }}" {{ old('role', $user->roles->first()?->name) == $role->name ? 'selected' : '' }}>{{ $role->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror

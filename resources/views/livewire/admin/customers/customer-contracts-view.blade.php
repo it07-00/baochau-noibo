@@ -2,14 +2,6 @@
     @section('title', 'Hợp đồng của ' . $customer->name)
     @section('page_title', 'Hợp đồng của ' . $customer->name)
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Khách hàng', 'url' => route('app.customers.index')],
-            ['label' => $customer->name],
-        ];
-    @endphp
-
     <div class="row g-3 mt-1 px-2 px-md-0">
         {{-- Thông tin khách hàng --}}
         <div class="col-12">
@@ -145,19 +137,9 @@
                                                 <div class="text-muted small text-wrap mxw-140px text-wrap" >{{ $contract->handler }}</div>
                                             @endif
                                             @if($contract->status)
-                                                @php
-                                                    $s = $contract->status;
-                                                    $sk = mb_strtolower(trim($s));
-                                                    $statusColor = match(true) {
-                                                        in_array($sk, ['hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước']) => ['bg' => '#d1e7dd', 'text' => '#198754'],
-                                                        in_array($sk, ['hợp đồng hủy', 'đã hủy', 'hủy bỏ']) => ['bg' => '#f8d7da', 'text' => '#dc3545'],
-                                                        in_array($sk, ['đang thực hiện', 'pth đang kiểm tra']) => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
-                                                        default => ['bg' => '#e9ecef', 'text' => '#495057'],
-                                                    };
-                                                @endphp
                                                 <span class="badge px-2 py-1 fw-semibold mt-1"
-                                                      style="font-size:0.65rem;background:{{ $statusColor['bg'] }};color:{{ $statusColor['text'] }};white-space:normal;">
-                                                    {{ $s }}
+                                                      style="font-size:0.65rem;background:{{ $this->statusColor($contract->status)['bg'] }};color:{{ $this->statusColor($contract->status)['text'] }};white-space:normal;">
+                                                    {{ $contract->status }}
                                                 </span>
                                             @endif
                                         </div>
@@ -168,35 +150,9 @@
                                     <td class="text-end">{{ $contract->value ? number_format($contract->value, 0, ',', '.') : '—' }}</td>
                                     <td class="d-none d-sm-table-cell">
                                         @if($contract->status)
-                                            @php
-                                                $s = $contract->status;
-                                                $sk = mb_strtolower(trim($s));
-                                                $statusColor = match(true) {
-                                                    in_array($s,  ['HOÀN THÀNH', 'Đã hoàn thành', 'Đã hoàn thành KH ký trước']) ||
-                                                    in_array($sk, ['hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước'])
-                                                        => ['bg' => '#d1e7dd', 'text' => '#198754'],
-                                                    in_array($s,  ['Hợp đồng hủy', 'ĐÃ HỦY', 'Đã hủy', 'Hủy bỏ']) ||
-                                                    in_array($sk, ['hợp đồng hủy', 'đã hủy', 'hủy bỏ'])
-                                                        => ['bg' => '#f8d7da', 'text' => '#dc3545'],
-                                                    in_array($s,  ['PTH đang kiểm tra', 'ĐANG THỰC HIỆN', 'ĐANG THỰC HIÊN']) ||
-                                                    in_array($sk, ['đang thực hiện', 'pth đang kiểm tra', ''])
-                                                        => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
-                                                    in_array($s,  ['Đang trình BGĐ ký']) ||
-                                                    in_array($sk, ['đã trình ký nhà thầu phụ', 'đang trình bgđ ký'])
-                                                        => ['bg' => '#fff3cd', 'text' => '#b45309'],
-                                                    in_array($sk, ['nhà thầu phụ đã gửi về'])
-                                                        => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
-                                                    in_array($s,  ['Đã gửi khách hàng']) ||
-                                                    in_array($sk, ['đã gửi khách hàng'])
-                                                        => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
-                                                    in_array($sk, ['tạm dừng'])
-                                                        => ['bg' => '#fff8e1', 'text' => '#e65100'],
-                                                    default => ['bg' => '#e9ecef', 'text' => '#495057'],
-                                                };
-                                            @endphp
                                             <span class="badge px-2 py-1 fw-semibold"
-                                                  style="font-size:0.75rem; background:{{ $statusColor['bg'] }}; color:{{ $statusColor['text'] }};">
-                                                {{ $s }}
+                                                  style="font-size:0.75rem; background:{{ $this->statusColor($contract->status)['bg'] }}; color:{{ $this->statusColor($contract->status)['text'] }};">
+                                                {{ $contract->status }}
                                             </span>
                                         @else
                                             —
@@ -270,7 +226,7 @@
                                         <tbody>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3 w-25" >Ghi chú</th>
-                                                <td class="px-4 py-3">{{ $selectedContract->note }}</td>
+                                                <td class="px-4 py-3">{{ $selectedContract->notes ?? $selectedContract->note }}</td>
                                             </tr>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3">Khách hàng</th>

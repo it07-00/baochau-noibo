@@ -203,6 +203,51 @@ class AttendanceManager extends Component
         ])->layout('admin.layouts.app');
     }
 
+    public function dayData(array $row, Carbon $date): ?array
+    {
+        return $row['days'][$date->day] ?? null;
+    }
+
+    public function isLate(?array $day): bool
+    {
+        return (bool) ($day && ($day['first'] ?? null) > '08:00');
+    }
+
+    public function isEarly(?array $day): bool
+    {
+        return (bool) ($day && !empty($day['last']) && $day['last'] < '17:00');
+    }
+
+    public function isAbsent(?array $day, Carbon $date): bool
+    {
+        return !$day && $date->lte(now());
+    }
+
+    public function attendanceCellStyle(?array $day, Carbon $date): array
+    {
+        $isLate = $this->isLate($day);
+        $isEarly = $this->isEarly($day);
+        $isAbsent = $this->isAbsent($day, $date);
+
+        if ($isAbsent || ($day && $isLate && $isEarly)) {
+            return ['bg' => '#dc3545', 'color' => '#fff'];
+        }
+
+        if ($day && $isLate) {
+            return ['bg' => '#fd7e14', 'color' => '#fff'];
+        }
+
+        if ($day && $isEarly) {
+            return ['bg' => '#ffc107', 'color' => '#000'];
+        }
+
+        if ($day) {
+            return ['bg' => '#198754', 'color' => '#fff'];
+        }
+
+        return ['bg' => 'transparent', 'color' => 'inherit'];
+    }
+
     private function parseAttlog(string $content): array
     {
         $logs = [];

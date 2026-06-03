@@ -470,6 +470,94 @@ abstract class AbstractContractGenericManager extends Component
         return auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
     }
 
+    public function workflowProgressMeta($doc): array
+    {
+        $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
+        $totalSteps = $doc->getMorphClass()::TOTAL_STEPS;
+        $progressPercent = $totalSteps > 0 ? (int) round(($completedSteps / $totalSteps) * 100) : 0;
+        $progressColor = $progressPercent >= 100 ? 'success' : ($progressPercent >= 50 ? 'primary' : 'warning');
+
+        return [
+            'completedSteps' => $completedSteps,
+            'totalSteps' => $totalSteps,
+            'progressPercent' => $progressPercent,
+            'progressColor' => $progressColor,
+        ];
+    }
+
+    public function deadlineMeta($doc): array
+    {
+        $deadline = $doc->assignments->first()?->deadline;
+        $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH'], true);
+        $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->copy()->startOfDay(), false) : null;
+        $isOverdue = $deadline && $deadline->isPast() && ! $isFinished;
+
+        return [
+            'deadline' => $deadline,
+            'daysLeft' => $daysLeft,
+            'isFinished' => $isFinished,
+            'isOverdue' => $isOverdue,
+            'isNearDue' => $deadline && ! $isOverdue && ! $isFinished && $daysLeft !== null && $daysLeft <= 3,
+        ];
+    }
+
+    public function canUpdateStatusForDoc($doc): bool
+    {
+        $user = auth()->user();
+
+        return ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
+            && (! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id);
+    }
+
+    public function canManageOwnedDoc($doc): bool
+    {
+        $user = auth()->user();
+
+        return ! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id;
+    }
+
+    public function statusColorForDoc($doc): array
+    {
+        return match ($doc->status) {
+            'PTH đang kiểm tra', 'ĐANG THỰC HIỆN' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+            'Đang trình BGĐ ký' => ['bg' => '#fff3cd', 'text' => '#b45309'],
+            'Đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+            'Đã hoàn thành', 'HOÀN THÀNH' => ['bg' => '#d1e7dd', 'text' => '#198754'],
+            'Hợp đồng hủy', 'ĐÃ HỦY' => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+            default => ['bg' => '#e9ecef', 'text' => '#6c757d'],
+        };
+    }
+
+    public function voucherBadgeInfoForDoc($doc): array
+    {
+        $voucherStatusValue = trim((string) ($doc->voucher_status ?? ''));
+        $voucherStatusKey = mb_strtolower($voucherStatusValue);
+
+        $voucherBadgeClass = match ($voucherStatusKey) {
+            'đã đề nghị thanh toán/tạm ứng' => 'bg-info text-dark',
+            'đã xuất hóa đơn' => 'bg-warning text-dark',
+            'đã làm biên bản bàn giao hồ sơ' => 'bg-primary text-white',
+            'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'bg-success text-white',
+            '', 'chưa có', 'chưa chọn' => 'bg-light text-dark border',
+            default => 'bg-secondary text-white',
+        };
+
+        $voucherBadgeLabel = match ($voucherStatusKey) {
+            'đã đề nghị thanh toán/tạm ứng' => 'Đề nghị TT/TƯ',
+            'đã xuất hóa đơn' => 'Xuất hóa đơn',
+            'đã làm biên bản bàn giao hồ sơ' => 'BB bàn giao hồ sơ',
+            'đã làm bb bàn giao và nghiệm thu kết thúc hợp đồng' => 'BB nghiệm thu kết thúc HĐ',
+            '', 'chưa có', 'chưa chọn' => 'Chưa chọn',
+            default => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
+        };
+
+        return [
+            'class' => $voucherBadgeClass,
+            'label' => $voucherBadgeLabel,
+            'full_value' => $voucherStatusValue !== '' ? $voucherStatusValue : 'Chưa chọn',
+        ];
+    }
+
     public function updateInlineReportNumber(int $docId, ?string $value): void
     {
         if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {

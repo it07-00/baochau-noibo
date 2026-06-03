@@ -3,14 +3,6 @@
 @section('title', 'Sửa phòng ban')
 @section('page_title', 'Chỉnh sửa: ' . $department->name)
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Phòng ban', 'url' => route('app.departments.index')],
-        ['label' => 'Chỉnh sửa'],
-    ];
-@endphp
-
 @section('content')
     <div class="row g-3 mt-1">
         <div class="col-12 col-md-8 col-xl-6 mx-auto">

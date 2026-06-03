@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 
@@ -119,3 +120,12 @@ Schedule::command('contracts:sync-ncc-payments-from-sheets')
     ->hourly()
     ->withoutOverlapping()
     ->name('contracts-sync-ncc-payments-from-sheets');
+
+// Backup database mỗi ngày lúc 02:00 sáng, giữ lại 30 ngày
+Schedule::command('db:backup --keep=30')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->name('db-backup-daily')
+    ->onFailure(function () {
+        Log::error('[Schedule] db:backup thất bại.');
+    });

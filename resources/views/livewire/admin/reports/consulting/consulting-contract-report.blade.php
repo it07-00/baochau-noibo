@@ -109,7 +109,6 @@
                     </thead>
                     <tbody>
                         @forelse($items as $item)
-                        @php $wp = $workflowProgress[$item->id] ?? ['percent' => 0, 'current_label' => 'Chưa bắt đầu', 'completed_count' => 0, 'total_steps' => 6]; @endphp
                         <tr>
                             <td class="text-center text-muted  fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="fw-semibold ">{{ $item->shd_bc ?: '—' }}</td>
@@ -121,15 +120,15 @@
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="progress flex-grow-1 h-8px" >
-                                        <div class="progress-bar {{ $wp['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
-                                             role="progressbar" style="width:{{ $wp['percent'] }}%"
-                                             aria-valuenow="{{ $wp['percent'] }}" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar {{ $this->workflowProgressMeta($workflowProgress, $item->id)['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
+                                             role="progressbar" style="width:{{ $this->workflowProgressMeta($workflowProgress, $item->id)['percent'] }}%"
+                                             aria-valuenow="{{ $this->workflowProgressMeta($workflowProgress, $item->id)['percent'] }}" aria-valuemin="0" aria-valuemax="100">
                                         </div>
                                     </div>
-                                    <span class=" text-muted text-nowrap" >{{ $wp['completed_count'] }}/{{ $wp['total_steps'] }}</span>
+                                    <span class=" text-muted text-nowrap" >{{ $this->workflowProgressMeta($workflowProgress, $item->id)['completed_count'] }}/{{ $this->workflowProgressMeta($workflowProgress, $item->id)['total_steps'] }}</span>
                                 </div>
                             </td>
-                            <td class="">{{ $wp['current_label'] }}</td>
+                            <td class="">{{ $this->workflowProgressMeta($workflowProgress, $item->id)['current_label'] }}</td>
                             <td class=" text-muted">{{ $item->signed_at?->format('d/m/Y') ?? '—' }}</td>
                             <td>
                                 <span class="badge bg-soft-{{ $item->status_color ?? 'secondary' }} text-{{ $item->status_color ?? 'secondary' }} ">

@@ -45,11 +45,10 @@
                         <tr>
                             <td class="fw-semibold text-success">DS Tái ký</td>
                             @for($m = 1; $m <= 12; $m++)
-                                @php $val = $months[$m]['renewal']; $cnt = $months[$m]['renewal_count']; @endphp
-                                <td class="text-end {{ $val > 0 ? 'text-success' : 'text-muted' }}">
-                                    @if($val > 0)
-                                        <div>{{ number_format($val, 0, ',', '.') }}</div>
-                                        <div class="text-muted ">{{ $cnt }} HĐ</div>
+                                <td class="text-end {{ $months[$m]['renewal'] > 0 ? 'text-success' : 'text-muted' }}">
+                                    @if($months[$m]['renewal'] > 0)
+                                        <div>{{ number_format($months[$m]['renewal'], 0, ',', '.') }}</div>
+                                        <div class="text-muted ">{{ $months[$m]['renewal_count'] }} HĐ</div>
                                     @else
                                         —
                                     @endif
@@ -63,11 +62,10 @@
                         <tr>
                             <td class="fw-semibold text-warning">DS HĐ mới</td>
                             @for($m = 1; $m <= 12; $m++)
-                                @php $val = $months[$m]['progressive']; $cnt = $months[$m]['progressive_count']; @endphp
-                                <td class="text-end {{ $val > 0 ? 'text-warning' : 'text-muted' }}">
-                                    @if($val > 0)
-                                        <div>{{ number_format($val, 0, ',', '.') }}</div>
-                                        <div class="text-muted ">{{ $cnt }} HĐ</div>
+                                <td class="text-end {{ $months[$m]['progressive'] > 0 ? 'text-warning' : 'text-muted' }}">
+                                    @if($months[$m]['progressive'] > 0)
+                                        <div>{{ number_format($months[$m]['progressive'], 0, ',', '.') }}</div>
+                                        <div class="text-muted ">{{ $months[$m]['progressive_count'] }} HĐ</div>
                                     @else
                                         —
                                     @endif
@@ -81,14 +79,10 @@
                         <tr class="table-secondary">
                             <td class="fw-bold">Tổng theo hợp đồng</td>
                             @for($m = 1; $m <= 12; $m++)
-                                @php
-                                    $val = $months[$m]['contract_total'];
-                                    $cnt = $months[$m]['renewal_count'] + $months[$m]['progressive_count'];
-                                @endphp
-                                <td class="text-end fw-bold {{ $val > 0 ? 'text-dark' : 'text-muted' }}">
-                                    @if($val > 0)
-                                        <div>{{ number_format($val, 0, ',', '.') }}</div>
-                                        <div class="text-muted  fw-normal">{{ $cnt }} HĐ</div>
+                                <td class="text-end fw-bold {{ $months[$m]['contract_total'] > 0 ? 'text-dark' : 'text-muted' }}">
+                                    @if($months[$m]['contract_total'] > 0)
+                                        <div>{{ number_format($months[$m]['contract_total'], 0, ',', '.') }}</div>
+                                        <div class="text-muted  fw-normal">{{ $months[$m]['renewal_count'] + $months[$m]['progressive_count'] }} HĐ</div>
                                     @else
                                         —
                                     @endif

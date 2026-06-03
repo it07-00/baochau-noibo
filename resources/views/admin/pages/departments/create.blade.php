@@ -3,14 +3,6 @@
 @section('title', 'Thêm phòng ban')
 @section('page_title', 'Tạo phòng ban mới')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Phòng ban', 'url' => route('app.departments.index')],
-        ['label' => 'Tạo mới'],
-    ];
-@endphp
-
 @section('content')
     <div class="row g-3 mt-1">
         <div class="col-12 col-md-8 col-xl-6 mx-auto">

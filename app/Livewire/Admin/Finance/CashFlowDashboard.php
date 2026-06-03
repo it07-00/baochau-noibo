@@ -33,11 +33,19 @@ class CashFlowDashboard extends Component
 
     public string $filterServiceCategory = 'all';
 
+    public string $filterHandlerType = 'all';  // all | tdx | non_tdx
+
+    public string $search = '';
+
     public array $sheetUrls = [];
 
     public array $paymentStatuses = [];
 
     public array $paymentDates = [];
+
+    public array $manualNccAmounts = [];
+
+    public array $invoiceDates = [];
 
     public array $baoChauInvoiceMessages = [];
 
@@ -102,6 +110,16 @@ class CashFlowDashboard extends Component
         $this->resetPage();
     }
 
+    public function updatedFilterHandlerType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
     private function buildQuery(string $modelClass)
     {
         $query = $modelClass::query()->with(['customer:id,name,slug', 'staff:id,name', 'handler:id,name']);
@@ -146,6 +164,8 @@ class CashFlowDashboard extends Component
                     ? self::PAYMENT_STATUS_PAID
                     : self::PAYMENT_STATUS_UNPAID;
 
+                $handlerName = $contract->handler?->name;
+
                 $rows[] = [
                     'id' => $contract->id,
                     'source_key' => $key,
@@ -156,9 +176,13 @@ class CashFlowDashboard extends Component
                     'shd_cxl' => (string) ($contract->shd_cxl ?? ''),
                     'customer' => $contract->customer?->name,
                     'customer_slug' => $contract->customer?->slug,
-                    'handler' => $contract->handler?->name,
+                    'handler' => $handlerName,
+                    'is_tdx_handler' => $this->isTdxHandler($handlerName),
                     'staff' => $contract->staff?->name,
                     'signed_at' => $contract->signed_at?->format('d/m/Y'),
+                    'submitted_at' => $contract->submitted_at?->format('d/m/Y'),
+                    'submitted_at_input' => $contract->submitted_at?->format('Y-m-d'),
+                    'contract_note' => $this->contractNote($contract),
                     'value_without_vat' => (int) round($contractValue / self::VAT_MULTIPLIER),
                     'revenue' => $revenue,
                     'commission' => (int) $contract->commission,
@@ -177,6 +201,21 @@ class CashFlowDashboard extends Component
             }
         }
 
+        if ($this->filterHandlerType === 'tdx') {
+            $rows = array_values(array_filter($rows, fn ($r) => $r['is_tdx_handler']));
+        } elseif ($this->filterHandlerType === 'non_tdx') {
+            $rows = array_values(array_filter($rows, fn ($r) => ! $r['is_tdx_handler']));
+        }
+
+        $keyword = mb_strtolower(trim($this->search), 'UTF-8');
+        if ($keyword !== '') {
+            $rows = array_values(array_filter($rows, function ($r) use ($keyword) {
+                return str_contains(mb_strtolower((string) ($r['customer'] ?? ''), 'UTF-8'), $keyword)
+                    || str_contains(mb_strtolower((string) ($r['shd_bc'] ?? ''), 'UTF-8'), $keyword)
+                    || str_contains(mb_strtolower((string) ($r['handler'] ?? ''), 'UTF-8'), $keyword);
+            }));
+        }
+
         usort($rows, fn ($a, $b) => strcmp($b['signed_at'] ?? '', $a['signed_at'] ?? ''));
 
         return $rows;
@@ -193,6 +232,19 @@ class CashFlowDashboard extends Component
             'energy' => 'bg-danger text-white',
             default => 'bg-light text-dark border',
         };
+    }
+
+    private function contractNote($contract): string
+    {
+        foreach (['notes', 'note'] as $field) {
+            $note = trim((string) ($contract->{$field} ?? ''));
+
+            if ($note !== '') {
+                return $note;
+            }
+        }
+
+        return '';
     }
 
     private function serviceCategoryOptions(): array
@@ -273,6 +325,68 @@ class CashFlowDashboard extends Component
         $this->dispatch('swal:toast', [
             'type' => 'success',
             'message' => 'Đã cập nhật số hóa đơn Bảo Châu.',
+        ]);
+    }
+
+    public function updateInvoiceDate(string $sourceKey, int $contractId): void
+    {
+        abort_unless($this->isAccountant(), 403);
+        $contractSources = $this->contractSources();
+        abort_unless(array_key_exists($sourceKey, $contractSources), 404);
+
+        $stateKey = $this->sheetStateKey($sourceKey, $contractId);
+        $raw = trim((string) ($this->invoiceDates[$stateKey] ?? ''));
+
+        [$modelClass] = $contractSources[$sourceKey];
+        $contract = $modelClass::query()->findOrFail($contractId);
+
+        if ($raw === '') {
+            $contract->forceFill(['submitted_at' => null])->save();
+            $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa ngày xuất hóa đơn.']);
+            return;
+        }
+
+        try {
+            $date = \Illuminate\Support\Carbon::createFromFormat('Y-m-d', $raw)->startOfDay();
+        } catch (\Throwable) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Ngày không hợp lệ.']);
+            return;
+        }
+
+        $contract->forceFill(['submitted_at' => $date])->save();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật ngày xuất hóa đơn: ' . $date->format('d/m/Y') . '.']);
+    }
+
+    public function updateNccPaymentManual(string $sourceKey, int $contractId): void
+    {
+        abort_unless($this->isAccountant(), 403);
+        $contractSources = $this->contractSources();
+        abort_unless(array_key_exists($sourceKey, $contractSources), 404);
+
+        $stateKey = $this->sheetStateKey($sourceKey, $contractId);
+        $raw = trim((string) ($this->manualNccAmounts[$stateKey] ?? ''));
+
+        // Allow formatted numbers like "1,500,000" or plain "1500000"
+        $raw = str_replace([',', '.', ' '], '', $raw);
+
+        if ($raw === '' || !ctype_digit($raw)) {
+            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng nhập số tiền hợp lệ.']);
+            return;
+        }
+
+        $amount = (int) $raw;
+
+        [$modelClass] = $contractSources[$sourceKey];
+        $contract = $modelClass::query()->findOrFail($contractId);
+        $contract->forceFill([
+            'ncc_payment'            => $amount,
+            'ncc_payment_updated_at' => now(),
+        ])->save();
+
+        $this->dispatch('swal:toast', [
+            'type'    => 'success',
+            'message' => 'Đã cập nhật chi NCC: ' . number_format($amount) . 'đ',
         ]);
     }
 
@@ -520,6 +634,36 @@ class CashFlowDashboard extends Component
         );
     }
 
+    public function stateKey(string $sourceKey, int $contractId): string
+    {
+        return $this->sheetStateKey($sourceKey, $contractId);
+    }
+
+    public function collapseId(string $sourceKey, int $contractId): string
+    {
+        return 'sheetEditor_' . $this->stateKey($sourceKey, $contractId);
+    }
+
+    public function baoChauMessageFor(string $stateKey): ?array
+    {
+        return $this->baoChauInvoiceMessages[$stateKey] ?? null;
+    }
+
+    public function subcontractorMessageFor(string $stateKey): ?array
+    {
+        return $this->subcontractorInvoiceMessages[$stateKey] ?? null;
+    }
+
+    public function selectedPaymentStatus(string $stateKey, array $row): string
+    {
+        return $this->paymentStatuses[$stateKey] ?? ($row['ncc_payment_status'] ?? self::PAYMENT_STATUS_UNPAID);
+    }
+
+    public function isTdxRow(array $row): bool
+    {
+        return !empty($row['is_tdx_handler']);
+    }
+
     private function buildTotals(array $rows): array
     {
         return [
@@ -566,8 +710,10 @@ class CashFlowDashboard extends Component
             'contractTypes' => array_map(fn ($s) => $s[1], $this->contractSources()),
             'serviceCategoryOptions' => $this->serviceCategoryOptions(),
             'availableYears' => range((int) now()->format('Y'), 2024),
+            'filterHandlerType' => $this->filterHandlerType,
             'canEditBaoChauInvoice' => $this->isAccountant(),
             'canManageNccPayment' => $this->isAccountant(),
+            'canEditInvoiceDate' => $this->isAccountant(),
         ])->layout('admin.layouts.app', ['title' => 'Dòng tiền']);
     }
 
@@ -589,6 +735,18 @@ class CashFlowDashboard extends Component
     private function sheetStateKey(string $sourceKey, int $contractId): string
     {
         return $sourceKey . '_' . $contractId;
+    }
+
+    private function isTdxHandler(?string $handlerName): bool
+    {
+        if ($handlerName === null) {
+            return false;
+        }
+
+        $lower = mb_strtolower($handlerName, 'UTF-8');
+
+        return str_contains($lower, 'trái đất xanh')
+            || str_contains($lower, 'trai dat xanh');
     }
 
     private function extractAmountFromSheetUrl(string $sheetUrl, bool $forceRefresh = false): int
@@ -623,6 +781,10 @@ class CashFlowDashboard extends Component
 
             if (! array_key_exists($stateKey, $this->paymentDates)) {
                 $this->paymentDates[$stateKey] = $row['ncc_payment_paid_at_input'] ?? '';
+            }
+
+            if (! array_key_exists($stateKey, $this->invoiceDates)) {
+                $this->invoiceDates[$stateKey] = $row['submitted_at_input'] ?? '';
             }
         }
     }

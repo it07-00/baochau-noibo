@@ -2,13 +2,6 @@
     @section('title', 'Quản lý Phòng ban')
     @section('page_title', 'Danh sách Phòng ban')
 
-    @php
-        $breadcrumbs = [
-            ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-            ['label' => 'Phòng ban']
-        ];
-    @endphp
-
     <div class="row g-3 mt-1">
         <div class="col-12">
             <div class="pure-card rounded-custom card-bg shadow-custom">

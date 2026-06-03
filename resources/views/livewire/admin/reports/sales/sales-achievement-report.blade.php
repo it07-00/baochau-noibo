@@ -1,25 +1,4 @@
 <div class="sales-race-board" x-data>
-    @php
-        $monthLabel = $filter_month ? 'Tháng ' . str_pad($filter_month, 2, '0', STR_PAD_LEFT) : 'Cả năm';
-        function raceInitials($name)
-        {
-            // Lấy phần tên trước dấu " - " (bỏ suffix như "TPKD")
-            $cleanName = preg_split('/\s*-\s*/', trim($name))[0];
-            $parts = array_filter(explode(' ', $cleanName), fn($w) => mb_strlen($w) > 0);
-            $parts = array_values($parts);
-            if (count($parts) === 0) {
-                return '?';
-            }
-            if (count($parts) === 1) {
-                return strtoupper(mb_substr($parts[0], 0, 2));
-            }
-            // Lấy chữ cái đầu của từ đầu và từ cuối
-            $first = mb_substr($parts[0], 0, 1);
-            $last = mb_substr($parts[count($parts) - 1], 0, 1);
-            return strtoupper($first . $last);
-        }
-    @endphp
-
     {{-- NEBULA BLOBS --}}
     <div class="race-nebula race-nebula-1"></div>
     <div class="race-nebula race-nebula-2"></div>
@@ -31,12 +10,7 @@
     <div class="race-wrapper">
 
         {{-- DAILY REPORT REMINDER --}}
-        @php
-            $salesHasDailyReport = \App\Models\DailyReport::where('user_id', auth()->id())
-                ->whereDate('date', today())
-                ->exists();
-        @endphp
-        @if (!$salesHasDailyReport)
+        @if (!$this->salesHasDailyReport())
             <div class="race-reminder">
                 <div class="race-reminder-icon">📋</div>
                 <div class="race-reminder-text">
@@ -80,7 +54,7 @@
         {{-- HEADER --}}
         <div class="race-header">
             <div class="race-header-badge">
-                Đường Đua Doanh Số – Chiến Binh Bảo Châu – {{ $monthLabel }}/{{ $year }}
+                Đường Đua Doanh Số – Chiến Binh Bảo Châu – {{ $this->monthLabel() }}/{{ $year }}
             </div>
             <div class="race-header-sub">"Mỗi ngày nỗ lực · mỗi con số là một dấu ấn"</div>
         </div>
@@ -101,63 +75,60 @@
                         <div class="race-podium">
                             {{-- #2 LEFT --}}
                             <div class="race-podium-slot race-podium-2">
-                                @php $p = $doanhSoRankings[1]; @endphp
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-md">
-                                        @if ($p['avatar_url'])
-                                            <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                        @if ($doanhSoRankings[1]['avatar_url'])
+                                            <img src="{{ $doanhSoRankings[1]['avatar_url'] }}" alt="{{ $doanhSoRankings[1]['name'] }}">
                                         @else
-                                            {{ raceInitials($p['name']) }}
+                                            {{ $this->raceInitials($doanhSoRankings[1]['name']) }}
                                         @endif
                                     </div>
                                 </div>
                                 <div class="race-pedestal race-pedestal-2">
                                     <img src="{{ asset('assets/images/2.png') }}" class="race-medal-img"
                                         alt="Hạng 2">
-                                    <div class="race-podium-name">{{ $p['name'] }}</div>
-                                    <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                                    <div class="race-podium-name">{{ $doanhSoRankings[1]['name'] }}</div>
+                                    <div class="race-podium-value">{{ number_format($doanhSoRankings[1]['total'], 0, ',', '.') }}đ</div>
                                 </div>
                             </div>
 
                             {{-- #1 CENTER --}}
                             <div class="race-podium-slot race-podium-1">
-                                @php $p = $doanhSoRankings[0]; @endphp
                                 <div class="race-crown">👑</div>
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-lg">
-                                        @if ($p['avatar_url'])
-                                            <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                        @if ($doanhSoRankings[0]['avatar_url'])
+                                            <img src="{{ $doanhSoRankings[0]['avatar_url'] }}" alt="{{ $doanhSoRankings[0]['name'] }}">
                                         @else
-                                            {{ raceInitials($p['name']) }}
+                                            {{ $this->raceInitials($doanhSoRankings[0]['name']) }}
                                         @endif
                                     </div>
                                 </div>
                                 <div class="race-pedestal race-pedestal-1">
                                     <img src="{{ asset('assets/images/1.png') }}" class="race-medal-img"
                                         alt="Hạng 1">
-                                    <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
+                                    <div class="race-podium-name race-name-gold">{{ $doanhSoRankings[0]['name'] }}</div>
                                     <div class="race-podium-value race-value-gold">
-                                        {{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                                        {{ number_format($doanhSoRankings[0]['total'], 0, ',', '.') }}đ</div>
                                 </div>
                             </div>
 
                             {{-- #3 RIGHT --}}
                             <div class="race-podium-slot race-podium-3">
-                                @php $p = $doanhSoRankings[2]; @endphp
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-md">
-                                        @if ($p['avatar_url'])
-                                            <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                        @if ($doanhSoRankings[2]['avatar_url'])
+                                            <img src="{{ $doanhSoRankings[2]['avatar_url'] }}" alt="{{ $doanhSoRankings[2]['name'] }}">
                                         @else
-                                            {{ raceInitials($p['name']) }}
+                                            {{ $this->raceInitials($doanhSoRankings[2]['name']) }}
                                         @endif
                                     </div>
                                 </div>
                                 <div class="race-pedestal race-pedestal-3">
                                     <img src="{{ asset('assets/images/3.png') }}" class="race-medal-img"
                                         alt="Hạng 3">
-                                    <div class="race-podium-name">{{ $p['name'] }}</div>
-                                    <div class="race-podium-value">{{ number_format($p['total'], 0, ',', '.') }}đ</div>
+                                    <div class="race-podium-name">{{ $doanhSoRankings[2]['name'] }}</div>
+                                    <div class="race-podium-value">{{ number_format($doanhSoRankings[2]['total'], 0, ',', '.') }}đ</div>
                                 </div>
                             </div>
                         </div>
@@ -165,14 +136,13 @@
 
                     {{-- REMAINING RANKS --}}
                     @foreach ($doanhSoRankings->skip(3)->values() as $i => $row)
-                        @php $rank = $i + 4; @endphp
                         <div class="race-rank-card">
-                            <div class="race-rank-num">{{ $rank }}.</div>
+                            <div class="race-rank-num">{{ $i + 4 }}.</div>
                             <div class="race-avatar race-avatar-sm">
                                 @if ($row['avatar_url'])
                                     <img src="{{ $row['avatar_url'] }}" alt="{{ $row['name'] }}">
                                 @else
-                                    {{ raceInitials($row['name']) }}
+                                    {{ $this->raceInitials($row['name']) }}
                                 @endif
                             </div>
                             <div class="race-card-name">{{ $row['name'] }}</div>
@@ -196,62 +166,59 @@
                         <div class="race-podium">
                             {{-- #2 LEFT --}}
                             <div class="race-podium-slot race-podium-2">
-                                @php $p = $kpiRankings[1]; @endphp
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-md">
-                                        @if ($p['avatar_url'])
-                                            <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                        @if ($kpiRankings[1]['avatar_url'])
+                                            <img src="{{ $kpiRankings[1]['avatar_url'] }}" alt="{{ $kpiRankings[1]['name'] }}">
                                         @else
-                                            {{ raceInitials($p['name']) }}
+                                            {{ $this->raceInitials($kpiRankings[1]['name']) }}
                                         @endif
                                     </div>
                                 </div>
                                 <div class="race-pedestal race-pedestal-2">
                                     <img src="{{ asset('assets/images/2.png') }}" class="race-medal-img"
                                         alt="Hạng 2">
-                                    <div class="race-podium-name">{{ $p['name'] }}</div>
-                                    <div class="race-podium-value">{{ $p['pct'] }}%</div>
+                                    <div class="race-podium-name">{{ $kpiRankings[1]['name'] }}</div>
+                                    <div class="race-podium-value">{{ $kpiRankings[1]['pct'] }}%</div>
                                 </div>
                             </div>
 
                             {{-- #1 CENTER --}}
                             <div class="race-podium-slot race-podium-1">
-                                @php $p = $kpiRankings[0]; @endphp
                                 <div class="race-crown">👑</div>
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-lg">
-                                        @if ($p['avatar_url'])
-                                            <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                        @if ($kpiRankings[0]['avatar_url'])
+                                            <img src="{{ $kpiRankings[0]['avatar_url'] }}" alt="{{ $kpiRankings[0]['name'] }}">
                                         @else
-                                            {{ raceInitials($p['name']) }}
+                                            {{ $this->raceInitials($kpiRankings[0]['name']) }}
                                         @endif
                                     </div>
                                 </div>
                                 <div class="race-pedestal race-pedestal-1">
                                     <img src="{{ asset('assets/images/1.png') }}" class="race-medal-img"
                                         alt="Hạng 1">
-                                    <div class="race-podium-name race-name-gold">{{ $p['name'] }}</div>
-                                    <div class="race-podium-value race-value-gold">{{ $p['pct'] }}%</div>
+                                    <div class="race-podium-name race-name-gold">{{ $kpiRankings[0]['name'] }}</div>
+                                    <div class="race-podium-value race-value-gold">{{ $kpiRankings[0]['pct'] }}%</div>
                                 </div>
                             </div>
 
                             {{-- #3 RIGHT --}}
                             <div class="race-podium-slot race-podium-3">
-                                @php $p = $kpiRankings[2]; @endphp
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-md">
-                                        @if ($p['avatar_url'])
-                                            <img src="{{ $p['avatar_url'] }}" alt="{{ $p['name'] }}">
+                                        @if ($kpiRankings[2]['avatar_url'])
+                                            <img src="{{ $kpiRankings[2]['avatar_url'] }}" alt="{{ $kpiRankings[2]['name'] }}">
                                         @else
-                                            {{ raceInitials($p['name']) }}
+                                            {{ $this->raceInitials($kpiRankings[2]['name']) }}
                                         @endif
                                     </div>
                                 </div>
                                 <div class="race-pedestal race-pedestal-3">
                                     <img src="{{ asset('assets/images/3.png') }}" class="race-medal-img"
                                         alt="Hạng 3">
-                                    <div class="race-podium-name">{{ $p['name'] }}</div>
-                                    <div class="race-podium-value">{{ $p['pct'] }}%</div>
+                                    <div class="race-podium-name">{{ $kpiRankings[2]['name'] }}</div>
+                                    <div class="race-podium-value">{{ $kpiRankings[2]['pct'] }}%</div>
                                 </div>
                             </div>
                         </div>
@@ -259,14 +226,13 @@
 
                     {{-- REMAINING RANKS --}}
                     @foreach ($kpiRankings->skip(3)->values() as $i => $row)
-                        @php $rank = $i + 4; @endphp
                         <div class="race-rank-card">
-                            <div class="race-rank-num">{{ $rank }}.</div>
+                            <div class="race-rank-num">{{ $i + 4 }}.</div>
                             <div class="race-avatar race-avatar-sm">
                                 @if ($row['avatar_url'])
                                     <img src="{{ $row['avatar_url'] }}" alt="{{ $row['name'] }}">
                                 @else
-                                    {{ raceInitials($row['name']) }}
+                                    {{ $this->raceInitials($row['name']) }}
                                 @endif
                             </div>
                             <div class="race-card-name">{{ $row['name'] }}</div>

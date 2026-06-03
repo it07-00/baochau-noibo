@@ -305,18 +305,6 @@
                             @endunless
                             @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                                 <td class="text-center">
-                                    @php
-                                        $completedSteps = $doc->workflowSteps->pluck('step_name')->unique()->count();
-                                        $totalSteps = $doc->getMorphClass()::TOTAL_STEPS;
-                                        $progressPercent =
-                                            $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
-                                        $progressColor =
-                                            $progressPercent >= 100
-                                                ? 'success'
-                                                : ($progressPercent >= 50
-                                                    ? 'primary'
-                                                    : 'warning');
-                                    @endphp
                                     @if ($doc->assignments->count() > 0)
                                         <div class="d-flex flex-column gap-1 align-items-center">
                                             @include(
@@ -333,54 +321,36 @@
                                     @endif
                                     <div class="mt-2">
                                         <div class="progress h-6px w-80px mx-auto">
-                                            <div class="progress-bar bg-{{ $progressColor }}"
-                                                style="width: {{ $progressPercent }}%"></div>
+                                            <div class="progress-bar bg-{{ $this->workflowProgressMeta($doc)['progressColor'] }}"
+                                                style="width: {{ $this->workflowProgressMeta($doc)['progressPercent'] }}%"></div>
                                         </div>
                                         <span
-                                            class="fw-semibold text-{{ $progressColor }} contract-text-08">{{ $completedSteps }}/{{ $totalSteps }}</span>
+                                            class="fw-semibold text-{{ $this->workflowProgressMeta($doc)['progressColor'] }} contract-text-08">{{ $this->workflowProgressMeta($doc)['completedSteps'] }}/{{ $this->workflowProgressMeta($doc)['totalSteps'] }}</span>
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    @php
-                                        $deadline = $doc->assignments->first()?->deadline;
-                                        $isFinished = in_array($doc->status ?? '', [
-                                            'Đã hoàn thành',
-                                            'Hợp đồng hủy',
-                                            'HOÀN THÀNH',
-                                        ]);
-                                        $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
-                                        $daysLeft = $deadline
-                                            ? (int) now()->startOfDay()->diffInDays($deadline->startOfDay(), false)
-                                            : null;
-                                        $isNearDue =
-                                            $deadline &&
-                                            !$isOverdue &&
-                                            !$isFinished &&
-                                            $daysLeft !== null &&
-                                            $daysLeft <= 3;
-                                    @endphp
-                                    @if ($deadline)
-                                        @if ($isFinished)
+                                    @if ($this->deadlineMeta($doc)['deadline'])
+                                        @if ($this->deadlineMeta($doc)['isFinished'])
                                             <span
-                                                class="fw-semibold text-success contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
+                                                class="fw-semibold text-success contract-text-08">{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
                                             <br><span class="badge bg-success contract-text-08"><i
                                                     class="bi bi-check-circle me-1"></i>Hoàn thành</span>
-                                        @elseif($isOverdue)
+                                        @elseif($this->deadlineMeta($doc)['isOverdue'])
                                             <span
-                                                class="fw-bold text-danger contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
+                                                class="fw-bold text-danger contract-text-08">{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
                                             <br><span class="badge bg-danger contract-text-08"><i
                                                     class="bi bi-exclamation-triangle me-1"></i>Quá hạn
-                                                {{ abs($daysLeft) }} ngày</span>
-                                        @elseif($isNearDue)
+                                                {{ abs($this->deadlineMeta($doc)['daysLeft']) }} ngày</span>
+                                        @elseif($this->deadlineMeta($doc)['isNearDue'])
                                             <span
-                                                class="fw-semibold text-warning contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
+                                                class="fw-semibold text-warning contract-text-08">{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
                                             <br><span class="badge bg-warning text-dark contract-text-08"><i
-                                                    class="bi bi-clock me-1"></i>Còn {{ $daysLeft }} ngày</span>
+                                                    class="bi bi-clock me-1"></i>Còn {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
                                         @else
                                             <span
-                                                class="fw-semibold text-success contract-text-08">{{ $deadline->format('d/m/Y') }}</span>
+                                                class="fw-semibold text-success contract-text-08">{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
                                             <br><span class="badge bg-success bg-opacity-75 contract-text-08">Còn
-                                                {{ $daysLeft }} ngày</span>
+                                                {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
                                         @endif
                                     @else
                                         <span class="text-muted">—</span>
@@ -389,30 +359,17 @@
                             @endunless
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center">
-                                    @php $statusColor = $doc->detailed_status_color; @endphp
-                                    @php
-                                        $canUpdateStatus =
-                                            !auth()
-                                                ->user()
-                                                ->hasAnyRole([
-                                                    \App\Enums\Role::TU_VAN->value,
-                                                    \App\Enums\Role::KY_THUAT->value,
-                                                ]) &&
-                                            (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
-                                                $doc->staff_id === auth()->id());
-                                    @endphp
-
-                                    @if (!$canUpdateStatus)
+                                    @if (!$this->canUpdateStatusForDoc($doc))
                                         <span
                                             class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0 status-badge-view"
-                                            style="--sbc:{{ $statusColor['bg'] }}; --stc:{{ $statusColor['text'] }};">
+                                            style="--sbc:{{ $doc->detailed_status_color['bg'] }}; --stc:{{ $doc->detailed_status_color['text'] }};">
                                             {{ $doc->status ?: '—' }}
                                         </span>
                                     @else
                                         <div class="position-relative" x-data="{ open: false }">
                                             <button type="button" @click="open = !open"
                                                 class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0 status-badge-btn"
-                                                style="--sbc:{{ $statusColor['bg'] }}; --stc:{{ $statusColor['text'] }};">
+                                                style="--sbc:{{ $doc->detailed_status_color['bg'] }}; --stc:{{ $doc->detailed_status_color['text'] }};">
                                                 {{ $doc->status ?: '—' }}
                                                 <svg width="12" height="12" viewBox="0 0 12 12"
                                                     fill="currentColor">
@@ -442,10 +399,9 @@
                             </td>
                             @unless ($this->isRestrictedRole)
                                 <td class="text-center voucher-status-cell">
-                                    @php $vInfo = $doc->voucher_badge_info; @endphp
-                                    <span class="badge voucher-status-badge {{ $vInfo['class'] }}"
-                                        title="{{ $vInfo['full_value'] }}">
-                                        {{ $vInfo['label'] }}
+                                    <span class="badge voucher-status-badge {{ $doc->voucher_badge_info['class'] }}"
+                                        title="{{ $doc->voucher_badge_info['full_value'] }}">
+                                        {{ $doc->voucher_badge_info['label'] }}
                                     </span>
                                 </td>
                             @endunless
@@ -466,12 +422,7 @@
                                         </button>
                                     @endif
                                     @can('contracts-commercial.edit')
-                                        @php
-                                            $canEditDelete =
-                                                !auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
-                                                $doc->staff_id === auth()->id();
-                                        @endphp
-                                        @if ($canEditDelete)
+                                        @if ($this->canManageOwnedDoc($doc))
                                             @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                                                 <button class="btn btn-sm p-0 text-secondary"
                                                     wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
@@ -485,12 +436,7 @@
                                         @endif
                                     @endcan
                                     @can('contracts-commercial.delete')
-                                        @php
-                                            $canDelete =
-                                                !auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) ||
-                                                $doc->staff_id === auth()->id();
-                                        @endphp
-                                        @if ($canDelete)
+                                        @if ($this->canManageOwnedDoc($doc))
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
                                                 wire:confirm="Xác nhận xóa hợp đồng này?" title="Xóa">

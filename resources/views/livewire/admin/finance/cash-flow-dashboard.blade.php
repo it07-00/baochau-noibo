@@ -5,7 +5,7 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Năm</label>
-                    <select wire:model.live="filterYear" class="form-select form-select-sm">
+                    <select wire:model.live="filterYear" class="form-select">
                         @foreach($availableYears as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Kỳ</label>
-                    <select wire:model.live="filterPeriodType" class="form-select form-select-sm">
+                    <select wire:model.live="filterPeriodType" class="form-select">
                         <option value="year">Cả năm</option>
                         <option value="quarter">Theo quý</option>
                         <option value="month">Theo tháng</option>
@@ -22,7 +22,7 @@
                 @if($filterPeriodType === 'quarter')
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Quý</label>
-                    <select wire:model.live="filterQuarter" class="form-select form-select-sm">
+                    <select wire:model.live="filterQuarter" class="form-select">
                         <option value="0">-- Chọn quý --</option>
                         @foreach([1,2,3,4] as $q)
                             <option value="{{ $q }}">Quý {{ $q }}</option>
@@ -32,7 +32,7 @@
                 @elseif($filterPeriodType === 'month')
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Tháng</label>
-                    <select wire:model.live="filterMonth" class="form-select form-select-sm">
+                    <select wire:model.live="filterMonth" class="form-select">
                         <option value="0">-- Chọn tháng --</option>
                         @foreach(range(1,12) as $m)
                             <option value="{{ $m }}">Tháng {{ $m }}</option>
@@ -42,7 +42,7 @@
                 @endif
                 <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1">Loại hợp đồng</label>
-                    <select wire:model.live="filterContractType" class="form-select form-select-sm">
+                    <select wire:model.live="filterContractType" class="form-select">
                         <option value="all">Tất cả loại hợp đồng</option>
                         @foreach($contractTypes as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
@@ -51,12 +51,35 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1">Hạng mục dịch vụ</label>
-                    <select wire:model.live="filterServiceCategory" class="form-select form-select-sm">
+                    <select wire:model.live="filterServiceCategory" class="form-select">
                         <option value="all">Tất cả hạng mục</option>
                         @foreach($serviceCategoryOptions as $serviceCategory)
                             <option value="{{ $serviceCategory }}">{{ $serviceCategory }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1">Đơn vị thực hiện</label>
+                    <select wire:model.live="filterHandlerType" class="form-select">
+                        <option value="all">Tất cả</option>
+                        <option value="tdx">TĐX (Trái Đất Xanh)</option>
+                        <option value="non_tdx">BC (Bảo Châu)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold mb-1">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text"
+                               wire:model.live.debounce.300ms="search"
+                               class="form-control"
+                               placeholder="Tên công ty, số HĐ Bảo Châu, nhà thầu phụ...">
+                        @if($search !== '')
+                            <button type="button" class="btn btn-outline-secondary" wire:click="$set('search', '')">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        @endif
+                    </div>
                 </div>
                 @can('cash-flow.export')
                 <div class="col-md-auto ms-auto">
@@ -135,14 +158,9 @@
                     </thead>
                     <tbody>
                         @forelse($rows as $i => $row)
-                        @php($sheetStateKey = $row['source_key'] . '_' . $row['id'])
-                        @php($activeSheetUrl = $sheetUrls[$sheetStateKey] ?? $row['ncc_payment_sheet_url'])
-                        @php($sheetCollapseId = 'sheetEditor_' . $sheetStateKey)
                         <tr>
                             <td class="text-center text-muted">{{ ($rows->currentPage() - 1) * $rows->perPage() + $i + 1 }}</td>
                             <td style="min-width:230px">
-                                @php($baoChauMessage = $baoChauInvoiceMessages[$sheetStateKey] ?? null)
-                                @php($subcontractorMessage = $subcontractorInvoiceMessages[$sheetStateKey] ?? null)
                                 <div class="d-flex flex-column gap-2">
                                     <div class="d-flex flex-column gap-1">
                                         <span class="badge {{ $row['type_badge_class'] ?? 'bg-light text-dark border' }} align-self-start text-start px-2 py-2" style="font-size:12px; white-space:normal">{{ $row['type'] }}</span>
@@ -158,8 +176,8 @@
                                            value="{{ $row['shd_bc'] }}"
                                            placeholder="Nhập số HĐ BC"
                                            wire:change="updateBaoChauInvoiceNumber('{{ $row['source_key'] }}', {{ $row['id'] }}, $event.target.value)">
-                                    @if($baoChauMessage)
-                                        <small class="{{ $baoChauMessage['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $baoChauMessage['text'] }}</small>
+                                    @if($this->baoChauMessageFor($this->stateKey($row['source_key'], $row['id'])))
+                                        <small class="{{ $this->baoChauMessageFor($this->stateKey($row['source_key'], $row['id']))['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $this->baoChauMessageFor($this->stateKey($row['source_key'], $row['id']))['text'] }}</small>
                                     @endif
                                 @else
                                         <div>
@@ -169,21 +187,25 @@
                                 @endif
                                     @if(!empty($row['handler']) || !empty($row['shd_cxl']))
                                         <div class="border-top pt-2">
-                                            <small class="text-muted d-block">Nhà thầu phụ</small>
+                                            @if($this->isTdxRow($row))
+                                                <small class="text-muted d-block">Nhà thầu phụ <span class="badge bg-light text-dark border" style="font-size:10px">TĐX</span></small>
+                                            @else
+                                                <small class="text-muted d-block">Nhà thầu phụ</small>
+                                            @endif
                                             <div class="fw-semibold text-dark">{{ $row['handler'] ?: '—' }}</div>
                                             @if($canEditBaoChauInvoice)
-                                                <label class="form-label small text-muted mb-0 mt-1">Số HĐ/HĐ NTP</label>
+                                                <label class="form-label small text-muted mb-0 mt-1">{{ $this->isTdxRow($row) ? 'Số HĐ TĐX' : 'Số HĐ/HĐ NTP' }}</label>
                                                 <input type="text"
                                                        class="form-control form-control-sm fw-semibold text-center"
                                                        style="font-size: 12px;"
                                                        value="{{ $row['shd_cxl'] }}"
-                                                       placeholder="Nhập số HĐ NTP"
+                                                       placeholder="{{ $this->isTdxRow($row) ? 'Nhập số HĐ TĐX' : 'Nhập số HĐ NTP' }}"
                                                        wire:change="updateSubcontractorInvoiceNumber('{{ $row['source_key'] }}', {{ $row['id'] }}, $event.target.value)">
-                                                @if($subcontractorMessage)
-                                                    <small class="{{ $subcontractorMessage['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $subcontractorMessage['text'] }}</small>
+                                                @if($this->subcontractorMessageFor($this->stateKey($row['source_key'], $row['id'])))
+                                                    <small class="{{ $this->subcontractorMessageFor($this->stateKey($row['source_key'], $row['id']))['type'] === 'error' ? 'text-danger' : 'text-success' }}">{{ $this->subcontractorMessageFor($this->stateKey($row['source_key'], $row['id']))['text'] }}</small>
                                                 @endif
                                             @else
-                                                <small class="text-muted">Số HĐ NTP: <span class="fw-semibold text-dark">{{ $row['shd_cxl'] ?: '—' }}</span></small>
+                                                <small class="text-muted">{{ $this->isTdxRow($row) ? 'Số HĐ TĐX' : 'Số HĐ NTP' }}: <span class="fw-semibold text-dark">{{ $row['shd_cxl'] ?: '—' }}</span></small>
                                             @endif
                                         </div>
                                     @endif
@@ -201,6 +223,27 @@
                                     <span>NV: {{ $row['staff'] ?? '—' }}</span>
                                     <span>Ngày ký: {{ $row['signed_at'] ?? '—' }}</span>
                                 </div>
+                                @if($canEditInvoiceDate)
+                                    <div class="mt-2">
+                                        <label class="form-label small text-muted mb-0">Ngày xuất hóa đơn</label>
+                                        <input type="date"
+                                               class="form-control form-control-sm"
+                                               wire:model.live="invoiceDates.{{ $this->stateKey($row['source_key'], $row['id']) }}"
+                                               wire:change="updateInvoiceDate('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                    </div>
+                                @else
+                                    @if(!empty($row['submitted_at']))
+                                        <div class="mt-1" style="font-size:12px">
+                                            <span class="text-muted">Xuất HĐ: </span>
+                                            <span class="fw-semibold">{{ $row['submitted_at'] }}</span>
+                                        </div>
+                                    @endif
+                                @endif
+                                @if(!empty($row['contract_note']))
+                                    <div class="text-muted mt-2" style="font-size:12px; word-break:break-word;">
+                                        <span class="fw-semibold text-dark">Ghi chú HĐ:</span> {{ $row['contract_note'] }}
+                                    </div>
+                                @endif
                             </td>
                             <td class="text-end text-nowrap">{{ $row['value_without_vat'] > 0 ? number_format($row['value_without_vat']) : '—' }}</td>
                             <td class="text-end text-nowrap">{{ $row['revenue'] > 0 ? number_format($row['revenue']) : '—' }}</td>
@@ -224,19 +267,18 @@
                             <td class="text-center">
                                 <div class="d-inline-flex flex-column align-items-center gap-1">
                                     @if($canManageNccPayment)
-                                        @php($currentPaymentStatus = $paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status'])
                                         <select class="form-select"
                                                 style="width: 100%;"
-                                                wire:model.live="paymentStatuses.{{ $sheetStateKey }}"
+                                                wire:model.live="paymentStatuses.{{ $this->stateKey($row['source_key'], $row['id']) }}"
                                                 wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
                                             <option value="unpaid">Chưa thanh toán</option>
                                             <option value="paid">Đã thanh toán</option>
                                         </select>
-                                        @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
+                                        @if($this->selectedPaymentStatus($this->stateKey($row['source_key'], $row['id']), $row) === 'paid')
                                             <input type="date"
                                                    class="form-control"
                                                    style="width: 100%;"
-                                                   wire:model.live="paymentDates.{{ $sheetStateKey }}"
+                                                   wire:model.live="paymentDates.{{ $this->stateKey($row['source_key'], $row['id']) }}"
                                                    wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
                                         @endif
                                     @else
@@ -252,9 +294,9 @@
                                     <button type="button"
                                             class="btn btn-outline-primary btn-sm px-3 py-2 fw-semibold"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#{{ $sheetCollapseId }}"
+                                            data-bs-target="#{{ $this->collapseId($row['source_key'], $row['id']) }}"
                                             aria-expanded="false"
-                                            aria-controls="{{ $sheetCollapseId }}">
+                                            aria-controls="{{ $this->collapseId($row['source_key'], $row['id']) }}">
                                         <i class="bi bi-link-45deg me-1"></i>Sheet
                                     </button>
                                 </td>
@@ -263,16 +305,40 @@
                         @if($canManageNccPayment)
                         <tr class="bg-light-subtle">
                             <td colspan="{{ $canManageNccPayment ? 10 : 9 }}" class="px-3 py-3">
-                                <div id="{{ $sheetCollapseId }}" class="collapse">
+                                <div id="{{ $this->collapseId($row['source_key'], $row['id']) }}" class="collapse">
+                                    {{-- Nhập tay --}}
+                                    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 mb-3">
+                                        <div class="text-muted fw-semibold" style="min-width: 170px; font-size:13px;">Nhập tay số tiền</div>
+                                        <div class="input-group" style="max-width: 340px;">
+                                            <input type="text"
+                                                   class="form-control py-2"
+                                                   wire:model.defer="manualNccAmounts.{{ $this->stateKey($row['source_key'], $row['id']) }}"
+                                                   placeholder="VD: 5.000.000"
+                                                   oninput="this.value=this.value.replace(/[^\d]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.')">
+                                            <button type="button"
+                                                    class="btn btn-success px-3 fw-semibold"
+                                                    wire:click="updateNccPaymentManual('{{ $row['source_key'] }}', {{ $row['id'] }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="updateNccPaymentManual('{{ $row['source_key'] }}', {{ $row['id'] }})">
+                                                <span wire:loading wire:target="updateNccPaymentManual('{{ $row['source_key'] }}', {{ $row['id'] }})" class="spinner-border spinner-border-sm me-1"></span>
+                                                Lưu
+                                            </button>
+                                        </div>
+                                        @if($row['ncc_payment'] > 0)
+                                            <small class="text-muted">Hiện tại: <span class="fw-semibold text-danger">{{ number_format($row['ncc_payment']) }}đ</span></small>
+                                        @endif
+                                    </div>
+                                    <hr class="my-2">
+                                    {{-- Hoặc lấy từ Google Sheet --}}
                                     <div class="row g-3 align-items-start">
                                         <div class="col-lg-7">
                                             <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 h-100">
-                                                <div class="text-muted fw-semibold" style="min-width: 170px; font-size:13px;">Link Google Sheet</div>
+                                                <div class="text-muted fw-semibold" style="min-width: 170px; font-size:13px;">Hoặc từ Sheet</div>
                                                 <div class="input-group">
                                                     <input type="url"
                                                            class="form-control py-2"
-                                                           wire:model.defer="sheetUrls.{{ $sheetStateKey }}"
-                                                           placeholder="Dan link Google Sheet cong khai">
+                                                           wire:model.defer="sheetUrls.{{ $this->stateKey($row['source_key'], $row['id']) }}"
+                                                           placeholder="Dán link Google Sheet công khai">
                                                     <button type="button"
                                                             class="btn btn-primary px-3 fw-semibold"
                                                             wire:click="importNccPaymentFromSheet('{{ $row['source_key'] }}', {{ $row['id'] }})"
@@ -284,9 +350,9 @@
                                                     <button type="button"
                                                             class="btn btn-outline-secondary px-3 fw-semibold"
                                                             data-bs-toggle="collapse"
-                                                            data-bs-target="#{{ $sheetCollapseId }}"
+                                                            data-bs-target="#{{ $this->collapseId($row['source_key'], $row['id']) }}"
                                                             aria-expanded="true"
-                                                            aria-controls="{{ $sheetCollapseId }}">
+                                                            aria-controls="{{ $this->collapseId($row['source_key'], $row['id']) }}">
                                                         Hủy
                                                     </button>
                                                 </div>
@@ -298,16 +364,16 @@
                                                 <div class="d-flex flex-column flex-sm-row gap-2 flex-grow-1">
                                                     <select class="form-select py-2"
                                                             style="min-width: 180px;"
-                                                            wire:model.live="paymentStatuses.{{ $sheetStateKey }}"
+                                                            wire:model.live="paymentStatuses.{{ $this->stateKey($row['source_key'], $row['id']) }}"
                                                             wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
                                                         <option value="unpaid">Chưa thanh toán</option>
                                                         <option value="paid">Đã thanh toán</option>
                                                     </select>
-                                                    @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
+                                                    @if($this->selectedPaymentStatus($this->stateKey($row['source_key'], $row['id']), $row) === 'paid')
                                                         <input type="date"
                                                                class="form-control py-2"
                                                                style="min-width: 170px;"
-                                                               wire:model.live="paymentDates.{{ $sheetStateKey }}"
+                                                               wire:model.live="paymentDates.{{ $this->stateKey($row['source_key'], $row['id']) }}"
                                                                wire:change="updateNccPaymentStatus('{{ $row['source_key'] }}', {{ $row['id'] }})">
                                                     @endif
                                                     <span class="text-success small d-inline-flex align-items-center px-2">
@@ -317,15 +383,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex flex-wrap gap-3 text-muted mt-2" style="font-size:13px;">
-                                        <span>Lấy số ở dòng chứa "Tổng Cộng".</span>
-                                        @if(($paymentStatuses[$sheetStateKey] ?? $row['ncc_payment_status']) === 'paid')
-                                            <span>Ngày thanh toán sẽ hiển thị dưới badge trạng thái.</span>
-                                        @endif
-                                        @if(!empty($activeSheetUrl))
-                                            <span>Đã lưu link sheet cho dòng này.</span>
-                                        @endif
-                                    </div>
+
                                 </div>
                             </td>
                         </tr>

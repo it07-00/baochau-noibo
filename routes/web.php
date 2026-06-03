@@ -142,33 +142,40 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
         ->name('quotation-tracking.index')
         ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH, Role::GIAM_DOC)]);
 
+    // Tạo Báo giá
+    Route::prefix('tao-bao-gia')->name('quotation-docs.')->middleware(Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW))->group(function () {
+        Route::get('/', \App\Livewire\Admin\QuotationDocuments\QuotationDocumentManager::class)->name('index');
+        Route::get('/{id}/xuat-word', [\App\Http\Controllers\Admin\QuotationDocumentController::class, 'exportWord'])->name('export-word');
+        Route::get('/{id}/xuat-pdf', [\App\Http\Controllers\Admin\QuotationDocumentController::class, 'exportPdf'])->name('export-pdf');
+    });
+
     // Báo cáo Kinh doanh
     Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware(Permission::toMiddleware(Permission::REPORTS_SALES_VIEW))->group(function () {
-        Route::get('tong-hop',           \App\Livewire\Admin\Reports\Sales\SalesSummaryReport::class)->name('summary');
-        Route::get('chi-tieu',           \App\Livewire\Admin\Reports\Sales\SalesTargetReport::class)->name('target');
-        Route::get('ca-nhan',            \App\Livewire\Admin\Reports\Sales\PersonalSalesReport::class)->name('personal');
+        Route::get('tong-hop', \App\Livewire\Admin\Reports\Sales\SalesSummaryReport::class)->name('summary');
+        Route::get('chi-tieu', \App\Livewire\Admin\Reports\Sales\SalesTargetReport::class)->name('target');
+        Route::get('ca-nhan', \App\Livewire\Admin\Reports\Sales\PersonalSalesReport::class)->name('personal');
     });
 
     // Báo cáo Tư vấn
     Route::prefix('bao-cao/tu-van')->name('reports.consulting-work.')->middleware(Permission::toMiddleware(Permission::REPORTS_CONSULTING_VIEW))->group(function () {
-        Route::get('chat-thai-va-tieng-on',       \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('waste');
-        Route::get('phap-ly-va-ho-so-mt',         \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('consulting');
-        Route::get('ky-thuat-va-ung-pho-sc',      \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('project');
-        Route::get('nc-va-chuyen-doi-cong-nghe',  \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('commercial');
-        Route::get('tv-va-bao-cao-ptbv',          \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('sustainability');
-        Route::get('phat-thai-va-nang-luong',     \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('energy');
-        Route::get('duong-dua',                   \App\Livewire\Admin\Reports\Consulting\ConsultingAchievementReport::class)->name('achievement');
+        Route::get('chat-thai-va-tieng-on', \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('waste');
+        Route::get('phap-ly-va-ho-so-mt', \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('consulting');
+        Route::get('ky-thuat-va-ung-pho-sc', \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('project');
+        Route::get('nc-va-chuyen-doi-cong-nghe', \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('commercial');
+        Route::get('tv-va-bao-cao-ptbv', \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('sustainability');
+        Route::get('phat-thai-va-nang-luong', \App\Livewire\Admin\Reports\Consulting\ConsultingContractReport::class)->name('energy');
+        Route::get('duong-dua', \App\Livewire\Admin\Reports\Consulting\ConsultingAchievementReport::class)->name('achievement');
     });
 
     // Báo cáo Kỹ thuật
     Route::prefix('bao-cao/ky-thuat')->name('reports.technical.')->middleware(Permission::toMiddleware(Permission::REPORTS_TECHNICAL_VIEW))->group(function () {
-        Route::get('chat-thai-va-tieng-on',      \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('waste');
-        Route::get('phap-ly-va-ho-so-mt',        \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('consulting');
-        Route::get('ky-thuat-va-ung-pho-sc',     \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('project');
+        Route::get('chat-thai-va-tieng-on', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('waste');
+        Route::get('phap-ly-va-ho-so-mt', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('consulting');
+        Route::get('ky-thuat-va-ung-pho-sc', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('project');
         Route::get('nc-va-chuyen-doi-cong-nghe', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('commercial');
-        Route::get('tv-va-bao-cao-ptbv',         \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('sustainability');
-        Route::get('phat-thai-va-nang-luong',    \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('energy');
-        Route::get('duong-dua',                  \App\Livewire\Admin\Reports\Technical\TechnicalAchievementReport::class)->name('achievement');
+        Route::get('tv-va-bao-cao-ptbv', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('sustainability');
+        Route::get('phat-thai-va-nang-luong', \App\Livewire\Admin\Reports\Technical\TechnicalContractReport::class)->name('energy');
+        Route::get('duong-dua', \App\Livewire\Admin\Reports\Technical\TechnicalAchievementReport::class)->name('achievement');
     });
 
     // Báo cáo Marketing
@@ -178,9 +185,9 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     });
 
     // Bảng thống kê & Bảng xếp hạng
-    Route::get('thong-ke',    \App\Livewire\Admin\StatisticsBoard::class)->name('statistics')->middleware(Permission::toMiddleware(Permission::STATISTICS_VIEW));
-    Route::get('xep-hang',    \App\Livewire\Admin\RankingsBoard::class)->name('rankings')->middleware(Permission::toMiddleware(Permission::RANKINGS_VIEW));
-    Route::get('he-thong',    \App\Livewire\Admin\ItDashboard::class)->name('it-dashboard')->middleware(Role::toMiddleware(Role::IT));
+    Route::get('thong-ke', \App\Livewire\Admin\StatisticsBoard::class)->name('statistics')->middleware(Permission::toMiddleware(Permission::STATISTICS_VIEW));
+    Route::get('xep-hang', \App\Livewire\Admin\RankingsBoard::class)->name('rankings')->middleware(Permission::toMiddleware(Permission::RANKINGS_VIEW));
+    Route::get('he-thong', \App\Livewire\Admin\ItDashboard::class)->name('it-dashboard')->middleware(Role::toMiddleware(Role::IT));
 
     // Nhật ký hoạt động
     Route::get('nhat-ky-hoat-dong', \App\Livewire\Admin\ActivityLogViewer::class)->name('activity-log')->middleware(Permission::toMiddleware(Permission::ACTIVITY_LOG_VIEW));

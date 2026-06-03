@@ -191,6 +191,16 @@ class ConsultingContractReport extends Component
         return $progress;
     }
 
+    public function workflowProgressMeta(array $workflowProgress, int $itemId): array
+    {
+        return $workflowProgress[$itemId] ?? [
+            'percent' => 0,
+            'current_label' => 'Chưa bắt đầu',
+            'completed_count' => 0,
+            'total_steps' => 6,
+        ];
+    }
+
     public function render()
     {
         $user = auth()->user();

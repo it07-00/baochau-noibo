@@ -8,6 +8,7 @@ use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
+use App\Models\DailyReport;
 use App\Models\SalesTarget;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -33,20 +34,53 @@ class SalesAchievementReport extends Component
         $this->filter_month = (string) now()->month;
     }
 
+    public function monthLabel(): string
+    {
+        return $this->filter_month !== ''
+            ? 'Tháng ' . str_pad($this->filter_month, 2, '0', STR_PAD_LEFT)
+            : 'Cả năm';
+    }
+
+    public function raceInitials(string $name): string
+    {
+        $cleanName = preg_split('/\s*-\s*/', trim($name))[0] ?? '';
+        $parts = array_values(array_filter(explode(' ', $cleanName), fn ($word) => mb_strlen($word) > 0));
+
+        if (count($parts) === 0) {
+            return '?';
+        }
+
+        if (count($parts) === 1) {
+            return strtoupper(mb_substr($parts[0], 0, 2));
+        }
+
+        $first = mb_substr($parts[0], 0, 1);
+        $last = mb_substr($parts[count($parts) - 1], 0, 1);
+
+        return strtoupper($first . $last);
+    }
+
+    public function salesHasDailyReport(): bool
+    {
+        return DailyReport::where('user_id', auth()->id())
+            ->whereDate('date', today())
+            ->exists();
+    }
+
     public function render()
     {
         $staffs = User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get();
         $staffIds = $staffs->pluck('id')->all();
 
-        // Doanh số tính theo revenue, dùng COALESCE(submitted_at, signed_at) để khớp với dang-ky-muc-tieu
+        // Doanh số tính theo revenue, chỉ dùng submitted_at (ngày xuất hóa đơn)
         $actualByStaff = [];
         foreach ($this->contractModels as $modelClass) {
-            $query = $modelClass::whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
-                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+            $query = $modelClass::whereNotNull('submitted_at')
+                ->whereYear('submitted_at', $this->year)
                 ->whereNotNull('staff_id');
 
             if ($this->filter_month) {
-                $query->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $this->filter_month);
+                $query->whereMonth('submitted_at', $this->filter_month);
             }
 
             $rows = $query->selectRaw('staff_id, COALESCE(SUM(revenue), 0) as total')

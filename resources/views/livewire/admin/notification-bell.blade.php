@@ -51,38 +51,36 @@
             @endif
 
             @foreach($notificationSections as $section)
-                @php $sectionUnread = $section['unread_count'] ?? $section['items']->whereNull('read_at')->count(); @endphp
-                <div class="border-bottom" x-data="{ open: {{ $sectionUnread > 0 ? 'true' : 'false' }} }">
+                <div class="border-bottom" x-data="{ open: {{ $this->sectionUnreadCount($section) > 0 ? 'true' : 'false' }} }">
                     <button type="button" class="notification-section-toggle w-100 px-3 py-2 bg-light-subtle border-0 d-flex align-items-center justify-content-between gap-2"
                         @click="open = !open">
                         <span class="notification-section-title fw-semibold text-uppercase text-start">{{ $section['label'] }}</span>
                         <div class="notification-section-meta d-flex align-items-center gap-2">
-                            <span class="badge {{ $sectionUnread > 0 ? 'bg-danger' : 'bg-secondary' }} rounded-pill">{{ $section['items']->count() }}</span>
+                            <span class="badge {{ $this->sectionUnreadCount($section) > 0 ? 'bg-danger' : 'bg-secondary' }} rounded-pill">{{ $section['items']->count() }}</span>
                             <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                         </div>
                     </button>
 
                     <div x-show="open" x-cloak>
                         @foreach($section['items'] as $notif)
-                            @php $data = $notif->data; @endphp
                             <div class="dropdown-item notification-item py-3 border-top d-flex align-items-start gap-2 {{ $notif->read_at ? '' : 'notification-item-unread' }} cursor-pointer"
-                                 @if(($data['contract_type'] ?? '') === 'internal')
+                                 @if(($this->notificationData($notif)['contract_type'] ?? '') === 'internal')
                                      wire:click.stop="openInternalModal('{{ $notif->id }}')"
                                  @else
                                      wire:click="openNotification('{{ $notif->id }}')"
                                  @endif>
-                                <div class="notification-icon bg-{{ $data['color'] ?? 'primary' }}-subtle text-{{ $data['color'] ?? 'primary' }} rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                                    <i class="bi {{ $data['icon'] ?? 'bi-bell-fill' }} "></i>
+                                <div class="notification-icon bg-{{ $this->notificationData($notif)['color'] ?? 'primary' }}-subtle text-{{ $this->notificationData($notif)['color'] ?? 'primary' }} rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi {{ $this->notificationData($notif)['icon'] ?? 'bi-bell-fill' }} "></i>
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="notification-item-top d-flex justify-content-between align-items-start gap-2 mb-1">
-                                        <span class="notification-title fw-bold text-dark">{{ $data['contract_label'] ?? '' }}</span>
+                                        <span class="notification-title fw-bold text-dark">{{ $this->notificationData($notif)['contract_label'] ?? '' }}</span>
                                         <span class="notification-time text-muted flex-shrink-0">{{ $notif->created_at->diffForHumans() }}</span>
                                     </div>
-                                    @if(($data['contract_type'] ?? '') === 'work_schedule' && !empty($data['time_label']) && $data['time_label'] !== 'Cả ngày')
-                                        <div class="text-muted small mb-1"><i class="bi bi-clock me-1"></i>{{ $data['time_label'] }}</div>
+                                    @if(($this->notificationData($notif)['contract_type'] ?? '') === 'work_schedule' && !empty($this->notificationData($notif)['time_label']) && $this->notificationData($notif)['time_label'] !== 'Cả ngày')
+                                        <div class="text-muted small mb-1"><i class="bi bi-clock me-1"></i>{{ $this->notificationData($notif)['time_label'] }}</div>
                                     @endif
-                                    <div class="notification-message text-muted">{{ $data['message'] ?? '' }}</div>
+                                    <div class="notification-message text-muted">{{ $this->notificationData($notif)['message'] ?? '' }}</div>
                                 </div>
                                 @if(!$notif->read_at)
                                     <span class="notification-unread-dot bg-primary rounded-circle flex-shrink-0 mt-2"></span>

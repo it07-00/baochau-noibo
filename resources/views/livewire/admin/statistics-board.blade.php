@@ -765,17 +765,14 @@
                             </thead>
                             <tbody>
                                 @forelse($consultingStats as $row)
-                                @php
-                                    $rowRate = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0;
-                                @endphp
                                 <tr>
                                     <td class="fw-semibold">{{ $row['label'] }}</td>
                                     <td class="text-center fw-bold">{{ number_format($row['count']) }}</td>
                                     <td class="text-center text-warning-emphasis">{{ number_format($row['processing']) }}</td>
                                     <td class="text-center text-success fw-semibold">{{ number_format($row['completed']) }}</td>
                                     <td class="text-center">
-                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $rowRate }}%"></span></div>
-                                        <small class="text-muted fw-semibold">{{ $rowRate }}%</small>
+                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%"></span></div>
+                                        <small class="text-muted fw-semibold">{{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%</small>
                                     </td>
                                 </tr>
                                 @empty
@@ -883,18 +880,14 @@
                             </thead>
                             <tbody>
                                 @forelse($technicalStats as $row)
-                                @php
-                                    $processingCount = max(0, $row['count'] - $row['completed']);
-                                    $rowRate = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0;
-                                @endphp
                                 <tr>
                                     <td class="fw-semibold">{{ $row['label'] }}</td>
                                     <td class="text-center fw-bold">{{ number_format($row['count']) }}</td>
-                                    <td class="text-center text-warning-emphasis">{{ number_format($processingCount) }}</td>
+                                    <td class="text-center text-warning-emphasis">{{ number_format(max(0, $row['count'] - $row['completed'])) }}</td>
                                     <td class="text-center text-success fw-semibold">{{ number_format($row['completed']) }}</td>
                                     <td class="text-center">
-                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $rowRate }}%"></span></div>
-                                        <small class="text-muted fw-semibold">{{ $rowRate }}%</small>
+                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%"></span></div>
+                                        <small class="text-muted fw-semibold">{{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%</small>
                                     </td>
                                 </tr>
                                 @empty

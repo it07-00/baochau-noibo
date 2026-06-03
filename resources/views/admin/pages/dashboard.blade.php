@@ -3,15 +3,6 @@
 @section('title', 'Bảng điều khiển')
 @section('page_title', 'Bảng điều khiển')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Bảng điều khiển'],
-    ];
-    $monthNames = ['','Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
-                   'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
-@endphp
-
 @section('content')
     {{-- KPI Cards --}}
     <div class="row g-3 mt-1">
@@ -91,7 +82,7 @@
                                 @foreach($monthly as $m => $val)
                                 <tr class="{{ $m == $month ? 'table-warning' : '' }}">
                                     <td class="fw-semibold ">
-                                        {{ $monthNames[$m] }}
+                                        {{ ['', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'][$m] ?? ('Tháng ' . $m) }}
                                         @if($m == $month)<span class="badge bg-warning text-dark ms-1 fs-10px" >Hiện tại</span>@endif
                                     </td>
                                     <td>
@@ -142,11 +133,8 @@
                         </thead>
                         <tbody>
                             @foreach($topStaff as $i => $row)
-                            @php
-                                $medal = match($i) { 0 => '🥇', 1 => '🥈', 2 => '🥉', default => $i + 1 };
-                            @endphp
                             <tr>
-                                <td class="text-center fw-bold">{{ $medal }}</td>
+                                <td class="text-center fw-bold">{{ match($i) { 0 => '🥇', 1 => '🥈', 2 => '🥉', default => $i + 1 } }}</td>
                                 <td class="fw-semibold">{{ $row['name'] }}</td>
                                 <td class="text-end  fw-semibold text-primary">
                                     {{ $row['total'] > 0 ? number_format($row['total'], 0, ',', '.') . ' đ' : '—' }}

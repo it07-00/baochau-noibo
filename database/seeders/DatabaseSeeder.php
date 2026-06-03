@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
 
             // 3. Kinh doanh & Sales
             // QuotationSeeder::class,
+            // QuotationDocumentSampleSeeder::class,
             // SalesDataSeeder::class,
             // SalesTargetSeeder::class,
 

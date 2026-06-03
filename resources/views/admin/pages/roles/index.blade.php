@@ -3,13 +3,6 @@
 @section('title', 'Vai trò và Quyền')
 @section('page_title', 'Quản lý Vai trò')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Vai trò'],
-    ];
-@endphp
-
 @section('content')
     @if (session('status'))
         <div class="alert alert-success mt-1 shadow-sm border-0">{{ session('status') }}</div>

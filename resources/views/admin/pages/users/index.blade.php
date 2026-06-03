@@ -3,13 +3,6 @@
 @section('title', 'Người dùng')
 @section('page_title', 'Người dùng')
 
-@php
-    $breadcrumbs = [
-        ['label' => 'Quản trị', 'url' => route('app.dashboard')],
-        ['label' => 'Người dùng'],
-    ];
-@endphp
-
 @section('content')
     <div class="row g-3 mt-1">
         <div class="col-lg-4 col-md-6">

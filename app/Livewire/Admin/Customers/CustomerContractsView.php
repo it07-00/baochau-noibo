@@ -66,6 +66,42 @@ class CustomerContractsView extends Component
         $this->resetPage();
     }
 
+    public function statusColor(?string $status): array
+    {
+        $statusText = trim((string) $status);
+        $statusKey = mb_strtolower($statusText);
+
+        return match (true) {
+            in_array($statusText, ['HOÀN THÀNH', 'Đã hoàn thành', 'Đã hoàn thành KH ký trước'], true)
+                || in_array($statusKey, ['hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước'], true)
+                => ['bg' => '#d1e7dd', 'text' => '#198754'],
+
+            in_array($statusText, ['Hợp đồng hủy', 'ĐÃ HỦY', 'Đã hủy', 'Hủy bỏ'], true)
+                || in_array($statusKey, ['hợp đồng hủy', 'đã hủy', 'hủy bỏ'], true)
+                => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+
+            in_array($statusText, ['PTH đang kiểm tra', 'ĐANG THỰC HIỆN', 'ĐANG THỰC HIÊN'], true)
+                || in_array($statusKey, ['đang thực hiện', 'pth đang kiểm tra', ''], true)
+                => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+
+            in_array($statusText, ['Đang trình BGĐ ký'], true)
+                || in_array($statusKey, ['đã trình ký nhà thầu phụ', 'đang trình bgđ ký'], true)
+                => ['bg' => '#fff3cd', 'text' => '#b45309'],
+
+            in_array($statusKey, ['nhà thầu phụ đã gửi về'], true)
+                => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
+
+            in_array($statusText, ['Đã gửi khách hàng'], true)
+                || in_array($statusKey, ['đã gửi khách hàng'], true)
+                => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+
+            in_array($statusKey, ['tạm dừng'], true)
+                => ['bg' => '#fff8e1', 'text' => '#e65100'],
+
+            default => ['bg' => '#e9ecef', 'text' => '#495057'],
+        };
+    }
+
     public function viewDetail(int $id, string $modelClass): void
     {
         $allowed = [

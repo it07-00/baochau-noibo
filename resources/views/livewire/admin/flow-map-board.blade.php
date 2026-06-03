@@ -72,22 +72,29 @@
 
                         <div class="flow-map-node-list">
                             @foreach($step['nodes'] as $node)
-                                @php
-                                    $tag = $node['href'] ? 'a' : 'div';
-                                @endphp
-                                <{{ $tag }}
-                                    @if($node['href']) href="{{ $node['href'] }}" wire:navigate @endif
-                                    class="flow-map-node is-{{ $node['tone'] }} {{ $node['optional'] ? 'is-optional' : '' }}"
-                                >
-                                    <span class="flow-map-node-icon">{{ $node['optional'] ? '↳' : '◆' }}</span>
-                                    <span class="flow-map-node-copy">
-                                        <strong>{{ $node['title'] }}</strong>
-                                        <small>{{ $node['subtitle'] }}</small>
-                                    </span>
-                                    @if($node['optional'])
-                                        <em>Phụ</em>
-                                    @endif
-                                </{{ $tag }}>
+                                @if($node['href'])
+                                    <a href="{{ $node['href'] }}" wire:navigate class="flow-map-node is-{{ $node['tone'] }} {{ $node['optional'] ? 'is-optional' : '' }}">
+                                        <span class="flow-map-node-icon">{{ $node['optional'] ? '↳' : '◆' }}</span>
+                                        <span class="flow-map-node-copy">
+                                            <strong>{{ $node['title'] }}</strong>
+                                            <small>{{ $node['subtitle'] }}</small>
+                                        </span>
+                                        @if($node['optional'])
+                                            <em>Phụ</em>
+                                        @endif
+                                    </a>
+                                @else
+                                    <div class="flow-map-node is-{{ $node['tone'] }} {{ $node['optional'] ? 'is-optional' : '' }}">
+                                        <span class="flow-map-node-icon">{{ $node['optional'] ? '↳' : '◆' }}</span>
+                                        <span class="flow-map-node-copy">
+                                            <strong>{{ $node['title'] }}</strong>
+                                            <small>{{ $node['subtitle'] }}</small>
+                                        </span>
+                                        @if($node['optional'])
+                                            <em>Phụ</em>
+                                        @endif
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
 

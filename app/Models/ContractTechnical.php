@@ -14,6 +14,8 @@ class ContractTechnical extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
 
+    const TOTAL_STEPS = 6;
+
     protected $table = 'contract_projects';
 
     public function getActivitylogOptions(): LogOptions
