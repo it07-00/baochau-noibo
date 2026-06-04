@@ -1278,6 +1278,8 @@ class QuotationDocumentExportService
 
     private function generateFallbackPdfContent(QuotationDocument $doc): string
     {
+        $this->ensureDirectory(storage_path('fonts'));
+
         $year = $doc->date?->format('Y') ?? now()->format('Y');
 
         $pdf = Pdf::loadView('admin.quotations.quotation-document-pdf', [
