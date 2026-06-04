@@ -39,8 +39,6 @@ Route::middleware(['auth', 'active'])->get('/admin/{path?}', function (Request $
 Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     Route::get('/', \App\Livewire\Admin\HomeBoard::class)->name('home');
     Route::get('/bang-dieu-khien', \App\Livewire\Admin\StatisticsBoard::class)->name('dashboard');
-    Route::redirect('/so-do-luong', '/workflow', 301);
-    Route::get('/workflow', \App\Livewire\Admin\FlowMapBoard::class)->name('workflow');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [SettingController::class, 'profile'])->name('index');

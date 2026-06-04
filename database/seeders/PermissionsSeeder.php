@@ -228,14 +228,5 @@ class PermissionsSeeder extends Seeder
             // Báo cáo ngày
             PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
         ]);
-
-        // ------------------------------------------------
-        // Backward compat: quan-ly (role cũ) = giống giam-doc
-        // ------------------------------------------------
-        if ($quanLy = Role::where('name', RoleEnum::QUAN_LY->value)->first()) {
-            $quanLy->syncPermissions(
-                Role::findByName(RoleEnum::GIAM_DOC->value)->permissions->pluck('name')->toArray()
-            );
-        }
     }
 }

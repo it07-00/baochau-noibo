@@ -23,18 +23,22 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->tables as $table) {
-            Schema::table($table, function (Blueprint $t) {
-                $t->softDeletes();
-            });
+            if (Schema::hasTable($table)) {
+                Schema::table($table, function (Blueprint $t) {
+                    $t->softDeletes();
+                });
+            }
         }
     }
 
     public function down(): void
     {
         foreach ($this->tables as $table) {
-            Schema::table($table, function (Blueprint $t) {
-                $t->dropSoftDeletes();
-            });
+            if (Schema::hasTable($table)) {
+                Schema::table($table, function (Blueprint $t) {
+                    $t->dropSoftDeletes();
+                });
+            }
         }
     }
 };

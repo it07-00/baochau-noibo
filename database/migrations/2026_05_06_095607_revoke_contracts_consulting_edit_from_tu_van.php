@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $role = Role::findByName('tu-van');
-        $permission = Permission::findByName('contracts-consulting.edit');
+        $role = Role::where('name', 'tu-van')->first();
+        $permission = Permission::where('name', 'contracts-consulting.edit')->first();
 
         if ($role && $permission && $role->hasPermissionTo($permission)) {
             $role->revokePermissionTo($permission);
@@ -20,8 +20,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        $role = Role::findByName('tu-van');
-        $permission = Permission::findByName('contracts-consulting.edit');
+        $role = Role::where('name', 'tu-van')->first();
+        $permission = Permission::where('name', 'contracts-consulting.edit')->first();
 
         if ($role && $permission && !$role->hasPermissionTo($permission)) {
             $role->givePermissionTo($permission);

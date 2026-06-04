@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -26,8 +27,10 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->columns as $table => $cols) {
-            foreach ($cols as $col) {
-                DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,0) NOT NULL DEFAULT 0");
+            if (Schema::hasTable($table)) {
+                foreach ($cols as $col) {
+                    DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,0) NOT NULL DEFAULT 0");
+                }
             }
         }
     }
@@ -35,8 +38,10 @@ return new class extends Migration
     public function down(): void
     {
         foreach ($this->columns as $table => $cols) {
-            foreach ($cols as $col) {
-                DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,2) NULL");
+            if (Schema::hasTable($table)) {
+                foreach ($cols as $col) {
+                    DB::statement("ALTER TABLE `{$table}` MODIFY COLUMN `{$col}` DECIMAL(15,2) NULL");
+                }
             }
         }
     }

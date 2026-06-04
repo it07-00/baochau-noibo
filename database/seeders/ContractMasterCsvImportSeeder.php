@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Schema;
 
 class ContractMasterCsvImportSeeder extends Seeder
 {
-    private const DEFAULT_CSV_PATH = 'C:\\Users\\LENOVO\\Downloads\\contracts_master_report.csv';
+    private const DEFAULT_CSV_PATH = 'import.csv';
 
     private const CSV_KEYS = [
         'id',
@@ -299,6 +299,55 @@ class ContractMasterCsvImportSeeder extends Seeder
             if ($user) {
                 return (int) $user->id;
             }
+
+            // Create user if not found in the system
+            $deptName = trim($data['department_name'] ?? '');
+            $department = null;
+            if ($deptName !== '') {
+                $department = Department::where('name', 'like', '%' . $deptName . '%')->first();
+            }
+            if (!$department) {
+                $department = Department::where('slug', 'kinh-doanh')->first();
+            }
+
+            $baseUsername = Str::slug($name, '');
+            if ($baseUsername === '') {
+                $baseUsername = 'user';
+            }
+            $username = $baseUsername;
+            $i = 1;
+            while (User::where('username', $username)->exists()) {
+                $username = $baseUsername . $i;
+                $i++;
+            }
+
+            $role = \App\Enums\Role::KINH_DOANH->value;
+            if ($department) {
+                if ($department->slug === 'tu-van-cskh') {
+                    $role = \App\Enums\Role::TU_VAN->value;
+                } elseif ($department->slug === 'ky-thuat') {
+                    $role = \App\Enums\Role::KY_THUAT->value;
+                } elseif ($department->slug === 'ke-toan') {
+                    $role = \App\Enums\Role::KE_TOAN->value;
+                } elseif ($department->slug === 'marketing') {
+                    $role = \App\Enums\Role::MARKETING->value;
+                }
+            }
+
+            $newUser = User::create([
+                'name' => $name,
+                'username' => $username,
+                'email' => $username . '@baochauenv.vn',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'department_id' => $department?->id,
+                'is_active' => true,
+            ]);
+
+            $newUser->syncRoles([$role]);
+
+            $this->command?->info("Created new user: {$name} (username: {$username}, role: {$role})");
+
+            return (int) $newUser->id;
         }
 
         return $defaultStaffId;
@@ -433,8 +482,7 @@ class ContractMasterCsvImportSeeder extends Seeder
         $pieces = preg_split('/—|-/u', $text);
         $name = is_array($pieces) && $pieces !== [] ? trim($pieces[0]) : $text;
 
-        $name = preg_replace('/\s*\(Ngoai\)$/u', '', $name) ?? $name;
-        $name = preg_replace('/\s*\(Ngoài\)$/u', '', $name) ?? $name;
+        $name = preg_replace('/\s*\(.*?\)$/u', '', $name) ?? $name;
 
         return trim($name);
     }
