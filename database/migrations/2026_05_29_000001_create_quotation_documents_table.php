@@ -29,8 +29,8 @@ return new class extends Migration
             $table->bigInteger('discount')->default(0);
             $table->text('notes')->nullable();
             $table->text('terms')->nullable();
-            $table->string('docx_path')->nullable();
-            $table->string('pdf_path')->nullable();
+            $table->text('docx_path')->nullable();
+            $table->text('pdf_path')->nullable();
             $table->timestamps();
 
             $table->index('staff_id');

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quotations', function (Blueprint $table) {
-            $table->string('pdf_path')->nullable()->after('notes');
+            $table->text('pdf_path')->nullable()->after('notes');
         });
     }
 
