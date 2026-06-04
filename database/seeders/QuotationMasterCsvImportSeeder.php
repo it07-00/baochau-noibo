@@ -67,6 +67,21 @@ class QuotationMasterCsvImportSeeder extends Seeder
                 $totalValue = $this->parseMoney($row[10]);
                 $valueIncVat = $totalValue + $commissionValue;
 
+                $pdfPath = null;
+                $localPathsRaw = $this->nullIfEmpty($row[19]);
+                if ($localPathsRaw) {
+                    $paths = explode('|', $localPathsRaw);
+                    foreach ($paths as $pathPart) {
+                        $pathPart = trim($pathPart);
+                        if ($pathPart === '') {
+                            continue;
+                        }
+                        $fileName = basename($pathPart);
+                        $pdfPath = 'quotations/' . $fileName;
+                        break;
+                    }
+                }
+
                 Quotation::create([
                     'id' => $id,
                     'date' => $date,
@@ -88,7 +103,7 @@ class QuotationMasterCsvImportSeeder extends Seeder
                     'commission_tax' => $commissionTax,
                     'total_value' => $totalValue,
                     'notes' => $this->nullIfEmpty($row[11]),
-                    'pdf_path' => $this->nullIfEmpty($row[18]),
+                    'pdf_path' => $pdfPath,
                 ]);
 
                 $count++;

@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\File;
 
 class ImportQuotationFiles extends Command
 {
-    protected $signature = 'quotations:import-files {--dir=quotations : Thư mục chứa các file PDF báo giá} {--disk= : Disk để lưu file (mặc định lấy theo config UPLOAD_DISK)}';
+    protected $signature = 'quotations:import-files {--dir=quotations : Thư mục chứa các file PDF báo giá}';
 
-    protected $description = 'Import các file PDF báo giá từ thư mục local vào storage và liên kết với DB';
+    protected $description = 'Import các file PDF báo giá từ thư mục local vào public storage và liên kết với DB';
 
     public function handle(): int
     {
         $dir = $this->option('dir');
-        $disk = $this->option('disk') ?: config('filesystems.upload_disk', 'public');
+        $disk = 'public';
         
         // Resolve absolute path relative to base path
         $absolutePath = base_path($dir);
@@ -63,7 +63,7 @@ class ImportQuotationFiles extends Command
             // Define target path in public storage
             $targetPath = 'quotations/' . $fileName;
 
-            // Copy file to selected disk storage
+            // Copy file to public disk storage
             $copied = false;
             if (!Storage::disk($disk)->exists($targetPath)) {
                 Storage::disk($disk)->put($targetPath, file_get_contents($file->getRealPath()));
@@ -71,30 +71,17 @@ class ImportQuotationFiles extends Command
                 $copied = true;
             }
 
-            // Create record in quotation_files if it doesn't exist
-            $existsInDb = QuotationFile::where('quotation_id', $quotationId)
-                ->where('path', $targetPath)
-                ->exists();
-
-            if (!$existsInDb) {
-                QuotationFile::create([
-                    'quotation_id' => $quotationId,
-                    'path' => $targetPath,
-                    'original_name' => $fileName,
-                ]);
-                $linkedCount++;
-            }
-
-            // Clear remote pdf_path and update to local path
+            // Update pdf_path and clear remote link
             if ($quotation->pdf_path !== $targetPath) {
                 $quotation->update(['pdf_path' => $targetPath]);
+                $linkedCount++;
             }
 
             $this->line("  - Đã xử lý file: {$fileName} -> Báo giá ID: {$quotationId} (" . ($copied ? "Sao chép mới lên [{$disk}]" : "File đã tồn tại trên [{$disk}]") . ")");
         }
 
         $this->newLine();
-        $this->info("Hoàn thành: Đã copy {$copiedCount} file lên disk [{$disk}], đã liên kết {$linkedCount} bản ghi DB, bỏ qua/lỗi {$skippedCount} file.");
+        $this->info("Hoàn thành: Đã copy {$copiedCount} file lên disk [{$disk}], đã cập nhật pdf_path cho {$linkedCount} báo giá, bỏ qua/lỗi {$skippedCount} file.");
 
         return self::SUCCESS;
     }
