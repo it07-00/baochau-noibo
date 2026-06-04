@@ -28,9 +28,12 @@ class AccountLockFeatureTest extends TestCase
 
     public function test_active_user_can_login(): void
     {
+        $role = \Spatie\Permission\Models\Role::create(['name' => \App\Enums\Role::IT->value]);
+
         $user = User::factory()->create([
             'is_active' => true,
         ]);
+        $user->assignRole($role);
 
         $response = $this->post(route('login.attempt'), [
             'username' => $user->username,
