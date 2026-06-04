@@ -90,7 +90,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Thông báo nội bộ
     Route::get('thong-bao-noi-bo', \App\Livewire\Admin\InternalNotifications\InternalNotificationManager::class)
         ->name('internal-notifications.index')
-        ->middleware(Role::toMiddleware(Role::IT, Role::GIAM_DOC));
+        ->middleware(Role::toMiddleware(Role::IT));
 
     // Nhật ký công việc
     Route::get('nhat-ky-cong-viec', \App\Livewire\Admin\DailyReports\DailyReportManager::class)->name('daily-reports.index')->middleware(Permission::toMiddleware(Permission::DAILY_REPORTS_VIEW));
@@ -138,7 +138,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Theo dõi báo giá
     Route::get('theo-doi-bao-gia', \App\Livewire\Admin\Quotations\QuotationManager::class)
         ->name('quotation-tracking.index')
-        ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH, Role::GIAM_DOC)]);
+        ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);
 
     // Tạo Báo giá
     Route::prefix('tao-bao-gia')->name('quotation-docs.')->middleware(Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW))->group(function () {

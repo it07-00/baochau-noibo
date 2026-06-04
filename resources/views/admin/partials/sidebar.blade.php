@@ -203,7 +203,7 @@
                         </li>
                     @endif
 
-                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value]))
+                    @if (auth()->user()->hasRole(\App\Enums\Role::IT->value))
                         <li class="app-sidebar-menu-item">
                             <a href="{{ route('app.internal-notifications.index') }}"
                                 class="menu-link d-flex align-items-center {{ request()->routeIs('app.internal-notifications.*') ? 'active menu-current' : '' }}">
@@ -426,8 +426,8 @@
                                         <ul class="app-sidebar-submenu"
                                             style="display: {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'block' : 'none' }};">
                                             @foreach ($menu['children'] as $child)
-                                                @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
-                                                @continue($child === 'Tạo báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
+                                                @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles()]))
+                                                @continue($child === 'Tạo báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles()]))
                                                 @continue($child === 'Đăng ký mục tiêu doanh số' && !auth()->user()->hasAnyRole(\App\Enums\Role::salesRoles()))
 
                                                 <li>

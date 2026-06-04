@@ -63,6 +63,20 @@ class PermissionsSeeder extends Seeder
                 PermissionEnum::TECHNICAL_REQUESTS_VIEW->value,
                 PermissionEnum::MARKETING_REPORTS_VIEW->value,
                 PermissionEnum::MAIL_DELIVERY_ADMIN_VIEW->value,
+                // Phòng ban
+                PermissionEnum::DEPARTMENTS_VIEW->value, PermissionEnum::DEPARTMENTS_CREATE->value, PermissionEnum::DEPARTMENTS_EDIT->value, PermissionEnum::DEPARTMENTS_DELETE->value,
+                // Hợp đồng
+                PermissionEnum::CONTRACTS_WASTE_VIEW->value, PermissionEnum::CONTRACTS_WASTE_CREATE->value, PermissionEnum::CONTRACTS_WASTE_EDIT->value, PermissionEnum::CONTRACTS_WASTE_DELETE->value,
+                PermissionEnum::CONTRACTS_CONSULTING_VIEW->value, PermissionEnum::CONTRACTS_CONSULTING_CREATE->value, PermissionEnum::CONTRACTS_CONSULTING_EDIT->value, PermissionEnum::CONTRACTS_CONSULTING_DELETE->value,
+                PermissionEnum::CONTRACTS_PROJECT_VIEW->value, PermissionEnum::CONTRACTS_PROJECT_CREATE->value, PermissionEnum::CONTRACTS_PROJECT_EDIT->value, PermissionEnum::CONTRACTS_PROJECT_DELETE->value,
+                PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value, PermissionEnum::CONTRACTS_COMMERCIAL_CREATE->value, PermissionEnum::CONTRACTS_COMMERCIAL_EDIT->value, PermissionEnum::CONTRACTS_COMMERCIAL_DELETE->value,
+                PermissionEnum::CONTRACTS_SUSTAINABILITY_VIEW->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_CREATE->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_EDIT->value, PermissionEnum::CONTRACTS_SUSTAINABILITY_DELETE->value,
+                PermissionEnum::CONTRACTS_ENERGY_VIEW->value, PermissionEnum::CONTRACTS_ENERGY_CREATE->value, PermissionEnum::CONTRACTS_ENERGY_EDIT->value, PermissionEnum::CONTRACTS_ENERGY_DELETE->value,
+                // Lịch thanh toán
+                PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value, PermissionEnum::PAYMENT_SCHEDULES_DELETE->value,
+                // Kinh doanh
+                PermissionEnum::SALES_PROGRESSIVE_VIEW->value, PermissionEnum::SALES_PROGRESSIVE_CREATE->value, PermissionEnum::SALES_PROGRESSIVE_EDIT->value, PermissionEnum::SALES_PROGRESSIVE_DELETE->value,
+                PermissionEnum::QUOTATION_TRACKING_VIEW->value, PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
             ])->pluck('name')->toArray()
         );
 
@@ -88,6 +102,7 @@ class PermissionsSeeder extends Seeder
             // Tài chính
             PermissionEnum::COMMISSIONS_VIEW->value, PermissionEnum::COMMISSIONS_CREATE->value, PermissionEnum::COMMISSIONS_EDIT->value,
             PermissionEnum::ADVANCE_REQUESTS_VIEW->value, PermissionEnum::ADVANCE_REQUESTS_CREATE->value,
+            PermissionEnum::CASH_FLOW_VIEW->value,
             // Chuyển phát
             PermissionEnum::MAIL_DELIVERY_VIEW->value, PermissionEnum::MAIL_DELIVERY_CREATE->value, PermissionEnum::MAIL_DELIVERY_EDIT->value,
             // Thống kê & Báo cáo

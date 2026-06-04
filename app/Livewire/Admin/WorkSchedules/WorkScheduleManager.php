@@ -94,8 +94,8 @@ class WorkScheduleManager extends Component
     {
         $event = WorkSchedule::findOrFail($id);
 
-        // Only owner can edit
-        if ($event->user_id !== auth()->id()) {
+        // Only owner or GIAM_DOC / IT can edit
+        if ($event->user_id !== auth()->id() && !auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value])) {
             $this->dispatch('swal:error', ['message' => 'Bạn chỉ có thể chỉnh sửa sự kiện của mình.']);
             return;
         }
@@ -167,7 +167,7 @@ class WorkScheduleManager extends Component
                 ->values()
                 ->all();
 
-            if ($event->user_id !== auth()->id()) {
+            if ($event->user_id !== auth()->id() && !auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value])) {
                 abort(403, 'Bạn chỉ có thể chỉnh sửa sự kiện của mình.');
             }
 
@@ -253,7 +253,7 @@ class WorkScheduleManager extends Component
     {
         $event = WorkSchedule::findOrFail($id);
 
-        if ($event->user_id !== auth()->id()) {
+        if ($event->user_id !== auth()->id() && !auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value])) {
             $this->dispatch('swal:error', ['message' => 'Bạn chỉ có thể xóa sự kiện của mình.']);
             return;
         }
@@ -308,7 +308,7 @@ class WorkScheduleManager extends Component
             'color'       => $e->color,
             'user_name'   => $e->user->name ?? '',
             'department'  => $e->user->department->name ?? '',
-            'is_owner'    => $e->user_id === auth()->id(),
+            'is_owner'    => $e->user_id === auth()->id() || auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]),
             'is_past'     => $e->ends_at->lt(now()),
             'is_multi_day' => $e->end_date !== null && $e->end_date->ne($e->start_date),
             'participants' => $e->participants->map(fn($p) => $p->name)->join(', '),
