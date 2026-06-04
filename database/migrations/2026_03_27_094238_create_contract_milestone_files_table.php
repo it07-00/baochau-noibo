@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::dropIfExists('contract_milestone_files');
         Schema::create('contract_milestone_files', function (Blueprint $table) {
             $table->id();
-            $table->morphs('contract'); // contract_type, contract_id
-            $table->string('milestone'); // receiving, survey, processing, waiting_client, client_confirmed, finished
+            $table->string('contract_type', 100);
+            $table->unsignedBigInteger('contract_id');
+            $table->string('milestone', 50); // receiving, survey, processing, waiting_client, client_confirmed, finished
             $table->string('file_path');
             $table->string('original_name')->nullable();
             $table->unsignedBigInteger('uploader_id');
