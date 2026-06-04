@@ -126,11 +126,26 @@ class SalesTargetRegistration extends Component
         $contracts = collect();
 
         foreach ($this->contractModels as $modelClass) {
-            $rows = $modelClass::with('customer')
-                ->where('staff_id', $this->selectedStaffId)
-                ->whereYear('signed_at', $this->year)
-                ->whereMonth('signed_at', $this->viewMonth)
-                ->get()
+            $query = $modelClass::with('customer')
+                ->where('staff_id', $this->selectedStaffId);
+
+            if ($this->viewMonth === 1) {
+                $query->where(function ($q) {
+                    $q->where(function ($q1) {
+                        $q1->whereYear('signed_at', $this->year)
+                           ->whereMonth('signed_at', 1);
+                    })->orWhere(function ($q2) {
+                        $q2->whereYear('signed_at', 2025)
+                           ->whereNotNull('submitted_at')
+                           ->whereYear('submitted_at', $this->year);
+                    });
+                });
+            } else {
+                $query->whereYear('signed_at', $this->year)
+                      ->whereMonth('signed_at', $this->viewMonth);
+            }
+
+            $rows = $query->get()
                 ->map(fn($c) => [
                     'id'              => $c->id,
                     'model_idx'       => array_search($modelClass, $this->contractModels),
@@ -197,14 +212,30 @@ class SalesTargetRegistration extends Component
 
         foreach ($this->contractModels as $modelClass) {
             $rows = $modelClass::query()
-                ->whereYear('signed_at', $this->year)
                 ->where('staff_id', $this->selectedStaffId)
-                ->selectRaw('MONTH(signed_at) as m, SUM(revenue) as total')
-                ->groupBy('m')
+                ->where(function ($q) {
+                    $q->whereYear('signed_at', $this->year)
+                      ->orWhere(function ($q2) {
+                          $q2->whereYear('signed_at', 2025)
+                             ->whereNotNull('submitted_at')
+                             ->whereYear('submitted_at', $this->year);
+                      });
+                })
                 ->get();
 
             foreach ($rows as $r) {
-                $months[(int) $r->m]['actual'] += (float) $r->total;
+                $signedYear = $r->signed_at ? (int) $r->signed_at->format('Y') : 0;
+                if ($signedYear === $this->year) {
+                    $monthIdx = $r->signed_at ? (int) $r->signed_at->format('n') : 1;
+                } elseif ($signedYear === 2025) {
+                    $monthIdx = 1;
+                } else {
+                    $monthIdx = $r->signed_at ? (int) $r->signed_at->format('n') : 1;
+                }
+                
+                if ($monthIdx >= 1 && $monthIdx <= 12) {
+                    $months[$monthIdx]['actual'] += (float) $r->revenue;
+                }
             }
         }
 
