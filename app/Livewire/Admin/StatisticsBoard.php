@@ -657,14 +657,14 @@ class StatisticsBoard extends Component
         $quotedByService = Quotation::whereYear('date', $this->year)
             ->whereMonth('date', $insightMonth)
             ->selectRaw("COALESCE(NULLIF(TRIM(service), ''), 'Khác') as label, COUNT(*) as cnt")
-            ->groupByRaw("COALESCE(NULLIF(TRIM(service), ''), 'Khác')")
+            ->groupBy('label')
             ->pluck('cnt', 'label')
             ->toArray();
 
         $quotedByProvince = Quotation::whereYear('date', $this->year)
             ->whereMonth('date', $insightMonth)
             ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt")
-            ->groupByRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ')")
+            ->groupBy('label')
             ->pluck('cnt', 'label')
             ->toArray();
 
@@ -679,7 +679,7 @@ class StatisticsBoard extends Component
             $applyContractDateFilter($serviceQuery, $insightMonth, $dateColumn);
             $serviceRows = $serviceQuery
                 ->selectRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác') as label, COUNT(*) as cnt")
-                ->groupByRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác')")
+                ->groupBy('label')
                 ->get();
 
             foreach ($serviceRows as $row) {
@@ -691,7 +691,7 @@ class StatisticsBoard extends Component
             $applyContractDateFilter($provinceQuery, $insightMonth, $dateColumn);
             $provinceRows = $provinceQuery
                 ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt, COALESCE(SUM(revenue), 0) as rev")
-                ->groupByRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ')")
+                ->groupBy('label')
                 ->get();
 
             foreach ($provinceRows as $row) {
@@ -964,12 +964,7 @@ class StatisticsBoard extends Component
                     END as label,
                     COALESCE(SUM(revenue), 0) as total_rev
                 ")
-                ->groupByRaw("
-                    CASE
-                        WHEN is_renewal = 1 THEN 'TÁI KÝ'
-                        ELSE UPPER(TRIM(COALESCE(NULLIF(TRIM({$sourceField}), ''), 'KHÁC')))
-                    END
-                ")
+                ->groupBy('label')
                 ->get();
 
             foreach ($rows as $row) {
