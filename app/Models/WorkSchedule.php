@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['user_id', 'title', 'description', 'start_date', 'start_time', 'end_date', 'end_time', 'color'])]
+#[Fillable(['user_id', 'title', 'description', 'start_date', 'start_time', 'end_date', 'end_time', 'color', 'is_private'])]
 class WorkSchedule extends Model
 {
     /** @use HasFactory */
@@ -32,6 +32,7 @@ class WorkSchedule extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date'   => 'date',
+        'is_private' => 'boolean',
     ];
 
     public function user(): BelongsTo

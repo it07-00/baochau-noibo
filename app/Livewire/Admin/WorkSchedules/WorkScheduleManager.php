@@ -27,6 +27,7 @@ class WorkScheduleManager extends Component
     public string $endTime = '';
     public string $color = 'primary';
     public array $selectedParticipants = [];
+    public bool $isPrivate = false;
 
     // Modal state
     public bool $showFormModal = false;
@@ -114,6 +115,7 @@ class WorkScheduleManager extends Component
         $this->endDate     = $event->effective_end_date->format('Y-m-d');
         $this->endTime     = $event->formatted_end_time ?? '';
         $this->color       = $event->color;
+        $this->isPrivate   = (bool) $event->is_private;
         $this->selectedParticipants = $event->participants->pluck('id')->map(fn($id) => (string) $id)->toArray();
         $this->showFormModal = true;
     }
@@ -128,6 +130,7 @@ class WorkScheduleManager extends Component
             'endDate'   => 'nullable|date|after_or_equal:startDate',
             'endTime'   => 'nullable|date_format:H:i',
             'color'     => 'required|in:' . implode(',', array_keys(WorkSchedule::COLORS)),
+            'isPrivate' => 'boolean',
         ], [
             'title.required'          => 'Vui lòng nhập tiêu đề sự kiện.',
             'title.max'               => 'Tiêu đề không được vượt quá 255 ký tự.',
@@ -184,6 +187,7 @@ class WorkScheduleManager extends Component
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
                 'end_time'    => $endTime,
                 'color'       => $this->color,
+                'is_private'  => $this->isPrivate,
             ]);
             $event->participants()->sync($selectedParticipantIds);
             $addedParticipantIds = array_values(array_diff($selectedParticipantIds, $previousParticipantIds));
@@ -220,6 +224,7 @@ class WorkScheduleManager extends Component
                 'end_date'    => ($endDate && $endDate->ne($startDate)) ? $endDate : null,
                 'end_time'    => $endTime,
                 'color'       => $this->color,
+                'is_private'  => $this->isPrivate,
             ]);
             $selectedParticipantIds = collect($this->selectedParticipants)
                 ->map(fn ($id) => (int) $id)
@@ -285,7 +290,10 @@ class WorkScheduleManager extends Component
         $this->detailDate = $date;
         $parsed = Carbon::parse($date);
 
-        $events = WorkSchedule::with('user', 'user.department', 'participants')
+        $user = auth()->user();
+        $isGdOrIt = $user->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]);
+
+        $query = WorkSchedule::with('user', 'user.department', 'participants')
             ->where('start_date', '<=', $parsed)
             ->where(function ($q) use ($parsed) {
                 $q->where('end_date', '>=', $parsed)
@@ -293,8 +301,19 @@ class WorkScheduleManager extends Component
                       $q2->whereNull('end_date')
                          ->where('start_date', $parsed);
                   });
-            })
-            ->orderBy('start_date')
+            });
+
+        if (!$isGdOrIt) {
+            $query->where(function ($q) use ($user) {
+                $q->where('is_private', false)
+                  ->orWhere('user_id', $user->id)
+                  ->orWhereHas('participants', function ($pq) use ($user) {
+                      $pq->where('users.id', $user->id);
+                  });
+            });
+        }
+
+        $events = $query->orderBy('start_date')
             ->orderBy('start_time')
             ->get();
 
@@ -311,6 +330,7 @@ class WorkScheduleManager extends Component
             'is_owner'    => $e->user_id === auth()->id() || auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]),
             'is_past'     => $e->ends_at->lt(now()),
             'is_multi_day' => $e->end_date !== null && $e->end_date->ne($e->start_date),
+            'is_private'  => (bool) $e->is_private,
             'participants' => $e->participants->map(fn($p) => $p->name)->join(', '),
         ])->toArray();
 
@@ -340,6 +360,7 @@ class WorkScheduleManager extends Component
         $this->endDate     = '';
         $this->endTime     = '';
         $this->color       = 'primary';
+        $this->isPrivate   = false;
         $this->selectedParticipants = [(string) auth()->id()];
         $this->resetValidation();
     }
@@ -379,8 +400,11 @@ class WorkScheduleManager extends Component
         $monthStart = Carbon::create($this->yearFilter, $this->monthFilter, 1);
         $monthEnd   = $monthStart->copy()->endOfMonth();
 
+        $user = auth()->user();
+        $isGdOrIt = $user->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]);
+
         // Get all events that overlap with this month
-        $events = WorkSchedule::with('user', 'user.department', 'participants')
+        $query = WorkSchedule::with('user', 'user.department', 'participants')
             ->where(function ($query) use ($monthStart, $monthEnd) {
                 $query->where(function ($q) use ($monthStart, $monthEnd) {
                     // Events with end_date that overlap the month
@@ -392,8 +416,19 @@ class WorkScheduleManager extends Component
                     $q->whereNull('end_date')
                       ->whereBetween('start_date', [$monthStart, $monthEnd]);
                 });
-            })
-            ->orderBy('start_date')
+            });
+
+        if (!$isGdOrIt) {
+            $query->where(function ($q) use ($user) {
+                $q->where('is_private', false)
+                  ->orWhere('user_id', $user->id)
+                  ->orWhereHas('participants', function ($pq) use ($user) {
+                      $pq->where('users.id', $user->id);
+                  });
+            });
+        }
+
+        $events = $query->orderBy('start_date')
             ->orderBy('start_time')
             ->get();
 

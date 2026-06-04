@@ -313,6 +313,13 @@
                     @error('description') <span class="text-danger fs-85" >{{ $message }}</span> @enderror
                 </div>
 
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="isPrivateSwitch" wire:model="isPrivate">
+                        <label class="form-check-label fw-bold text-muted" for="isPrivateSwitch">Sự kiện riêng tư</label>
+                    </div>
+                </div>
+
                 <div class="mb-4">
                     <label class="form-label fw-bold text-muted"><i class="bi bi-people me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
                     <div class="border rounded-3 p-2 border-light-subtle" style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
