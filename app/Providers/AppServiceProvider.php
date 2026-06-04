@@ -14,6 +14,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Schema::defaultStringLength(191);
+
         \Illuminate\Support\Facades\Gate::before(function ($user) {
             if ($user->hasRole(Role::IT->value)) {
                 return true;
