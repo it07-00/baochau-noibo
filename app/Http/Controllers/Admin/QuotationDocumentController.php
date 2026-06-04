@@ -35,7 +35,7 @@ class QuotationDocumentController extends Controller
         $storagePath = $service->exportDocx($doc);
         $fileName = $service->downloadFileName($doc, 'docx');
 
-        return Storage::disk('spaces')->download($storagePath, $fileName);
+        return Storage::disk(config('filesystems.upload_disk', 'public'))->download($storagePath, $fileName);
     }
 
     public function exportPdf(int $id, QuotationDocumentExportService $service): \Illuminate\Http\Response

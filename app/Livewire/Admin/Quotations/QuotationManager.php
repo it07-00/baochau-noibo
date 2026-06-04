@@ -258,7 +258,7 @@ class QuotationManager extends Component
         $this->editingFiles = $quotation->files->map(fn ($f) => [
             'id'   => $f->id,
             'name' => $f->original_name,
-            'url'  => Storage::disk('spaces')->url($f->path),
+            'url'  => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
 
         $this->dispatch('open-files-modal');
@@ -282,7 +282,7 @@ class QuotationManager extends Component
         $this->authorizeQuotationAccess($quotation);
 
         foreach ($this->pdfFiles as $file) {
-            $path = $file->store('quotations', 'spaces');
+            $path = $file->store('quotations', config('filesystems.upload_disk', 'public'));
             $quotation->files()->create([
                 'path'          => $path,
                 'original_name' => $file->getClientOriginalName(),
@@ -293,7 +293,7 @@ class QuotationManager extends Component
         $this->editingFiles = $quotation->fresh('files')->files->map(fn ($f) => [
             'id'   => $f->id,
             'name' => $f->original_name,
-            'url'  => Storage::disk('spaces')->url($f->path),
+            'url'  => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
 
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã lưu file PDF.']);
@@ -318,7 +318,7 @@ class QuotationManager extends Component
         $this->editingFiles = $quotation->files->map(fn ($f) => [
             'id'   => $f->id,
             'name' => $f->original_name,
-            'url'  => Storage::disk('spaces')->url($f->path),
+            'url'  => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
         $this->recalculateTotals();
@@ -430,7 +430,7 @@ class QuotationManager extends Component
                 ]
             );
             foreach ($this->pdfFiles as $file) {
-                $path = $file->store('quotations', 'spaces');
+                $path = $file->store('quotations', config('filesystems.upload_disk', 'public'));
                 $quotation->files()->create([
                     'path'          => $path,
                     'original_name' => $file->getClientOriginalName(),
@@ -448,7 +448,7 @@ class QuotationManager extends Component
         $file = QuotationFile::with('quotation')->findOrFail($fileId);
         $this->authorizeQuotationAccess($file->quotation);
 
-        Storage::disk('spaces')->delete($file->path);
+        Storage::disk(config('filesystems.upload_disk', 'public'))->delete($file->path);
         $file->delete();
 
         $this->editingFiles = array_values(

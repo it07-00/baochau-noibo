@@ -306,7 +306,7 @@
                                         @if($selectedQuotation->files->isNotEmpty())
                                             <div class="d-flex flex-column gap-1">
                                                 @foreach($selectedQuotation->files as $f)
-                                                <a href="{{ Storage::disk('spaces')->url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
+                                                <a href="{{ Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
                                                     <i class="bi bi-file-earmark-pdf"></i>
                                                     <span class="text-truncate">{{ $f->original_name }}</span>
                                                 </a>

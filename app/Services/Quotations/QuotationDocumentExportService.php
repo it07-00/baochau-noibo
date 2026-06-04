@@ -44,7 +44,7 @@ class QuotationDocumentExportService
         $this->ensureDirectory(dirname($tempPath));
         $this->buildDocxFromTemplate($doc, $tempPath);
 
-        Storage::disk('spaces')->put($storagePath, file_get_contents($tempPath));
+        Storage::disk(config('filesystems.upload_disk', 'public'))->put($storagePath, file_get_contents($tempPath));
         $doc->update(['docx_path' => $storagePath]);
 
         @unlink($tempPath);
@@ -71,7 +71,7 @@ class QuotationDocumentExportService
                 : $this->generateFallbackPdfContent($doc);
 
             $storagePath = 'quotation-docs/'.$baseName.'.pdf';
-            Storage::disk('spaces')->put($storagePath, $content);
+            Storage::disk(config('filesystems.upload_disk', 'public'))->put($storagePath, $content);
             $doc->update(['pdf_path' => $storagePath]);
 
             return $storagePath;
