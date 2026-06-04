@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contract_assignments', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
+            try {
+                $table->dropForeign(['user_id']);
+            } catch (\Throwable $e) {
+                // Ignore if foreign key drop fails
+            }
             $table->unsignedBigInteger('user_id')->nullable()->change();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             
@@ -28,7 +32,11 @@ return new class extends Migration
         Schema::table('contract_assignments', function (Blueprint $table) {
             $table->dropColumn('external_assignee');
             
-            $table->dropForeign(['user_id']);
+            try {
+                $table->dropForeign(['user_id']);
+            } catch (\Throwable $e) {
+                // Ignore if foreign key drop fails
+            }
             $table->unsignedBigInteger('user_id')->nullable(false)->change();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });

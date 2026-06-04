@@ -23,8 +23,15 @@ return new class extends Migration
                 'contract_id'   => DB::raw('contract_waste_id'),
             ]);
 
+        try {
+            Schema::table('commission_requests', function (Blueprint $table) {
+                $table->dropForeign(['contract_waste_id']);
+            });
+        } catch (\Throwable $e) {
+            // Ignore if foreign key drop fails
+        }
+
         Schema::table('commission_requests', function (Blueprint $table) {
-            $table->dropForeign(['contract_waste_id']);
             $table->dropColumn('contract_waste_id');
         });
     }

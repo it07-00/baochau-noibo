@@ -18,7 +18,11 @@ return new class extends Migration
     {
         foreach ($this->tables as $table) {
             Schema::table($table, function (Blueprint $tbl) {
-                $tbl->dropForeign(['staff_id']);
+                try {
+                    $tbl->dropForeign(['staff_id']);
+                } catch (\Throwable $e) {
+                    // Ignore if foreign key drop fails
+                }
                 $tbl->unsignedBigInteger('staff_id')->nullable()->change();
                 $tbl->foreign('staff_id')->references('id')->on('users')->nullOnDelete();
             });
@@ -29,7 +33,11 @@ return new class extends Migration
     {
         foreach ($this->tables as $table) {
             Schema::table($table, function (Blueprint $tbl) {
-                $tbl->dropForeign(['staff_id']);
+                try {
+                    $tbl->dropForeign(['staff_id']);
+                } catch (\Throwable $e) {
+                    // Ignore if foreign key drop fails
+                }
                 $tbl->unsignedBigInteger('staff_id')->nullable(false)->change();
                 $tbl->foreign('staff_id')->references('id')->on('users');
             });
