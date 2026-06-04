@@ -7,6 +7,53 @@
 <script src="{{ asset('assets/js/ckeditor.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 
 <script>
+    // ── Bootstrap Modal Singleton & Backdrop Cleanup for Livewire ──
+    (function() {
+        if (window.bootstrap && window.bootstrap.Modal) {
+            const OriginalModal = window.bootstrap.Modal;
+            const ModalWrapper = function(element, config) {
+                return OriginalModal.getOrCreateInstance(element, config);
+            };
+            ModalWrapper.prototype = OriginalModal.prototype;
+            Object.setPrototypeOf(ModalWrapper, OriginalModal);
+            window.bootstrap.Modal = ModalWrapper;
+        }
+
+        function cleanupModalBackdrops() {
+            // Check if there are any visible/showing modals in the DOM (checking show class or block display style)
+            const openModals = Array.from(document.querySelectorAll('.modal')).filter(modal => {
+                return modal.classList.contains('show') || modal.style.display === 'block' || window.getComputedStyle(modal).display === 'block';
+            });
+            if (openModals.length === 0) {
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+            }
+        }
+
+        // Global listeners for standard Bootstrap modal hide/hidden events
+        document.addEventListener('hidden.bs.modal', cleanupModalBackdrops);
+        document.addEventListener('hide.bs.modal', cleanupModalBackdrops);
+
+        // Livewire Hooks for cleaning up during transitions & updates
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Livewire !== 'undefined') {
+                Livewire.hook('request', ({ fail, respond }) => {
+                    respond(() => {
+                        setTimeout(cleanupModalBackdrops, 300);
+                    });
+                });
+                document.addEventListener('livewire:navigating', () => {
+                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                });
+            }
+        });
+    })();
+
     // ── Strip diacritics helper (dùng cho Alpine x-show search) ──
     window.__strip = function(s) {
         return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
