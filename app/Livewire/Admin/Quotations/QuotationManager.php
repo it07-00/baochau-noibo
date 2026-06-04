@@ -463,7 +463,7 @@ class QuotationManager extends Component
         $this->authorizeQuotationAccess($quotation);
 
         if ($quotation->pdf_path) {
-            Storage::disk('public')->delete($quotation->pdf_path);
+            Storage::disk(config('filesystems.upload_disk', 'public'))->delete($quotation->pdf_path);
             $quotation->update(['pdf_path' => null]);
         }
 

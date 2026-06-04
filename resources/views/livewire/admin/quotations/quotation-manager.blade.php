@@ -156,7 +156,7 @@
                                     <i class="bi bi-eye fs-5"></i>
                                 </button>
                                 @if($item->pdf_path)
-                                <a href="{{ Storage::disk('public')->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
+                                <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
                                     <i class="bi bi-file-earmark-pdf fs-5"></i>
                                 </a>
                                 @elseif($item->files_count > 0)
