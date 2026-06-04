@@ -10,15 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'email_verified_at')) {
+        if (Schema::hasColumn('users', 'email_verified_at')) {
+            Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('email_verified_at');
-            }
+            });
+        }
 
-            if (Schema::hasColumn('users', 'email')) {
+        if (Schema::hasColumn('users', 'email')) {
+            Schema::table('users', function (Blueprint $table) {
+                // Drop the unique index before the column for SQLite compatibility
+                $table->dropUnique('users_email_unique');
                 $table->dropColumn('email');
-            }
-        });
+            });
+        }
     }
 
     /**

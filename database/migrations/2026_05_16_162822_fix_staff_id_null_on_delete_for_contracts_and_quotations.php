@@ -17,12 +17,15 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->tables as $table) {
-            Schema::table($table, function (Blueprint $tbl) {
-                try {
+            try {
+                Schema::table($table, function (Blueprint $tbl) {
                     $tbl->dropForeign(['staff_id']);
-                } catch (\Throwable $e) {
-                    // Ignore if foreign key drop fails
-                }
+                });
+            } catch (\Throwable $e) {
+                // Ignore if foreign key drop fails
+            }
+
+            Schema::table($table, function (Blueprint $tbl) {
                 $tbl->unsignedBigInteger('staff_id')->nullable()->change();
                 $tbl->foreign('staff_id')->references('id')->on('users')->nullOnDelete();
             });
@@ -32,12 +35,15 @@ return new class extends Migration
     public function down(): void
     {
         foreach ($this->tables as $table) {
-            Schema::table($table, function (Blueprint $tbl) {
-                try {
+            try {
+                Schema::table($table, function (Blueprint $tbl) {
                     $tbl->dropForeign(['staff_id']);
-                } catch (\Throwable $e) {
-                    // Ignore if foreign key drop fails
-                }
+                });
+            } catch (\Throwable $e) {
+                // Ignore if foreign key drop fails
+            }
+
+            Schema::table($table, function (Blueprint $tbl) {
                 $tbl->unsignedBigInteger('staff_id')->nullable(false)->change();
                 $tbl->foreign('staff_id')->references('id')->on('users');
             });

@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('contract_assignments', function (Blueprint $table) {
-            try {
+        try {
+            Schema::table('contract_assignments', function (Blueprint $table) {
                 $table->dropForeign(['user_id']);
-            } catch (\Throwable $e) {
-                // Ignore if foreign key drop fails
-            }
+            });
+        } catch (\Throwable $e) {
+            // Ignore if foreign key drop fails
+        }
+
+        Schema::table('contract_assignments', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable()->change();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            
             $table->string('external_assignee')->nullable()->after('user_id');
         });
     }
@@ -31,12 +33,17 @@ return new class extends Migration
     {
         Schema::table('contract_assignments', function (Blueprint $table) {
             $table->dropColumn('external_assignee');
-            
-            try {
+        });
+
+        try {
+            Schema::table('contract_assignments', function (Blueprint $table) {
                 $table->dropForeign(['user_id']);
-            } catch (\Throwable $e) {
-                // Ignore if foreign key drop fails
-            }
+            });
+        } catch (\Throwable $e) {
+            // Ignore if foreign key drop fails
+        }
+
+        Schema::table('contract_assignments', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable(false)->change();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });

@@ -26,6 +26,10 @@ return new class extends Migration
 
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return; // MODIFY COLUMN is not supported on SQLite
+        }
+
         foreach ($this->columns as $table => $cols) {
             if (Schema::hasTable($table)) {
                 foreach ($cols as $col) {
@@ -37,6 +41,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         foreach ($this->columns as $table => $cols) {
             if (Schema::hasTable($table)) {
                 foreach ($cols as $col) {
