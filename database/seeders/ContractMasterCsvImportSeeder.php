@@ -387,15 +387,7 @@ class ContractMasterCsvImportSeeder extends Seeder
 
     private function buildNote(array $data): ?string
     {
-        $parts = [
-            $this->nullIfEmpty($data['note']),
-            $this->nullIfEmpty($data['attachment_links']),
-            $this->nullIfEmpty($data['download_paths']),
-        ];
-
-        $parts = array_values(array_filter($parts, fn ($v) => $v !== null));
-
-        return $parts === [] ? null : implode("\n", $parts);
+        return $this->nullIfEmpty($data['note']);
     }
 
     private function detectWasteServiceType(?string $value): string
