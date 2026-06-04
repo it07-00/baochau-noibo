@@ -11,6 +11,7 @@
                         @endforeach
                     </select>
                 </div>
+                @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::TP_KINH_DOANH->value]))
                 <div class="col-md-4 col-lg-3">
                     <label class="form-label fw-semibold mb-1  text-muted">Nhân viên kinh doanh</label>
                     <select wire:model.live="filter_staff" class="form-select">
@@ -20,6 +21,7 @@
                         @endforeach
                     </select>
                 </div>
+                @endif
                 <div class="col-md-3 col-lg-2 ms-lg-auto">
                     <button type="button" wire:click="$refresh" class="btn btn-light border w-100">
                         <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
@@ -186,7 +188,7 @@
                 <div class="modal-body p-0">
                     @if(empty($detail))
                         <div class="text-center text-muted py-5">
-                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            <i class="bi bi-inbox d-block mb-3 text-muted" style="font-size: 3.5rem;"></i>
                             Không có hợp đồng nào
                         </div>
                     @else

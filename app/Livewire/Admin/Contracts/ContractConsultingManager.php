@@ -347,8 +347,10 @@ class ContractConsultingManager extends Component
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
         $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && ! $user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        if ($isRestrictedTpKd) {
+        if ($isRestrictedTpKd || $isRestrictedSales) {
             abort_if($doc->staff_id !== $user->id, 403);
         } else {
             abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
@@ -373,8 +375,10 @@ class ContractConsultingManager extends Component
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
         $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && ! $user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        if ($isRestrictedTpKd) {
+        if ($isRestrictedTpKd || $isRestrictedSales) {
             abort_if($doc->staff_id !== $user->id, 403);
         }
         abort_unless($user->can(Permission::CONTRACTS_CONSULTING_DELETE->value), 403);
@@ -457,6 +461,13 @@ class ContractConsultingManager extends Component
         $this->detailActiveTab = 'info';
         $this->selectedDoc = ContractLegal::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner', 'handler'])->find($id);
         if ($this->selectedDoc) {
+            $user = auth()->user();
+            $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+                && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            if ($isRestrictedSales && $this->selectedDoc->staff_id !== $user->id) {
+                $this->selectedDoc = null;
+                abort(403, 'Bạn không có quyền xem chi tiết hợp đồng này.');
+            }
             $this->reportNumber = $this->selectedDoc->report_number ?? '';
             $this->progressNotes = ContractProgressNote::where('contract_type', 'consulting')
                 ->where('contract_id', $id)
@@ -781,6 +792,7 @@ class ContractConsultingManager extends Component
                         });
                 });
             })
+            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 

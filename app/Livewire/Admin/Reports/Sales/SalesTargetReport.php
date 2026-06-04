@@ -10,6 +10,7 @@ use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\SalesTarget;
 use App\Models\User;
+use App\Enums\Role;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -41,15 +42,30 @@ class SalesTargetReport extends Component
     public function mount(): void
     {
         $this->year = (int) now()->format('Y');
-        // Default to all sales staff so report totals are not accidentally scoped to one person.
-        $this->filter_staff = '';
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+        } else {
+            $this->filter_staff = '';
+        }
     }
 
     public function openDetail(int $month): void
     {
         $this->filter_month = $month;
-        $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
-        $staffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+            $staffIds = [$user->id];
+        } else {
+            $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+            $staffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+        }
 
         $detail = collect();
         if (!empty($staffIds)) {
@@ -151,16 +167,24 @@ class SalesTargetReport extends Component
             $months[$m] = ['target' => 0, 'actual' => 0];
         }
 
-        $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
-        if (!empty($salesStaffIds)) {
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+            $targetStaffIds = [$user->id];
+            $staffs = User::where('id', $user->id)->get();
+        } else {
+            $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+            $targetStaffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+            $staffs = User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
+        }
+
+        if (!empty($targetStaffIds)) {
             foreach (SalesTarget::query()
                 ->where('year', $this->year)
-                ->when(
-                    $this->filter_staff !== '',
-                    fn($q) => $q->where('staff_id', $this->filter_staff),
-                    fn($q) => $q->whereIn('staff_id', $salesStaffIds)
-                )
+                ->whereIn('staff_id', $targetStaffIds)
                 ->selectRaw('month, SUM(target_amount) as total_target')
                 ->groupBy('month')
                 ->get() as $r) {
@@ -171,11 +195,7 @@ class SalesTargetReport extends Component
                 $rows = $modelClass::query()
                     ->whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
                     ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
-                    ->when(
-                        $this->filter_staff !== '',
-                        fn($q) => $q->where('staff_id', $this->filter_staff),
-                        fn($q) => $q->whereIn('staff_id', $salesStaffIds)
-                    )
+                    ->whereIn('staff_id', $targetStaffIds)
                     ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
@@ -195,7 +215,7 @@ class SalesTargetReport extends Component
         return view('livewire.admin.reports.sales.sales-target-report', [
             'months'    => $months,
             'totals'    => $totals,
-            'staffs'    => User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get(),
+            'staffs'    => $staffs,
             'years'     => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }

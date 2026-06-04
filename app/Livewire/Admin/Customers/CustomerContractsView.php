@@ -14,6 +14,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Enums\Role;
 
 class CustomerContractsView extends Component
 {
@@ -117,6 +118,13 @@ class CustomerContractsView extends Component
         $contract = $modelClass::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
         if (!$contract || (int)$contract->customer_id !== $this->customer->id) return;
 
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        if ($isRestrictedSales && $contract->staff_id !== $user->id) {
+            abort(403, 'Bạn không có quyền xem chi tiết hợp đồng này.');
+        }
+
         $typeLabels = [
             'waste'          => 'Chất thải',
             'consulting'     => 'Quan trắc và hồ sơ môi trường',
@@ -183,10 +191,15 @@ class CustomerContractsView extends Component
         $all = collect();
 
         foreach ($types as $type) {
+            $user = auth()->user();
+            $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+                && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+
             $rows = $type['model']::query()
                 ->where('customer_id', $this->customer->id)
                 ->when($this->dateFrom, fn ($q) => $q->whereDate('signed_at', '>=', $this->dateFrom))
                 ->when($this->dateTo,   fn ($q) => $q->whereDate('signed_at', '<=', $this->dateTo))
+                ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
                 ->with('handler')
                 ->get()
                 ->map(fn ($contract) => (object) [

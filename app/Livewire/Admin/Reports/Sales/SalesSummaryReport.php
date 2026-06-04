@@ -9,6 +9,7 @@ use App\Models\ContractTechnical;
 use App\Models\ContractSustainability;
 use App\Models\ContractWaste;
 use App\Models\User;
+use App\Enums\Role;
 use Livewire\Component;
 
 class SalesSummaryReport extends Component
@@ -38,6 +39,12 @@ class SalesSummaryReport extends Component
     public function mount(): void
     {
         $this->year = (int) now()->format('Y');
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+        }
     }
 
     public function render()
@@ -53,8 +60,19 @@ class SalesSummaryReport extends Component
             ];
         }
 
-        $salesStaffIds  = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
-        $targetStaffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+            $targetStaffIds = [$user->id];
+            $staffs = User::where('id', $user->id)->get();
+        } else {
+            $salesStaffIds  = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+            $targetStaffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+            $staffs = User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
+        }
 
         if (!empty($targetStaffIds)) {
             foreach ($this->contractModelClasses as $modelClass) {
@@ -126,7 +144,7 @@ class SalesSummaryReport extends Component
             $detail = $detail->sortByDesc('date')->values();
         }
 
-        $staffs = User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
+        // $staffs is already calculated above based on role restriction.
 
         return view('livewire.admin.reports.sales.sales-summary-report', [
             'months'  => $months,

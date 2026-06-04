@@ -5,21 +5,23 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 ">Năm</label>
-                    <select wire:model.live="year" class="form-select form-select-sm">
+                    <select wire:model.live="year" class="form-select form-select-sm" style="font-size: 0.85rem;">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
+                @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::TP_KINH_DOANH->value]))
                 <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1 ">Nhân viên</label>
-                    <select wire:model.live="filter_staff" class="form-select form-select-sm">
+                    <select wire:model.live="filter_staff" class="form-select form-select-sm" style="font-size: 0.85rem;">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
                 </div>
+                @endif
             </div>
         </div>
     </div>
@@ -117,7 +119,7 @@
                 @endif
             </h6>
             <div class="w-min-160px">
-                <select wire:model.live="filter_month" class="form-select form-select-sm">
+                <select wire:model.live="filter_month" class="form-select form-select-sm" style="font-size: 0.85rem;">
                     <option value="0">-- Chọn tháng --</option>
                     @for($m = 1; $m <= 12; $m++)
                         <option value="{{ $m }}">Tháng {{ $m }}</option>
@@ -128,7 +130,7 @@
         <div class="card-body p-0">
             @if($filter_month === 0)
                 <div class="text-center text-muted py-5">
-                    <i class="bi bi-calendar3 fs-2 d-block mb-2"></i>
+                    <i class="bi bi-calendar3 d-block mb-3 text-muted" style="font-size: 3.5rem;"></i>
                     Chọn tháng để xem danh sách hợp đồng
                 </div>
             @elseif($detail->isEmpty())
