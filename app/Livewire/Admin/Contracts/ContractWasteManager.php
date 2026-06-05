@@ -246,7 +246,7 @@ class ContractWasteManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
             return;
@@ -315,8 +315,7 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
-
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         } else {
@@ -342,8 +341,7 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
-
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($isRestrictedTpKd) {
             abort_if($doc->staff_id !== $user->id, 403);
         }
@@ -369,7 +367,7 @@ class ContractWasteManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $deletedCount = 0;
         $skippedCount = 0;
 
@@ -473,18 +471,14 @@ class ContractWasteManager extends Component
 
     public function canManageOwnedDoc($doc): bool
     {
-        return !auth()->user()->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === auth()->id();
+        return true;
     }
 
     public function canUpdateStatusForDoc($doc): bool
     {
         $currentUser = auth()->user();
-        $isRestrictedTpKd =
-            $currentUser->hasRole(Role::TP_KINH_DOANH->value) &&
-            !$currentUser->hasAnyRole([Role::GIAM_DOC->value]);
 
-        return !$currentUser->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
-            && (!$isRestrictedTpKd || $doc->staff_id === $currentUser->id);
+        return !$currentUser->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
     }
 
     public function workflowProgressMeta($doc): array

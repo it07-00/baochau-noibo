@@ -243,7 +243,7 @@ class ContractConsultingManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && ! $user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
 
@@ -346,7 +346,7 @@ class ContractConsultingManager extends Component
     {
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && ! $user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
@@ -374,7 +374,7 @@ class ContractConsultingManager extends Component
     {
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && ! $user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
@@ -423,7 +423,7 @@ class ContractConsultingManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && ! $user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $deletedCount = 0;
         $skippedCount = 0;
 
@@ -911,15 +911,12 @@ class ContractConsultingManager extends Component
     {
         $user = auth()->user();
 
-        return ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
-            && (! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id);
+        return ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
     }
 
     public function canManageOwnedDoc(ContractLegal $doc): bool
     {
-        $user = auth()->user();
-
-        return ! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id;
+        return true;
     }
 
     public function updateInlineReportNumber(int $docId, ?string $value): void

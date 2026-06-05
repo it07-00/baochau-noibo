@@ -250,7 +250,7 @@ abstract class AbstractContractGenericManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($this->isEditing && ($isRestrictedTpKd || $isRestrictedSales) && $this->selectedDoc->staff_id !== $user->id) {
@@ -356,7 +356,7 @@ abstract class AbstractContractGenericManager extends Component
         $doc        = $modelClass::findOrFail($id);
         $user       = auth()->user();
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedTpKd || $isRestrictedSales) {
@@ -385,7 +385,7 @@ abstract class AbstractContractGenericManager extends Component
         $doc        = $modelClass::findOrFail($id);
         $user       = auth()->user();
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedTpKd || $isRestrictedSales) {
@@ -433,7 +433,7 @@ abstract class AbstractContractGenericManager extends Component
             return;
         }
 
-        $isRestrictedTpKd = $user->hasRole(Role::TP_KINH_DOANH->value) && !$user->hasAnyRole([Role::GIAM_DOC->value]);
+        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $deletedCount     = 0;
         $skippedCount     = 0;
 
@@ -519,15 +519,12 @@ abstract class AbstractContractGenericManager extends Component
     {
         $user = auth()->user();
 
-        return ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
-            && (! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id);
+        return ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
     }
 
     public function canManageOwnedDoc($doc): bool
     {
-        $user = auth()->user();
-
-        return ! $user->hasRole(Role::TP_KINH_DOANH->value) || $doc->staff_id === $user->id;
+        return true;
     }
 
     public function statusColorForDoc($doc): array
