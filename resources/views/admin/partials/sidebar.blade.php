@@ -426,7 +426,7 @@
                                         <ul class="app-sidebar-submenu"
                                             style="display: {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'block' : 'none' }};">
                                             @foreach ($menu['children'] as $child)
-                                                @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles()]))
+                                                @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
                                                 @continue($child === 'Tạo báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles()]))
                                                 @continue($child === 'Đăng ký mục tiêu doanh số' && !auth()->user()->hasAnyRole(\App\Enums\Role::salesRoles()))
 

@@ -76,7 +76,7 @@ class PermissionsSeeder extends Seeder
                 PermissionEnum::PAYMENT_SCHEDULES_VIEW->value, PermissionEnum::PAYMENT_SCHEDULES_CREATE->value, PermissionEnum::PAYMENT_SCHEDULES_EDIT->value, PermissionEnum::PAYMENT_SCHEDULES_DELETE->value,
                 // Kinh doanh
                 PermissionEnum::SALES_PROGRESSIVE_VIEW->value, PermissionEnum::SALES_PROGRESSIVE_CREATE->value, PermissionEnum::SALES_PROGRESSIVE_EDIT->value, PermissionEnum::SALES_PROGRESSIVE_DELETE->value,
-                PermissionEnum::QUOTATION_TRACKING_VIEW->value, PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
+                PermissionEnum::QUOTATION_TRACKING_CREATE->value, PermissionEnum::QUOTATION_TRACKING_EDIT->value, PermissionEnum::QUOTATION_TRACKING_DELETE->value,
             ])->pluck('name')->toArray()
         );
 

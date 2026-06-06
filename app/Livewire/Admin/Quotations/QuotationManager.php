@@ -266,6 +266,8 @@ class QuotationManager extends Component
 
     public function saveFiles(): void
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
         if (empty($this->pdfFiles)) {
             return;
         }
@@ -301,6 +303,8 @@ class QuotationManager extends Component
 
     public function create()
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_CREATE->value), 403);
+
         $this->resetForm();
         $this->isEditing = false;
         $this->isDuplicating = false;
@@ -309,6 +313,8 @@ class QuotationManager extends Component
 
     public function edit($id)
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
         $quotation = Quotation::findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
 
@@ -329,6 +335,8 @@ class QuotationManager extends Component
 
     public function duplicate($id)
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_CREATE->value), 403);
+
         $quotation = Quotation::findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
 
@@ -354,6 +362,8 @@ class QuotationManager extends Component
 
     public function selectContractType($id)
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
         $quotation = Quotation::findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
 
@@ -363,6 +373,8 @@ class QuotationManager extends Component
 
     public function convertTo($type)
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
         $route = match($type) {
             'waste'          => 'app.contracts.waste.index',
             'consulting'     => 'app.contracts.consulting.index',
@@ -445,6 +457,8 @@ class QuotationManager extends Component
 
     public function deleteFile(int $fileId): void
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
         $file = QuotationFile::with('quotation')->findOrFail($fileId);
         $this->authorizeQuotationAccess($file->quotation);
 
@@ -459,6 +473,8 @@ class QuotationManager extends Component
 
     public function deletePdf(int $id): void
     {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
         $quotation = Quotation::findOrFail($id);
         $this->authorizeQuotationAccess($quotation);
 

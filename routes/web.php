@@ -138,11 +138,13 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Theo dõi báo giá
     Route::get('theo-doi-bao-gia', \App\Livewire\Admin\Quotations\QuotationManager::class)
         ->name('quotation-tracking.index')
-        ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);
+        ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH, Role::GIAM_DOC)]);
 
     // Tạo Báo giá
     Route::prefix('tao-bao-gia')->name('quotation-docs.')->middleware(Permission::toMiddleware(Permission::QUOTATION_TRACKING_VIEW))->group(function () {
-        Route::get('/', \App\Livewire\Admin\QuotationDocuments\QuotationDocumentManager::class)->name('index');
+        Route::get('/', \App\Livewire\Admin\QuotationDocuments\QuotationDocumentManager::class)
+            ->name('index')
+            ->middleware([Permission::toMiddleware(Permission::QUOTATION_TRACKING_CREATE), Role::toMiddleware(Role::KINH_DOANH, Role::TP_KINH_DOANH)]);
         Route::get('/{id}/xuat-word', [\App\Http\Controllers\Admin\QuotationDocumentController::class, 'exportWord'])->name('export-word');
         Route::get('/{id}/xuat-pdf', [\App\Http\Controllers\Admin\QuotationDocumentController::class, 'exportPdf'])->name('export-pdf');
     });

@@ -10,6 +10,7 @@
             </nav>
         </div>
         <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
+            @can('quotation-tracking.create')
             <button class="btn btn-success btn-sm d-flex align-items-center gap-1" wire:click="create">
                 <i class="bi bi-plus-lg"></i> Thêm mới
             </button>
@@ -18,6 +19,7 @@
                     data-bs-toggle="modal" data-bs-target="#importModal">
                 <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
             </button>
+            @endcan
             <div class="input-group w-230px" >
                 <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
                 <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
@@ -88,9 +90,9 @@
                         <th class="text-end w-100px" >Hoa hồng KH</th>
                         <th class="text-end w-85px" >Thuế HH</th>
                         <th class="text-end fw-bold w-120px" >Giá trị HĐ</th>
-                        @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
+                        @can('quotation-tracking.view')
                         <th class="text-center pe-3 w-110px" >#</th>
-                        @endcanany
+                        @endcan
                     </tr>
                 </thead>
                 <tbody>
@@ -149,7 +151,7 @@
                         <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value, 0, ',', '.') : '-' }}</td>
                         <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax, 0, ',', '.') : '-' }}</td>
                         <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}</td>
-                        @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
+                        @can('quotation-tracking.view')
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
@@ -165,9 +167,11 @@
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
                                 </button>
                                 @else
+                                @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
                                     <i class="bi bi-file-earmark-pdf fs-5"></i>
                                 </button>
+                                @endcan
                                 @endif
                                 @if($item->quotationDocuments->first())
                                 <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
@@ -194,7 +198,7 @@
                                 @endcan
                             </div>
                         </td>
-                        @endcanany
+                        @endcan
                     </tr>
                     @empty
                     <tr>
@@ -473,20 +477,24 @@
                                         <div class="d-flex align-items-center gap-2 border rounded px-2 py-1">
                                             <i class="bi bi-file-earmark-pdf text-danger"></i>
                                             <a href="{{ $ef['url'] }}" target="_blank" class="text-truncate flex-grow-1 small text-danger">{{ $ef['name'] }}</a>
+                                            @can('quotation-tracking.edit')
                                             <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteFile({{ $ef['id'] }})" wire:confirm="Xóa file này?">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
+                                            @endcan
                                         </div>
                                         @endforeach
                                     </div>
                                 @endif
 
+                                @canany(['quotation-tracking.create', 'quotation-tracking.edit'])
                                 <input type="file" class="form-control" wire:model="pdfFiles" accept=".pdf" multiple>
                                 <div wire:loading wire:target="pdfFiles" class="text-primary mt-1 small">
                                     <span class="spinner-border spinner-border-sm me-1"></span> Đang tải...
                                 </div>
                                 <div class="form-text">Chỉ chấp nhận file PDF, tối đa 50MB mỗi file. Có thể chọn nhiều file cùng lúc.</div>
                                 @error('pdfFiles.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                @endcanany
                             </div>
                         </div>
                     </div>
@@ -517,9 +525,11 @@
                             <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
                                 <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
                                 <a href="{{ $ef['url'] }}" target="_blank" class="text-truncate flex-grow-1 small text-danger fw-semibold text-decoration-none">{{ $ef['name'] }}</a>
+                                @can('quotation-tracking.edit')
                                 <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteFile({{ $ef['id'] }})" wire:confirm="Xóa file này?">
                                     <i class="bi bi-trash fs-5"></i>
                                 </button>
+                                @endcan
                             </div>
                             @endforeach
                         </div>
@@ -527,6 +537,7 @@
                         <p class="text-muted small mb-3">Chưa có file nào.</p>
                     @endif
 
+                    @can('quotation-tracking.edit')
                     @if(count($pdfFiles) > 0)
                         <div class="d-flex flex-column gap-1 mb-3">
                             <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($pdfFiles) }} file):</p>
@@ -546,13 +557,16 @@
                     </div>
                     <div class="form-text">Tối đa 50MB mỗi file. Có thể chọn nhiều file cùng lúc.</div>
                     @error('pdfFiles.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    @endcan
                 </div>
                 <div class="modal-footer bg-light px-4 py-3">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    @can('quotation-tracking.edit')
                     <button type="button" class="btn btn-primary" wire:click="saveFiles" wire:loading.attr="disabled" wire:target="saveFiles">
                         <span wire:loading wire:target="saveFiles" class="spinner-border spinner-border-sm me-2"></span>
                         Lưu file
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
