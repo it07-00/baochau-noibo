@@ -63,12 +63,12 @@ jobs:
       - name: Deploy to iNET VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
+          host: 202.92.5.66
+          username: gijjbknkhosting
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
+          port: 22
           script: |
-            cd ${{ secrets.PROJECT_PATH }}
+            cd /home/gijjbknkhosting/domains/noibobaochau
             git pull origin main
             composer install --no-dev --optimize-autoloader --no-interaction
             npm install
