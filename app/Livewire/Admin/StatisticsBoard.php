@@ -980,6 +980,57 @@ class StatisticsBoard extends Component
             'datasets' => array_values($sourceSalesMap),
         ];
 
+        // ── Dữ liệu cho Bảng Tổng quan vận hành mới ──
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+        $workScheduleWeekCount = WorkSchedule::query()
+            ->where($applyWorkScheduleScope)
+            ->where(function($q) use ($startOfWeek, $endOfWeek) {
+                $q->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                  ->orWhereBetween('end_date', [$startOfWeek, $endOfWeek]);
+            })
+            ->count();
+
+        $reportingUsersCount = User::where('is_active', true)
+            ->whereDoesntHave('roles', fn($q) => $q->where('name', RoleEnum::GIAM_DOC->value))
+            ->count();
+        
+        $reportedTodayCount = DailyReport::whereDate('date', today())
+            ->whereHas('user', fn($q) => $q->where('is_active', true)->whereDoesntHave('roles', fn($qr) => $qr->where('name', RoleEnum::GIAM_DOC->value)))
+            ->distinct('user_id')
+            ->count();
+
+        $unreportedTodayCount = max(0, $reportingUsersCount - $reportedTodayCount);
+        $dailyReportRate = $reportingUsersCount > 0 ? round(($reportedTodayCount / $reportingUsersCount) * 100) : 0;
+
+        $upcomingSchedules = WorkSchedule::query()
+            ->where($applyWorkScheduleScope)
+            ->whereDate('start_date', '>=', today())
+            ->with('user:id,name')
+            ->orderBy('start_date')
+            ->orderBy('start_time')
+            ->take(5)
+            ->get();
+
+        $latestReports = DailyReport::query()
+            ->with('user:id,name')
+            ->latest('date')
+            ->latest('created_at')
+            ->take(5)
+            ->get();
+
+        $dashboardRoleDistribution = Role::withCount(['users' => fn($q) => $q->where('is_active', true)])
+            ->get()
+            ->map(fn($r) => [
+                'name' => $r->display_name ?: $r->name,
+                'count' => $r->users_count,
+            ])
+            ->filter(fn($r) => $r['count'] > 0)
+            ->values()
+            ->toArray();
+
+        $totalActiveUsersCount = User::where('is_active', true)->count();
+
         return view('livewire.admin.statistics-board', compact(
             'totalCustomers', 'totalContracts', 'totalContractValue', 'totalSales',
             'totalRevenue', 'totalPaymentDue', 'totalPaymentPaid',
@@ -989,7 +1040,9 @@ class StatisticsBoard extends Component
             'isIT', 'itStats', 'envData', 'dailyReportReminder', 'needsAction', 'needsActionTotal',
             'workScheduleSummary', 'workScheduleRecentItems', 'workScheduleHasTime',
             'insightMonth', 'serviceInsightChart', 'regionInsightChart',
-            'sourceSalesChart'
+            'sourceSalesChart',
+            'workScheduleWeekCount', 'reportedTodayCount', 'unreportedTodayCount', 'dailyReportRate',
+            'upcomingSchedules', 'latestReports', 'dashboardRoleDistribution', 'totalActiveUsersCount'
         ))->layout('admin.layouts.app');
     }
 }
