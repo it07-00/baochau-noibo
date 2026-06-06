@@ -24,6 +24,7 @@ return new class extends Migration
         'rankings.view', 'statistics.view', 'reports.view', 'reports-sales.view',
         'internal-docs.view',
         'daily-reports.view', 'daily-reports.create', 'daily-reports.edit',
+        'marketing-reports.view',
     ];
 
     private array $tpkdPermissions = [
