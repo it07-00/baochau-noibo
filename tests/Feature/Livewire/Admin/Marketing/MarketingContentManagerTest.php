@@ -1,0 +1,79 @@
+<?php
+
+namespace Tests\Feature\Livewire\Admin\Marketing;
+
+use App\Enums\Permission as PermissionEnum;
+use App\Enums\Role as RoleEnum;
+use App\Models\Department;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Tests\TestCase;
+
+class MarketingContentManagerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private User $salesUser;
+    private User $accountantUser;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clear Spatie permission cache
+        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // Seed roles & permissions
+        foreach (RoleEnum::cases() as $roleEnum) {
+            Role::findOrCreate($roleEnum->value);
+        }
+
+        $salesRole = Role::findByName(RoleEnum::KINH_DOANH->value);
+        $accountantRole = Role::findByName(RoleEnum::KE_TOAN->value);
+
+        foreach (PermissionEnum::cases() as $perm) {
+            Permission::findOrCreate($perm->value);
+        }
+
+        // Give KINH_DOANH necessary permissions including marketing-reports.view
+        $salesRole->syncPermissions([
+            PermissionEnum::MARKETING_REPORTS_VIEW->value,
+        ]);
+
+        $dept = Department::firstOrCreate(
+            ['slug' => 'kinh-doanh'],
+            ['name' => 'Phòng Kinh Doanh']
+        );
+
+        $this->salesUser = User::factory()->create([
+            'is_active' => true,
+            'department_id' => $dept->id,
+        ]);
+        $this->salesUser->assignRole($salesRole);
+
+        $this->accountantUser = User::factory()->create([
+            'is_active' => true,
+        ]);
+        $this->accountantUser->assignRole($accountantRole);
+    }
+
+    public function test_sales_user_can_access_marketing_content_page(): void
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('app.marketing.content.index'));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_unauthorized_user_cannot_access_marketing_content_page(): void
+    {
+        $this->actingAs($this->accountantUser);
+
+        $response = $this->get(route('app.marketing.content.index'));
+
+        $response->assertStatus(403);
+    }
+}

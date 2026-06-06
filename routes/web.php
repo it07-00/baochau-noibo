@@ -101,7 +101,7 @@ Route::middleware(['auth', 'active'])->name('app.')->group(function () {
     // Kế hoạch content Marketing
     Route::get('marketing/ke-hoach-content', \App\Livewire\Admin\Marketing\MarketingContentManager::class)
         ->name('marketing.content.index')
-        ->middleware(Role::toMiddleware(Role::MARKETING, Role::TP_KINH_DOANH, Role::GIAM_DOC, Role::IT));
+        ->middleware(Role::toMiddleware(Role::MARKETING, Role::TP_KINH_DOANH, Role::KINH_DOANH, Role::GIAM_DOC, Role::IT));
 
     // Hoa hồng
     Route::prefix('hoa-hong')->name('commissions.')->middleware(Permission::toMiddleware(Permission::COMMISSIONS_VIEW))->group(function () {

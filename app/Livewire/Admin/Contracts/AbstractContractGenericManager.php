@@ -350,6 +350,7 @@ abstract class AbstractContractGenericManager extends Component
             }
         }
 
+        $this->showModal = false;
         $this->dispatch('closeFormModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Lưu hợp đồng thành công!']);
         $this->resetForm();

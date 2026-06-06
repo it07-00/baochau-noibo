@@ -145,6 +145,8 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày: chỉ xem của mình + tạo/sửa
             PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
+            // Báo cáo Marketing hàng ngày: chỉ xem
+            PermissionEnum::MARKETING_REPORTS_VIEW->value,
         ]);
 
         // ------------------------------------------------
