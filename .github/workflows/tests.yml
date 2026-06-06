@@ -60,21 +60,46 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to iNET VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          host: 202.92.5.66
-          username: gijjbknkhosting
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 65333
-          script: |
-            cd /home/gijjbknkhosting/domains/noibobaochau
-            git pull origin main
-            composer install --no-dev --optimize-autoloader --no-interaction
-            npm install
-            npm run build
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan queue:restart
+          fetch-depth: 2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, gd
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install npm dependencies & Build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Clean build tools
+        run: rm -rf node_modules
+
+      - name: Deploy to iNET Hosting via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: 202.92.5.66
+          username: lamtruongdz2000
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/tests/**
+            **/node_modules/**
