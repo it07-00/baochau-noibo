@@ -15,7 +15,7 @@ return [
 
     'name' => env('APP_NAME', 'Môi trường Bảo Châu'),
     'version' => env('APP_VERSION', '1.0.0'),
-    'default_password' => env('DEFAULT_USER_PASSWORD') ?? throw new \RuntimeException('DEFAULT_USER_PASSWORD is not set in .env'),
+    'default_password' => env('DEFAULT_USER_PASSWORD') ?? (file_exists(base_path('.env')) ? throw new \RuntimeException('DEFAULT_USER_PASSWORD is not set in .env') : 'moitruongbaochau789'),
 
     /*
     |--------------------------------------------------------------------------
