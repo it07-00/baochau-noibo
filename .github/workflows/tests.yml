@@ -66,7 +66,7 @@ jobs:
           host: 202.92.5.66
           username: gijjbknkhosting
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
+          port: 65333
           script: |
             cd /home/gijjbknkhosting/domains/noibobaochau
             git pull origin main
