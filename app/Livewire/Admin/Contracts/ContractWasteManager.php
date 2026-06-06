@@ -200,7 +200,11 @@ class ContractWasteManager extends Component
 
     public function edit($id)
     {
-        abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_EDIT->value), 403);
+        $user = auth()->user();
+        if (!$user || !$user->can(Permission::CONTRACTS_WASTE_EDIT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+            return;
+        }
         $doc = ContractWaste::with(['assignments.user'])->findOrFail($id);
         $this->selectedDoc = $doc;
         $this->formData = $doc->toArray();
@@ -218,7 +222,11 @@ class ContractWasteManager extends Component
 
     public function duplicate($id): void
     {
-        abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_CREATE->value), 403);
+        $user = auth()->user();
+        if (!$user || !$user->can(Permission::CONTRACTS_WASTE_CREATE->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+            return;
+        }
         $doc = ContractWaste::findOrFail($id);
         $this->resetForm();
         $this->formData = $doc->toArray();
@@ -315,13 +323,26 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
+        if (!$user) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+            return;
+        }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($isRestrictedTpKd) {
-            abort_if($doc->staff_id !== $user->id, 403);
+            if ((int) $doc->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng này.']);
+                return;
+            }
         } else {
-            abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
+            if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng.']);
+                return;
+            }
         }
-        abort_unless($user->can(Permission::CONTRACTS_WASTE_EDIT->value), 403);
+        if (!$user->can(Permission::CONTRACTS_WASTE_EDIT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng.']);
+            return;
+        }
 
         if (!in_array($status, self::ALLOWED_STATUSES, true)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Trạng thái không hợp lệ!']);
@@ -341,11 +362,21 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
+        if (!$user) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+            return;
+        }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($isRestrictedTpKd) {
-            abort_if($doc->staff_id !== $user->id, 403);
+            if ((int) $doc->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng này.']);
+                return;
+            }
         }
-        abort_unless($user->can(Permission::CONTRACTS_WASTE_DELETE->value), 403);
+        if (!$user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+            return;
+        }
 
         $doc->delete();
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
@@ -354,7 +385,10 @@ class ContractWasteManager extends Component
     public function bulkDeleteSelected()
     {
         $user = auth()->user();
-        abort_unless($user->can(Permission::CONTRACTS_WASTE_DELETE->value), 403);
+        if (!$user || !$user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+            return;
+        }
 
         $selectedIds = collect($this->selectedDocIds)
             ->map(static fn($id) => (int) $id)

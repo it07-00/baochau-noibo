@@ -218,7 +218,11 @@ class ContractConsultingManager extends Component
 
     public function edit(int $id): void
     {
-        abort_unless(auth()->user()->can(Permission::CONTRACTS_CONSULTING_EDIT->value), 403);
+        $user = auth()->user();
+        if (!$user || !$user->can(Permission::CONTRACTS_CONSULTING_EDIT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+            return;
+        }
         $this->selectedDoc = ContractLegal::with(['assignments.user'])->findOrFail($id);
         $this->formData = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
@@ -346,16 +350,29 @@ class ContractConsultingManager extends Component
     {
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
+        if (!$user) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+            return;
+        }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         if ($isRestrictedTpKd || $isRestrictedSales) {
-            abort_if($doc->staff_id !== $user->id, 403);
+            if ((int) $doc->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng này.']);
+                return;
+            }
         } else {
-            abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
+            if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng.']);
+                return;
+            }
         }
-        abort_unless($user->can(Permission::CONTRACTS_CONSULTING_EDIT->value), 403);
+        if (!$user->can(Permission::CONTRACTS_CONSULTING_EDIT->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng.']);
+            return;
+        }
 
         if (! in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
@@ -374,14 +391,24 @@ class ContractConsultingManager extends Component
     {
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
+        if (!$user) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+            return;
+        }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         if ($isRestrictedTpKd || $isRestrictedSales) {
-            abort_if($doc->staff_id !== $user->id, 403);
+            if ((int) $doc->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng này.']);
+                return;
+            }
         }
-        abort_unless($user->can(Permission::CONTRACTS_CONSULTING_DELETE->value), 403);
+        if (!$user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+            return;
+        }
 
         $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
@@ -389,7 +416,11 @@ class ContractConsultingManager extends Component
 
     public function duplicate(int $id): void
     {
-        abort_unless(auth()->user()->can(Permission::CONTRACTS_CONSULTING_CREATE->value), 403);
+        $user = auth()->user();
+        if (!$user || !$user->can(Permission::CONTRACTS_CONSULTING_CREATE->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+            return;
+        }
         $doc = ContractLegal::findOrFail($id);
         $this->resetForm();
         $this->formData = $doc->toArray();
@@ -409,7 +440,10 @@ class ContractConsultingManager extends Component
     public function bulkDeleteSelected(): void
     {
         $user = auth()->user();
-        abort_unless($user->can(Permission::CONTRACTS_CONSULTING_DELETE->value), 403);
+        if (!$user || !$user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+            return;
+        }
 
         $selectedIds = collect($this->selectedDocIds)
             ->map(static fn ($id) => (int) $id)
@@ -464,9 +498,10 @@ class ContractConsultingManager extends Component
             $user = auth()->user();
             $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
                 && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
-            if ($isRestrictedSales && $this->selectedDoc->staff_id !== $user->id) {
+            if ($isRestrictedSales && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
                 $this->selectedDoc = null;
-                abort(403, 'Bạn không có quyền xem chi tiết hợp đồng này.');
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xem chi tiết hợp đồng này.']);
+                return;
             }
             $this->reportNumber = $this->selectedDoc->report_number ?? '';
             $this->progressNotes = ContractProgressNote::where('contract_type', 'consulting')

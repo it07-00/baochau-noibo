@@ -216,15 +216,20 @@ abstract class AbstractContractGenericManager extends Component
 
     public function edit(int $id): void
     {
-        abort_unless(auth()->user()->can($this->getPermEdit()->value), 403);
+        $user = auth()->user();
+        if (!$user || !$user->can($this->getPermEdit()->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+            return;
+        }
+
         $modelClass        = $this->getModelClass();
         $this->selectedDoc = $modelClass::with(['assignments.user'])->findOrFail($id);
 
-        $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
-        if ($isRestrictedSales && $this->selectedDoc->staff_id !== $user->id) {
-            abort(403, 'Bạn không có quyền chỉnh sửa hợp đồng này.');
+        if ($isRestrictedSales && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+            return;
         }
 
         $this->formData    = $this->selectedDoc->toArray();
@@ -245,7 +250,7 @@ abstract class AbstractContractGenericManager extends Component
         $user       = auth()->user();
         $modelClass = $this->getModelClass();
 
-        if (!$user->can($this->isEditing ? $this->getPermEdit()->value : $this->getPermCreate()->value)) {
+        if (!$user || !$user->can($this->isEditing ? $this->getPermEdit()->value : $this->getPermCreate()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
             return;
         }
@@ -253,7 +258,7 @@ abstract class AbstractContractGenericManager extends Component
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
-        if ($this->isEditing && ($isRestrictedTpKd || $isRestrictedSales) && $this->selectedDoc->staff_id !== $user->id) {
+        if ($this->isEditing && ($isRestrictedTpKd || $isRestrictedSales) && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
             return;
         }
@@ -356,15 +361,30 @@ abstract class AbstractContractGenericManager extends Component
         $doc        = $modelClass::findOrFail($id);
         $user       = auth()->user();
 
+        if (!$user) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+            return;
+        }
+
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedTpKd || $isRestrictedSales) {
-            abort_if($doc->staff_id !== $user->id, 403);
+            if ((int) $doc->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng này.']);
+                return;
+            }
         } else {
-            abort_if($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]), 403);
+            if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng.']);
+                return;
+            }
         }
-        abort_unless($user->can($this->getPermEdit()->value), 403);
+
+        if (!$user->can($this->getPermEdit()->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng.']);
+            return;
+        }
 
         if (!in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
@@ -385,13 +405,25 @@ abstract class AbstractContractGenericManager extends Component
         $doc        = $modelClass::findOrFail($id);
         $user       = auth()->user();
 
+        if (!$user) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+            return;
+        }
+
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedTpKd || $isRestrictedSales) {
-            abort_if($doc->staff_id !== $user->id, 403);
+            if ((int) $doc->staff_id !== (int) $user->id) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng này.']);
+                return;
+            }
         }
-        abort_unless($user->can($this->getPermDelete()->value), 403);
+
+        if (!$user->can($this->getPermDelete()->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+            return;
+        }
 
         $doc->delete();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hợp đồng!']);
@@ -399,7 +431,11 @@ abstract class AbstractContractGenericManager extends Component
 
     public function duplicate(int $id): void
     {
-        abort_unless(auth()->user()->can($this->getPermCreate()->value), 403);
+        $user = auth()->user();
+        if (!$user || !$user->can($this->getPermCreate()->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+            return;
+        }
         $modelClass = $this->getModelClass();
         $doc        = $modelClass::findOrFail($id);
         $this->resetForm();
@@ -420,7 +456,10 @@ abstract class AbstractContractGenericManager extends Component
     public function bulkDeleteSelected(): void
     {
         $user = auth()->user();
-        abort_unless($user->can($this->getPermDelete()->value), 403);
+        if (!$user || !$user->can($this->getPermDelete()->value)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+            return;
+        }
 
         $selectedIds = collect($this->selectedDocIds)
             ->map(static fn($id) => (int) $id)
@@ -593,11 +632,16 @@ abstract class AbstractContractGenericManager extends Component
         $this->selectedDoc = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner', 'handler'])->find($id);
         if ($this->selectedDoc) {
             $user = auth()->user();
+            if (!$user) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+                return;
+            }
             $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
                 && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
-            if ($isRestrictedSales && $this->selectedDoc->staff_id !== $user->id) {
+            if ($isRestrictedSales && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
                 $this->selectedDoc = null;
-                abort(403, 'Bạn không có quyền xem chi tiết hợp đồng này.');
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xem chi tiết hợp đồng này.']);
+                return;
             }
             $this->progressNotes = ContractProgressNote::where('contract_type', $this->getContractType())
                 ->where('contract_id', $id)
