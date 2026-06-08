@@ -395,8 +395,8 @@
                                 <label class="form-label fw-bold">Hiệu lực đến</label>
                                 <input type="date" class="form-control" wire:model="formData.valid_until">
                             </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">Mẫu báo giá</label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Mẫu báo giá & dịch vụ <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <select class="form-select" wire:model.live="formData.template_key">
                                         @foreach($templatePresets as $preset)
@@ -404,22 +404,17 @@
                                         @endforeach
                                     </select>
                                     <button type="button"
-                                            class="btn btn-outline-primary"
+                                            class="btn btn-outline-primary d-flex align-items-center gap-1"
                                             wire:click="applySelectedTemplatePreset"
-                                            wire:confirm="Áp dụng mẫu sẽ đặt lại dòng tổng hợp và xóa các dòng chi tiết hiện tại. Tiếp tục?">
-                                        <i class="bi bi-stars"></i>
+                                            wire:confirm="Áp dụng mẫu sẽ đặt lại dòng tổng hợp và xóa các dòng chi tiết hiện tại. Tiếp tục?"
+                                            title="Áp dụng lại mẫu mặc định">
+                                        <i class="bi bi-stars"></i> Áp dụng mẫu
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">Loại dịch vụ</label>
-                                <select class="form-select" wire:model="formData.service_type">
-                                    <option value="">-- Chọn loại dịch vụ --</option>
-                                    @foreach($serviceTypes as $st)
-                                        <option value="{{ $st }}">{{ $st }}</option>
-                                    @endforeach
-                                    <option value="Khác">Khác (nhập tay)</option>
-                                </select>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tên dịch vụ hiển thị</label>
+                                <input type="text" class="form-control" wire:model="formData.service_type" placeholder="Tên dịch vụ hiển thị trên báo giá...">
                             </div>
                         </div>
 

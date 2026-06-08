@@ -381,9 +381,7 @@ class QuotationDocumentManager extends Component
 
         $this->formData['template_key'] = $template['key'];
 
-        if ($replaceRows || trim((string) ($this->formData['service_type'] ?? '')) === '') {
-            $this->formData['service_type'] = $template['service_type'] ?? '';
-        }
+        $this->formData['service_type'] = $template['service_type'] ?? '';
 
         if ($replaceRows || empty($this->summaryItems)) {
             $this->summaryItems = [QuotationTemplateCatalog::defaultSummaryItem($template['key'])];
@@ -1228,7 +1226,7 @@ class QuotationDocumentManager extends Component
             'customer_contact' => '',
             'customer_email' => '',
             'customer_tax_code' => '',
-            'service_type' => '',
+            'service_type' => QuotationTemplateCatalog::find(QuotationTemplateCatalog::DEFAULT_KEY)['service_type'] ?? '',
             'template_key' => QuotationTemplateCatalog::DEFAULT_KEY,
             'work_location' => '',
             'subtotal' => 0,
