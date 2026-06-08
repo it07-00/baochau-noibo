@@ -21,11 +21,13 @@ class DatabaseSeeder extends Seeder
             // 2. Dữ liệu nền
             // InternalDocsSeeder::class,
             // ContractWasteSeeder::class,
-            // ContractSampleSeeder::class,
+            ContractSampleSeeder::class,
 
             // 3. Kinh doanh & Sales
-            // QuotationSeeder::class,
-            // QuotationDocumentSampleSeeder::class,
+            QuotationSeeder::class,
+            QuotationDocumentSampleSeeder::class,
+            QuotationDocumentPlldSampleSeeder::class,
+            QuotationDocumentPlldFullSampleSeeder::class,
             // SalesDataSeeder::class,
             // SalesTargetSeeder::class,
 

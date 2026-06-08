@@ -5,38 +5,54 @@ namespace App\Livewire\Admin\QuotationDocuments;
 use App\Enums\Permission;
 use App\Enums\QuotationStatus;
 use App\Enums\Role;
+use App\Livewire\Concerns\CleanMoneyInput;
+use App\Models\ContractLegal;
+use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\QuotationDocument;
-use App\Models\QuotationDocumentItem;
+use App\Models\User;
 use App\Support\Quotations\QuotationTemplateCatalog;
-use App\Livewire\Concerns\CleanMoneyInput;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class QuotationDocumentManager extends Component
 {
-    use WithPagination, CleanMoneyInput;
+    use CleanMoneyInput, WithPagination;
 
     // Filters
     public $search = '';
+
     public $filter_staff = '';
+
     public $date_from = '';
+
     public $date_to = '';
 
     // Modal state
     public $showModal = false;
+
     public $isEditing = false;
+
     public $selectedId = null;
+
     public $selectedDoc = null;
+
+    public $selectedCustomerId = '';
 
     // Form data
     public array $formData = [];
+
     public array $summaryItems = [];
+
     public array $detailItems = [];
+
     public array $matrixRows = [];
+
     public int $vatRate = 8;
+
     public int $detailTotal = 0;
+
     public int $matrixTotal = 0;
 
     // Default terms
@@ -45,10 +61,11 @@ class QuotationDocumentManager extends Component
     public const PREDEFINED_GROUPS = [
         'I. YẾU TỐ VI KHÍ HẬU',
         'II. YẾU TỐ VẬT LÝ',
-        'III. YẾU TỐ BỤI CÁC LOẠI',
-        'IV. YẾU TỐ HÓA HỌC',
-        'V. YẾU TỐ TÂM SINH LÝ VÀ ECGONOMI',
-        'VI. CHI PHÍ KHÁC',
+        'III. YẾU TỐ TIẾP XÚC',
+        'IV. YẾU TỐ TÂM SINH LÝ VÀ ECGONOMI',
+        'V. YẾU TỐ BỤI CÁC LOẠI',
+        'VI. YẾU TỐ HÓA HỌC',
+        'VII. CHI PHÍ KHÁC',
     ];
 
     private array $moneyFields = ['discount'];
@@ -136,13 +153,17 @@ class QuotationDocumentManager extends Component
 
     public function moveSummaryItemUp(int $index): void
     {
-        if ($index <= 0) return;
+        if ($index <= 0) {
+            return;
+        }
         [$this->summaryItems[$index - 1], $this->summaryItems[$index]] = [$this->summaryItems[$index], $this->summaryItems[$index - 1]];
     }
 
     public function moveSummaryItemDown(int $index): void
     {
-        if ($index >= count($this->summaryItems) - 1) return;
+        if ($index >= count($this->summaryItems) - 1) {
+            return;
+        }
         [$this->summaryItems[$index + 1], $this->summaryItems[$index]] = [$this->summaryItems[$index], $this->summaryItems[$index + 1]];
     }
 
@@ -151,7 +172,8 @@ class QuotationDocumentManager extends Component
     public function addDetailItem(): void
     {
         // Default to the last group used, or the first predefined group
-        $lastGroup = count($this->detailItems) > 0 ? end($this->detailItems)['group_name'] : self::PREDEFINED_GROUPS[0];
+        $groupOptions = $this->groupOptions();
+        $lastGroup = count($this->detailItems) > 0 ? end($this->detailItems)['group_name'] : ($groupOptions[0] ?? self::PREDEFINED_GROUPS[0]);
 
         $this->detailItems[] = [
             'group_name' => $lastGroup,
@@ -174,13 +196,17 @@ class QuotationDocumentManager extends Component
 
     public function moveDetailItemUp(int $index): void
     {
-        if ($index <= 0) return;
+        if ($index <= 0) {
+            return;
+        }
         [$this->detailItems[$index - 1], $this->detailItems[$index]] = [$this->detailItems[$index], $this->detailItems[$index - 1]];
     }
 
     public function moveDetailItemDown(int $index): void
     {
-        if ($index >= count($this->detailItems) - 1) return;
+        if ($index >= count($this->detailItems) - 1) {
+            return;
+        }
         [$this->detailItems[$index + 1], $this->detailItems[$index]] = [$this->detailItems[$index], $this->detailItems[$index + 1]];
     }
 
@@ -203,13 +229,17 @@ class QuotationDocumentManager extends Component
 
     public function moveMatrixRowUp(int $index): void
     {
-        if ($index <= 0) return;
+        if ($index <= 0) {
+            return;
+        }
         [$this->matrixRows[$index - 1], $this->matrixRows[$index]] = [$this->matrixRows[$index], $this->matrixRows[$index - 1]];
     }
 
     public function moveMatrixRowDown(int $index): void
     {
-        if ($index >= count($this->matrixRows) - 1) return;
+        if ($index >= count($this->matrixRows) - 1) {
+            return;
+        }
         [$this->matrixRows[$index + 1], $this->matrixRows[$index]] = [$this->matrixRows[$index], $this->matrixRows[$index + 1]];
     }
 
@@ -265,10 +295,10 @@ class QuotationDocumentManager extends Component
 
         $description = "Thực hiện {$serviceType} {$year}";
         if ($customerName) {
-            $description .= " tại " . $customerName;
+            $description .= ' tại '.$customerName;
         }
         if ($location) {
-            $description .= ", " . $location;
+            $description .= ', '.$location;
         }
 
         $this->summaryItems = [
@@ -279,7 +309,7 @@ class QuotationDocumentManager extends Component
                 'unit_price' => $this->detailTotal,
                 'amount' => $this->detailTotal,
                 'note' => '',
-            ]
+            ],
         ];
 
         $this->recalculate();
@@ -291,8 +321,18 @@ class QuotationDocumentManager extends Component
         $this->recalculate();
     }
 
-    public function updatedDetailItems(): void
+    public function updatedDetailItems(mixed $value = null, ?string $key = null): void
     {
+        if (is_string($key) && preg_match('/^(\d+)\.description$/', $key, $matches) === 1) {
+            $this->applyLaborMonitoringPriceToDetailItem((int) $matches[1], (string) $value);
+
+            return;
+        }
+
+        if (is_string($key) && preg_match('/^(\d+)\.group_name$/', $key, $matches) === 1) {
+            $this->resetDetailDescriptionWhenGroupChanges((int) $matches[1]);
+        }
+
         $this->recalculate();
     }
 
@@ -314,6 +354,19 @@ class QuotationDocumentManager extends Component
     public function updatedFormDataTemplateKey(): void
     {
         $this->applyTemplatePreset(false);
+    }
+
+    public function updatedSelectedCustomerId($value): void
+    {
+        $customer = Customer::find($value);
+        if (! $customer) {
+            return;
+        }
+
+        $this->formData['customer_name'] = $customer->name;
+        $this->formData['customer_address'] = $customer->address ?? '';
+        $this->formData['customer_contact'] = $customer->representative ?? '';
+        $this->formData['customer_tax_code'] = $customer->tax_code ?? '';
     }
 
     public function applySelectedTemplatePreset(): void
@@ -362,11 +415,77 @@ class QuotationDocumentManager extends Component
         return $groups !== [] ? $groups : self::PREDEFINED_GROUPS;
     }
 
+    public function detailPriceCatalogForGroup(?string $groupName): array
+    {
+        return QuotationTemplateCatalog::detailPriceCatalog($this->formData['template_key'] ?? null, $groupName);
+    }
+
+    public function isLaborMonitoringTemplate(): bool
+    {
+        return ($this->formData['template_key'] ?? QuotationTemplateCatalog::DEFAULT_KEY) === QuotationTemplateCatalog::DEFAULT_KEY;
+    }
+
+    public function isLaborMonitoringDocument(?QuotationDocument $doc): bool
+    {
+        return ($doc?->template_key ?? QuotationTemplateCatalog::DEFAULT_KEY) === QuotationTemplateCatalog::DEFAULT_KEY;
+    }
+
+    private function usesLaborMonitoringTemplate(): bool
+    {
+        return $this->isLaborMonitoringTemplate();
+    }
+
+    private function applyLaborMonitoringPriceToDetailItem(int $index, string $description): void
+    {
+        if (! $this->usesLaborMonitoringTemplate() || ! isset($this->detailItems[$index])) {
+            return;
+        }
+
+        $catalogItem = QuotationTemplateCatalog::findDetailPriceItem($this->formData['template_key'] ?? null, $description);
+        if (! $catalogItem) {
+            return;
+        }
+
+        $quantity = $this->parseIntegerQuantity($this->detailItems[$index]['quantity'] ?? 1);
+        $this->detailItems[$index] = array_merge(
+            $this->detailItems[$index],
+            QuotationTemplateCatalog::catalogDetailItem($this->formData['template_key'] ?? null, $catalogItem, $quantity)
+        );
+        $this->detailItems[$index]['unit_price'] = $this->formatMoneyInputValue($this->detailItems[$index]['unit_price']);
+
+        $this->recalculate();
+    }
+
+    private function resetDetailDescriptionWhenGroupChanges(int $index): void
+    {
+        if (! $this->usesLaborMonitoringTemplate() || ! isset($this->detailItems[$index])) {
+            return;
+        }
+
+        $description = $this->detailItems[$index]['description'] ?? '';
+        if ($description === '') {
+            return;
+        }
+
+        $catalogItem = QuotationTemplateCatalog::findDetailPriceItem($this->formData['template_key'] ?? null, $description);
+        if (
+            ! $catalogItem
+            || $catalogItem['group_name'] === ($this->detailItems[$index]['group_name'] ?? null)
+        ) {
+            return;
+        }
+
+        $this->detailItems[$index]['description'] = '';
+        $this->detailItems[$index]['unit_price'] = 0;
+        $this->detailItems[$index]['amount'] = 0;
+        $this->detailItems[$index]['note'] = '';
+    }
+
     public function recalculate(): void
     {
         // Recalculate summary items
         foreach ($this->summaryItems as $i => &$item) {
-            $qty = (float)($item['quantity'] ?? 0);
+            $qty = (float) ($item['quantity'] ?? 0);
             $price = $this->parseMoneyValue($item['unit_price'] ?? 0);
             $item['amount'] = (int) round($qty * $price);
         }
@@ -374,14 +493,17 @@ class QuotationDocumentManager extends Component
 
         // Recalculate detail items
         foreach ($this->detailItems as $i => &$item) {
-            $qty = (float)($item['quantity'] ?? 0);
+            $qty = $this->parseIntegerQuantity($item['quantity'] ?? 0);
+            $item['quantity'] = $qty;
             $price = $this->parseMoneyValue($item['unit_price'] ?? 0);
             $item['amount'] = (int) round($qty * $price);
         }
         unset($item);
 
-        $subtotal = array_sum(array_column($this->summaryItems, 'amount'));
         $this->detailTotal = array_sum(array_column($this->detailItems, 'amount'));
+        $subtotal = $this->usesLaborMonitoringTemplate()
+            ? $this->detailTotal
+            : array_sum(array_column($this->summaryItems, 'amount'));
 
         $this->matrixTotal = 0;
         foreach ($this->matrixRows as &$row) {
@@ -406,13 +528,33 @@ class QuotationDocumentManager extends Component
     private function parseMoneyValue(mixed $value): float
     {
         if (is_int($value) || is_float($value)) {
-            return (float)$value;
+            return (float) $value;
         }
         if (is_string($value)) {
             $normalized = preg_replace('/\D+/', '', $value);
-            return $normalized !== '' ? (float)$normalized : 0.0;
+
+            return $normalized !== '' ? (float) $normalized : 0.0;
         }
+
         return 0.0;
+    }
+
+    private function parseIntegerQuantity(mixed $value): int
+    {
+        if (is_string($value)) {
+            $value = str_replace(',', '.', trim($value));
+        }
+
+        $number = is_numeric($value) ? (float) $value : 0.0;
+
+        return max(0, (int) round($number));
+    }
+
+    private function formatMoneyInputValue(mixed $value): string
+    {
+        $amount = (int) $this->parseMoneyValue($value);
+
+        return number_format($amount, 0, ',', '.');
     }
 
     // ── CRUD ──
@@ -529,7 +671,7 @@ class QuotationDocumentManager extends Component
     {
         $summary = $doc->summaryItems
             ->pluck('description')
-            ->map(fn($value) => trim((string) $value))
+            ->map(fn ($value) => trim((string) $value))
             ->filter()
             ->implode('; ');
 
@@ -540,7 +682,7 @@ class QuotationDocumentManager extends Component
         $details = $doc->detailItems
             ->take(8)
             ->pluck('description')
-            ->map(fn($value) => trim((string) $value))
+            ->map(fn ($value) => trim((string) $value))
             ->filter()
             ->implode('; ');
 
@@ -549,7 +691,7 @@ class QuotationDocumentManager extends Component
 
     private function trackingNotes(QuotationDocument $doc): string
     {
-        $parts = ['Chuyển từ báo giá Word/PDF: ' . $doc->document_number];
+        $parts = ['Chuyển từ báo giá Word/PDF: '.$doc->document_number];
         $notes = trim((string) $doc->notes);
 
         if ($notes !== '') {
@@ -589,6 +731,7 @@ class QuotationDocumentManager extends Component
 
         $this->selectedId = $id;
         $this->isEditing = true;
+        $this->selectedCustomerId = $this->matchingCustomerId($doc->customer_name);
 
         $this->formData = $doc->only([
             'document_number', 'date', 'valid_until', 'customer_name', 'customer_address',
@@ -603,7 +746,7 @@ class QuotationDocumentManager extends Component
         $this->vatRate = $doc->vat_rate;
 
         // Split items by type
-        $this->summaryItems = $doc->items->where('item_type', 'summary')->map(fn($item) => [
+        $this->summaryItems = $doc->items->where('item_type', 'summary')->map(fn ($item) => [
             'description' => $item->description,
             'unit' => $item->unit,
             'quantity' => $item->quantity,
@@ -612,12 +755,12 @@ class QuotationDocumentManager extends Component
             'note' => $item->note ?? '',
         ])->values()->toArray();
 
-        $this->detailItems = $doc->items->where('item_type', 'detail')->map(fn($item) => [
+        $this->detailItems = $doc->items->where('item_type', 'detail')->map(fn ($item) => [
             'group_name' => $item->group_name ?? self::PREDEFINED_GROUPS[0],
             'description' => $item->description,
             'unit' => $item->unit,
-            'quantity' => $item->quantity,
-            'unit_price' => $item->unit_price,
+            'quantity' => $this->parseIntegerQuantity($item->quantity),
+            'unit_price' => $this->formatMoneyInputValue($item->unit_price),
             'amount' => $item->amount,
             'note' => $item->note ?? '',
         ])->values()->toArray();
@@ -646,10 +789,11 @@ class QuotationDocumentManager extends Component
         $this->formData['template_key'] = $this->formData['template_key'] ?: QuotationTemplateCatalog::DEFAULT_KEY;
         $this->formData['date'] = now()->format('Y-m-d');
         $this->formData['document_number'] = $this->generateNextNumber();
+        $this->selectedCustomerId = $this->matchingCustomerId($this->formData['customer_name'] ?? '');
 
         $this->vatRate = $doc->vat_rate;
 
-        $this->summaryItems = $doc->items->where('item_type', 'summary')->map(fn($item) => [
+        $this->summaryItems = $doc->items->where('item_type', 'summary')->map(fn ($item) => [
             'description' => $item->description,
             'unit' => $item->unit,
             'quantity' => $item->quantity,
@@ -658,12 +802,12 @@ class QuotationDocumentManager extends Component
             'note' => $item->note ?? '',
         ])->values()->toArray();
 
-        $this->detailItems = $doc->items->where('item_type', 'detail')->map(fn($item) => [
+        $this->detailItems = $doc->items->where('item_type', 'detail')->map(fn ($item) => [
             'group_name' => $item->group_name ?? self::PREDEFINED_GROUPS[0],
             'description' => $item->description,
             'unit' => $item->unit,
-            'quantity' => $item->quantity,
-            'unit_price' => $item->unit_price,
+            'quantity' => $this->parseIntegerQuantity($item->quantity),
+            'unit_price' => $this->formatMoneyInputValue($item->unit_price),
             'amount' => $item->amount,
             'note' => $item->note ?? '',
         ])->values()->toArray();
@@ -678,7 +822,7 @@ class QuotationDocumentManager extends Component
         $this->authorizePermission(Permission::QUOTATION_TRACKING_VIEW);
 
         $doc = QuotationDocument::with([
-            'items' => fn($q) => $q->orderBy('sort_order'),
+            'items' => fn ($q) => $q->orderBy('sort_order'),
             'sections.rows',
             'staff',
             'quotation',
@@ -691,16 +835,29 @@ class QuotationDocumentManager extends Component
 
     public function summaryItemsForDetail(?QuotationDocument $doc): Collection
     {
-        if (!$doc) {
+        if (! $doc) {
             return collect();
         }
 
         return $doc->items->where('item_type', 'summary')->values();
     }
 
+    public function mainPriceItemsForDetail(?QuotationDocument $doc): Collection
+    {
+        if (! $doc) {
+            return collect();
+        }
+
+        $details = $doc->items->where('item_type', 'detail')->values();
+
+        return $details->isNotEmpty()
+            ? $details
+            : $doc->items->where('item_type', 'summary')->values();
+    }
+
     public function groupedDetailItemsForDetail(?QuotationDocument $doc): Collection
     {
-        if (!$doc) {
+        if (! $doc) {
             return collect();
         }
 
@@ -731,7 +888,7 @@ class QuotationDocumentManager extends Component
 
     public function matrixRowsForDetail(?QuotationDocument $doc): Collection
     {
-        if (!$doc) {
+        if (! $doc) {
             return collect();
         }
 
@@ -748,7 +905,7 @@ class QuotationDocumentManager extends Component
         $section = $doc->sections
             ->firstWhere('section_key', 'plld_matrix');
 
-        if (!$section) {
+        if (! $section) {
             return [];
         }
 
@@ -780,17 +937,29 @@ class QuotationDocumentManager extends Component
         $this->cleanMoneyFields($this->formData, $this->moneyFields);
         $this->recalculate();
 
+        if ($this->usesLaborMonitoringTemplate()) {
+            if (empty($this->detailItems)) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng báo giá Quan trắc môi trường lao động phải có ít nhất 1 chỉ tiêu.']);
+
+                return;
+            }
+
+            $this->syncLaborMonitoringSummaryFromDetail();
+        }
+
         $this->validate();
 
         if (empty($this->summaryItems)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 01 (Tổng hợp) phải có ít nhất 1 dòng dịch vụ.']);
+
             return;
         }
 
         // Validate summary items
         foreach ($this->summaryItems as $i => $item) {
             if (empty(trim($item['description'] ?? ''))) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 01 - Dòng ' . ($i + 1) . ': Vui lòng nhập nội dung dịch vụ.']);
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 01 - Dòng '.($i + 1).': Vui lòng nhập nội dung dịch vụ.']);
+
                 return;
             }
         }
@@ -798,11 +967,13 @@ class QuotationDocumentManager extends Component
         // Validate detail items if present
         foreach ($this->detailItems as $i => $item) {
             if (empty(trim($item['description'] ?? ''))) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 - Dòng ' . ($i + 1) . ': Vui lòng nhập chỉ tiêu/nội dung.']);
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 - Dòng '.($i + 1).': Vui lòng nhập chỉ tiêu/nội dung.']);
+
                 return;
             }
             if (empty(trim($item['group_name'] ?? ''))) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 - Dòng ' . ($i + 1) . ': Vui lòng nhập/chọn nhóm.']);
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 - Dòng '.($i + 1).': Vui lòng nhập/chọn nhóm.']);
+
                 return;
             }
         }
@@ -814,7 +985,8 @@ class QuotationDocumentManager extends Component
                 || (int) ($row['total'] ?? 0) > 0;
 
             if ($hasData && trim((string) ($row['job_title'] ?? '')) === '') {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Ma trận PLLĐ - Dòng ' . ($i + 1) . ': Vui lòng nhập chức danh công việc.']);
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Ma trận PLLĐ - Dòng '.($i + 1).': Vui lòng nhập chức danh công việc.']);
+
                 return;
             }
         }
@@ -841,30 +1013,30 @@ class QuotationDocumentManager extends Component
         $sortOrder = 0;
         foreach ($this->summaryItems as $item) {
             $doc->items()->create([
-                'item_type'   => 'summary',
-                'sort_order'  => $sortOrder++,
-                'group_name'  => null,
+                'item_type' => 'summary',
+                'sort_order' => $sortOrder++,
+                'group_name' => null,
                 'description' => $item['description'],
-                'unit'        => $item['unit'] ?? null,
-                'quantity'    => $item['quantity'] ?? 1,
-                'unit_price'  => $this->parseMoneyValue($item['unit_price'] ?? 0),
-                'amount'      => $item['amount'] ?? 0,
-                'note'        => $item['note'] ?? null,
+                'unit' => $item['unit'] ?? null,
+                'quantity' => $item['quantity'] ?? 1,
+                'unit_price' => $this->parseMoneyValue($item['unit_price'] ?? 0),
+                'amount' => $item['amount'] ?? 0,
+                'note' => $item['note'] ?? null,
             ]);
         }
 
         // Save Detail Items
         foreach ($this->detailItems as $item) {
             $doc->items()->create([
-                'item_type'   => 'detail',
-                'sort_order'  => $sortOrder++,
-                'group_name'  => $item['group_name'],
+                'item_type' => 'detail',
+                'sort_order' => $sortOrder++,
+                'group_name' => $item['group_name'],
                 'description' => $item['description'],
-                'unit'        => $item['unit'] ?? null,
-                'quantity'    => $item['quantity'] ?? 1,
-                'unit_price'  => $this->parseMoneyValue($item['unit_price'] ?? 0),
-                'amount'      => $item['amount'] ?? 0,
-                'note'        => $item['note'] ?? null,
+                'unit' => $item['unit'] ?? null,
+                'quantity' => $this->parseIntegerQuantity($item['quantity'] ?? 1),
+                'unit_price' => $this->parseMoneyValue($item['unit_price'] ?? 0),
+                'amount' => $item['amount'] ?? 0,
+                'note' => $item['note'] ?? null,
             ]);
         }
 
@@ -923,31 +1095,31 @@ class QuotationDocumentManager extends Component
         $detailItems = $doc->items->where('item_type', 'detail')->values();
         if ($detailItems->isNotEmpty()) {
             $detailSection = $doc->sections()->create([
-            'section_key' => 'detail',
-            'section_type' => 'grouped_detail',
-            'sort_order' => 20,
-            'title' => 'Bảng 02. Chi tiết thực hiện',
-            'columns' => ['stt', 'group_name', 'description', 'unit', 'quantity', 'unit_price', 'amount'],
-            'totals' => [
-                'total' => (int) $detailItems->sum('amount'),
-            ],
-        ]);
+                'section_key' => 'detail',
+                'section_type' => 'grouped_detail',
+                'sort_order' => 20,
+                'title' => 'Bảng 02. Chi tiết thực hiện',
+                'columns' => ['stt', 'group_name', 'description', 'unit', 'quantity', 'unit_price', 'amount'],
+                'totals' => [
+                    'total' => (int) $detailItems->sum('amount'),
+                ],
+            ]);
 
             foreach ($detailItems as $index => $item) {
                 $detailSection->rows()->create([
-                'sort_order' => $index,
-                'row_type' => 'item',
-                'group_name' => $item->group_name,
-                'description' => $item->description,
-                'unit' => $item->unit,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
-                'amount' => $item->amount,
-                'note' => $item->note,
-                'columns' => [
-                    'legacy_item_id' => $item->id,
-                    'item_type' => $item->item_type,
-                ],
+                    'sort_order' => $index,
+                    'row_type' => 'item',
+                    'group_name' => $item->group_name,
+                    'description' => $item->description,
+                    'unit' => $item->unit,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                    'amount' => $item->amount,
+                    'note' => $item->note,
+                    'columns' => [
+                        'legacy_item_id' => $item->id,
+                        'item_type' => $item->item_type,
+                    ],
                 ]);
             }
         }
@@ -1000,6 +1172,35 @@ class QuotationDocumentManager extends Component
         }
     }
 
+    private function syncLaborMonitoringSummaryFromDetail(): void
+    {
+        $customerName = trim($this->formData['customer_name'] ?? '');
+        $serviceType = trim($this->formData['service_type'] ?? 'Quan trắc môi trường lao động');
+        if ($serviceType === 'Khác' || $serviceType === '') {
+            $serviceType = 'Quan trắc môi trường lao động';
+        }
+
+        $year = $this->formData['date'] ? date('Y', strtotime($this->formData['date'])) : date('Y');
+        $location = trim($this->formData['work_location'] ?? '');
+
+        $description = "Thực hiện {$serviceType} {$year}";
+        if ($customerName !== '') {
+            $description .= ' tại '.$customerName;
+        }
+        if ($location !== '') {
+            $description .= ', '.$location;
+        }
+
+        $this->summaryItems = [[
+            'description' => $description,
+            'unit' => 'Hồ sơ',
+            'quantity' => 1,
+            'unit_price' => $this->detailTotal,
+            'amount' => $this->detailTotal,
+            'note' => '',
+        ]];
+    }
+
     public function delete(int $id): void
     {
         $this->authorizePermission(Permission::QUOTATION_TRACKING_DELETE);
@@ -1048,14 +1249,29 @@ class QuotationDocumentManager extends Component
         $this->vatRate = 8;
         $this->selectedId = null;
         $this->selectedDoc = null;
+        $this->selectedCustomerId = '';
+    }
+
+    private function matchingCustomerId(?string $customerName): string
+    {
+        $customerName = trim((string) $customerName);
+        if ($customerName === '') {
+            return '';
+        }
+
+        $customer = Customer::query()
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($customerName, 'UTF-8')])
+            ->first();
+
+        return $customer ? (string) $customer->id : '';
     }
 
     private function generateNextNumber(): string
     {
         $year = now()->format('Y');
-        $prefix = 'BG-' . $year . '-';
+        $prefix = 'BG-'.$year.'-';
 
-        $lastDoc = QuotationDocument::where('document_number', 'like', $prefix . '%')
+        $lastDoc = QuotationDocument::where('document_number', 'like', $prefix.'%')
             ->orderByDesc('document_number')
             ->first();
 
@@ -1066,35 +1282,39 @@ class QuotationDocumentManager extends Component
             $nextNum = 1;
         }
 
-        return $prefix . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+        return $prefix.str_pad($nextNum, 3, '0', STR_PAD_LEFT);
     }
 
     public function render()
     {
         $query = QuotationDocument::with(['staff', 'quotation'])
             ->withCount('items')
-            ->when($this->isKinhDoanhUser(), fn($q) => $q->where('staff_id', auth()->id()))
+            ->when($this->isKinhDoanhUser(), fn ($q) => $q->where('staff_id', auth()->id()))
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
-                    $sq->where('customer_name', 'like', '%' . $this->search . '%')
-                       ->orWhere('document_number', 'like', '%' . $this->search . '%')
-                       ->orWhere('service_type', 'like', '%' . $this->search . '%');
+                    $sq->where('customer_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('document_number', 'like', '%'.$this->search.'%')
+                        ->orWhere('service_type', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->filter_staff, fn($q) => $q->where('staff_id', $this->filter_staff))
-            ->when($this->date_from, fn($q) => $q->whereDate('date', '>=', $this->date_from))
-            ->when($this->date_to, fn($q) => $q->whereDate('date', '<=', $this->date_to));
+            ->when($this->filter_staff, fn ($q) => $q->where('staff_id', $this->filter_staff))
+            ->when($this->date_from, fn ($q) => $q->whereDate('date', '>=', $this->date_from))
+            ->when($this->date_to, fn ($q) => $q->whereDate('date', '<=', $this->date_to));
 
-        $staffs = \App\Models\User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value, Role::TU_VAN->value])
+        $staffs = User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value, Role::TU_VAN->value])
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        $serviceTypes = collect(\App\Models\ContractLegal::SERVICE_TYPES)
+        $serviceTypes = collect(ContractLegal::SERVICE_TYPES)
             ->merge(QuotationTemplateCatalog::serviceTypes())
             ->filter()
             ->unique()
             ->values();
+
+        $customers = Customer::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'tax_code', 'address', 'representative']);
 
         return view('livewire.admin.quotation-documents.quotation-document-manager', [
             'documents' => $query->orderByDesc('date')->orderByDesc('id')->paginate(15),
@@ -1102,6 +1322,7 @@ class QuotationDocumentManager extends Component
             'serviceTypes' => $serviceTypes,
             'templatePresets' => QuotationTemplateCatalog::all(),
             'groupOptions' => $this->groupOptions(),
+            'customers' => $customers,
         ])->layout('admin.layouts.app', ['title' => 'Tạo Báo giá']);
     }
 }

@@ -3,13 +3,14 @@
 namespace App\Support;
 
 use App\Models\QuotationDocument;
+use App\Support\Quotations\QuotationTemplateCatalog;
 use Illuminate\Support\Collection;
 
 class QuotationPdfViewData
 {
     public function dompdfFont(string $file): string
     {
-        return 'file:///' . str_replace('\\', '/', base_path('vendor/dompdf/dompdf/lib/fonts/' . $file));
+        return 'file:///'.str_replace('\\', '/', base_path('vendor/dompdf/dompdf/lib/fonts/'.$file));
     }
 
     public function detailItems(QuotationDocument $doc): Collection
@@ -20,6 +21,20 @@ class QuotationPdfViewData
     public function summaryItems(QuotationDocument $doc): Collection
     {
         return $doc->items->where('item_type', 'summary')->values();
+    }
+
+    public function isLaborMonitoringTemplate(QuotationDocument $doc): bool
+    {
+        return ($doc->template_key ?? QuotationTemplateCatalog::DEFAULT_KEY) === QuotationTemplateCatalog::DEFAULT_KEY;
+    }
+
+    public function mainPriceItems(QuotationDocument $doc): Collection
+    {
+        $details = $this->detailItems($doc);
+
+        return $details->isNotEmpty()
+            ? $details
+            : $this->summaryItems($doc);
     }
 
     public function hasDetailItems(QuotationDocument $doc): bool
@@ -54,14 +69,14 @@ class QuotationPdfViewData
 
     public function subtitleText(string $serviceTitle, string $year): string
     {
-        return $serviceTitle . ' ' . $year;
+        return $serviceTitle.' '.$year;
     }
 
     public function introText(string $serviceTitle, string $year): string
     {
         return 'Xin chân thành cảm ơn Quý khách hàng đã tin tưởng và lựa chọn chúng tôi. '
-            . 'Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
-            . 'Về dịch vụ hiện ' . mb_strtolower($serviceTitle, 'UTF-8') . ' ' . $year . ', Công ty Bảo Châu xin gửi báo giá như sau:';
+            .'Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
+            .'Về dịch vụ hiện '.mb_strtolower($serviceTitle, 'UTF-8').' '.$year.', Công ty Bảo Châu xin gửi báo giá như sau:';
     }
 
     public function formatQty(mixed $qty): string
@@ -110,7 +125,7 @@ class QuotationPdfViewData
 
         foreach ($labels as $label) {
             if (str_starts_with($line, $label)) {
-                return '<span class="note-label">' . e($label) . '</span>' . e(mb_substr($line, mb_strlen($label, 'UTF-8'), null, 'UTF-8'));
+                return '<span class="note-label">'.e($label).'</span>'.e(mb_substr($line, mb_strlen($label, 'UTF-8'), null, 'UTF-8'));
             }
         }
 

@@ -11,18 +11,20 @@ final class QuotationTemplateCatalog
             'key' => 'qtmtld',
             'label' => 'Quan trắc môi trường lao động',
             'service_type' => 'Quan trắc môi trường lao động',
-            'template_path' => 'templates/quotation-document-template.docx',
+            'template_path' => 'templates/quotations/qtmtld.docx',
             'orientation' => 'portrait',
             'vat_rate' => 8,
             'summary_description' => 'Thực hiện Quan trắc môi trường lao động',
             'summary_unit' => 'Hồ sơ',
+            'price_catalog' => 'labor_monitoring_2026',
             'detail_groups' => [
                 'I. YẾU TỐ VI KHÍ HẬU',
                 'II. YẾU TỐ VẬT LÝ',
-                'III. YẾU TỐ BỤI CÁC LOẠI',
-                'IV. YẾU TỐ HÓA HỌC',
-                'V. YẾU TỐ TÂM SINH LÝ VÀ ECGONOMI',
-                'VI. CHI PHÍ KHÁC',
+                'III. YẾU TỐ TIẾP XÚC',
+                'IV. YẾU TỐ TÂM SINH LÝ VÀ ECGONOMI',
+                'V. YẾU TỐ BỤI CÁC LOẠI',
+                'VI. YẾU TỐ HÓA HỌC',
+                'VII. CHI PHÍ KHÁC',
             ],
         ],
         'qtmt_periodic' => [
@@ -134,6 +136,10 @@ final class QuotationTemplateCatalog
         ],
     ];
 
+    private const PRICE_CATALOGS = [
+        'labor_monitoring_2026' => LaborMonitoringPriceCatalog::class,
+    ];
+
     public static function all(): array
     {
         return array_values(self::TEMPLATES);
@@ -163,7 +169,34 @@ final class QuotationTemplateCatalog
 
     public static function detailGroups(?string $key): array
     {
+        $catalogClass = self::priceCatalogClass($key);
+
+        if ($catalogClass !== null) {
+            return $catalogClass::groups();
+        }
+
         return self::find($key)['detail_groups'] ?? [];
+    }
+
+    public static function detailPriceCatalog(?string $key, ?string $groupName = null): array
+    {
+        $catalogClass = self::priceCatalogClass($key);
+
+        return $catalogClass !== null ? $catalogClass::forGroup($groupName) : [];
+    }
+
+    public static function findDetailPriceItem(?string $key, ?string $description): ?array
+    {
+        $catalogClass = self::priceCatalogClass($key);
+
+        return $catalogClass !== null ? $catalogClass::findByDescription($description) : null;
+    }
+
+    public static function catalogDetailItem(?string $key, array $catalogItem, int|float $quantity = 1): array
+    {
+        $catalogClass = self::priceCatalogClass($key);
+
+        return $catalogClass !== null ? $catalogClass::toDetailItem($catalogItem, $quantity) : [];
     }
 
     public static function defaultSummaryItem(?string $key): array
@@ -178,5 +211,12 @@ final class QuotationTemplateCatalog
             'amount' => 0,
             'note' => '',
         ];
+    }
+
+    private static function priceCatalogClass(?string $key): ?string
+    {
+        $catalogKey = self::find($key)['price_catalog'] ?? null;
+
+        return self::PRICE_CATALOGS[$catalogKey] ?? null;
     }
 }

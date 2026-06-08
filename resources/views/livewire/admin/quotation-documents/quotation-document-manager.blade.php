@@ -183,6 +183,57 @@
                             </div>
                         </div>
 
+                        @if($this->isLaborMonitoringDocument($selectedDoc))
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-list-check text-success me-1"></i> Bảng báo giá Quan trắc môi trường lao động</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
+                                <thead class="table-success" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                    <tr class="text-center fw-bold">
+                                        <th class="w-40px">STT</th>
+                                        <th>Chỉ tiêu</th>
+                                        <th class="w-90px">Số lượng</th>
+                                        <th class="w-130px text-end">Đơn giá</th>
+                                        <th class="w-140px text-end">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($this->mainPriceItemsForDetail($selectedDoc) as $item)
+                                    <tr>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td>{{ $item->description }}</td>
+                                        <td class="text-center">{{ $item->quantity == (int)$item->quantity ? (int)$item->quantity : $item->quantity }}</td>
+                                        <td class="text-end">{{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                                        <td class="text-end fw-bold">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-2">Không có chỉ tiêu</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold">
+                                        <td colspan="4" class="text-end">Tổng cộng chưa VAT:</td>
+                                        <td class="text-end">{{ number_format($selectedDoc->subtotal, 0, ',', '.') }}</td>
+                                    </tr>
+                                    @if($selectedDoc->discount > 0)
+                                    <tr class="fw-bold">
+                                        <td colspan="4" class="text-end">Chiết khấu:</td>
+                                        <td class="text-end text-success">-{{ number_format($selectedDoc->discount, 0, ',', '.') }}</td>
+                                    </tr>
+                                    @endif
+                                    <tr class="fw-bold">
+                                        <td colspan="4" class="text-end">Thuế VAT ({{ $selectedDoc->vat_rate }}%):</td>
+                                        <td class="text-end">{{ number_format($selectedDoc->vat_amount, 0, ',', '.') }}</td>
+                                    </tr>
+                                    <tr class="fw-bold text-danger fs-5">
+                                        <td colspan="4" class="text-end">TỔNG THANH TOÁN (có VAT):</td>
+                                        <td class="text-end">{{ number_format($selectedDoc->total, 0, ',', '.') }}đ</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        @else
                         <!-- Table 01: Summary -->
                         <h6 class="fw-bold text-dark mb-2"><i class="bi bi-table text-primary me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
                         <div class="table-responsive mb-4">
@@ -276,6 +327,7 @@
                                 </tfoot>
                             </table>
                         </div>
+                        @endif
                         @endif
 
                         @if($selectedDoc->notes)
@@ -374,12 +426,21 @@
                         <!-- Khách hàng -->
                         <h6 class="fw-bold text-primary mb-3"><i class="bi bi-building me-1"></i> Thông tin khách hàng</h6>
                         <div class="row g-3 mb-4">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Chọn khách hàng cũ</label>
+                                <select class="form-select" wire:model.live="selectedCustomerId">
+                                    <option value="">-- Nhập khách mới --</option>
+                                    @foreach($customers as $customer)
+                                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Tên công ty / Khách hàng <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('formData.customer_name') is-invalid @enderror" wire:model="formData.customer_name" placeholder="VD: Công ty TNHH Điện Lạnh Bách Khoa">
                                 @error('formData.customer_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Địa chỉ</label>
                                 <input type="text" class="form-control" wire:model="formData.customer_address">
                             </div>
@@ -405,6 +466,7 @@
                             </div>
                         </div>
 
+                        @unless($this->isLaborMonitoringTemplate())
                         <!-- Bảng 01. Tổng hợp dự toán chi phí thực hiện -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h6 class="fw-bold text-primary mb-0"><i class="bi bi-table me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
@@ -477,18 +539,25 @@
                                 </tfoot>
                             </table>
                         </div>
+                        @endunless
 
-                        <!-- Bảng 02. Chi tiết thực hiện -->
+                        <!-- Bảng chi tiết thực hiện -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="fw-bold text-success mb-0"><i class="bi bi-list-check me-1"></i> Bảng 02. Chi tiết thực hiện (Đo đạc chỉ tiêu chi tiết)</h6>
+                            <h6 class="fw-bold text-success mb-0">
+                                <i class="bi bi-list-check me-1"></i>
+                                {{ $this->isLaborMonitoringTemplate() ? 'Bảng báo giá Quan trắc môi trường lao động' : 'Bảng 02. Chi tiết thực hiện (Đo đạc chỉ tiêu chi tiết)' }}
+                            </h6>
                             @if(count($detailItems) > 0)
                             <div class="text-muted fw-bold" style="font-size: 0.85rem;">
-                                Tổng chi phí chi tiết Bảng 02: <span class="text-success">{{ number_format($detailTotal, 0, ',', '.') }}đ</span>
-                                @if($detailTotal !== (int)($formData['subtotal'] ?? 0))
-                                <span class="badge bg-warning text-dark ms-2"><i class="bi bi-exclamation-triangle-fill"></i> Chưa khớp Bảng 01</span>
-                                @else
-                                <span class="badge bg-success text-white ms-2"><i class="bi bi-check-circle-fill"></i> Khớp Bảng 01</span>
-                                @endif
+                                {{ $this->isLaborMonitoringTemplate() ? 'Tổng chi phí:' : 'Tổng chi phí chi tiết Bảng 02:' }}
+                                <span class="text-success">{{ number_format($detailTotal, 0, ',', '.') }}đ</span>
+                                @unless($this->isLaborMonitoringTemplate())
+                                    @if($detailTotal !== (int)($formData['subtotal'] ?? 0))
+                                    <span class="badge bg-warning text-dark ms-2"><i class="bi bi-exclamation-triangle-fill"></i> Chưa khớp Bảng 01</span>
+                                    @else
+                                    <span class="badge bg-success text-white ms-2"><i class="bi bi-check-circle-fill"></i> Khớp Bảng 01</span>
+                                    @endif
+                                @endunless
                             </div>
                             @endif
                         </div>
@@ -508,22 +577,40 @@
                                 </thead>
                                 <tbody>
                                     @forelse($detailItems as $i => $item)
+                                    @php($rowDetailPriceCatalog = $this->detailPriceCatalogForGroup($item['group_name'] ?? null))
                                     <tr>
                                         <td class="text-center text-muted">{{ $i + 1 }}</td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1 font-weight-bold"
-                                                   wire:model.blur="detailItems.{{ $i }}.group_name" list="group-names" placeholder="Nhập hoặc chọn nhóm...">
+                                            <select class="form-select form-select-sm border-0 bg-transparent px-1 fw-bold"
+                                                    wire:model.live="detailItems.{{ $i }}.group_name">
+                                                @foreach($groupOptions as $groupOption)
+                                                    <option value="{{ $groupOption }}">{{ $groupOption }}</option>
+                                                @endforeach
+                                            </select>
                                         </td>
                                         <td>
+                                            @if($rowDetailPriceCatalog !== [])
+                                            <select class="form-select form-select-sm border-0 bg-transparent px-1"
+                                                    wire:model.live="detailItems.{{ $i }}.description">
+                                                <option value="">-- Chọn chỉ tiêu --</option>
+                                                @foreach($rowDetailPriceCatalog as $catalogItem)
+                                                    <option value="{{ $catalogItem['description'] }}">
+                                                        {{ $catalogItem['description'] }} - {{ number_format((int) $catalogItem['unit_price'], 0, ',', '.') }}đ
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @else
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1"
-                                                   wire:model.blur="detailItems.{{ $i }}.description" placeholder="VD: Nhiệt độ, Tiếng ồn, Chi phí di chuyển...">
+                                                   wire:model.live.debounce.250ms="detailItems.{{ $i }}.description"
+                                                   placeholder="Nhập chỉ tiêu...">
+                                            @endif
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
                                                    wire:model.blur="detailItems.{{ $i }}.unit" placeholder="Mẫu">
                                         </td>
                                         <td>
-                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                            <input type="number" step="1" min="0" inputmode="numeric" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
                                                    wire:model.live.debounce.500ms="detailItems.{{ $i }}.quantity">
                                         </td>
                                         <td>
@@ -548,7 +635,7 @@
                                     @empty
                                     <tr>
                                         <td colspan="8" class="text-center py-4 text-muted">
-                                            Chưa có chỉ tiêu chi tiết nào. Bấm <strong>"Thêm chỉ tiêu chi tiết"</strong> nếu bạn muốn xuất Bảng 02.
+                                            Chưa có chỉ tiêu chi tiết nào. Bấm <strong>"Thêm chỉ tiêu chi tiết"</strong>, sau đó gõ/chọn chỉ tiêu ngay trong ô <strong>Chỉ tiêu / Nội dung chi tiết</strong>.
                                         </td>
                                     </tr>
                                     @endforelse
@@ -557,7 +644,7 @@
                                     <tr>
                                         <td colspan="8">
                                             <button type="button" class="btn btn-sm btn-outline-success" wire:click="addDetailItem">
-                                                <i class="bi bi-plus-lg me-1"></i> Thêm chỉ tiêu chi tiết (Bảng 02)
+                                                <i class="bi bi-plus-lg me-1"></i> Thêm chỉ tiêu
                                             </button>
                                         </td>
                                     </tr>
@@ -648,7 +735,7 @@
                             <div class="col-md-5">
                                 <table class="table table-sm mb-0">
                                     <tr>
-                                        <td class="fw-bold">Tổng cộng Bảng 01 (chưa VAT):</td>
+                                        <td class="fw-bold">{{ $this->isLaborMonitoringTemplate() ? 'Tổng cộng chỉ tiêu (chưa VAT):' : 'Tổng cộng Bảng 01 (chưa VAT):' }}</td>
                                         <td class="text-end fw-bold">{{ number_format((float)($formData['subtotal'] ?? 0), 0, ',', '.') }}đ</td>
                                     </tr>
                                     <tr>
@@ -672,7 +759,7 @@
                                         <td class="text-end fw-bold">{{ number_format((float)($formData['vat_amount'] ?? 0), 0, ',', '.') }}đ</td>
                                     </tr>
                                     <tr class="border-top border-2">
-                                        <td class="fw-bold text-danger fs-5">TỔNG THANH TOÁN (Bảng 01 + VAT):</td>
+                                        <td class="fw-bold text-danger fs-5">TỔNG THANH TOÁN{{ $this->isLaborMonitoringTemplate() ? '' : ' (Bảng 01 + VAT)' }}:</td>
                                         <td class="text-end fw-bold text-danger fs-5">{{ number_format((float)($formData['total'] ?? 0), 0, ',', '.') }}đ</td>
                                     </tr>
                                 </table>

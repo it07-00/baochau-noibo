@@ -2,6 +2,7 @@
 
 namespace App\Services\Quotations;
 
+use App\Enums\Role;
 use App\Models\QuotationDocument;
 use App\Support\Quotations\QuotationTemplateCatalog;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -30,19 +31,20 @@ class QuotationDocumentExportService
 
     private const WORD_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
 
-    private const TEMPLATE_RELATIVE_PATH = 'templates/quotation-document-template.docx';
+    private const TEMPLATE_RELATIVE_PATH = 'templates/quotations/qtmtld.docx';
 
     private const TABLE_HEADER_FILL = 'C5EECE';
 
     public function exportDocx(QuotationDocument $doc): string
     {
         $doc->loadMissing('items', 'sections.rows', 'staff');
+        $pageCount = $this->estimatePageCount($doc);
 
         $storagePath = 'quotation-docs/BG-'.$this->safeFilePart($doc->document_number).'-'.now()->format('YmdHis').'.docx';
         $tempPath = storage_path('app/temp/'.$storagePath);
 
         $this->ensureDirectory(dirname($tempPath));
-        $this->buildDocxFromTemplate($doc, $tempPath);
+        $this->buildDocxFromTemplate($doc, $tempPath, $pageCount);
 
         Storage::disk(config('filesystems.upload_disk', 'public'))->put($storagePath, file_get_contents($tempPath));
         $doc->update(['docx_path' => $storagePath]);
@@ -55,6 +57,7 @@ class QuotationDocumentExportService
     public function exportPdf(QuotationDocument $doc): string
     {
         $doc->loadMissing('items', 'sections.rows', 'staff');
+        $pageCount = $this->estimatePageCount($doc);
 
         $baseName = 'BG-'.$this->safeFilePart($doc->document_number).'-'.now()->format('YmdHis');
         $workDir = storage_path('app/temp/quotation-docs/'.$baseName);
@@ -64,11 +67,11 @@ class QuotationDocumentExportService
         $this->ensureDirectory($workDir);
 
         try {
-            $this->buildDocxFromTemplate($doc, $docxPath);
+            $this->buildDocxFromTemplate($doc, $docxPath, $pageCount);
 
             $content = $this->convertDocxToPdf($docxPath, $pdfPath)
                 ? file_get_contents($pdfPath)
-                : $this->generateFallbackPdfContent($doc);
+                : $this->generateFallbackPdfContent($doc, $pageCount);
 
             $storagePath = 'quotation-docs/'.$baseName.'.pdf';
             Storage::disk(config('filesystems.upload_disk', 'public'))->put($storagePath, $content);
@@ -83,6 +86,7 @@ class QuotationDocumentExportService
     public function generatePdfContent(QuotationDocument $doc): string
     {
         $doc->loadMissing('items', 'sections.rows', 'staff');
+        $pageCount = $this->estimatePageCount($doc);
 
         $baseName = 'BG-'.$this->safeFilePart($doc->document_number).'-'.uniqid();
         $workDir = storage_path('app/temp/quotation-docs/'.$baseName);
@@ -92,11 +96,11 @@ class QuotationDocumentExportService
         $this->ensureDirectory($workDir);
 
         try {
-            $this->buildDocxFromTemplate($doc, $docxPath);
+            $this->buildDocxFromTemplate($doc, $docxPath, $pageCount);
 
             return $this->convertDocxToPdf($docxPath, $pdfPath)
                 ? file_get_contents($pdfPath)
-                : $this->generateFallbackPdfContent($doc);
+                : $this->generateFallbackPdfContent($doc, $pageCount);
         } finally {
             $this->removeDirectory($workDir);
         }
@@ -119,7 +123,7 @@ class QuotationDocumentExportService
         return resource_path(self::TEMPLATE_RELATIVE_PATH);
     }
 
-    private function buildDocxFromTemplate(QuotationDocument $doc, string $outputPath): void
+    private function buildDocxFromTemplate(QuotationDocument $doc, string $outputPath, string $pageCount): void
     {
         $templatePath = $this->templatePathFor($doc);
 
@@ -149,13 +153,13 @@ class QuotationDocumentExportService
         $xpath = new DOMXPath($dom);
         $xpath->registerNamespace('w', self::WORD_NS);
 
-        $this->hydrateTemplateDocument($doc, $dom, $xpath);
+        $this->hydrateTemplateDocument($doc, $dom, $xpath, $pageCount);
 
         $zip->addFromString('word/document.xml', $dom->saveXML());
         $zip->close();
     }
 
-    private function hydrateTemplateDocument(QuotationDocument $doc, DOMDocument $dom, DOMXPath $xpath): void
+    private function hydrateTemplateDocument(QuotationDocument $doc, DOMDocument $dom, DOMXPath $xpath, string $pageCount): void
     {
         $body = $xpath->query('/w:document/w:body')->item(0);
         if (! $body instanceof DOMElement) {
@@ -166,9 +170,7 @@ class QuotationDocumentExportService
         $serviceType = $this->displayServiceType($doc);
         $serviceTypeLower = mb_strtolower($serviceType, 'UTF-8');
         $customerName = $doc->customer_name ?: 'QUÝ CÔNG TY';
-        $staffName = $doc->staff?->name ?: 'Nhật Quỳnh';
-        $staffPhone = $doc->staff?->phone ?: '0915 219 148';
-        $staffEmail = $doc->staff?->email ?: 'nhatquynh@baochauenvir.com';
+        [$staffName, $staffPhone, $staffEmail] = $this->resolveStaffDetails($doc);
         $templateKey = QuotationTemplateCatalog::find($doc->template_key ?? null)['key'];
 
         if ($templateKey === 'plld') {
@@ -181,7 +183,8 @@ class QuotationDocumentExportService
                 $customerName,
                 $staffName,
                 $staffPhone,
-                $staffEmail
+                $staffEmail,
+                $pageCount
             );
 
             return;
@@ -198,7 +201,8 @@ class QuotationDocumentExportService
                 $customerName,
                 $staffName,
                 $staffPhone,
-                $staffEmail
+                $staffEmail,
+                $pageCount
             );
 
             return;
@@ -248,7 +252,8 @@ class QuotationDocumentExportService
                 $customerName,
                 $staffName,
                 $staffPhone,
-                $staffEmail
+                $staffEmail,
+                $pageCount
             );
 
             return;
@@ -261,34 +266,39 @@ class QuotationDocumentExportService
             $xpath,
             'Xin chân thành',
             'Xin chân thành cảm ơn Quý khách hàng đã tin tưởng và lựa chọn chúng tôi. '
-            .'Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
+            .'**Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu** hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
             .'Về dịch vụ hiện '.$serviceTypeLower.' '.$year.', Công ty Bảo Châu xin gửi báo giá như sau:'
         );
-        $this->setDirectParagraphStartingWith($body, $xpath, 'Bảng 01.', 'Bảng 01. Tổng hợp dự toán chi phí thực hiện');
-        $this->setDirectParagraphStartingWith($body, $xpath, 'Bảng 02.', 'Bảng 02. Tổng hợp chỉ tiêu đánh giá');
+        $this->removeDirectParagraphStartingWith($body, $xpath, 'Bảng 01.');
+        $this->removeDirectParagraphStartingWith($body, $xpath, 'Bảng 02.');
         $this->setDirectParagraphStartingWith($body, $xpath, 'Ghi chú', 'Ghi chú :');
 
         $tables = $this->directChildElements($body, 'tbl');
 
         if (isset($tables[0])) {
-            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail, $pageCount);
         }
 
         if (isset($tables[1])) {
-            $this->hydrateSummaryTable($tables[1], $xpath, $doc);
+            $this->hydrateLaborMonitoringSinglePriceTable($tables[1], $xpath, $doc);
         }
 
-        if (isset($tables[2])) {
-            $this->hydrateDetailTable($tables[2], $xpath, $doc);
+        if (count($tables) === 3) {
+            if (isset($tables[2])) {
+                $this->hydrateSignatureTable($tables[2], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
+            }
+        } else {
+            if (isset($tables[2])) {
+                $this->removeNode($tables[2]);
+            }
+            if (isset($tables[3])) {
+                $this->hydrateSignatureTable($tables[3], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
+            }
         }
 
         $noteHeading = $this->findDirectParagraphStartingWith($body, $xpath, 'Ghi chú');
         if ($noteHeading instanceof DOMElement) {
             $this->replaceParagraphsAfterHeadingUntilNextTable($noteHeading, $xpath, $this->noteLines($doc, $year));
-        }
-
-        if (isset($tables[3])) {
-            $this->hydrateSignatureTable($tables[3], $xpath, $staffName, $staffPhone, $staffEmail);
         }
     }
 
@@ -302,7 +312,8 @@ class QuotationDocumentExportService
         string $customerName,
         string $staffName,
         string $staffPhone,
-        string $staffEmail
+        string $staffEmail,
+        string $pageCount
     ): void {
         $this->setDirectParagraphStartingWith($body, $xpath, 'BẢNG BÁO GIÁ', 'BẢNG BÁO GIÁ');
         $this->setDirectParagraphStartingWith($body, $xpath, '(V/v:', '(V/v: '.$serviceType.' '.$year.')');
@@ -311,7 +322,7 @@ class QuotationDocumentExportService
             $xpath,
             'Xin chân thành',
             'Xin chân thành cảm ơn Quý khách hàng đã tin tưởng và lựa chọn chúng tôi. '
-            .'Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
+            .'**Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu** hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
             .'Về dịch vụ '.$serviceTypeLower.' '.$year.', Công ty Bảo Châu xin gửi báo giá như sau:'
         );
         $this->setDirectParagraphStartingWith($body, $xpath, 'Bảng 01.', 'Bảng 01. Tổng hợp chi phí thực hiện');
@@ -321,7 +332,7 @@ class QuotationDocumentExportService
         $tables = $this->directChildElements($body, 'tbl');
 
         if (isset($tables[0])) {
-            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail, $pageCount);
         }
 
         if (isset($tables[1])) {
@@ -338,7 +349,7 @@ class QuotationDocumentExportService
         }
 
         if (isset($tables[3])) {
-            $this->hydrateSignatureTable($tables[3], $xpath, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateSignatureTable($tables[3], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
         }
     }
 
@@ -351,7 +362,8 @@ class QuotationDocumentExportService
         string $customerName,
         string $staffName,
         string $staffPhone,
-        string $staffEmail
+        string $staffEmail,
+        string $pageCount
     ): void {
         $this->setDirectParagraphStartingWith($body, $xpath, 'BẢNG BÁO GIÁ', 'BẢNG BÁO GIÁ');
         $this->setDirectParagraphStartingWith($body, $xpath, '(V/v:', '(V/v: '.$serviceType.')');
@@ -360,7 +372,7 @@ class QuotationDocumentExportService
             $xpath,
             'Xin chân thành',
             'Xin chân thành cảm ơn Quý khách hàng đã tin tưởng và lựa chọn chúng tôi. '
-            .'Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
+            .'**Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu** hân hạnh được đồng hành cùng Quý khách hàng trong lĩnh vực môi trường. '
             .'Về dịch vụ '.$serviceType.', Công ty Bảo Châu xin gửi báo giá như sau:'
         );
         $this->setDirectParagraphStartingWith($body, $xpath, 'Bảng 01.', 'Bảng 01. Tổng hợp chi phí thực hiện phân loại lao động');
@@ -369,7 +381,7 @@ class QuotationDocumentExportService
         $tables = $this->directChildElements($body, 'tbl');
 
         if (isset($tables[0])) {
-            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail, $pageCount);
         }
 
         if (isset($tables[1])) {
@@ -386,7 +398,7 @@ class QuotationDocumentExportService
         }
 
         if (isset($tables[3])) {
-            $this->hydrateSignatureTable($tables[3], $xpath, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateSignatureTable($tables[3], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
         }
     }
 
@@ -436,7 +448,7 @@ class QuotationDocumentExportService
 
         $signatureTableIndex = $templateKey === 'vhnt' ? 3 : 2;
         if (isset($tables[$signatureTableIndex])) {
-            $this->hydrateSignatureTable($tables[$signatureTableIndex], $xpath, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateSignatureTable($tables[$signatureTableIndex], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
         }
     }
 
@@ -449,7 +461,8 @@ class QuotationDocumentExportService
         string $customerName,
         string $staffName,
         string $staffPhone,
-        string $staffEmail
+        string $staffEmail,
+        string $pageCount
     ): void {
         $this->setDirectParagraphStartingWith($body, $xpath, 'BẢNG BÁO GIÁ', 'BẢNG BÁO GIÁ');
         $this->setDirectParagraphStartingWith($body, $xpath, '(V.v:', '(V.v: '.$serviceType.' giai đoạn '.$year.'-2030)');
@@ -458,7 +471,7 @@ class QuotationDocumentExportService
         $tables = $this->directChildElements($body, 'tbl');
 
         if (isset($tables[0])) {
-            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateInfoTable($tables[0], $xpath, $doc, $customerName, $staffName, $staffPhone, $staffEmail, $pageCount);
         }
 
         if (isset($tables[1])) {
@@ -474,7 +487,7 @@ class QuotationDocumentExportService
         }
 
         if (isset($tables[4])) {
-            $this->hydrateSignatureTable($tables[4], $xpath, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateSignatureTable($tables[4], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
         }
     }
 
@@ -511,7 +524,7 @@ class QuotationDocumentExportService
         }
 
         if (isset($tables[1])) {
-            $this->hydrateDirectorSignatureTable($tables[1], $xpath, $staffName, $staffPhone, $staffEmail);
+            $this->hydrateDirectorSignatureTable($tables[1], $xpath, $doc, $staffName, $staffPhone, $staffEmail);
         }
     }
 
@@ -522,7 +535,8 @@ class QuotationDocumentExportService
         string $customerName,
         string $staffName,
         string $staffPhone,
-        string $staffEmail
+        string $staffEmail,
+        string $pageCount
     ): void {
         $rows = $this->tableRows($table);
 
@@ -534,8 +548,9 @@ class QuotationDocumentExportService
             'Kính gửi: Ban giám đốc',
             mb_strtoupper($customerName, 'UTF-8'),
         ]);
+        $genderPrefix = $this->resolveStaffGenderPrefix($doc);
         $this->setCellParagraphTexts($rows[0], $xpath, 1, [
-            ' Người gửi: (Ms) '.$staffName,
+            ' Người gửi: ' . ($genderPrefix ? $genderPrefix . ' ' : '') . '**' . $staffName . '**',
             'Điện thoại: '.$staffPhone,
             'Email: '.$staffEmail,
         ]);
@@ -543,10 +558,11 @@ class QuotationDocumentExportService
             'Người nhận: '.($doc->customer_contact ?: ''),
             'Địa chỉ: '.($doc->customer_address ?: $doc->work_location ?: ''),
         ]);
+
         $this->setCellParagraphTexts($rows[1], $xpath, 1, [
             'Báo giá số: '.$doc->document_number,
             'Ngày báo giá: '.($doc->date?->format('d/m/Y') ?? now()->format('d/m/Y')),
-            'Số trang: 03',
+            'Số trang: '.$pageCount,
         ]);
     }
 
@@ -601,7 +617,117 @@ class QuotationDocumentExportService
         $table->appendChild($totalRow);
 
         $wordsRow = $wordsTemplate->cloneNode(true);
-        $this->setCellText($wordsRow, $xpath, 0, 'Bằng chữ: “'.$this->numberToWords($doc->total).' Việt Nam đồng”');
+        $this->setCellText($wordsRow, $xpath, 0, 'Bằng chữ: “'.$this->numberToWords($doc->total).' đồng”');
+        $table->appendChild($wordsRow);
+    }
+
+    private function hydrateLaborMonitoringSinglePriceTable(DOMElement $table, DOMXPath $xpath, QuotationDocument $doc): void
+    {
+        $rows = $this->tableRows($table);
+        if (count($rows) < 2) {
+            return;
+        }
+
+        $this->shadeRow($rows[0], self::TABLE_HEADER_FILL);
+        $this->setCellText($rows[0], $xpath, 0, 'STT');
+        $this->setCellText($rows[0], $xpath, 1, 'CHỈ TIÊU');
+        $this->setCellText($rows[0], $xpath, 2, 'SỐ LƯỢNG');
+        $this->setCellText($rows[0], $xpath, 3, 'ĐƠN GIÁ');
+        $this->setCellText($rows[0], $xpath, 4, 'THÀNH TIỀN');
+
+        $itemTemplate = $rows[1]->cloneNode(true);
+
+        // Find templates dynamically based on text content
+        $subtotalTemplate = null;
+        $vatTemplate = null;
+        $totalTemplate = null;
+        $wordsTemplate = null;
+
+        foreach ($rows as $row) {
+            $rowText = $this->nodeText($row, $xpath);
+            if (preg_match('/chưa\s*Vat/ui', $rowText)) {
+                $subtotalTemplate = $row;
+            } elseif (preg_match('/sau\s*Vat/ui', $rowText) || preg_match('/đã\s*Vat/ui', $rowText)) {
+                $totalTemplate = $row;
+            } elseif (preg_match('/Vat|VAT/ui', $rowText)) {
+                $vatTemplate = $row;
+            } elseif (preg_match('/Bằng\s*chữ/ui', $rowText)) {
+                $wordsTemplate = $row;
+            }
+        }
+
+        // Fallbacks if not found dynamically (backward compatibility)
+        if (! $subtotalTemplate && count($rows) === 6) {
+            $subtotalTemplate = $rows[2];
+        }
+        if (! $vatTemplate && count($rows) === 6) {
+            $vatTemplate = $rows[3];
+        }
+        if (! $totalTemplate && count($rows) === 6) {
+            $totalTemplate = $rows[4];
+        }
+        if (! $wordsTemplate && count($rows) === 6) {
+            $wordsTemplate = $rows[5];
+        }
+
+        $subtotalTemplate = $subtotalTemplate ? $subtotalTemplate->cloneNode(true) : $itemTemplate->cloneNode(true);
+        $vatTemplate = $vatTemplate ? $vatTemplate->cloneNode(true) : $itemTemplate->cloneNode(true);
+        $totalTemplate = $totalTemplate ? $totalTemplate->cloneNode(true) : $itemTemplate->cloneNode(true);
+        $wordsTemplate = $wordsTemplate ? $wordsTemplate->cloneNode(true) : $totalTemplate->cloneNode(true);
+
+        $this->removeTableRowsAfter($table, 0);
+
+        $items = $doc->items->where('item_type', 'detail')->values();
+        if ($items->isEmpty()) {
+            $items = $doc->items->where('item_type', 'summary')->values();
+        }
+
+        foreach ($items as $index => $item) {
+            $row = $itemTemplate->cloneNode(true);
+            $unitPrice = (int) ($item->unit_price ?: $item->amount);
+
+            $this->setCellText($row, $xpath, 0, (string) ($index + 1));
+            $this->setCellText($row, $xpath, 1, (string) $item->description);
+            $this->setCellText($row, $xpath, 2, $this->formatDetailQty((float) $item->quantity));
+            $this->setCellText($row, $xpath, 3, $this->formatMoney($unitPrice));
+            $this->setCellText($row, $xpath, 4, $this->formatMoney((int) $item->amount));
+            $table->appendChild($row);
+        }
+
+        $subtotalRow = $subtotalTemplate->cloneNode(true);
+        $this->setCellText($subtotalRow, $xpath, 0, 'TỔNG CỘNG CHƯA VAT ');
+        $this->setCellText($subtotalRow, $xpath, 1, $this->formatMoney($doc->subtotal));
+        $table->appendChild($subtotalRow);
+
+        if ((int) $doc->discount > 0) {
+            $discountRow = $subtotalTemplate->cloneNode(true);
+            $this->setCellText($discountRow, $xpath, 0, 'CHIẾT KHẤU');
+            $this->setCellText($discountRow, $xpath, 1, '-'.$this->formatMoney($doc->discount));
+            $table->appendChild($discountRow);
+        }
+
+        $vatRow = $vatTemplate->cloneNode(true);
+        $this->setCellText($vatRow, $xpath, 0, 'VAT '.$doc->vat_rate.'%');
+        $this->setCellText($vatRow, $xpath, 1, $this->formatMoney($doc->vat_amount));
+        $table->appendChild($vatRow);
+
+        $totalRow = $totalTemplate->cloneNode(true);
+        $this->setCellText($totalRow, $xpath, 0, 'TỔNG THÀNH TIỀN ĐÃ VAT');
+        $this->setCellText($totalRow, $xpath, 1, $this->formatMoney($doc->total));
+        $table->appendChild($totalRow);
+
+        $wordsRow = $wordsTemplate->cloneNode(true);
+        $wordsText = 'Bằng chữ: “'.$this->numberToWords($doc->total).' đồng”';
+        $cellCount = count($this->rowCells($wordsRow));
+        if ($cellCount >= 2) {
+            $this->setCellText($wordsRow, $xpath, 0, $wordsText);
+            $this->setCellText($wordsRow, $xpath, 1, '');
+            for ($cellIndex = 2; $cellIndex < $cellCount; $cellIndex++) {
+                $this->setCellText($wordsRow, $xpath, $cellIndex, '');
+            }
+        } else {
+            $this->setCellText($wordsRow, $xpath, 0, $wordsText);
+        }
         $table->appendChild($wordsRow);
     }
 
@@ -715,7 +841,7 @@ class QuotationDocumentExportService
         }
 
         $amountForWords = (int) ((int) $doc->vat_amount > 0 ? $doc->total : $doc->subtotal);
-        $this->appendWordsRow($table, $xpath, $wordsTemplate, 'Viết bằng chữ: '.$this->numberToWords($amountForWords).' Việt Nam đồng./.');
+        $this->appendWordsRow($table, $xpath, $wordsTemplate, 'Viết bằng chữ: '.$this->numberToWords($amountForWords).' đồng./.');
     }
 
     private function hydrateFiveColumnSummaryTable(DOMElement $table, DOMXPath $xpath, QuotationDocument $doc): void
@@ -1155,7 +1281,7 @@ class QuotationDocumentExportService
         $this->shadeRow($rows[2], self::TABLE_HEADER_FILL);
 
         $itemTemplate = $this->firstRowWithAtLeastCells($rows, 16, 3)?->cloneNode(true);
-        if (!$itemTemplate instanceof DOMElement) {
+        if (! $itemTemplate instanceof DOMElement) {
             return;
         }
 
@@ -1190,7 +1316,7 @@ class QuotationDocumentExportService
     private function laborMatrixRows(QuotationDocument $doc): array
     {
         $section = $doc->sections->firstWhere('section_key', 'plld_matrix');
-        if (!$section) {
+        if (! $section) {
             return [];
         }
 
@@ -1233,16 +1359,24 @@ class QuotationDocumentExportService
         return $values;
     }
 
-    private function hydrateSignatureTable(DOMElement $table, DOMXPath $xpath, string $staffName, string $staffPhone, string $staffEmail): void
-    {
+    private function hydrateSignatureTable(
+        DOMElement $table,
+        DOMXPath $xpath,
+        QuotationDocument $doc,
+        string $staffName,
+        string $staffPhone,
+        string $staffEmail
+    ): void {
         $rows = $this->tableRows($table);
         if (! isset($rows[0])) {
             return;
         }
 
+        $staffTitle = $this->resolveStaffTitle($doc, true);
+
         $this->setCellParagraphTexts($rows[0], $xpath, 0, [
             'Thông tin liên hệ: ',
-            $staffName.' – Sales Manager',
+            $staffName.' – '.$staffTitle,
             'Số điện thoại: '.$staffPhone,
             'Email: '.$staffEmail.' ',
         ]);
@@ -1254,16 +1388,24 @@ class QuotationDocumentExportService
         ]);
     }
 
-    private function hydrateDirectorSignatureTable(DOMElement $table, DOMXPath $xpath, string $staffName, string $staffPhone, string $staffEmail): void
-    {
+    private function hydrateDirectorSignatureTable(
+        DOMElement $table,
+        DOMXPath $xpath,
+        QuotationDocument $doc,
+        string $staffName,
+        string $staffPhone,
+        string $staffEmail
+    ): void {
         $rows = $this->tableRows($table);
         if (! isset($rows[0])) {
             return;
         }
 
+        $staffTitle = $this->resolveStaffTitle($doc, false);
+
         $this->setCellParagraphTexts($rows[0], $xpath, 0, [
             'Mọi chi tiết xin vui lòng liên hệ:',
-            $staffName.' - Nhân viên kinh doanh',
+            $staffName.' - '.$staffTitle,
             'Điện thoại: '.$staffPhone,
             'Email: '.$staffEmail,
         ]);
@@ -1276,11 +1418,12 @@ class QuotationDocumentExportService
         ]);
     }
 
-    private function generateFallbackPdfContent(QuotationDocument $doc): string
+    private function generateFallbackPdfContent(QuotationDocument $doc, string $pageCount): string
     {
         $this->ensureDirectory(storage_path('fonts'));
 
         $year = $doc->date?->format('Y') ?? now()->format('Y');
+        [$staffName, $staffPhone, $staffEmail] = $this->resolveStaffDetails($doc);
 
         $pdf = Pdf::loadView('admin.quotations.quotation-document-pdf', [
             'doc' => $doc,
@@ -1295,9 +1438,12 @@ class QuotationDocumentExportService
             'serviceTitle' => $this->displayServiceType($doc),
             'year' => $year,
             'noteLines' => $this->noteLines($doc, $year),
-            'staffName' => $doc->staff?->name ?: 'Nhật Quỳnh',
-            'staffPhone' => $doc->staff?->phone ?: '0915 219 148',
-            'staffEmail' => $doc->staff?->email ?: 'nhatquynh@baochauenvir.com',
+            'staffName' => $staffName,
+            'staffPhone' => $staffPhone,
+            'staffEmail' => $staffEmail,
+            'staffGenderPrefix' => $this->resolveStaffGenderPrefix($doc),
+            'staffTitle' => $this->resolveStaffTitle($doc, true),
+            'pageCount' => $pageCount,
         ]);
 
         $pdf->setPaper('A4', 'portrait');
@@ -1306,6 +1452,56 @@ class QuotationDocumentExportService
         $pdf->setOption('defaultFont', 'DejaVu Serif');
 
         return $pdf->output();
+    }
+
+    private function estimatePageCount(QuotationDocument $doc): string
+    {
+        try {
+            $year = $doc->date?->format('Y') ?? now()->format('Y');
+            $baselineCount = $this->getTemplatePageCount($doc);
+            [$staffName, $staffPhone, $staffEmail] = $this->resolveStaffDetails($doc);
+
+            $pdf = Pdf::loadView('admin.quotations.quotation-document-pdf', [
+                'doc' => $doc,
+                'company' => [
+                    'name' => self::COMPANY_NAME,
+                    'address' => self::COMPANY_ADDRESS,
+                    'phone' => self::COMPANY_PHONE,
+                    'email' => self::COMPANY_EMAIL,
+                    'tax_code' => self::COMPANY_TAX_CODE,
+                ],
+                'amountInWords' => $this->numberToWords($doc->total),
+                'serviceTitle' => $this->displayServiceType($doc),
+                'year' => $year,
+                'noteLines' => $this->noteLines($doc, $year),
+                'staffName' => $staffName,
+                'staffPhone' => $staffPhone,
+                'staffEmail' => $staffEmail,
+                'staffGenderPrefix' => $this->resolveStaffGenderPrefix($doc),
+                'staffTitle' => $this->resolveStaffTitle($doc, true),
+                'pageCount' => $baselineCount,
+            ]);
+
+            $template = QuotationTemplateCatalog::find($doc->template_key ?? null);
+            $orientation = $template['orientation'] ?? 'portrait';
+            $pdf->setPaper('A4', $orientation);
+            $pdf->setOption('isHtml5ParserEnabled', true);
+            $pdf->setOption('isRemoteEnabled', true);
+            $pdf->setOption('defaultFont', 'DejaVu Serif');
+
+            $output = $pdf->output();
+            $pages = 0;
+            if (preg_match_all('/\/Type\s*\/Page\b/', $output, $matches)) {
+                $pages = count($matches[0]);
+            }
+            if ($pages > 0) {
+                return str_pad((string)$pages, 2, '0', STR_PAD_LEFT);
+            }
+        } catch (\Throwable $e) {
+            Log::debug('Error estimating page count: ' . $e->getMessage());
+        }
+
+        return $this->getTemplatePageCount($doc);
     }
 
     private function convertDocxToPdf(string $docxPath, string $pdfPath): bool
@@ -1429,6 +1625,21 @@ POWERSHELL;
         }
     }
 
+    private function removeDirectParagraphStartingWith(DOMElement $parent, DOMXPath $xpath, string $needle): void
+    {
+        $paragraph = $this->findDirectParagraphStartingWith($parent, $xpath, $needle);
+        if ($paragraph instanceof DOMElement) {
+            $this->removeNode($paragraph);
+        }
+    }
+
+    private function removeNode(DOMNode $node): void
+    {
+        if ($node->parentNode instanceof DOMNode) {
+            $node->parentNode->removeChild($node);
+        }
+    }
+
     private function findDirectParagraphStartingWith(DOMElement $parent, DOMXPath $xpath, string $needle): ?DOMElement
     {
         foreach ($this->directChildElements($parent, 'p') as $paragraph) {
@@ -1515,6 +1726,129 @@ POWERSHELL;
 
     private function setParagraphText(DOMElement $paragraph, DOMXPath $xpath, string $text): void
     {
+        // 1. Detect if the original paragraph has any underlined runs
+        $hasUnderline = $xpath->query('.//w:r[w:rPr/w:u]', $paragraph)->length > 0;
+
+        // 2. Check if the text contains a label-value pattern (contains ':')
+        $parts = explode(':', $text, 2);
+
+        $hasBoldMarker = str_contains($text, '**');
+
+        // If the paragraph has underline or contains bold markers, we rebuild its runs
+        if (($hasUnderline && count($parts) === 2) || $hasBoldMarker) {
+            $segments = [];
+            if ($hasUnderline && count($parts) === 2) {
+                $labelText = $parts[0] . ':';
+                $valueText = $parts[1];
+
+                $segments[] = [
+                    'text' => $labelText,
+                    'underline' => true,
+                    'bold' => false,
+                ];
+
+                $valueSegments = $this->parseBoldSegments($valueText);
+                foreach ($valueSegments as $seg) {
+                    $segments[] = [
+                        'text' => $seg['text'],
+                        'underline' => false,
+                        'bold' => $seg['bold'],
+                    ];
+                }
+            } else {
+                $boldSegments = $this->parseBoldSegments($text);
+                foreach ($boldSegments as $seg) {
+                    $segments[] = [
+                        'text' => $seg['text'],
+                        'underline' => false,
+                        'bold' => $seg['bold'],
+                    ];
+                }
+            }
+
+            if ($segments === []) {
+                $segments[] = [
+                    'text' => '',
+                    'underline' => false,
+                    'bold' => false,
+                ];
+            }
+
+            // Find the first run to copy its run properties (rPr)
+            $firstRun = $this->directChildElements($paragraph, 'r')[0] ?? null;
+            $rPrTemplate = null;
+            if ($firstRun instanceof DOMElement) {
+                $rPrTemplate = $this->directChildElements($firstRun, 'rPr')[0] ?? null;
+            }
+
+            // Let's remove all existing children of the paragraph except paragraph properties (pPr)
+            $toRemove = [];
+            foreach ($paragraph->childNodes as $child) {
+                if ($child instanceof DOMElement && $child->localName === 'pPr' && $child->namespaceURI === self::WORD_NS) {
+                    continue;
+                }
+                $toRemove[] = $child;
+            }
+            foreach ($toRemove as $child) {
+                $paragraph->removeChild($child);
+            }
+
+            $dom = $paragraph->ownerDocument;
+
+            foreach ($segments as $segment) {
+                $run = $dom->createElementNS(self::WORD_NS, 'w:r');
+                $rPr = $rPrTemplate ? $rPrTemplate->cloneNode(true) : $dom->createElementNS(self::WORD_NS, 'w:rPr');
+
+                // Handle underline
+                $u = $this->directChildElements($rPr, 'u')[0] ?? null;
+                if ($segment['underline']) {
+                    if (! $u instanceof DOMElement) {
+                        $u = $dom->createElementNS(self::WORD_NS, 'w:u');
+                        $u->setAttributeNS(self::WORD_NS, 'w:val', 'single');
+                        $rPr->appendChild($u);
+                    }
+                } else {
+                    if ($u instanceof DOMElement) {
+                        $rPr->removeChild($u);
+                    }
+                }
+
+                // Handle bold (only if we have bold markers in the text, otherwise preserve original)
+                if ($hasBoldMarker) {
+                    $b = $this->directChildElements($rPr, 'b')[0] ?? null;
+                    $bCs = $this->directChildElements($rPr, 'bCs')[0] ?? null;
+                    if ($segment['bold']) {
+                        if (! $b instanceof DOMElement) {
+                            $rPr->appendChild($dom->createElementNS(self::WORD_NS, 'w:b'));
+                        }
+                        if (! $bCs instanceof DOMElement) {
+                            $rPr->appendChild($dom->createElementNS(self::WORD_NS, 'w:bCs'));
+                        }
+                    } else {
+                        if ($b instanceof DOMElement) {
+                            $rPr->removeChild($b);
+                        }
+                        if ($bCs instanceof DOMElement) {
+                            $rPr->removeChild($bCs);
+                        }
+                    }
+                }
+
+                $run->appendChild($rPr);
+
+                $t = $dom->createElementNS(self::WORD_NS, 'w:t');
+                $t->nodeValue = $segment['text'];
+                if ($segment['text'] !== trim($segment['text'])) {
+                    $t->setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+                }
+                $run->appendChild($t);
+                $paragraph->appendChild($run);
+            }
+
+            return;
+        }
+
+        // Default behavior (normal replacement)
         $textNodes = iterator_to_array($xpath->query('.//w:t', $paragraph));
 
         if ($textNodes === []) {
@@ -1532,6 +1866,23 @@ POWERSHELL;
                 $textNode->setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
             }
         }
+    }
+
+    private function parseBoldSegments(string $text): array
+    {
+        $segments = [];
+        $parts = explode('**', $text);
+        foreach ($parts as $index => $part) {
+            if ($part === '' && $index === 0) {
+                continue;
+            }
+            $segments[] = [
+                'text' => $part,
+                'bold' => ($index % 2 === 1),
+            ];
+        }
+
+        return $segments;
     }
 
     private function shadeRow(DOMElement $row, string $fill): void
@@ -1685,9 +2036,10 @@ POWERSHELL;
         $defaultLines = [
             'Kết quả thực hiện: Báo cáo Quan trắc môi trường lao động '.$year,
             'Thời gian có cuốn báo cáo QTMTLĐ:10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);',
-            'Chi phí trên đã bao gồm VAT'.$doc->vat_rate.'% tại thời điểm xuất hóa đơn.',
+            'Chi phí trên đã bao gồm VAT '.$doc->vat_rate.'% tại thời điểm xuất hóa đơn.',
             'Phương thức thanh toán:',
-            '50% sau khi ký hợp đồng – 50% sau khi hoàn thành báo cáo Quan trắc môi trường lao động ',
+            '50% sau khi ký hợp đồng',
+            '50% sau khi hoàn thành báo cáo Quan trắc môi trường lao động',
             'Hình thức: chuyển khoản',
             'Chúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!',
             'Trân trọng cảm ơn và mong nhận được sự hợp tác từ Quý Khách hàng!',
@@ -1696,11 +2048,22 @@ POWERSHELL;
         $notes = $this->splitUserLines($doc->notes);
         $terms = $this->splitUserLines($doc->terms);
 
-        if ($this->looksLikeDefaultLaborTerms($terms)) {
+        if ($terms === []) {
             $terms = $defaultLines;
+        } else {
+            foreach ($terms as &$line) {
+                if (str_contains($line, 'Báo cáo Quan trắc môi trường lao động') && ! str_contains($line, $year)) {
+                    $line = preg_replace('/Báo cáo Quan trắc môi trường lao động/u', 'Báo cáo Quan trắc môi trường lao động '.$year, $line);
+                }
+
+                if (str_contains($line, 'bao gồm VAT') && ! str_contains($line, '%')) {
+                    $line = str_replace('bao gồm VAT', 'bao gồm VAT '.$doc->vat_rate.'%', $line);
+                }
+            }
+            unset($line);
         }
 
-        return array_values(array_filter([...$notes, ...($terms ?: $defaultLines)], fn ($line) => $line !== ''));
+        return array_values(array_filter([...$notes, ...$terms], fn ($line) => $line !== ''));
     }
 
     private function customNoteLines(QuotationDocument $doc): array
@@ -1914,5 +2277,86 @@ POWERSHELL;
         }
 
         return implode(' ', $parts);
+    }
+
+    private function getTemplatePageCount(QuotationDocument $doc): string
+    {
+        try {
+            $templatePath = $this->templatePathFor($doc);
+            if (is_file($templatePath)) {
+                $zip = new ZipArchive;
+                if ($zip->open($templatePath) === true) {
+                    $docXml = $zip->getFromName('word/document.xml');
+                    $zip->close();
+                    if ($docXml) {
+                        $tempDom = new DOMDocument();
+                        @$tempDom->loadXML($docXml);
+                        $tempXpath = new DOMXPath($tempDom);
+                        $tempXpath->registerNamespace('w', self::WORD_NS);
+
+                        $tables = $tempXpath->query('//w:tbl');
+                        if ($tables->length > 0) {
+                            $rows = $tempXpath->query('.//w:tr', $tables->item(0));
+                            if ($rows->length > 1) {
+                                $cells = $tempXpath->query('.//w:tc', $rows->item(1));
+                                if ($cells->length > 1) {
+                                    $ps = $tempXpath->query('.//w:p', $cells->item(1));
+                                    foreach ($ps as $p) {
+                                        $rawText = trim($this->nodeText($p, $tempXpath));
+                                        if (preg_match('/Số\s*trang:\s*(\d+)/ui', $rawText, $matches)) {
+                                            return str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ignore and fallback
+        }
+
+        return '03';
+    }
+
+    private function resolveStaffDetails(QuotationDocument $doc): array
+    {
+        $name = $doc->staff?->name ?: 'Nhật Quỳnh';
+        $phone = $doc->staff?->phone ?: '0915 219 148';
+        $email = $doc->staff?->email ?: 'nhatquynh@baochauenvir.com';
+
+        return [$name, $phone, $email];
+    }
+
+    private function resolveStaffGenderPrefix(QuotationDocument $doc): string
+    {
+        return '(Mrs)';
+    }
+
+    private function resolveStaffTitle(QuotationDocument $doc, bool $useEnglish = false): string
+    {
+        $user = $doc->staff;
+        if (! $user) {
+            return $useEnglish ? 'Sales Manager' : 'Nhân viên kinh doanh';
+        }
+
+        if ($user->hasRole(Role::TP_KINH_DOANH->value)) {
+            return $useEnglish ? 'Sales Manager' : 'Trưởng phòng Kinh doanh';
+        }
+
+        if ($user->hasRole(Role::KINH_DOANH->value)) {
+            return $useEnglish ? 'Sales Executive' : 'Nhân viên kinh doanh';
+        }
+
+        $role = $user->roles->first();
+        if ($role) {
+            $roleEnum = Role::tryFrom($role->name);
+            if ($roleEnum) {
+                return $roleEnum->label();
+            }
+        }
+
+        return $useEnglish ? 'Sales Manager' : 'Nhân viên kinh doanh';
     }
 }

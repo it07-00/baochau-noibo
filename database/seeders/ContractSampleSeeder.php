@@ -31,48 +31,48 @@ class ContractSampleSeeder extends Seeder
         // ============================================================
         $handler = Handler::firstOrCreate(
             ['name' => 'Công ty CP Công Nghệ Môi Trường Trái Đất Xanh'],
-            ['phone' => '028.38123456', 'address' => 'Số 123, Đường ABC, Quận XYZ, TP.HCM']
+            ['address' => 'Số 123, Đường ABC, Quận XYZ, TP.HCM']
         );
 
         $wasteData = [
             [
-                'customer' => ['name' => 'CÔNG TY TNHH SẢN XUẤT BAO BÌ ĐÔNG NAM',      'representative' => 'Anh Hùng',    'phone' => '0901234501', 'address' => 'KCN Đông Nam, Củ Chi, TP.HCM'],
+                'customer' => ['name' => 'CÔNG TY TNHH SẢN XUẤT BAO BÌ ĐÔNG NAM',      'representative' => 'Anh Hùng',    'address' => 'KCN Đông Nam, Củ Chi, TP.HCM'],
                 'contract' => ['shd_cxl' => 'ĐÔNG NAM BB-01',  'shd_bc' => 'ĐÔNG NAM BB-01',  'content' => 'KL: 500 KG/NĂM - TS: 02 LẦN/NĂM', 'value' => 18500000, 'commission' => 2000000, 'revenue' => 16000000, 'signed_at' => '2025-01-10', 'effective_at' => '2025-01-10', 'end_at' => '2026-01-10', 'submitted_at' => '2025-01-15', 'waste_type' => 'CTNH', 'service_type' => 'Chất thải', 'status' => 'Đã trình ký Chủ xử lý', 'renewal_status' => 'Chưa tái ký', 'source' => 'TÁI KÝ', 'payment_method' => 'Sau ký', 'province' => 'TP. Hồ Chí Minh'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY TNHH CHẾ BIẾN THỦY SẢN BÌNH THUẬN',  'representative' => 'Chị Lan',     'phone' => '0901234502', 'address' => 'KCN Phan Thiết, Bình Thuận'],
+                'customer' => ['name' => 'CÔNG TY TNHH CHẾ BIẾN THỦY SẢN BÌNH THUẬN',  'representative' => 'Chị Lan',     'address' => 'KCN Phan Thiết, Bình Thuận'],
                 'contract' => ['shd_cxl' => 'THỦY SẢN BT-02',  'shd_bc' => 'THỦY SẢN BT-02',  'content' => 'KL: 200 KG/NĂM - TS: 01 LẦN/NĂM', 'value' => 9800000,  'commission' => 1000000, 'revenue' => 8500000,  'signed_at' => '2025-02-05', 'effective_at' => '2025-02-05', 'end_at' => '2026-02-05', 'submitted_at' => '2025-02-10', 'waste_type' => 'CTNH & CTCN', 'service_type' => 'Chất thải', 'status' => 'Đã gửi khách hàng', 'renewal_status' => 'Đã tái ký', 'source' => 'TÁI KÝ', 'payment_method' => 'Sau ký', 'province' => 'Bình Thuận'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY CP DỆT MAY LONG AN',                  'representative' => 'Anh Toàn',    'phone' => '0901234503', 'address' => 'KCN Đức Hoà III, Long An'],
+                'customer' => ['name' => 'CÔNG TY CP DỆT MAY LONG AN',                  'representative' => 'Anh Toàn',    'address' => 'KCN Đức Hoà III, Long An'],
                 'contract' => ['shd_cxl' => 'DỆT MAY LA-03',   'shd_bc' => 'DỆT MAY LA-03',   'content' => 'KL: 1000 KG/NĂM - TS: 04 LẦN/NĂM', 'value' => 35000000, 'commission' => 4000000, 'revenue' => 30000000, 'signed_at' => '2025-03-12', 'effective_at' => '2025-03-12', 'end_at' => '2026-03-12', 'submitted_at' => '2025-03-18', 'waste_type' => 'CTNH', 'service_type' => 'Chất thải', 'status' => 'Đã hoàn thành KH ký trước', 'renewal_status' => 'Chưa tái ký', 'source' => 'MỚI', 'payment_method' => 'Trước ký', 'province' => 'Long An'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY TNHH SẠ CHẾ BIẾN GỖ BÌNH DƯƠNG',     'representative' => 'Chị Tuyết',   'phone' => '0901234504', 'address' => 'KCN VSIP II, Bình Dương'],
+                'customer' => ['name' => 'CÔNG TY TNHH SẠ CHẾ BIẾN GỖ BÌNH DƯƠNG',     'representative' => 'Chị Tuyết',   'address' => 'KCN VSIP II, Bình Dương'],
                 'contract' => ['shd_cxl' => 'GỖ BD-04',         'shd_bc' => 'GỖ BD-04',         'content' => 'KL: 300 KG/NĂM - TS: 01 LẦN/NĂM', 'value' => 12000000, 'commission' => 1500000, 'revenue' => 10200000, 'signed_at' => '2025-04-08', 'effective_at' => '2025-04-08', 'end_at' => '2026-04-08', 'submitted_at' => '2025-04-12', 'waste_type' => 'CTCN', 'service_type' => 'Chất thải', 'status' => 'Hợp đồng hủy', 'renewal_status' => 'Không tái ký', 'source' => 'MỚI', 'payment_method' => 'Sau ký', 'province' => 'Bình Dương'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY CP IN ẤN VÀ BAO BÌ HÀ NỘI',           'representative' => 'Anh Minh',    'phone' => '0901234505', 'address' => 'KCN Thạch Thất, Hà Nội'],
+                'customer' => ['name' => 'CÔNG TY CP IN ẤN VÀ BAO BÌ HÀ NỘI',           'representative' => 'Anh Minh',    'address' => 'KCN Thạch Thất, Hà Nội'],
                 'contract' => ['shd_cxl' => 'IN ẤN HN-05',      'shd_bc' => 'IN ẤN HN-05',      'content' => 'KL: 150 KG/NĂM - TS: 02 LẦN/NĂM', 'value' => 8500000,  'commission' => 900000,  'revenue' => 7300000,  'signed_at' => '2025-05-20', 'effective_at' => '2025-05-20', 'end_at' => '2026-05-20', 'submitted_at' => '2025-05-25', 'waste_type' => 'CTNH & CTCN', 'service_type' => 'Hủy hàng', 'status' => 'Đã trình ký Chủ xử lý', 'renewal_status' => 'Đang tái ký', 'source' => 'TÁI KÝ', 'payment_method' => 'Sau ký', 'province' => 'Hà Nội'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY TNHH ĐIỆN TỬ SAMSUNG VIỆT NAM',       'representative' => 'Anh Hải',     'phone' => '0901234506', 'address' => 'KCN Tiên Sơn, Bắc Ninh'],
+                'customer' => ['name' => 'CÔNG TY TNHH ĐIỆN TỬ SAMSUNG VIỆT NAM',       'representative' => 'Anh Hải',     'address' => 'KCN Tiên Sơn, Bắc Ninh'],
                 'contract' => ['shd_cxl' => 'SAMSUNG BN-06',    'shd_bc' => 'SAMSUNG BN-06',    'content' => 'KL: 5000 KG/NĂM - TS: 12 LẦN/NĂM', 'value' => 120000000, 'commission' => 15000000, 'revenue' => 100000000, 'signed_at' => '2025-06-01', 'effective_at' => '2025-06-01', 'end_at' => '2026-06-01', 'submitted_at' => '2025-06-05', 'waste_type' => 'CTNH', 'service_type' => 'Chất thải', 'status' => 'Đã hoàn thành KH ký trước', 'renewal_status' => 'Đã tái ký', 'source' => 'TÁI KÝ', 'payment_method' => 'Sau ký', 'province' => 'Bắc Ninh'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY CP SẢN XUẤT NHỰA ĐỒNG NAI',           'representative' => 'Chị Phương',  'phone' => '0901234507', 'address' => 'KCN Biên Hòa 2, Đồng Nai'],
+                'customer' => ['name' => 'CÔNG TY CP SẢN XUẤT NHỰA ĐỒNG NAI',           'representative' => 'Chị Phương',  'address' => 'KCN Biên Hòa 2, Đồng Nai'],
                 'contract' => ['shd_cxl' => 'NHỰA ĐN-07',       'shd_bc' => 'NHỰA ĐN-07',       'content' => 'KL: 800 KG/NĂM - TS: 02 LẦN/NĂM', 'value' => 22000000, 'commission' => 2500000, 'revenue' => 19000000, 'signed_at' => '2025-07-14', 'effective_at' => '2025-07-14', 'end_at' => '2026-07-14', 'submitted_at' => '2025-07-20', 'waste_type' => 'CTCN', 'service_type' => 'Chất thải', 'status' => 'Đã gửi khách hàng', 'renewal_status' => 'Chưa tái ký', 'source' => 'MỚI', 'payment_method' => 'Sau ký', 'province' => 'Đồng Nai'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY TNHH THỰC PHẨM CẦU TRE',              'representative' => 'Anh Khoa',    'phone' => '0901234508', 'address' => 'Quận Bình Tân, TP.HCM'],
+                'customer' => ['name' => 'CÔNG TY TNHH THỰC PHẨM CẦU TRE',              'representative' => 'Anh Khoa',    'address' => 'Quận Bình Tân, TP.HCM'],
                 'contract' => ['shd_cxl' => 'CẦU TRE-08',       'shd_bc' => 'CẦU TRE-08',       'content' => 'KL: 400 KG/NĂM - TS: 02 LẦN/NĂM', 'value' => 15000000, 'commission' => 1800000, 'revenue' => 12800000, 'signed_at' => '2025-08-03', 'effective_at' => '2025-08-03', 'end_at' => '2026-08-03', 'submitted_at' => '2025-08-08', 'waste_type' => 'CTNH & CTCN', 'service_type' => 'Chất thải', 'status' => 'Đã trình ký Chủ xử lý', 'renewal_status' => 'Đang tái ký', 'source' => 'TÁI KÝ', 'payment_method' => 'Trước ký', 'province' => 'TP. Hồ Chí Minh'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY CP SẢN XUẤT GIẤY VĨNH LONG',          'representative' => 'Chị Nga',     'phone' => '0901234509', 'address' => 'KCN Hoà Phú, Vĩnh Long'],
+                'customer' => ['name' => 'CÔNG TY CP SẢN XUẤT GIẤY VĨNH LONG',          'representative' => 'Chị Nga',     'address' => 'KCN Hoà Phú, Vĩnh Long'],
                 'contract' => ['shd_cxl' => 'GIẤY VL-09',       'shd_bc' => 'GIẤY VL-09',       'content' => 'KL: 600 KG/NĂM - TS: 02 LẦN/NĂM', 'value' => 19500000, 'commission' => 2200000, 'revenue' => 16800000, 'signed_at' => '2025-09-22', 'effective_at' => '2025-09-22', 'end_at' => '2026-09-22', 'submitted_at' => '2025-09-28', 'waste_type' => 'CTCN', 'service_type' => 'Chất thải', 'status' => 'Đã hoàn thành KH ký trước', 'renewal_status' => 'Rớt tái ký', 'source' => 'MỚI', 'payment_method' => 'Sau ký', 'province' => 'Vĩnh Long'],
             ],
             [
-                'customer' => ['name' => 'CÔNG TY CP HÓA CHẤT MIỀN NAM',                 'representative' => 'Anh Đức',     'phone' => '0901234510', 'address' => 'KCN Hiệp Phước, Nhà Bè, TP.HCM'],
+                'customer' => ['name' => 'CÔNG TY CP HÓA CHẤT MIỀN NAM',                 'representative' => 'Anh Đức',     'address' => 'KCN Hiệp Phước, Nhà Bè, TP.HCM'],
                 'contract' => ['shd_cxl' => 'HÓA CHẤT MN-10',   'shd_bc' => 'HÓA CHẤT MN-10',   'content' => 'KL: 2000 KG/NĂM - TS: 04 LẦN/NĂM', 'value' => 55000000, 'commission' => 6500000, 'revenue' => 47000000, 'signed_at' => '2025-10-15', 'effective_at' => '2025-10-15', 'end_at' => '2026-10-15', 'submitted_at' => '2025-10-20', 'waste_type' => 'CTNH', 'service_type' => 'Chất thải', 'status' => 'Đã hoàn thành KH ký trước', 'renewal_status' => 'Đã tái ký', 'source' => 'TÁI KÝ', 'payment_method' => 'Sau ký', 'province' => 'TP. Hồ Chí Minh'],
             ],
         ];

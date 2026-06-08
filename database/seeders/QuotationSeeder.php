@@ -15,7 +15,9 @@ class QuotationSeeder extends Seeder
             $staff = User::first();
         }
 
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
         Quotation::truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
 
         $data = [
             [
