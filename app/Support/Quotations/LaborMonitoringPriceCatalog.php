@@ -109,12 +109,12 @@ final class LaborMonitoringPriceCatalog
         ['group_name' => 'VI. YẾU TỐ HÓA HỌC', 'description' => 'Hydrocacbon', 'unit_price' => 400000, 'note' => ''],
     ];
 
-    public static function groups(): array
+    public static function groups(?string $subcontractor = null): array
     {
         return self::GROUPS;
     }
 
-    public static function all(): array
+    public static function all(?string $subcontractor = null): array
     {
         return array_map(
             fn (array $item): array => $item + ['unit' => self::UNIT],
@@ -122,7 +122,7 @@ final class LaborMonitoringPriceCatalog
         );
     }
 
-    public static function forGroup(?string $groupName): array
+    public static function forGroup(?string $groupName, ?string $subcontractor = null): array
     {
         $needle = self::normalizeGroup($groupName);
 
@@ -136,8 +136,11 @@ final class LaborMonitoringPriceCatalog
         ));
     }
 
-    public static function findByDescription(?string $description): ?array
-    {
+    public static function findByDescription(
+        ?string $description,
+        ?string $groupName = null,
+        ?string $subcontractor = null
+    ): ?array {
         $needle = self::normalizeDescription($description);
         if ($needle === '') {
             return null;
@@ -147,7 +150,7 @@ final class LaborMonitoringPriceCatalog
             $needle = self::normalizeDescription(self::DESCRIPTION_ALIASES[$needle]);
         }
 
-        foreach (self::all() as $item) {
+        foreach (self::forGroup($groupName) as $item) {
             if (self::normalizeDescription($item['description']) === $needle) {
                 return $item;
             }

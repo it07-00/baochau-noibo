@@ -22,6 +22,7 @@ class QuotationDocument extends Model
         'customer_tax_code',
         'service_type',
         'template_key',
+        'price_subcontractor',
         'work_location',
         'subtotal',
         'vat_rate',

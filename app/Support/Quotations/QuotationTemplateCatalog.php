@@ -29,13 +29,20 @@ final class QuotationTemplateCatalog
         ],
         'qtmt_periodic' => [
             'key' => 'qtmt_periodic',
-            'label' => 'Quan trắc môi trường định kỳ',
+            'label' => 'Quan trắc môi trường',
             'service_type' => 'Quan trắc môi trường',
             'template_path' => 'templates/quotations/qtmt-periodic.docx',
             'orientation' => 'portrait',
             'vat_rate' => 8,
-            'summary_description' => 'Thực hiện Quan trắc môi trường định kỳ',
+            'summary_description' => 'Thực hiện Quan trắc môi trường',
             'summary_unit' => 'Đợt',
+            'price_catalog' => 'environmental_monitoring_2026',
+            'default_price_subcontractor' => 'dai_phu',
+            'price_subcontractors' => [
+                'dai_phu' => 'Đại Phú',
+                'cec' => 'CEC',
+                'phuong_nam' => 'Phương Nam',
+            ],
             'detail_groups' => [
                 'I. MÔI TRƯỜNG KHÍ THẢI',
                 'II. MÔI TRƯỜNG NƯỚC THẢI',
@@ -138,6 +145,7 @@ final class QuotationTemplateCatalog
 
     private const PRICE_CATALOGS = [
         'labor_monitoring_2026' => LaborMonitoringPriceCatalog::class,
+        'environmental_monitoring_2026' => EnvironmentalMonitoringPriceCatalog::class,
     ];
 
     public static function all(): array
@@ -167,29 +175,38 @@ final class QuotationTemplateCatalog
             ->all();
     }
 
-    public static function detailGroups(?string $key): array
+    public static function detailGroups(?string $key, ?string $subcontractor = null): array
     {
         $catalogClass = self::priceCatalogClass($key);
 
         if ($catalogClass !== null) {
-            return $catalogClass::groups();
+            return $catalogClass::groups($subcontractor);
         }
 
         return self::find($key)['detail_groups'] ?? [];
     }
 
-    public static function detailPriceCatalog(?string $key, ?string $groupName = null): array
-    {
+    public static function detailPriceCatalog(
+        ?string $key,
+        ?string $groupName = null,
+        ?string $subcontractor = null
+    ): array {
         $catalogClass = self::priceCatalogClass($key);
 
-        return $catalogClass !== null ? $catalogClass::forGroup($groupName) : [];
+        return $catalogClass !== null ? $catalogClass::forGroup($groupName, $subcontractor) : [];
     }
 
-    public static function findDetailPriceItem(?string $key, ?string $description): ?array
-    {
+    public static function findDetailPriceItem(
+        ?string $key,
+        ?string $description,
+        ?string $groupName = null,
+        ?string $subcontractor = null
+    ): ?array {
         $catalogClass = self::priceCatalogClass($key);
 
-        return $catalogClass !== null ? $catalogClass::findByDescription($description) : null;
+        return $catalogClass !== null
+            ? $catalogClass::findByDescription($description, $groupName, $subcontractor)
+            : null;
     }
 
     public static function catalogDetailItem(?string $key, array $catalogItem, int|float $quantity = 1): array
@@ -197,6 +214,33 @@ final class QuotationTemplateCatalog
         $catalogClass = self::priceCatalogClass($key);
 
         return $catalogClass !== null ? $catalogClass::toDetailItem($catalogItem, $quantity) : [];
+    }
+
+    public static function serviceSummaryDescription(?string $key, ?string $serviceType = null): string
+    {
+        $template = self::find($key);
+        $serviceType = trim((string) ($serviceType ?: ($template['service_type'] ?? '')));
+
+        return $serviceType !== ''
+            ? 'Thực hiện '.$serviceType
+            : ($template['summary_description'] ?? '');
+    }
+
+    public static function defaultTerms(?string $key, ?string $serviceType = null): string
+    {
+        $template = self::find($key);
+        $templateKey = $template['key'] ?? self::DEFAULT_KEY;
+        $serviceType = trim((string) ($serviceType ?: ($template['service_type'] ?? 'dịch vụ')));
+
+        if ($templateKey === self::DEFAULT_KEY) {
+            return self::monitoringTerms('Quan trắc môi trường lao động', 'QTMTLĐ');
+        }
+
+        if ($templateKey === 'qtmt_periodic') {
+            return self::monitoringTerms('Quan trắc môi trường', 'QTMT');
+        }
+
+        return "Kết quả thực hiện: {$serviceType}\nThời gian thực hiện: theo thỏa thuận giữa hai bên.\nChi phí trên đã bao gồm VAT tại thời điểm xuất hóa đơn.\nPhương thức thanh toán:\n• 50% sau khi ký hợp đồng\n• 50% sau khi hoàn thành công việc\nHình thức: chuyển khoản\nChúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!";
     }
 
     public static function defaultSummaryItem(?string $key): array
@@ -213,10 +257,28 @@ final class QuotationTemplateCatalog
         ];
     }
 
+    public static function priceSubcontractors(?string $key): array
+    {
+        return self::find($key)['price_subcontractors'] ?? [];
+    }
+
+    public static function defaultPriceSubcontractor(?string $key): string
+    {
+        $template = self::find($key);
+        $options = self::priceSubcontractors($key);
+
+        return $template['default_price_subcontractor'] ?? array_key_first($options) ?? '';
+    }
+
     private static function priceCatalogClass(?string $key): ?string
     {
         $catalogKey = self::find($key)['price_catalog'] ?? null;
 
         return self::PRICE_CATALOGS[$catalogKey] ?? null;
+    }
+
+    private static function monitoringTerms(string $serviceName, string $shortName): string
+    {
+        return "Kết quả thực hiện: Báo cáo {$serviceName}\nThời gian có cuốn báo cáo {$shortName}: 10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);\nChi phí trên đã bao gồm VAT tại thời điểm xuất hóa đơn.\nPhương thức thanh toán:\n• 50% sau khi ký hợp đồng\n• 50% sau khi hoàn thành báo cáo {$serviceName}\nHình thức: chuyển khoản\nChúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!";
     }
 }

@@ -55,9 +55,6 @@ class QuotationDocumentManager extends Component
 
     public int $matrixTotal = 0;
 
-    // Default terms
-    private const DEFAULT_TERMS = "Kết quả thực hiện: Báo cáo Quan trắc môi trường lao động\nThời gian có cuốn báo cáo QTMTLĐ: 10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);\nChi phí trên đã bao gồm VAT tại thời điểm xuất hóa đơn.\nPhương thức thanh toán:\n• 50% sau khi ký hợp đồng\n• 50% sau khi hoàn thành báo cáo Quan trắc môi trường lao động\nHình thức: chuyển khoản\nChúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!";
-
     public const PREDEFINED_GROUPS = [
         'I. YẾU TỐ VI KHÍ HẬU',
         'II. YẾU TỐ VẬT LÝ',
@@ -83,6 +80,7 @@ class QuotationDocumentManager extends Component
             'formData.customer_tax_code' => 'nullable|string|max:50',
             'formData.service_type' => 'nullable|string|max:255',
             'formData.template_key' => 'required|string|max:80',
+            'formData.price_subcontractor' => 'nullable|string|max:80',
             'formData.work_location' => 'nullable|string|max:500',
             'formData.valid_until' => 'nullable|date|after_or_equal:formData.date',
             'formData.notes' => 'nullable|string|max:5000',
@@ -324,7 +322,7 @@ class QuotationDocumentManager extends Component
     public function updatedDetailItems(mixed $value = null, ?string $key = null): void
     {
         if (is_string($key) && preg_match('/^(\d+)\.description$/', $key, $matches) === 1) {
-            $this->applyLaborMonitoringPriceToDetailItem((int) $matches[1], (string) $value);
+            $this->applyTemplatePriceToDetailItem((int) $matches[1], (string) $value);
 
             return;
         }
@@ -356,6 +354,17 @@ class QuotationDocumentManager extends Component
         $this->applyTemplatePreset(false);
     }
 
+    public function updatedFormDataServiceType(): void
+    {
+        $this->syncServiceTextFromTemplate();
+    }
+
+    public function updatedFormDataPriceSubcontractor(): void
+    {
+        $this->resetUnavailableDetailGroupsForSelectedCatalog();
+        $this->repriceDetailItemsForSelectedCatalog();
+    }
+
     public function updatedSelectedCustomerId($value): void
     {
         $customer = Customer::find($value);
@@ -380,12 +389,15 @@ class QuotationDocumentManager extends Component
         $template = QuotationTemplateCatalog::find($this->formData['template_key'] ?? null);
 
         $this->formData['template_key'] = $template['key'];
+        $this->formData['price_subcontractor'] = $this->defaultPriceSubcontractorForTemplate($template['key']);
 
         $this->formData['service_type'] = $template['service_type'] ?? '';
 
         if ($replaceRows || empty($this->summaryItems)) {
             $this->summaryItems = [QuotationTemplateCatalog::defaultSummaryItem($template['key'])];
         }
+
+        $this->syncServiceTextFromTemplate();
 
         if ($replaceRows) {
             $this->detailItems = [];
@@ -406,16 +418,28 @@ class QuotationDocumentManager extends Component
         return QuotationTemplateCatalog::find($key ?? ($this->formData['template_key'] ?? null))['label'];
     }
 
+    public function priceSubcontractorOptions(): array
+    {
+        return QuotationTemplateCatalog::priceSubcontractors($this->formData['template_key'] ?? null);
+    }
+
     public function groupOptions(): array
     {
-        $groups = QuotationTemplateCatalog::detailGroups($this->formData['template_key'] ?? null);
+        $groups = QuotationTemplateCatalog::detailGroups(
+            $this->formData['template_key'] ?? null,
+            $this->formData['price_subcontractor'] ?? null
+        );
 
         return $groups !== [] ? $groups : self::PREDEFINED_GROUPS;
     }
 
     public function detailPriceCatalogForGroup(?string $groupName): array
     {
-        return QuotationTemplateCatalog::detailPriceCatalog($this->formData['template_key'] ?? null, $groupName);
+        return QuotationTemplateCatalog::detailPriceCatalog(
+            $this->formData['template_key'] ?? null,
+            $groupName,
+            $this->formData['price_subcontractor'] ?? null
+        );
     }
 
     public function isLaborMonitoringTemplate(): bool
@@ -433,13 +457,32 @@ class QuotationDocumentManager extends Component
         return $this->isLaborMonitoringTemplate();
     }
 
-    private function applyLaborMonitoringPriceToDetailItem(int $index, string $description): void
+    private function defaultPriceSubcontractorForTemplate(?string $templateKey = null): string
     {
-        if (! $this->usesLaborMonitoringTemplate() || ! isset($this->detailItems[$index])) {
+        return QuotationTemplateCatalog::defaultPriceSubcontractor($templateKey ?? ($this->formData['template_key'] ?? null));
+    }
+
+    private function usesDetailPriceCatalog(): bool
+    {
+        return QuotationTemplateCatalog::detailPriceCatalog(
+            $this->formData['template_key'] ?? null,
+            null,
+            $this->formData['price_subcontractor'] ?? null
+        ) !== [];
+    }
+
+    private function applyTemplatePriceToDetailItem(int $index, string $description): void
+    {
+        if (! $this->usesDetailPriceCatalog() || ! isset($this->detailItems[$index])) {
             return;
         }
 
-        $catalogItem = QuotationTemplateCatalog::findDetailPriceItem($this->formData['template_key'] ?? null, $description);
+        $catalogItem = QuotationTemplateCatalog::findDetailPriceItem(
+            $this->formData['template_key'] ?? null,
+            $description,
+            $this->detailItems[$index]['group_name'] ?? null,
+            $this->formData['price_subcontractor'] ?? null
+        );
         if (! $catalogItem) {
             return;
         }
@@ -456,7 +499,7 @@ class QuotationDocumentManager extends Component
 
     private function resetDetailDescriptionWhenGroupChanges(int $index): void
     {
-        if (! $this->usesLaborMonitoringTemplate() || ! isset($this->detailItems[$index])) {
+        if (! $this->usesDetailPriceCatalog() || ! isset($this->detailItems[$index])) {
             return;
         }
 
@@ -465,18 +508,84 @@ class QuotationDocumentManager extends Component
             return;
         }
 
-        $catalogItem = QuotationTemplateCatalog::findDetailPriceItem($this->formData['template_key'] ?? null, $description);
-        if (
-            ! $catalogItem
-            || $catalogItem['group_name'] === ($this->detailItems[$index]['group_name'] ?? null)
-        ) {
+        if ($this->detailPriceCatalogForGroup($this->detailItems[$index]['group_name'] ?? null) === []) {
             return;
         }
 
-        $this->detailItems[$index]['description'] = '';
-        $this->detailItems[$index]['unit_price'] = 0;
-        $this->detailItems[$index]['amount'] = 0;
-        $this->detailItems[$index]['note'] = '';
+        $catalogItem = QuotationTemplateCatalog::findDetailPriceItem(
+            $this->formData['template_key'] ?? null,
+            $description,
+            $this->detailItems[$index]['group_name'] ?? null,
+            $this->formData['price_subcontractor'] ?? null
+        );
+        if (
+            ! $catalogItem
+            || $catalogItem['group_name'] !== ($this->detailItems[$index]['group_name'] ?? null)
+        ) {
+            $this->detailItems[$index]['description'] = '';
+            $this->detailItems[$index]['unit_price'] = 0;
+            $this->detailItems[$index]['amount'] = 0;
+            $this->detailItems[$index]['note'] = '';
+
+            return;
+        }
+
+        $this->applyTemplatePriceToDetailItem($index, $description);
+    }
+
+    private function repriceDetailItemsForSelectedCatalog(): void
+    {
+        foreach ($this->detailItems as $index => $item) {
+            $description = (string) ($item['description'] ?? '');
+            if ($description === '') {
+                continue;
+            }
+
+            if ($this->detailPriceCatalogForGroup($item['group_name'] ?? null) === []) {
+                $this->detailItems[$index]['unit_price'] = 0;
+                $this->detailItems[$index]['amount'] = 0;
+                $this->detailItems[$index]['note'] = '';
+
+                continue;
+            }
+
+            $this->applyTemplatePriceToDetailItem($index, $description);
+        }
+
+        $this->recalculate();
+    }
+
+    private function syncServiceTextFromTemplate(): void
+    {
+        $templateKey = $this->formData['template_key'] ?? QuotationTemplateCatalog::DEFAULT_KEY;
+        $serviceType = $this->formData['service_type'] ?? null;
+
+        if (empty($this->summaryItems)) {
+            $this->summaryItems = [QuotationTemplateCatalog::defaultSummaryItem($templateKey)];
+        }
+
+        $this->summaryItems[0]['description'] = QuotationTemplateCatalog::serviceSummaryDescription($templateKey, $serviceType);
+        $this->formData['terms'] = QuotationTemplateCatalog::defaultTerms($templateKey, $serviceType);
+    }
+
+    private function resetUnavailableDetailGroupsForSelectedCatalog(): void
+    {
+        $groupOptions = $this->groupOptions();
+        if ($groupOptions === []) {
+            return;
+        }
+
+        foreach ($this->detailItems as $index => $item) {
+            if (in_array($item['group_name'] ?? '', $groupOptions, true)) {
+                continue;
+            }
+
+            $this->detailItems[$index]['group_name'] = $groupOptions[0];
+            $this->detailItems[$index]['description'] = '';
+            $this->detailItems[$index]['unit_price'] = 0;
+            $this->detailItems[$index]['amount'] = 0;
+            $this->detailItems[$index]['note'] = '';
+        }
     }
 
     public function recalculate(): void
@@ -498,10 +607,12 @@ class QuotationDocumentManager extends Component
         }
         unset($item);
 
-        $this->detailTotal = array_sum(array_column($this->detailItems, 'amount'));
-        $subtotal = $this->usesLaborMonitoringTemplate()
-            ? $this->detailTotal
-            : array_sum(array_column($this->summaryItems, 'amount'));
+        $this->detailTotal = $this->sumMoneyColumn($this->detailItems, 'amount');
+        if ($this->usesLaborMonitoringTemplate()) {
+            $this->syncLaborMonitoringSummaryFromDetail();
+        }
+
+        $subtotal = $this->sumMoneyColumn($this->summaryItems, 'amount');
 
         $this->matrixTotal = 0;
         foreach ($this->matrixRows as &$row) {
@@ -535,6 +646,14 @@ class QuotationDocumentManager extends Component
         }
 
         return 0.0;
+    }
+
+    private function sumMoneyColumn(array $rows, string $key): int
+    {
+        return array_sum(array_map(
+            fn (array $row): int => (int) round($this->parseMoneyValue($row[$key] ?? 0)),
+            $rows
+        ));
     }
 
     private function parseIntegerQuantity(mixed $value): int
@@ -735,9 +854,11 @@ class QuotationDocumentManager extends Component
             'document_number', 'date', 'valid_until', 'customer_name', 'customer_address',
             'customer_phone', 'customer_contact', 'customer_email', 'customer_tax_code',
             'service_type', 'template_key', 'work_location', 'subtotal', 'vat_amount', 'total',
-            'discount', 'notes', 'terms',
+            'price_subcontractor', 'discount', 'notes', 'terms',
         ]);
         $this->formData['template_key'] = $this->formData['template_key'] ?: QuotationTemplateCatalog::DEFAULT_KEY;
+        $this->formData['price_subcontractor'] = $this->formData['price_subcontractor']
+            ?: $this->defaultPriceSubcontractorForTemplate($this->formData['template_key']);
         $this->formData['date'] = $doc->date?->format('Y-m-d') ?? '';
         $this->formData['valid_until'] = $doc->valid_until?->format('Y-m-d') ?? '';
 
@@ -782,9 +903,11 @@ class QuotationDocumentManager extends Component
         $this->formData = array_merge($this->formData, $doc->only([
             'customer_name', 'customer_address', 'customer_phone', 'customer_contact',
             'customer_email', 'customer_tax_code', 'service_type', 'template_key', 'work_location',
-            'discount', 'notes', 'terms',
+            'price_subcontractor', 'discount', 'notes', 'terms',
         ]));
         $this->formData['template_key'] = $this->formData['template_key'] ?: QuotationTemplateCatalog::DEFAULT_KEY;
+        $this->formData['price_subcontractor'] = $this->formData['price_subcontractor']
+            ?: $this->defaultPriceSubcontractorForTemplate($this->formData['template_key']);
         $this->formData['date'] = now()->format('Y-m-d');
         $this->formData['document_number'] = $this->generateNextNumber();
         $this->selectedCustomerId = $this->matchingCustomerId($this->formData['customer_name'] ?? '');
@@ -937,7 +1060,7 @@ class QuotationDocumentManager extends Component
 
         if ($this->usesLaborMonitoringTemplate()) {
             if (empty($this->detailItems)) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng báo giá Quan trắc môi trường lao động phải có ít nhất 1 chỉ tiêu.']);
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 Quan trắc môi trường lao động phải có ít nhất 1 chỉ tiêu.']);
 
                 return;
             }
@@ -1018,7 +1141,7 @@ class QuotationDocumentManager extends Component
                 'unit' => $item['unit'] ?? null,
                 'quantity' => $item['quantity'] ?? 1,
                 'unit_price' => $this->parseMoneyValue($item['unit_price'] ?? 0),
-                'amount' => $item['amount'] ?? 0,
+                'amount' => (int) round($this->parseMoneyValue($item['amount'] ?? 0)),
                 'note' => $item['note'] ?? null,
             ]);
         }
@@ -1033,7 +1156,7 @@ class QuotationDocumentManager extends Component
                 'unit' => $item['unit'] ?? null,
                 'quantity' => $this->parseIntegerQuantity($item['quantity'] ?? 1),
                 'unit_price' => $this->parseMoneyValue($item['unit_price'] ?? 0),
-                'amount' => $item['amount'] ?? 0,
+                'amount' => (int) round($this->parseMoneyValue($item['amount'] ?? 0)),
                 'note' => $item['note'] ?? null,
             ]);
         }
@@ -1228,13 +1351,14 @@ class QuotationDocumentManager extends Component
             'customer_tax_code' => '',
             'service_type' => QuotationTemplateCatalog::find(QuotationTemplateCatalog::DEFAULT_KEY)['service_type'] ?? '',
             'template_key' => QuotationTemplateCatalog::DEFAULT_KEY,
+            'price_subcontractor' => $this->defaultPriceSubcontractorForTemplate(QuotationTemplateCatalog::DEFAULT_KEY),
             'work_location' => '',
             'subtotal' => 0,
             'vat_amount' => 0,
             'total' => 0,
             'discount' => 0,
             'notes' => '',
-            'terms' => self::DEFAULT_TERMS,
+            'terms' => QuotationTemplateCatalog::defaultTerms(QuotationTemplateCatalog::DEFAULT_KEY),
         ];
 
         $this->summaryItems = [QuotationTemplateCatalog::defaultSummaryItem(QuotationTemplateCatalog::DEFAULT_KEY)];
@@ -1320,6 +1444,7 @@ class QuotationDocumentManager extends Component
             'serviceTypes' => $serviceTypes,
             'templatePresets' => QuotationTemplateCatalog::all(),
             'groupOptions' => $this->groupOptions(),
+            'priceSubcontractorOptions' => $this->priceSubcontractorOptions(),
             'customers' => $customers,
         ])->layout('admin.layouts.app', ['title' => 'Tạo Báo giá']);
     }

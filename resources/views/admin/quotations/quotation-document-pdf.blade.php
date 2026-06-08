@@ -360,59 +360,6 @@
     {{ $pdfViewData->introText($serviceTitle, $year) }}
 </p>
 
-@if($pdfViewData->isLaborMonitoringTemplate($doc))
-<table class="quote-table">
-    <thead>
-    <tr>
-        <th style="width: 8%;">STT</th>
-        <th style="width: 42%;">CHỈ TIÊU</th>
-        <th style="width: 12%;">SỐ LƯỢNG</th>
-        <th style="width: 18%;">ĐƠN GIÁ</th>
-        <th style="width: 20%;">THÀNH TIỀN</th>
-    </tr>
-    </thead>
-    <tbody>
-    @forelse($pdfViewData->mainPriceItems($doc) as $item)
-        <tr>
-            <td class="center">{{ $loop->iteration }}</td>
-            <td>{{ $item->description }}</td>
-            <td class="center">{{ $pdfViewData->formatQty($item->quantity) }}</td>
-            <td class="right">{{ $pdfViewData->formatMoney($item->unit_price ?: $item->amount) }}</td>
-            <td class="right">{{ $pdfViewData->formatMoney($item->amount) }}</td>
-        </tr>
-    @empty
-        <tr>
-            <td class="center">1</td>
-            <td>Thực hiện {{ $pdfViewData->subtitleText($serviceTitle, $year) }}</td>
-            <td class="center">1</td>
-            <td class="right">{{ $pdfViewData->formatMoney($doc->subtotal) }}</td>
-            <td class="right">{{ $pdfViewData->formatMoney($doc->subtotal) }}</td>
-        </tr>
-    @endforelse
-    <tr class="detail-total-row">
-        <td colspan="4" class="right bold">TỔNG CỘNG CHƯA VAT</td>
-        <td class="right bold">{{ $pdfViewData->formatMoney($doc->subtotal) }}</td>
-    </tr>
-    @if((int) $doc->discount > 0)
-        <tr class="detail-total-row">
-            <td colspan="4" class="right bold">CHIẾT KHẤU</td>
-            <td class="right bold">-{{ $pdfViewData->formatMoney($doc->discount) }}</td>
-        </tr>
-    @endif
-    <tr class="detail-total-row">
-        <td colspan="4" class="right bold">VAT {{ $doc->vat_rate }}%</td>
-        <td class="right bold">{{ $pdfViewData->formatMoney($doc->vat_amount) }}</td>
-    </tr>
-    <tr class="grand-total-row">
-        <td colspan="4" class="right bold">TỔNG THÀNH TIỀN ĐÃ VAT</td>
-        <td class="right bold">{{ $pdfViewData->formatMoney($doc->total) }}</td>
-    </tr>
-    <tr>
-        <td colspan="5" class="bold">Bằng chữ: "{{ $amountInWords }} đồng"</td>
-    </tr>
-    </tbody>
-</table>
-@else
 <div class="caption">Bảng 01. Tổng hợp dự toán chi phí thực hiện</div>
 <table class="quote-table">
     <thead>
@@ -520,7 +467,6 @@
     </tr>
     </tbody>
 </table>
-@endif
 
 <div class="notes">
     @foreach($noteLines as $line)
