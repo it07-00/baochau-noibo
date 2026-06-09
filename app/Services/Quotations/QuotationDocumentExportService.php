@@ -1067,15 +1067,22 @@ class QuotationDocumentExportService
             $this->setCellText($row, $xpath, 0, (string) ($index + 1));
             $this->setCellText($row, $xpath, 1, (string) $item->description);
             $this->setCellText($row, $xpath, 2, $this->formatPlainMoney($amount));
-            $this->setCellText($row, $xpath, 3, '');
+            $this->setCellText($row, $xpath, 3, $this->formatPlainMoney($amount));
             $table->appendChild($row);
         }
 
         $totalRow = $totalTemplate->cloneNode(true);
+        $totalAmount = $this->formatPlainMoney($doc->subtotal);
+        $totalCellCount = count($this->rowCells($totalRow));
         $this->setCellText($totalRow, $xpath, 0, 'TỔNG CỘNG');
-        $this->setCellText($totalRow, $xpath, 1, '');
-        $this->setCellText($totalRow, $xpath, 2, $this->formatPlainMoney($doc->subtotal));
-        $this->setCellText($totalRow, $xpath, 3, '');
+        if ($totalCellCount >= 4) {
+            $this->setCellText($totalRow, $xpath, 1, '');
+            $this->setCellText($totalRow, $xpath, 2, $totalAmount);
+            $this->setCellText($totalRow, $xpath, 3, $totalAmount);
+        } elseif ($totalCellCount >= 3) {
+            $this->setCellText($totalRow, $xpath, 1, $totalAmount);
+            $this->setCellText($totalRow, $xpath, 2, $totalAmount);
+        }
         $table->appendChild($totalRow);
     }
 
@@ -2387,9 +2394,11 @@ POWERSHELL;
 
     private function resolveStaffDetails(QuotationDocument $doc): array
     {
-        $name = $doc->staff?->name ?: 'Nhật Quỳnh';
-        $phone = $doc->staff?->phone ?: '0915 219 148';
-        $email = $doc->staff?->email ?: 'nhatquynh@baochauenvir.com';
+        $staff = $doc->staff ?: auth()->user();
+
+        $name = trim((string) ($staff?->name ?: 'Kinh Doanh'));
+        $phone = trim((string) ($staff?->phone ?: ''));
+        $email = trim((string) ($staff?->email ?: ''));
 
         return [$name, $phone, $email];
     }
