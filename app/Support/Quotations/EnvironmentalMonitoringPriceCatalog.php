@@ -144,14 +144,14 @@ final class EnvironmentalMonitoringPriceCatalog
         return $item + [
             'unit_price' => $unitPrice,
             'subcontractor' => $subcontractor,
-            'note' => $notes[$subcontractor] ?? '',
+            'note' => $notes[$subcontractor] ?? $notes['generic'] ?? '',
         ];
     }
 
     private static function priceFor(array $item, string $subcontractor): ?int
     {
         $prices = is_array($item['unit_prices'] ?? null) ? $item['unit_prices'] : [];
-        $price = $prices[$subcontractor] ?? null;
+        $price = $prices[$subcontractor] ?? $prices['generic'] ?? null;
 
         return is_numeric($price) && (int) $price > 0 ? (int) $price : null;
     }

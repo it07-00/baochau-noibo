@@ -15,7 +15,10 @@
     "Bùn",
     "Đất",
     "Trầm tích",
-    "Chất thải"
+    "Chất thải",
+    "Nước uống",
+    "Nhân công, vận chuyển",
+    "Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
   ],
   "items": [
     {
@@ -21645,6 +21648,3582 @@
       "notes": {},
       "sources": [
         "qtmt_price_1:Chất thải"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Amoni",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Amoni",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Asen",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 170000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Bào tử VK kỵ khí khử Sunfit",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 220000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Cadimi",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 170000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Chỉ số Permanganate",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Clorua",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Coliform",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 170000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Coliform",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 220000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Ecoli",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 170000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Ecoli",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 145000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Florua",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Nitrat",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Nitrit",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "pH",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 45000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Pseudomonas aeruginosa",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 220000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Sắt",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 170000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Tổng chất rắn hòa tan",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Tổng VSV Hiếu khí",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 220000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Tổng độ cứng",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "VK đường ruột ( Intestinal enterococci)",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 220000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Đồng",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 170000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Độ màu",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nước uống",
+      "description": "Độ đục",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "generic": 120000
+      },
+      "notes": {
+        "generic": "Đơn giá Bảo Châu"
+      },
+      "sources": [
+        "qtmt_price_1:Nước uống"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Bến Cát",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Dĩ An",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Dầu Tiếng",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Phú Giáo",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Thuận An",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Thủ Dầu Một",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Bình Dương - Tân Uyên",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Bến Lức",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Châu Thành",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Cần Giuộc",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Cần Đước",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Mộc Hóa",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Thanh Hoá",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Thủ Thừa",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Tân An",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Tân Hưng",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Tân Thạnh",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Tân Trụ",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Vĩnh Hưng",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Đức Huệ",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Long An - Đức Hòa",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Bình Chánh",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Bình Thạnh",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Bình Tân",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Cần Giờ",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Củ Chi",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Gò Vấp",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Hóc Môn",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Nhà Bè",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Phú Nhuận",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 1",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 10",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 11",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 12",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 3",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 4",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 5",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 6",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 7",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Quận 8",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Tp. Thủ Đức",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Tân Bình",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Thành phố Hồ Chí Minh - Tân Phú",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Biên Hòa",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Cẩm Mỹ",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Long Khánh",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Long Thành",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Nhơn Trạch",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Thống Nhất",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Trảng Bom",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Tân Phú",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Vĩnh Cửu",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Xuân Lộc",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Nhân công lấy mẫu (1 người) - Đồng Nai - Định Quán",
+      "unit": "Người",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Bến Cát",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Dĩ An",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Dầu Tiếng",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Phú Giáo",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Thuận An",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Thủ Dầu Một",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Bình Dương - Tân Uyên",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Bến Lức",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Châu Thành",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Cần Giuộc",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Cần Đước",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Mộc Hóa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Thanh Hoá",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Thủ Thừa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Tân An",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Tân Hưng",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Tân Thạnh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Tân Trụ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Vĩnh Hưng",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Đức Huệ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Long An - Đức Hòa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Bình Chánh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Bình Thạnh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Bình Tân",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Cần Giờ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Củ Chi",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Gò Vấp",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Hóc Môn",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Nhà Bè",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Phú Nhuận",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 1",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 10",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 11",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 12",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 3",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 4",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 5",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 6",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 7",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Quận 8",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Tp. Thủ Đức",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Tân Bình",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Thành phố Hồ Chí Minh - Tân Phú",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Biên Hòa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Cẩm Mỹ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Long Khánh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Long Thành",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Nhơn Trạch",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Thống Nhất",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Trảng Bom",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Tân Phú",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Vĩnh Cửu",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Xuân Lộc",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Nhân công, vận chuyển",
+      "description": "Vận chuyển lấy mẫu - Đồng Nai - Định Quán",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Nhân công, vận chuyển"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Bến Cát",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Dĩ An",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Dầu Tiếng",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Phú Giáo",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Thuận An",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Thủ Dầu Một",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Bình Dương - Tân Uyên",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Bến Lức",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Châu Thành",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Cần Giuộc",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Cần Đước",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Mộc Hóa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Thanh Hoá",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Thủ Thừa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Tân An",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Tân Hưng",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Tân Thạnh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Tân Trụ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Vĩnh Hưng",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Đức Huệ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Long An - Đức Hòa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Bình Chánh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Bình Thạnh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Bình Tân",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Cần Giờ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Củ Chi",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Gò Vấp",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Hóc Môn",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Nhà Bè",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Phú Nhuận",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 1",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 10",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 11",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 12",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 3",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 4",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 5",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 6",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 7",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Quận 8",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Tp. Thủ Đức",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Tân Bình",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Tân Phú",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Biên Hòa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Cẩm Mỹ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Long Khánh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Long Thành",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Nhơn Trạch",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Thống Nhất",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Trảng Bom",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Tân Phú",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Vĩnh Cửu",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Xuân Lộc",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Lập hồ sơ (viết, in ấn) - Đồng Nai - Định Quán",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Bến Cát",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Dĩ An",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Dầu Tiếng",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Phú Giáo",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Thuận An",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Thủ Dầu Một",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Bình Dương - Tân Uyên",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Bến Lức",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Châu Thành",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Cần Giuộc",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Cần Đước",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Mộc Hóa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Thanh Hoá",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Thủ Thừa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Tân An",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Tân Hưng",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Tân Thạnh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Tân Trụ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Vĩnh Hưng",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Đức Huệ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Long An - Đức Hòa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Bình Chánh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Bình Thạnh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Bình Tân",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Cần Giờ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Củ Chi",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Gò Vấp",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Hóc Môn",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Nhà Bè",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Phú Nhuận",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 1",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 10",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 11",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 12",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 3",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 4",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 5",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 6",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 7",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Quận 8",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Tp. Thủ Đức",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Tân Bình",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Thành phố Hồ Chí Minh - Tân Phú",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Biên Hòa",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Cẩm Mỹ",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Long Khánh",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Long Thành",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Nhơn Trạch",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Thống Nhất",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Trảng Bom",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Tân Phú",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Vĩnh Cửu",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Xuân Lộc",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Thẩm định cơ quan nhà nước - Đồng Nai - Định Quán",
+      "unit": "Hồ sơ",
+      "unit_prices": {
+        "generic": 1000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Bến Cát",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Dĩ An",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Dầu Tiếng",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Phú Giáo",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Thuận An",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Thủ Dầu Một",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Bình Dương - Tân Uyên",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Bến Lức",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Châu Thành",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Cần Giuộc",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Cần Đước",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Mộc Hóa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Thanh Hoá",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Thủ Thừa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Tân An",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Tân Hưng",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Tân Thạnh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Tân Trụ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Vĩnh Hưng",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Đức Huệ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Long An - Đức Hòa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 2500000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Bình Chánh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Bình Thạnh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Bình Tân",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Cần Giờ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Củ Chi",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Gò Vấp",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Hóc Môn",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Nhà Bè",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1700000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Phú Nhuận",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 1",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 10",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 11",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 12",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 3",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 4",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 5",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 6",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 7",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Quận 8",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Tp. Thủ Đức",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Tân Bình",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Thành phố Hồ Chí Minh - Tân Phú",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 1200000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Biên Hòa",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Cẩm Mỹ",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Long Khánh",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Long Thành",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Nhơn Trạch",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Thống Nhất",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Trảng Bom",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Tân Phú",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Vĩnh Cửu",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Xuân Lộc",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
+      ]
+    },
+    {
+      "group_name": "Chi phí viết BÁO CÁO CÔNG TÁC BVMT",
+      "description": "Vận chuyển - Đồng Nai - Định Quán",
+      "unit": "Chuyến",
+      "unit_prices": {
+        "generic": 3000000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Chi phí viết BÁO CÁO CÔNG TÁC BVMT"
       ]
     }
   ]

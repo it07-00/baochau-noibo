@@ -24,6 +24,9 @@ class EnvironmentalMonitoringPriceCatalogTest extends TestCase
         $this->assertContains('Không khí xung quanh', $cecGroups);
         $this->assertContains('Khí thải', $cecGroups);
         $this->assertContains('Bùn', $cecGroups);
+        $this->assertContains('Nước uống', $cecGroups);
+        $this->assertContains('Nhân công, vận chuyển', $cecGroups);
+        $this->assertContains('Chi phí viết BÁO CÁO CÔNG TÁC BVMT', $cecGroups);
         $this->assertContains('Chi phí khác', $cecGroups);
         $this->assertNotContains('Nước ngầm', $cecGroups);
     }
@@ -33,11 +36,19 @@ class EnvironmentalMonitoringPriceCatalogTest extends TestCase
         $daiPhu = EnvironmentalMonitoringPriceCatalog::findByDescription('Nhiệt độ', 'Không khí xung quanh', 'dai_phu');
         $cec = EnvironmentalMonitoringPriceCatalog::findByDescription('Nhiệt độ', 'Không khí xung quanh', 'cec');
         $cecMud = EnvironmentalMonitoringPriceCatalog::findByDescription('Asen (As)', 'Bùn', 'cec');
+        $cecDrinkingWater = EnvironmentalMonitoringPriceCatalog::findByDescription('Độ đục', 'Nước uống', 'cec');
+        $phuongNamReportCost = EnvironmentalMonitoringPriceCatalog::findByDescription(
+            'Lập hồ sơ (viết, in ấn) - Thành phố Hồ Chí Minh - Tân Bình',
+            'Chi phí viết BÁO CÁO CÔNG TÁC BVMT',
+            'phuong_nam'
+        );
         $phuongNam = EnvironmentalMonitoringPriceCatalog::findByDescription('Nhiệt độ', 'Khí thải', 'phuong_nam');
 
         $this->assertSame(30000, $daiPhu['unit_price']);
         $this->assertSame(30000, $cec['unit_price']);
         $this->assertSame(420000, $cecMud['unit_price']);
+        $this->assertSame(120000, $cecDrinkingWater['unit_price']);
+        $this->assertSame(2500000, $phuongNamReportCost['unit_price']);
         $this->assertSame(600000, $phuongNam['unit_price']);
     }
 
