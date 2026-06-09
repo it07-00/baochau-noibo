@@ -1411,20 +1411,30 @@ class QuotationDocumentManager extends Component
     private function generateNextNumber(): string
     {
         $year = now()->format('Y');
-        $prefix = 'BG-'.$year.'-';
+        $suffix = '/' . $year . '/BG – **BC';
 
-        $lastDoc = QuotationDocument::where('document_number', 'like', $prefix.'%')
-            ->orderByDesc('document_number')
-            ->first();
+        // Find the last document with this year in the document number
+        // This matches both the new format and legacy 'BG-[Year]-' format
+        $lastDoc = QuotationDocument::where(function ($q) use ($year) {
+            $q->where('document_number', 'like', 'BG-' . $year . '-%')
+              ->orWhere('document_number', 'like', '%/' . $year . '/BG%');
+        })
+        ->orderByDesc('id')
+        ->first();
 
         if ($lastDoc) {
-            $lastNum = (int) str_replace($prefix, '', $lastDoc->document_number);
+            $numStr = $lastDoc->document_number;
+            if (str_contains($numStr, '/')) {
+                $lastNum = (int) strstr($numStr, '/', true);
+            } else {
+                $lastNum = (int) str_replace('BG-' . $year . '-', '', $numStr);
+            }
             $nextNum = $lastNum + 1;
         } else {
             $nextNum = 1;
         }
 
-        return $prefix.str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+        return str_pad($nextNum, 3, '0', STR_PAD_LEFT) . $suffix;
     }
 
     public function render()
