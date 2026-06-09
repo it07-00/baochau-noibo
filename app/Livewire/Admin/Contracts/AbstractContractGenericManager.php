@@ -924,9 +924,7 @@ abstract class AbstractContractGenericManager extends Component
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
 
-        $loaiDichVuOptions = $isRestrictedUser
-            ? (clone $baseUserQuery)->whereNotNull('loai_dich_vu')->where('loai_dich_vu', '!=', '')->distinct()->pluck('loai_dich_vu')->toArray()
-            : $modelClass::SERVICE_TYPES;
+        $loaiDichVuOptions = $modelClass::SERVICE_TYPES;
 
         $scopedProvinces = $isRestrictedUser
             ? (clone $baseUserQuery)->whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray()

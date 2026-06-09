@@ -162,16 +162,16 @@
       "description": "Benzene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 300000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 300000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -324,15 +324,15 @@
       "description": "Chlorobenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 360000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 360000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -403,16 +403,16 @@
       "description": "CO",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "cec": 210000,
-        "phuong_nam": 180000,
-        "dai_phu": 120000
+        "phuong_nam": 180000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -434,15 +434,15 @@
       "description": "cyclohexene",
       "unit": "Mẫu",
       "unit_prices": {
-        "cec": 630000,
-        "dai_phu": 400000
+        "dai_phu": 400000,
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -463,15 +463,15 @@
       "description": "EthylBenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000,
-        "dai_phu": 300000
+        "dai_phu": 300000,
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -532,15 +532,15 @@
       "description": "H2S",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 380000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 380000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -693,16 +693,16 @@
       "description": "Hướng gió",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 30000,
         "cec": 30000,
-        "phuong_nam": 30000,
-        "dai_phu": 30000
+        "phuong_nam": 30000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -804,16 +804,16 @@
       "description": "n-decane",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 400000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 400000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -860,16 +860,16 @@
       "description": "n-hexane",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 400000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 400000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -877,15 +877,15 @@
       "description": "n-nonane",
       "unit": "Mẫu",
       "unit_prices": {
-        "cec": 630000,
-        "dai_phu": 400000
+        "dai_phu": 400000,
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -920,16 +920,16 @@
       "description": "n-pentane",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 400000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 400000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -975,16 +975,16 @@
       "description": "NH3",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "cec": 210000,
-        "phuong_nam": 380000,
-        "dai_phu": 120000
+        "phuong_nam": 380000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -992,16 +992,16 @@
       "description": "Nhiệt độ",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 30000,
         "cec": 30000,
-        "phuong_nam": 30000,
-        "dai_phu": 30000
+        "phuong_nam": 30000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1022,16 +1022,16 @@
       "description": "NO2",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "cec": 210000,
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1094,16 +1094,16 @@
       "description": "SO2",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "cec": 210000,
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1111,16 +1111,16 @@
       "description": "Styrene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 300000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 300000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1154,16 +1154,16 @@
       "description": "Tiếng ồn",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 50000,
         "cec": 70000,
-        "phuong_nam": 80000,
-        "dai_phu": 50000
+        "phuong_nam": 80000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1183,16 +1183,16 @@
       "description": "Toluene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 300000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 300000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1200,16 +1200,16 @@
       "description": "Tốc độ gió",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 30000,
         "cec": 30000,
-        "phuong_nam": 30000,
-        "dai_phu": 30000
+        "phuong_nam": 30000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1269,16 +1269,16 @@
       "description": "Xylene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 300000,
         "cec": 630000,
-        "phuong_nam": 290000,
-        "dai_phu": 300000
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1326,16 +1326,16 @@
       "description": "Độ ẩm",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 30000,
         "cec": 30000,
-        "phuong_nam": 30000,
-        "dai_phu": 30000
+        "phuong_nam": 30000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Không khí xq",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Không khí xq"
       ]
     },
     {
@@ -1383,7 +1383,7 @@
       "description": "1,1,2,2-tetrachloroethane*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1395,15 +1395,15 @@
       "description": "1,1,2-trichloroethane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -1449,7 +1449,7 @@
       "description": "1,1-Dicloetan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -1475,7 +1475,7 @@
       "description": "1,2- dibromo -3 chloro propane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1487,7 +1487,7 @@
       "description": "1,2- dichloro propane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1499,7 +1499,7 @@
       "description": "1,2- dichlorobenzen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -1511,7 +1511,7 @@
       "description": "1,2-dibromoethane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1563,7 +1563,7 @@
       "description": "1,2-diclobenzen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1599,7 +1599,7 @@
       "description": "1,3-Butadien*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -1625,7 +1625,7 @@
       "description": "1,3-diclobenzen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1637,7 +1637,7 @@
       "description": "1,4 Dioxan",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -1649,7 +1649,7 @@
       "description": "1,4-diclobenzen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -1687,7 +1687,7 @@
       "description": "2-Butanone (MEK)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -1773,15 +1773,15 @@
       "description": "Acetone",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 1400000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -1789,7 +1789,7 @@
       "description": "Acrolein*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -1801,7 +1801,7 @@
       "description": "Amoniac và các hợp chất amoni",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -1839,7 +1839,7 @@
       "description": "Anilin*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -1877,7 +1877,7 @@
       "description": "Antimon và hợp chất, tính theo Sb",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -1901,7 +1901,7 @@
       "description": "Asen và các hợp chất, tính theo As",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -1913,7 +1913,7 @@
       "description": "Axetaldehyt*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -1925,7 +1925,7 @@
       "description": "Axit clohydric, HCl",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -1937,7 +1937,7 @@
       "description": "Bari và hợp chất, tính theo Ba",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -1949,15 +1949,16 @@
       "description": "Benzene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 650000,
         "phuong_nam": 720000,
-        "dai_phu": 650000
+        "cec": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -1989,7 +1990,7 @@
       "description": "Bery và hợp chất, tính theo Be*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -2001,7 +2002,8 @@
       "description": "Br2",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 540000
+        "phuong_nam": 540000,
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -2041,7 +2043,7 @@
       "description": "Bromoethane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2053,7 +2055,7 @@
       "description": "Bromoform**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -2065,7 +2067,7 @@
       "description": "Butanolamin**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2077,7 +2079,7 @@
       "description": "Butylamin*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2101,7 +2103,7 @@
       "description": "Bạc và hợp chất, tính theo Ag",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -2113,7 +2115,7 @@
       "description": "Bụi PM10**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 2100000
+        "cec": 2100000
       },
       "notes": {},
       "sources": [
@@ -2125,7 +2127,8 @@
       "description": "Bụi tổng",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1500000
+        "phuong_nam": 1500000,
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2149,7 +2152,7 @@
       "description": "Cadmi và hợp chất, tính theo Cd",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -2161,7 +2164,7 @@
       "description": "Carbon Tetrachloride",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -2173,15 +2176,15 @@
       "description": "Chlorobenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "phuong_nam": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2189,7 +2192,7 @@
       "description": "Chlorobenzene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -2201,7 +2204,7 @@
       "description": "Chlorofom",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2239,7 +2242,7 @@
       "description": "Chì và hợp chất, tính theo Pb",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -2251,7 +2254,7 @@
       "description": "Cis-1,3-dichloropropylene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -2275,7 +2278,7 @@
       "description": "Cl2 (Clo)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -2287,15 +2290,16 @@
       "description": "CO",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 350000,
         "phuong_nam": 600000,
-        "dai_phu": 350000
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2303,15 +2307,16 @@
       "description": "CO2",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 350000,
         "phuong_nam": 600000,
-        "dai_phu": 350000
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2331,7 +2336,7 @@
       "description": "Coban và hợp chất, tính theo Co",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -2355,7 +2360,7 @@
       "description": "Crom và hợp chất, tính theo Cr",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -2367,15 +2372,15 @@
       "description": "Cyclohexane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 750000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2383,15 +2388,15 @@
       "description": "Cyclohexanol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "phuong_nam": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2399,7 +2404,7 @@
       "description": "Cyclohexanol*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2423,15 +2428,15 @@
       "description": "Cyclohexanone",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2439,7 +2444,7 @@
       "description": "Cyclohexen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2451,15 +2456,15 @@
       "description": "Cyclohexene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "phuong_nam": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2493,7 +2498,7 @@
       "description": "Cấu tử khác*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2505,7 +2510,7 @@
       "description": "Dibromo-chloro ethane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2531,7 +2536,7 @@
       "description": "Dibromochloromethane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -2557,7 +2562,7 @@
       "description": "Dibromomethane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2569,7 +2574,7 @@
       "description": "Dichloromethane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2595,7 +2600,7 @@
       "description": "Dimethy Formamide (DMF)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2675,7 +2680,7 @@
       "description": "Dioxin/Furan (PCDD/PCDF)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2687,7 +2692,7 @@
       "description": "Etanol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2699,7 +2704,7 @@
       "description": "Etanolamine*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2795,15 +2800,15 @@
       "description": "Ethylbenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -2851,7 +2856,7 @@
       "description": "Etylamin*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2875,7 +2880,7 @@
       "description": "Etylaxetat*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2899,7 +2904,7 @@
       "description": "Etylen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2911,7 +2916,7 @@
       "description": "Etylendiamin*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2935,7 +2940,7 @@
       "description": "Etylenoxyt*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -2947,7 +2952,7 @@
       "description": "Flo, HF, hoặc các hợp chất vô cơ của Flo, tính theo HF (HF)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -2973,7 +2978,7 @@
       "description": "Formaldehyt*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -2985,15 +2990,15 @@
       "description": "H2S",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "phuong_nam": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3001,15 +3006,15 @@
       "description": "H2SO4",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 540000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "phuong_nam": 540000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3017,7 +3022,8 @@
       "description": "HBr",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 540000
+        "phuong_nam": 540000,
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -3055,7 +3061,7 @@
       "description": "Hexachlorobutadiene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -3079,7 +3085,7 @@
       "description": "Hydro sunphua, H2S",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -3119,7 +3125,7 @@
       "description": "Hơi H2SO4 hoặc SO3, tính theo SO3",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -3131,7 +3137,7 @@
       "description": "Isopropanol**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -3199,7 +3205,7 @@
       "description": "Isopropylbenzene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -3237,7 +3243,7 @@
       "description": "Kẽm và hợp chất, tính theo Zn",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -3249,7 +3255,7 @@
       "description": "Lưu huỳnh đioxit, SO2",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -3261,15 +3267,16 @@
       "description": "Lưu lượng",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 1000000,
         "phuong_nam": 1500000,
-        "dai_phu": 1000000
+        "cec": 1500000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3303,7 +3310,7 @@
       "description": "Mangan và hợp chất, tính theo Mn",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -3315,7 +3322,7 @@
       "description": "Metanol*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -3327,7 +3334,7 @@
       "description": "Metanolamin**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -3395,7 +3402,7 @@
       "description": "Methyl cyclohexanone",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -3421,7 +3428,7 @@
       "description": "Methyl Isobutylketone (MIBK)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -3447,7 +3454,7 @@
       "description": "Methyl mercaptan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -3459,15 +3466,15 @@
       "description": "Methylcyclohexane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 750000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3515,7 +3522,7 @@
       "description": "Metylacrylat**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -3527,7 +3534,7 @@
       "description": "Metylaxetat*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -3577,15 +3584,15 @@
       "description": "n - Butanol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3621,7 +3628,7 @@
       "description": "n - Butylaxetat*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -3647,15 +3654,15 @@
       "description": "n - Propanol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3713,7 +3720,7 @@
       "description": "n-butylbenzene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -3725,15 +3732,15 @@
       "description": "n-decane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 780000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "phuong_nam": 780000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3741,7 +3748,7 @@
       "description": "n-decane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000
+        "cec": 750000
       },
       "notes": {},
       "sources": [
@@ -3753,7 +3760,7 @@
       "description": "n-dodecane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000
+        "cec": 750000
       },
       "notes": {},
       "sources": [
@@ -3777,15 +3784,15 @@
       "description": "n-heptane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 750000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3793,15 +3800,16 @@
       "description": "n-hexane",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 650000,
         "phuong_nam": 780000,
-        "dai_phu": 650000
+        "cec": 750000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3809,15 +3817,15 @@
       "description": "n-nonane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 750000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3837,15 +3845,15 @@
       "description": "n-octane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 750000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3867,7 +3875,7 @@
       "description": "n-pentane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000
+        "cec": 750000
       },
       "notes": {},
       "sources": [
@@ -3891,7 +3899,7 @@
       "description": "n-propyl benzene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -3915,7 +3923,7 @@
       "description": "n-Propylaxetat*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -3927,7 +3935,7 @@
       "description": "n-undecane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000
+        "cec": 750000
       },
       "notes": {},
       "sources": [
@@ -3939,15 +3947,15 @@
       "description": "Naphthalene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 850000
+        "dai_phu": 850000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3967,15 +3975,16 @@
       "description": "Nhiệt độ",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 150000,
         "phuong_nam": 600000,
-        "dai_phu": 150000
+        "cec": 600000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -3995,7 +4004,7 @@
       "description": "Niken và hợp chất, tính theo Ni",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -4073,15 +4082,16 @@
       "description": "NO",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 350000,
         "phuong_nam": 600000,
-        "dai_phu": 350000
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4103,7 +4113,8 @@
       "description": "NO2",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 600000
+        "phuong_nam": 600000,
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -4127,15 +4138,16 @@
       "description": "NOx (tính theo NO2)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 350000,
         "phuong_nam": 600000,
-        "dai_phu": 350000
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4183,7 +4195,7 @@
       "description": "o-xylen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -4195,15 +4207,16 @@
       "description": "O2",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 350000,
         "phuong_nam": 600000,
-        "dai_phu": 350000
+        "cec": 630000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4237,15 +4250,15 @@
       "description": "Phenol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4253,7 +4266,7 @@
       "description": "Phenol*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4265,7 +4278,7 @@
       "description": "Propylen**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4303,7 +4316,7 @@
       "description": "Propylenoxyt*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4327,15 +4340,15 @@
       "description": "Pyridine",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 650000
+        "dai_phu": 650000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4343,7 +4356,7 @@
       "description": "sec-butyl benzene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4367,7 +4380,7 @@
       "description": "Selen và hợp chất, tính theo Se",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -4379,15 +4392,27 @@
       "description": "SO2",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 600000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "phuong_nam": 600000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
+      ]
+    },
+    {
+      "group_name": "Khí thải",
+      "description": "ß-clopren (chloroprene)",
+      "unit": "Mẫu",
+      "unit_prices": {
+        "phuong_nam": 720000
+      },
+      "notes": {},
+      "sources": [
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4395,15 +4420,16 @@
       "description": "Styrene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 650000,
         "phuong_nam": 720000,
-        "dai_phu": 650000
+        "cec": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4423,7 +4449,7 @@
       "description": "Tali và hợp chất, tính theo Tl",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -4435,7 +4461,7 @@
       "description": "Tert butyl benzene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4447,7 +4473,7 @@
       "description": "Tetrachloroethylene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -4509,7 +4535,7 @@
       "description": "Thiếc và hợp chất, tính theo Sn",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -4533,7 +4559,7 @@
       "description": "Thủy ngân và hợp chất, tính theo Hg",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -4545,15 +4571,16 @@
       "description": "Toluene",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 650000,
         "phuong_nam": 720000,
-        "dai_phu": 650000
+        "cec": 720000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Khí thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Khí thải"
       ]
     },
     {
@@ -4561,7 +4588,7 @@
       "description": "Trans-1,3-dichloropropylene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -4601,7 +4628,7 @@
       "description": "Trichloroethylene**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -4613,7 +4640,7 @@
       "description": "Tridecane**",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 750000
+        "cec": 750000
       },
       "notes": {},
       "sources": [
@@ -4653,7 +4680,7 @@
       "description": "Tổng các kim loại nặng khác** (As, Sb, Ni, Co, Cu, Cr, Sn, Mn, TI, Zn) và hợp chất tương ứng",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -4665,7 +4692,7 @@
       "description": "Tổng Florua*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -4703,7 +4730,7 @@
       "description": "Vinylclorua*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -4715,7 +4742,7 @@
       "description": "Vinyltoluen*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4783,7 +4810,7 @@
       "description": "Xylen (m,p-Xylen)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 720000
+        "cec": 720000
       },
       "notes": {},
       "sources": [
@@ -4806,22 +4833,10 @@
     },
     {
       "group_name": "Khí thải",
-      "description": "ß-clopren (chloroprene)",
-      "unit": "Mẫu",
-      "unit_prices": {
-        "phuong_nam": 720000
-      },
-      "notes": {},
-      "sources": [
-        "qtmt_price_1:Khí thải"
-      ]
-    },
-    {
-      "group_name": "Khí thải",
       "description": "Áp suất",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 600000
+        "cec": 600000
       },
       "notes": {},
       "sources": [
@@ -4873,7 +4888,7 @@
       "description": "Đồng và hợp chất, tính theo Cu",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -4925,7 +4940,7 @@
       "description": "2,4- DDD",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4937,7 +4952,7 @@
       "description": "2,4- DDE",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -4949,7 +4964,7 @@
       "description": "2,4- DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5067,7 +5082,7 @@
       "description": "4,4- DDD",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5079,7 +5094,7 @@
       "description": "4,4- DDE",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5091,7 +5106,7 @@
       "description": "4,4- DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5167,15 +5182,16 @@
       "description": "Aldrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 600000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5197,7 +5213,7 @@
       "description": "Alpha BHC (α- HCH)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5209,7 +5225,7 @@
       "description": "Alpha Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5249,7 +5265,7 @@
       "description": "Amoni (NH4+ tính theo N)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 168000
+        "cec": 168000
       },
       "notes": {},
       "sources": [
@@ -5299,15 +5315,16 @@
       "description": "Asen (As)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5315,7 +5332,7 @@
       "description": "Azinphos ethyl*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5435,7 +5452,7 @@
       "description": "Beta BHC (β- HCH)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5447,7 +5464,7 @@
       "description": "Beta Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5459,7 +5476,7 @@
       "description": "Bromophos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5485,7 +5502,8 @@
       "description": "Cadimi (Cd)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 160000
+        "phuong_nam": 160000,
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -5549,7 +5567,7 @@
       "description": "Chloropyrifos ethyl*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5561,7 +5579,7 @@
       "description": "Chloropyriphos methyl*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5601,15 +5619,16 @@
       "description": "Chì (Pb)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5617,15 +5636,15 @@
       "description": "Chất hoạt động bề mặt",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 370000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "phuong_nam": 370000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5647,7 +5666,7 @@
       "description": "cis-Chlordane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5671,15 +5690,15 @@
       "description": "Clo dư",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 112000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5713,15 +5732,16 @@
       "description": "Clorua (Cl-)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 80000,
         "phuong_nam": 116000,
-        "dai_phu": 80000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5743,15 +5763,16 @@
       "description": "Coliform",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 360000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5839,7 +5860,7 @@
       "description": "Crom III (Cr3+)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 252000
+        "cec": 252000
       },
       "notes": {},
       "sources": [
@@ -5851,7 +5872,7 @@
       "description": "Crom VI (Cr6+)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -5875,7 +5896,7 @@
       "description": "Cấu tử khác*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 980000
+        "cec": 980000
       },
       "notes": {},
       "sources": [
@@ -5887,7 +5908,7 @@
       "description": "Delta BHC (δ- HCH)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -5949,15 +5970,15 @@
       "description": "Diazinon",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 600000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 600000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -5965,7 +5986,7 @@
       "description": "Diazinone",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6005,7 +6026,7 @@
       "description": "Dichlorvos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6017,15 +6038,16 @@
       "description": "Dieldrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 600000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6047,7 +6069,7 @@
       "description": "Dimethoate*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6059,15 +6081,16 @@
       "description": "Disulfoton",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 600000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6087,15 +6110,15 @@
       "description": "Dầu, mỡ động thực vật",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "cec": 700000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6129,7 +6152,7 @@
       "description": "Eldrin aldehyde*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6179,7 +6202,7 @@
       "description": "Endosulfan sulfate",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6203,15 +6226,15 @@
       "description": "Endrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6259,7 +6282,7 @@
       "description": "Endrin Ketone*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6271,15 +6294,16 @@
       "description": "Ethion",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 600000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6287,7 +6311,7 @@
       "description": "Fenitrothion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6313,7 +6337,7 @@
       "description": "Fenthion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6325,15 +6349,16 @@
       "description": "Florua (F-)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 80000,
         "phuong_nam": 240000,
-        "dai_phu": 80000
+        "cec": 280000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6369,7 +6394,7 @@
       "description": "Gama BHC (Lindane)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6409,15 +6434,15 @@
       "description": "Heptachlor",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 600000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 600000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6439,7 +6464,7 @@
       "description": "Heptachlor & Heptachlorepoxide* (C10H5Cl7 & C10H5Cl7O)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6451,15 +6476,15 @@
       "description": "Heptachlor epoxide",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 600000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 600000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6467,7 +6492,7 @@
       "description": "Hexachlorobenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6559,15 +6584,16 @@
       "description": "Kẽm (Zn)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6575,15 +6601,16 @@
       "description": "Lưu lượng",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 725000,
-        "dai_phu": 500000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6591,15 +6618,16 @@
       "description": "Malathion",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 600000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6607,15 +6635,16 @@
       "description": "Mangan (Mn)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6661,7 +6690,7 @@
       "description": "Mevinphos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6713,15 +6742,16 @@
       "description": "Nhiệt độ",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 30000,
         "phuong_nam": 30000,
-        "dai_phu": 30000
+        "cec": 56000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6729,15 +6759,16 @@
       "description": "Nhu cầu oxy hóa học (COD)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 80000,
         "phuong_nam": 145000,
-        "dai_phu": 80000
+        "cec": 168000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6745,15 +6776,15 @@
       "description": "Nhu cầu oxy sinh hóa (BOD5)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 240000,
-        "dai_phu": 90000
+        "dai_phu": 90000,
+        "phuong_nam": 240000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6761,7 +6792,7 @@
       "description": "Nhu cầu oxy sinh học (BOD5)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 280000
+        "cec": 280000
       },
       "notes": {},
       "sources": [
@@ -6787,7 +6818,8 @@
       "description": "Niken (Ni)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 160000
+        "phuong_nam": 160000,
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -6799,7 +6831,8 @@
       "description": "Nitrat (NO3- tính theo N)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 180000
+        "phuong_nam": 180000,
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -6825,7 +6858,7 @@
       "description": "Nitrit (NO2- tính theo N)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 140000
+        "cec": 140000
       },
       "notes": {},
       "sources": [
@@ -6893,7 +6926,7 @@
       "description": "Parathion ethyl (Parathion)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6905,7 +6938,7 @@
       "description": "Parathion methyl",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -6957,15 +6990,15 @@
       "description": "PCB 101",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -6987,7 +7020,7 @@
       "description": "PCB 118",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -6999,15 +7032,15 @@
       "description": "PCB 138",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7043,15 +7076,15 @@
       "description": "PCB 153",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7087,15 +7120,15 @@
       "description": "PCB 180",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7145,7 +7178,7 @@
       "description": "PCB 28",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -7185,15 +7218,15 @@
       "description": "PCB 52",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7325,15 +7358,16 @@
       "description": "pH",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 50000,
         "phuong_nam": 50000,
-        "dai_phu": 50000
+        "cec": 70000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7355,7 +7389,8 @@
       "description": "Photphat (PO43- tính theo P)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 144000
+        "phuong_nam": 144000,
+        "cec": 168000
       },
       "notes": {},
       "sources": [
@@ -7367,7 +7402,7 @@
       "description": "Propetamphos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -7419,7 +7454,7 @@
       "description": "Salmonella*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 490000
+        "cec": 490000
       },
       "notes": {},
       "sources": [
@@ -7431,15 +7466,15 @@
       "description": "Selen (Se)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 160000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 160000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7485,7 +7520,7 @@
       "description": "Sulfotep*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -7497,7 +7532,7 @@
       "description": "Sulfua (S2-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 140000
+        "cec": 140000
       },
       "notes": {},
       "sources": [
@@ -7535,15 +7570,16 @@
       "description": "Sắt (Fe)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7575,7 +7611,8 @@
       "description": "Thiếc (Sn)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 160000
+        "phuong_nam": 160000,
+        "cec": 252000
       },
       "notes": {},
       "sources": [
@@ -7601,15 +7638,16 @@
       "description": "Thủy ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 252000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7629,7 +7667,7 @@
       "description": "trans-Chlordane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -7641,7 +7679,7 @@
       "description": "Triadimefon*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -7653,7 +7691,7 @@
       "description": "Triazophos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -7677,7 +7715,7 @@
       "description": "Tổng Chromi (Cr)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -7689,15 +7727,15 @@
       "description": "Tổng chất rắn hòa tan (TDS)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 140000,
-        "dai_phu": 60000
+        "dai_phu": 60000,
+        "cec": 140000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7705,15 +7743,16 @@
       "description": "Tổng chất rắn lơ lửng (TSS)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 80000,
         "phuong_nam": 116000,
-        "dai_phu": 80000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7733,7 +7772,7 @@
       "description": "Tổng các chất hoạt động bề mặt",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 560000
+        "cec": 560000
       },
       "notes": {},
       "sources": [
@@ -7785,15 +7824,15 @@
       "description": "Tổng dầu, mỡ khoáng",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "cec": 700000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7801,15 +7840,15 @@
       "description": "Tổng hoạt độ phóng xạ α",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7817,7 +7856,7 @@
       "description": "Tổng hoạt độ phóng xạ α*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -7829,15 +7868,15 @@
       "description": "Tổng hoạt độ phóng xạ β",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7845,7 +7884,7 @@
       "description": "Tổng hoạt độ phóng xạ β*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -7857,7 +7896,7 @@
       "description": "Tổng N",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -7869,15 +7908,15 @@
       "description": "Tổng Nitơ",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 180000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 180000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7885,7 +7924,7 @@
       "description": "Tổng P",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 196000
+        "cec": 196000
       },
       "notes": {},
       "sources": [
@@ -7897,15 +7936,16 @@
       "description": "Tổng Phenol",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 350000,
         "phuong_nam": 430000,
-        "dai_phu": 350000
+        "cec": 700000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7913,15 +7953,15 @@
       "description": "Tổng Photpho",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 160000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 160000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7943,15 +7983,15 @@
       "description": "Vibrio cholerae",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 220000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 220000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7959,15 +7999,16 @@
       "description": "Vận tốc",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 430000,
-        "dai_phu": 500000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -7989,7 +8030,7 @@
       "description": "Xyanua (CN-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 280000
+        "cec": 280000
       },
       "notes": {},
       "sources": [
@@ -8013,15 +8054,16 @@
       "description": "Đồng (Cu)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 160000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -8085,15 +8127,16 @@
       "description": "Độ màu",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 70000,
         "phuong_nam": 116000,
-        "dai_phu": 70000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước thải"
       ]
     },
     {
@@ -8261,7 +8304,8 @@
       "description": "1,2 Dichloroethane (C2H4Cl2)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000
+        "phuong_nam": 580000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -8273,7 +8317,7 @@
       "description": "1,4-Dioxane (C4H8O2)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -8285,7 +8329,7 @@
       "description": "2,4 DDD",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8297,7 +8341,7 @@
       "description": "2,4 DDE",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8309,7 +8353,7 @@
       "description": "2,4 DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8427,7 +8471,7 @@
       "description": "4,4 DDD",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8439,7 +8483,7 @@
       "description": "4,4 DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8451,7 +8495,7 @@
       "description": "4,4-DDE",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8527,15 +8571,16 @@
       "description": "Aldrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 580000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -8557,7 +8602,7 @@
       "description": "Alpha BHC (α- HCH)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8569,7 +8614,7 @@
       "description": "Alpha Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8609,7 +8654,8 @@
       "description": "Amoni (NH4+ tính theo N)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000
+        "phuong_nam": 120000,
+        "cec": 168000
       },
       "notes": {},
       "sources": [
@@ -8647,7 +8693,7 @@
       "description": "Antimon (Sb)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -8659,7 +8705,7 @@
       "description": "Arsenic (As)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -8671,15 +8717,15 @@
       "description": "Asen (As)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -8687,7 +8733,7 @@
       "description": "Azinphos ethyl*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8699,7 +8745,7 @@
       "description": "Azinphos methyl",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8711,7 +8757,8 @@
       "description": "Benzene (C6H6)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000
+        "phuong_nam": 580000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -8807,7 +8854,7 @@
       "description": "Beta BHC (β- HCH)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8819,7 +8866,7 @@
       "description": "Beta Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8831,7 +8878,7 @@
       "description": "Bis (2-ethylHexyl)phthalate DEHP (C24H38O4)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 2800000
+        "cec": 2800000
       },
       "notes": {},
       "sources": [
@@ -8843,7 +8890,7 @@
       "description": "Bromophos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8881,15 +8928,15 @@
       "description": "Cadmi (Cd)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -8897,15 +8944,16 @@
       "description": "Canxi (Ca)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 150000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -8913,7 +8961,7 @@
       "description": "Carbon tetrachloride (CCl4)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -8925,7 +8973,7 @@
       "description": "Chlordane*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8937,7 +8985,7 @@
       "description": "Chloride (Cl-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 112000
+        "cec": 112000
       },
       "notes": {},
       "sources": [
@@ -8949,7 +8997,8 @@
       "description": "Chloroform (CHCl3)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000
+        "phuong_nam": 580000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -8961,7 +9010,7 @@
       "description": "Chloropyrifos ethyl*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8973,7 +9022,7 @@
       "description": "Chloropyriphos methyl*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -8999,7 +9048,7 @@
       "description": "Chlorrophyll- a*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -9011,7 +9060,7 @@
       "description": "Chromi (VI) (Cr6+)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -9037,15 +9086,15 @@
       "description": "Chì (Pb)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9053,7 +9102,7 @@
       "description": "Chì (Plumbum) (Pb)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -9079,7 +9128,8 @@
       "description": "Chất hoạt động bề mặt anion",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 380000
+        "phuong_nam": 380000,
+        "cec": 560000
       },
       "notes": {},
       "sources": [
@@ -9105,7 +9155,7 @@
       "description": "cis-Chlordane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9145,15 +9195,15 @@
       "description": "Clorua (Cl-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9175,15 +9225,15 @@
       "description": "Coliform",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9191,15 +9241,16 @@
       "description": "Coliform chịu nhiệt",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 150000,
         "phuong_nam": 150000,
-        "dai_phu": 150000
+        "cec": 252000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9249,7 +9300,7 @@
       "description": "Cyanide (CN-)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 280000
+        "cec": 280000
       },
       "notes": {},
       "sources": [
@@ -9261,7 +9312,7 @@
       "description": "Cấu tử khác*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 980000
+        "cec": 980000
       },
       "notes": {},
       "sources": [
@@ -9273,7 +9324,7 @@
       "description": "Delta BHC (δ- HCH)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9323,15 +9374,15 @@
       "description": "Diazinon",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9339,7 +9390,7 @@
       "description": "Diazinone",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9379,7 +9430,7 @@
       "description": "Dichlorvos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9391,15 +9442,16 @@
       "description": "Dieldrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 580000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9421,7 +9473,7 @@
       "description": "Dimethoate*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9433,15 +9485,16 @@
       "description": "Disulfoton",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 580000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9501,7 +9554,7 @@
       "description": "E.Coli",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -9513,7 +9566,7 @@
       "description": "Eldrin aldehyde*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9563,7 +9616,7 @@
       "description": "Endosulfan sulfate",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9587,15 +9640,15 @@
       "description": "Endrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9643,7 +9696,7 @@
       "description": "Endrin Ketone*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9655,15 +9708,16 @@
       "description": "Ethion",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 580000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9671,7 +9725,7 @@
       "description": "Fenitrothion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9697,7 +9751,7 @@
       "description": "Fenthion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9709,15 +9763,15 @@
       "description": "Florua (F-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9753,7 +9807,7 @@
       "description": "Fluoride (F-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 280000
+        "cec": 280000
       },
       "notes": {},
       "sources": [
@@ -9765,7 +9819,7 @@
       "description": "Formaldehyde (CH2O)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -9777,7 +9831,7 @@
       "description": "Gama BHC (Lindane)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9817,15 +9871,15 @@
       "description": "Heptachlor",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9847,7 +9901,7 @@
       "description": "Heptachlor & Heptachlorepoxide* (C10H5Cl7 & C10H5Cl7O)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9859,15 +9913,15 @@
       "description": "Heptachlor epoxide",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9875,7 +9929,7 @@
       "description": "Hexachlorobenzene (C6Cl6)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -9887,15 +9941,15 @@
       "description": "Hàm lượng oxy hòa tan (DO)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 140000,
-        "dai_phu": 50000
+        "dai_phu": 50000,
+        "cec": 140000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -9981,7 +10035,8 @@
       "description": "Kali (K)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000
+        "phuong_nam": 150000,
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -9993,7 +10048,7 @@
       "description": "Kẽm (Zincum) (Zn)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -10005,15 +10060,15 @@
       "description": "Kẽm (Zn)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10035,7 +10090,8 @@
       "description": "Magie (Mg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000
+        "phuong_nam": 150000,
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -10047,15 +10103,16 @@
       "description": "Malathion",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 580000,
-        "dai_phu": 500000
+        "cec": 840000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10063,15 +10120,16 @@
       "description": "Mangan (Mn)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 120000,
         "phuong_nam": 150000,
-        "dai_phu": 120000
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10079,7 +10137,8 @@
       "description": "Methoxychlor",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000
+        "phuong_nam": 580000,
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10091,7 +10150,8 @@
       "description": "Methylene chloride (CH2Cl2)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000
+        "phuong_nam": 580000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -10117,7 +10177,7 @@
       "description": "Mevinphos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10143,15 +10203,15 @@
       "description": "Natri (Na)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10159,7 +10219,7 @@
       "description": "Natri (Na)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -10171,15 +10231,16 @@
       "description": "Nhiệt độ",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 30000,
         "phuong_nam": 30000,
-        "dai_phu": 30000
+        "cec": 56000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10187,15 +10248,16 @@
       "description": "Nhu cầu oxy hóa học (COD)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 80000,
         "phuong_nam": 150000,
-        "dai_phu": 80000
+        "cec": 168000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10203,15 +10265,15 @@
       "description": "Nhu cầu oxy sinh hóa (BOD5)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 90000
+        "dai_phu": 90000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10219,7 +10281,7 @@
       "description": "Nhu cầu oxy sinh học (BOD5)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 280000
+        "cec": 280000
       },
       "notes": {},
       "sources": [
@@ -10231,15 +10293,15 @@
       "description": "Nickel (Ni)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10271,15 +10333,15 @@
       "description": "Nitrat (NO3--N)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "cec": 210000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10287,7 +10349,8 @@
       "description": "Nitrit (NO2- tính theo N)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000
+        "phuong_nam": 120000,
+        "cec": 140000
       },
       "notes": {},
       "sources": [
@@ -10355,7 +10418,7 @@
       "description": "Parathion ethyl (Parathion)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10367,7 +10430,7 @@
       "description": "Parathion methyl",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10419,15 +10482,15 @@
       "description": "PCB 101",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10449,7 +10512,7 @@
       "description": "PCB 118",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -10461,15 +10524,15 @@
       "description": "PCB 138",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10505,15 +10568,15 @@
       "description": "PCB 153",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10549,15 +10612,15 @@
       "description": "PCB 180",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10607,7 +10670,7 @@
       "description": "PCB 28",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -10647,15 +10710,15 @@
       "description": "PCB 52",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10691,15 +10754,16 @@
       "description": "pH",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 50000,
         "phuong_nam": 50000,
-        "dai_phu": 50000
+        "cec": 70000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10721,7 +10785,7 @@
       "description": "Phosalone*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10745,7 +10809,7 @@
       "description": "Photphat (PO43--P)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 168000
+        "cec": 168000
       },
       "notes": {},
       "sources": [
@@ -10757,7 +10821,7 @@
       "description": "Propetamphos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10849,7 +10913,7 @@
       "description": "Sulfat (SO42-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 140000
+        "cec": 140000
       },
       "notes": {},
       "sources": [
@@ -10861,7 +10925,7 @@
       "description": "Sulfotep*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -10873,7 +10937,7 @@
       "description": "Sulfua (S2-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 140000
+        "cec": 140000
       },
       "notes": {},
       "sources": [
@@ -10923,15 +10987,15 @@
       "description": "Sắt (Fe)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10939,7 +11003,7 @@
       "description": "Sắt (Ferrum) (Fe)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -10951,7 +11015,8 @@
       "description": "Tetrachloroethylene PCE (C2Cl4)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000
+        "phuong_nam": 580000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -10963,15 +11028,15 @@
       "description": "Thế oxy hóa khử (ORP)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 70000
+        "dai_phu": 70000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -10979,7 +11044,7 @@
       "description": "Thế oxy hóa khử (ORP)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 112000
+        "cec": 112000
       },
       "notes": {},
       "sources": [
@@ -10991,15 +11056,15 @@
       "description": "Thủy ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11007,7 +11072,7 @@
       "description": "Thủy ngân (Hydrargyrum) (Hg)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 252000
+        "cec": 252000
       },
       "notes": {},
       "sources": [
@@ -11019,7 +11084,7 @@
       "description": "Thực vật nổi*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 2100000
+        "cec": 2100000
       },
       "notes": {},
       "sources": [
@@ -11031,7 +11096,7 @@
       "description": "trans-Chlordane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -11043,7 +11108,7 @@
       "description": "Triadimefon*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -11055,7 +11120,7 @@
       "description": "Triazophos*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -11067,7 +11132,7 @@
       "description": "Tổng Chromi (Cr)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -11079,15 +11144,16 @@
       "description": "Tổng chất rắn hòa tan (TDS)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 60000,
         "phuong_nam": 120000,
-        "dai_phu": 60000
+        "cec": 140000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11095,15 +11161,16 @@
       "description": "Tổng chất rắn lơ lửng (TSS)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 80000,
         "phuong_nam": 120000,
-        "dai_phu": 80000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11111,7 +11178,7 @@
       "description": "Tổng Coliform",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -11149,7 +11216,7 @@
       "description": "Tổng DDT* (1,1'-(2,2,2-Trichloroethane-1,1-diyl) bis(4-chlorobenzene) (C14H9Cl5)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -11187,7 +11254,7 @@
       "description": "Tổng dầu, mỡ (oils & grease)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -11213,15 +11280,15 @@
       "description": "Tổng hoạt độ phóng xạ α",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 730000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 730000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11229,7 +11296,7 @@
       "description": "Tổng hoạt độ phóng xạ α*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -11241,15 +11308,15 @@
       "description": "Tổng hoạt độ phóng xạ β",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 730000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 730000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11257,7 +11324,7 @@
       "description": "Tổng hoạt độ phóng xạ β*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -11269,7 +11336,7 @@
       "description": "Tổng N",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -11281,15 +11348,15 @@
       "description": "Tổng Nitơ",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11297,7 +11364,7 @@
       "description": "Tổng P",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 196000
+        "cec": 196000
       },
       "notes": {},
       "sources": [
@@ -11309,15 +11376,15 @@
       "description": "Tổng Phenol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 440000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "phuong_nam": 440000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11325,7 +11392,7 @@
       "description": "Tổng Phenol*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -11337,15 +11404,15 @@
       "description": "Tổng Photpho",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11379,15 +11446,15 @@
       "description": "Vibrio cholerae",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 220000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 220000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11435,15 +11502,15 @@
       "description": "Đồng (Cu)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 150000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 150000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11451,7 +11518,7 @@
       "description": "Đồng (Cuprum) (Cu)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 210000
+        "cec": 210000
       },
       "notes": {},
       "sources": [
@@ -11489,7 +11556,7 @@
       "description": "Độ cứng tổng số (tính theo CaCO3)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 112000
+        "cec": 112000
       },
       "notes": {},
       "sources": [
@@ -11501,15 +11568,16 @@
       "description": "Độ dẫn điện (EC)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 50000,
         "phuong_nam": 120000,
-        "dai_phu": 50000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11517,15 +11585,15 @@
       "description": "Độ kiềm",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 70000
+        "dai_phu": 70000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11533,7 +11601,7 @@
       "description": "Độ kiềm (tính theo CaCO3)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 112000
+        "cec": 112000
       },
       "notes": {},
       "sources": [
@@ -11545,15 +11613,16 @@
       "description": "Độ muối",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 60000,
         "phuong_nam": 120000,
-        "dai_phu": 60000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11561,15 +11630,16 @@
       "description": "Độ màu",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 70000,
         "phuong_nam": 120000,
-        "dai_phu": 70000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11591,7 +11661,7 @@
       "description": "Độ trong*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 112000
+        "cec": 112000
       },
       "notes": {},
       "sources": [
@@ -11603,15 +11673,16 @@
       "description": "Độ đục",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 60000,
         "phuong_nam": 120000,
-        "dai_phu": 60000
+        "cec": 112000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước mặt",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước mặt"
       ]
     },
     {
@@ -11633,7 +11704,7 @@
       "description": "Động vật nổi*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 2100000
+        "cec": 2100000
       },
       "notes": {},
       "sources": [
@@ -11659,7 +11730,7 @@
       "description": "Động vật đáy*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 2100000
+        "cec": 2100000
       },
       "notes": {},
       "sources": [
@@ -11969,15 +12040,15 @@
       "description": "Aldrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12053,15 +12124,15 @@
       "description": "Asen (As)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12247,15 +12318,15 @@
       "description": "Chì (Pb)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12331,15 +12402,15 @@
       "description": "Clorua (Cl-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12359,15 +12430,15 @@
       "description": "Coban (Co)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12375,15 +12446,15 @@
       "description": "Coliform",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12563,15 +12634,15 @@
       "description": "Dieldrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12593,15 +12664,15 @@
       "description": "Disulfoton",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12753,15 +12824,15 @@
       "description": "Ethion",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12795,15 +12866,15 @@
       "description": "Florua (F-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12879,15 +12950,15 @@
       "description": "Heptachlor",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -12909,15 +12980,15 @@
       "description": "Heptachlor epoxide",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13029,15 +13100,15 @@
       "description": "Kẽm (Zn)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13059,15 +13130,15 @@
       "description": "Malathion",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13075,15 +13146,15 @@
       "description": "Mangan (Mn)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13145,15 +13216,15 @@
       "description": "Nhiệt độ",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 30000,
-        "dai_phu": 30000
+        "dai_phu": 30000,
+        "phuong_nam": 30000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13161,15 +13232,15 @@
       "description": "Nhu cầu oxy hóa học (COD)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13177,15 +13248,15 @@
       "description": "Nhu cầu oxy sinh hóa (BOD5)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 90000
+        "dai_phu": 90000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13591,15 +13662,15 @@
       "description": "pH",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 45000,
-        "dai_phu": 50000
+        "dai_phu": 50000,
+        "phuong_nam": 45000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13661,15 +13732,15 @@
       "description": "Selen (Se)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13729,15 +13800,15 @@
       "description": "Sắt (Fe)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13757,15 +13828,15 @@
       "description": "Thế oxy hóa khử (ORP)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 70000
+        "dai_phu": 70000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13773,15 +13844,15 @@
       "description": "Thủy ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13813,15 +13884,15 @@
       "description": "Tổng chất rắn hòa tan (TDS)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 60000
+        "dai_phu": 60000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13829,15 +13900,15 @@
       "description": "Tổng chất rắn lơ lửng (TSS)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13911,15 +13982,15 @@
       "description": "Tổng hoạt độ phóng xạ α",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13927,15 +13998,15 @@
       "description": "Tổng hoạt độ phóng xạ β",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13943,15 +14014,15 @@
       "description": "Tổng Nitơ",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13959,15 +14030,15 @@
       "description": "Tổng Phenol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 435000,
-        "dai_phu": 350000
+        "dai_phu": 350000,
+        "phuong_nam": 435000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -13975,15 +14046,15 @@
       "description": "Tổng Photpho",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 80000
+        "dai_phu": 80000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -14083,15 +14154,15 @@
       "description": "Đồng (Cu)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 145000,
-        "dai_phu": 120000
+        "dai_phu": 120000,
+        "phuong_nam": 145000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -14125,15 +14196,15 @@
       "description": "Độ dẫn điện (EC)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 50000
+        "dai_phu": 50000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -14141,15 +14212,15 @@
       "description": "Độ kiềm",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 70000
+        "dai_phu": 70000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -14157,15 +14228,15 @@
       "description": "Độ muối",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 60000
+        "dai_phu": 60000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -14173,15 +14244,15 @@
       "description": "Độ màu",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 70000
+        "dai_phu": 70000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -14203,15 +14274,15 @@
       "description": "Độ đục",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 120000,
-        "dai_phu": 60000
+        "dai_phu": 60000,
+        "phuong_nam": 120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Nước ngầm",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Nước ngầm"
       ]
     },
     {
@@ -16227,7 +16298,7 @@
       "description": "2,4 DDD",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16239,7 +16310,7 @@
       "description": "2,4 DDE",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16251,7 +16322,7 @@
       "description": "2,4 DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16277,7 +16348,7 @@
       "description": "4,4 DDD",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16289,7 +16360,7 @@
       "description": "4,4 DDE",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16301,7 +16372,7 @@
       "description": "4,4 DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16355,15 +16426,15 @@
       "description": "Aldrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16385,7 +16456,7 @@
       "description": "Alpha BHC",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16397,7 +16468,7 @@
       "description": "Alpha Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16423,15 +16494,16 @@
       "description": "Asen (As)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16439,15 +16511,16 @@
       "description": "Bari (Ba)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16467,7 +16540,7 @@
       "description": "Benzen*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16493,7 +16566,7 @@
       "description": "Beta BHC",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16505,7 +16578,7 @@
       "description": "Beta Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16531,15 +16604,16 @@
       "description": "Bạc (Ag)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16561,15 +16635,15 @@
       "description": "Cadimi (Cd)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16577,7 +16651,7 @@
       "description": "Cadmi (Cd)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -16589,7 +16663,7 @@
       "description": "Chlordane*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16629,15 +16703,16 @@
       "description": "Chì (Pb)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16645,7 +16720,7 @@
       "description": "cis-Chlordane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16669,7 +16744,7 @@
       "description": "Clobenzen*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16695,15 +16770,16 @@
       "description": "Coban (Co)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16725,7 +16801,8 @@
       "description": "Crom VI (Cr6+)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -16751,7 +16828,7 @@
       "description": "Delta BHC",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16791,15 +16868,15 @@
       "description": "Dieldrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16849,15 +16926,15 @@
       "description": "Endosulfan sulfate",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16865,15 +16942,15 @@
       "description": "Endrin",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -16895,7 +16972,7 @@
       "description": "Endrin aldehyde*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16921,7 +16998,7 @@
       "description": "Endrin Ketone*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -16987,7 +17064,7 @@
       "description": "Gama BHC (Lindane)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17055,7 +17132,7 @@
       "description": "Heptachlor epoxide*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17067,7 +17144,7 @@
       "description": "Heptachlor*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17079,7 +17156,7 @@
       "description": "Hexachlorobenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17119,15 +17196,16 @@
       "description": "Kẽm (Zn)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -17163,7 +17241,7 @@
       "description": "Metoxyclo",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17175,7 +17253,7 @@
       "description": "Metyl parathion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17213,7 +17291,7 @@
       "description": "Naphthalene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -17251,7 +17329,8 @@
       "description": "Niken (Ni)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -17319,7 +17398,7 @@
       "description": "Parathion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17331,7 +17410,7 @@
       "description": "PCB 101*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17343,7 +17422,7 @@
       "description": "PCB 118*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17355,7 +17434,7 @@
       "description": "PCB 138*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17367,7 +17446,7 @@
       "description": "PCB 153*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17379,7 +17458,7 @@
       "description": "PCB 180*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17391,7 +17470,7 @@
       "description": "PCB 28*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17403,7 +17482,7 @@
       "description": "PCB 52*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17415,15 +17494,16 @@
       "description": "pH",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 100000,
         "phuong_nam": 145000,
-        "dai_phu": 100000
+        "cec": 140000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -17431,7 +17511,8 @@
       "description": "Phenol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000
+        "phuong_nam": 725000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17443,7 +17524,8 @@
       "description": "Selen (Se)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -17455,15 +17537,15 @@
       "description": "Thuỷ ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -17471,7 +17553,7 @@
       "description": "Thủy ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -17495,7 +17577,7 @@
       "description": "Toluen*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17507,7 +17589,7 @@
       "description": "trans-Chlordane",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17519,7 +17601,7 @@
       "description": "Tổng Chromi (Cr)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -17545,7 +17627,7 @@
       "description": "Tổng DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -17557,15 +17639,15 @@
       "description": "Tổng dầu",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 600000
+        "dai_phu": 600000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -17585,7 +17667,7 @@
       "description": "Tổng dầu*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -17625,7 +17707,7 @@
       "description": "Tổng Xyanua (CN-)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 630000
+        "cec": 630000
       },
       "notes": {},
       "sources": [
@@ -17661,15 +17743,16 @@
       "description": "Đồng (Cu)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Bùn",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Bùn"
       ]
     },
     {
@@ -19371,7 +19454,7 @@
       "description": "1,2,4-Trichlorobenzene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -19487,7 +19570,7 @@
       "description": "Acenaphthene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19511,15 +19594,16 @@
       "description": "Aldrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 725000,
-        "dai_phu": 500000
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -19541,7 +19625,7 @@
       "description": "Alpha BHC",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -19579,7 +19663,7 @@
       "description": "Anthracene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19591,7 +19675,8 @@
       "description": "Antimon (Sb)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -19603,15 +19688,16 @@
       "description": "Asen (As)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -19619,15 +19705,15 @@
       "description": "Bari (Ba)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -19635,7 +19721,7 @@
       "description": "Bari (Barium) (trừ arium sulfate)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -19659,7 +19745,7 @@
       "description": "Benz[a]anthracene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19683,7 +19769,7 @@
       "description": "Benzene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -19707,7 +19793,7 @@
       "description": "Benzo(a)pyrene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19743,7 +19829,7 @@
       "description": "Benzo(j)fluoranthene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19767,7 +19853,7 @@
       "description": "Benzo(k)fluoranthene)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19791,7 +19877,7 @@
       "description": "Beryn (Be)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -19817,7 +19903,7 @@
       "description": "Beta BHC",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -19843,15 +19929,16 @@
       "description": "Bạc (Ag)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -19873,15 +19960,15 @@
       "description": "Cadimi (Cd)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -19889,7 +19976,7 @@
       "description": "Cadmi (Cd)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -19941,7 +20028,7 @@
       "description": "Chrysene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -19953,15 +20040,16 @@
       "description": "Chì (Pb)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -19981,7 +20069,7 @@
       "description": "Clodan (Chlordane)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20007,15 +20095,16 @@
       "description": "Coban (Co)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20037,7 +20126,8 @@
       "description": "Crom VI (Cr6+)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -20063,7 +20153,7 @@
       "description": "Delta BHC",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20101,7 +20191,7 @@
       "description": "Dibenz(a,h)anthracene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -20127,15 +20217,16 @@
       "description": "Dieldrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 725000,
-        "dai_phu": 500000
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20171,7 +20262,7 @@
       "description": "Disulfoton*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20209,7 +20300,7 @@
       "description": "Endosulfan I (Alpha Endosulfan)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20233,7 +20324,7 @@
       "description": "Endosulfan II (Beta Endosulfan)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20245,15 +20336,15 @@
       "description": "Endosulfan sulfate",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20261,15 +20352,16 @@
       "description": "Endrin",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 725000,
-        "dai_phu": 500000
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20303,7 +20395,7 @@
       "description": "Endrin aldehyde*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20343,7 +20435,7 @@
       "description": "Ethyl benzene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20407,7 +20499,7 @@
       "description": "Fluoranthene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -20431,7 +20523,7 @@
       "description": "Fluorene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -20443,7 +20535,7 @@
       "description": "Gama BHC (Lindane)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20483,15 +20575,15 @@
       "description": "Heptachlor",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20499,15 +20591,15 @@
       "description": "Heptachlor epoxide",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000,
-        "dai_phu": 500000
+        "dai_phu": 500000,
+        "phuong_nam": 725000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20515,7 +20607,7 @@
       "description": "Heptachlor epoxide*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20527,7 +20619,7 @@
       "description": "Heptachlor*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20539,7 +20631,7 @@
       "description": "Hexachlorobenzene",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20603,15 +20695,16 @@
       "description": "Kẽm (Zn)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20633,15 +20726,16 @@
       "description": "Methoxychlor",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 500000,
         "phuong_nam": 725000,
-        "dai_phu": 500000
+        "cec": 1120000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -20649,7 +20743,7 @@
       "description": "Methyl parathion*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20687,7 +20781,7 @@
       "description": "Molybdenum (trừ molybdenum disulfide)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -20699,7 +20793,7 @@
       "description": "Muối Fluoride (trừ calcium floride)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 700000
+        "cec": 700000
       },
       "notes": {},
       "sources": [
@@ -20711,7 +20805,7 @@
       "description": "Naphthalene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -20749,7 +20843,7 @@
       "description": "Nicken (Ni)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -20773,7 +20867,7 @@
       "description": "o,p'-DDD (2,4 DDD)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20785,7 +20879,7 @@
       "description": "o,p'-DDE (2,4 DDE)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20797,7 +20891,7 @@
       "description": "o,p'-DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20809,7 +20903,7 @@
       "description": "p,p'-DDD (4,4 DDD)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20821,7 +20915,7 @@
       "description": "p,p'-DDE (4,4 DDE)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20833,7 +20927,7 @@
       "description": "p,p'-DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20901,7 +20995,7 @@
       "description": "Paration (Parathion ethyl)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -20913,7 +21007,7 @@
       "description": "PCB 101",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -20925,7 +21019,7 @@
       "description": "PCB 118",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -20937,7 +21031,7 @@
       "description": "PCB 138",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -20949,7 +21043,7 @@
       "description": "PCB 153",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -20961,7 +21055,7 @@
       "description": "PCB 180",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -20973,7 +21067,7 @@
       "description": "PCB 28",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -20985,7 +21079,7 @@
       "description": "PCB 52",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1190000
+        "cec": 1190000
       },
       "notes": {},
       "sources": [
@@ -21093,15 +21187,16 @@
       "description": "pH",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 100000,
         "phuong_nam": 145000,
-        "dai_phu": 100000
+        "cec": 140000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -21121,7 +21216,7 @@
       "description": "Phenanthrene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -21133,7 +21228,8 @@
       "description": "Phenol",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 725000
+        "phuong_nam": 725000,
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -21157,7 +21253,7 @@
       "description": "Pyrene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -21169,7 +21265,8 @@
       "description": "Selen (Se)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -21181,7 +21278,8 @@
       "description": "Tali (Tl)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000
+        "phuong_nam": 290000,
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -21193,15 +21291,15 @@
       "description": "Thuỷ ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 290000,
-        "dai_phu": 200000
+        "dai_phu": 200000,
+        "phuong_nam": 290000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -21209,7 +21307,7 @@
       "description": "Thủy ngân (Hg)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -21233,7 +21331,7 @@
       "description": "Toluene*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -21245,7 +21343,7 @@
       "description": "Tổng BHC*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -21257,7 +21355,7 @@
       "description": "Tổng Chromi (Cr)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -21283,7 +21381,7 @@
       "description": "Tổng DDD, DDE, DDT",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -21295,15 +21393,15 @@
       "description": "Tổng dầu",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 580000,
-        "dai_phu": 600000
+        "dai_phu": 600000,
+        "phuong_nam": 580000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {
@@ -21323,7 +21421,7 @@
       "description": "Tổng dầu mỡ*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 840000
+        "cec": 840000
       },
       "notes": {},
       "sources": [
@@ -21335,7 +21433,7 @@
       "description": "Tổng Endosulfan*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -21347,7 +21445,7 @@
       "description": "Tổng HCBVTV thực vật photpho hữu cơ (trả theo các thông số đã chọn)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1400000
+        "cec": 1400000
       },
       "notes": {},
       "sources": [
@@ -21399,7 +21497,7 @@
       "description": "Vanadi (Va)",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 420000
+        "cec": 420000
       },
       "notes": {},
       "sources": [
@@ -21423,7 +21521,7 @@
       "description": "Xylen (o-, m-, p-xylen)*",
       "unit": "Mẫu",
       "unit_prices": {
-        "phuong_nam": 1120000
+        "cec": 1120000
       },
       "notes": {},
       "sources": [
@@ -21447,15 +21545,16 @@
       "description": "Đồng (Cu)",
       "unit": "Mẫu",
       "unit_prices": {
+        "dai_phu": 200000,
         "phuong_nam": 290000,
-        "dai_phu": 200000
+        "cec": 420000
       },
       "notes": {
         "dai_phu": "Vimcerts 292"
       },
       "sources": [
-        "qtmt_price_1:Chất thải",
-        "qtmt_price_2:CƠ SỞ GIÁ"
+        "qtmt_price_2:CƠ SỞ GIÁ",
+        "qtmt_price_1:Chất thải"
       ]
     },
     {

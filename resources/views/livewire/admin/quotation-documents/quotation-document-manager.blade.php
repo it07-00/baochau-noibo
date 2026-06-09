@@ -526,11 +526,14 @@
                                 </thead>
                                 <tbody>
                                     @forelse($detailItems as $i => $item)
-                                    @php($rowDetailPriceCatalog = $this->detailPriceCatalogForGroup($item['group_name'] ?? null))
-                                    <tr>
+                                    @php($rowGroupName = (string) ($item['group_name'] ?? ''))
+                                    @php($rowDetailPriceCatalog = $this->detailPriceCatalogForGroup($rowGroupName))
+                                    @php($groupOptionsKey = md5(($formData['template_key'] ?? '').'|'.($formData['price_subcontractor'] ?? '').'|'.implode('|', $groupOptions)))
+                                    <tr wire:key="detail-row-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}">
                                         <td class="text-center text-muted">{{ $i + 1 }}</td>
                                         <td>
                                             <select class="form-select form-select-sm border-0 bg-transparent px-1 fw-bold"
+                                                    wire:key="detail-group-{{ $i }}-{{ $groupOptionsKey }}"
                                                     wire:model.live="detailItems.{{ $i }}.group_name">
                                                 @foreach($groupOptions as $groupOption)
                                                     <option value="{{ $groupOption }}">{{ $groupOption }}</option>
@@ -540,11 +543,12 @@
                                         <td>
                                             @if($rowDetailPriceCatalog !== [])
                                             <select class="form-select form-select-sm border-0 bg-transparent px-1"
+                                                    wire:key="detail-description-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}"
                                                     wire:model.live="detailItems.{{ $i }}.description">
                                                 <option value="">-- Chọn chỉ tiêu --</option>
                                                 @foreach($rowDetailPriceCatalog as $catalogItem)
                                                     <option value="{{ $catalogItem['description'] }}">
-                                                        {{ $catalogItem['description'] }} - {{ number_format((int) $catalogItem['unit_price'], 0, ',', '.') }}đ
+                                                        {{ $catalogItem['description'] }}
                                                     </option>
                                                 @endforeach
                                             </select>

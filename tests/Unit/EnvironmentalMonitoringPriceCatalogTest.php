@@ -22,19 +22,32 @@ class EnvironmentalMonitoringPriceCatalogTest extends TestCase
         $cecGroups = EnvironmentalMonitoringPriceCatalog::groups('cec');
 
         $this->assertContains('Không khí xung quanh', $cecGroups);
+        $this->assertContains('Khí thải', $cecGroups);
+        $this->assertContains('Bùn', $cecGroups);
         $this->assertContains('Chi phí khác', $cecGroups);
-        $this->assertNotContains('Khí thải', $cecGroups);
+        $this->assertNotContains('Nước ngầm', $cecGroups);
     }
 
     public function test_catalog_returns_vendor_specific_unit_price(): void
     {
         $daiPhu = EnvironmentalMonitoringPriceCatalog::findByDescription('Nhiệt độ', 'Không khí xung quanh', 'dai_phu');
         $cec = EnvironmentalMonitoringPriceCatalog::findByDescription('Nhiệt độ', 'Không khí xung quanh', 'cec');
+        $cecMud = EnvironmentalMonitoringPriceCatalog::findByDescription('Asen (As)', 'Bùn', 'cec');
         $phuongNam = EnvironmentalMonitoringPriceCatalog::findByDescription('Nhiệt độ', 'Khí thải', 'phuong_nam');
 
         $this->assertSame(30000, $daiPhu['unit_price']);
         $this->assertSame(30000, $cec['unit_price']);
+        $this->assertSame(420000, $cecMud['unit_price']);
         $this->assertSame(600000, $phuongNam['unit_price']);
+    }
+
+    public function test_qtmt_template_returns_items_for_selected_water_sea_group(): void
+    {
+        $items = QuotationTemplateCatalog::detailPriceCatalog('qtmt_periodic', 'Nước biển', 'dai_phu');
+        $descriptions = array_column($items, 'description');
+
+        $this->assertNotEmpty($items);
+        $this->assertContains('- HCO3', $descriptions);
     }
 
     public function test_qtmt_template_uses_environmental_monitoring_price_catalog(): void

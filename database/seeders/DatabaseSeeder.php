@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             QuotationDocumentSampleSeeder::class,
             QuotationDocumentPlldSampleSeeder::class,
             QuotationDocumentPlldFullSampleSeeder::class,
+            QuotationDocumentQtmtFullSampleSeeder::class,
             // SalesDataSeeder::class,
             // SalesTargetSeeder::class,
 

@@ -504,11 +504,19 @@ class QuotationDocumentManager extends Component
         }
 
         $description = $this->detailItems[$index]['description'] ?? '';
-        if ($description === '') {
+        $catalog = $this->detailPriceCatalogForGroup($this->detailItems[$index]['group_name'] ?? null);
+
+        if ($catalog === []) {
+            $this->clearDetailSelection($index);
+
             return;
         }
 
-        if ($this->detailPriceCatalogForGroup($this->detailItems[$index]['group_name'] ?? null) === []) {
+        if ($description === '') {
+            $this->detailItems[$index]['unit_price'] = 0;
+            $this->detailItems[$index]['amount'] = 0;
+            $this->detailItems[$index]['note'] = '';
+
             return;
         }
 
@@ -522,15 +530,20 @@ class QuotationDocumentManager extends Component
             ! $catalogItem
             || $catalogItem['group_name'] !== ($this->detailItems[$index]['group_name'] ?? null)
         ) {
-            $this->detailItems[$index]['description'] = '';
-            $this->detailItems[$index]['unit_price'] = 0;
-            $this->detailItems[$index]['amount'] = 0;
-            $this->detailItems[$index]['note'] = '';
+            $this->clearDetailSelection($index);
 
             return;
         }
 
         $this->applyTemplatePriceToDetailItem($index, $description);
+    }
+
+    private function clearDetailSelection(int $index): void
+    {
+        $this->detailItems[$index]['description'] = '';
+        $this->detailItems[$index]['unit_price'] = 0;
+        $this->detailItems[$index]['amount'] = 0;
+        $this->detailItems[$index]['note'] = '';
     }
 
     private function repriceDetailItemsForSelectedCatalog(): void
