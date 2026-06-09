@@ -15,6 +15,7 @@ class QuotationDocumentItem extends Model
         'description',
         'unit',
         'quantity',
+        'frequency',
         'unit_price',
         'amount',
         'note',
@@ -23,6 +24,7 @@ class QuotationDocumentItem extends Model
     protected $casts = [
         'sort_order' => 'integer',
         'quantity' => 'decimal:2',
+        'frequency' => 'integer',
         'unit_price' => 'integer',
         'amount' => 'integer',
     ];

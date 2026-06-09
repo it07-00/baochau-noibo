@@ -890,7 +890,7 @@ class QuotationDocumentExportService
             foreach ($items as $item) {
                 $row = $itemTemplate->cloneNode(true);
                 $cellCount = count($this->rowCells($row));
-                $frequency = $this->frequencyFromNote($item->note);
+                $frequency = (string) (isset($item->frequency) && (int) $item->frequency > 0 ? (int) $item->frequency : $this->frequencyFromNote($item->note));
 
                 $this->setCellText($row, $xpath, 0, (string) $lineNo++);
                 $this->setCellText($row, $xpath, 1, (string) $item->description);
@@ -1020,7 +1020,7 @@ class QuotationDocumentExportService
 
             foreach ($items as $item) {
                 $row = $itemTemplate->cloneNode(true);
-                $frequency = $this->frequencyFromNote($item->note);
+                $frequency = (string) (isset($item->frequency) && (int) $item->frequency > 0 ? (int) $item->frequency : $this->frequencyFromNote($item->note));
 
                 $this->setCellText($row, $xpath, 0, (string) $runningIndex++);
                 $this->setCellText($row, $xpath, 1, (string) $item->description);

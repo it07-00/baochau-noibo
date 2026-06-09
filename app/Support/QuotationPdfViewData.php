@@ -91,6 +91,10 @@ class QuotationPdfViewData
 
     public function frequencyOf(object $item): string
     {
+        if (isset($item->frequency) && (int) $item->frequency > 0) {
+            return (string) (int) $item->frequency;
+        }
+
         $note = trim((string) ($item->note ?? ''));
 
         if ($note !== '' && preg_match('/^(?:tần\s*suất|tan\s*suat|frequency)?\s*[:=]?\s*([0-9]+(?:[,.][0-9]+)?)$/iu', $note, $matches)) {

@@ -109,6 +109,7 @@ class QuotationDocumentSampleSeeder extends Seeder
                     'description' => 'Hạng mục mẫu - ' . $group,
                     'unit' => 'Mẫu',
                     'quantity' => 1,
+                    'frequency' => 1,
                     'unit_price' => $detailPrice,
                     'amount' => $detailPrice,
                     'note' => '1',

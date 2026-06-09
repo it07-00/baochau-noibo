@@ -178,6 +178,7 @@ class QuotationDocumentManager extends Component
             'description' => '',
             'unit' => 'Mẫu',
             'quantity' => 1,
+            'frequency' => 1,
             'unit_price' => 0,
             'amount' => 0,
             'note' => '',
@@ -615,8 +616,10 @@ class QuotationDocumentManager extends Component
         foreach ($this->detailItems as $i => &$item) {
             $qty = $this->parseIntegerQuantity($item['quantity'] ?? 0);
             $item['quantity'] = $qty;
+            $frequency = $this->parseIntegerQuantity($item['frequency'] ?? 1);
+            $item['frequency'] = $frequency;
             $price = $this->parseMoneyValue($item['unit_price'] ?? 0);
-            $item['amount'] = (int) round($qty * $price);
+            $item['amount'] = (int) round($qty * $price * $frequency);
         }
         unset($item);
 
@@ -892,6 +895,7 @@ class QuotationDocumentManager extends Component
             'description' => $item->description,
             'unit' => $item->unit,
             'quantity' => $this->parseIntegerQuantity($item->quantity),
+            'frequency' => (int) ($item->frequency ?? 1),
             'unit_price' => $this->formatMoneyInputValue($item->unit_price),
             'amount' => $item->amount,
             'note' => $item->note ?? '',
@@ -941,6 +945,7 @@ class QuotationDocumentManager extends Component
             'description' => $item->description,
             'unit' => $item->unit,
             'quantity' => $this->parseIntegerQuantity($item->quantity),
+            'frequency' => (int) ($item->frequency ?? 1),
             'unit_price' => $this->formatMoneyInputValue($item->unit_price),
             'amount' => $item->amount,
             'note' => $item->note ?? '',
@@ -1168,6 +1173,7 @@ class QuotationDocumentManager extends Component
                 'description' => $item['description'],
                 'unit' => $item['unit'] ?? null,
                 'quantity' => $this->parseIntegerQuantity($item['quantity'] ?? 1),
+                'frequency' => $this->parseIntegerQuantity($item['frequency'] ?? 1),
                 'unit_price' => $this->parseMoneyValue($item['unit_price'] ?? 0),
                 'amount' => (int) round($this->parseMoneyValue($item['amount'] ?? 0)),
                 'note' => $item['note'] ?? null,
@@ -1247,6 +1253,7 @@ class QuotationDocumentManager extends Component
                     'description' => $item->description,
                     'unit' => $item->unit,
                     'quantity' => $item->quantity,
+                    'frequency' => $item->frequency ?? 1,
                     'unit_price' => $item->unit_price,
                     'amount' => $item->amount,
                     'note' => $item->note,

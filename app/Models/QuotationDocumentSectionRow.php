@@ -16,6 +16,7 @@ class QuotationDocumentSectionRow extends Model
         'description',
         'unit',
         'quantity',
+        'frequency',
         'unit_price',
         'amount',
         'columns',
@@ -25,6 +26,7 @@ class QuotationDocumentSectionRow extends Model
     protected $casts = [
         'sort_order' => 'integer',
         'quantity' => 'decimal:2',
+        'frequency' => 'integer',
         'unit_price' => 'integer',
         'amount' => 'integer',
         'columns' => 'array',

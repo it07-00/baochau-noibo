@@ -352,6 +352,16 @@ class QuotationDocumentQtmtFullSampleSeeder extends Seeder
             ],
         ];
 
+        $detailRows = array_map(function ($row) {
+            $frequency = 1;
+            if (isset($row['note']) && preg_match('/tần suất:\s*(\d+)/u', $row['note'], $matches)) {
+                $frequency = (int) $matches[1];
+            }
+            $row['frequency'] = $frequency;
+            $row['amount'] = (int) ($row['quantity'] * $row['unit_price'] * $frequency);
+            return $row;
+        }, $detailRows);
+
         $sort = count($summaryItems) + 1;
         foreach ($detailRows as $row) {
             QuotationDocumentItem::create([
@@ -362,6 +372,7 @@ class QuotationDocumentQtmtFullSampleSeeder extends Seeder
                 'description' => $row['description'],
                 'unit' => $row['unit'],
                 'quantity' => $row['quantity'],
+                'frequency' => $row['frequency'],
                 'unit_price' => $row['unit_price'],
                 'amount' => $row['amount'],
                 'note' => $row['note'],
@@ -422,6 +433,7 @@ class QuotationDocumentQtmtFullSampleSeeder extends Seeder
                 'description' => $row['description'],
                 'unit' => $row['unit'],
                 'quantity' => $row['quantity'],
+                'frequency' => $row['frequency'],
                 'unit_price' => $row['unit_price'],
                 'amount' => $row['amount'],
                 'columns' => [

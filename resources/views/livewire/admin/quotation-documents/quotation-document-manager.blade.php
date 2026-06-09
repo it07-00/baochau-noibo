@@ -519,7 +519,8 @@
                                         <th>Chỉ tiêu / Nội dung chi tiết <span class="text-danger">*</span></th>
                                         <th class="w-80px">ĐVT</th>
                                         <th class="w-60px">SL</th>
-                                        <th class="w-120px">Chi phí (đơn giá)</th>
+                                        <th class="w-70px">Tần suất</th>
+                                        <th class="w-120px">Đơn giá</th>
                                         <th class="w-125px">Thành tiền</th>
                                         <th class="w-60px"></th>
                                     </tr>
@@ -567,6 +568,10 @@
                                                    wire:model.live.debounce.500ms="detailItems.{{ $i }}.quantity">
                                         </td>
                                         <td>
+                                            <input type="number" step="1" min="1" inputmode="numeric" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                                   wire:model.live.debounce.500ms="detailItems.{{ $i }}.frequency">
+                                        </td>
+                                        <td>
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent text-end money-input px-1"
                                                    wire:model.live.debounce.500ms="detailItems.{{ $i }}.unit_price">
                                         </td>
@@ -587,7 +592,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="8" class="text-center py-4 text-muted">
+                                        <td colspan="9" class="text-center py-4 text-muted">
                                             Chưa có chỉ tiêu chi tiết nào. Bấm <strong>"Thêm chỉ tiêu chi tiết"</strong>, sau đó gõ/chọn chỉ tiêu ngay trong ô <strong>Chỉ tiêu / Nội dung chi tiết</strong>.
                                         </td>
                                     </tr>
@@ -595,7 +600,7 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="8">
+                                        <td colspan="9">
                                             <button type="button" class="btn btn-sm btn-outline-success" wire:click="addDetailItem">
                                                 <i class="bi bi-plus-lg me-1"></i> Thêm chỉ tiêu
                                             </button>
