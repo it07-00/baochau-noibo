@@ -95,7 +95,7 @@ trait ContractValidation
             'formData.shd_cxl'           => 'nullable|string|max:255',
             'formData.shd_bc'            => 'nullable|string|max:255',
             'formData.customer_id'       => 'required|exists:customers,id',
-            'formData.handler_id'        => 'required|exists:handlers,id',
+            'formData.handler_id'        => 'nullable|exists:handlers,id',
             'formData.staff_id'          => 'required|exists:users,id',
             'formData.department_id'     => 'required|exists:departments,id',
             'formData.content'           => 'nullable|string|max:2000',
@@ -129,7 +129,6 @@ trait ContractValidation
         return [
             'formData.customer_id.required'     => 'Vui lòng chọn khách hàng.',
             'formData.customer_id.exists'        => 'Khách hàng không tồn tại.',
-            'formData.handler_id.required'       => 'Vui lòng chọn nhà thầu phụ.',
             'formData.handler_id.exists'          => 'Nhà thầu phụ không tồn tại.',
             'formData.staff_id.required'          => 'Vui lòng chọn nhân viên phụ trách.',
             'formData.staff_id.exists'            => 'Nhân viên không tồn tại.',

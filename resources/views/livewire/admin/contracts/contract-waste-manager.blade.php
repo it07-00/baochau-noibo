@@ -926,7 +926,7 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label small fw-semibold">Nhà thầu phụ <span class="text-danger">*</span></label>
+                                <label class="form-label small fw-semibold">Nhà thầu phụ</label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
                                     <button
                                         class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror select-full"

@@ -116,6 +116,25 @@ class ContractWasteManagerTest extends TestCase
         $this->assertSoftDeleted('contract_wastes', ['id' => $contract->id]);
     }
 
+    public function test_can_create_waste_contract_without_handler(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+            ->call('create')
+            ->set('formData.customer_id', $this->customer->id)
+            ->set('formData.department_id', $this->dept->id)
+            ->set('formData.value', '35.000.000')
+            ->set('formData.signed_at', '2026-06-01')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('contract_wastes', [
+            'customer_id' => $this->customer->id,
+            'handler_id' => null,
+        ]);
+    }
+
     public function test_effective_date_validation(): void
     {
         $this->actingAs($this->adminUser);

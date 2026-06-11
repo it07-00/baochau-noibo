@@ -67,7 +67,6 @@ class ContractMasterCsvImportSeeder extends Seeder
 
         $departmentId = $this->resolveDepartmentId();
         $defaultStaffId = $this->resolveDefaultStaffId();
-        $defaultHandlerId = $this->resolveDefaultHandlerId();
 
         DB::beginTransaction();
 
@@ -121,7 +120,7 @@ class ContractMasterCsvImportSeeder extends Seeder
                     ]
                 );
 
-                $handlerId = $this->resolveHandlerId($data['handler_name'], $defaultHandlerId);
+                $handlerId = $this->resolveHandlerId($data['handler_name']);
                 $staffId = $this->resolveStaffId($data, $defaultStaffId);
 
                 $contractData = $this->buildBaseContractData($data, $customer->id, $staffId, $departmentId, $handlerId);
@@ -253,24 +252,11 @@ class ContractMasterCsvImportSeeder extends Seeder
         return (int) $staffId;
     }
 
-    private function resolveDefaultHandlerId(): int
-    {
-        $handler = Handler::firstOrCreate(
-            ['name' => 'Cong ty CP Cong Nghe Moi Truong Trai Dat Xanh'],
-            [
-                'phone' => null,
-                'address' => null,
-            ]
-        );
-
-        return (int) $handler->id;
-    }
-
-    private function resolveHandlerId(?string $value, int $defaultHandlerId): int
+    private function resolveHandlerId(?string $value): ?int
     {
         $name = $this->str($value);
         if ($name === '' || $name === '-' || $this->normalizeForMatch($name) === 'chua chon') {
-            return $defaultHandlerId;
+            return null;
         }
 
         $handler = Handler::firstOrCreate(['name' => $name]);
@@ -353,7 +339,7 @@ class ContractMasterCsvImportSeeder extends Seeder
         return $defaultStaffId;
     }
 
-    private function buildBaseContractData(array $data, int $customerId, int $staffId, int $departmentId, int $handlerId): array
+    private function buildBaseContractData(array $data, int $customerId, int $staffId, int $departmentId, ?int $handlerId): array
     {
         $source = $this->nullIfEmpty($data['info_source']);
 
