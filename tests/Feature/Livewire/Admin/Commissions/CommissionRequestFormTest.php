@@ -245,4 +245,37 @@ class CommissionRequestFormTest extends TestCase
             'processed_at' => null,
         ]);
     }
+
+    public function test_banks_are_loaded_correctly(): void
+    {
+        $this->actingAs($this->salesUser);
+
+        \Illuminate\Support\Facades\Http::fake([
+            'api.vietqr.io/*' => \Illuminate\Support\Facades\Http::response([
+                'code' => '00',
+                'desc' => 'Success',
+                'data' => [
+                    [
+                        'code' => 'VCB',
+                        'shortName' => 'Vietcombank',
+                    ],
+                    [
+                        'code' => 'TCB',
+                        'shortName' => 'Techcombank',
+                    ]
+                ]
+            ], 200)
+        ]);
+
+        \Illuminate\Support\Facades\Cache::forget('vietqr_banks_list');
+
+        $component = Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class);
+
+        $banks = $component->get('banks');
+
+        $this->assertArrayHasKey('VCB', $banks);
+        $this->assertArrayHasKey('TCB', $banks);
+        $this->assertEquals('Vietcombank (VCB)', $banks['VCB']);
+        $this->assertEquals('Techcombank (TCB)', $banks['TCB']);
+    }
 }

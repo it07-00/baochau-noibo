@@ -158,7 +158,13 @@
                                 <td>
                                     <div class="fw-semibold">{{ $request->receiver_name }}</div>
                                     <div class=" text-muted">{{ $request->receiver_phone ?: 'Chưa có số điện thoại' }}</div>
-                                    <div class=" text-muted text-truncate text-truncate-200" >{{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}</div>
+                                    <div class="text-muted text-truncate text-truncate-200">
+                                        @if($request->bank_code && $request->bank_number)
+                                            {{ $request->bank_code }} - {{ $request->bank_number }}
+                                        @else
+                                            {{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}
+                                        @endif
+                                    </div>
                                     @if($request->qr_url)
                                         <div class="mt-1">
                                             <button type="button" 

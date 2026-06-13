@@ -26,27 +26,12 @@ class CommissionRequestForm extends Component
     public $referrer_info;
     public $notes;
     public $selectedSavedAccountId = '';
-    public array $banks = [
-        'VCB' => 'Vietcombank (VCB)',
-        'TCB' => 'Techcombank (TCB)',
-        'MB' => 'MBBank (MB)',
-        'BIDV' => 'BIDV',
-        'CTG' => 'VietinBank (CTG)',
-        'VBA' => 'Agribank (VBA)',
-        'ACB' => 'ACB',
-        'VPB' => 'VPBank (VPB)',
-        'STB' => 'Sacombank (STB)',
-        'TPB' => 'TPBank (TPB)',
-        'HDB' => 'HDBank (HDB)',
-        'VIB' => 'VIB',
-        'SHB' => 'SHB',
-        'MSB' => 'MSB',
-        'OCB' => 'OCB',
-        'LPB' => 'LPBank (LPB)',
-    ];
+    public array $banks = [];
 
     public function mount($id = null)
     {
+        $this->banks = $this->loadBanks();
+
         if ($id) {
             abort_if(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
 
@@ -279,5 +264,106 @@ class CommissionRequestForm extends Component
             'contractTypes' => ContractType::labelMap(),
             'savedAccounts' => $savedAccounts,
         ])->layout('admin.layouts.app', ['title' => $this->requestId ? 'Chỉnh sửa Yêu cầu chi hoa hồng' : 'Thêm mới Yêu cầu chi hoa hồng']);
+    }
+
+    private function loadBanks(): array
+    {
+        return \Illuminate\Support\Facades\Cache::remember('vietqr_banks_list', 86400, function () {
+            try {
+                $response = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.vietqr.io/v2/banks');
+                if ($response->successful() && isset($response->json()['data'])) {
+                    $banksData = $response->json()['data'];
+                    $formattedBanks = [];
+                    foreach ($banksData as $bank) {
+                        $code = $bank['code'] ?? '';
+                        $shortName = $bank['shortName'] ?? ($bank['short_name'] ?? '');
+                        if ($code && $shortName) {
+                            $formattedBanks[$code] = $shortName . ' (' . $code . ')';
+                        }
+                    }
+                    if (!empty($formattedBanks)) {
+                        asort($formattedBanks);
+                        return $formattedBanks;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Silent fallback
+            }
+
+            return $this->getStaticBanksList();
+        });
+    }
+
+    private function getStaticBanksList(): array
+    {
+        $static = [
+            'ICB' => 'VietinBank (ICB)',
+            'VCB' => 'Vietcombank (VCB)',
+            'BIDV' => 'BIDV',
+            'VBA' => 'Agribank (VBA)',
+            'OCB' => 'OCB',
+            'MB' => 'MBBank (MB)',
+            'TCB' => 'Techcombank (TCB)',
+            'ACB' => 'ACB',
+            'VPB' => 'VPBank (VPB)',
+            'TPB' => 'TPBank (TPB)',
+            'STB' => 'Sacombank (STB)',
+            'HDB' => 'HDBank (HDB)',
+            'VCCB' => 'VietCapitalBank (VCCB)',
+            'SCB' => 'SCB',
+            'VIB' => 'VIB',
+            'SHB' => 'SHB',
+            'EIB' => 'Eximbank (EIB)',
+            'MSB' => 'MSB',
+            'CAKE' => 'CAKE',
+            'Ubank' => 'Ubank',
+            'VTLMONEY' => 'ViettelMoney (VTLMONEY)',
+            'TIMO' => 'Timo (TIMO)',
+            'VNPTMONEY' => 'VNPTMoney (VNPTMONEY)',
+            'SGICB' => 'SaigonBank (SGICB)',
+            'BAB' => 'BacABank (BAB)',
+            'momo' => 'MoMo (momo)',
+            'PVDB' => 'PVcomBank Pay (PVDB)',
+            'PVCB' => 'PVcomBank (PVCB)',
+            'MBV' => 'MBV',
+            'NCB' => 'NCB',
+            'SHBVN' => 'ShinhanBank (SHBVN)',
+            'ABB' => 'ABBANK (ABB)',
+            'VAB' => 'VietABank (VAB)',
+            'NAB' => 'NamABank (NAB)',
+            'PGB' => 'PGBank (PGB)',
+            'VIETBANK' => 'VietBank (VIETBANK)',
+            'BVB' => 'BaoVietBank (BVB)',
+            'SEAB' => 'SeABank (SEAB)',
+            'COOPBANK' => 'COOPBANK',
+            'LPB' => 'LPBank (LPB)',
+            'KLB' => 'KienLongBank (KLB)',
+            'KBank' => 'KBank',
+            'MAFC' => 'MAFC',
+            'HLBVN' => 'HongLeong (HLBVN)',
+            'KEBHANAHN' => 'KEBHANAHN',
+            'KEBHANAHCM' => 'KEBHanaHCM',
+            'CITIBANK' => 'Citibank (CITIBANK)',
+            'CBB' => 'CBBank (CBB)',
+            'CIMB' => 'CIMB',
+            'DBS' => 'DBSBank (DBS)',
+            'Vikki' => 'Vikki',
+            'VBSP' => 'VBSP',
+            'GPB' => 'GPBank (GPB)',
+            'KBHCM' => 'KookminHCM (KBHCM)',
+            'KBHN' => 'KookminHN (KBHN)',
+            'WVN' => 'Woori (WVN)',
+            'VRB' => 'VRB',
+            'HSBC' => 'HSBC',
+            'IBK - HN' => 'IBKHN (IBK - HN)',
+            'IBK - HCM' => 'IBKHCM (IBK - HCM)',
+            'IVB' => 'IndovinaBank (IVB)',
+            'UOB' => 'UnitedOverseas (UOB)',
+            'NHB HN' => 'Nonghyup (NHB HN)',
+            'SCVN' => 'StandardChartered (SCVN)',
+            'PBVN' => 'PublicBank (PBVN)',
+        ];
+        asort($static);
+        return $static;
     }
 }
