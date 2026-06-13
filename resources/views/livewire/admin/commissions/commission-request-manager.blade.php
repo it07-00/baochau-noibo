@@ -266,8 +266,8 @@
                     @if($requests->isNotEmpty())
                         <tfoot class="table-light fw-bold border-top-2">
                             <tr>
-                                <td colspan="4" class="text-end ps-4">Tổng cộng:</td>
-                                <td class="text-end text-danger">{{ number_format($summary['amount'], 0, ',', '.') }} đ</td>
+                                <td colspan="4" class="text-end ps-4">Tổng đã chi:</td>
+                                <td class="text-end text-success">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</td>
                                 @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
                                     <td colspan="3"></td>
                                 @else
