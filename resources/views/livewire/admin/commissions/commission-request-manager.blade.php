@@ -263,6 +263,19 @@
                             </tr>
                         @endforelse
                     </tbody>
+                    @if($requests->isNotEmpty())
+                        <tfoot class="table-light fw-bold border-top-2">
+                            <tr>
+                                <td colspan="4" class="text-end ps-4">Tổng cộng:</td>
+                                <td class="text-end text-danger">{{ number_format($summary['amount'], 0, ',', '.') }} đ</td>
+                                @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
+                                    <td colspan="3"></td>
+                                @else
+                                    <td colspan="2"></td>
+                                @endcanany
+                            </tr>
+                        </tfoot>
+                    @endif
                 </table>
             </div>
 

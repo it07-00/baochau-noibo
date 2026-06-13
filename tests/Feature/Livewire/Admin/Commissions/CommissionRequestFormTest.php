@@ -278,4 +278,55 @@ class CommissionRequestFormTest extends TestCase
         $this->assertEquals('Vietcombank (VCB)', $banks['VCB']);
         $this->assertEquals('Techcombank (TCB)', $banks['TCB']);
     }
+
+    public function test_notifications_are_sent_on_creation_and_rejection_resubmit(): void
+    {
+        $accountantRole = Role::findByName(RoleEnum::KE_TOAN->value);
+        $accountant = User::factory()->create(['is_active' => true]);
+        $accountant->assignRole($accountantRole);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class)
+            ->set('contract_type', ContractWaste::class)
+            ->set('contract_id', $this->contract->id)
+            ->set('receiver_name', 'Nguyen Van A')
+            ->set('amount', '1.000.000')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertEquals(1, $accountant->unreadNotifications()->count());
+        $notification = $accountant->unreadNotifications()->first();
+        $this->assertEquals('commission', $notification->data['contract_type']);
+        $this->assertStringContainsString('gửi yêu cầu chi hoa hồng', $notification->data['message']);
+
+        $request = CommissionRequest::latest()->first();
+        
+        $this->actingAs($accountant);
+        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+            ->call('startReject', $request->id)
+            ->set('rejectReason', 'Wrong name')
+            ->call('confirmReject')
+            ->assertHasNoErrors();
+
+        $this->salesUser->refresh();
+        $this->assertEquals(1, $this->salesUser->unreadNotifications()->count());
+        $notification = $this->salesUser->unreadNotifications()->first();
+        $this->assertEquals('commission', $notification->data['contract_type']);
+        $this->assertStringContainsString('từ chối. Lý do: Wrong name', $notification->data['message']);
+
+        $accountant->unreadNotifications()->update(['read_at' => now()]);
+
+        $this->actingAs($this->salesUser);
+        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class, ['id' => $request->id])
+            ->set('receiver_name', 'Nguyen Van B')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $accountant->refresh();
+        $this->assertEquals(1, $accountant->unreadNotifications()->count());
+        $notification = $accountant->unreadNotifications()->first();
+        $this->assertEquals('commission', $notification->data['contract_type']);
+        $this->assertStringContainsString('gửi yêu cầu chi hoa hồng', $notification->data['message']);
+    }
 }

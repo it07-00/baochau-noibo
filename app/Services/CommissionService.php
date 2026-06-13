@@ -44,6 +44,16 @@ class CommissionService
         return $request;
     }
 
+    public function updateRequest(CommissionRequest $request, array $data, User $actor): void
+    {
+        $oldStatus = $request->status;
+        $request->update($data);
+
+        if ($oldStatus === CommissionRequestStatus::TU_CHOI->value && $request->status === CommissionRequestStatus::CHO_CHI->value) {
+            $this->notifyAccountants($request, $actor);
+        }
+    }
+
     private function notifyRequesterStatusUpdate(
         CommissionRequest $request,
         string $status,

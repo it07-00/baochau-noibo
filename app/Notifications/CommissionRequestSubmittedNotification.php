@@ -29,6 +29,7 @@ class CommissionRequestSubmittedNotification extends Notification
         return [
             'icon'           => 'bi-cash-stack',
             'color'          => 'warning',
+            'contract_type'  => 'commission',
             'contract_label' => 'Yêu cầu hoa hồng mới',
             'message'        => "{$this->requesterName} vừa gửi yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel}.",
             'url'            => route('app.commissions.index'),

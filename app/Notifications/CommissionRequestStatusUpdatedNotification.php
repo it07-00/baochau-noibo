@@ -47,6 +47,7 @@ class CommissionRequestStatusUpdatedNotification extends Notification
         return [
             'icon'           => $icon,
             'color'          => $color,
+            'contract_type'  => 'commission',
             'contract_label' => 'Cập nhật yêu cầu hoa hồng',
             'message'        => $message,
             'url'            => route('app.commissions.index'),

@@ -213,7 +213,7 @@ class CommissionRequestForm extends Component
                 $data['status'] = \App\Enums\CommissionRequestStatus::CHO_CHI->value;
                 $data['processed_at'] = null;
             }
-            $existing->update($data);
+            app(CommissionService::class)->updateRequest($existing, $data, auth()->user());
             $this->dispatch('swal:success', ['message' => 'Cập nhật yêu cầu thành công!']);
         } else {
             app(CommissionService::class)->createRequest($data, auth()->user());

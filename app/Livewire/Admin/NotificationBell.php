@@ -32,7 +32,7 @@ class NotificationBell extends Component
 
     private function allowedSectionKeysForUser($user): array
     {
-        return array_merge(['daily_report', 'work_schedule'], $this->contractSectionKeys());
+        return array_merge(['daily_report', 'work_schedule', 'commission'], $this->contractSectionKeys());
     }
 
     private function sectionLabelsForUser($user): array
@@ -41,6 +41,7 @@ class NotificationBell extends Component
             'internal'       => 'Thông báo nội bộ',
             'daily_report'   => 'Báo cáo ngày',
             'work_schedule'  => 'Lịch công tác',
+            'commission'     => 'Yêu cầu chi hoa hồng',
             'waste'          => 'HĐ Chất thải và tiếng ồn',
             'consulting'     => 'HĐ Pháp lý và hồ sơ MT',
             'project'        => 'HĐ Kỹ thuật và ứng phó SC',
@@ -65,7 +66,7 @@ class NotificationBell extends Component
     {
         $contractType = (string) ($data['contract_type'] ?? '');
 
-        $allKeys = array_merge(['daily_report', 'work_schedule'], $this->contractSectionKeys());
+        $allKeys = array_merge(['daily_report', 'work_schedule', 'commission'], $this->contractSectionKeys());
 
         if (in_array($contractType, $allKeys, true)) {
             return $contractType;
@@ -78,6 +79,9 @@ class NotificationBell extends Component
         }
         if (str_contains($url, '/lich-cong-tac')) {
             return 'work_schedule';
+        }
+        if (str_contains($url, '/hoa-hong')) {
+            return 'commission';
         }
 
         return 'general';
