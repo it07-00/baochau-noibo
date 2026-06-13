@@ -85,16 +85,18 @@
                     <label class="form-label">Tháng yêu cầu</label>
                     <input type="month" wire:model.live="requestMonthFilter" class="form-control">
                 </div>
-                <div class="col-12 col-lg-2">
-                    <label class="form-label">Người yêu cầu</label>
-                    <select wire:model.live="requesterFilter" class="form-select">
-                        <option value="">Tất cả người yêu cầu</option>
-                        @foreach($requesters as $requester)
-                            <option value="{{ $requester->id }}">{{ $requester->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-12 col-lg-3">
+                @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::IT->value)))
+                    <div class="col-12 col-lg-2">
+                        <label class="form-label">Người yêu cầu</label>
+                        <select wire:model.live="requesterFilter" class="form-select">
+                            <option value="">Tất cả người yêu cầu</option>
+                            @foreach($requesters as $requester)
+                                <option value="{{ $requester->id }}">{{ $requester->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+                <div class="col-12 @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::IT->value))) col-lg-3 @else col-lg-5 @endif">
                     <label class="form-label">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
@@ -149,6 +151,15 @@
                                     <div class="fw-semibold">{{ $request->receiver_name }}</div>
                                     <div class=" text-muted">{{ $request->receiver_phone ?: 'Chưa có số điện thoại' }}</div>
                                     <div class=" text-muted text-truncate text-truncate-200" >{{ $request->bank_account ?: 'Chưa có tài khoản ngân hàng' }}</div>
+                                    @if($request->qr_url)
+                                        <div class="mt-1">
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-link p-0 text-decoration-none text-info fw-bold d-inline-flex align-items-center gap-1"
+                                                    wire:click="viewRequest({{ $request->id }})">
+                                                <i class="bi bi-qr-code"></i> Xem QR thanh toán
+                                            </button>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="text-center">
                                     <span class="badge bg-soft-primary text-primary px-2 py-1">{{ $request->contract_type_label }}</span>
@@ -179,6 +190,12 @@
                                 <td class="text-center">{{ $request->created_at->format('d/m/Y') }}</td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end align-items-center gap-2 flex-wrap">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-info"
+                                                wire:click="viewRequest({{ $request->id }})">
+                                            <i class="bi bi-eye me-1"></i>
+                                            Xem QR
+                                        </button>
                                         @if($canApprove && $request->status === 'Chờ chi')
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-success"
@@ -195,14 +212,20 @@
                                             </button>
                                         @endif
 
-                                        @if($canEdit)
+                                        @php
+                                            $isOwner = auth()->check() && $request->user_id === auth()->id();
+                                            $rowCanEdit = $canEdit || ($isOwner && !auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value));
+                                            $rowCanDelete = $canDelete || $isOwner;
+                                        @endphp
+
+                                        @if($rowCanEdit && $request->status !== 'Đã chi')
                                             <a href="{{ route('app.commissions.edit', $request->id) }}" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-pencil-square me-1"></i>
                                                 Sửa
                                             </a>
                                         @endif
 
-                                        @if($canDelete)
+                                        @if($rowCanDelete && $request->status !== 'Đã chi')
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     wire:click="delete({{ $request->id }})"
@@ -212,9 +235,7 @@
                                             </button>
                                         @endif
 
-                                        @if(!$canApprove && !$canEdit && !$canDelete)
-                                            <span class=" text-muted">Không có thao tác</span>
-                                        @endif
+
                                     </div>
                                 </td>
                             </tr>
@@ -263,15 +284,131 @@
         </div>
     </div>
 
+    <!-- View QR & Details Modal -->
+    <div wire:ignore.self class="modal fade" id="viewRequestModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title d-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card-2-front"></i> Chi tiết thanh toán & QR Code
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="closeView"></button>
+                </div>
+                <div class="modal-body p-4">
+                    @if($viewingRequest)
+                        <div class="row g-4">
+                            <!-- Left Column: Recipient Details (col-md-6) -->
+                            <div class="col-md-6 d-flex">
+                                <div class="card border-light-subtle shadow-sm w-100 h-100">
+                                    <div class="card-header bg-light border-bottom py-3">
+                                        <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
+                                            <i class="bi bi-person-bounding-box"></i> Thông tin người nhận
+                                        </h6>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="d-flex flex-column gap-3" style="font-size: 1.05rem;">
+                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-person text-secondary"></i> Họ và tên:</span>
+                                                <span class="fw-bold text-dark text-end">{{ strtoupper(\Illuminate\Support\Str::ascii($viewingRequest->receiver_name)) }}</span>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-telephone text-secondary"></i> Số điện thoại:</span>
+                                                <span class="fw-bold text-dark text-end">{{ $viewingRequest->receiver_phone ?: 'Chưa cập nhật' }}</span>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-file-earmark-text text-secondary"></i> Hợp đồng:</span>
+                                                <span class="fw-bold text-primary text-end">BC {{ $viewingRequest->contract->shd_bc ?? 'N/A' }}</span>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-cash-stack text-secondary"></i> Số tiền:</span>
+                                                <span class="fw-bold text-danger fs-5 text-end">{{ number_format($viewingRequest->amount, 0, ',', '.') }} đ</span>
+                                            </div>
+
+                                            @if($viewingRequest->bank_code && $viewingRequest->bank_number)
+                                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-bank text-secondary"></i> Ngân hàng:</span>
+                                                    <span class="fw-bold text-dark font-monospace text-end">{{ $viewingRequest->bank_code }}</span>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-credit-card-2-back text-secondary"></i> Số tài khoản:</span>
+                                                    <span class="fw-bold text-dark font-monospace text-end">{{ $viewingRequest->bank_number }}</span>
+                                                </div>
+                                            @endif
+
+                                            @if($viewingRequest->bank_account)
+                                                <div class="d-flex justify-content-between align-items-start border-bottom pb-2">
+                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-info-circle text-secondary"></i> Thông tin khác:</span>
+                                                    <span class="text-dark small fw-semibold text-end ms-3">{{ $viewingRequest->bank_account }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column: QR Code Preview (col-md-6) -->
+                            <div class="col-md-6 d-flex">
+                                @if($viewingRequest->qr_url)
+                                    <div class="card border-light-subtle shadow-sm w-100 h-100">
+                                        <div class="card-header bg-light border-bottom py-3 text-center">
+                                            <h6 class="card-title mb-0 fw-bold text-secondary">
+                                                <i class="bi bi-qr-code-scan me-1"></i> Quét mã QR chuyển khoản
+                                            </h6>
+                                        </div>
+                                        <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center bg-white">
+                                            <img src="{{ $viewingRequest->qr_url }}" class="img-fluid rounded border shadow-sm" style="width: 100%; max-width: 340px; height: auto; aspect-ratio: 1/1; object-fit: contain;" alt="Payment QR Code">
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="card border-light-subtle shadow-sm w-100 h-100">
+                                        <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
+                                            <i class="bi bi-exclamation-triangle text-warning mb-3" style="font-size: 3rem;"></i>
+                                            <h6 class="fw-bold text-secondary mb-1">Không tạo được QR</h6>
+                                            <span class="text-muted small">Không tìm thấy tài khoản ngân hàng của người nhận.</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-center py-4 text-muted">
+                            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                            <div>Đang tải thông tin...</div>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    @if($viewingRequest && $canApprove && $viewingRequest->status === 'Chờ chi')
+                        <button type="button" class="btn btn-success" 
+                                wire:click="approve({{ $viewingRequest->id }})"
+                                wire:confirm="Xác nhận duyệt chi yêu cầu này?">
+                            <i class="bi bi-check-circle me-1"></i> Duyệt chi
+                        </button>
+                    @endif
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="closeView">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         document.addEventListener('livewire:init', () => {
-            const modalEl = document.getElementById('rejectReasonModal');
-            if (!modalEl) return;
+            const rejectModalEl = document.getElementById('rejectReasonModal');
+            const rejectModal = rejectModalEl ? new bootstrap.Modal(rejectModalEl) : null;
+            
+            Livewire.on('open-reject-modal', () => rejectModal && rejectModal.show());
+            Livewire.on('close-reject-modal', () => rejectModal && rejectModal.hide());
 
-            const rejectModal = new bootstrap.Modal(modalEl);
-            Livewire.on('open-reject-modal', () => rejectModal.show());
-            Livewire.on('close-reject-modal', () => rejectModal.hide());
+            const viewModalEl = document.getElementById('viewRequestModal');
+            const viewModal = viewModalEl ? new bootstrap.Modal(viewModalEl) : null;
+            
+            Livewire.on('open-view-modal', () => viewModal && viewModal.show());
+            Livewire.on('close-view-modal', () => viewModal && viewModal.hide());
         });
     </script>
     @endpush

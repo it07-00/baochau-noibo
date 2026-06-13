@@ -25,6 +25,7 @@ class CommissionRequestManager extends Component
     public $perPage = 10;
     public ?int $rejectingId = null;
     public string $rejectReason = '';
+    public ?int $viewingRequestId = null;
 
     protected $listeners = ['deleteConfirmed' => 'delete'];
 
@@ -95,9 +96,16 @@ class CommissionRequestManager extends Component
 
     public function delete($id)
     {
-        abort_unless(auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value), 403);
-
         $request = CommissionRequest::findOrFail($id);
+
+        $isOwner = auth()->check() && $request->user_id === auth()->id();
+        $hasDeletePermission = auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value);
+        abort_unless($isOwner || $hasDeletePermission, 403);
+        if ($request->status === CommissionRequestStatus::DA_CHI->value) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể xóa yêu cầu đã được chi.']);
+            return;
+        }
+
         $request->delete();
         $this->dispatch('swal:success', ['message' => 'Xóa yêu cầu thành công!']);
     }
@@ -138,6 +146,27 @@ class CommissionRequestManager extends Component
     {
         $this->resetRejectState();
         $this->dispatch('close-reject-modal');
+    }
+
+    public function viewRequest(int $id): void
+    {
+        $request = CommissionRequest::findOrFail($id);
+        $user = auth()->user();
+        $isSpecialRole = $user && (
+            $user->hasRole(Role::GIAM_DOC->value) || 
+            $user->hasRole(Role::KE_TOAN->value) || 
+            $user->hasRole(Role::IT->value)
+        );
+        abort_unless($isSpecialRole || ($user && $request->user_id === $user->id), 403);
+
+        $this->viewingRequestId = $id;
+        $this->dispatch('open-view-modal');
+    }
+
+    public function closeView(): void
+    {
+        $this->viewingRequestId = null;
+        $this->dispatch('close-view-modal');
     }
 
     public function confirmReject(): void
@@ -184,10 +213,23 @@ class CommissionRequestManager extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        $isSpecialRole = $user && (
+            $user->hasRole(Role::GIAM_DOC->value) || 
+            $user->hasRole(Role::KE_TOAN->value) || 
+            $user->hasRole(Role::IT->value)
+        );
+
         $query = CommissionRequest::with(['contract.customer', 'contract.staff', 'user']);
+        if (!$isSpecialRole && $user) {
+            $query->where('user_id', $user->id);
+        }
         $this->applyFilters($query);
 
         $summaryQuery = CommissionRequest::query();
+        if (!$isSpecialRole && $user) {
+            $summaryQuery->where('user_id', $user->id);
+        }
         $this->applyFilters($summaryQuery);
 
         $statusCounts = (clone $summaryQuery)
@@ -204,24 +246,36 @@ class CommissionRequestManager extends Component
             'amount'   => (float) $statusCounts->sum('total_amount'),
         ];
 
-        $requesters = User::query()
-            ->where('is_active', true)
-            ->whereIn('id', CommissionRequest::query()->select('user_id')->distinct())
-            ->orderBy('name')
-            ->get(['id', 'name']);
+        $requestersQuery = User::query()->where('is_active', true);
+        if (!$isSpecialRole && $user) {
+            $requestersQuery->where('id', $user->id);
+        } else {
+            $requestersQuery->whereIn('id', CommissionRequest::query()->select('user_id')->distinct());
+        }
+        $requesters = $requestersQuery->orderBy('name')->get(['id', 'name']);
 
         $requests = $query->orderBy('created_at', 'desc')->paginate($this->perPage);
 
+        $viewingRequest = null;
+        if ($this->viewingRequestId) {
+            $viewingQuery = CommissionRequest::with(['contract.customer', 'user']);
+            if (!$isSpecialRole && $user) {
+                $viewingQuery->where('user_id', $user->id);
+            }
+            $viewingRequest = $viewingQuery->find($this->viewingRequestId);
+        }
+
         return view('livewire.admin.commissions.commission-request-manager', [
-            'requests'      => $requests,
-            'contractTypes' => ContractType::labelMap(),
-            'summary'       => $summary,
-            'requesters'    => $requesters,
-            'canApprove'    => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),
-            'canEdit'       => auth()->check()
+            'requests'       => $requests,
+            'contractTypes'  => ContractType::labelMap(),
+            'summary'        => $summary,
+            'requesters'     => $requesters,
+            'viewingRequest' => $viewingRequest,
+            'canApprove'     => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),
+            'canEdit'        => auth()->check()
                 && auth()->user()->can(Permission::COMMISSIONS_EDIT->value)
                 && !auth()->user()->hasRole(Role::KE_TOAN->value),
-            'canDelete'     => auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value),
+            'canDelete'      => auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Yêu cầu chi hoa hồng']);
     }
 }

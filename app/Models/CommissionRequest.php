@@ -25,7 +25,7 @@ class CommissionRequest extends Model
 
     protected $fillable = [
         'contract_type', 'contract_id', 'receiver_name', 'receiver_phone',
-        'bank_account', 'amount', 'referrer_info', 'notes', 'status', 'processed_at', 'user_id',
+        'bank_account', 'bank_code', 'bank_number', 'amount', 'referrer_info', 'notes', 'status', 'processed_at', 'user_id',
     ];
 
     protected $casts = [
@@ -47,5 +47,21 @@ class CommissionRequest extends Model
     public function getContractTypeLabelAttribute(): string
     {
         return ContractType::fromModelClass($this->contract_type)?->label() ?? 'N/A';
+    }
+
+    public function getQrUrlAttribute(): string
+    {
+        if ($this->bank_code && $this->bank_number) {
+            $contractShd = 'Hoa hong';
+            $contract = $this->contract;
+            if ($contract && isset($contract->shd_bc)) {
+                $contractShd = $contract->shd_bc;
+            }
+            $receiverName = rawurlencode(strtoupper(\Illuminate\Support\Str::ascii($this->receiver_name ?: '')));
+            $description = rawurlencode("Chi hoa hong HD {$contractShd}");
+            return "https://img.vietqr.io/image/{$this->bank_code}-{$this->bank_number}-compact2.png?amount={$this->amount}&addInfo={$description}&accountName={$receiverName}";
+        }
+
+        return '';
     }
 }

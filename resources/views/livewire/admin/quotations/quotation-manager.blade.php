@@ -166,6 +166,10 @@
                                     <i class="bi bi-file-earmark-pdf fs-5"></i>
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
                                 </button>
+                                @elseif($item->quotationDocuments->first())
+                                <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xem PDF báo giá tạo tự động">
+                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                </a>
                                 @else
                                 @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
