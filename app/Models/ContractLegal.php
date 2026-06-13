@@ -2,27 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasContractBehavior;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class ContractLegal extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, HasContractBehavior;
 
     protected $table = 'contract_consultings';
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logAll()
-            ->logOnlyDirty();
-    }
 
     const SERVICE_TYPES = [
         'Quan trắc môi trường',
@@ -88,51 +77,6 @@ class ContractLegal extends Model
         'parent_contract_id',
     ];
 
-    protected $casts = [
-        'signed_at' => 'date',
-        'submitted_at' => 'date',
-        'value' => 'integer',
-        'commission' => 'integer',
-        'revenue' => 'integer',
-        'ncc_payment' => 'integer',
-        'ncc_payment_updated_at' => 'datetime',
-        'ncc_payment_paid_at' => 'date',
-        'is_offset' => 'boolean',
-        'has_room_fund' => 'boolean',
-        'is_overdue' => 'boolean',
-        'is_renewal' => 'boolean',
-    ];
-
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
-    }
-
-    public function handler(): BelongsTo
-    {
-        return $this->belongsTo(Handler::class);
-    }
-
-    public function staff(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'staff_id');
-    }
-
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
-
-    public function getStatusLabelAttribute(): string
-    {
-        return match($this->status) {
-            'ĐANG THỰC HIỆN' => 'Đang thực hiện',
-            'HOÀN THÀNH'     => 'Hoàn thành',
-            'ĐÃ HỦY'         => 'Đã hủy',
-            default          => $this->status ?? 'Không xác định',
-        };
-    }
-
     public function getDetailedStatusColorAttribute(): array
     {
         return match ($this->status) {
@@ -178,16 +122,6 @@ class ContractLegal extends Model
         ];
     }
 
-    public function getStatusColorAttribute(): string
-    {
-        return match($this->status) {
-            'ĐANG THỰC HIỆN' => 'info',
-            'HOÀN THÀNH'     => 'success',
-            'ĐÃ HỦY'         => 'danger',
-            default          => 'secondary',
-        };
-    }
-
     public function consultant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'consultant_id');
@@ -196,35 +130,5 @@ class ContractLegal extends Model
     public function manager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'manager_id');
-    }
-
-    public function workflowSteps(): MorphMany
-    {
-        return $this->morphMany(ContractWorkflowStep::class, 'contract');
-    }
-
-    public function milestoneFiles(): MorphMany
-    {
-        return $this->morphMany(ContractMilestoneFile::class, 'contract');
-    }
-
-    public function assignments(): MorphMany
-    {
-        return $this->morphMany(ContractAssignment::class, 'assignable');
-    }
-
-    public function parentContract(): BelongsTo
-    {
-        return $this->belongsTo(self::class, 'parent_contract_id');
-    }
-
-    public function renewalContracts(): HasMany
-    {
-        return $this->hasMany(self::class, 'parent_contract_id');
-    }
-
-    public function paymentSchedules(): MorphMany
-    {
-        return $this->morphMany(ContractPaymentSchedule::class, 'contract');
     }
 }

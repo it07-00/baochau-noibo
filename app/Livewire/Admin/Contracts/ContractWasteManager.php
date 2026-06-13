@@ -83,7 +83,7 @@ class ContractWasteManager extends Component
         'ncc_payment_status' => 'unpaid',
         'ncc_payment_paid_at' => '',
         'payment_method' => 'Sau ký',
-        'source' => 'MỚI',
+        'info_source' => 'MỚI',
         'signed_at' => '',
         'effective_at' => '',
         'end_at' => '',
@@ -96,7 +96,7 @@ class ContractWasteManager extends Component
         'voucher_status' => '',
         'is_offset' => false,
         'is_overdue' => false,
-        'note' => '',
+        'notes' => '',
         'loai_dich_vu' => '',
         'province' => '',
         'is_renewal' => false,
@@ -117,7 +117,7 @@ class ContractWasteManager extends Component
         'is_offset' => false,
         'is_overdue' => false,
         'department_id' => '',
-        'source' => '',
+        'info_source' => '',
         'payment_method' => '',
         'service_type' => '',
         'waste_type' => '',
@@ -166,8 +166,8 @@ class ContractWasteManager extends Component
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
                 $this->formData['province'] = $quotation->province ?? '';
-                $this->formData['note'] = $quotation->notes;
-                $this->formData['source'] = 'MỚI';
+                $this->formData['notes'] = $quotation->notes;
+                $this->formData['info_source'] = 'MỚI';
                 $this->formData['status'] = self::ALLOWED_STATUSES[0];
                 $this->ensureDepartmentId();
 
@@ -456,7 +456,7 @@ class ContractWasteManager extends Component
             'ncc_payment_status' => 'unpaid',
             'ncc_payment_paid_at' => '',
             'payment_method' => 'Sau ký',
-            'source' => 'MỚI',
+            'info_source' => 'MỚI',
             'signed_at' => date('Y-m-d'),
             'effective_at' => '',
             'end_at' => '',
@@ -469,7 +469,7 @@ class ContractWasteManager extends Component
             'voucher_status' => '',
             'is_offset' => false,
             'is_overdue' => false,
-            'note' => '',
+            'notes' => '',
             'loai_dich_vu' => '',
             'is_renewal' => false,
             'parent_contract_id' => '',
@@ -759,7 +759,7 @@ class ContractWasteManager extends Component
             'is_offset' => false,
             'is_overdue' => false,
             'department_id' => '',
-            'source' => '',
+            'info_source' => '',
             'payment_method' => '',
             'service_type' => '',
             'waste_type' => '',
@@ -877,7 +877,7 @@ class ContractWasteManager extends Component
         if ($f['end_to'] ?? null)       $query->whereDate('end_at', '<=', $f['end_to']);
         if ($f['service_type'] ?? null) $query->where('service_type', $f['service_type']);
         if ($f['waste_type'] ?? null)   $query->where('waste_type', $f['waste_type']);
-        if ($f['source'] ?? null)       $query->where('source', $f['source']);
+        if ($f['info_source'] ?? null)  $query->where('info_source', $f['info_source']);
     }
 
     public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
@@ -991,7 +991,7 @@ class ContractWasteManager extends Component
             'voucher_status_options' => ContractVoucherStatus::values(),
             'payment_methods' => ['Sau ký', 'Trước ký'],
             'provinces' => $scopedProvinces,
-            'source_options' => ContractWaste::whereNotNull('source')->where('source', '!=', '')->distinct()->pluck('source')->toArray(),
+            'info_sources' => ContractWaste::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
             'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Chất thải']);
     }

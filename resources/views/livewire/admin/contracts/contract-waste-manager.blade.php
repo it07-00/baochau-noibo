@@ -161,9 +161,9 @@
                         <!-- Row 3 -->
                         <div class="col-md-3">
                             <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.source">
+                            <select class="form-select form-control-xs" wire:model.live="filter.info_source">
                                 <option value="">Chọn Nguồn...</option>
-                                @foreach ($source_options as $src)
+                                @foreach ($info_sources as $src)
                                     <option value="{{ $src }}">{{ $src }}</option>
                                 @endforeach
                             </select>
@@ -661,7 +661,7 @@
                                         <tbody>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3 w-25">Ghi chú</th>
-                                                <td class="px-4 py-3">{{ $selectedDoc->note }}</td>
+                                                <td class="px-4 py-3">{{ $selectedDoc->notes }}</td>
                                             </tr>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3">Khách hàng</th>
@@ -719,7 +719,7 @@
                                             </tr>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3">Nguồn thông tin</th>
-                                                <td class="px-4 py-3">{{ $selectedDoc->source }}</td>
+                                                <td class="px-4 py-3">{{ $selectedDoc->info_source }}</td>
                                             </tr>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3">Ngày ký hợp đồng</th>
@@ -1103,10 +1103,10 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label small fw-semibold">Nguồn thông tin</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.source"
+                                <input type="text" class="form-control" wire:model.defer="formData.info_source"
                                     list="source-list-waste" placeholder="Nhập hoặc chọn nguồn...">
                                 <datalist id="source-list-waste">
-                                    @foreach ($source_options as $src)
+                                    @foreach ($info_sources as $src)
                                         <option value="{{ $src }}">
                                     @endforeach
                                 </datalist>
@@ -1286,9 +1286,9 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <textarea class="form-control @error('formData.note') is-invalid @enderror" rows="3"
-                                    wire:model.defer="formData.note" placeholder="Nhập ghi chú..."></textarea>
-                                @error('formData.note')
+                                <textarea class="form-control @error('formData.notes') is-invalid @enderror" rows="3"
+                                    wire:model.defer="formData.notes" placeholder="Nhập ghi chú..."></textarea>
+                                @error('formData.notes')
                                     <div class="text-danger  mt-1">{{ $message }}</div>
                                 @enderror
                             </div>

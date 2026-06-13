@@ -104,7 +104,7 @@ trait ContractValidation
             'formData.revenue'           => 'nullable|numeric|min:0|max:999999999999999',
             'formData.ncc_payment_sheet_url' => 'nullable|url|max:2048',
             'formData.payment_method'    => 'nullable|string|max:100',
-            'formData.source'            => 'nullable|string|max:255',
+            'formData.info_source'       => 'nullable|string|max:255',
             'formData.signed_at'         => 'nullable|date',
             'formData.effective_at'      => 'nullable|date|after_or_equal:formData.signed_at',
             'formData.end_at'            => 'nullable|date|after_or_equal:formData.effective_at',
@@ -117,7 +117,7 @@ trait ContractValidation
             'formData.voucher_status'    => 'nullable|in:' . implode(',', ContractVoucherStatus::values()),
             'formData.province'          => 'nullable|string|max:100',
             'formData.loai_dich_vu'      => 'nullable|string|max:255',
-            'formData.note'              => 'nullable|string|max:2000',
+            'formData.notes'             => 'nullable|string|max:2000',
         ];
     }
 

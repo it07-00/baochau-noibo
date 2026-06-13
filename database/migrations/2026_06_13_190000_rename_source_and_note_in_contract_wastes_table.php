@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('shd_bc', function (Blueprint $table) {
-            //
+        Schema::table('contract_wastes', function (Blueprint $table) {
+            $table->renameColumn('source', 'info_source');
+            $table->renameColumn('note', 'notes');
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('shd_bc', function (Blueprint $table) {
-            //
+        Schema::table('contract_wastes', function (Blueprint $table) {
+            $table->renameColumn('info_source', 'source');
+            $table->renameColumn('notes', 'note');
         });
     }
 };
