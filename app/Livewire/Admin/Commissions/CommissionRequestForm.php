@@ -2,30 +2,46 @@
 
 namespace App\Livewire\Admin\Commissions;
 
+use App\Enums\CommissionRequestStatus;
 use App\Enums\ContractType;
 use App\Enums\Role;
+use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\CommissionRequest;
 use App\Services\CommissionService;
-use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use App\Livewire\Concerns\CleanMoneyInput;
-use Livewire\WithFileUploads;
+use Livewire\Component;
 
 class CommissionRequestForm extends Component
 {
     use CleanMoneyInput;
+
     public $requestId;
+
     public $contract_type = '';
+
     public $contract_id = '';
+
     public $receiver_name;
+
     public $receiver_phone;
+
     public $bank_account;
+
     public $bank_code = '';
+
     public $bank_number = '';
+
     public $amount;
+
     public $referrer_info;
+
     public $notes;
+
     public $selectedSavedAccountId = '';
+
     public array $banks = [];
 
     public function mount($id = null)
@@ -36,7 +52,14 @@ class CommissionRequestForm extends Component
             abort_if(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
 
             $request = CommissionRequest::where('user_id', auth()->id())->findOrFail($id);
-            abort_if($request->status === \App\Enums\CommissionRequestStatus::DA_CHI->value, 403, 'Không thể chỉnh sửa yêu cầu đã được chi.');
+            abort_if(
+                in_array($request->status, [
+                    CommissionRequestStatus::DA_DUYET->value,
+                    CommissionRequestStatus::DA_CHI->value,
+                ], true),
+                403,
+                'Không thể chỉnh sửa yêu cầu đã được duyệt hoặc đã chi.'
+            );
 
             $this->requestId = $request->id;
             $this->contract_type = $this->normalizeContractType($request->contract_type);
@@ -48,7 +71,7 @@ class CommissionRequestForm extends Component
             $this->bank_number = $request->bank_number ?: '';
             $this->amount = $request->amount;
             $this->referrer_info = $request->referrer_info;
-            $this->notes = $request->status === \App\Enums\CommissionRequestStatus::TU_CHOI->value ? '' : $request->notes;
+            $this->notes = $request->status === CommissionRequestStatus::TU_CHOI->value ? '' : $request->notes;
         }
     }
 
@@ -59,15 +82,16 @@ class CommissionRequestForm extends Component
 
     private function cleanReceiverName($value): string
     {
-        if (!$value) {
+        if (! $value) {
             return '';
         }
-        return strtoupper(\Illuminate\Support\Str::ascii((string) $value));
+
+        return strtoupper(Str::ascii((string) $value));
     }
 
     public function updatedSelectedSavedAccountId($value)
     {
-        if (!$value) {
+        if (! $value) {
             return;
         }
 
@@ -83,7 +107,7 @@ class CommissionRequestForm extends Component
 
     public function getVietQrUrl(): string
     {
-        if (!$this->bank_code || !$this->bank_number) {
+        if (! $this->bank_code || ! $this->bank_number) {
             return '';
         }
 
@@ -103,7 +127,7 @@ class CommissionRequestForm extends Component
             }
         }
 
-        $receiverName = rawurlencode(strtoupper(\Illuminate\Support\Str::ascii($this->receiver_name ?: '')));
+        $receiverName = rawurlencode(strtoupper(Str::ascii($this->receiver_name ?: '')));
         $description = rawurlencode("Chi hoa hong HD {$contractShd}");
 
         return "https://img.vietqr.io/image/{$this->bank_code}-{$this->bank_number}-compact2.png?amount={$cleanAmount}&addInfo={$description}&accountName={$receiverName}";
@@ -117,7 +141,7 @@ class CommissionRequestForm extends Component
 
     private function normalizeContractType(?string $type): string
     {
-        if (!$type) {
+        if (! $type) {
             return '';
         }
 
@@ -144,13 +168,18 @@ class CommissionRequestForm extends Component
     {
         if ($this->requestId && auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Kế toán không được sửa yêu cầu chi hoa hồng.']);
+
             return;
         }
 
         if ($this->requestId) {
             $existing = CommissionRequest::findOrFail($this->requestId);
-            if ($existing->status === \App\Enums\CommissionRequestStatus::DA_CHI->value) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể chỉnh sửa yêu cầu đã được chi.']);
+            if (in_array($existing->status, [
+                CommissionRequestStatus::DA_DUYET->value,
+                CommissionRequestStatus::DA_CHI->value,
+            ], true)) {
+                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể chỉnh sửa yêu cầu đã được duyệt hoặc đã chi.']);
+
                 return;
             }
         }
@@ -169,15 +198,15 @@ class CommissionRequestForm extends Component
 
         $this->validate([
             'contract_type' => ['required', 'string', Rule::in($allowedTypes)],
-            'contract_id'   => 'required|integer',
+            'contract_id' => 'required|integer',
             'receiver_name' => 'required|string|max:255',
             'receiver_phone' => 'nullable|string|max:30',
-            'bank_account'  => 'nullable|string|max:100',
-            'bank_code'     => 'nullable|string|max:20',
-            'bank_number'   => 'nullable|string|max:50',
-            'amount'        => 'required|numeric|min:0',
+            'bank_account' => 'nullable|string|max:100',
+            'bank_code' => 'nullable|string|max:20',
+            'bank_number' => 'nullable|string|max:50',
+            'amount' => 'required|numeric|min:0',
             'referrer_info' => 'nullable|string|max:500',
-            'notes'         => 'nullable|string|max:2000',
+            'notes' => 'nullable|string|max:2000',
         ], [
             'contract_type.required' => 'Vui lòng chọn loại hợp đồng.',
             'contract_type.in' => 'Loại hợp đồng không hợp lệ.',
@@ -188,14 +217,15 @@ class CommissionRequestForm extends Component
         ]);
 
         $modelClass = $this->getSelectedContractModelClass();
-        if (!$modelClass || !$modelClass::query()->whereKey($this->contract_id)->exists()) {
+        if (! $modelClass || ! $modelClass::query()->whereKey($this->contract_id)->exists()) {
             $this->addError('contract_id', 'Số hợp đồng không thuộc loại hợp đồng đã chọn.');
+
             return;
         }
 
         $data = [
             'contract_type' => $this->contract_type,
-            'contract_id'   => $this->contract_id,
+            'contract_id' => $this->contract_id,
             'receiver_name' => $this->cleanReceiverName($this->receiver_name),
             'receiver_phone' => $this->receiver_phone,
             'bank_account' => $this->bank_account,
@@ -209,13 +239,14 @@ class CommissionRequestForm extends Component
 
         if ($this->requestId) {
             $existing = CommissionRequest::findOrFail($this->requestId);
-            if ($existing->status === \App\Enums\CommissionRequestStatus::TU_CHOI->value) {
-                $data['status'] = \App\Enums\CommissionRequestStatus::CHO_CHI->value;
+            if ($existing->status === CommissionRequestStatus::TU_CHOI->value) {
+                $data['status'] = CommissionRequestStatus::DU_CHI->value;
                 $data['processed_at'] = null;
             }
             app(CommissionService::class)->updateRequest($existing, $data, auth()->user());
             $this->dispatch('swal:success', ['message' => 'Cập nhật yêu cầu thành công!']);
         } else {
+            $data['status'] = CommissionRequestStatus::DU_CHI->value;
             app(CommissionService::class)->createRequest($data, auth()->user());
             $this->dispatch('swal:success', ['message' => 'Thêm mới yêu cầu thành công!']);
         }
@@ -224,7 +255,7 @@ class CommissionRequestForm extends Component
             return redirect()->route('app.commissions.index');
         }
 
-        if (!$this->requestId) {
+        if (! $this->requestId) {
             $this->reset();
         }
     }
@@ -246,21 +277,22 @@ class CommissionRequestForm extends Component
             ->whereNotNull('receiver_name')
             ->where(function ($q) {
                 $q->whereNotNull('bank_number')
-                  ->orWhereNotNull('bank_account');
+                    ->orWhereNotNull('bank_account');
             })
             ->latest()
             ->get()
             ->map(function ($item) {
                 $item->receiver_name = $this->cleanReceiverName($item->receiver_name);
+
                 return $item;
             })
             ->unique(function ($item) {
-                return $item->receiver_name . '_' . ($item->bank_number ?: $item->bank_account);
+                return $item->receiver_name.'_'.($item->bank_number ?: $item->bank_account);
             })
             ->values();
 
         return view('livewire.admin.commissions.commission-request-form', [
-            'contracts'     => $contracts,
+            'contracts' => $contracts,
             'contractTypes' => ContractType::labelMap(),
             'savedAccounts' => $savedAccounts,
         ])->layout('admin.layouts.app', ['title' => $this->requestId ? 'Chỉnh sửa Yêu cầu chi hoa hồng' : 'Thêm mới Yêu cầu chi hoa hồng']);
@@ -268,9 +300,9 @@ class CommissionRequestForm extends Component
 
     private function loadBanks(): array
     {
-        return \Illuminate\Support\Facades\Cache::remember('vietqr_banks_list', 86400, function () {
+        return Cache::remember('vietqr_banks_list', 86400, function () {
             try {
-                $response = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.vietqr.io/v2/banks');
+                $response = Http::timeout(5)->get('https://api.vietqr.io/v2/banks');
                 if ($response->successful() && isset($response->json()['data'])) {
                     $banksData = $response->json()['data'];
                     $formattedBanks = [];
@@ -278,11 +310,12 @@ class CommissionRequestForm extends Component
                         $code = $bank['code'] ?? '';
                         $shortName = $bank['shortName'] ?? ($bank['short_name'] ?? '');
                         if ($code && $shortName) {
-                            $formattedBanks[$code] = $shortName . ' (' . $code . ')';
+                            $formattedBanks[$code] = $shortName.' ('.$code.')';
                         }
                     }
-                    if (!empty($formattedBanks)) {
+                    if (! empty($formattedBanks)) {
                         asort($formattedBanks);
+
                         return $formattedBanks;
                     }
                 }
@@ -364,6 +397,7 @@ class CommissionRequestForm extends Component
             'PBVN' => 'PublicBank (PBVN)',
         ];
         asort($static);
+
         return $static;
     }
 }

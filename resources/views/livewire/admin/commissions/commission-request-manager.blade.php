@@ -30,6 +30,14 @@
         <div class="col-12 col-sm-6 col-xl">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
+                    <p class="text-muted mb-1">Dự chi</p>
+                    <h4 class="mb-0 text-secondary">{{ number_format($summary['estimated']) }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
                     <p class="text-muted mb-1">Chờ chi</p>
                     <h4 class="mb-0 text-warning">{{ number_format($summary['pending']) }}</h4>
                 </div>
@@ -39,14 +47,14 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted mb-1">Đã chi</p>
-                    <h4 class="mb-0 text-success">{{ number_format($summary['approved']) }}</h4>
+                    <h4 class="mb-0 text-success">{{ number_format($summary['paid']) }}</h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <p class="text-muted mb-1">Tổng chi</p>
+                    <p class="text-muted mb-1">Tổng đã chi</p>
                     <h4 class="mb-0 text-danger">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</h4>
                 </div>
             </div>
@@ -84,7 +92,8 @@
                     <label class="form-label">Tình trạng</label>
                     <select wire:model.live="statusFilter" class="form-select">
                         <option value="">Tất cả tình trạng</option>
-                        <option value="Chờ chi">Chờ chi</option>
+                        <option value="Dự chi">Dự chi</option>
+                        <option value="Đã duyệt">Đã duyệt (Chờ chi)</option>
                         <option value="Đã chi">Đã chi</option>
                         <option value="Từ chối">Từ chối</option>
                     </select>
@@ -186,6 +195,12 @@
                                             <br>
                                             <small>{{ $request->processed_at?->format('H:i - d/m/Y') }}</small>
                                         </span>
+                                    @elseif($request->status === 'Đã duyệt')
+                                        <span class="badge bg-soft-warning text-warning px-3 py-2">
+                                            Đã duyệt
+                                            <br>
+                                            <small>Chờ chi</small>
+                                        </span>
                                     @elseif($request->status === 'Từ chối')
                                         <span class="badge bg-soft-danger text-danger px-3 py-2">
                                             Từ chối
@@ -198,7 +213,7 @@
                                             </div>
                                         @endif
                                     @else
-                                        <span class="badge bg-soft-warning text-warning px-3 py-2">Chờ chi</span>
+                                        <span class="badge bg-soft-secondary text-secondary px-3 py-2">Dự chi</span>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $request->created_at->format('d/m/Y') }}</td>
@@ -211,12 +226,12 @@
                                             <a href="{{ $request->payment_bill_url }}" target="_blank" class="btn btn-sm btn-outline-success">
                                                 <i class="bi bi-file-earmark-text me-1"></i> Xem hóa đơn
                                             </a>
-                                        @elseif(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
+                                        @elseif($request->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
                                             <button type="button" class="btn btn-sm btn-outline-primary" wire:click="openUploadBillModal({{ $request->id }})">
                                                 <i class="bi bi-upload me-1"></i> Up hóa đơn
                                             </button>
                                         @endif
-                                        @if($canApprove && $request->status === 'Chờ chi')
+                                        @if($canApprove && $request->status === 'Dự chi')
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-success"
                                                     wire:click="approve({{ $request->id }})"
@@ -238,14 +253,14 @@
                                             $rowCanDelete = $canDelete || $isOwner;
                                         @endphp
 
-                                        @if($rowCanEdit && $request->status !== 'Đã chi')
+                                        @if($rowCanEdit && !in_array($request->status, ['Đã duyệt', 'Đã chi'], true))
                                             <a href="{{ route('app.commissions.edit', $request->id) }}" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-pencil-square me-1"></i>
                                                 Sửa
                                             </a>
                                         @endif
 
-                                        @if($rowCanDelete && $request->status !== 'Đã chi')
+                                        @if($rowCanDelete && !in_array($request->status, ['Đã duyệt', 'Đã chi'], true))
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     wire:click="delete({{ $request->id }})"
@@ -266,18 +281,22 @@
                     @if($requests->isNotEmpty())
                         <tfoot class="table-light fw-bold border-top-2">
                             <tr>
-                                <td colspan="4" class="text-end ps-4">
+                                <td colspan="5" class="text-end ps-4">
                                     <div class="d-flex justify-content-end align-items-center gap-4">
                                         <div>
-                                            <span class="text-secondary fw-semibold">Tổng dự chi (Chờ chi):</span>
+                                            <span class="text-secondary fw-semibold">Tổng dự chi:</span>
+                                            <span class="font-monospace">{{ number_format($summary['total_estimated'], 0, ',', '.') }} đ</span>
+                                        </div>
+                                        <div class="border-start ps-4 py-1">
+                                            <span class="text-warning fw-semibold">Tổng chờ chi:</span>
                                             <span class="text-warning font-monospace">{{ number_format($summary['total_pending_payout'], 0, ',', '.') }} đ</span>
                                         </div>
                                         <div class="border-start ps-4 py-1">
-                                            <span class="text-dark">Tổng đã chi:</span>
+                                            <span class="text-success">Tổng đã chi:</span>
+                                            <span class="text-success font-monospace">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="text-end text-success">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</td>
                                 @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
                                     <td colspan="3"></td>
                                 @else
@@ -373,10 +392,12 @@
                                                 <span class="fw-bold text-end" style="font-size: 0.95rem;">
                                                     @if($viewingRequest->status === 'Đã chi')
                                                         <span class="text-success"><i class="bi bi-check-circle-fill"></i> Đã chi ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
+                                                    @elseif($viewingRequest->status === 'Đã duyệt')
+                                                        <span class="text-warning"><i class="bi bi-patch-check-fill"></i> Đã duyệt - Chờ chi</span>
                                                     @elseif($viewingRequest->status === 'Từ chối')
                                                         <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Từ chối ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
                                                     @else
-                                                        <span class="text-warning"><i class="bi bi-hourglass-split"></i> Chờ chi</span>
+                                                        <span class="text-secondary"><i class="bi bi-calculator"></i> Dự chi</span>
                                                     @endif
                                                 </span>
                                             </div>
@@ -483,7 +504,7 @@
                                             <div class="text-center py-3">
                                                 <p class="text-muted mb-3">Chưa có hóa đơn/minh chứng thanh toán nào được cập nhật.</p>
 
-                                                @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
+                                                @if($viewingRequest->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
                                                     <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-light position-relative" style="border-style: dashed !important; border-width: 2px !important; border-color: #dee2e6 !important;">
                                                         <i class="bi bi-cloud-arrow-up text-primary fs-2 mb-2"></i>
                                                         <h6 class="fw-semibold text-secondary mb-2">Tải lên hóa đơn (Minh chứng)</h6>
@@ -530,7 +551,7 @@
                     @endif
                 </div>
                 <div class="modal-footer">
-                    @if($viewingRequest && $canApprove && $viewingRequest->status === 'Chờ chi')
+                    @if($viewingRequest && $canApprove && $viewingRequest->status === 'Dự chi')
                         <button type="button" class="btn btn-success" 
                                 wire:click="approve({{ $viewingRequest->id }})"
                                 wire:confirm="Xác nhận duyệt chi yêu cầu này?">

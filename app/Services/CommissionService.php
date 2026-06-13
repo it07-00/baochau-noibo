@@ -14,7 +14,17 @@ class CommissionService
     public function approve(CommissionRequest $request, User $actor): void
     {
         $request->update([
-            'status'       => CommissionRequestStatus::DA_CHI->value,
+            'status' => CommissionRequestStatus::DA_DUYET->value,
+            'processed_at' => now(),
+        ]);
+
+        $this->notifyRequesterStatusUpdate($request, CommissionRequestStatus::DA_DUYET->value, $actor);
+    }
+
+    public function markPaid(CommissionRequest $request, User $actor): void
+    {
+        $request->update([
+            'status' => CommissionRequestStatus::DA_CHI->value,
             'processed_at' => now(),
         ]);
 
@@ -24,14 +34,14 @@ class CommissionService
     public function reject(CommissionRequest $request, string $reason, User $actor): void
     {
         $mergedNotes = trim(
-            ($request->notes ? rtrim($request->notes) . "\n\n" : '')
-            . 'Lý do từ chối (kế toán): ' . $reason
+            ($request->notes ? rtrim($request->notes)."\n\n" : '')
+            .'Lý do từ chối (kế toán): '.$reason
         );
 
         $request->update([
-            'status'       => CommissionRequestStatus::TU_CHOI->value,
+            'status' => CommissionRequestStatus::TU_CHOI->value,
             'processed_at' => now(),
-            'notes'        => $mergedNotes,
+            'notes' => $mergedNotes,
         ]);
 
         $this->notifyRequesterStatusUpdate($request, CommissionRequestStatus::TU_CHOI->value, $actor, $reason);
@@ -41,6 +51,7 @@ class CommissionService
     {
         $request = CommissionRequest::create($data);
         $this->notifyAccountants($request, $creator);
+
         return $request;
     }
 
@@ -49,7 +60,7 @@ class CommissionService
         $oldStatus = $request->status;
         $request->update($data);
 
-        if ($oldStatus === CommissionRequestStatus::TU_CHOI->value && $request->status === CommissionRequestStatus::CHO_CHI->value) {
+        if ($oldStatus === CommissionRequestStatus::TU_CHOI->value && $request->status === CommissionRequestStatus::DU_CHI->value) {
             $this->notifyAccountants($request, $actor);
         }
     }
@@ -61,11 +72,11 @@ class CommissionService
         ?string $reason = null
     ): void {
         $requester = $request->user;
-        if (!$requester) {
+        if (! $requester) {
             return;
         }
 
-        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#' . $request->id));
+        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#'.$request->id));
 
         $requester->notify(new CommissionRequestStatusUpdatedNotification(
             status: $status,
@@ -79,7 +90,7 @@ class CommissionService
 
     private function notifyAccountants(CommissionRequest $request, User $creator): void
     {
-        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#' . $request->id));
+        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#'.$request->id));
 
         $recipients = User::role(Role::KE_TOAN->value)->get()->unique('id');
 

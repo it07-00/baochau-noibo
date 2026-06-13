@@ -4,17 +4,19 @@ namespace Tests\Feature\Livewire\Admin\Commissions;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Commissions\CommissionRequestManager;
+use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use App\Models\CommissionRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class CommissionRequestBillTest extends TestCase
@@ -22,16 +24,20 @@ class CommissionRequestBillTest extends TestCase
     use RefreshDatabase;
 
     private User $accountantUser;
+
     private User $directorUser;
+
     private User $salesUser;
+
     private Customer $customer;
+
     private ContractWaste $contract;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         foreach (RoleEnum::cases() as $roleEnum) {
             Role::findOrCreate($roleEnum->value);
@@ -84,7 +90,7 @@ class CommissionRequestBillTest extends TestCase
         $this->directorUser->assignRole($directorRole);
 
         $this->customer = Customer::create(['name' => 'Khách hàng C']);
-        
+
         $this->contract = ContractWaste::create([
             'customer_id' => $this->customer->id,
             'staff_id' => $this->salesUser->id,
@@ -107,6 +113,7 @@ class CommissionRequestBillTest extends TestCase
             'receiver_name' => 'Paid Receiver',
             'amount' => 1000000,
             'status' => 'Đã chi',
+            'payment_bill_path' => 'commission_bills/paid.jpg',
         ]);
 
         CommissionRequest::create([
@@ -115,16 +122,26 @@ class CommissionRequestBillTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Pending Receiver',
             'amount' => 2000000,
-            'status' => 'Chờ chi',
+            'status' => 'Đã duyệt',
+        ]);
+
+        CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Estimated Receiver',
+            'amount' => 3000000,
+            'status' => 'Dự chi',
         ]);
 
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->assertViewHas('summary', function ($summary) {
-                return $summary['total_payout'] == 1000000 
+                return $summary['total_payout'] == 1000000
                     && $summary['total_pending_payout'] == 2000000
-                    && $summary['amount'] == 3000000;
+                    && $summary['total_estimated'] == 3000000
+                    && $summary['amount'] == 6000000;
             });
     }
 
@@ -136,14 +153,14 @@ class CommissionRequestBillTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Receiver A',
             'amount' => 1000000,
-            'status' => 'Đã chi',
+            'status' => 'Đã duyệt',
         ]);
 
         $this->actingAs($this->accountantUser);
 
         $file = UploadedFile::fake()->image('payment_receipt.jpg');
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->set('viewingRequestId', $request->id)
             ->set('billFile', $file)
             ->call('uploadBill')
@@ -153,6 +170,7 @@ class CommissionRequestBillTest extends TestCase
 
         $request->refresh();
         $this->assertNotNull($request->payment_bill_path);
+        $this->assertSame('Đã chi', $request->status);
         Storage::disk('public')->assertExists($request->payment_bill_path);
     }
 
@@ -164,14 +182,14 @@ class CommissionRequestBillTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Receiver A',
             'amount' => 1000000,
-            'status' => 'Đã chi',
+            'status' => 'Đã duyệt',
         ]);
 
         $this->actingAs($this->directorUser);
 
         $file = UploadedFile::fake()->create('receipt.pdf', 500, 'application/pdf');
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->set('viewingRequestId', $request->id)
             ->set('billFile', $file)
             ->call('uploadBill')
@@ -180,6 +198,7 @@ class CommissionRequestBillTest extends TestCase
 
         $request->refresh();
         $this->assertNotNull($request->payment_bill_path);
+        $this->assertSame('Đã chi', $request->status);
         Storage::disk('public')->assertExists($request->payment_bill_path);
     }
 
@@ -191,14 +210,14 @@ class CommissionRequestBillTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Receiver A',
             'amount' => 1000000,
-            'status' => 'Đã chi',
+            'status' => 'Đã duyệt',
         ]);
 
         $this->actingAs($this->salesUser);
 
         $file = UploadedFile::fake()->image('receipt.png');
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->set('viewingRequestId', $request->id)
             ->set('billFile', $file)
             ->call('uploadBill')
@@ -222,14 +241,15 @@ class CommissionRequestBillTest extends TestCase
 
         $this->actingAs($this->accountantUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->set('viewingRequestId', $request->id)
             ->call('deleteBill')
             ->assertHasNoErrors()
-            ->assertDispatched('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hóa đơn thanh toán.']);
+            ->assertDispatched('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hóa đơn; yêu cầu chuyển về trạng thái Đã duyệt.']);
 
         $request->refresh();
         $this->assertNull($request->payment_bill_path);
+        $this->assertSame('Đã duyệt', $request->status);
         Storage::disk('public')->assertMissing('commission_bills/receipt.jpg');
     }
 
@@ -241,12 +261,12 @@ class CommissionRequestBillTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Receiver A',
             'amount' => 1000000,
-            'status' => 'Đã chi',
+            'status' => 'Đã duyệt',
         ]);
 
         $this->actingAs($this->accountantUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('openUploadBillModal', $request->id)
             ->assertSet('uploadingBillRequestId', $request->id)
             ->assertDispatched('open-upload-bill-modal')
@@ -263,14 +283,14 @@ class CommissionRequestBillTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Receiver A',
             'amount' => 1000000,
-            'status' => 'Đã chi',
+            'status' => 'Đã duyệt',
         ]);
 
         $this->actingAs($this->accountantUser);
 
         $file = UploadedFile::fake()->image('quick_receipt.jpg');
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('openUploadBillModal', $request->id)
             ->set('billFile', $file)
             ->call('uploadBill')
@@ -282,6 +302,34 @@ class CommissionRequestBillTest extends TestCase
 
         $request->refresh();
         $this->assertNotNull($request->payment_bill_path);
+        $this->assertSame('Đã chi', $request->status);
         Storage::disk('public')->assertExists($request->payment_bill_path);
+    }
+
+    public function test_cannot_upload_payment_bill_before_approval(): void
+    {
+        $request = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Draft Receiver',
+            'amount' => 1000000,
+            'status' => 'Dự chi',
+        ]);
+
+        $this->actingAs($this->accountantUser);
+
+        Livewire::test(CommissionRequestManager::class)
+            ->set('viewingRequestId', $request->id)
+            ->set('billFile', UploadedFile::fake()->image('receipt.png'))
+            ->call('uploadBill')
+            ->assertDispatched('swal:toast', [
+                'type' => 'error',
+                'message' => 'Chỉ có thể tải hóa đơn cho yêu cầu đã được duyệt.',
+            ]);
+
+        $request->refresh();
+        $this->assertSame('Dự chi', $request->status);
+        $this->assertNull($request->payment_bill_path);
     }
 }

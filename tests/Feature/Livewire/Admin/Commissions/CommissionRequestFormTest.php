@@ -4,17 +4,20 @@ namespace Tests\Feature\Livewire\Admin\Commissions;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Commissions\CommissionRequestForm;
+use App\Livewire\Admin\Commissions\CommissionRequestManager;
+use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use App\Models\CommissionRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class CommissionRequestFormTest extends TestCase
@@ -22,7 +25,9 @@ class CommissionRequestFormTest extends TestCase
     use RefreshDatabase;
 
     private User $salesUser;
+
     private Customer $customer;
+
     private ContractWaste $contract;
 
     protected function setUp(): void
@@ -30,7 +35,7 @@ class CommissionRequestFormTest extends TestCase
         parent::setUp();
 
         // Clear Spatie permission cache
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         // Seed roles & permissions
         foreach (RoleEnum::cases() as $roleEnum) {
@@ -62,7 +67,7 @@ class CommissionRequestFormTest extends TestCase
         $this->salesUser->assignRole($salesRole);
 
         $this->customer = Customer::create(['name' => 'Khách hàng A']);
-        
+
         $this->contract = ContractWaste::create([
             'customer_id' => $this->customer->id,
             'staff_id' => $this->salesUser->id,
@@ -78,7 +83,7 @@ class CommissionRequestFormTest extends TestCase
     {
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class)
+        Livewire::test(CommissionRequestForm::class)
             ->assertStatus(200)
             ->assertSee('Thông tin Yêu cầu chi hoa hồng');
     }
@@ -87,7 +92,7 @@ class CommissionRequestFormTest extends TestCase
     {
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class)
+        Livewire::test(CommissionRequestForm::class)
             ->set('contract_type', ContractWaste::class)
             ->set('contract_id', $this->contract->id)
             ->set('receiver_name', 'Nguyen Van A')
@@ -106,6 +111,7 @@ class CommissionRequestFormTest extends TestCase
             'bank_code' => 'VCB',
             'bank_number' => '1234567890',
             'amount' => 1000000,
+            'status' => 'Dự chi',
         ]);
     }
 
@@ -126,7 +132,7 @@ class CommissionRequestFormTest extends TestCase
 
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class)
+        Livewire::test(CommissionRequestForm::class)
             ->set('selectedSavedAccountId', $pastRequest->id)
             ->assertSet('receiver_name', 'NGUYEN VAN SAVED')
             ->assertSet('receiver_phone', '0999888777')
@@ -152,7 +158,7 @@ class CommissionRequestFormTest extends TestCase
     {
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class)
+        Livewire::test(CommissionRequestForm::class)
             ->set('contract_type', '')
             ->set('contract_id', '')
             ->set('receiver_name', '')
@@ -184,7 +190,7 @@ class CommissionRequestFormTest extends TestCase
         $this->actingAs($this->salesUser);
 
         // Mount should fail with a 403 status code
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class, ['id' => $paidRequest->id])
+        Livewire::test(CommissionRequestForm::class, ['id' => $paidRequest->id])
             ->assertStatus(403);
     }
 
@@ -199,12 +205,12 @@ class CommissionRequestFormTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Original Receiver',
             'amount' => 1000000,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
         ]);
 
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class, ['id' => $pendingRequest->id])
+        Livewire::test(CommissionRequestForm::class, ['id' => $pendingRequest->id])
             ->assertStatus(200)
             ->set('receiver_name', 'Updated Receiver Name')
             ->call('save')
@@ -231,7 +237,7 @@ class CommissionRequestFormTest extends TestCase
 
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class, ['id' => $rejectedRequest->id])
+        Livewire::test(CommissionRequestForm::class, ['id' => $rejectedRequest->id])
             ->assertStatus(200)
             ->assertSet('notes', '')
             ->set('notes', 'New submitted notes')
@@ -240,7 +246,7 @@ class CommissionRequestFormTest extends TestCase
 
         $this->assertDatabaseHas('commission_requests', [
             'id' => $rejectedRequest->id,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
             'notes' => 'New submitted notes',
             'processed_at' => null,
         ]);
@@ -250,8 +256,8 @@ class CommissionRequestFormTest extends TestCase
     {
         $this->actingAs($this->salesUser);
 
-        \Illuminate\Support\Facades\Http::fake([
-            'api.vietqr.io/*' => \Illuminate\Support\Facades\Http::response([
+        Http::fake([
+            'api.vietqr.io/*' => Http::response([
                 'code' => '00',
                 'desc' => 'Success',
                 'data' => [
@@ -262,14 +268,14 @@ class CommissionRequestFormTest extends TestCase
                     [
                         'code' => 'TCB',
                         'shortName' => 'Techcombank',
-                    ]
-                ]
-            ], 200)
+                    ],
+                ],
+            ], 200),
         ]);
 
-        \Illuminate\Support\Facades\Cache::forget('vietqr_banks_list');
+        Cache::forget('vietqr_banks_list');
 
-        $component = Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class);
+        $component = Livewire::test(CommissionRequestForm::class);
 
         $banks = $component->get('banks');
 
@@ -277,6 +283,23 @@ class CommissionRequestFormTest extends TestCase
         $this->assertArrayHasKey('TCB', $banks);
         $this->assertEquals('Vietcombank (VCB)', $banks['VCB']);
         $this->assertEquals('Techcombank (TCB)', $banks['TCB']);
+    }
+
+    public function test_cannot_edit_approved_request(): void
+    {
+        $approvedRequest = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Tran Van Approved',
+            'amount' => 1000000,
+            'status' => 'Đã duyệt',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(CommissionRequestForm::class, ['id' => $approvedRequest->id])
+            ->assertStatus(403);
     }
 
     public function test_notifications_are_sent_on_creation_and_rejection_resubmit(): void
@@ -287,7 +310,7 @@ class CommissionRequestFormTest extends TestCase
 
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class)
+        Livewire::test(CommissionRequestForm::class)
             ->set('contract_type', ContractWaste::class)
             ->set('contract_id', $this->contract->id)
             ->set('receiver_name', 'Nguyen Van A')
@@ -301,9 +324,9 @@ class CommissionRequestFormTest extends TestCase
         $this->assertStringContainsString('gửi yêu cầu chi hoa hồng', $notification->data['message']);
 
         $request = CommissionRequest::latest()->first();
-        
+
         $this->actingAs($accountant);
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('startReject', $request->id)
             ->set('rejectReason', 'Wrong name')
             ->call('confirmReject')
@@ -318,7 +341,7 @@ class CommissionRequestFormTest extends TestCase
         $accountant->unreadNotifications()->update(['read_at' => now()]);
 
         $this->actingAs($this->salesUser);
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class, ['id' => $request->id])
+        Livewire::test(CommissionRequestForm::class, ['id' => $request->id])
             ->set('receiver_name', 'Nguyen Van B')
             ->call('save')
             ->assertHasNoErrors();

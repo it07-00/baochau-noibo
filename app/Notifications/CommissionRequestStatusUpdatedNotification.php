@@ -29,13 +29,17 @@ class CommissionRequestStatusUpdatedNotification extends Notification
         $amountText = number_format((float) $this->amount, 0, ',', '.');
         $status = trim($this->status);
 
-        if ($status === CommissionRequestStatus::DA_CHI->value) {
-            $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã được {$this->processedByName} duyệt chi.";
+        if ($status === CommissionRequestStatus::DA_DUYET->value) {
+            $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã được {$this->processedByName} duyệt, đang chờ chi.";
+            $icon = 'bi-patch-check-fill';
+            $color = 'warning';
+        } elseif ($status === CommissionRequestStatus::DA_CHI->value) {
+            $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã được {$this->processedByName} xác nhận đã chi.";
             $icon = 'bi-patch-check-fill';
             $color = 'success';
         } elseif ($status === CommissionRequestStatus::TU_CHOI->value) {
-            $reasonText = $this->reason ? ' Lý do: ' . trim($this->reason) . '.' : '';
-            $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã bị {$this->processedByName} từ chối." . $reasonText;
+            $reasonText = $this->reason ? ' Lý do: '.trim($this->reason).'.' : '';
+            $message = "Yêu cầu chi hoa hồng {$amountText} VND cho hợp đồng {$this->contractLabel} đã bị {$this->processedByName} từ chối.".$reasonText;
             $icon = 'bi-x-octagon-fill';
             $color = 'danger';
         } else {
@@ -45,14 +49,14 @@ class CommissionRequestStatusUpdatedNotification extends Notification
         }
 
         return [
-            'icon'           => $icon,
-            'color'          => $color,
-            'contract_type'  => 'commission',
+            'icon' => $icon,
+            'color' => $color,
+            'contract_type' => 'commission',
             'contract_label' => 'Cập nhật yêu cầu hoa hồng',
-            'message'        => $message,
-            'url'            => route('app.commissions.index'),
-            'request_id'     => $this->requestId,
-            'status'         => $status,
+            'message' => $message,
+            'url' => route('app.commissions.index'),
+            'request_id' => $this->requestId,
+            'status' => $status,
         ];
     }
 }

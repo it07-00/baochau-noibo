@@ -4,9 +4,10 @@ namespace App\Enums;
 
 enum CommissionRequestStatus: string
 {
-    case CHO_CHI  = 'Chờ chi';
-    case DA_CHI   = 'Đã chi';
-    case TU_CHOI  = 'Từ chối';
+    case DU_CHI = 'Dự chi';
+    case DA_DUYET = 'Đã duyệt';
+    case DA_CHI = 'Đã chi';
+    case TU_CHOI = 'Từ chối';
 
     public function label(): string
     {
@@ -16,9 +17,10 @@ enum CommissionRequestStatus: string
     public function color(): string
     {
         return match ($this) {
-            self::CHO_CHI  => 'warning',
-            self::DA_CHI   => 'success',
-            self::TU_CHOI  => 'danger',
+            self::DU_CHI => 'secondary',
+            self::DA_DUYET => 'warning',
+            self::DA_CHI => 'success',
+            self::TU_CHOI => 'danger',
         };
     }
 
@@ -26,7 +28,7 @@ enum CommissionRequestStatus: string
     public static function map(): array
     {
         return array_column(
-            array_map(fn($c) => [$c->value, $c->label()], self::cases()),
+            array_map(fn ($c) => [$c->value, $c->label()], self::cases()),
             1, 0
         );
     }

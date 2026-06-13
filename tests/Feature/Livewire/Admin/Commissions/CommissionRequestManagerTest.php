@@ -4,15 +4,17 @@ namespace Tests\Feature\Livewire\Admin\Commissions;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Commissions\CommissionRequestManager;
+use App\Models\CommissionRequest;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use App\Models\CommissionRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class CommissionRequestManagerTest extends TestCase
@@ -20,15 +22,18 @@ class CommissionRequestManagerTest extends TestCase
     use RefreshDatabase;
 
     private User $accountantUser;
+
     private User $salesUser;
+
     private Customer $customer;
+
     private ContractWaste $contract;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         foreach (RoleEnum::cases() as $roleEnum) {
             Role::findOrCreate($roleEnum->value);
@@ -70,7 +75,7 @@ class CommissionRequestManagerTest extends TestCase
         $this->accountantUser->assignRole($accountantRole);
 
         $this->customer = Customer::create(['name' => 'Khách hàng C']);
-        
+
         $this->contract = ContractWaste::create([
             'customer_id' => $this->customer->id,
             'staff_id' => $this->salesUser->id,
@@ -86,7 +91,7 @@ class CommissionRequestManagerTest extends TestCase
     {
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->assertStatus(200)
             ->assertSee('Quản lý Yêu cầu chi hoa hồng');
     }
@@ -101,12 +106,12 @@ class CommissionRequestManagerTest extends TestCase
             'bank_code' => 'VCB',
             'bank_number' => '987654321',
             'amount' => 1200000,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
         ]);
 
         $this->actingAs($this->accountantUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('viewRequest', $request->id)
             ->assertSet('viewingRequestId', $request->id)
             ->assertDispatched('open-view-modal')
@@ -135,17 +140,17 @@ class CommissionRequestManagerTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'Tran Van Pending',
             'amount' => 1000000,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
         ]);
 
         $this->actingAs($this->salesUser);
 
         // Try to delete the paid request
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('delete', $paidRequest->id)
             ->assertDispatched('swal:toast', [
                 'type' => 'error',
-                'message' => 'Không thể xóa yêu cầu đã được chi.',
+                'message' => 'Không thể xóa yêu cầu đã được duyệt hoặc đã chi.',
             ]);
 
         $this->assertDatabaseHas('commission_requests', [
@@ -154,7 +159,7 @@ class CommissionRequestManagerTest extends TestCase
         ]);
 
         // Try to delete the pending request
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('delete', $pendingRequest->id)
             ->assertDispatched('swal:success', [
                 'message' => 'Xóa yêu cầu thành công!',
@@ -176,7 +181,7 @@ class CommissionRequestManagerTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'OTHER USER',
             'amount' => 1000000,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
         ]);
 
         $ownRequest = CommissionRequest::create([
@@ -185,17 +190,17 @@ class CommissionRequestManagerTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'OWN USER',
             'amount' => 2000000,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
         ]);
 
         $this->actingAs($this->salesUser);
 
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->assertSee('OWN USER')
             ->assertDontSee('OTHER USER');
 
         // Verify trying to view other user's request aborts with 403
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->call('viewRequest', $otherRequest->id)
             ->assertStatus(403);
     }
@@ -211,22 +216,49 @@ class CommissionRequestManagerTest extends TestCase
             'contract_id' => $this->contract->id,
             'receiver_name' => 'USER B REQUEST',
             'amount' => 1000000,
-            'status' => 'Chờ chi',
+            'status' => 'Dự chi',
         ]);
 
         // 1. Accountant test
         $this->actingAs($this->accountantUser);
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->assertSee('USER B REQUEST');
 
         // 2. Director test
         $directorUser = User::factory()->create(['is_active' => true]);
         $directorUser->assignRole(RoleEnum::GIAM_DOC->value);
-        
+
         $this->actingAs($directorUser);
-        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
+        Livewire::test(CommissionRequestManager::class)
             ->assertSee('USER B REQUEST')
             ->call('viewRequest', $requestB->id)
             ->assertSet('viewingRequestId', $requestB->id);
+    }
+
+    public function test_accountant_approval_moves_estimate_to_approved_not_paid(): void
+    {
+        $request = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Receiver Waiting Payment',
+            'amount' => 1000000,
+            'status' => 'Dự chi',
+        ]);
+
+        $this->actingAs($this->accountantUser);
+
+        Livewire::test(CommissionRequestManager::class)
+            ->call('approve', $request->id)
+            ->assertDispatched('swal:toast', [
+                'type' => 'success',
+                'message' => 'Kế toán đã duyệt chi yêu cầu thành công.',
+            ]);
+
+        $request->refresh();
+
+        $this->assertSame('Đã duyệt', $request->status);
+        $this->assertNull($request->payment_bill_path);
+        $this->assertNotNull($request->processed_at);
     }
 }

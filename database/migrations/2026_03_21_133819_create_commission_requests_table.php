@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 0)->default(0);
             $table->string('referrer_info')->nullable();
             $table->text('notes')->nullable();
-            $table->string('status')->default('Chờ chi');
+            $table->string('status')->default('Dự chi');
             $table->dateTime('processed_at')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
