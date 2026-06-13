@@ -6,6 +6,7 @@ use App\Enums\Role as RoleEnum;
 use App\Livewire\Admin\Reports\Sales\PersonalSalesReport;
 use App\Livewire\Admin\Reports\Sales\SalesSummaryReport;
 use App\Livewire\Admin\Reports\Sales\SalesTargetReport;
+use App\Livewire\Admin\Sales\SalesTargetRegistration;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Department;
@@ -60,7 +61,7 @@ class SalesReportsConsistencyTest extends TestCase
             'value' => 100_000_000,
             'revenue' => 100_000_000,
             'signed_at' => '2026-02-10',
-            'submitted_at' => null,
+            'submitted_at' => '2026-02-20',
             'is_renewal' => false,
         ]);
 
@@ -74,6 +75,19 @@ class SalesReportsConsistencyTest extends TestCase
             'signed_at' => '2026-01-15',
             'submitted_at' => '2026-03-05',
             'is_renewal' => true,
+        ]);
+
+        // Non-invoiced contract (should be ignored in reports)
+        ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $salesperson->id,
+            'department_id' => $department->id,
+            'value' => 50_000_000,
+            'revenue' => 50_000_000,
+            'signed_at' => '2026-04-10',
+            'submitted_at' => null,
+            'is_renewal' => false,
         ]);
 
         $this->actingAs($salesperson);
@@ -93,7 +107,7 @@ class SalesReportsConsistencyTest extends TestCase
                 'detail',
                 fn (Collection $detail): bool => $detail->count() === 1
                     && $detail->sum('value') === 100_000_000.0
-                    && $detail->first()['date']->toDateString() === '2026-02-10'
+                    && $detail->first()['date']->toDateString() === '2026-02-20'
             );
 
         Livewire::test(SalesTargetReport::class)
@@ -117,5 +131,59 @@ class SalesReportsConsistencyTest extends TestCase
                 'personalTotals',
                 fn (array $totals): bool => $totals['actual'] === 300_000_000.0
             );
+    }
+
+    public function test_sales_target_registration_groups_pre_2026_contracts_into_january_2026(): void
+    {
+        $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
+        Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value);
+        $department = Department::create([
+            'name' => 'Phong Kinh Doanh',
+            'slug' => 'kinh-doanh',
+            'is_active' => true,
+        ]);
+        $salesperson = User::factory()->create([
+            'department_id' => $department->id,
+            'is_active' => true,
+        ]);
+        $salesperson->assignRole($salesRole);
+
+        $customer = Customer::create(['name' => 'Khach hang']);
+        $handler = Handler::create(['name' => 'Nha thau phu']);
+
+        // Pre-2026 signed contract
+        ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $salesperson->id,
+            'department_id' => $department->id,
+            'value' => 120_000_000,
+            'revenue' => 120_000_000,
+            'signed_at' => '2025-11-20',
+            'submitted_at' => null,
+            'is_renewal' => false,
+        ]);
+
+        // 2026 signed contract
+        ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $salesperson->id,
+            'department_id' => $department->id,
+            'value' => 80_000_000,
+            'revenue' => 80_000_000,
+            'signed_at' => '2026-02-15',
+            'submitted_at' => null,
+            'is_renewal' => false,
+        ]);
+
+        $this->actingAs($salesperson);
+
+        Livewire::test(SalesTargetRegistration::class)
+            ->set('year', 2026)
+            ->assertViewHas('months', function (array $months): bool {
+                return $months[1]['actual'] === 120_000_000.0
+                    && $months[2]['actual'] === 80_000_000.0;
+            });
     }
 }

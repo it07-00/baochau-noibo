@@ -129,16 +129,12 @@ class SalesTargetRegistration extends Component
             $query = $modelClass::with('customer')
                 ->where('staff_id', $this->selectedStaffId);
 
-            if ($this->viewMonth === 1) {
+            if ($this->year === 2026 && $this->viewMonth === 1) {
                 $query->where(function ($q) {
                     $q->where(function ($q1) {
-                        $q1->whereYear('signed_at', $this->year)
+                        $q1->whereYear('signed_at', 2026)
                            ->whereMonth('signed_at', 1);
-                    })->orWhere(function ($q2) {
-                        $q2->whereYear('signed_at', 2025)
-                           ->whereNotNull('submitted_at')
-                           ->whereYear('submitted_at', $this->year);
-                    });
+                    })->orWhere('signed_at', '<', '2026-01-01');
                 });
             } else {
                 $query->whereYear('signed_at', $this->year)
@@ -211,23 +207,23 @@ class SalesTargetRegistration extends Component
         }
 
         foreach ($this->contractModels as $modelClass) {
-            $rows = $modelClass::query()
-                ->where('staff_id', $this->selectedStaffId)
-                ->where(function ($q) {
-                    $q->whereYear('signed_at', $this->year)
-                      ->orWhere(function ($q2) {
-                          $q2->whereYear('signed_at', 2025)
-                             ->whereNotNull('submitted_at')
-                             ->whereYear('submitted_at', $this->year);
-                      });
-                })
-                ->get();
+            $query = $modelClass::query()
+                ->where('staff_id', $this->selectedStaffId);
+
+            if ($this->year === 2026) {
+                $query->where(function ($q) {
+                    $q->whereYear('signed_at', 2026)
+                      ->orWhere('signed_at', '<', '2026-01-01');
+                });
+            } else {
+                $query->whereYear('signed_at', $this->year);
+            }
+
+            $rows = $query->get();
 
             foreach ($rows as $r) {
                 $signedYear = $r->signed_at ? (int) $r->signed_at->format('Y') : 0;
-                if ($signedYear === $this->year) {
-                    $monthIdx = $r->signed_at ? (int) $r->signed_at->format('n') : 1;
-                } elseif ($signedYear === 2025) {
+                if ($this->year === 2026 && $signedYear < 2026) {
                     $monthIdx = 1;
                 } else {
                     $monthIdx = $r->signed_at ? (int) $r->signed_at->format('n') : 1;

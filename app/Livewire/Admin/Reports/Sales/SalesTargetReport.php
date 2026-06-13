@@ -72,9 +72,9 @@ class SalesTargetReport extends Component
             foreach ($this->contractModels as $modelClass) {
                 $contracts = $modelClass::query()
                     ->with('customer', 'staff')
-                    ->whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
-                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
-                    ->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $month)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
+                    ->whereMonth('submitted_at', $month)
                     ->whereIn('staff_id', $staffIds)
                     ->get();
 
@@ -85,7 +85,7 @@ class SalesTargetReport extends Component
                         'type'       => $this->contractTypeLabels[$modelClass],
                         'value'      => (float) $contract->revenue,
                         'is_renewal' => (bool) $contract->is_renewal,
-                        'date'       => ($contract->submitted_at ?? $contract->signed_at)?->format('d/m/Y'),
+                        'date'       => $contract->submitted_at?->format('d/m/Y'),
                     ]);
                 }
             }
@@ -193,10 +193,10 @@ class SalesTargetReport extends Component
 
             foreach ($this->contractModels as $modelClass) {
                 $rows = $modelClass::query()
-                    ->whereRaw('COALESCE(submitted_at, signed_at) IS NOT NULL')
-                    ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year)
+                    ->whereNotNull('submitted_at')
+                    ->whereYear('submitted_at', $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
-                    ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as total')
+                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total')
                     ->groupBy('m')
                     ->get();
 
