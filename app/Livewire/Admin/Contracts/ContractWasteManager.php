@@ -125,6 +125,7 @@ class ContractWasteManager extends Component
         'status' => '',
         'renewal_status' => '',
         'voucher_status' => '',
+        'hide_completed_workflow' => false,
     ];
 
     protected $queryString = ['search', 'quotation_id'];
@@ -137,6 +138,11 @@ class ContractWasteManager extends Component
 
     public function mount()
     {
+        $this->filter['hide_completed_workflow'] = auth()->user()->hasAnyRole([
+            Role::TU_VAN->value,
+            Role::KY_THUAT->value,
+        ]);
+
         if ($this->quotation_id) {
             abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_CREATE->value), 403);
 
@@ -761,6 +767,10 @@ class ContractWasteManager extends Component
             'status' => '',
             'renewal_status' => '',
             'voucher_status' => '',
+            'hide_completed_workflow' => auth()->user()->hasAnyRole([
+                Role::TU_VAN->value,
+                Role::KY_THUAT->value,
+            ]),
         ];
         $this->selectedDocIds = [];
         $this->sortDirection = 'desc';

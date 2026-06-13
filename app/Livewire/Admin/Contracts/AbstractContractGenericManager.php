@@ -116,6 +116,7 @@ abstract class AbstractContractGenericManager extends Component
         'is_overdue'     => false,
         'loai_dich_vu'   => '',
         'handler_id'     => '',
+        'hide_completed_workflow' => false,
     ];
 
     public string $contractTypeName = '';
@@ -152,6 +153,10 @@ abstract class AbstractContractGenericManager extends Component
     public function mount(): void
     {
         $this->contractTypeName = $this->getPageTitle();
+        $this->filter['hide_completed_workflow'] = auth()->user()->hasAnyRole([
+            Role::TU_VAN->value,
+            Role::KY_THUAT->value,
+        ]);
 
         if ($this->quotation_id) {
             $quotation = Quotation::find($this->quotation_id);
@@ -844,6 +849,10 @@ abstract class AbstractContractGenericManager extends Component
             'is_overdue'     => false,
             'loai_dich_vu'   => '',
             'handler_id'     => '',
+            'hide_completed_workflow' => auth()->user()->hasAnyRole([
+                Role::TU_VAN->value,
+                Role::KY_THUAT->value,
+            ]),
         ];
         $this->selectedDocIds = [];
         $this->sortBy         = 'id';

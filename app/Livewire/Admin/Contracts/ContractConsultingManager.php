@@ -146,6 +146,7 @@ class ContractConsultingManager extends Component
         'is_overdue' => false,
         'loai_dich_vu' => '',
         'handler_id'  => '',
+        'hide_completed_workflow' => false,
     ];
 
     protected $queryString = ['search', 'quotation_id'];
@@ -157,6 +158,11 @@ class ContractConsultingManager extends Component
 
     public function mount(): void
     {
+        $this->filter['hide_completed_workflow'] = auth()->user()->hasAnyRole([
+            Role::TU_VAN->value,
+            Role::KY_THUAT->value,
+        ]);
+
         if ($this->quotation_id) {
             $quotation = Quotation::find($this->quotation_id);
             if ($quotation) {
@@ -757,6 +763,10 @@ class ContractConsultingManager extends Component
             'is_overdue' => false,
             'loai_dich_vu' => '',
             'handler_id'  => '',
+            'hide_completed_workflow' => auth()->user()->hasAnyRole([
+                Role::TU_VAN->value,
+                Role::KY_THUAT->value,
+            ]),
         ];
         $this->selectedDocIds = [];
         $this->sortBy = 'id';

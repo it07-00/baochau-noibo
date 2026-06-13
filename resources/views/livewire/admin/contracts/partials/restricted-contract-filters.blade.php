@@ -28,3 +28,16 @@
         @endif
     </select>
 </div>
+@if (auth()->user()->hasAnyRole([
+    \App\Enums\Role::TU_VAN->value,
+    \App\Enums\Role::KY_THUAT->value,
+]))
+    <div class="col-md-3 d-flex align-items-end pb-1">
+        <label
+            class="d-flex align-items-center gap-2 px-3 py-1 rounded border mb-0 {{ $filter['hide_completed_workflow'] ? 'border-primary text-primary bg-primary bg-opacity-10' : 'border-secondary text-muted' }} contract-text-12px cursor-pointer">
+            <input class="form-check-input m-0" type="checkbox"
+                wire:model.live="filter.hide_completed_workflow">
+            Chưa hoàn thành
+        </label>
+    </div>
+@endif

@@ -4,7 +4,9 @@ namespace Tests\Feature\Livewire\Admin\Contracts;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Models\ContractAssignment;
 use App\Models\ContractTechnical;
+use App\Models\ContractWorkflowStep;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Handler;
@@ -77,6 +79,47 @@ class ContractProjectManagerTest extends TestCase
             ->assertStatus(200)
             ->assertSee($this->customer->name)
             ->assertSee('50,000,000');
+    }
+
+    public function test_consultant_hides_completed_generic_contracts_by_default(): void
+    {
+        $consultingRole = Role::findByName(RoleEnum::TU_VAN->value);
+        $consultingRole->syncPermissions([PermissionEnum::CONTRACTS_PROJECT_VIEW->value]);
+
+        $consultant = User::factory()->create(['is_active' => true]);
+        $consultant->assignRole($consultingRole);
+
+        $completedContract = ContractTechnical::create([
+            'customer_id' => Customer::create(['name' => 'Completed project contract'])->id,
+            'staff_id' => $this->adminUser->id,
+            'department_id' => $this->dept->id,
+            'value' => 2000000,
+        ]);
+
+        ContractAssignment::create([
+            'assignable_type' => ContractTechnical::class,
+            'assignable_id' => $completedContract->id,
+            'user_id' => $consultant->id,
+            'assigned_by' => $this->adminUser->id,
+        ]);
+
+        foreach (ContractWorkflowStep::STEP_KEYS as $stepName) {
+            ContractWorkflowStep::create([
+                'contract_type' => ContractTechnical::class,
+                'contract_id' => $completedContract->id,
+                'user_id' => $consultant->id,
+                'step_name' => $stepName,
+                'action' => 'complete',
+            ]);
+        }
+
+        $this->actingAs($consultant);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+            ->assertSet('filter.hide_completed_workflow', true)
+            ->assertViewHas('docs', fn ($docs) => ! $docs->contains('id', $completedContract->id))
+            ->set('filter.hide_completed_workflow', false)
+            ->assertViewHas('docs', fn ($docs) => $docs->contains('id', $completedContract->id));
     }
 
     public function test_can_search_contracts(): void

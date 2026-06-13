@@ -25,5 +25,8 @@ trait HasContractFilters
         if ($f['is_overdue'] ?? false)    $query->where('is_overdue', true);
         if ($f['loai_dich_vu'] ?? null)   $query->where('loai_dich_vu', $f['loai_dich_vu']);
         if ($f['handler_id'] ?? null)     $query->where('handler_id', $f['handler_id']);
+        if ($f['hide_completed_workflow'] ?? false) {
+            $query->whereDoesntHave('workflowSteps', fn($stepQuery) => $stepQuery->where('step_name', 'finished'));
+        }
     }
 }
