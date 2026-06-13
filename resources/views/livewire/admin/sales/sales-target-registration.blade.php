@@ -299,7 +299,7 @@
                                 <tr class="text-center">
                                     <td class="ps-3 fw-semibold text-start">{{ $c['customer_name'] }}</td>
                                     <td class="text-muted small text-start">{{ $c['service'] }}</td>
-                                    <td class="text-success fw-semibold">{{ $c['revenue'] > 0 ? number_format($c['revenue'], 0, ',', '.') : '—' }}</td>
+                                    <td class="text-success fw-semibold">{{ $c['value'] > 0 ? number_format($c['value'], 0, ',', '.') : '—' }}</td>
                                     <td>{{ $c['payment_method'] ?: '—' }}</td>
                                     <td class="text-success fw-semibold">
                                         {{ $c['revenue'] > 0 ? number_format($c['revenue'], 0, ',', '.') : '—' }}
@@ -327,7 +327,7 @@
                             <tfoot class="table-secondary fw-bold">
                                 <tr class="text-center">
                                     <td colspan="2" class="ps-3 text-start">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
-                                    <td class="text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
+                                    <td class="text-success">{{ number_format($monthContracts->sum('value'), 0, ',', '.') }}</td>
                                     <td></td>
                                     <td class="text-success">{{ number_format($monthContracts->sum('revenue'), 0, ',', '.') }}</td>
                                     <td></td>
