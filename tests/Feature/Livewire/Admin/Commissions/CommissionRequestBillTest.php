@@ -122,7 +122,9 @@ class CommissionRequestBillTest extends TestCase
 
         Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestManager::class)
             ->assertViewHas('summary', function ($summary) {
-                return $summary['total_payout'] == 1000000 && $summary['amount'] == 3000000;
+                return $summary['total_payout'] == 1000000 
+                    && $summary['total_pending_payout'] == 2000000
+                    && $summary['amount'] == 3000000;
             });
     }
 

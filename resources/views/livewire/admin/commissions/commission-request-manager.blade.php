@@ -266,7 +266,17 @@
                     @if($requests->isNotEmpty())
                         <tfoot class="table-light fw-bold border-top-2">
                             <tr>
-                                <td colspan="4" class="text-end ps-4">Tổng đã chi:</td>
+                                <td colspan="4" class="text-end ps-4">
+                                    <div class="d-flex justify-content-end align-items-center gap-4">
+                                        <div>
+                                            <span class="text-secondary fw-semibold">Tổng dự chi (Chờ chi):</span>
+                                            <span class="text-warning font-monospace">{{ number_format($summary['total_pending_payout'], 0, ',', '.') }} đ</span>
+                                        </div>
+                                        <div class="border-start ps-4 py-1">
+                                            <span class="text-dark">Tổng đã chi:</span>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="text-end text-success">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</td>
                                 @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
                                     <td colspan="3"></td>

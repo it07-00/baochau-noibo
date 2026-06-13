@@ -317,12 +317,13 @@ class CommissionRequestManager extends Component
             ->keyBy('status');
 
         $summary = [
-            'total'        => $statusCounts->sum('cnt'),
-            'pending'      => (int) ($statusCounts->get(CommissionRequestStatus::CHO_CHI->value)?->cnt ?? 0),
-            'approved'     => (int) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->cnt ?? 0),
-            'rejected'     => (int) ($statusCounts->get(CommissionRequestStatus::TU_CHOI->value)?->cnt ?? 0),
-            'amount'       => (float) $statusCounts->sum('total_amount'),
-            'total_payout' => (float) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->total_amount ?? 0),
+            'total'                => $statusCounts->sum('cnt'),
+            'pending'              => (int) ($statusCounts->get(CommissionRequestStatus::CHO_CHI->value)?->cnt ?? 0),
+            'approved'             => (int) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->cnt ?? 0),
+            'rejected'             => (int) ($statusCounts->get(CommissionRequestStatus::TU_CHOI->value)?->cnt ?? 0),
+            'amount'               => (float) $statusCounts->sum('total_amount'),
+            'total_payout'         => (float) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->total_amount ?? 0),
+            'total_pending_payout' => (float) ($statusCounts->get(CommissionRequestStatus::CHO_CHI->value)?->total_amount ?? 0),
         ];
 
         $requestersQuery = User::query()->where('is_active', true);
