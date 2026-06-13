@@ -183,12 +183,8 @@ class CommissionRequestManager extends Component
     {
         $request = CommissionRequest::findOrFail($id);
         $user = auth()->user();
-        $isSpecialRole = $user && (
-            $user->hasRole(Role::GIAM_DOC->value) ||
-            $user->hasRole(Role::KE_TOAN->value) ||
-            $user->hasRole(Role::IT->value)
-        );
-        abort_unless($isSpecialRole || ($user && $request->user_id === $user->id), 403);
+        $canViewAll = $user && $user->can('commissions.view');
+        abort_unless($canViewAll || ($user && $request->user_id === $user->id), 403);
 
         $this->viewingRequestId = $id;
         $this->billFile = null;
