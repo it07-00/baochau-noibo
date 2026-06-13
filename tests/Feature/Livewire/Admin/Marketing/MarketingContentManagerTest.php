@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire\Admin\Marketing;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Marketing\MarketingContentManager;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,5 +76,27 @@ class MarketingContentManagerTest extends TestCase
         $response = $this->get(route('app.marketing.content.index'));
 
         $response->assertStatus(403);
+    }
+
+    public function test_user_with_create_permission_can_create_marketing_content(): void
+    {
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_CREATE->value);
+
+        $this->actingAs($this->salesUser);
+
+        \Livewire\Livewire::test(MarketingContentManager::class)
+            ->assertViewHas('isMarketing', true)
+            ->set('formTitle', 'New content title')
+            ->set('formContent', 'New content caption')
+            ->set('formScheduledAt', '2026-06-20')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('marketing_contents', [
+            'title' => 'New content title',
+            'content' => 'New content caption',
+            'user_id' => $this->salesUser->id,
+            'status' => 'draft',
+        ]);
     }
 }

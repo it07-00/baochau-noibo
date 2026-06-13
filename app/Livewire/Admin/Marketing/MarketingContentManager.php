@@ -266,8 +266,7 @@ class MarketingContentManager extends Component
     {
         $user = auth()->user();
 
-        abort_unless($user && $user->hasRole(Role::MARKETING->value), 403);
-        abort_unless($user->can($permission->value), 403);
+        abort_unless($user && $user->can($permission->value), 403);
     }
 
     private function authorizeReviewerAction(): void
@@ -280,7 +279,7 @@ class MarketingContentManager extends Component
         $user = auth()->user();
 
         return MarketingContent::query()
-            ->when($isMarketing, fn (Builder $builder) => $builder->where('user_id', $user->id));
+            ->when($isMarketing && !$this->isReviewer(), fn (Builder $builder) => $builder->where('user_id', $user->id));
     }
 
     private function authorizeOwn(int $id): ?MarketingContent
@@ -290,7 +289,7 @@ class MarketingContentManager extends Component
         if (!$record) {
             return null;
         }
-        if ($user->hasRole(Role::MARKETING->value) && $record->user_id !== $user->id) {
+        if (!$this->isReviewer() && $record->user_id !== $user->id) {
             return null;
         }
         return $record;
@@ -387,7 +386,7 @@ class MarketingContentManager extends Component
     public function render()
     {
         $user = auth()->user();
-        $isMarketing = $user->hasRole(Role::MARKETING->value);
+        $isMarketing = $user->can(Permission::ARTICLES_CREATE->value);
 
         $scopedQuery = $this->buildScopedQuery($isMarketing);
 
