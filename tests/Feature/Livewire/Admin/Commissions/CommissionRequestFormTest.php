@@ -215,4 +215,34 @@ class CommissionRequestFormTest extends TestCase
             'receiver_name' => 'UPDATED RECEIVER NAME',
         ]);
     }
+
+    public function test_editing_rejected_request_clears_notes_and_resets_status(): void
+    {
+        $rejectedRequest = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Original Receiver',
+            'amount' => 1000000,
+            'status' => 'Từ chối',
+            'notes' => 'Old notes content',
+            'processed_at' => now(),
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(\App\Livewire\Admin\Commissions\CommissionRequestForm::class, ['id' => $rejectedRequest->id])
+            ->assertStatus(200)
+            ->assertSet('notes', '')
+            ->set('notes', 'New submitted notes')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('commission_requests', [
+            'id' => $rejectedRequest->id,
+            'status' => 'Chờ chi',
+            'notes' => 'New submitted notes',
+            'processed_at' => null,
+        ]);
+    }
 }

@@ -24,15 +24,26 @@ class CommissionRequest extends Model
     }
 
     protected $fillable = [
-        'contract_type', 'contract_id', 'receiver_name', 'receiver_phone',
-        'bank_account', 'bank_code', 'bank_number', 'amount', 'referrer_info', 'notes', 'status', 'processed_at', 'user_id',
+        'contract_type',
+        'contract_id',
+        'receiver_name',
+        'receiver_phone',
+        'bank_account',
+        'bank_code',
+        'bank_number',
+        'amount',
+        'referrer_info',
+        'notes',
+        'status',
+        'processed_at',
+        'user_id',
+        'payment_bill_path',
     ];
 
     protected $casts = [
         'processed_at' => 'datetime',
         'amount' => 'integer',
     ];
-
 
     public function contract(): MorphTo
     {
@@ -47,6 +58,14 @@ class CommissionRequest extends Model
     public function getContractTypeLabelAttribute(): string
     {
         return ContractType::fromModelClass($this->contract_type)?->label() ?? 'N/A';
+    }
+
+    public function getPaymentBillUrlAttribute(): ?string
+    {
+        if ($this->payment_bill_path) {
+            return \Illuminate\Support\Facades\Storage::disk(config('filesystems.upload_disk', 'public'))->url($this->payment_bill_path);
+        }
+        return null;
     }
 
     public function getQrUrlAttribute(): string

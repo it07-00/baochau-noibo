@@ -12,10 +12,11 @@ use App\Services\CommissionService;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class CommissionRequestManager extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $search = '';
     public $statusFilter = '';
@@ -26,8 +27,25 @@ class CommissionRequestManager extends Component
     public ?int $rejectingId = null;
     public string $rejectReason = '';
     public ?int $viewingRequestId = null;
+    public $billFile;
+    public ?int $uploadingBillRequestId = null;
 
     protected $listeners = ['deleteConfirmed' => 'delete'];
+
+    public function openUploadBillModal(int $id): void
+    {
+        $this->ensureAccountantOrDirectorAccess();
+        $this->uploadingBillRequestId = $id;
+        $this->billFile = null;
+        $this->dispatch('open-upload-bill-modal');
+    }
+
+    public function closeUploadBillModal(): void
+    {
+        $this->uploadingBillRequestId = null;
+        $this->billFile = null;
+        $this->dispatch('close-upload-bill-modal');
+    }
 
     private function applyFilters($query): void
     {
@@ -67,6 +85,14 @@ class CommissionRequestManager extends Component
         abort_unless(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403);
     }
 
+    private function ensureAccountantOrDirectorAccess(): void
+    {
+        abort_unless(auth()->check() && (
+            auth()->user()->hasRole(Role::KE_TOAN->value) ||
+            auth()->user()->hasRole(Role::GIAM_DOC->value)
+        ), 403);
+    }
+
     private function resetRejectState(): void
     {
         $this->rejectingId = null;
@@ -104,6 +130,11 @@ class CommissionRequestManager extends Component
         if ($request->status === CommissionRequestStatus::DA_CHI->value) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể xóa yêu cầu đã được chi.']);
             return;
+        }
+
+        // Delete bill from storage if exists
+        if ($request->payment_bill_path) {
+            \Illuminate\Support\Facades\Storage::disk(config('filesystems.upload_disk', 'public'))->delete($request->payment_bill_path);
         }
 
         $request->delete();
@@ -153,19 +184,21 @@ class CommissionRequestManager extends Component
         $request = CommissionRequest::findOrFail($id);
         $user = auth()->user();
         $isSpecialRole = $user && (
-            $user->hasRole(Role::GIAM_DOC->value) || 
-            $user->hasRole(Role::KE_TOAN->value) || 
+            $user->hasRole(Role::GIAM_DOC->value) ||
+            $user->hasRole(Role::KE_TOAN->value) ||
             $user->hasRole(Role::IT->value)
         );
         abort_unless($isSpecialRole || ($user && $request->user_id === $user->id), 403);
 
         $this->viewingRequestId = $id;
+        $this->billFile = null;
         $this->dispatch('open-view-modal');
     }
 
     public function closeView(): void
     {
         $this->viewingRequestId = null;
+        $this->billFile = null;
         $this->dispatch('close-view-modal');
     }
 
@@ -197,6 +230,55 @@ class CommissionRequestManager extends Component
         $this->cancelReject();
     }
 
+    public function uploadBill(): void
+    {
+        $this->ensureAccountantOrDirectorAccess();
+
+        $this->validate([
+            'billFile' => 'required|file|mimes:jpeg,jpg,png,pdf|max:10240', // max 10MB
+        ], [
+            'billFile.required' => 'Vui lòng chọn file hóa đơn.',
+            'billFile.mimes'    => 'Chỉ chấp nhận file ảnh (jpg, jpeg, png) hoặc PDF.',
+            'billFile.max'      => 'File không được vượt quá 10MB.',
+        ]);
+
+        $requestId = $this->uploadingBillRequestId ?? $this->viewingRequestId;
+        $request = CommissionRequest::findOrFail($requestId);
+
+        $path = $this->billFile->store('commission_bills', config('filesystems.upload_disk', 'public'));
+
+        if ($request->payment_bill_path) {
+            \Illuminate\Support\Facades\Storage::disk(config('filesystems.upload_disk', 'public'))->delete($request->payment_bill_path);
+        }
+
+        $request->update([
+            'payment_bill_path' => $path,
+        ]);
+
+        $this->billFile = null;
+
+        if ($this->uploadingBillRequestId) {
+            $this->closeUploadBillModal();
+        }
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Tải lên hóa đơn thành công!']);
+    }
+
+    public function deleteBill(): void
+    {
+        $this->ensureAccountantOrDirectorAccess();
+
+        $request = CommissionRequest::findOrFail($this->viewingRequestId);
+
+        if ($request->payment_bill_path) {
+            \Illuminate\Support\Facades\Storage::disk(config('filesystems.upload_disk', 'public'))->delete($request->payment_bill_path);
+            $request->update([
+                'payment_bill_path' => null,
+            ]);
+            $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa hóa đơn thanh toán.']);
+        }
+    }
+
     public function rejectionReason(?string $notes): string
     {
         if (empty($notes) || !str_contains($notes, 'Lý do từ chối (kế toán):')) {
@@ -215,8 +297,8 @@ class CommissionRequestManager extends Component
     {
         $user = auth()->user();
         $isSpecialRole = $user && (
-            $user->hasRole(Role::GIAM_DOC->value) || 
-            $user->hasRole(Role::KE_TOAN->value) || 
+            $user->hasRole(Role::GIAM_DOC->value) ||
+            $user->hasRole(Role::KE_TOAN->value) ||
             $user->hasRole(Role::IT->value)
         );
 
@@ -239,11 +321,12 @@ class CommissionRequestManager extends Component
             ->keyBy('status');
 
         $summary = [
-            'total'    => $statusCounts->sum('cnt'),
-            'pending'  => (int) ($statusCounts->get(CommissionRequestStatus::CHO_CHI->value)?->cnt ?? 0),
-            'approved' => (int) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->cnt ?? 0),
-            'rejected' => (int) ($statusCounts->get(CommissionRequestStatus::TU_CHOI->value)?->cnt ?? 0),
-            'amount'   => (float) $statusCounts->sum('total_amount'),
+            'total'        => $statusCounts->sum('cnt'),
+            'pending'      => (int) ($statusCounts->get(CommissionRequestStatus::CHO_CHI->value)?->cnt ?? 0),
+            'approved'     => (int) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->cnt ?? 0),
+            'rejected'     => (int) ($statusCounts->get(CommissionRequestStatus::TU_CHOI->value)?->cnt ?? 0),
+            'amount'       => (float) $statusCounts->sum('total_amount'),
+            'total_payout' => (float) ($statusCounts->get(CommissionRequestStatus::DA_CHI->value)?->total_amount ?? 0),
         ];
 
         $requestersQuery = User::query()->where('is_active', true);

@@ -63,7 +63,7 @@ class CommissionRequestForm extends Component
             $this->bank_number = $request->bank_number ?: '';
             $this->amount = $request->amount;
             $this->referrer_info = $request->referrer_info;
-            $this->notes = $request->notes;
+            $this->notes = $request->status === \App\Enums\CommissionRequestStatus::TU_CHOI->value ? '' : $request->notes;
         }
     }
 
@@ -223,7 +223,12 @@ class CommissionRequestForm extends Component
         ];
 
         if ($this->requestId) {
-            CommissionRequest::findOrFail($this->requestId)->update($data);
+            $existing = CommissionRequest::findOrFail($this->requestId);
+            if ($existing->status === \App\Enums\CommissionRequestStatus::TU_CHOI->value) {
+                $data['status'] = \App\Enums\CommissionRequestStatus::CHO_CHI->value;
+                $data['processed_at'] = null;
+            }
+            $existing->update($data);
             $this->dispatch('swal:success', ['message' => 'Cập nhật yêu cầu thành công!']);
         } else {
             app(CommissionService::class)->createRequest($data, auth()->user());

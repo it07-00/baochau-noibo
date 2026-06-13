@@ -32,7 +32,7 @@
                             <div class="col-12 col-md-4">
                                 <label class="form-label fw-bold">Người nhận hoa hồng <span class="text-danger">*</span></label>
                                 <input type="text" 
-                                       wire:model.live.debounce.500ms="receiver_name" 
+                                       wire:model.blur="receiver_name" 
                                        x-on:blur="$el.value = $el.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/Đ/g, 'D').replace(/đ/g, 'd'); $wire.set('receiver_name', $el.value);"
                                        class="form-control @error('receiver_name') is-invalid @enderror" 
                                        placeholder="HỌ VÀ TÊN NGƯỜI NHẬN (KHÔNG DẤU)">
