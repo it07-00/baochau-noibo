@@ -113,6 +113,8 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_VIEW_ALL->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
             // Báo cáo Marketing hàng ngày: chỉ xem
             PermissionEnum::MARKETING_REPORTS_VIEW->value, PermissionEnum::MARKETING_REPORTS_VIEW_ALL->value,
+            // Bài viết / nội dung content: CRUD
+            PermissionEnum::ARTICLES_VIEW->value, PermissionEnum::ARTICLES_CREATE->value, PermissionEnum::ARTICLES_EDIT->value, PermissionEnum::ARTICLES_DELETE->value,
         ]);
 
         // ------------------------------------------------
@@ -147,6 +149,8 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
             // Báo cáo Marketing hàng ngày: chỉ xem
             PermissionEnum::MARKETING_REPORTS_VIEW->value,
+            // Bài viết / nội dung content: CRUD
+            PermissionEnum::ARTICLES_VIEW->value, PermissionEnum::ARTICLES_CREATE->value, PermissionEnum::ARTICLES_EDIT->value, PermissionEnum::ARTICLES_DELETE->value,
         ]);
 
         // ------------------------------------------------
