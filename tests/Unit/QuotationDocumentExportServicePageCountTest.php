@@ -126,6 +126,75 @@ class QuotationDocumentExportServicePageCountTest extends TestCase
         }
     }
 
+    public function test_fallback_pdf_preserves_three_page_layout_for_full_periodic_quote(): void
+    {
+        $doc = new QuotationDocument([
+            'document_number' => 'QTMT-LAYOUT-001',
+            'date' => now(),
+            'customer_name' => 'FULL PERIODIC MONITORING CUSTOMER',
+            'customer_contact' => 'Environmental Manager',
+            'customer_address' => 'Industrial Park, Ho Chi Minh City',
+            'service_type' => 'Environmental monitoring',
+            'template_key' => 'qtmt_periodic',
+            'work_location' => 'Factory and wastewater treatment system',
+            'subtotal' => 44860000,
+            'discount' => 1560000,
+            'vat_rate' => 8,
+            'vat_amount' => 3464000,
+            'total' => 46764000,
+            'terms' => 'Payment terms: 50% after signing and 50% after report completion.',
+        ]);
+
+        $staff = new User(['name' => 'Sales Staff']);
+        $staff->setRelation('roles', collect());
+        $doc->setRelation('staff', $staff);
+
+        $items = collect([
+            new QuotationDocumentItem([
+                'item_type' => 'summary',
+                'sort_order' => 0,
+                'description' => 'Perform environmental monitoring in 2026 at the factory production area and wastewater treatment system',
+                'unit' => 'Report',
+                'quantity' => 1,
+                'unit_price' => 44860000,
+                'amount' => 44860000,
+            ]),
+        ]);
+
+        foreach (range(1, 23) as $index) {
+            $items->push(new QuotationDocumentItem([
+                'item_type' => 'detail',
+                'sort_order' => $index,
+                'group_name' => match (true) {
+                    $index <= 5 => 'I. AIR EMISSIONS',
+                    $index <= 14 => 'II. WASTEWATER',
+                    $index <= 21 => 'III. AMBIENT AIR',
+                    default => 'IV. OTHER COSTS',
+                },
+                'description' => $index % 5 === 0
+                    ? 'Flow rate, temperature and pressure at the monitoring location'
+                    : 'Environmental monitoring parameter '.$index,
+                'unit' => $index % 3 === 0 ? 'Parameter' : 'Sample',
+                'quantity' => $index % 4 + 1,
+                'frequency' => 4,
+                'unit_price' => 150000,
+                'amount' => 600000,
+            ]));
+        }
+
+        $doc->setRelation('items', $items);
+        $doc->setRelation('sections', collect());
+
+        $service = app(QuotationDocumentExportService::class);
+        $method = (new ReflectionClass($service))->getMethod('generateFallbackPdfContent');
+        $method->setAccessible(true);
+        $content = $method->invoke($service, $doc, '03');
+
+        preg_match_all('/\/Type\s*\/Page\b/', $content, $matches);
+
+        $this->assertCount(3, $matches[0]);
+    }
+
     private function resolveStaffDetails(QuotationDocument $doc): array
     {
         $service = app(QuotationDocumentExportService::class);
