@@ -34,7 +34,9 @@ class SoftwareManager extends Component
 
     public function mount()
     {
-        // Ai cũng xem được, không check permission
+        if (auth()->user()->hasRole(Role::THUC_TAP->value)) {
+            abort(403, 'Bạn không có quyền truy cập trang này.');
+        }
     }
 
     public function updatingSearch()

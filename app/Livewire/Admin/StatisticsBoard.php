@@ -26,6 +26,10 @@ class StatisticsBoard extends Component
 
     public function mount(): void
     {
+        if (auth()->user()->hasRole(RoleEnum::THUC_TAP->value)) {
+            abort(403, 'Bạn không có quyền truy cập trang này.');
+        }
+
         if (auth()->user()->hasRole(RoleEnum::MARKETING->value)) {
             $this->redirect(route('app.marketing.content.index'), navigate: true);
         }

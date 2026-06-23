@@ -19,6 +19,22 @@
 
         <div id="app-sidebar-menu" class="app-sidebar-menu">
             <ul>
+                @if (auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value))
+                    {{-- ── NGHIỆP VỤ (ONLY FOR INTERNS) ─────────────────────────────────── --}}
+                    <li class="app-sidebar-menu-heading">
+                        <span>
+                            <span class="app-sidebar-menu-heading-line"></span>
+                            NGHIỆP VỤ
+                        </span>
+                    </li>
+                    <li class="app-sidebar-menu-item">
+                        <a href="{{ route('app.daily-reports.index') }}"
+                            class="menu-link d-flex align-items-center {{ request()->routeIs('app.daily-reports.*') ? 'active menu-current' : '' }}">
+                            <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon('report') !!}</span>
+                            <span class="menu-title flex-grow-1">Báo cáo ngày</span>
+                        </a>
+                    </li>
+                @else
 
                 {{-- ── TỔNG QUAN ─────────────────────────────────────── --}}
                 <li class="app-sidebar-menu-heading">
@@ -445,6 +461,7 @@
                         @endforeach
                     @endforeach
                 @endunless
+                @endif
             </ul>
         </div>
 

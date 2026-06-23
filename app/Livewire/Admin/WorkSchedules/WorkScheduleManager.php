@@ -42,6 +42,10 @@ class WorkScheduleManager extends Component
 
     public function mount(): void
     {
+        if (auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value)) {
+            abort(403, 'Bạn không có quyền truy cập trang này.');
+        }
+
         $this->monthFilter = (int) date('m');
         $this->yearFilter  = (int) date('Y');
     }
