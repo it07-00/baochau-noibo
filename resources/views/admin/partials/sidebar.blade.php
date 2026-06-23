@@ -1,7 +1,7 @@
 <div id="app-sidebar" class="app-sidebar overflow-hidden">
     <div class="app-sidebar-wrapper">
         <div class="app-sidebar-header d-flex align-items-center justify-content-between">
-            <a href="{{ auth()->user()->hasAnyRole(\App\Enums\Role::dashboardAccessRoles()) ? route('app.dashboard') : route('app.home') }}"
+            <a href="{{ auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value) ? route('app.daily-reports.index') : (auth()->user()->hasAnyRole(\App\Enums\Role::dashboardAccessRoles()) ? route('app.dashboard') : route('app.home')) }}"
                 class="app-sidebar-logo text-decoration-none d-flex align-items-center gap-2">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Bảo Châu Environment"
                     class="h-40px-auto">
@@ -467,7 +467,7 @@
 
         <div class="app-sidebar-footer">
             <div class="d-flex align-items-center justify-content-between w-100 mb-2">
-                <a href="{{ route('app.profile.index') }}" class="d-flex align-items-center gap-3 text-decoration-none flex-grow-1 overflow-hidden profile-link">
+                <a href="{{ auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value) ? route('app.daily-reports.index') : route('app.profile.index') }}" class="d-flex align-items-center gap-3 text-decoration-none flex-grow-1 overflow-hidden profile-link">
                     <div class="avatar flex-shrink-0">
                         <x-user-avatar :user="auth()->user()" :size="40" class="border border-2 border-white border-opacity-10" />
                     </div>

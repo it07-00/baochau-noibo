@@ -1,4 +1,5 @@
 @inject('headerView', 'App\Support\HeaderViewData')
+@php($isIntern = auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value))
 
 <div class="app-header app-header-redesign">
     {{-- LEFT: Hamburger + Greeting --}}
@@ -59,9 +60,11 @@
                     </ul>
                 </li>
 
-                <li class="header-nav-item me-4 position-relative">
-                    <livewire:admin.notification-bell />
-                </li>
+                @unless($isIntern)
+                    <li class="header-nav-item me-4 position-relative">
+                        <livewire:admin.notification-bell />
+                    </li>
+                @endunless
 
                 <li class="header-nav-item header-user me-0">
                     <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -78,11 +81,13 @@
                             </div>
                         </div>
                         <div class="dropdown-body py-2">
+                            @unless($isIntern)
                             <a class="dropdown-item" href="{{ route('app.profile.index') }}">Hồ sơ của tôi</a>
                             <a class="dropdown-item" href="{{ route('app.password.index') }}">Đổi mật khẩu</a>
                             @can(\App\Enums\Permission::SETTINGS_VIEW->value)
                             <a class="dropdown-item" href="{{ route('app.settings.index') }}">Cài đặt hệ thống</a>
                             @endcan
+                            @endunless
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="dropdown-item">Đăng xuất</button>

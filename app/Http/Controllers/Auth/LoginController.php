@@ -30,16 +30,18 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            $defaultRoute = $user->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::KE_TOAN->value])
-                ? route('app.dashboard')
-                : route('app.home');
+            $defaultRoute = match (true) {
+                $user->hasRole(Role::THUC_TAP->value) => route('app.daily-reports.index'),
+                $user->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value, Role::KE_TOAN->value]) => route('app.dashboard'),
+                default => route('app.home'),
+            };
 
             return redirect()->intended($defaultRoute);
         }
 
         $lockedUser = User::where('username', $credentials['username'])->first();
 
-        if ($lockedUser && !$lockedUser->is_active && Auth::validate($credentials)) {
+        if ($lockedUser && ! $lockedUser->is_active && Auth::validate($credentials)) {
             return back()
                 ->withInput($request->only('username'))
                 ->withErrors([

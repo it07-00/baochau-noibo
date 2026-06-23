@@ -51,6 +51,11 @@ class RolesSeeder extends Seeder
                 'display_name' => 'Kế toán',
                 'description' => 'Hóa đơn, hoa hồng, ứng tiền, công nợ',
             ],
+            [
+                'name' => RoleEnum::THUC_TAP->value,
+                'display_name' => 'Thuc tap',
+                'description' => 'Chi truy cap bao cao ngay',
+            ],
         ];
 
         foreach ($roles as $roleData) {

@@ -7,19 +7,20 @@ use App\Enums\Role as RoleEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // ============================
         // 1. Định nghĩa tất cả permissions
         // ============================
         foreach (PermissionEnum::cases() as $perm) {
             Permission::firstOrCreate([
-                'name'       => $perm->value,
+                'name' => $perm->value,
                 'guard_name' => 'web',
             ]);
         }
@@ -248,6 +249,15 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày
             PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
+        ]);
+
+        // ------------------------------------------------
+        // Thuc tap - chi truy cap bao cao ngay
+        // ------------------------------------------------
+        Role::findOrCreate(RoleEnum::THUC_TAP->value)->syncPermissions([
+            PermissionEnum::DAILY_REPORTS_VIEW->value,
+            PermissionEnum::DAILY_REPORTS_CREATE->value,
+            PermissionEnum::DAILY_REPORTS_EDIT->value,
         ]);
     }
 }
