@@ -43,6 +43,7 @@ class CommissionRequest extends Model
     protected $casts = [
         'processed_at' => 'datetime',
         'amount' => 'integer',
+        'user_id' => 'integer',
     ];
 
     public function contract(): MorphTo
