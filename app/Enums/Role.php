@@ -13,6 +13,7 @@ enum Role: string
     case MARKETING      = 'marketing';
     case KE_TOAN        = 'ke-toan';
     case HCNS           = 'hcns';
+    case THUC_TAP       = 'thuc-tap';
 
     public function label(): string
     {
@@ -26,6 +27,7 @@ enum Role: string
             self::MARKETING     => 'Marketing',
             self::KE_TOAN       => 'Kế toán',
             self::HCNS          => 'Hành chính NS',
+            self::THUC_TAP      => 'Thực tập',
         };
     }
 
@@ -41,6 +43,7 @@ enum Role: string
             self::MARKETING     => '#ec4899',
             self::KE_TOAN       => '#84cc16',
             self::HCNS          => '#64748b',
+            self::THUC_TAP      => '#a855f7',
         };
     }
 
@@ -57,6 +60,7 @@ enum Role: string
             self::TU_VAN->value,
             self::KY_THUAT->value,
             self::KINH_DOANH->value,
+            self::THUC_TAP->value,
         ];
     }
 

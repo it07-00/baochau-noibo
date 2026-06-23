@@ -18,6 +18,10 @@ class HomeBoard extends Component
         if ($user->hasRole(Role::MARKETING->value)) {
             $this->redirect(route('app.marketing.content.index'), navigate: true);
         }
+
+        if ($user->hasRole(Role::THUC_TAP->value)) {
+            $this->redirect(route('app.daily-reports.index'), navigate: true);
+        }
     }
 
     public function render()
