@@ -4,9 +4,11 @@ namespace App\Livewire\Admin\Marketing;
 
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Models\MarketingContent;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\MarketingContent;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -18,42 +20,76 @@ class MarketingContentManager extends Component
 
     // Form fields
     public string $formTitle = '';
+
     public string $formContent = '';
+
     public string $formScheduledAt = '';
+
     public array $newImages = [];
+
     public array $existingImages = [];
+
     public array $imagesToRemove = [];
 
     // State
     public bool $isEditing = false;
+
     public ?int $editingId = null;
 
     // Review
     public ?int $reviewingId = null;
+
     public string $reviewNote = '';
 
     // Detail
     public ?int $detailId = null;
 
+    // Calendar
+    public string $calendarMonth = '';
+
+    public function mount(): void
+    {
+        $this->calendarMonth = now()->format('Y-m');
+    }
+
     protected function rules(): array
     {
         return [
-            'formTitle'        => 'required|string|max:200',
-            'formContent'      => 'required|string',
-            'formScheduledAt'  => 'required|date',
-            'newImages.*'      => 'nullable|image|max:10240',
+            'formTitle' => 'required|string|max:200',
+            'formContent' => 'required|string',
+            'formScheduledAt' => 'required|date',
+            'newImages.*' => 'nullable|image|max:10240',
         ];
     }
 
     protected function messages(): array
     {
         return [
-            'formTitle.required'     => 'Tiêu đề không được để trống.',
-            'formContent.required'   => 'Nội dung không được để trống.',
+            'formTitle.required' => 'Tiêu đề không được để trống.',
+            'formContent.required' => 'Nội dung không được để trống.',
             'formScheduledAt.required' => 'Vui lòng chọn ngày đăng dự kiến.',
-            'newImages.*.image'      => 'Tệp phải là hình ảnh.',
-            'newImages.*.max'        => 'Ảnh không được vượt quá 10MB.',
+            'newImages.*.image' => 'Tệp phải là hình ảnh.',
+            'newImages.*.max' => 'Ảnh không được vượt quá 10MB.',
         ];
+    }
+
+    public function previousCalendarMonth(): void
+    {
+        $this->calendarMonth = $this->calendarMonthStart()
+            ->subMonthNoOverflow()
+            ->format('Y-m');
+    }
+
+    public function nextCalendarMonth(): void
+    {
+        $this->calendarMonth = $this->calendarMonthStart()
+            ->addMonthNoOverflow()
+            ->format('Y-m');
+    }
+
+    public function goToCurrentCalendarMonth(): void
+    {
+        $this->calendarMonth = now()->format('Y-m');
     }
 
     public function openCreate(): void
@@ -66,12 +102,28 @@ class MarketingContentManager extends Component
         $this->dispatch('openContentFormModal');
     }
 
+    public function openCreateForDate(string $date): void
+    {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_CREATE);
+
+        $scheduledAt = $this->parseCalendarDate($date);
+        if (! $scheduledAt) {
+            return;
+        }
+
+        $this->resetForm();
+        $this->isEditing = false;
+        $this->editingId = null;
+        $this->formScheduledAt = $scheduledAt->toDateString();
+        $this->dispatch('openContentFormModal');
+    }
+
     public function openEdit(int $id): void
     {
         $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
 
         $record = $this->authorizeOwn($id);
-        if (!$record || !$record->isEditable()) {
+        if (! $record || ! $record->isEditable()) {
             return;
         }
 
@@ -85,6 +137,26 @@ class MarketingContentManager extends Component
         $this->imagesToRemove = [];
 
         $this->dispatch('openContentFormModal');
+    }
+
+    public function openCalendarContent(int $id): void
+    {
+        $record = $this->authorizeOwn($id);
+        if (! $record) {
+            return;
+        }
+
+        $user = auth()->user();
+        $isMarketing = $user && ($user->can(Permission::ARTICLES_CREATE->value) || $user->can(Permission::ARTICLES_EDIT->value)) && ! $user->hasRole(Role::TP_KINH_DOANH->value);
+
+        if ($isMarketing && $user->can(Permission::ARTICLES_EDIT->value) && $record->isEditable()) {
+            $this->openEdit($record->id);
+
+            return;
+        }
+
+        $this->detailId = $record->id;
+        $this->dispatch('openDetailModal');
     }
 
     public function save(): void
@@ -111,15 +183,19 @@ class MarketingContentManager extends Component
         }
 
         $data = [
-            'title'        => $this->formTitle,
-            'content'      => $this->formContent,
+            'title' => $this->formTitle,
+            'content' => $this->formContent,
             'scheduled_at' => $this->formScheduledAt,
-            'images'       => $storedPaths ?: null,
+            'images' => $storedPaths ?: null,
         ];
 
         if ($this->isEditing) {
+            if (! $this->editingId) {
+                return;
+            }
+
             $record = $this->authorizeOwn($this->editingId);
-            if (!$record || !$record->isEditable()) {
+            if (! $record || ! $record->isEditable()) {
                 return;
             }
             // Reset to draft when re-editing a rejected post
@@ -148,7 +224,7 @@ class MarketingContentManager extends Component
         $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
 
         $record = $this->authorizeOwn($id);
-        if (!$record || !$record->isDraft()) {
+        if (! $record || ! $record->isDraft()) {
             return;
         }
 
@@ -161,7 +237,7 @@ class MarketingContentManager extends Component
         $this->authorizeReviewerAction();
 
         $record = MarketingContent::find($id);
-        if (!$record || !$record->isPending()) {
+        if (! $record || ! $record->isPending()) {
             return;
         }
 
@@ -175,12 +251,12 @@ class MarketingContentManager extends Component
         $this->authorizeReviewerAction();
 
         $record = MarketingContent::find($this->reviewingId);
-        if (!$record || !$record->isPending()) {
+        if (! $record || ! $record->isPending()) {
             return;
         }
 
         $record->update([
-            'status'      => 'approved',
+            'status' => 'approved',
             'reviewer_id' => auth()->id(),
             'reviewed_at' => now(),
             'reviewer_note' => null,
@@ -200,14 +276,14 @@ class MarketingContentManager extends Component
         ]);
 
         $record = MarketingContent::find($this->reviewingId);
-        if (!$record || !$record->isPending()) {
+        if (! $record || ! $record->isPending()) {
             return;
         }
 
         $record->update([
-            'status'        => 'rejected',
-            'reviewer_id'   => auth()->id(),
-            'reviewed_at'   => now(),
+            'status' => 'rejected',
+            'reviewer_id' => auth()->id(),
+            'reviewed_at' => now(),
             'reviewer_note' => $this->reviewNote,
         ]);
 
@@ -220,7 +296,7 @@ class MarketingContentManager extends Component
     public function openDetail(int $id): void
     {
         $record = $this->authorizeOwn($id);
-        if (!$record) {
+        if (! $record) {
             return;
         }
 
@@ -233,7 +309,7 @@ class MarketingContentManager extends Component
         $this->authorizeMarketingPermission(Permission::ARTICLES_DELETE);
 
         $record = $this->authorizeOwn($id);
-        if (!$record || !$record->isDraft()) {
+        if (! $record || ! $record->isDraft()) {
             return;
         }
 
@@ -266,7 +342,7 @@ class MarketingContentManager extends Component
     {
         $user = auth()->user();
 
-        abort_unless($user && $user->can($permission->value), 403);
+        abort_unless($user && $user->can($permission->value) && ! $user->hasRole(Role::TP_KINH_DOANH->value), 403);
     }
 
     private function authorizeReviewerAction(): void
@@ -276,23 +352,12 @@ class MarketingContentManager extends Component
 
     private function buildScopedQuery(bool $isMarketing): Builder
     {
-        $user = auth()->user();
-
-        return MarketingContent::query()
-            ->when($isMarketing && !$this->isReviewer(), fn (Builder $builder) => $builder->where('user_id', $user->id));
+        return MarketingContent::query();
     }
 
     private function authorizeOwn(int $id): ?MarketingContent
     {
-        $user = auth()->user();
-        $record = MarketingContent::find($id);
-        if (!$record) {
-            return null;
-        }
-        if (!$this->isReviewer() && $record->user_id !== $user->id) {
-            return null;
-        }
-        return $record;
+        return MarketingContent::find($id);
     }
 
     private function resetForm(): void
@@ -308,11 +373,62 @@ class MarketingContentManager extends Component
 
     private function isReviewer(): bool
     {
-        return auth()->user()->hasAnyRole([
-            Role::TP_KINH_DOANH->value,
-            Role::GIAM_DOC->value,
-            Role::IT->value,
-        ]);
+        return auth()->user()->hasRole(Role::TP_KINH_DOANH->value);
+    }
+
+    private function calendarMonthStart(): CarbonImmutable
+    {
+        if (! preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $this->calendarMonth)) {
+            $this->calendarMonth = now()->format('Y-m');
+        }
+
+        return CarbonImmutable::createFromFormat('!Y-m-d', $this->calendarMonth.'-01')
+            ->startOfMonth();
+    }
+
+    private function daysUntilSchedule(CarbonInterface $scheduledAt): int
+    {
+        return (int) CarbonImmutable::today()
+            ->diffInDays(CarbonImmutable::parse($scheduledAt->toDateString()), true);
+    }
+
+    private function buildCalendarDays(CarbonImmutable $monthStart, Collection $contents): array
+    {
+        $gridStart = $monthStart->startOfWeek(CarbonInterface::MONDAY);
+        $gridEnd = $monthStart->endOfMonth()->endOfWeek(CarbonInterface::SUNDAY);
+        $contentsByDate = $contents->groupBy(fn (MarketingContent $item) => $item->scheduled_at?->toDateString());
+        $days = [];
+
+        for ($day = $gridStart; $day->lessThanOrEqualTo($gridEnd); $day = $day->addDay()) {
+            $days[] = [
+                'date' => $day,
+                'key' => $day->toDateString(),
+                'isCurrentMonth' => $day->isSameMonth($monthStart),
+                'isToday' => $day->isToday(),
+                'items' => $contentsByDate->get($day->toDateString(), collect()),
+            ];
+        }
+
+        return $days;
+    }
+
+    private function parseCalendarDate(string $date): ?CarbonImmutable
+    {
+        if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return null;
+        }
+
+        try {
+            $parsed = CarbonImmutable::createFromFormat('!Y-m-d', $date);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if ($parsed->format('Y-m-d') !== $date) {
+            return null;
+        }
+
+        return $parsed;
     }
 
     public function listScheduleIcon(?CarbonInterface $scheduledAt): string
@@ -329,7 +445,7 @@ class MarketingContentManager extends Component
             return 'bi bi-exclamation-circle';
         }
 
-        if ($scheduledAt->diffInDays(now()) <= 7) {
+        if ($this->daysUntilSchedule($scheduledAt) <= 7) {
             return 'bi bi-calendar-week';
         }
 
@@ -347,14 +463,16 @@ class MarketingContentManager extends Component
         }
 
         if ($scheduledAt->isPast()) {
-            return 'Quá lịch ' . $scheduledAt->format('d/m');
+            return 'Quá lịch '.$scheduledAt->format('d/m');
         }
 
-        if ($scheduledAt->diffInDays(now()) <= 7) {
-            return 'Trong ' . $scheduledAt->diffInDays(now()) . ' ngày';
+        $daysUntil = $this->daysUntilSchedule($scheduledAt);
+
+        if ($daysUntil <= 7) {
+            return 'Trong '.$daysUntil.' ngày';
         }
 
-        return 'Lên lịch ' . $scheduledAt->format('d/m');
+        return 'Lên lịch '.$scheduledAt->format('d/m');
     }
 
     public function detailScheduleValue(?CarbonInterface $scheduledAt): string
@@ -376,24 +494,56 @@ class MarketingContentManager extends Component
             return 'Đã quá lịch đăng';
         }
 
-        if ($scheduledAt->diffInDays(now()) <= 7) {
-            return 'Dự kiến đăng trong ' . $scheduledAt->diffInDays(now()) . ' ngày';
+        $daysUntil = $this->daysUntilSchedule($scheduledAt);
+
+        if ($daysUntil <= 7) {
+            return 'Dự kiến đăng trong '.$daysUntil.' ngày';
         }
 
         return 'Đã lên lịch đăng';
     }
 
+    public function formSchedulePreviewValue(): string
+    {
+        if (! $this->formScheduledAt) {
+            return 'Chọn ngày đăng';
+        }
+
+        return CarbonImmutable::parse($this->formScheduledAt)->format('d/m/Y');
+    }
+
+    public function formSchedulePreviewHint(): string
+    {
+        if (! $this->formScheduledAt) {
+            return 'Bài viết sẽ nằm trên lịch sau khi chọn ngày.';
+        }
+
+        return $this->detailScheduleHint(CarbonImmutable::parse($this->formScheduledAt));
+    }
+
     public function render()
     {
         $user = auth()->user();
-        $isMarketing = $user->can(Permission::ARTICLES_CREATE->value);
+        $isMarketing = ($user->can(Permission::ARTICLES_CREATE->value) || $user->can(Permission::ARTICLES_EDIT->value)) && ! $user->hasRole(Role::TP_KINH_DOANH->value);
 
-        $scopedQuery = $this->buildScopedQuery($isMarketing);
-
-        $contents = $scopedQuery
+        $monthStart = $this->calendarMonthStart();
+        $contents = $this->buildScopedQuery($isMarketing)
             ->with(['user', 'reviewer'])
+            ->whereBetween('scheduled_at', [$monthStart->toDateString(), $monthStart->endOfMonth()->toDateString()])
+            ->orderBy('scheduled_at')
+            ->orderBy('created_at')
+            ->get();
+
+        $monthContents = $contents
+            ->filter(fn (MarketingContent $item) => $item->scheduled_at?->isSameMonth($monthStart))
+            ->values();
+
+        $unscheduledContents = $this->buildScopedQuery($isMarketing)
+            ->with(['user', 'reviewer'])
+            ->whereNull('scheduled_at')
             ->latest()
-            ->paginate(12);
+            ->limit(8)
+            ->get();
 
         $detailRecord = $this->detailId ? $this->authorizeOwn($this->detailId) : null;
         $reviewRecord = ($this->reviewingId && $this->isReviewer())
@@ -401,11 +551,16 @@ class MarketingContentManager extends Component
             : null;
 
         return view('livewire.admin.marketing.marketing-content-manager', [
-            'contents'     => $contents,
+            'contents' => $contents,
+            'calendarDays' => $this->buildCalendarDays($monthStart, $contents),
+            'calendarMonthLabel' => 'Tháng '.$monthStart->format('m/Y'),
+            'calendarStatusCounts' => $monthContents->countBy('status'),
+            'monthContentsCount' => $monthContents->count(),
+            'unscheduledContents' => $unscheduledContents,
             'statusLabels' => MarketingContent::$statusLabels,
             'statusColors' => MarketingContent::$statusColors,
-            'isMarketing'  => $isMarketing,
-            'isReviewer'   => $this->isReviewer(),
+            'isMarketing' => $isMarketing,
+            'isReviewer' => $this->isReviewer(),
             'detailRecord' => $detailRecord,
             'reviewRecord' => $reviewRecord,
         ])->layout('admin.layouts.app');
