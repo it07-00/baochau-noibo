@@ -1,6 +1,6 @@
 @once
     @push('styles')
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/marketing-content-manager.css') }}?v={{ config('app.version') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/marketing-content-manager.css') }}?v={{ filemtime(public_path('assets/css/marketing-content-manager.css')) }}">
     @endpush
 @endonce
 
