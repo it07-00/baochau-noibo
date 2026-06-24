@@ -289,4 +289,71 @@ class MarketingContentManagerTest extends TestCase
             ->assertSet('isEditing', false)
             ->assertSet('detailId', $record->id);
     }
+
+    public function test_marketing_content_notifications_are_dispatched(): void
+    {
+        \Illuminate\Support\Facades\Notification::fake();
+
+        $tpkdRole = Role::findByName(RoleEnum::TP_KINH_DOANH->value);
+        $tpkdUser = User::factory()->create([
+            'is_active' => true,
+        ]);
+        $tpkdUser->assignRole($tpkdRole);
+
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Notify campaign',
+            'content' => 'Notify caption',
+            'scheduled_at' => '2026-07-15',
+            'status' => 'draft',
+        ]);
+
+        // 1. Submit for review
+        $this->actingAs($this->salesUser);
+        Livewire::test(MarketingContentManager::class)
+            ->call('submitForReview', $record->id);
+
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $tpkdUser,
+            \App\Notifications\MarketingContentNotification::class,
+            function ($notification, $channels) use ($tpkdUser) {
+                return $notification->toArray($tpkdUser)['color'] === 'warning';
+            }
+        );
+
+        // 2. Approve
+        \Illuminate\Support\Facades\Notification::fake(); // reset
+        $record->update(['status' => 'pending']); // ensure status is pending for review
+        $this->actingAs($tpkdUser);
+        Livewire::test(MarketingContentManager::class)
+            ->set('reviewingId', $record->id)
+            ->call('approve');
+
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $this->salesUser,
+            \App\Notifications\MarketingContentNotification::class,
+            function ($notification, $channels) {
+                return $notification->toArray($this->salesUser)['color'] === 'success';
+            }
+        );
+
+        // 3. Reject
+        \Illuminate\Support\Facades\Notification::fake(); // reset
+        $record->update(['status' => 'pending']);
+        Livewire::test(MarketingContentManager::class)
+            ->set('reviewingId', $record->id)
+            ->set('reviewNote', 'Rejected reason')
+            ->call('reject');
+
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $this->salesUser,
+            \App\Notifications\MarketingContentNotification::class,
+            function ($notification, $channels) {
+                $data = $notification->toArray($this->salesUser);
+                return $data['color'] === 'danger' && str_contains($data['message'], 'Rejected reason');
+            }
+        );
+    }
 }

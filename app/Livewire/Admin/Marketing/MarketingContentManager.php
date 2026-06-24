@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\Marketing;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\MarketingContent;
+use App\Models\User;
+use App\Notifications\MarketingContentNotification;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -229,6 +231,13 @@ class MarketingContentManager extends Component
         }
 
         $record->update(['status' => 'pending']);
+
+        // Gửi thông báo cho tất cả TPKD
+        $tpkdUsers = User::role(Role::TP_KINH_DOANH->value)->get();
+        foreach ($tpkdUsers as $tpkdUser) {
+            $tpkdUser->notify(new MarketingContentNotification($record, 'submitted'));
+        }
+
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã gửi duyệt thành công.']);
     }
 
@@ -262,6 +271,11 @@ class MarketingContentManager extends Component
             'reviewer_note' => null,
         ]);
 
+        // Gửi thông báo cho người tạo bài viết
+        if ($record->user) {
+            $record->user->notify(new MarketingContentNotification($record, 'approved'));
+        }
+
         $this->reviewingId = null;
         $this->dispatch('closeReviewModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã duyệt bài content.']);
@@ -286,6 +300,11 @@ class MarketingContentManager extends Component
             'reviewed_at' => now(),
             'reviewer_note' => $this->reviewNote,
         ]);
+
+        // Gửi thông báo cho người tạo bài viết
+        if ($record->user) {
+            $record->user->notify(new MarketingContentNotification($record, 'rejected', $this->reviewNote));
+        }
 
         $this->reviewingId = null;
         $this->reviewNote = '';

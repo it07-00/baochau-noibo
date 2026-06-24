@@ -32,7 +32,7 @@ class NotificationBell extends Component
 
     private function allowedSectionKeysForUser($user): array
     {
-        return array_merge(['daily_report', 'work_schedule', 'commission'], $this->contractSectionKeys());
+        return array_merge(['daily_report', 'work_schedule', 'commission', 'marketing'], $this->contractSectionKeys());
     }
 
     private function sectionLabelsForUser($user): array
@@ -42,6 +42,7 @@ class NotificationBell extends Component
             'daily_report'   => 'Báo cáo ngày',
             'work_schedule'  => 'Lịch công tác',
             'commission'     => 'Yêu cầu chi hoa hồng',
+            'marketing'      => 'Kế hoạch content',
             'waste'          => 'HĐ Chất thải và tiếng ồn',
             'consulting'     => 'HĐ Pháp lý và hồ sơ MT',
             'project'        => 'HĐ Kỹ thuật và ứng phó SC',
@@ -66,7 +67,7 @@ class NotificationBell extends Component
     {
         $contractType = (string) ($data['contract_type'] ?? '');
 
-        $allKeys = array_merge(['daily_report', 'work_schedule', 'commission'], $this->contractSectionKeys());
+        $allKeys = array_merge(['daily_report', 'work_schedule', 'commission', 'marketing'], $this->contractSectionKeys());
 
         if (in_array($contractType, $allKeys, true)) {
             return $contractType;
