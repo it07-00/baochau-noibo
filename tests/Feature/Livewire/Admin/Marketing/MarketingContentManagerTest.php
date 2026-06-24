@@ -324,8 +324,7 @@ class MarketingContentManagerTest extends TestCase
         );
 
         // 2. Approve
-        \Illuminate\Support\Facades\Notification::fake(); // reset
-        $record->update(['status' => 'pending']); // ensure status is pending for review
+        $record->refresh()->update(['status' => 'pending']); // ensure status is pending for review
         $this->actingAs($tpkdUser);
         Livewire::test(MarketingContentManager::class)
             ->set('reviewingId', $record->id)
@@ -340,8 +339,7 @@ class MarketingContentManagerTest extends TestCase
         );
 
         // 3. Reject
-        \Illuminate\Support\Facades\Notification::fake(); // reset
-        $record->update(['status' => 'pending']);
+        $record->refresh()->update(['status' => 'pending']);
         Livewire::test(MarketingContentManager::class)
             ->set('reviewingId', $record->id)
             ->set('reviewNote', 'Rejected reason')
@@ -355,5 +353,33 @@ class MarketingContentManagerTest extends TestCase
                 return $data['color'] === 'danger' && str_contains($data['message'], 'Rejected reason');
             }
         );
+    }
+
+    public function test_marketing_content_image_upload_converts_to_webp(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_CREATE->value);
+
+        $this->actingAs($this->salesUser);
+
+        $image = \Illuminate\Http\UploadedFile::fake()->image('campaign.png', 200, 200);
+
+        Livewire::test(MarketingContentManager::class)
+            ->set('formTitle', 'WebP Campaign')
+            ->set('formContent', 'Caption detailing webp conversion')
+            ->set('formScheduledAt', '2026-07-20')
+            ->set('newImages', [$image])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $record = MarketingContent::where('title', 'WebP Campaign')->first();
+        $this->assertNotNull($record);
+        $this->assertNotEmpty($record->images);
+        
+        $savedPath = $record->images[0];
+        $this->assertStringEndsWith('.webp', $savedPath);
+
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($savedPath);
     }
 }

@@ -291,7 +291,7 @@
                                             <label class="form-label fw-semibold d-block mt-2 mb-2">{{ $isEditing ? 'Thêm ảnh mới' : 'Tải ảnh lên' }}</label>
                                             <input type="file" class="form-control @error('newImages.*') is-invalid @enderror"
                                                 wire:model="newImages" multiple accept="image/*">
-                                            <div class="form-text">Cho phép nhiều ảnh, tối đa 10MB mỗi ảnh.</div>
+                                            <div class="form-text">Cho phép nhiều ảnh, tối đa 50MB mỗi ảnh (tự động chuyển sang định dạng WebP).</div>
                                             @error('newImages.*')
                                                 <div class="text-danger small mt-1">{{ $message }}</div>
                                             @enderror

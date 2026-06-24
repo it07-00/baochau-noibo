@@ -60,7 +60,7 @@ class MarketingContentManager extends Component
             'formTitle' => 'required|string|max:200',
             'formContent' => 'required|string',
             'formScheduledAt' => 'required|date',
-            'newImages.*' => 'nullable|image|max:10240',
+            'newImages.*' => 'nullable|image|max:51200',
         ];
     }
 
@@ -71,7 +71,7 @@ class MarketingContentManager extends Component
             'formContent.required' => 'Nội dung không được để trống.',
             'formScheduledAt.required' => 'Vui lòng chọn ngày đăng dự kiến.',
             'newImages.*.image' => 'Tệp phải là hình ảnh.',
-            'newImages.*.max' => 'Ảnh không được vượt quá 10MB.',
+            'newImages.*.max' => 'Ảnh không được vượt quá 50MB.',
         ];
     }
 
@@ -181,7 +181,31 @@ class MarketingContentManager extends Component
 
         // Store new images
         foreach ($this->newImages as $image) {
-            $storedPaths[] = $image->store('marketing-content', 'public');
+            $webpData = null;
+            try {
+                $sourcePath = $image->getRealPath();
+                $imgData = file_get_contents($sourcePath);
+                $im = imagecreatefromstring($imgData);
+                if ($im !== false) {
+                    imagealphablending($im, false);
+                    imagesavealpha($im, true);
+
+                    ob_start();
+                    imagewebp($im, null, 85);
+                    $webpData = ob_get_clean();
+                    imagedestroy($im);
+                }
+            } catch (\Throwable $e) {
+                logger()->error('WebP conversion failed: ' . $e->getMessage());
+            }
+
+            if ($webpData !== null) {
+                $filename = 'marketing-content/' . \Illuminate\Support\Str::random(40) . '.webp';
+                Storage::disk('public')->put($filename, $webpData);
+                $storedPaths[] = $filename;
+            } else {
+                $storedPaths[] = $image->store('marketing-content', 'public');
+            }
         }
 
         $data = [
