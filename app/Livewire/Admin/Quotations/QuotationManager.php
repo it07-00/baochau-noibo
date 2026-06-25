@@ -6,26 +6,31 @@ use App\Actions\Quotations\UpsertQuotationAction;
 use App\Enums\Permission;
 use App\Enums\QuotationStatus;
 use App\Enums\Role;
+use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\Quotation;
 use App\Models\QuotationFile;
 use App\Models\User;
-use App\Models\Customer;
 use App\Services\Quotations\QuotationImportService;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Livewire\WithFileUploads;
-use App\Livewire\Concerns\CleanMoneyInput;
+use Livewire\WithPagination;
 
 class QuotationManager extends Component
 {
-    use WithPagination, CleanMoneyInput, WithFileUploads;
+    use CleanMoneyInput, WithFileUploads, WithPagination;
 
     public $search = '';
+
     public $filter_staff = '';
+
     public $filter_status = '';
+
     public $date_from = '';
+
     public $date_to = '';
+
     public $sortDirection = 'desc';
 
     protected $queryString = [
@@ -33,22 +38,33 @@ class QuotationManager extends Component
     ];
 
     public $showModal = false;
+
     public $isEditing = false;
+
     public $isDuplicating = false;
+
     public $selectedId = null;
+
     public $selectedQuotation = null;
+
     public $convertingQuotation = null;
 
     // PDF
     public array $pdfFiles = [];
+
     public array $editingFiles = []; // [['id'=>, 'name'=>, 'url'=>], ...]
 
     // Import
     public $importFile = null;
+
     public $importPreview = [];
+
     public $importHeaders = [];
+
     public $importColumnMap = [];
+
     public $importErrors = [];
+
     public $importSuccess = null;
 
     public array $availableFields = [];
@@ -198,9 +214,20 @@ class QuotationManager extends Component
 
     private array $moneyFields = ['original_value', 'value_inc_vat', 'commission_value', 'commission_tax', 'total_value'];
 
-    public function updatedFormDataOriginalValue() { $this->recalculateTotals(); }
-    public function updatedFormDataCommissionValue() { $this->recalculateTotals(); }
-    public function updatedFormDataCommissionTax() { $this->recalculateTotals(); }
+    public function updatedFormDataOriginalValue()
+    {
+        $this->recalculateTotals();
+    }
+
+    public function updatedFormDataCommissionValue()
+    {
+        $this->recalculateTotals();
+    }
+
+    public function updatedFormDataCommissionTax()
+    {
+        $this->recalculateTotals();
+    }
 
     public function updatedSortDirection($value): void
     {
@@ -232,6 +259,7 @@ class QuotationManager extends Component
 
         if (is_string($value)) {
             $normalized = preg_replace('/\D+/', '', $value);
+
             return $normalized !== '' ? (float) $normalized : 0.0;
         }
 
@@ -254,11 +282,11 @@ class QuotationManager extends Component
         $this->authorizeQuotationAccess($quotation);
 
         $this->selectedId = $id;
-        $this->pdfFiles   = [];
+        $this->pdfFiles = [];
         $this->editingFiles = $quotation->files->map(fn ($f) => [
-            'id'   => $f->id,
+            'id' => $f->id,
             'name' => $f->original_name,
-            'url'  => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
+            'url' => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
 
         $this->dispatch('open-files-modal');
@@ -276,7 +304,7 @@ class QuotationManager extends Component
             ['pdfFiles.*' => 'file|mimes:pdf|max:51200'],
             [
                 'pdfFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
-                'pdfFiles.*.max'   => 'File PDF không được vượt quá 50MB.',
+                'pdfFiles.*.max' => 'File PDF không được vượt quá 50MB.',
             ]
         );
 
@@ -286,16 +314,16 @@ class QuotationManager extends Component
         foreach ($this->pdfFiles as $file) {
             $path = $file->store('quotations', config('filesystems.upload_disk', 'public'));
             $quotation->files()->create([
-                'path'          => $path,
+                'path' => $path,
                 'original_name' => $file->getClientOriginalName(),
             ]);
         }
 
         $this->pdfFiles = [];
         $this->editingFiles = $quotation->fresh('files')->files->map(fn ($f) => [
-            'id'   => $f->id,
+            'id' => $f->id,
             'name' => $f->original_name,
-            'url'  => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
+            'url' => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
 
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã lưu file PDF.']);
@@ -322,9 +350,9 @@ class QuotationManager extends Component
         $this->formData = $quotation->toArray();
         unset($this->formData['pdf_path']);
         $this->editingFiles = $quotation->files->map(fn ($f) => [
-            'id'   => $f->id,
+            'id' => $f->id,
             'name' => $f->original_name,
-            'url'  => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
+            'url' => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
         $this->recalculateTotals();
@@ -375,14 +403,14 @@ class QuotationManager extends Component
     {
         abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
 
-        $route = match($type) {
-            'waste'          => 'app.contracts.waste.index',
-            'consulting'     => 'app.contracts.consulting.index',
-            'project'        => 'app.contracts.project.index',
-            'commercial'     => 'app.contracts.commercial.index',
+        $route = match ($type) {
+            'waste' => 'app.contracts.waste.index',
+            'consulting' => 'app.contracts.consulting.index',
+            'project' => 'app.contracts.project.index',
+            'commercial' => 'app.contracts.commercial.index',
             'sustainability' => 'app.contracts.sustainability.index',
-            'energy'         => 'app.contracts.energy.index',
-            default          => 'app.contracts.waste.index',
+            'energy' => 'app.contracts.energy.index',
+            default => 'app.contracts.waste.index',
         };
 
         return redirect()->route($route, ['quotation_id' => $this->convertingQuotation->id]);
@@ -404,8 +432,9 @@ class QuotationManager extends Component
     {
         $user = auth()->user();
 
-        if (!$user->can($this->isEditing ? Permission::QUOTATION_TRACKING_EDIT->value : Permission::QUOTATION_TRACKING_CREATE->value)) {
+        if (! $user->can($this->isEditing ? Permission::QUOTATION_TRACKING_EDIT->value : Permission::QUOTATION_TRACKING_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu báo giá này.']);
+
             return;
         }
 
@@ -414,16 +443,17 @@ class QuotationManager extends Component
             $existing = Quotation::findOrFail($this->selectedId);
             if ($this->isKinhDoanh() && (int) $existing->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật báo giá do bạn phụ trách.']);
+
                 return;
             }
         }
 
-        $this->cleanMoneyFields($this->formData, $this->moneyFields);
+        $this->cleanMoneyFields($this->formData, $this->moneyFields, blankAsZero: true);
         $this->recalculateTotals();
 
         try {
             $this->validate($this->rules, $this->quotationValidationMessages(), $this->quotationValidationAttributes());
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $firstError = $e->validator->errors()->first();
             if ($firstError) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => $firstError]);
@@ -433,18 +463,18 @@ class QuotationManager extends Component
 
         [$quotation, $msg] = app(UpsertQuotationAction::class)->execute($this->formData, $user, $existing);
 
-        if (!empty($this->pdfFiles)) {
+        if (! empty($this->pdfFiles)) {
             $this->validate(
                 ['pdfFiles.*' => 'file|mimes:pdf|max:51200'],
                 [
                     'pdfFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
-                    'pdfFiles.*.max'   => 'File PDF không được vượt quá 50MB.',
+                    'pdfFiles.*.max' => 'File PDF không được vượt quá 50MB.',
                 ]
             );
             foreach ($this->pdfFiles as $file) {
                 $path = $file->store('quotations', config('filesystems.upload_disk', 'public'));
                 $quotation->files()->create([
-                    'path'          => $path,
+                    'path' => $path,
                     'original_name' => $file->getClientOriginalName(),
                 ]);
             }
@@ -543,10 +573,10 @@ class QuotationManager extends Component
 
         $result = app(QuotationImportService::class)->previewFile($this->importFile);
 
-        $this->importErrors    = $result['errors'];
-        $this->importHeaders   = $result['headers'];
+        $this->importErrors = $result['errors'];
+        $this->importHeaders = $result['headers'];
         $this->importColumnMap = $result['columnMap'];
-        $this->importPreview   = $result['preview'];
+        $this->importPreview = $result['preview'];
     }
 
     public function runImport()
@@ -558,6 +588,7 @@ class QuotationManager extends Component
 
         if (! $this->importFile) {
             $this->importErrors[] = 'Chưa chọn file.';
+
             return;
         }
 
@@ -576,12 +607,12 @@ class QuotationManager extends Component
             if ($result['skippedDuplicates'] > 0) {
                 $messageParts[] = "bỏ qua {$result['skippedDuplicates']} dòng trùng dữ liệu";
             }
-            $this->importSuccess = implode(', ', $messageParts) . '.';
+            $this->importSuccess = implode(', ', $messageParts).'.';
 
             $this->dispatch('close-import-modal');
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => $this->importSuccess]);
         } catch (\Throwable $e) {
-            $this->importErrors[] = 'Lỗi khi import: ' . $e->getMessage();
+            $this->importErrors[] = 'Lỗi khi import: '.$e->getMessage();
         }
     }
 
@@ -600,20 +631,20 @@ class QuotationManager extends Component
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
 
         $query = Quotation::with(['staff', 'quotationDocuments'])->withCount('files')
-            ->when($this->isKinhDoanh(), fn($q) => $q->where('staff_id', auth()->id()))
-            ->when($this->search, function($q) {
-                $q->where(function($sq) {
+            ->when($this->isKinhDoanh(), fn ($q) => $q->where('staff_id', auth()->id()))
+            ->when($this->search, function ($q) {
+                $q->where(function ($sq) {
                     $sq->where('company_name', 'like', '%'.$this->search.'%')
-                      ->orWhere('quotation_number', 'like', '%'.$this->search.'%')
-                      ->orWhere('contact_person', 'like', '%'.$this->search.'%')
-                      ->orWhere('industry', 'like', '%'.$this->search.'%')
-                      ->orWhere('service', 'like', '%'.$this->search.'%');
+                        ->orWhere('quotation_number', 'like', '%'.$this->search.'%')
+                        ->orWhere('contact_person', 'like', '%'.$this->search.'%')
+                        ->orWhere('industry', 'like', '%'.$this->search.'%')
+                        ->orWhere('service', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->filter_staff, fn($q) => $q->where('staff_id', $this->filter_staff))
-            ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
-            ->when($this->date_from, fn($q) => $q->whereDate('date', '>=', $this->date_from))
-            ->when($this->date_to, fn($q) => $q->whereDate('date', '<=', $this->date_to));
+            ->when($this->filter_staff, fn ($q) => $q->where('staff_id', $this->filter_staff))
+            ->when($this->filter_status, fn ($q) => $q->where('status', $this->filter_status))
+            ->when($this->date_from, fn ($q) => $q->whereDate('date', '>=', $this->date_from))
+            ->when($this->date_to, fn ($q) => $q->whereDate('date', '<=', $this->date_to));
 
         return view('livewire.admin.quotations.quotation-manager', [
             'quotations' => $query->orderBy('date', $orderDirection)->orderBy('id', $orderDirection)->paginate(15),

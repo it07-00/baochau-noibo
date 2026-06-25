@@ -1,0 +1,81 @@
+<?php
+
+namespace Tests\Feature\Livewire\Admin\Quotations;
+
+use App\Enums\Permission as PermissionEnum;
+use App\Enums\QuotationStatus;
+use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Quotations\QuotationManager;
+use App\Models\Quotation;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+use Tests\TestCase;
+
+class QuotationManagerMoneyInputTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        foreach (RoleEnum::cases() as $roleEnum) {
+            Role::findOrCreate($roleEnum->value);
+        }
+
+        foreach (PermissionEnum::cases() as $permissionEnum) {
+            Permission::findOrCreate($permissionEnum->value);
+        }
+    }
+
+    public function test_blank_money_fields_are_saved_as_zero(): void
+    {
+        $salesUser = User::factory()->create(['is_active' => true]);
+        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
+        $salesUser->givePermissionTo(PermissionEnum::QUOTATION_TRACKING_CREATE->value);
+
+        $this->actingAs($salesUser);
+
+        Livewire::test(QuotationManager::class)
+            ->set('formData.date', '2026-06-25')
+            ->set('formData.staff_id', $salesUser->id)
+            ->set('formData.company_name', 'Benh vien Da khoa Ba Ria')
+            ->set('formData.status', QuotationStatus::DANG_THEO_DOI->value)
+            ->set('formData.original_value', '')
+            ->set('formData.value_inc_vat', '')
+            ->set('formData.commission_value', '')
+            ->set('formData.commission_tax', '')
+            ->set('formData.total_value', '')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $quotation = Quotation::query()->firstOrFail();
+        $rawValues = DB::table('quotations')
+            ->where('id', $quotation->id)
+            ->first([
+                'original_value',
+                'value_inc_vat',
+                'commission_value',
+                'commission_tax',
+                'total_value',
+            ]);
+
+        $this->assertSame(0, $quotation->original_value);
+        $this->assertSame(0, $quotation->value_inc_vat);
+        $this->assertSame(0, $quotation->commission_value);
+        $this->assertSame(0, $quotation->commission_tax);
+        $this->assertSame(0, $quotation->total_value);
+        $this->assertSame(0, $rawValues->original_value);
+        $this->assertSame(0, $rawValues->value_inc_vat);
+        $this->assertSame(0, $rawValues->commission_value);
+        $this->assertSame(0, $rawValues->commission_tax);
+        $this->assertSame(0, $rawValues->total_value);
+    }
+}
