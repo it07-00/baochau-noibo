@@ -16,6 +16,7 @@ use App\Models\DailyReport;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Models\WorkSchedule;
+use App\Support\ContractRenewalRadar;
 use App\Support\DailyReportVisibility;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -837,6 +838,8 @@ class StatisticsService
             ->take(5)
             ->get();
 
+        $upcomingRenewalContracts = ContractRenewalRadar::visibleFor($currentUser);
+
         $dashboardRoleDistribution = Role::withCount(['users' => fn ($q) => $q->where('is_active', true)])
             ->get()
             ->map(fn ($r) => [
@@ -860,7 +863,7 @@ class StatisticsService
             'insightMonth', 'serviceInsightChart', 'regionInsightChart',
             'sourceSalesChart',
             'workScheduleWeekCount', 'reportedTodayCount', 'unreportedTodayCount', 'dailyReportRate',
-            'upcomingSchedules', 'latestReports', 'dashboardRoleDistribution', 'totalActiveUsersCount'
+            'upcomingSchedules', 'latestReports', 'upcomingRenewalContracts', 'dashboardRoleDistribution', 'totalActiveUsersCount'
         );
     }
 }

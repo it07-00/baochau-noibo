@@ -44,6 +44,45 @@
                     </div>
                 </div>
 
+                <!-- Renewal radar -->
+                @if(auth()->user()->hasAnyRole([\App\Enums\Role::KINH_DOANH->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
+                <div class="op-renewal-panel mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
+                        <div class="d-flex align-items-center gap-2 min-w-0">
+                            <div class="op-stat-circle op-circle-warning" style="width: 32px; height: 32px; font-size: 13px;">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h6 class="fw-bold text-dark mb-0">Hợp đồng sắp tái ký</h6>
+                                <div class="text-muted" style="font-size: 11px;">Theo ngày ký cũ, nhắc trước 30 ngày</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">{{ $upcomingRenewalContracts->count() }} hợp đồng</span>
+                    </div>
+                    <div class="op-renewal-list">
+                        @forelse($upcomingRenewalContracts as $contract)
+                            <a href="{{ $contract['url'] }}" class="op-renewal-item">
+                                <div class="min-w-0 flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 min-w-0">
+                                        <span class="fw-bold text-dark text-truncate small">{{ $contract['customer'] }}</span>
+                                        <span class="badge bg-light text-muted border fw-normal flex-shrink-0">{{ $contract['type'] }}</span>
+                                    </div>
+                                    <div class="text-muted text-truncate" style="font-size: 11px;">
+                                        {{ $contract['contract_number'] }} · Ký {{ $contract['signed_at']->format('d/m/Y') }} · Tái ký {{ $contract['renewal_date']->format('d/m/Y') }} · {{ $contract['staff'] }}
+                                    </div>
+                                </div>
+                                <span class="op-renewal-days">{{ $contract['days_label'] }}</span>
+                            </a>
+                        @empty
+                            <div class="op-empty-state py-3">
+                                <i class="bi bi-check2-circle"></i>
+                                <div>Chưa có hợp đồng sắp đến kỳ tái ký.</div>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+                @endif
+
                 <!-- Columns: Lịch công tác & Báo cáo mới nhất -->
                 <div class="row g-4">
                     <div class="col-md-6">
