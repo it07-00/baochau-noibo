@@ -2,25 +2,28 @@
 
 namespace App\Services;
 
-use App\Enums\Role as RoleEnum;
-use App\Models\ContractResearch;
-use App\Models\ContractLegal;
-use App\Models\ContractEmission;
-use App\Models\ContractTechnical;
-use App\Models\ContractSustainability;
-use App\Models\ContractWaste;
-use App\Models\ContractAssignment;
-use App\Models\Customer;
-use App\Models\Quotation;
-use App\Models\DailyReport;
-use App\Models\WorkSchedule;
-use App\Models\User;
 use App\Enums\QuotationStatus;
-use Spatie\Activitylog\Models\Activity;
-use Spatie\Permission\Models\Role;
+use App\Enums\Role as RoleEnum;
+use App\Models\ContractAssignment;
+use App\Models\ContractEmission;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
+use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
+use App\Models\ContractWaste;
+use App\Models\Customer;
+use App\Models\DailyReport;
+use App\Models\Quotation;
+use App\Models\User;
+use App\Models\WorkSchedule;
+use App\Support\DailyReportVisibility;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Permission\Models\Role;
 
 class StatisticsService
 {
@@ -55,6 +58,7 @@ class StatisticsService
                 if ($contractDateToParsed !== null) {
                     $query->whereDate($dateColumn, '<=', $contractDateToParsed);
                 }
+
                 return $query;
             }
 
@@ -79,11 +83,11 @@ class StatisticsService
         $totalCustomers = (int) $customerQuery->count();
 
         $contractTypes = [
-            'Chất thải'              => ContractWaste::class,
-            'Pháp lý & Hồ sơ MT'     => ContractLegal::class,
-            'Ứng phó sự cố'          => ContractTechnical::class,
+            'Chất thải' => ContractWaste::class,
+            'Pháp lý & Hồ sơ MT' => ContractLegal::class,
+            'Ứng phó sự cố' => ContractTechnical::class,
             'Nghiên cứu và chuyển đổi công nghệ' => ContractResearch::class,
-            'Phát triển bền vững'    => ContractSustainability::class,
+            'Phát triển bền vững' => ContractSustainability::class,
             'Giảm phát thải, tiết kiệm năng lượng' => ContractEmission::class,
         ];
 
@@ -169,28 +173,28 @@ class StatisticsService
         }
 
         // ── Tiến độ thu tiền ────────────────────────
-        $totalPaymentDue  = 0;
+        $totalPaymentDue = 0;
         $totalPaymentPaid = 0;
 
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
             $monthly[$m] = [
-                'contracts'    => $contractMonthly[$m]['cnt'] ?? 0,
-                'value'        => (float) ($contractMonthly[$m]['val'] ?? 0),
-                'sales'        => (float) ($contractMonthly[$m]['rev'] ?? 0),
-                'revenue'      => 0,
-                'payment_due'  => 0,
+                'contracts' => $contractMonthly[$m]['cnt'] ?? 0,
+                'value' => (float) ($contractMonthly[$m]['val'] ?? 0),
+                'sales' => (float) ($contractMonthly[$m]['rev'] ?? 0),
+                'revenue' => 0,
+                'payment_due' => 0,
                 'payment_paid' => 0,
             ];
         }
 
         // ── Nhắc nhở báo cáo ngày ─────────────────────
         $dailyReportReminder = null;
-        if (!$currentUser->hasRole(RoleEnum::GIAM_DOC->value)) {
+        if (! $currentUser->hasRole(RoleEnum::GIAM_DOC->value)) {
             $hasReportToday = DailyReport::where('user_id', $currentUser->id)
                 ->whereDate('date', today())
                 ->exists();
-            $dailyReportReminder = !$hasReportToday;
+            $dailyReportReminder = ! $hasReportToday;
         }
 
         // ── Nhắc lịch công tác (mọi role) ─────────────────
@@ -264,21 +268,21 @@ class StatisticsService
                 $startTimeValue = $schedule->getAttribute('start_time');
                 $endTimeValue = $workScheduleHasEndTime ? $schedule->getAttribute('end_time') : null;
 
-                if (!empty($startTimeValue)) {
-                    $startAt = \Carbon\Carbon::parse($startDate->toDateString() . ' ' . $startTimeValue);
+                if (! empty($startTimeValue)) {
+                    $startAt = Carbon::parse($startDate->toDateString().' '.$startTimeValue);
                     $timeLabel = $startAt->format('H:i');
                 }
 
-                if (!empty($endTimeValue)) {
-                    $endAt = \Carbon\Carbon::parse($effectiveEndDate->toDateString() . ' ' . $endTimeValue);
+                if (! empty($endTimeValue)) {
+                    $endAt = Carbon::parse($effectiveEndDate->toDateString().' '.$endTimeValue);
                     if ($endAt->lt($startAt)) {
                         $endAt = $startAt->copy()->addHour();
                     }
 
-                    $timeLabel = !empty($startTimeValue)
-                        ? $startAt->format('H:i') . ' - ' . $endAt->format('H:i')
+                    $timeLabel = ! empty($startTimeValue)
+                        ? $startAt->format('H:i').' - '.$endAt->format('H:i')
                         : $endAt->format('H:i');
-                } elseif (!empty($startTimeValue)) {
+                } elseif (! empty($startTimeValue)) {
                     $endAt = $startAt->copy()->addHour();
                 }
             }
@@ -303,10 +307,10 @@ class StatisticsService
             return [
                 'id' => $schedule->id,
                 'title' => $schedule->title,
-                'description' => \Illuminate\Support\Str::limit((string) ($schedule->description ?? ''), 120),
+                'description' => Str::limit((string) ($schedule->description ?? ''), 120),
                 'owner_name' => $schedule->user?->name ?? 'Hệ thống',
                 'time_label' => $timeLabel,
-                'date_label' => $startDate->format('d/m/Y') . ($effectiveEndDate->ne($startDate) ? ' - ' . $effectiveEndDate->format('d/m/Y') : ''),
+                'date_label' => $startDate->format('d/m/Y').($effectiveEndDate->ne($startDate) ? ' - '.$effectiveEndDate->format('d/m/Y') : ''),
                 'status_key' => $statusKey,
                 'status_label' => $statusLabel,
                 'status_class' => $statusClassMap[$statusKey],
@@ -339,16 +343,16 @@ class StatisticsService
             ->values();
 
         $workScheduleSummary = [
-            'today_total'        => (int) $workScheduleTodayTotal,
-            'upcoming_tomorrow'  => (int) $workScheduleTomorrowTotal,
-            'overdue'            => (int) $workScheduleOverdueTotal,
+            'today_total' => (int) $workScheduleTodayTotal,
+            'upcoming_tomorrow' => (int) $workScheduleTomorrowTotal,
+            'overdue' => (int) $workScheduleOverdueTotal,
         ];
 
-        $canSeeTechnical  = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::KY_THUAT->value]);
+        $canSeeTechnical = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::KY_THUAT->value]);
         $canSeeConsulting = $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TU_VAN->value]);
-        $canSeeFinance        = !$currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value]);
-        $canSeeInvoiceTasks  = $currentUser->hasAnyRole([RoleEnum::KE_TOAN->value, RoleEnum::GIAM_DOC->value]);
-        $canSeeSalesTasks    = $currentUser->hasAnyRole([RoleEnum::KINH_DOANH->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::GIAM_DOC->value]);
+        $canSeeFinance = ! $currentUser->hasAnyRole([RoleEnum::TU_VAN->value, RoleEnum::KY_THUAT->value]);
+        $canSeeInvoiceTasks = $currentUser->hasAnyRole([RoleEnum::KE_TOAN->value, RoleEnum::GIAM_DOC->value]);
+        $canSeeSalesTasks = $currentUser->hasAnyRole([RoleEnum::KINH_DOANH->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::GIAM_DOC->value]);
 
         // ── Needs Action Alerts ───────────────────────
         $needsAction = [
@@ -567,7 +571,7 @@ class StatisticsService
                     $qData = [];
                     for ($q = 1; $q <= 4; $q++) {
                         $startMonth = ($q - 1) * 3 + 1;
-                        $endMonth   = $startMonth + 2;
+                        $endMonth = $startMonth + 2;
                         $quarterQuery = $model::query();
                         $applyContractDateFilter($quarterQuery, null, $dateColumn);
                         $quarterQuery->whereMonth($dateColumn, '>=', $startMonth)
@@ -651,9 +655,9 @@ class StatisticsService
                 $completed = $assignments->filter(fn ($a) => ($a->assignable->workflow_status ?? '') === 'finished')->count();
 
                 $technicalStats->push([
-                    'label'     => $label,
-                    'count'     => $count,
-                    'value'     => $value,
+                    'label' => $label,
+                    'count' => $count,
+                    'value' => $value,
                     'completed' => $completed,
                 ]);
             }
@@ -680,30 +684,31 @@ class StatisticsService
 
         if ($isIT && empty($itStats)) {
             // Role distribution
-            $roleDistribution = Role::withCount('users')->get()->map(fn($r) => [
-                'name'  => $r->name,
+            $roleDistribution = Role::withCount('users')->get()->map(fn ($r) => [
+                'name' => $r->name,
                 'label' => $r->display_name ?: $r->name,
-                'count' => $r->users_count
-            ])->filter(fn($r) => $r['count'] > 0)->values();
+                'count' => $r->users_count,
+            ])->filter(fn ($r) => $r['count'] > 0)->values();
 
             // System health
             $diskPath = base_path();
             $totalSpace = disk_total_space($diskPath) ?: 1;
-            $freeSpace  = disk_free_space($diskPath) ?: 11;
-            $usedSpace  = $totalSpace - $freeSpace;
+            $freeSpace = disk_free_space($diskPath) ?: 11;
+            $usedSpace = $totalSpace - $freeSpace;
             $diskUsagePercent = round(($usedSpace / $totalSpace) * 100, 1);
 
             // DB size (MySQL specific)
             $dbName = config('database.connections.mysql.database');
             $dbSize = 0;
             try {
-                $dbSizeResult = DB::select("
+                $dbSizeResult = DB::select('
                     SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb
                     FROM information_schema.TABLES
                     WHERE table_schema = ?
-                ", [$dbName]);
+                ', [$dbName]);
                 $dbSize = $dbSizeResult[0]->size_mb ?? 0;
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             // Queues
             $pendingJobs = DB::table('jobs')->count();
@@ -718,19 +723,21 @@ class StatisticsService
                     if (stripos($line, 'error') !== false || stripos($line, 'exception') !== false) {
                         $recentErrors[] = $line;
                         $errorCount++;
-                        if ($errorCount >= 10) break;
+                        if ($errorCount >= 10) {
+                            break;
+                        }
                     }
                 }
             }
 
             $itStats = [
-                'total_users'  => User::count(),
+                'total_users' => User::count(),
                 'active_users' => User::where('is_active', true)->count(),
                 'locked_users' => User::where('is_active', false)->count(),
                 'recent_activities' => Activity::with('causer')->latest()->take(10)->get(),
                 'role_distribution' => $roleDistribution,
                 'top_users' => Activity::select('causer_id', 'causer_type', DB::raw('count(*) as total'))
-                    ->where('causer_type', \App\Models\User::class)
+                    ->where('causer_type', User::class)
                     ->where('created_at', '>=', now()->subDays(7))
                     ->groupBy('causer_id', 'causer_type')
                     ->orderByDesc('total')
@@ -738,21 +745,21 @@ class StatisticsService
                     ->with('causer')
                     ->get(),
                 'system' => [
-                    'disk_total'   => round($totalSpace / (1024 ** 3), 2),
-                    'disk_free'    => round($freeSpace / (1024 ** 3), 2),
-                    'disk_used'    => round($usedSpace / (1024 ** 3), 2),
+                    'disk_total' => round($totalSpace / (1024 ** 3), 2),
+                    'disk_free' => round($freeSpace / (1024 ** 3), 2),
+                    'disk_used' => round($usedSpace / (1024 ** 3), 2),
                     'disk_percent' => $diskUsagePercent,
-                    'db_size_mb'   => $dbSize,
+                    'db_size_mb' => $dbSize,
                     'pending_jobs' => $pendingJobs,
                     'active_sessions' => DB::table('sessions')->count(),
-                    'php_version'  => PHP_VERSION,
+                    'php_version' => PHP_VERSION,
                     'laravel_version' => app()->version(),
                     'failed_logins_24h' => Activity::where('log_name', 'auth')
                         ->where('description', 'like', '%Đăng nhập thất bại%')
                         ->where('created_at', '>=', now()->subDay())
                         ->count(),
                 ],
-                'recent_errors' => $recentErrors
+                'recent_errors' => $recentErrors,
             ];
         }
 
@@ -794,20 +801,21 @@ class StatisticsService
         $endOfWeek = now()->endOfWeek();
         $workScheduleWeekCount = WorkSchedule::query()
             ->where($applyWorkScheduleScope)
-            ->where(function($q) use ($startOfWeek, $endOfWeek) {
+            ->where(function ($q) use ($startOfWeek, $endOfWeek) {
                 $q->whereBetween('start_date', [$startOfWeek, $endOfWeek])
-                  ->orWhereBetween('end_date', [$startOfWeek, $endOfWeek]);
+                    ->orWhereBetween('end_date', [$startOfWeek, $endOfWeek]);
             })
             ->count();
 
-        $reportingUsersCount = User::where('is_active', true)
-            ->whereDoesntHave('roles', fn($q) => $q->where('name', RoleEnum::GIAM_DOC->value))
-            ->count();
-        
-        $reportedTodayCount = DailyReport::whereDate('date', today())
-            ->whereHas('user', fn($q) => $q->where('is_active', true)->whereDoesntHave('roles', fn($qr) => $qr->where('name', RoleEnum::GIAM_DOC->value)))
-            ->distinct('user_id')
-            ->count();
+        $reportingUserIds = DailyReportVisibility::visibleReportingUsersQuery($currentUser)->pluck('id');
+        $reportingUsersCount = $reportingUserIds->count();
+
+        $reportedTodayCount = $reportingUsersCount > 0
+            ? DailyReport::whereDate('date', today())
+                ->whereIn('user_id', $reportingUserIds)
+                ->distinct('user_id')
+                ->count('user_id')
+            : 0;
 
         $unreportedTodayCount = max(0, $reportingUsersCount - $reportedTodayCount);
         $dailyReportRate = $reportingUsersCount > 0 ? round(($reportedTodayCount / $reportingUsersCount) * 100) : 0;
@@ -823,18 +831,19 @@ class StatisticsService
 
         $latestReports = DailyReport::query()
             ->with('user:id,name')
+            ->whereIn('user_id', $reportingUserIds)
             ->latest('date')
             ->latest('created_at')
             ->take(5)
             ->get();
 
-        $dashboardRoleDistribution = Role::withCount(['users' => fn($q) => $q->where('is_active', true)])
+        $dashboardRoleDistribution = Role::withCount(['users' => fn ($q) => $q->where('is_active', true)])
             ->get()
-            ->map(fn($r) => [
+            ->map(fn ($r) => [
                 'name' => $r->display_name ?: $r->name,
                 'count' => $r->users_count,
             ])
-            ->filter(fn($r) => $r['count'] > 0)
+            ->filter(fn ($r) => $r['count'] > 0)
             ->values()
             ->toArray();
 

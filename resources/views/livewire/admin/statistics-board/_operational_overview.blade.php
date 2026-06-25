@@ -75,7 +75,9 @@
                     <div class="col-md-6">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <h6 class="fw-bold text-dark mb-0">Báo cáo mới nhất</h6>
+                            @can('daily-reports.view')
                             <a href="{{ route('app.daily-reports.index') }}" class="text-decoration-none small fw-bold text-primary">Xem tất cả</a>
+                            @endcan
                         </div>
                         <div class="op-list-container">
                             @forelse($latestReports as $report)

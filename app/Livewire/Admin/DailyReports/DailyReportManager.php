@@ -4,38 +4,53 @@ namespace App\Livewire\Admin\DailyReports;
 
 use App\Actions\DailyReports\SubmitDailyReportAction;
 use App\Enums\DailyReportStatus;
+use App\Enums\Permission;
 use App\Enums\Role;
-use Livewire\Component;
 use App\Models\DailyReport;
 use App\Models\Department;
-use App\Models\User;
+use App\Support\DailyReportVisibility;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
+use Livewire\Component;
 
 class DailyReportManager extends Component
 {
     // Form fields
     public $reportDate;
+
     public $status = DailyReportStatus::HOAN_THANH_DUNG_KH->value;
+
     public $content;
+
     public $plan;
+
     public $issues;
 
     // View states
     public $activeTab = 'form'; // 'form' | 'history' | 'management'
+
     public $isManager = false;
+
     public $isDirector = false;
+
     public $canSubmitOwnReport = true;
+
     public $isEditing = false;
+
     public $viewType = 'day'; // 'day' or 'month' (for managers)
+
     public $showReportModal = false;
 
     // Filters
     public $dateFilter;
+
     public $monthFilter;
+
     public $yearFilter;
+
     public $deptIdFilter;
+
     public $userIdFilter;
 
     public $reportStats = [
@@ -47,25 +62,25 @@ class DailyReportManager extends Component
 
     protected $queryString = [
         'dateFilter' => ['except' => ''],
-        'viewType'   => ['except' => 'day'],
+        'viewType' => ['except' => 'day'],
     ];
 
     public function mount($userId = null)
     {
         $this->reportDate = date('Y-m-d');
         $this->dateFilter = date('Y-m-d');
-        $this->monthFilter = (int)date('m');
-        $this->yearFilter = (int)date('Y');
+        $this->monthFilter = (int) date('m');
+        $this->yearFilter = (int) date('Y');
 
         $this->isDirector = auth()->user()->hasRole(Role::GIAM_DOC->value);
-        $this->canSubmitOwnReport = !$this->isDirector;
+        $this->canSubmitOwnReport = ! $this->isDirector;
         $this->isManager = $this->canManageReports();
 
         if ($this->isDirector && $this->isManager) {
             $this->activeTab = 'management';
         }
 
-        if (!$this->isManager) {
+        if (! $this->isManager) {
             $this->userIdFilter = auth()->id();
         }
 
@@ -76,24 +91,17 @@ class DailyReportManager extends Component
 
     private function canManageReports(): bool
     {
-        return auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value]);
+        return DailyReportVisibility::canManage(auth()->user());
     }
 
     private function scopedUsersQuery()
     {
-        $query = User::where('is_active', true);
-
-        $isTopLevel = auth()->user()->hasAnyRole([Role::GIAM_DOC->value]);
-        if (auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && !$isTopLevel) {
-            $query->role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]);
-        }
-
-        return $query;
+        return DailyReportVisibility::visibleUsersQuery(auth()->user());
     }
 
     public function updatedReportDate()
     {
-        if (!$this->canSubmitOwnReport) {
+        if (! $this->canSubmitOwnReport) {
             return;
         }
 
@@ -109,13 +117,14 @@ class DailyReportManager extends Component
 
     public function openReportModal($date)
     {
-        if (!$this->canSubmitOwnReport) {
+        if (! $this->canSubmitOwnReport) {
             return;
         }
 
         $parsed = Carbon::parse($date);
         if ($parsed->gt(today())) {
             $this->dispatch('swal:error', ['message' => 'Không thể gửi báo cáo cho ngày trong tương lai.']);
+
             return;
         }
 
@@ -132,7 +141,7 @@ class DailyReportManager extends Component
 
     public function loadReportByDate()
     {
-        if (!$this->canSubmitOwnReport) {
+        if (! $this->canSubmitOwnReport) {
             return;
         }
 
@@ -164,7 +173,7 @@ class DailyReportManager extends Component
         $this->validate([
             'reportDate' => 'required|date|before_or_equal:today',
             'content' => 'required|min:10|max:10000',
-            'status' => 'required|in:' . implode(',', DailyReportStatus::values()),
+            'status' => 'required|in:'.implode(',', DailyReportStatus::values()),
             'plan' => 'nullable|string|max:5000',
             'issues' => 'nullable|string|max:5000',
         ], [
@@ -179,11 +188,11 @@ class DailyReportManager extends Component
 
         app(SubmitDailyReportAction::class)->execute(
             reporter: auth()->user(),
-            date:     $this->reportDate,
-            content:  $this->content,
-            status:   $this->status,
-            plan:     trim((string) ($this->plan ?? '')),
-            issues:   trim((string) ($this->issues ?? '')),
+            date: $this->reportDate,
+            content: $this->content,
+            status: $this->status,
+            plan: trim((string) ($this->plan ?? '')),
+            issues: trim((string) ($this->issues ?? '')),
         );
 
         $this->dispatch('swal:success', ['message' => 'Gửi báo cáo thành công!']);
@@ -199,11 +208,12 @@ class DailyReportManager extends Component
     public function delete($id)
     {
         $report = DailyReport::findOrFail($id);
-        if (!$this->isManager && $report->user_id !== auth()->id()) {
-            abort(403);
+
+        if ($report->user_id !== auth()->id()) {
+            abort_unless($this->isManager && auth()->user()->can(Permission::DAILY_REPORTS_DELETE->value), 403);
         }
 
-        if ($this->isManager && auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && !auth()->user()->hasRole(Role::GIAM_DOC->value)) {
+        if ($this->isManager && auth()->user()->hasRole(Role::TP_KINH_DOANH->value) && ! auth()->user()->hasRole(Role::GIAM_DOC->value)) {
             $canManageThisUser = $this->scopedUsersQuery()->whereKey($report->user_id)->exists();
             abort_unless($canManageThisUser, 403);
         }
@@ -268,7 +278,7 @@ class DailyReportManager extends Component
 
     public function reportLateDays(DailyReport $report): int
     {
-        if (!$report->created_at) {
+        if (! $report->created_at) {
             return 0;
         }
 
@@ -283,7 +293,8 @@ class DailyReportManager extends Component
     public function dayNamesPreview(Collection $reports, int $limit = 3): string
     {
         $names = $reports->pluck('user.name')->filter()->take($limit)->join(', ');
-        return $names . ($reports->count() > $limit ? '...' : '');
+
+        return $names.($reports->count() > $limit ? '...' : '');
     }
 
     public function reportPayload(Collection $reports): string
@@ -360,12 +371,12 @@ class DailyReportManager extends Component
     public function dayDotColor(Carbon $currentDate, Collection $dayReports): string
     {
         $isInsideMonth = $currentDate->month == (int) $this->monthFilter;
-        $isPast = $currentDate->isPast() && !$currentDate->isToday();
+        $isPast = $currentDate->isPast() && ! $currentDate->isToday();
         $isWeekend = $currentDate->isSunday();
         $isComplete = $dayReports->isNotEmpty();
         $hasIssue = $dayReports->where('status', DailyReportStatus::GAP_VAN_DE->value)->isNotEmpty();
 
-        if (!$isInsideMonth) {
+        if (! $isInsideMonth) {
             return 'secondary';
         }
 
@@ -386,17 +397,23 @@ class DailyReportManager extends Component
 
     public function export()
     {
-        if (!$this->isManager) abort(403);
+        if (! $this->isManager) {
+            abort(403);
+        }
 
         if ($this->viewType === 'day') {
-            $filename = "Bao_cao_ngay_" . Carbon::parse($this->dateFilter)->format('d_m_Y') . ".xls";
+            $filename = 'Bao_cao_ngay_'.Carbon::parse($this->dateFilter)->format('d_m_Y').'.xls';
         } else {
-            $filename = "Bao_cao_thang_" . str_pad($this->monthFilter, 2, '0', STR_PAD_LEFT) . "_" . $this->yearFilter . ".xls";
+            $filename = 'Bao_cao_thang_'.str_pad($this->monthFilter, 2, '0', STR_PAD_LEFT).'_'.$this->yearFilter.'.xls';
         }
 
         $allUsers = $this->scopedUsersQuery();
-        if ($this->deptIdFilter) $allUsers->where('department_id', $this->deptIdFilter);
-        if ($this->userIdFilter) $allUsers->where('id', $this->userIdFilter);
+        if ($this->deptIdFilter) {
+            $allUsers->where('department_id', $this->deptIdFilter);
+        }
+        if ($this->userIdFilter) {
+            $allUsers->where('id', $this->userIdFilter);
+        }
         $userIds = $allUsers->pluck('id');
 
         $query = DailyReport::with('user', 'user.department')->whereIn('user_id', $userIds);
@@ -409,7 +426,7 @@ class DailyReportManager extends Component
 
         $reports = $query->orderBy('date', 'desc')->get();
 
-        return response()->streamDownload(function() use ($reports) {
+        return response()->streamDownload(function () use ($reports) {
             echo view('admin.daily-reports.export-excel', [
                 'reports' => $reports,
                 'viewType' => $this->viewType,
@@ -443,8 +460,12 @@ class DailyReportManager extends Component
             $userIds = [auth()->id()];
         } elseif ($this->isManager) {
             $scopedUsers = $this->scopedUsersQuery();
-            if ($this->deptIdFilter) $scopedUsers->where('department_id', $this->deptIdFilter);
-            if ($this->userIdFilter) $scopedUsers->where('id', $this->userIdFilter);
+            if ($this->deptIdFilter) {
+                $scopedUsers->where('department_id', $this->deptIdFilter);
+            }
+            if ($this->userIdFilter) {
+                $scopedUsers->where('id', $this->userIdFilter);
+            }
             $userIds = $scopedUsers->pluck('id');
         } else {
             $userIds = [auth()->id()];
@@ -460,7 +481,7 @@ class DailyReportManager extends Component
                 ->get();
 
             foreach ($monthReports as $report) {
-                $dayNum = (int)$report->date->format('j');
+                $dayNum = (int) $report->date->format('j');
                 $calendarData[$dayNum][] = $report;
             }
             $this->reportStats['total'] = $monthReports->count();
@@ -474,12 +495,12 @@ class DailyReportManager extends Component
                 $usersToDisplay = $this->scopedUsersQuery()->whereIn('id', $userIds)->where('is_active', true)->get();
                 foreach ($usersToDisplay as $user) {
                     $report = $dailyReports->get($user->id);
-                    $reports->push((object)['user' => $user, 'report' => $report]);
+                    $reports->push((object) ['user' => $user, 'report' => $report]);
                 }
 
                 $this->reportStats['total'] = $usersToDisplay->count();
                 $this->reportStats['issues'] = $dailyReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->count();
-                $this->reportStats['missing'] = $usersToDisplay->whereNull(fn($u) => $dailyReports->get($u->id))->count();
+                $this->reportStats['missing'] = $usersToDisplay->whereNull(fn ($u) => $dailyReports->get($u->id))->count();
                 $this->reportStats['late'] = $dailyReports->filter(function ($report) {
                     return $report->created_at
                         && $report->created_at->copy()->startOfDay()->gt($report->date->copy()->startOfDay());
@@ -491,7 +512,7 @@ class DailyReportManager extends Component
                     ->get();
 
                 foreach ($monthReports as $report) {
-                    $dayNum = (int)$report->date->format('j');
+                    $dayNum = (int) $report->date->format('j');
                     $calendarData[$dayNum][] = $report;
                 }
                 $this->reportStats['total'] = $monthReports->count();
@@ -504,7 +525,7 @@ class DailyReportManager extends Component
             'reports' => $reports,
             'calendarData' => $calendarData,
         ])->layout('admin.layouts.app', [
-            'fullWidth' => $this->isManager || $this->activeTab === 'history'
+            'fullWidth' => $this->isManager || $this->activeTab === 'history',
         ]);
     }
 }
