@@ -8,8 +8,12 @@ use App\Livewire\Admin\Marketing\MarketingContentManager;
 use App\Models\Department;
 use App\Models\MarketingContent;
 use App\Models\User;
+use App\Notifications\MarketingContentNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -178,6 +182,32 @@ class MarketingContentManagerTest extends TestCase
             ->assertSee('Tải xuống');
     }
 
+    public function test_detail_modal_can_submit_draft_content_for_review(): void
+    {
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Draft campaign',
+            'content' => 'Draft caption ready for review',
+            'scheduled_at' => '2026-07-15',
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(MarketingContentManager::class)
+            ->call('openDetail', $record->id)
+            ->assertSee('Gửi duyệt')
+            ->call('submitForReview', $record->id)
+            ->assertDispatched('closeDetailModal');
+
+        $this->assertDatabaseHas('marketing_contents', [
+            'id' => $record->id,
+            'status' => 'pending',
+        ]);
+    }
+
     public function test_marketing_content_renders_as_month_calendar(): void
     {
         Carbon::setTestNow('2026-07-10 09:00:00');
@@ -292,7 +322,7 @@ class MarketingContentManagerTest extends TestCase
 
     public function test_marketing_content_notifications_are_dispatched(): void
     {
-        \Illuminate\Support\Facades\Notification::fake();
+        Notification::fake();
 
         $tpkdRole = Role::findByName(RoleEnum::TP_KINH_DOANH->value);
         $tpkdUser = User::factory()->create([
@@ -315,9 +345,9 @@ class MarketingContentManagerTest extends TestCase
         Livewire::test(MarketingContentManager::class)
             ->call('submitForReview', $record->id);
 
-        \Illuminate\Support\Facades\Notification::assertSentTo(
+        Notification::assertSentTo(
             $tpkdUser,
-            \App\Notifications\MarketingContentNotification::class,
+            MarketingContentNotification::class,
             function ($notification, $channels) use ($tpkdUser) {
                 return $notification->toArray($tpkdUser)['color'] === 'warning';
             }
@@ -330,9 +360,9 @@ class MarketingContentManagerTest extends TestCase
             ->set('reviewingId', $record->id)
             ->call('approve');
 
-        \Illuminate\Support\Facades\Notification::assertSentTo(
+        Notification::assertSentTo(
             $this->salesUser,
-            \App\Notifications\MarketingContentNotification::class,
+            MarketingContentNotification::class,
             function ($notification, $channels) {
                 return $notification->toArray($this->salesUser)['color'] === 'success';
             }
@@ -345,11 +375,12 @@ class MarketingContentManagerTest extends TestCase
             ->set('reviewNote', 'Rejected reason')
             ->call('reject');
 
-        \Illuminate\Support\Facades\Notification::assertSentTo(
+        Notification::assertSentTo(
             $this->salesUser,
-            \App\Notifications\MarketingContentNotification::class,
+            MarketingContentNotification::class,
             function ($notification, $channels) {
                 $data = $notification->toArray($this->salesUser);
+
                 return $data['color'] === 'danger' && str_contains($data['message'], 'Rejected reason');
             }
         );
@@ -357,13 +388,13 @@ class MarketingContentManagerTest extends TestCase
 
     public function test_marketing_content_image_upload_converts_to_webp(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
         $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_CREATE->value);
 
         $this->actingAs($this->salesUser);
 
-        $image = \Illuminate\Http\UploadedFile::fake()->image('campaign.png', 200, 200);
+        $image = UploadedFile::fake()->image('campaign.png', 200, 200);
 
         Livewire::test(MarketingContentManager::class)
             ->set('formTitle', 'WebP Campaign')
@@ -376,10 +407,10 @@ class MarketingContentManagerTest extends TestCase
         $record = MarketingContent::where('title', 'WebP Campaign')->first();
         $this->assertNotNull($record);
         $this->assertNotEmpty($record->images);
-        
+
         $savedPath = $record->images[0];
         $this->assertStringEndsWith('.webp', $savedPath);
 
-        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($savedPath);
+        Storage::disk('public')->assertExists($savedPath);
     }
 }

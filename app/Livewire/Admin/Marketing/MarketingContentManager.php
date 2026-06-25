@@ -12,6 +12,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -196,11 +197,11 @@ class MarketingContentManager extends Component
                     imagedestroy($im);
                 }
             } catch (\Throwable $e) {
-                logger()->error('WebP conversion failed: ' . $e->getMessage());
+                logger()->error('WebP conversion failed: '.$e->getMessage());
             }
 
             if ($webpData !== null) {
-                $filename = 'marketing-content/' . \Illuminate\Support\Str::random(40) . '.webp';
+                $filename = 'marketing-content/'.Str::random(40).'.webp';
                 Storage::disk('public')->put($filename, $webpData);
                 $storedPaths[] = $filename;
             } else {
@@ -262,6 +263,8 @@ class MarketingContentManager extends Component
             $tpkdUser->notify(new MarketingContentNotification($record, 'submitted'));
         }
 
+        $this->detailId = null;
+        $this->dispatch('closeDetailModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã gửi duyệt thành công.']);
     }
 

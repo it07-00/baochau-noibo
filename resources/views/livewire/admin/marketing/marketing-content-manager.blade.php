@@ -496,8 +496,8 @@
 
         <div wire:ignore.self class="modal fade" id="detailModal" tabindex="-1">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                <div class="modal-content border-0 shadow">
-                    <div class="modal-header bg-primary text-white">
+                <div class="modal-content border-0 shadow mc-detail-modal">
+                    <div class="modal-header mc-detail-modal-header">
                         <div>
                             <h5 class="modal-title fw-bold mb-1">{{ $detailRecord->title }}</h5>
                             <p class="mb-0 small opacity-75">Xem nội dung, lịch đăng, ảnh đính kèm và trạng thái xử lý của bài viết.</p>
@@ -620,6 +620,14 @@
 
                     <div class="modal-footer d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <div class="d-flex align-items-center flex-wrap gap-2">
+                            @if($isMarketing && $detailRecord->isDraft())
+                                <button type="button"
+                                    class="btn btn-warning text-dark fw-semibold"
+                                    wire:click="submitForReview({{ $detailRecord->id }})"
+                                    wire:confirm="Gửi bài này để duyệt?">
+                                    <i class="bi bi-send me-1"></i>Gửi duyệt
+                                </button>
+                            @endif
                             <button type="button"
                                 class="btn btn-outline-primary"
                                 onclick="window.marketingContentCopy(this, @js($detailRecord->content), @js($detailImageUrls))">
@@ -668,6 +676,7 @@
         window.addEventListener('openReviewModal', () => openModal('reviewModal'));
         window.addEventListener('closeReviewModal', () => closeModal('reviewModal'));
         window.addEventListener('openDetailModal', () => openModal('detailModal'));
+        window.addEventListener('closeDetailModal', () => closeModal('detailModal'));
     }
 
     if (!window._marketingContentShareHelpersRegistered) {
