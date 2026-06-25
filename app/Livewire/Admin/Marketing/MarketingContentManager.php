@@ -171,50 +171,7 @@ class MarketingContentManager extends Component
         $this->validate();
 
         $user = auth()->user();
-
-        $storedPaths = $this->existingImages;
-
-        // Remove images marked for deletion
-        foreach ($this->imagesToRemove as $path) {
-            Storage::disk('public')->delete($path);
-            $storedPaths = array_values(array_filter($storedPaths, fn ($p) => $p !== $path));
-        }
-
-        // Store new images
-        foreach ($this->newImages as $image) {
-            $webpData = null;
-            try {
-                $sourcePath = $image->getRealPath();
-                $imgData = file_get_contents($sourcePath);
-                $im = imagecreatefromstring($imgData);
-                if ($im !== false) {
-                    imagealphablending($im, false);
-                    imagesavealpha($im, true);
-
-                    ob_start();
-                    imagewebp($im, null, 85);
-                    $webpData = ob_get_clean();
-                    imagedestroy($im);
-                }
-            } catch (\Throwable $e) {
-                logger()->error('WebP conversion failed: '.$e->getMessage());
-            }
-
-            if ($webpData !== null) {
-                $filename = 'marketing-content/'.Str::random(40).'.webp';
-                Storage::disk('public')->put($filename, $webpData);
-                $storedPaths[] = $filename;
-            } else {
-                $storedPaths[] = $image->store('marketing-content', 'public');
-            }
-        }
-
-        $data = [
-            'title' => $this->formTitle,
-            'content' => $this->formContent,
-            'scheduled_at' => $this->formScheduledAt,
-            'images' => $storedPaths ?: null,
-        ];
+        $data = $this->formData();
 
         if ($this->isEditing) {
             if (! $this->editingId) {
@@ -244,6 +201,30 @@ class MarketingContentManager extends Component
         $this->resetForm();
         $this->dispatch('closeContentFormModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => $message]);
+    }
+
+    public function saveAndSubmitForReview(): void
+    {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
+
+        if (! $this->isEditing || ! $this->editingId) {
+            return;
+        }
+
+        $record = $this->authorizeOwn($this->editingId);
+        if (! $record || ! $record->isDraft()) {
+            return;
+        }
+
+        $this->validate();
+        $record->update($this->formData());
+
+        $this->isEditing = false;
+        $this->editingId = null;
+        $this->resetForm();
+        $this->dispatch('closeContentFormModal');
+
+        $this->submitForReview($record->id);
     }
 
     public function submitForReview(int $id): void
@@ -415,6 +396,58 @@ class MarketingContentManager extends Component
         $this->existingImages = [];
         $this->imagesToRemove = [];
         $this->resetErrorBag();
+    }
+
+    private function formData(): array
+    {
+        return [
+            'title' => $this->formTitle,
+            'content' => $this->formContent,
+            'scheduled_at' => $this->formScheduledAt,
+            'images' => $this->storeFormImages() ?: null,
+        ];
+    }
+
+    private function storeFormImages(): array
+    {
+        $storedPaths = $this->existingImages;
+
+        // Remove images marked for deletion
+        foreach ($this->imagesToRemove as $path) {
+            Storage::disk('public')->delete($path);
+            $storedPaths = array_values(array_filter($storedPaths, fn ($p) => $p !== $path));
+        }
+
+        // Store new images
+        foreach ($this->newImages as $image) {
+            $webpData = null;
+            try {
+                $sourcePath = $image->getRealPath();
+                $imgData = file_get_contents($sourcePath);
+                $im = imagecreatefromstring($imgData);
+                if ($im !== false) {
+                    imagealphablending($im, false);
+                    imagesavealpha($im, true);
+
+                    ob_start();
+                    imagewebp($im, null, 85);
+                    $webpData = ob_get_clean();
+                    imagedestroy($im);
+                }
+            } catch (\Throwable $e) {
+                logger()->error('WebP conversion failed: '.$e->getMessage());
+            }
+
+            if ($webpData !== null) {
+                $filename = 'marketing-content/'.Str::random(40).'.webp';
+                Storage::disk('public')->put($filename, $webpData);
+                $storedPaths[] = $filename;
+            } else {
+                $storedPaths[] = $image->store('marketing-content', 'public');
+            }
+        }
+
+        return $storedPaths;
     }
 
     private function isReviewer(): bool
@@ -592,6 +625,7 @@ class MarketingContentManager extends Component
             ->get();
 
         $detailRecord = $this->detailId ? $this->authorizeOwn($this->detailId) : null;
+        $editingRecord = $this->editingId ? $this->authorizeOwn($this->editingId) : null;
         $reviewRecord = ($this->reviewingId && $this->isReviewer())
             ? MarketingContent::with('user')->find($this->reviewingId)
             : null;
@@ -608,6 +642,7 @@ class MarketingContentManager extends Component
             'isMarketing' => $isMarketing,
             'isReviewer' => $this->isReviewer(),
             'detailRecord' => $detailRecord,
+            'editingRecord' => $editingRecord,
             'reviewRecord' => $reviewRecord,
         ])->layout('admin.layouts.app');
     }

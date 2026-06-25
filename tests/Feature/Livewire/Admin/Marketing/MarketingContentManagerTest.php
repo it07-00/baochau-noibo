@@ -143,6 +143,38 @@ class MarketingContentManagerTest extends TestCase
             ->assertSet('formTitle', 'Draft campaign');
     }
 
+    public function test_edit_form_can_save_current_changes_and_submit_draft_for_review(): void
+    {
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Draft campaign',
+            'content' => 'Draft caption',
+            'scheduled_at' => '2026-07-15',
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(MarketingContentManager::class)
+            ->call('openCalendarContent', $record->id)
+            ->assertSet('isEditing', true)
+            ->assertSee('Gửi duyệt')
+            ->set('formTitle', 'Updated campaign')
+            ->set('formContent', 'Updated caption ready for review')
+            ->call('saveAndSubmitForReview')
+            ->assertDispatched('closeContentFormModal')
+            ->assertDispatched('closeDetailModal');
+
+        $this->assertDatabaseHas('marketing_contents', [
+            'id' => $record->id,
+            'title' => 'Updated campaign',
+            'content' => 'Updated caption ready for review',
+            'status' => 'pending',
+        ]);
+    }
+
     public function test_calendar_content_click_opens_detail_for_locked_content(): void
     {
         $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
@@ -198,6 +230,32 @@ class MarketingContentManagerTest extends TestCase
 
         Livewire::test(MarketingContentManager::class)
             ->call('openDetail', $record->id)
+            ->assertSee('Gửi duyệt')
+            ->call('submitForReview', $record->id)
+            ->assertDispatched('closeDetailModal');
+
+        $this->assertDatabaseHas('marketing_contents', [
+            'id' => $record->id,
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_unscheduled_draft_content_has_inline_submit_action(): void
+    {
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Unscheduled campaign',
+            'content' => 'Draft caption without a publish date',
+            'scheduled_at' => null,
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(MarketingContentManager::class)
+            ->assertSee('Unscheduled campaign')
             ->assertSee('Gửi duyệt')
             ->call('submitForReview', $record->id)
             ->assertDispatched('closeDetailModal');

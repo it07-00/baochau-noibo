@@ -216,7 +216,7 @@
 
     <div wire:ignore.self class="modal fade" id="contentFormModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow">
+            <div class="modal-content border-0 shadow mc-content-form-modal">
                 <div class="modal-header bg-body align-items-start border-bottom">
                     <div class="d-flex align-items-start gap-3">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary flex-shrink-0 mc-form-hero-icon">
@@ -405,6 +405,16 @@
 
                     <div class="modal-footer d-flex justify-content-end flex-wrap gap-2 bg-body flex-shrink-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        @if($isEditing && $editingRecord?->isDraft())
+                            <button type="button" class="btn btn-warning text-dark fw-semibold"
+                                wire:click="saveAndSubmitForReview"
+                                wire:confirm="Lưu nội dung hiện tại và gửi bài này để duyệt?"
+                                wire:loading.attr="disabled"
+                                wire:target="saveAndSubmitForReview,newImages">
+                                <span wire:loading wire:target="saveAndSubmitForReview" class="spinner-border spinner-border-sm me-1"></span>
+                                <i class="bi bi-send me-1"></i>Gửi duyệt
+                            </button>
+                        @endif
                         <button type="submit" class="btn btn-success"
                             wire:loading.attr="disabled" wire:target="save,newImages">
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm me-1"></span>
