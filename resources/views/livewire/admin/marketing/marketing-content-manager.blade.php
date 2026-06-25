@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm overflow-hidden" wire:loading.class="opacity-75" wire:target="calendarMonth,previousCalendarMonth,nextCalendarMonth,goToCurrentCalendarMonth">
+    <div class="card border-0 shadow-sm overflow-hidden mc-marketing-panel mc-calendar-card" wire:loading.class="opacity-75" wire:target="calendarMonth,previousCalendarMonth,nextCalendarMonth,goToCurrentCalendarMonth">
         <div class="card-header bg-body d-flex align-items-center justify-content-between flex-wrap gap-3 p-3">
             <div>
                 <div class="text-muted small fw-bold text-uppercase">Lịch đăng</div>
@@ -128,8 +128,8 @@
                                             @endif
 
                                             @if($isMarketing && $item->isDraft())
-                                                <button type="button" class="btn btn-sm btn-outline-warning mc-icon-btn" wire:click.stop="submitForReview({{ $item->id }})" wire:confirm="Gửi bài này để duyệt?" title="Gửi duyệt">
-                                                    <i class="bi bi-send"></i>
+                                                <button type="button" class="btn btn-sm btn-warning text-dark fw-semibold d-inline-flex align-items-center gap-1" wire:click.stop="submitForReview({{ $item->id }})" wire:confirm="Gửi bài này để duyệt?" title="Gửi duyệt">
+                                                    <i class="bi bi-send"></i><span>Gửi duyệt</span>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger mc-icon-btn" wire:click.stop="deleteContent({{ $item->id }})" wire:confirm="Xóa bài content này?" title="Xóa">
                                                     <i class="bi bi-trash"></i>
@@ -162,7 +162,7 @@
     </div>
 
     @if($unscheduledContents->isNotEmpty())
-        <div class="card border-0 shadow-sm mt-3">
+        <div class="card border-0 shadow-sm mt-3 mc-marketing-panel mc-unscheduled-card">
             <div class="card-header bg-body d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
                     <div class="text-muted small fw-bold text-uppercase">Chưa chốt lịch</div>
@@ -176,15 +176,39 @@
                     @php
                         $statusColor = $statusColors[$item->status] ?? 'secondary';
                     @endphp
-                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-start justify-content-between gap-3" wire:click="openDetail({{ $item->id }})" wire:key="marketing-unscheduled-{{ $item->id }}">
-                        <span class="min-w-0 text-start">
+                    <div class="list-group-item d-flex align-items-start justify-content-between flex-wrap gap-3" wire:key="marketing-unscheduled-{{ $item->id }}">
+                        <button type="button" class="mc-unscheduled-main min-w-0 text-start flex-grow-1" wire:click="openDetail({{ $item->id }})">
                             <strong class="d-block text-truncate">{{ $item->title }}</strong>
                             <small class="d-block text-muted">{{ \Illuminate\Support\Str::limit($item->content, 90) }}</small>
-                        </span>
-                        <span class="badge rounded-pill text-bg-{{ $statusColor }} flex-shrink-0">
-                            {{ $statusLabels[$item->status] ?? $item->status }}
-                        </span>
-                    </button>
+                        </button>
+
+                        <div class="d-flex align-items-center justify-content-end flex-wrap gap-2">
+                            <span class="badge rounded-pill text-bg-{{ $statusColor }} flex-shrink-0">
+                                {{ $statusLabels[$item->status] ?? $item->status }}
+                            </span>
+
+                            @if($isMarketing && $item->isEditable())
+                                <button type="button" class="btn btn-sm btn-outline-secondary mc-icon-btn" wire:click.stop="openEdit({{ $item->id }})" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            @endif
+
+                            @if($isMarketing && $item->isDraft())
+                                <button type="button" class="btn btn-sm btn-warning text-dark fw-semibold d-inline-flex align-items-center gap-1" wire:click.stop="submitForReview({{ $item->id }})" wire:confirm="Gửi bài này để duyệt?" title="Gửi duyệt">
+                                    <i class="bi bi-send"></i><span>Gửi duyệt</span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger mc-icon-btn" wire:click.stop="deleteContent({{ $item->id }})" wire:confirm="Xóa bài content này?" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            @endif
+
+                            @if($isReviewer && $item->isPending())
+                                <button type="button" class="btn btn-sm btn-success mc-icon-btn" wire:click.stop="openReview({{ $item->id }})" title="Duyệt">
+                                    <i class="bi bi-check2-circle"></i>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
                 @endforeach
             </div>
         </div>

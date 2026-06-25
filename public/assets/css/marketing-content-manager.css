@@ -40,6 +40,20 @@
 	flex: 0 0 auto;
 }
 
+.marketing-content-page .mc-unscheduled-main {
+	display: block;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	padding: 0;
+	min-width: 0;
+}
+
+.marketing-content-page .mc-unscheduled-main:hover strong,
+.marketing-content-page .mc-unscheduled-main:focus strong {
+	color: var(--bs-primary);
+}
+
 .marketing-content-page .mc-form-hero-icon {
 	width: 2.75rem;
 	height: 2.75rem;
@@ -62,11 +76,14 @@
 	color: inherit;
 }
 
+.marketing-content-page .mc-marketing-panel .btn-warning,
 .marketing-content-page .mc-detail-modal .btn-warning {
 	background: #fbbf24;
 	border-color: #fbbf24;
 }
 
+.marketing-content-page .mc-marketing-panel .btn-warning:hover,
+.marketing-content-page .mc-marketing-panel .btn-warning:focus,
 .marketing-content-page .mc-detail-modal .btn-warning:hover,
 .marketing-content-page .mc-detail-modal .btn-warning:focus {
 	background: #f59e0b;
@@ -150,6 +167,75 @@
 	height: 100%;
 	object-fit: contain;
 	display: block;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-marketing-panel,
+body.theme-dark .marketing-content-page .mc-marketing-panel {
+	background: #0f172a;
+	color: #e5e7eb;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-marketing-panel .card-header,
+[data-bs-theme=dark] .marketing-content-page .mc-marketing-panel .card-body,
+body.theme-dark .marketing-content-page .mc-marketing-panel .card-header,
+body.theme-dark .marketing-content-page .mc-marketing-panel .card-body {
+	background-color: #111827 !important;
+	border-color: #334155;
+	color: #e5e7eb;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-weekdays,
+body.theme-dark .marketing-content-page .mc-calendar-weekdays {
+	background-color: #111827 !important;
+	border-color: #334155 !important;
+	color: #94a3b8 !important;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-day,
+body.theme-dark .marketing-content-page .mc-calendar-day {
+	border-color: #334155 !important;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-day.bg-body,
+body.theme-dark .marketing-content-page .mc-calendar-day.bg-body {
+	background-color: #0f172a !important;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-day.bg-body-tertiary,
+body.theme-dark .marketing-content-page .mc-calendar-day.bg-body-tertiary {
+	background-color: #111827 !important;
+	color: #94a3b8 !important;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-event,
+body.theme-dark .marketing-content-page .mc-calendar-event {
+	background-color: #172033 !important;
+	border-color: #334155 !important;
+	color: #e5e7eb;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-day-action:hover,
+[data-bs-theme=dark] .marketing-content-page .mc-calendar-event:hover,
+body.theme-dark .marketing-content-page .mc-calendar-day-action:hover,
+body.theme-dark .marketing-content-page .mc-calendar-event:hover {
+	background-color: #1f2937 !important;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-unscheduled-card .list-group-item,
+body.theme-dark .marketing-content-page .mc-unscheduled-card .list-group-item {
+	background-color: #0f172a;
+	border-color: #334155;
+	color: #e5e7eb;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-unscheduled-card .list-group-item:hover,
+body.theme-dark .marketing-content-page .mc-unscheduled-card .list-group-item:hover {
+	background-color: #172033;
+}
+
+[data-bs-theme=dark] .marketing-content-page .mc-marketing-panel .text-muted,
+body.theme-dark .marketing-content-page .mc-marketing-panel .text-muted {
+	color: #94a3b8 !important;
 }
 
 [data-bs-theme=dark] .marketing-content-page .mc-detail-modal,
