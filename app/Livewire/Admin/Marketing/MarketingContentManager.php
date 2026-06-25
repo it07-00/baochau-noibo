@@ -260,6 +260,8 @@ class MarketingContentManager extends Component
 
         $this->reviewingId = $record->id;
         $this->reviewNote = '';
+        $this->detailId = null;
+        $this->dispatch('closeDetailModal');
         $this->dispatch('openReviewModal');
     }
 

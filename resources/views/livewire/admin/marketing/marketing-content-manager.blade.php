@@ -662,6 +662,13 @@
                                     <i class="bi bi-send me-1"></i>Gửi duyệt
                                 </button>
                             @endif
+                            @if($isReviewer && $detailRecord->isPending())
+                                <button type="button"
+                                    class="btn btn-success fw-semibold"
+                                    wire:click="openReview({{ $detailRecord->id }})">
+                                    <i class="bi bi-check2-circle me-1"></i>Duyệt bài
+                                </button>
+                            @endif
                             <button type="button"
                                 class="btn btn-outline-primary"
                                 onclick="window.marketingContentCopy(this, @js($detailRecord->content), @js($detailImageUrls))">

@@ -378,6 +378,35 @@ class MarketingContentManagerTest extends TestCase
             ->assertSet('detailId', $record->id);
     }
 
+    public function test_tpkd_user_can_review_pending_content_from_detail_modal(): void
+    {
+        $tpkdRole = Role::findByName(RoleEnum::TP_KINH_DOANH->value);
+        $tpkdUser = User::factory()->create([
+            'is_active' => true,
+        ]);
+        $tpkdUser->assignRole($tpkdRole);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Pending campaign',
+            'content' => 'Pending caption',
+            'scheduled_at' => '2026-07-15',
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($tpkdUser);
+
+        Livewire::test(MarketingContentManager::class)
+            ->call('openCalendarContent', $record->id)
+            ->assertSet('isEditing', false)
+            ->assertSet('detailId', $record->id)
+            ->assertSee('Duyệt bài')
+            ->call('openReview', $record->id)
+            ->assertSet('reviewingId', $record->id)
+            ->assertDispatched('closeDetailModal')
+            ->assertDispatched('openReviewModal');
+    }
+
     public function test_marketing_content_notifications_are_dispatched(): void
     {
         Notification::fake();
