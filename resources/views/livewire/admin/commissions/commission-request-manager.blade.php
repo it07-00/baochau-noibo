@@ -260,7 +260,7 @@
                                             </a>
                                         @endif
 
-                                        @if($rowCanDelete && !in_array($request->status, ['Đã duyệt', 'Đã chi'], true))
+                                        @if($rowCanDelete && (!in_array($request->status, ['Đã duyệt', 'Đã chi'], true) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value)))
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     wire:click="delete({{ $request->id }})"

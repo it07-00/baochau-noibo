@@ -261,4 +261,75 @@ class CommissionRequestManagerTest extends TestCase
         $this->assertNull($request->payment_bill_path);
         $this->assertNotNull($request->processed_at);
     }
+
+    public function test_sales_user_cannot_delete_approved_request(): void
+    {
+        $approvedRequest = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Tran Van Approved',
+            'amount' => 1000000,
+            'status' => 'Đã duyệt',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(CommissionRequestManager::class)
+            ->call('delete', $approvedRequest->id)
+            ->assertDispatched('swal:toast', [
+                'type' => 'error',
+                'message' => 'Không thể xóa yêu cầu đã được duyệt hoặc đã chi.',
+            ]);
+
+        $this->assertDatabaseHas('commission_requests', [
+            'id' => $approvedRequest->id,
+            'deleted_at' => null,
+        ]);
+    }
+
+    public function test_accountant_can_delete_approved_and_paid_requests(): void
+    {
+        // Ensure accountant role has delete permission in this test
+        $accountantRole = Role::findByName(RoleEnum::KE_TOAN->value);
+        $accountantRole->givePermissionTo(PermissionEnum::COMMISSIONS_DELETE->value);
+
+        $approvedRequest = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Tran Van Approved',
+            'amount' => 1000000,
+            'status' => 'Đã duyệt',
+        ]);
+
+        $paidRequest = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'Tran Van Paid',
+            'amount' => 1000000,
+            'status' => 'Đã chi',
+        ]);
+
+        $this->actingAs($this->accountantUser);
+
+        // Delete approved request
+        Livewire::test(CommissionRequestManager::class)
+            ->call('delete', $approvedRequest->id)
+            ->assertDispatched('swal:success', [
+                'message' => 'Xóa yêu cầu thành công!',
+            ]);
+
+        $this->assertSoftDeleted($approvedRequest);
+
+        // Delete paid request
+        Livewire::test(CommissionRequestManager::class)
+            ->call('delete', $paidRequest->id)
+            ->assertDispatched('swal:success', [
+                'message' => 'Xóa yêu cầu thành công!',
+            ]);
+
+        $this->assertSoftDeleted($paidRequest);
+    }
 }

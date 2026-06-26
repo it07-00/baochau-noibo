@@ -155,10 +155,11 @@ class CommissionRequestManager extends Component
         $isOwner = auth()->check() && $request->user_id === auth()->id();
         $hasDeletePermission = auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value);
         abort_unless($isOwner || $hasDeletePermission, 403);
+        $isAccountant = auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value);
         if (in_array($request->status, [
             CommissionRequestStatus::DA_DUYET->value,
             CommissionRequestStatus::DA_CHI->value,
-        ], true)) {
+        ], true) && !$isAccountant) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể xóa yêu cầu đã được duyệt hoặc đã chi.']);
 
             return;
