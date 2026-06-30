@@ -37,6 +37,15 @@
    01. Base & Reset Helpers
    ============================================================ */
 
+:root {
+    --bs-font-sans-serif: "Plus Jakarta Sans", sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
+}
+
+body {
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
 /** Alpine.js — hide until JS loads */
 [x-cloak] { display: none !important; }
 
