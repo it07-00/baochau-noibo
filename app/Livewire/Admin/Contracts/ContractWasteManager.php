@@ -109,7 +109,7 @@ class ContractWasteManager extends Component
         'ncc_payment_sheet_url' => '',
         'ncc_payment_status' => 'unpaid',
         'ncc_payment_paid_at' => '',
-        'payment_method' => 'Sau ký',
+        'payment_method' => 'Sau khi ký HĐ',
         'info_source' => 'MỚI',
         'signed_at' => '',
         'effective_at' => '',
@@ -134,7 +134,7 @@ class ContractWasteManager extends Component
 
     public array $financialBase = ['value' => 0, 'commission' => 0, 'revenue' => 0];
 
-    public array $paymentMethods = ['Sau ký'];
+    public array $paymentMethods = ['Sau khi ký HĐ'];
 
     public $filter = [
         'signed_from' => '',
@@ -518,7 +518,7 @@ class ContractWasteManager extends Component
     private function resetForm()
     {
         $this->newCustomerName = '';
-        $this->paymentMethods = ['Sau ký'];
+        $this->paymentMethods = ['Sau khi ký HĐ'];
         $this->formData = [
             'shd_cxl' => '',
             'shd_bc' => '',
@@ -537,7 +537,7 @@ class ContractWasteManager extends Component
             'ncc_payment_sheet_url' => '',
             'ncc_payment_status' => 'unpaid',
             'ncc_payment_paid_at' => '',
-            'payment_method' => 'Sau ký',
+            'payment_method' => 'Sau khi ký HĐ',
             'info_source' => 'MỚI',
             'signed_at' => date('Y-m-d'),
             'effective_at' => '',
@@ -1084,7 +1084,7 @@ class ContractWasteManager extends Component
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_statuses' => $voucherStatuses,
             'voucher_status_options' => ContractVoucherStatus::values(),
-            'payment_methods' => ['Sau ký', 'Trước ký', 'Đã ký hợp đồng', 'Đã có kết quả/Báo cáo', 'Đã nộp báo cáo', 'Đã gửi báo cáo KH ký', 'Bàn giao + nghiệm thu'],
+            'payment_methods' => ['Sau khi ký HĐ', 'Sau khi có kết quả/báo cáo', 'Sau khi bàn giao + Nghiệm thu'],
             'provinces' => $scopedProvinces,
             'info_sources' => collect(['MỚI', 'Sale', 'Tái ký', 'Thông tin chuyển', 'Thông tin chuyển MKT'])
                 ->merge(ContractWaste::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source'))

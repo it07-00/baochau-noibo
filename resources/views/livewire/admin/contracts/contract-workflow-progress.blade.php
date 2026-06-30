@@ -1,7 +1,7 @@
 <div class="px-3 px-md-4 py-3 border-top bg-light" >
     <div class="d-flex align-items-center justify-content-between mb-3">
         <span class="fw-bold text-muted">
-            <i class="bi bi-diagram-3 me-1 text-primary"></i> Tiến độ xử lý
+            <i class="fa-solid fa-sitemap me-1 text-primary"></i> Tiến độ xử lý
         </span>
         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle fs-75 text-nowrap"
             >
@@ -18,7 +18,7 @@
                         {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-white text-muted border border-secondary') }} wh-34 fs-85"
                         >
                         @if (in_array($key, $completedSteps))
-                            <i class="bi bi-check-lg"></i>
+                            <i class="fa-solid fa-check"></i>
                         @else
                             <span class="fw-bold">{{ $i + 1 }}</span>
                         @endif
@@ -48,7 +48,7 @@
                         {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-white text-muted border border-secondary') }} wh-36 fs-82"
                         >
                         @if (in_array($key, $completedSteps))
-                            <i class="bi bi-check-lg"></i>
+                            <i class="fa-solid fa-check"></i>
                         @else
                             <span class="fw-bold">{{ $i + 1 }}</span>
                         @endif
@@ -81,19 +81,19 @@
     @if ($filesByStep->count() > 0)
         <div class="mt-3 pt-3 border-top">
             <div class="fw-bold text-muted mb-2 fs-85" >
-                <i class="bi bi-paperclip me-1"></i> File đính kèm theo bước
+                <i class="fa-solid fa-paperclip me-1"></i> File đính kèm theo bước
             </div>
             @foreach ($stepKeys as $key)
                 @if (isset($filesByStep[$key]))
                     <div class="mb-3">
                         <span class="badge text-white mb-2 px-2 py-1 bg-primary fs-75 rounded-2"
                             >
-                            <i class="bi bi-check-circle me-1"></i>{{ $steps[$key] }}
+                            <i class="fa-solid fa-circle-check me-1"></i>{{ $steps[$key] }}
                         </span>
                         @foreach ($filesByStep[$key] as $f)
                             <div class="ps-2 mb-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-file-earmark-arrow-down text-success flex-shrink-0"></i>
+                                    <i class="fa-solid fa-file-arrow-down text-success flex-shrink-0"></i>
                                     <a href="{{ $f->file_url }}" target="_blank"
                                         class="fw-semibold text-decoration-none text-primary text-truncate fs-83"
                                         >

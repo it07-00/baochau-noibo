@@ -12,17 +12,17 @@
         <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
             @can('quotation-tracking.create')
             <button class="btn btn-success btn-sm d-flex align-items-center gap-1" wire:click="create">
-                <i class="bi bi-plus-lg"></i> Thêm mới
+                <i class="fa-solid fa-plus-lg"></i> Thêm mới
             </button>
             <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
                     wire:click="resetImport"
                     data-bs-toggle="modal" data-bs-target="#importModal">
-                <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
+                <i class="fa-solid fa-file-arrow-up"></i> Import Excel
             </button>
             @endcan
             <div class="input-group w-230px" >
                 <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </div>
     </div>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-md-2 d-flex align-items-end justify-content-end">
                     <button class="btn btn-sm btn-outline-secondary" wire:click="resetFilters">
-                        <i class="bi bi-x-circle"></i> Xóa lọc
+                        <i class="fa-solid fa-xmark-circle"></i> Xóa lọc
                     </button>
                 </div>
             </div>
@@ -114,14 +114,14 @@
                             @endif
                             @if($item->quotationDocuments->first())
                             <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="badge bg-success bg-opacity-10 text-success border mt-1 text-decoration-none d-inline-flex align-items-center gap-1">
-                                <i class="bi bi-file-earmark-pdf"></i> Word/PDF
+                                <i class="fa-solid fa-file-pdf"></i> Word/PDF
                             </a>
                             @endif
                         </td>
                         <td>
                             <div class="fw-bold text-primary text-capitalize fs-85 lh-sm" >{{ $item->company_name }}</div>
                             @if($item->contact_person)
-                            <div class=" text-muted mt-1"><i class="bi bi-person-circle me-1"></i>{{ $item->contact_person }}</div>
+                            <div class=" text-muted mt-1"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->contact_person }}</div>
                             @endif
                             @if($item->province)
                             <span class="badge bg-info bg-opacity-10 text-info mt-1 fs-65" >{{ $item->province }}</span>
@@ -155,49 +155,49 @@
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
-                                    <i class="bi bi-eye fs-5"></i>
+                                    <i class="fa-solid fa-eye fs-5"></i>
                                 </button>
                                 @if($item->pdf_path)
                                 <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
-                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    <i class="fa-solid fa-file-pdf fs-5"></i>
                                 </a>
                                 @elseif($item->files_count > 0)
                                 <button class="btn btn-sm p-0 text-danger position-relative" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
-                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    <i class="fa-solid fa-file-pdf fs-5"></i>
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
                                 </button>
                                 @elseif($item->quotationDocuments->first())
                                 <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xem PDF báo giá tạo tự động">
-                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    <i class="fa-solid fa-file-pdf fs-5"></i>
                                 </a>
                                 @else
                                 @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
-                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    <i class="fa-solid fa-file-pdf fs-5"></i>
                                 </button>
                                 @endcan
                                 @endif
                                 @if($item->quotationDocuments->first())
                                 <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
-                                    <i class="bi bi-file-earmark-richtext fs-5"></i>
+                                    <i class="fa-solid fa-file-richtext fs-5"></i>
                                 </a>
                                 @endif
                                 @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
-                                    <i class="bi bi-file-earmark-plus fs-5"></i>
+                                    <i class="fa-solid fa-file-plus fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
-                                    <i class="bi bi-copy fs-5"></i>
+                                    <i class="fa-solid fa-copy fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
-                                    <i class="bi bi-pencil-square fs-5"></i>
+                                    <i class="fa-solid fa-pen-square fs-5"></i>
                                 </button>
                                 @endcan
                                 @can('quotation-tracking.delete')
                                 <button class="btn btn-sm p-0 text-danger"
                                         wire:click="delete({{ $item->id }})"
                                         wire:confirm="Xác nhận xóa báo giá này?">
-                                    <i class="bi bi-trash fs-5"></i>
+                                    <i class="fa-solid fa-trash fs-5"></i>
                                 </button>
                                 @endcan
                             </div>
@@ -303,11 +303,11 @@
                                     <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value, 0, ',', '.') }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-light fw-bold px-4 py-3"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</th>
+                                    <th class="bg-light fw-bold px-4 py-3"><i class="fa-solid fa-file-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</th>
                                     <td class="px-4 py-3">
                                         @if($selectedQuotation->quotationDocuments->first())
                                             <a href="{{ route('app.quotation-docs.export-pdf', $selectedQuotation->quotationDocuments->first()->id) }}" target="_blank" class="d-inline-flex align-items-center gap-2 text-success text-decoration-none small mb-2">
-                                                <i class="bi bi-file-earmark-richtext"></i>
+                                                <i class="fa-solid fa-file-richtext"></i>
                                                 <span>Báo giá Word/PDF gốc: {{ $selectedQuotation->quotationDocuments->first()->document_number }}</span>
                                             </a>
                                         @endif
@@ -315,7 +315,7 @@
                                             <div class="d-flex flex-column gap-1">
                                                 @foreach($selectedQuotation->files as $f)
                                                 <a href="{{ Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
-                                                    <i class="bi bi-file-earmark-pdf"></i>
+                                                    <i class="fa-solid fa-file-pdf"></i>
                                                     <span class="text-truncate">{{ $f->original_name }}</span>
                                                 </a>
                                                 @endforeach
@@ -484,17 +484,17 @@
 
                             <div class="col-12">
                                 <hr class="my-1">
-                                <label class="form-label fw-bold"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</label>
+                                <label class="form-label fw-bold"><i class="fa-solid fa-file-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</label>
 
                                 @if(count($editingFiles) > 0)
                                     <div class="d-flex flex-column gap-1 mb-2">
                                         @foreach($editingFiles as $ef)
                                         <div class="d-flex align-items-center gap-2 border rounded px-2 py-1">
-                                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                            <i class="fa-solid fa-file-pdf text-danger"></i>
                                             <a href="{{ $ef['url'] }}" target="_blank" class="text-truncate flex-grow-1 small text-danger">{{ $ef['name'] }}</a>
                                             @can('quotation-tracking.edit')
                                             <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteFile({{ $ef['id'] }})" wire:confirm="Xóa file này?">
-                                                <i class="bi bi-trash fs-5"></i>
+                                                <i class="fa-solid fa-trash fs-5"></i>
                                             </button>
                                             @endcan
                                         </div>
@@ -530,7 +530,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header py-3">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>FILE PDF BÁO GIÁ</h6>
+                    <h6 class="modal-title fw-bold"><i class="fa-solid fa-file-pdf text-danger me-2"></i>FILE PDF BÁO GIÁ</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body px-4 py-3">
@@ -538,11 +538,11 @@
                         <div class="d-flex flex-column gap-2 mb-3">
                             @foreach($editingFiles as $ef)
                             <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
-                                <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                                <i class="fa-solid fa-file-pdf text-danger fs-5"></i>
                                 <a href="{{ $ef['url'] }}" target="_blank" class="text-truncate flex-grow-1 small text-danger fw-semibold text-decoration-none">{{ $ef['name'] }}</a>
                                 @can('quotation-tracking.edit')
                                 <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteFile({{ $ef['id'] }})" wire:confirm="Xóa file này?">
-                                    <i class="bi bi-trash fs-5"></i>
+                                    <i class="fa-solid fa-trash fs-5"></i>
                                 </button>
                                 @endcan
                             </div>
@@ -558,7 +558,7 @@
                             <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($pdfFiles) }} file):</p>
                             @foreach($pdfFiles as $pf)
                             <div class="d-flex align-items-center gap-2 border border-primary rounded px-3 py-1 bg-light">
-                                <i class="bi bi-file-earmark-pdf text-primary"></i>
+                                <i class="fa-solid fa-file-pdf text-primary"></i>
                                 <span class="small text-truncate flex-grow-1">{{ $pf->getClientOriginalName() }}</span>
                             </div>
                             @endforeach
@@ -599,22 +599,22 @@
                     <p class="mb-4">Hệ thống sẽ chuyển dữ liệu từ báo giá này sang trang tạo hợp đồng mới.</p>
                     <div class="d-grid gap-3">
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('waste')">
-                            <i class="bi bi-trash3 me-2"></i> Chất thải
+                            <i class="fa-solid fa-trash3 me-2"></i> Chất thải
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('consulting')">
-                            <i class="bi bi-chat-dots me-2"></i> Hồ sơ môi trường
+                            <i class="fa-solid fa-comment-dots me-2"></i> Hồ sơ môi trường
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('project')">
-                            <i class="bi bi-building me-2"></i> Ứng phó sự cố
+                            <i class="fa-solid fa-building me-2"></i> Ứng phó sự cố
                         </button>
                         <button class="btn btn-outline-primary py-3 fw-bold" wire:click="convertTo('commercial')">
-                            <i class="bi bi-cart3 me-2"></i> Nghiên cứu và chuyển đổi công nghệ
+                            <i class="fa-solid fa-cart-shopping me-2"></i> Nghiên cứu và chuyển đổi công nghệ
                         </button>
                         <button class="btn btn-outline-success py-3 fw-bold" wire:click="convertTo('sustainability')">
-                            <i class="bi bi-tree me-2"></i> Phát triển bền vững
+                            <i class="fa-solid fa-tree me-2"></i> Phát triển bền vững
                         </button>
                         <button class="btn btn-outline-warning py-3 fw-bold" wire:click="convertTo('energy')">
-                            <i class="bi bi-lightning me-2"></i> Giảm phát thải, tiết kiệm năng lượng
+                            <i class="fa-solid fa-bolt me-2"></i> Giảm phát thải, tiết kiệm năng lượng
                         </button>
                     </div>
                 </div>
@@ -627,7 +627,7 @@
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg overflow-hidden">
                 <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white"><i class="bi bi-file-earmark-arrow-up me-2"></i>Import Báo giá từ Excel</h5>
+                    <h5 class="modal-title fw-bold text-white"><i class="fa-solid fa-file-arrow-up me-2"></i>Import Báo giá từ Excel</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="resetImport"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -715,7 +715,7 @@
                     @if(count($importHeaders) > 0)
                     <button type="button" class="btn btn-primary px-4 fw-bold" wire:click="runImport">
                         <span wire:loading wire:target="runImport" class="spinner-border spinner-border-sm me-2"></span>
-                        <i class="bi bi-cloud-upload me-1"></i> Thực hiện Import
+                        <i class="fa-solid fa-cloud-arrow-up me-1"></i> Thực hiện Import
                     </button>
                     @endif
                 </div>

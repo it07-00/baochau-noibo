@@ -9,7 +9,7 @@
         <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3 flex-wrap">
                 <h5 class="ws-toolbar-title mb-0 fw-bold">
-                    <span class="ws-title-icon"><i class="bi bi-calendar2-week"></i></span>
+                    <span class="ws-title-icon"><i class="fa-solid fa-calendar-week"></i></span>
                     <span>Lịch công tác</span>
                 </h5>
 
@@ -19,7 +19,7 @@
                     <button wire:click="previousMonth"
                         class="ws-nav-button btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
                         title="Tháng trước">
-                        <i class="bi bi-chevron-left"></i>
+                        <i class="fa-solid fa-chevron-left"></i>
                     </button>
                     <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle">
                         @for($m = 1; $m <= 12; $m++)
@@ -34,7 +34,7 @@
                     <button wire:click="nextMonth"
                         class="ws-nav-button btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
                         title="Tháng sau">
-                        <i class="bi bi-chevron-right"></i>
+                        <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                     {{ $totalEvents }} sự kiện
                 </span>
                 <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
-                    <i class="bi bi-plus-lg"></i> Thêm sự kiện
+                    <i class="fa-solid fa-plus-lg"></i> Thêm sự kiện
                 </button>
             </div>
         </div>
@@ -83,16 +83,16 @@
                     <button type="button"
                         class="ws-agenda-add btn btn-sm btn-outline-primary"
                         wire:click="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')">
-                        <i class="bi bi-plus-lg me-1"></i> Thêm vào ngày này
+                        <i class="fa-solid fa-plus-lg me-1"></i> Thêm vào ngày này
                     </button>
                 @endif
             </section>
         @empty
             <div class="ws-agenda-empty bg-white shadow-sm">
-                <i class="bi bi-calendar2-week"></i>
+                <i class="fa-solid fa-calendar-week"></i>
                 <div class="fw-semibold">Chưa có sự kiện trong tháng này</div>
                 <button wire:click="openCreateModal" class="btn btn-primary btn-sm mt-2">
-                    <i class="bi bi-plus-lg me-1"></i> Thêm sự kiện
+                    <i class="fa-solid fa-plus-lg me-1"></i> Thêm sự kiện
                 </button>
             </div>
         @endforelse
@@ -132,7 +132,7 @@
                                 <button wire:click.stop="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')"
                                     class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
                                     title="Thêm sự kiện">
-                                    <i class="bi bi-plus"></i>
+                                    <i class="fa-solid fa-plus"></i>
                                 </button>
                             @endif
                         </div>
@@ -168,7 +168,7 @@
              @click.stop>
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
                 <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-calendar-event me-2"></i> Lịch công tác ngày {{ $detailDate ? \Carbon\Carbon::parse($detailDate)->format('d/m/Y') : '' }}
+                    <i class="fa-solid fa-calendar-day me-2"></i> Lịch công tác ngày {{ $detailDate ? \Carbon\Carbon::parse($detailDate)->format('d/m/Y') : '' }}
                 </h5>
                 <button wire:click="closeDayDetail" class="btn-close"></button>
             </div>
@@ -185,23 +185,23 @@
                                     @if($evt['is_owner'] && !$evt['is_past'])
                                         <button wire:click="edit({{ $evt['id'] }})"
                                             class="btn btn-sm btn-outline-primary px-2 rounded-2" >
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="fa-solid fa-pen"></i>
                                         </button>
                                     @endif
                                     @if($evt['is_owner'])
                                         <button wire:click="delete({{ $evt['id'] }})"
                                             wire:confirm="Bạn chắc chắn muốn xóa sự kiện này?"
                                             class="btn btn-sm btn-outline-danger px-2 rounded-2" >
-                                            <i class="bi bi-trash"></i>
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                     @endif
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-2 fs-095" >
-                                <span class="text-muted"><i class="bi bi-person me-1"></i>{{ $evt['user_name'] }}</span>
+                                <span class="text-muted"><i class="fa-solid fa-user me-1"></i>{{ $evt['user_name'] }}</span>
                                 <span class="text-muted">•</span>
                                 <span class="text-muted">
-                                    <i class="bi bi-calendar3 me-1"></i>
+                                    <i class="fa-solid fa-calendar-days me-1"></i>
                                     {{ $evt['start_date'] }}
                                     @if($evt['is_multi_day'])
                                         → {{ $evt['end_date'] }}
@@ -209,11 +209,11 @@
                                 </span>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-2 fs-095">
-                                <span class="text-muted"><i class="bi bi-clock me-1"></i>{{ $evt['time_label'] }}</span>
+                                <span class="text-muted"><i class="fa-solid fa-clock me-1"></i>{{ $evt['time_label'] }}</span>
                             </div>
                             @if(!empty($evt['participants']))
                                 <div class="mb-2 fs-095" >
-                                    <i class="bi bi-people me-1 text-muted"></i>
+                                    <i class="fa-solid fa-users me-1 text-muted"></i>
                                     <span class="text-muted">Người tham gia:</span>
                                     <span class="fw-semibold">{{ $evt['participants'] }}</span>
                                 </div>
@@ -231,7 +231,7 @@
                     <div class="text-center mt-4">
                         <button wire:click="openCreateModal('{{ $detailDate }}')"
                             class="btn btn-outline-primary px-4 py-2 fw-semibold rounded-10px fs-6" >
-                            <i class="bi bi-plus-lg me-2"></i> Thêm sự kiện vào ngày này
+                            <i class="fa-solid fa-plus-lg me-2"></i> Thêm sự kiện vào ngày này
                         </button>
                     </div>
                 @endif
@@ -321,7 +321,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-bold text-muted"><i class="bi bi-people me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
+                    <label class="form-label fw-bold text-muted"><i class="fa-solid fa-users me-1"></i>Người tham gia <span class="fw-normal text-muted">(tùy chọn)</span></label>
                     <div class="border rounded-3 p-2 border-light-subtle" style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
                         @foreach($allUsers as $u)
                             <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88"

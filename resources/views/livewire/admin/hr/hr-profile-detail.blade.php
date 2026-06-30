@@ -6,7 +6,7 @@
     <div class="px-3 pt-3">
         <!-- Back button -->
         <a href="{{ route('app.hr.index') }}" class="btn btn-sm btn-outline-secondary mb-3 rounded-8px" >
-            <i class="bi bi-arrow-left me-1"></i> Danh sách nhân sự
+            <i class="fa-solid fa-arrow-left me-1"></i> Danh sách nhân sự
         </a>
 
         <div class="row g-4">
@@ -29,11 +29,11 @@
                         <span class="hr-badge hr-badge-{{ $user->work_type }} ms-1">{{ $user->work_type_label }}</span>
                     </div>
                     <div class="border-top px-4 py-3 fs-85" >
-                        <div class="mb-2"><i class="bi bi-hash me-2 text-muted"></i><strong>Mã NV:</strong> {{ $user->employee_code ?: '—' }}</div>
-                        <div class="mb-2"><i class="bi bi-building me-2 text-muted"></i><strong>Phòng ban:</strong> {{ $user->department->name ?? '—' }}</div>
-                        <div class="mb-2"><i class="bi bi-telephone me-2 text-muted"></i><strong>SĐT:</strong> {{ $user->phone ?: '—' }}</div>
-                        <div class="mb-2"><i class="bi bi-calendar-event me-2 text-muted"></i><strong>Ngày vào:</strong> {{ $user->start_date?->format('d/m/Y') ?? '—' }}</div>
-                        <div><i class="bi bi-file-earmark-text me-2 text-muted"></i><strong>HĐ hiện tại:</strong> {{ $user->active_contract?->contract_type_label ?? '—' }}</div>
+                        <div class="mb-2"><i class="fa-solid fa-hashtag me-2 text-muted"></i><strong>Mã NV:</strong> {{ $user->employee_code ?: '—' }}</div>
+                        <div class="mb-2"><i class="fa-solid fa-building me-2 text-muted"></i><strong>Phòng ban:</strong> {{ $user->department->name ?? '—' }}</div>
+                        <div class="mb-2"><i class="fa-solid fa-phone me-2 text-muted"></i><strong>SĐT:</strong> {{ $user->phone ?: '—' }}</div>
+                        <div class="mb-2"><i class="fa-solid fa-calendar-day me-2 text-muted"></i><strong>Ngày vào:</strong> {{ $user->start_date?->format('d/m/Y') ?? '—' }}</div>
+                        <div><i class="fa-solid fa-file-text me-2 text-muted"></i><strong>HĐ hiện tại:</strong> {{ $user->active_contract?->contract_type_label ?? '—' }}</div>
                     </div>
                 </div>
             </div>
@@ -46,17 +46,17 @@
                         <ul class="nav hr-tabs">
                             <li class="nav-item">
                                 <button wire:click="$set('activeTab', 'info')" class="nav-link {{ $activeTab === 'info' ? 'active' : '' }}">
-                                    <i class="bi bi-person me-1"></i> Thông tin cá nhân
+                                    <i class="fa-solid fa-user me-1"></i> Thông tin cá nhân
                                 </button>
                             </li>
                             <li class="nav-item">
                                 <button wire:click="$set('activeTab', 'contracts')" class="nav-link {{ $activeTab === 'contracts' ? 'active' : '' }}">
-                                    <i class="bi bi-file-earmark-text me-1"></i> Hợp đồng <span class="badge bg-secondary ms-1">{{ $contracts->count() }}</span>
+                                    <i class="fa-solid fa-file-text me-1"></i> Hợp đồng <span class="badge bg-secondary ms-1">{{ $contracts->count() }}</span>
                                 </button>
                             </li>
                             <li class="nav-item">
                                 <button wire:click="$set('activeTab', 'documents')" class="nav-link {{ $activeTab === 'documents' ? 'active' : '' }}">
-                                    <i class="bi bi-folder me-1"></i> Hồ sơ giấy tờ <span class="badge bg-secondary ms-1">{{ $documents->count() }}</span>
+                                    <i class="fa-solid fa-folder me-1"></i> Hồ sơ giấy tờ <span class="badge bg-secondary ms-1">{{ $documents->count() }}</span>
                                 </button>
                             </li>
                         </ul>
@@ -66,7 +66,7 @@
                         {{-- ═══ TAB: THÔNG TIN CÁ NHÂN ═══ --}}
                         @if($activeTab === 'info')
                             <form wire:submit.prevent="savePersonalInfo">
-                                <h6 class="fw-bold text-muted mb-3"><i class="bi bi-person-vcard me-1"></i> Giấy tờ tùy thân</h6>
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-user-vcard me-1"></i> Giấy tờ tùy thân</h6>
                                 <div class="hr-info-grid mb-4">
                                     <div class="hr-info-field">
                                         <label>Mã nhân viên</label>
@@ -86,7 +86,7 @@
                                     </div>
                                 </div>
 
-                                <h6 class="fw-bold text-muted mb-3"><i class="bi bi-geo-alt me-1"></i> Địa chỉ</h6>
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-location-dot me-1"></i> Địa chỉ</h6>
                                 <div class="hr-info-grid mb-4">
                                     <div class="hr-info-field">
                                         <label>Quê quán</label>
@@ -106,7 +106,7 @@
                                     </div>
                                 </div>
 
-                                <h6 class="fw-bold text-muted mb-3"><i class="bi bi-bank me-1"></i> Tài chính & Bảo hiểm</h6>
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-building-columns me-1"></i> Tài chính & Bảo hiểm</h6>
                                 <div class="hr-info-grid mb-4">
                                     <div class="hr-info-field">
                                         <label>Mã số thuế</label>
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
 
-                                <h6 class="fw-bold text-muted mb-3"><i class="bi bi-telephone me-1"></i> Liên hệ khẩn cấp & Học vấn</h6>
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-phone me-1"></i> Liên hệ khẩn cấp & Học vấn</h6>
                                 <div class="hr-info-grid mb-4">
                                     <div class="hr-info-field">
                                         <label>Người liên hệ KC</label>
@@ -146,7 +146,7 @@
                                     </div>
                                 </div>
 
-                                <h6 class="fw-bold text-muted mb-3"><i class="bi bi-briefcase me-1"></i> Trạng thái công việc</h6>
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-briefcase me-1"></i> Trạng thái công việc</h6>
                                 <div class="hr-info-grid mb-4">
                                     <div class="hr-info-field">
                                         <label>Trạng thái</label>
@@ -181,7 +181,7 @@
 
                                 @can('hr-profiles.edit')
                                     <button type="submit" class="btn btn-primary px-4 rounded-8px" >
-                                        <i class="bi bi-check-lg me-1"></i> Lưu thông tin
+                                        <i class="fa-solid fa-check me-1"></i> Lưu thông tin
                                     </button>
                                 @endcan
                             </form>
@@ -191,7 +191,7 @@
                             @can('hr-profiles.edit')
                                 <div class="d-flex justify-content-end mb-3">
                                     <button wire:click="openContractModal" class="btn btn-sm btn-primary rounded-8px" >
-                                        <i class="bi bi-plus-lg me-1"></i> Thêm hợp đồng
+                                        <i class="fa-solid fa-plus-lg me-1"></i> Thêm hợp đồng
                                     </button>
                                 </div>
                             @endcan
@@ -218,17 +218,17 @@
                                             </span>
                                             @can('hr-profiles.edit')
                                                 <button wire:click="openContractModal({{ $c->id }})" class="btn btn-sm btn-outline-primary py-0 px-2 fs-75 rounded-2" >
-                                                    <i class="bi bi-pencil"></i>
+                                                    <i class="fa-solid fa-pen"></i>
                                                 </button>
                                             @endcan
                                             @if($c->file_path)
                                                 <button wire:click="downloadContract({{ $c->id }})" class="btn btn-sm btn-outline-secondary py-0 px-2 fs-75 rounded-2" >
-                                                    <i class="bi bi-download"></i>
+                                                    <i class="fa-solid fa-download"></i>
                                                 </button>
                                             @endif
                                             @can('hr-profiles.delete')
                                                 <button wire:click="deleteContract({{ $c->id }})" wire:confirm="Xóa hợp đồng này?" class="btn btn-sm btn-outline-danger py-0 px-2 fs-75 rounded-2" >
-                                                    <i class="bi bi-trash"></i>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             @endcan
                                         </div>
@@ -236,7 +236,7 @@
                                 </div>
                             @empty
                                 <div class="text-center text-muted py-5">
-                                    <i class="bi bi-file-earmark-x fs-1 d-block mb-2 opacity-50"></i>
+                                    <i class="fa-solid fa-file-x fs-1 d-block mb-2 opacity-50"></i>
                                     Chưa có hợp đồng nào.
                                 </div>
                             @endforelse
@@ -246,7 +246,7 @@
                             @can('hr-profiles.edit')
                                 <div class="d-flex justify-content-end mb-3">
                                     <button wire:click="openDocumentModal" class="btn btn-sm btn-primary rounded-8px" >
-                                        <i class="bi bi-cloud-upload me-1"></i> Tải lên giấy tờ
+                                        <i class="fa-solid fa-cloud-arrow-up me-1"></i> Tải lên giấy tờ
                                     </button>
                                 </div>
                             @endcan
@@ -267,11 +267,11 @@
                                             </div>
                                             <div class="d-flex gap-1">
                                                 <button wire:click="downloadDocument({{ $doc->id }})" class="btn btn-sm btn-outline-primary py-0 px-2 fs-75 rounded-2"  title="Tải về">
-                                                    <i class="bi bi-download"></i>
+                                                    <i class="fa-solid fa-download"></i>
                                                 </button>
                                                 @can('hr-profiles.delete')
                                                     <button wire:click="deleteDocument({{ $doc->id }})" wire:confirm="Xóa giấy tờ này?" class="btn btn-sm btn-outline-danger py-0 px-2 fs-75 rounded-2"  title="Xóa">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                 @endcan
                                             </div>
@@ -279,7 +279,7 @@
                                     </div>
                                 @empty
                                     <div class="col-12 text-center text-muted py-5">
-                                        <i class="bi bi-folder2-open fs-1 d-block mb-2 opacity-50"></i>
+                                        <i class="fa-solid fa-folder2-open fs-1 d-block mb-2 opacity-50"></i>
                                         Chưa có giấy tờ nào.
                                     </div>
                                 @endforelse
@@ -297,7 +297,7 @@
             <div class="hr-modal-backdrop" wire:click="$set('showContractModal', false)"></div>
             <div class="hr-modal-content" @click.stop>
                 <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>{{ $editingContractId ? 'Sửa' : 'Thêm' }} hợp đồng</h5>
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-file-text me-2"></i>{{ $editingContractId ? 'Sửa' : 'Thêm' }} hợp đồng</h5>
                     <button wire:click="$set('showContractModal', false)" class="btn-close"></button>
                 </div>
                 <form wire:submit.prevent="saveContract" class="p-4">
@@ -353,7 +353,7 @@
                     </div>
                     <div class="mt-4 d-flex gap-2">
                         <button type="submit" class="btn btn-primary px-4 rounded-8px" >
-                            <i class="bi bi-check-lg me-1"></i> {{ $editingContractId ? 'Cập nhật' : 'Thêm mới' }}
+                            <i class="fa-solid fa-check me-1"></i> {{ $editingContractId ? 'Cập nhật' : 'Thêm mới' }}
                         </button>
                         <button type="button" wire:click="$set('showContractModal', false)" class="btn btn-outline-secondary rounded-8px" >Hủy</button>
                     </div>
@@ -368,7 +368,7 @@
             <div class="hr-modal-backdrop" wire:click="$set('showDocumentModal', false)"></div>
             <div class="hr-modal-content" @click.stop>
                 <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2"></i>Tải lên giấy tờ</h5>
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Tải lên giấy tờ</h5>
                     <button wire:click="$set('showDocumentModal', false)" class="btn-close"></button>
                 </div>
                 <form wire:submit.prevent="saveDocuments" class="p-4">
@@ -406,7 +406,7 @@
                     </div>
                     <div class="mt-4 d-flex gap-2">
                         <button type="submit" class="btn btn-primary px-4 rounded-8px" >
-                            <i class="bi bi-cloud-upload me-1"></i> Tải lên
+                            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Tải lên
                         </button>
                         <button type="button" wire:click="$set('showDocumentModal', false)" class="btn btn-outline-secondary rounded-8px" >Hủy</button>
                     </div>

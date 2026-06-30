@@ -10,14 +10,14 @@
                     <div class="d-flex align-items-center gap-3 flex-grow-1">
                         <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 icon-48"
                              >
-                            <i class="bi bi-building fs-5 text-primary"></i>
+                            <i class="fa-solid fa-building fs-5 text-primary"></i>
                         </div>
                         <div class="min-w-0">
                             <div class="fw-bold fs-6 fs-md-5">{{ $handler->name }}</div>
                             <div class="text-muted small">
-                                @if($handler->phone) <i class="bi bi-telephone me-1"></i>{{ $handler->phone }} @endif
+                                @if($handler->phone) <i class="fa-solid fa-phone me-1"></i>{{ $handler->phone }} @endif
                                 @if($handler->phone && $handler->address) &nbsp;·&nbsp; @endif
-                                @if($handler->address) <i class="bi bi-geo-alt me-1"></i>{{ $handler->address }} @endif
+                                @if($handler->address) <i class="fa-solid fa-location-dot me-1"></i>{{ $handler->address }} @endif
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h3 class="pure-card-title m-0">Tất cả hợp đồng</h3>
                         <a href="{{ route('app.handlers.index') }}" class="btn btn-light btn-sm">
-                            <i class="bi bi-arrow-left me-1"></i>Quay lại
+                            <i class="fa-solid fa-arrow-left me-1"></i>Quay lại
                         </a>
                     </div>
                     <div class="d-flex flex-wrap align-items-center gap-2">
@@ -65,14 +65,14 @@
                         </div>
                         <button class="btn btn-outline-secondary btn-sm px-2" wire:click="toggleDir">
                             @if($sortDir === 'desc')
-                                <i class="bi bi-sort-down me-1"></i><span class="small">Mới → Cũ</span>
+                                <i class="fa-solid fa-sort-down me-1"></i><span class="small">Mới → Cũ</span>
                             @else
-                                <i class="bi bi-sort-up me-1"></i><span class="small">Cũ → Mới</span>
+                                <i class="fa-solid fa-sort-up me-1"></i><span class="small">Cũ → Mới</span>
                             @endif
                         </button>
                         @if($dateFrom || $dateTo)
                         <button class="btn btn-outline-secondary btn-sm" wire:click="resetFilter">
-                            <i class="bi bi-x-lg"></i>
+                            <i class="fa-solid fa-xmark-lg"></i>
                         </button>
                         @endif
                     </div>
@@ -158,7 +158,7 @@
                                                 wire:click.stop="viewDetail({{ $contract->contract_id }}, '{{ addslashes($contract->model_class) }}')"
                                                 onclick="event.stopPropagation()"
                                                 title="Xem chi tiết">
-                                            <i class="bi bi-eye fs-5"></i>
+                                            <i class="fa-solid fa-eye fs-5"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -200,13 +200,13 @@
                             <li class="nav-item">
                                 <button class="nav-link active fw-semibold" data-bs-toggle="tab"
                                     data-bs-target="#htab-info-{{ $selectedContractType }}-{{ $selectedContract->id }}" type="button">
-                                    <i class="bi bi-info-circle me-1"></i>Thông tin HĐ
+                                    <i class="fa-solid fa-circle-info me-1"></i>Thông tin HĐ
                                 </button>
                             </li>
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" data-bs-toggle="tab"
                                     data-bs-target="#htab-progress-{{ $selectedContractType }}-{{ $selectedContract->id }}" type="button">
-                                    <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
+                                    <i class="fa-solid fa-sitemap me-1"></i>Tiến độ hoàn thành
                                 </button>
                             </li>
                         </ul>
@@ -306,7 +306,7 @@
                                             </tr>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3 align-middle" colspan="2">
-                                                    <i class="bi bi-journal-text me-1"></i> Ghi chú tiến độ
+                                                    <i class="fa-solid fa-book me-1"></i> Ghi chú tiến độ
                                                 </th>
                                             </tr>
                                             @if ($selectedProgressNotes && count($selectedProgressNotes) > 0)
@@ -343,7 +343,7 @@
                                                             wire:target="addProgressNote">
                                                             <span wire:loading wire:target="addProgressNote"
                                                                 class="spinner-border spinner-border-sm me-1"></span>
-                                                            <i class="bi bi-plus me-1"></i> Thêm ghi chú
+                                                            <i class="fa-solid fa-plus me-1"></i> Thêm ghi chú
                                                         </button>
                                                     </td>
                                                 </tr>

@@ -11,7 +11,7 @@
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm rounded-10px"  data-bs-toggle="modal" data-bs-target="#deliveryModal" wire:click="resetFields">
-                <i class="bi bi-plus-lg"></i>
+                <i class="fa-solid fa-plus-lg"></i>
                 <span class="fw-bold">Thêm mới</span>
             </button>
         </div>
@@ -20,14 +20,14 @@
     <!-- Filters Section -->
     <div class="card border-0 shadow-sm mb-4 rounded-15px" >
         <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
-            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-filter-left me-2 text-primary"></i>Bộ lọc Chuyển phát thư</h6>
+            <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-filter me-2 text-primary"></i>Bộ lọc Chuyển phát thư</h6>
         </div>
         <div class="card-body p-4">
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label fw-bold  text-muted mb-2">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input type="text" class="form-control bg-light border-0" placeholder="Khách hàng, số bill, người gửi..." wire:model.live.debounce.300ms="search">
                     </div>
                 </div>
@@ -42,10 +42,10 @@
                 </div>
                 <div class="col-md-5 d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
                     <button class="btn btn-primary px-4 shadow-sm rounded-10px" wire:click="$refresh" >
-                        <i class="bi bi-search me-2"></i>Lọc
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>Lọc
                     </button>
                     <button class="btn btn-outline-primary px-4 shadow-sm fw-bold d-flex align-items-center gap-2 rounded-10px" >
-                        <i class="bi bi-file-earmark-text"></i> Quy trình
+                        <i class="fa-solid fa-file-text"></i> Quy trình
                     </button>
                 </div>
             </div>
@@ -81,12 +81,12 @@
                             <div class="d-flex flex-column">
                                 <span class="fw-bold text-dark  mb-1">{{ $delivery->customer_name }}</span>
                                 @if($delivery->customer_phone)
-                                    <span class="text-muted  mb-1"><i class="bi bi-telephone me-1"></i> {{ $delivery->customer_phone }}</span>
+                                    <span class="text-muted  mb-1"><i class="fa-solid fa-phone me-1"></i> {{ $delivery->customer_phone }}</span>
                                 @endif
                                 @if($delivery->address)
-                                    <span class="text-muted  mb-1"><i class="bi bi-geo-alt me-1"></i> {{ $delivery->address }}</span>
+                                    <span class="text-muted  mb-1"><i class="fa-solid fa-location-dot me-1"></i> {{ $delivery->address }}</span>
                                 @endif
-                                <span class="text-dark "><i class="bi bi-person me-1"></i> Người gửi: <strong>{{ $delivery->sender_name }}</strong></span>
+                                <span class="text-dark "><i class="fa-solid fa-user me-1"></i> Người gửi: <strong>{{ $delivery->sender_name }}</strong></span>
                             </div>
                         </td>
                         <td class="text-center">
@@ -140,7 +140,7 @@
                                         wire:loading.attr="disabled"
                                         wire:target="createVtpForExisting({{ $delivery->id }})"
                                         title="Tạo đơn Viettel Post">
-                                        <i class="bi bi-truck"></i>
+                                        <i class="fa-solid fa-truck"></i>
                                     </button>
                                 @endif
 
@@ -155,7 +155,7 @@
                                             <span class="spinner-border spinner-border-sm" role="status"></span>
                                         </span>
                                         <span wire:loading.remove wire:target="trackVtp({{ $delivery->id }})">
-                                            <i class="bi bi-geo-alt-fill"></i>
+                                            <i class="fa-solid fa-location-dot-fill"></i>
                                         </span>
                                     </button>
                                 @endif
@@ -163,20 +163,20 @@
 
                                 <button class="btn btn-sm btn-icon btn-light rounded-circle text-success shadow-none border"
                                     onclick="copyAddress('{{ addslashes($delivery->address) }}')" title="Copy địa chỉ">
-                                    <i class="bi bi-clipboard"></i>
+                                    <i class="fa-solid fa-clipboard"></i>
                                 </button>
 
                                 @can('mail-delivery.edit')
                                 <button class="btn btn-sm btn-icon btn-light rounded-circle text-primary shadow-none border"
                                     wire:click="edit({{ $delivery->id }})" title="Sửa">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="fa-solid fa-pen"></i>
                                 </button>
                                 @endcan
 
                                 @can('mail-delivery.delete')
                                 <button class="btn btn-sm btn-icon btn-light rounded-circle text-danger shadow-none border"
                                     onclick="confirmDelete({{ $delivery->id }})" title="Xóa">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
                                 @endcan
                             </div>
@@ -292,7 +292,7 @@
                                 <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" id="createVtpOrder" wire:model.live="create_vtp_order">
                                     <label class="form-check-label fw-bold text-danger" for="createVtpOrder">
-                                        <i class="bi bi-truck me-1"></i> Tạo đơn Viettel Post tự động
+                                        <i class="fa-solid fa-truck me-1"></i> Tạo đơn Viettel Post tự động
                                     </label>
                                 </div>
                             </div>
@@ -326,7 +326,7 @@
                             <span wire:loading wire:target="save">
                                 <span class="spinner-border spinner-border-sm me-1" role="status"></span>
                             </span>
-                            <i class="bi bi-save me-2" wire:loading.remove wire:target="save"></i>
+                            <i class="fa-solid fa-floppy-disk me-2" wire:loading.remove wire:target="save"></i>
                             {{ $deliveryId ? 'Cập nhật ngay' : ($create_vtp_order ? 'Thêm & Tạo đơn VTP' : 'Thêm mới') }}
                         </button>
                     </div>
@@ -341,7 +341,7 @@
             <div class="modal-content border-0 shadow-lg rounded-pill" >
                 <div class="modal-header border-0 pt-4 px-4 pb-2">
                     <h5 class="modal-title fw-bold text-dark">
-                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>Tracking Viettel Post
+                        <i class="fa-solid fa-location-dot-fill text-danger me-2"></i>Tracking Viettel Post
                     </h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -373,9 +373,9 @@
                             <div class="me-3 text-center mnw-40px" >
                                 <div class="rounded-circle d-flex align-items-center justify-content-center {{ $index === 0 ? 'bg-primary text-white' : 'bg-light text-muted' }} wh-32 fs-14px" >
                                     @if($index === 0)
-                                        <i class="bi bi-check-lg"></i>
+                                        <i class="fa-solid fa-check"></i>
                                     @else
-                                        <i class="bi bi-circle"></i>
+                                        <i class="fa-solid fa-circle"></i>
                                     @endif
                                 </div>
                                 @if(!$loop->last)
@@ -398,7 +398,7 @@
                     </div>
                     @else
                     <div class="text-center py-4 text-muted">
-                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        <i class="fa-solid fa-inbox fs-1 d-block mb-2"></i>
                         Chưa có dữ liệu tracking.
                     </div>
                     @endif

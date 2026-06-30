@@ -69,12 +69,12 @@
                 <div class="col-md-4">
                     <label class="form-label fw-semibold mb-1">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input type="text" wire:model.live.debounce.300ms="search" class="form-control"
                             placeholder="Tên công ty, số HĐ Bảo Châu, nhà thầu phụ...">
                         @if($search !== '')
                             <button type="button" class="btn btn-outline-secondary" wire:click="$set('search', '')">
-                                <i class="bi bi-x"></i>
+                                <i class="fa-solid fa-xmark"></i>
                             </button>
                         @endif
                     </div>
@@ -84,7 +84,7 @@
                         <button wire:click="exportExcel" class="btn btn-success btn-sm" wire:loading.attr="disabled">
                             <span wire:loading wire:target="exportExcel"
                                 class="spinner-border spinner-border-sm me-1"></span>
-                            <i class="bi bi-file-earmark-excel me-1"></i> Xuất Excel
+                            <i class="fa-solid fa-file-excel me-1"></i> Xuất Excel
                         </button>
                     </div>
                 @endcan
@@ -267,7 +267,7 @@
                                                 <a href="{{ $row['ncc_payment_sheet_url'] }}" target="_blank"
                                                     rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm py-0 px-2"
                                                     title="Mở Google Sheet">
-                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                                 </a>
                                             @endif
                                         </div>
@@ -309,7 +309,7 @@
                                             data-bs-target="#{{ $this->collapseId($row['source_key'], $row['id']) }}"
                                             aria-expanded="false"
                                             aria-controls="{{ $this->collapseId($row['source_key'], $row['id']) }}">
-                                            <i class="bi bi-link-45deg me-1"></i>Sheet
+                                            <i class="fa-solid fa-link me-1"></i>Sheet
                                         </button>
                                     </td>
                                 @endif
@@ -394,7 +394,7 @@
                                                             @endif
                                                             <span
                                                                 class="text-success small d-inline-flex align-items-center px-2">
-                                                                <i class="bi bi-check2-circle me-1"></i>Tự động lưu
+                                                                <i class="fa-solid fa-check-circle me-1"></i>Tự động lưu
                                                             </span>
                                                         </div>
                                                     </div>

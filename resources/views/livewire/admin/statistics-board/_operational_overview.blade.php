@@ -17,7 +17,7 @@
                         <div class="op-stat-box">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="op-stat-circle op-circle-warning">
-                                    <i class="bi bi-calendar3"></i>
+                                    <i class="fa-solid fa-calendar-days"></i>
                                 </div>
                                 <div>
                                     <div class="text-muted small fw-semibold">Lịch tuần này</div>
@@ -30,7 +30,7 @@
                         <div class="op-stat-box">
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="op-stat-circle op-circle-success">
-                                    <i class="bi bi-file-earmark-bar-graph"></i>
+                                    <i class="fa-solid fa-file-bar-graph"></i>
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="text-muted small fw-semibold">Tỷ lệ báo cáo hôm nay</div>
@@ -50,7 +50,7 @@
                     <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
                         <div class="d-flex align-items-center gap-2 min-w-0">
                             <div class="op-stat-circle op-circle-warning" style="width: 32px; height: 32px; font-size: 13px;">
-                                <i class="bi bi-arrow-repeat"></i>
+                                <i class="fa-solid fa-arrows-rotate"></i>
                             </div>
                             <div class="min-w-0">
                                 <h6 class="fw-bold text-dark mb-0">Hợp đồng sắp tái ký</h6>
@@ -75,7 +75,7 @@
                             </a>
                         @empty
                             <div class="op-empty-state py-3">
-                                <i class="bi bi-check2-circle"></i>
+                                <i class="fa-solid fa-check-circle"></i>
                                 <div>Chưa có hợp đồng sắp đến kỳ tái ký.</div>
                             </div>
                         @endforelse
@@ -94,7 +94,7 @@
                             @forelse($upcomingSchedules as $schedule)
                                 <div class="op-list-item">
                                     <div class="op-stat-circle op-circle-warning" style="width: 32px; height: 32px; font-size: 13px;">
-                                        <i class="bi bi-calendar-event"></i>
+                                        <i class="fa-solid fa-calendar-day"></i>
                                     </div>
                                     <div class="min-w-0 flex-grow-1">
                                         <div class="fw-bold text-dark text-truncate small" title="{{ $schedule->title }}">{{ $schedule->title }}</div>
@@ -105,7 +105,7 @@
                                 </div>
                             @empty
                                 <div class="op-empty-state">
-                                    <i class="bi bi-calendar-x"></i>
+                                    <i class="fa-solid fa-calendar-xmark"></i>
                                     <div>Chưa có lịch công tác sắp tới.</div>
                                 </div>
                             @endforelse
@@ -133,7 +133,7 @@
                                 </div>
                             @empty
                                 <div class="op-empty-state">
-                                    <i class="bi bi-file-earmark-x"></i>
+                                    <i class="fa-solid fa-file-x"></i>
                                     <div>Chưa có báo cáo nào.</div>
                                 </div>
                             @endforelse
@@ -154,33 +154,33 @@
                     @can('hr-profiles.view')
                     <div class="col-6">
                         <a href="{{ route('app.hr.index') }}" class="op-quick-btn op-btn-primary">
-                            <i class="bi bi-people-fill"></i> Nhân sự
+                            <i class="fa-solid fa-users-fill"></i> Nhân sự
                         </a>
                     </div>
                     @endcan
                     <div class="col-6">
                         <a href="{{ route('app.work-schedules.index') }}" class="op-quick-btn op-btn-warning">
-                            <i class="bi bi-calendar3"></i> Lịch
+                            <i class="fa-solid fa-calendar-days"></i> Lịch
                         </a>
                     </div>
                     @can('daily-reports.view')
                     <div class="col-6">
                         <a href="{{ route('app.daily-reports.index') }}" class="op-quick-btn op-btn-success">
-                            <i class="bi bi-file-earmark-bar-graph"></i> Báo cáo
+                            <i class="fa-solid fa-file-bar-graph"></i> Báo cáo
                         </a>
                     </div>
                     @endcan
                     @can('roles.view')
                     <div class="col-6">
                         <a href="{{ route('app.roles.index') }}" class="op-quick-btn op-btn-danger">
-                            <i class="bi bi-shield-lock-fill"></i> Quyền
+                            <i class="fa-solid fa-shield-halved"></i> Quyền
                         </a>
                     </div>
                     @endcan
                     @can('settings.view')
                     <div class="col-12">
                         <a href="{{ route('app.settings.index') }}" class="op-quick-btn op-btn-info justify-content-center">
-                            <i class="bi bi-gear-fill"></i> Thiết lập hệ thống
+                            <i class="fa-solid fa-gear-fill"></i> Thiết lập hệ thống
                         </a>
                     </div>
                     @endcan

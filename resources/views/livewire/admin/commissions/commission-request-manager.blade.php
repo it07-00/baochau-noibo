@@ -12,7 +12,7 @@
         </div>
         <div class="page-title-right d-flex gap-2 ms-auto">
             <a href="{{ route('app.commissions.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
-                <i class="bi bi-plus-lg"></i>
+                <i class="fa-solid fa-plus-lg"></i>
                 Tạo yêu cầu
             </a>
         </div>
@@ -73,7 +73,7 @@
         <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
             <h5 class="card-title mb-0">Bộ lọc</h5>
             <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="$refresh">
-                <i class="bi bi-arrow-clockwise me-1"></i>
+                <i class="fa-solid fa-rotate-right me-1"></i>
                 Làm mới
             </button>
         </div>
@@ -116,7 +116,7 @@
                 <div class="col-12 @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::IT->value))) col-lg-3 @else col-lg-5 @endif">
                     <label class="form-label">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                        <span class="input-group-text bg-light"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input type="text"
                                wire:model.live.debounce.300ms="search"
                                class="form-control"
@@ -179,7 +179,7 @@
                                             <button type="button" 
                                                     class="btn btn-sm btn-link p-0 text-decoration-none text-info fw-bold d-inline-flex align-items-center gap-1"
                                                     wire:click="viewRequest({{ $request->id }})">
-                                                <i class="bi bi-qr-code me-1"></i> Xem QR thanh toán
+                                                <i class="fa-solid fa-qrcode me-1"></i> Xem QR thanh toán
                                             </button>
                                         </div>
                                     @endif
@@ -220,15 +220,15 @@
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end align-items-center gap-2 flex-wrap">
                                         <button type="button" class="btn btn-sm btn-outline-info" wire:click="viewRequest({{ $request->id }})">
-                                            <i class="bi bi-eye me-1"></i> Xem chi tiết
+                                            <i class="fa-solid fa-eye me-1"></i> Xem chi tiết
                                         </button>
                                         @if($request->payment_bill_path)
                                             <a href="{{ $request->payment_bill_url }}" target="_blank" class="btn btn-sm btn-outline-success">
-                                                <i class="bi bi-file-earmark-text me-1"></i> Xem hóa đơn
+                                                <i class="fa-solid fa-file-text me-1"></i> Xem hóa đơn
                                             </a>
                                         @elseif($request->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
                                             <button type="button" class="btn btn-sm btn-outline-primary" wire:click="openUploadBillModal({{ $request->id }})">
-                                                <i class="bi bi-upload me-1"></i> Up hóa đơn
+                                                <i class="fa-solid fa-upload me-1"></i> Up hóa đơn
                                             </button>
                                         @endif
                                         @if($canApprove && $request->status === 'Dự chi')
@@ -236,13 +236,13 @@
                                                     class="btn btn-sm btn-outline-success"
                                                     wire:click="approve({{ $request->id }})"
                                                     wire:confirm="Xác nhận duyệt chi yêu cầu này?">
-                                                <i class="bi bi-check-circle me-1"></i>
+                                                <i class="fa-solid fa-circle-check me-1"></i>
                                                 Duyệt
                                             </button>
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     wire:click="startReject({{ $request->id }})">
-                                                <i class="bi bi-x-circle me-1"></i>
+                                                <i class="fa-solid fa-xmark-circle me-1"></i>
                                                 Từ chối
                                             </button>
                                         @endif
@@ -255,7 +255,7 @@
 
                                         @if($rowCanEdit && !in_array($request->status, ['Đã duyệt', 'Đã chi'], true))
                                             <a href="{{ route('app.commissions.edit', $request->id) }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-pencil-square me-1"></i>
+                                                <i class="fa-solid fa-pen-square me-1"></i>
                                                 Sửa
                                             </a>
                                         @endif
@@ -265,7 +265,7 @@
                                                     class="btn btn-sm btn-outline-danger"
                                                     wire:click="delete({{ $request->id }})"
                                                     wire:confirm="Xác nhận xóa yêu cầu này?">
-                                                <i class="bi bi-trash me-1"></i>
+                                                <i class="fa-solid fa-trash me-1"></i>
                                                 Xóa
                                             </button>
                                         @endif
@@ -350,7 +350,7 @@
             <div class="modal-content border-0 shadow-lg rounded-3">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title d-flex align-items-center gap-2">
-                        <i class="bi bi-credit-card-2-front"></i> Chi tiết thanh toán & QR Code
+                        <i class="fa-solid fa-credit-card"></i> Chi tiết thanh toán & QR Code
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="closeView"></button>
                 </div>
@@ -362,61 +362,61 @@
                                 <div class="card border-light-subtle shadow-sm w-100 h-100">
                                     <div class="card-header bg-light border-bottom py-3">
                                         <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                                            <i class="bi bi-person-bounding-box"></i> Thông tin người nhận
+                                            <i class="fa-solid fa-user-bounding-box"></i> Thông tin người nhận
                                         </h6>
                                     </div>
                                     <div class="card-body p-3">
                                         <div class="d-flex flex-column gap-3" style="font-size: 1.05rem;">
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-person text-secondary"></i> Họ và tên:</span>
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-user text-secondary"></i> Họ và tên:</span>
                                                 <span class="fw-bold text-dark text-end">{{ strtoupper(\Illuminate\Support\Str::ascii($viewingRequest->receiver_name)) }}</span>
                                             </div>
                                             
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-telephone text-secondary"></i> Số điện thoại:</span>
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-phone text-secondary"></i> Số điện thoại:</span>
                                                 <span class="fw-bold text-dark text-end">{{ $viewingRequest->receiver_phone ?: 'Chưa cập nhật' }}</span>
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-file-earmark-text text-secondary"></i> Hợp đồng:</span>
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-file-text text-secondary"></i> Hợp đồng:</span>
                                                 <span class="fw-bold text-primary text-end">BC {{ $viewingRequest->contract->shd_bc ?? 'N/A' }}</span>
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-cash-stack text-secondary"></i> Số tiền:</span>
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-money-bill-wave text-secondary"></i> Số tiền:</span>
                                                 <span class="fw-bold text-danger fs-5 text-end">{{ number_format($viewingRequest->amount, 0, ',', '.') }} đ</span>
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-activity text-secondary"></i> Trạng thái:</span>
+                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-chart-line text-secondary"></i> Trạng thái:</span>
                                                 <span class="fw-bold text-end" style="font-size: 0.95rem;">
                                                     @if($viewingRequest->status === 'Đã chi')
-                                                        <span class="text-success"><i class="bi bi-check-circle-fill"></i> Đã chi ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
+                                                        <span class="text-success"><i class="fa-solid fa-circle-check-fill"></i> Đã chi ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
                                                     @elseif($viewingRequest->status === 'Đã duyệt')
-                                                        <span class="text-warning"><i class="bi bi-patch-check-fill"></i> Đã duyệt - Chờ chi</span>
+                                                        <span class="text-warning"><i class="fa-solid fa-certificate-fill"></i> Đã duyệt - Chờ chi</span>
                                                     @elseif($viewingRequest->status === 'Từ chối')
-                                                        <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Từ chối ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
+                                                        <span class="text-danger"><i class="fa-solid fa-xmark-circle-fill"></i> Từ chối ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
                                                     @else
-                                                        <span class="text-secondary"><i class="bi bi-calculator"></i> Dự chi</span>
+                                                        <span class="text-secondary"><i class="fa-solid fa-calculator"></i> Dự chi</span>
                                                     @endif
                                                 </span>
                                             </div>
 
                                             @if($viewingRequest->bank_code && $viewingRequest->bank_number)
                                                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-bank text-secondary"></i> Ngân hàng:</span>
+                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-building-columns text-secondary"></i> Ngân hàng:</span>
                                                     <span class="fw-bold text-dark font-monospace text-end">{{ $viewingRequest->bank_code }}</span>
                                                 </div>
 
                                                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-credit-card-2-back text-secondary"></i> Số tài khoản:</span>
+                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-credit-card text-secondary"></i> Số tài khoản:</span>
                                                     <span class="fw-bold text-dark font-monospace text-end">{{ $viewingRequest->bank_number }}</span>
                                                 </div>
                                             @endif
 
                                             @if($viewingRequest->bank_account)
                                                 <div class="d-flex justify-content-between align-items-start border-bottom pb-2">
-                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="bi bi-info-circle text-secondary"></i> Thông tin khác:</span>
+                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-circle-info text-secondary"></i> Thông tin khác:</span>
                                                     <span class="text-dark small fw-semibold text-end ms-3">{{ $viewingRequest->bank_account }}</span>
                                                 </div>
                                             @endif
@@ -431,7 +431,7 @@
                                     <div class="card border-light-subtle shadow-sm w-100 h-100">
                                         <div class="card-header bg-light border-bottom py-3 text-center">
                                             <h6 class="card-title mb-0 fw-bold text-secondary">
-                                                <i class="bi bi-qr-code-scan me-1"></i> Quét mã QR chuyển khoản
+                                                <i class="fa-solid fa-qrcode-scan me-1"></i> Quét mã QR chuyển khoản
                                             </h6>
                                         </div>
                                         <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center bg-white">
@@ -441,7 +441,7 @@
                                 @else
                                     <div class="card border-light-subtle shadow-sm w-100 h-100">
                                         <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
-                                            <i class="bi bi-exclamation-triangle text-warning mb-3" style="font-size: 3rem;"></i>
+                                            <i class="fa-solid fa-triangle-exclamation text-warning mb-3" style="font-size: 3rem;"></i>
                                             <h6 class="fw-bold text-secondary mb-1">Không tạo được QR</h6>
                                             <span class="text-muted small">Không tìm thấy tài khoản ngân hàng của người nhận.</span>
                                         </div>
@@ -456,10 +456,10 @@
                                 <div class="card border-light-subtle shadow-sm">
                                     <div class="card-header bg-light border-bottom py-3 d-flex justify-content-between align-items-center">
                                         <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                                            <i class="bi bi-file-earmark-image"></i> Hóa đơn thanh toán / Minh chứng
+                                            <i class="fa-solid fa-file-image"></i> Hóa đơn thanh toán / Minh chứng
                                         </h6>
                                         @if($viewingRequest->payment_bill_path)
-                                            <span class="badge bg-soft-success text-success px-2 py-1"><i class="bi bi-check-circle"></i> Đã tải lên</span>
+                                            <span class="badge bg-soft-success text-success px-2 py-1"><i class="fa-solid fa-circle-check"></i> Đã tải lên</span>
                                         @else
                                             <span class="badge bg-soft-secondary text-secondary px-2 py-1">Chưa có hóa đơn</span>
                                         @endif
@@ -473,13 +473,13 @@
 
                                                 @if($isPdf)
                                                     <div class="d-flex align-items-center gap-3 p-3 bg-light rounded w-100 border">
-                                                        <i class="bi bi-file-earmark-pdf-fill text-danger fs-1"></i>
+                                                        <i class="fa-solid fa-file-pdf-fill text-danger fs-1"></i>
                                                         <div class="flex-grow-1">
                                                             <div class="fw-bold text-dark text-truncate">Hóa đơn thanh toán (PDF)</div>
                                                             <span class="text-muted small">Nhấp để mở hoặc tải về file PDF.</span>
                                                         </div>
                                                         <a href="{{ $viewingRequest->payment_bill_url }}" target="_blank" class="btn btn-primary d-flex align-items-center gap-1">
-                                                            <i class="bi bi-box-arrow-up-right"></i> Xem PDF
+                                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Xem PDF
                                                         </a>
                                                     </div>
                                                 @else
@@ -487,7 +487,7 @@
                                                         <a href="{{ $viewingRequest->payment_bill_url }}" target="_blank" title="Nhấp để phóng to ảnh">
                                                             <img src="{{ $viewingRequest->payment_bill_url }}" class="img-thumbnail rounded border shadow-sm" style="max-height: 300px; width: auto; object-fit: contain;" alt="Payment Bill">
                                                         </a>
-                                                        <div class="mt-2 text-muted small"><i class="bi bi-zoom-in"></i> Nhấp vào ảnh để xem chi tiết kích thước đầy đủ</div>
+                                                        <div class="mt-2 text-muted small"><i class="fa-solid fa-magnifying-glass-plus"></i> Nhấp vào ảnh để xem chi tiết kích thước đầy đủ</div>
                                                     </div>
                                                 @endif
 
@@ -496,7 +496,7 @@
                                                             class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 mt-2" 
                                                             wire:click="deleteBill" 
                                                             wire:confirm="Bạn có chắc chắn muốn xóa hóa đơn thanh toán này?">
-                                                        <i class="bi bi-trash"></i> Xóa hóa đơn & Tải lại
+                                                        <i class="fa-solid fa-trash"></i> Xóa hóa đơn & Tải lại
                                                     </button>
                                                 @endif
                                             </div>
@@ -506,7 +506,7 @@
 
                                                 @if($viewingRequest->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
                                                     <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-light position-relative" style="border-style: dashed !important; border-width: 2px !important; border-color: #dee2e6 !important;">
-                                                        <i class="bi bi-cloud-arrow-up text-primary fs-2 mb-2"></i>
+                                                        <i class="fa-solid fa-cloud-arrow-up text-primary fs-2 mb-2"></i>
                                                         <h6 class="fw-semibold text-secondary mb-2">Tải lên hóa đơn (Minh chứng)</h6>
                                                         <p class="text-muted small mb-3">Chấp nhận JPG, PNG, JPEG hoặc PDF. Tối đa 10MB.</p>
 
@@ -527,11 +527,11 @@
 
                                                         @if($billFile && !$errors->has('billFile'))
                                                             <div class="mt-3 d-flex align-items-center gap-2">
-                                                                <span class="text-success small fw-semibold"><i class="bi bi-check2-circle me-1"></i> Sẵn sàng tải lên: {{ $billFile->getClientOriginalName() }}</span>
+                                                                <span class="text-success small fw-semibold"><i class="fa-solid fa-check-circle me-1"></i> Sẵn sàng tải lên: {{ $billFile->getClientOriginalName() }}</span>
                                                                 <button type="button" 
                                                                         class="btn btn-success btn-sm d-flex align-items-center gap-1"
                                                                         wire:click="uploadBill">
-                                                                    <i class="bi bi-cloud-upload"></i> Xác nhận lưu
+                                                                    <i class="fa-solid fa-cloud-arrow-up"></i> Xác nhận lưu
                                                                 </button>
                                                             </div>
                                                         @endif
@@ -555,7 +555,7 @@
                         <button type="button" class="btn btn-success" 
                                 wire:click="approve({{ $viewingRequest->id }})"
                                 wire:confirm="Xác nhận duyệt chi yêu cầu này?">
-                            <i class="bi bi-check-circle me-1"></i> Duyệt chi
+                            <i class="fa-solid fa-circle-check me-1"></i> Duyệt chi
                         </button>
                     @endif
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="closeView">Đóng</button>
@@ -569,7 +569,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-cloud-arrow-up-fill me-1"></i> Tải lên hóa đơn thanh toán</h5>
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-cloud-arrow-up-fill me-1"></i> Tải lên hóa đơn thanh toán</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" wire:click="closeUploadBillModal"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -592,7 +592,7 @@
                     @endif
 
                     <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-light position-relative" style="border-style: dashed !important; border-width: 2px !important; border-color: #dee2e6 !important;">
-                        <i class="bi bi-cloud-arrow-up text-warning fs-2 mb-2"></i>
+                        <i class="fa-solid fa-cloud-arrow-up text-warning fs-2 mb-2"></i>
                         <h6 class="fw-semibold text-secondary mb-2">Chọn file minh chứng thanh toán</h6>
                         <p class="text-muted small mb-3">Chấp nhận JPG, PNG, JPEG hoặc PDF. Tối đa 10MB.</p>
 
@@ -613,11 +613,11 @@
 
                         @if($billFile && !$errors->has('billFile'))
                             <div class="mt-3 d-flex align-items-center gap-2">
-                                <span class="text-success small fw-semibold"><i class="bi bi-check2-circle me-1"></i> Sẵn sàng: {{ $billFile->getClientOriginalName() }}</span>
+                                <span class="text-success small fw-semibold"><i class="fa-solid fa-check-circle me-1"></i> Sẵn sàng: {{ $billFile->getClientOriginalName() }}</span>
                                 <button type="button" 
                                         class="btn btn-success btn-sm d-flex align-items-center gap-1"
                                         wire:click="uploadBill">
-                                    <i class="bi bi-cloud-upload"></i> Lưu lại
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Lưu lại
                                 </button>
                             </div>
                         @endif

@@ -13,7 +13,7 @@
         <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
             @if($isMarketing)
                 <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1" wire:click="openCreate">
-                    <i class="bi bi-plus-lg"></i> Tạo bài mới
+                    <i class="fa-solid fa-plus-lg"></i> Tạo bài mới
                 </button>
             @endif
         </div>
@@ -29,12 +29,12 @@
 
             <div class="d-flex align-items-center justify-content-end flex-wrap gap-2">
                 <button type="button" class="btn btn-outline-secondary btn-sm mc-icon-btn" wire:click="previousCalendarMonth" title="Tháng trước">
-                    <i class="bi bi-chevron-left"></i>
+                    <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <label class="visually-hidden" for="marketing-content-month">Chọn tháng</label>
                 <input id="marketing-content-month" type="month" class="form-control form-control-sm w-auto" wire:model.live="calendarMonth">
                 <button type="button" class="btn btn-outline-secondary btn-sm mc-icon-btn" wire:click="nextCalendarMonth" title="Tháng sau">
-                    <i class="bi bi-chevron-right"></i>
+                    <i class="fa-solid fa-chevron-right"></i>
                 </button>
                 <button type="button" class="btn btn-outline-primary btn-sm" wire:click="goToCurrentCalendarMonth">
                     Hôm nay
@@ -111,10 +111,10 @@
                                     <div class="d-flex align-items-center flex-wrap gap-2 mt-2 text-muted small">
                                         <span class="d-inline-flex align-items-center gap-1"><i class="{{ $this->listScheduleIcon($item->scheduled_at) }}"></i>{{ $this->listScheduleText($item->scheduled_at) }}</span>
                                         @if(!$isMarketing)
-                                            <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-person"></i>{{ $item->user?->name ?? 'Chưa rõ' }}</span>
+                                            <span class="d-inline-flex align-items-center gap-1"><i class="fa-solid fa-user"></i>{{ $item->user?->name ?? 'Chưa rõ' }}</span>
                                         @endif
                                         @if(count($item->images ?? []) > 0)
-                                            <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-image"></i>{{ count($item->images ?? []) }}</span>
+                                            <span class="d-inline-flex align-items-center gap-1"><i class="fa-solid fa-image"></i>{{ count($item->images ?? []) }}</span>
                                         @endif
                                     </div>
 
@@ -123,22 +123,22 @@
                                         <div class="d-inline-flex align-items-center gap-1">
                                             @if($isMarketing && $item->isEditable())
                                                 <button type="button" class="btn btn-sm btn-outline-secondary mc-icon-btn" wire:click.stop="openEdit({{ $item->id }})" title="Sửa">
-                                                    <i class="bi bi-pencil"></i>
+                                                    <i class="fa-solid fa-pen"></i>
                                                 </button>
                                             @endif
 
                                             @if($isMarketing && $item->isDraft())
                                                 <button type="button" class="btn btn-sm btn-warning text-dark fw-semibold d-inline-flex align-items-center gap-1" wire:click.stop="submitForReview({{ $item->id }})" wire:confirm="Gửi bài này để duyệt?" title="Gửi duyệt">
-                                                    <i class="bi bi-send"></i><span>Gửi duyệt</span>
+                                                    <i class="fa-solid fa-paper-plane"></i><span>Gửi duyệt</span>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger mc-icon-btn" wire:click.stop="deleteContent({{ $item->id }})" wire:confirm="Xóa bài content này?" title="Xóa">
-                                                    <i class="bi bi-trash"></i>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             @endif
 
                                             @if($isReviewer && $item->isPending())
                                                 <button type="button" class="btn btn-sm btn-success mc-icon-btn" wire:click.stop="openReview({{ $item->id }})" title="Duyệt">
-                                                    <i class="bi bi-check2-circle"></i>
+                                                    <i class="fa-solid fa-check-circle"></i>
                                                 </button>
                                             @endif
                                         </div>
@@ -148,7 +148,7 @@
                             @empty
                                 @if($isMarketing)
                                     <span class="mc-calendar-add-hint d-inline-flex align-items-center justify-content-center rounded-2 border text-secondary small py-2">
-                                        <i class="bi bi-plus-lg"></i>
+                                        <i class="fa-solid fa-plus-lg"></i>
                                     </span>
                                 @else
                                     <span class="text-muted small">-</span>
@@ -189,22 +189,22 @@
 
                             @if($isMarketing && $item->isEditable())
                                 <button type="button" class="btn btn-sm btn-outline-secondary mc-icon-btn" wire:click.stop="openEdit({{ $item->id }})" title="Sửa">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="fa-solid fa-pen"></i>
                                 </button>
                             @endif
 
                             @if($isMarketing && $item->isDraft())
                                 <button type="button" class="btn btn-sm btn-warning text-dark fw-semibold d-inline-flex align-items-center gap-1" wire:click.stop="submitForReview({{ $item->id }})" wire:confirm="Gửi bài này để duyệt?" title="Gửi duyệt">
-                                    <i class="bi bi-send"></i><span>Gửi duyệt</span>
+                                    <i class="fa-solid fa-paper-plane"></i><span>Gửi duyệt</span>
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-danger mc-icon-btn" wire:click.stop="deleteContent({{ $item->id }})" wire:confirm="Xóa bài content này?" title="Xóa">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
                             @endif
 
                             @if($isReviewer && $item->isPending())
                                 <button type="button" class="btn btn-sm btn-success mc-icon-btn" wire:click.stop="openReview({{ $item->id }})" title="Duyệt">
-                                    <i class="bi bi-check2-circle"></i>
+                                    <i class="fa-solid fa-check-circle"></i>
                                 </button>
                             @endif
                         </div>
@@ -220,7 +220,7 @@
                 <div class="modal-header bg-body align-items-start border-bottom">
                     <div class="d-flex align-items-start gap-3">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary flex-shrink-0 mc-form-hero-icon">
-                            <i class="bi bi-megaphone"></i>
+                            <i class="fa-solid fa-bullhorn"></i>
                         </span>
                         <div>
                             <h5 class="modal-title fw-bold mb-1">{{ $isEditing ? 'Chỉnh sửa bài content' : 'Tạo bài content mới' }}</h5>
@@ -302,7 +302,7 @@
                                                             <img src="{{ asset('storage/' . $path) }}" alt="Ảnh hiện tại">
                                                             <button type="button" class="mc-image-remove"
                                                                 wire:click="removeExistingImage('{{ $path }}')">
-                                                                <i class="bi bi-x"></i>
+                                                                <i class="fa-solid fa-xmark"></i>
                                                             </button>
                                                         </div>
                                                     @endforeach
@@ -311,7 +311,7 @@
                                         @endif
 
                                         <div class="border border-2 rounded-3 bg-body-tertiary p-4 text-center mc-upload-zone">
-                                            <i class="bi bi-cloud-arrow-up fs-1 text-secondary"></i>
+                                            <i class="fa-solid fa-cloud-arrow-up fs-1 text-secondary"></i>
                                             <label class="form-label fw-semibold d-block mt-2 mb-2">{{ $isEditing ? 'Thêm ảnh mới' : 'Tải ảnh lên' }}</label>
                                             <input type="file" class="form-control @error('newImages.*') is-invalid @enderror"
                                                 wire:model="newImages" multiple accept="image/*">
@@ -330,7 +330,7 @@
                                                             <img src="{{ $img->temporaryUrl() }}" alt="Ảnh xem trước">
                                                             <button type="button" class="mc-image-remove"
                                                                 wire:click="removeNewImage({{ $i }})">
-                                                                <i class="bi bi-x"></i>
+                                                                <i class="fa-solid fa-xmark"></i>
                                                             </button>
                                                         </div>
                                                     @endforeach
@@ -358,7 +358,7 @@
                                         <div class="card-body">
                                             <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-body-tertiary border mb-3">
                                                 <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success mc-form-hero-icon">
-                                                    <i class="bi bi-calendar-event"></i>
+                                                    <i class="fa-solid fa-calendar-day"></i>
                                                 </span>
                                                 <div>
                                                     <div class="fw-bold">{{ $this->formSchedulePreviewValue() }}</div>
@@ -386,7 +386,7 @@
                                                     </div>
                                                 @else
                                                     <div class="border rounded-3 bg-body-tertiary p-4 text-center text-muted small">
-                                                        <i class="bi bi-image d-block fs-2 mb-2"></i>
+                                                        <i class="fa-solid fa-image d-block fs-2 mb-2"></i>
                                                         Chưa có ảnh đính kèm
                                                     </div>
                                                 @endif
@@ -395,7 +395,7 @@
                                     </div>
 
                                     <div class="border rounded-3 bg-body-tertiary mt-3 mb-0 p-3 text-body-secondary">
-                                        <div class="fw-semibold text-body mb-1"><i class="bi bi-lightbulb text-warning me-1"></i>Gợi ý</div>
+                                        <div class="fw-semibold text-body mb-1"><i class="fa-solid fa-lightbulb text-warning me-1"></i>Gợi ý</div>
                                         <div class="small">Tiêu đề ngắn, caption rõ CTA và ảnh khớp thông điệp sẽ giúp vòng duyệt nhanh hơn.</div>
                                     </div>
                                 </div>
@@ -412,7 +412,7 @@
                                 wire:loading.attr="disabled"
                                 wire:target="saveAndSubmitForReview,newImages">
                                 <span wire:loading wire:target="saveAndSubmitForReview" class="spinner-border spinner-border-sm me-1"></span>
-                                <i class="bi bi-send me-1"></i>Gửi duyệt
+                                <i class="fa-solid fa-paper-plane me-1"></i>Gửi duyệt
                             </button>
                         @endif
                         <button type="submit" class="btn btn-success"
@@ -433,7 +433,7 @@
                     <div class="modal-header bg-warning-subtle text-warning-emphasis">
                         <div>
                             <h5 class="modal-title fw-bold mb-1">
-                                <i class="bi bi-check2-circle me-2"></i>Duyệt bài content
+                                <i class="fa-solid fa-check-circle me-2"></i>Duyệt bài content
                             </h5>
                             <p class="mb-0 small">Kiểm tra caption và media trước khi phê duyệt hoặc phản hồi.</p>
                         </div>
@@ -453,8 +453,8 @@
                                     </div>
 
                                     <div class="d-flex flex-wrap gap-2 mt-3">
-                                        <span class="badge rounded-pill text-bg-light border text-body"><i class="bi bi-person me-1"></i>{{ $reviewRecord->user?->name ?? 'Chưa rõ phụ trách' }}</span>
-                                        <span class="badge rounded-pill text-bg-light border text-body"><i class="bi bi-calendar3 me-1"></i>{{ $reviewRecord->scheduled_at?->format('d/m/Y') ?? 'Chưa chốt lịch' }}</span>
+                                        <span class="badge rounded-pill text-bg-light border text-body"><i class="fa-solid fa-user me-1"></i>{{ $reviewRecord->user?->name ?? 'Chưa rõ phụ trách' }}</span>
+                                        <span class="badge rounded-pill text-bg-light border text-body"><i class="fa-solid fa-calendar-days me-1"></i>{{ $reviewRecord->scheduled_at?->format('d/m/Y') ?? 'Chưa chốt lịch' }}</span>
                                     </div>
                                 </div>
 
@@ -494,9 +494,9 @@
                                     <div class="form-text mt-3">Chỉ cần nhập ghi chú khi từ chối. Ghi rõ điểm cần sửa để đội marketing chỉnh nhanh và gửi lại đúng vòng duyệt.</div>
 
                                     <div class="border-top mt-4 pt-4 small text-muted d-grid gap-2">
-                                        <div><i class="bi bi-check2 me-2"></i>Kiểm tra caption có đúng định hướng nội dung.</div>
-                                        <div><i class="bi bi-check2 me-2"></i>Đảm bảo hình ảnh khớp với thông điệp bài viết.</div>
-                                        <div><i class="bi bi-check2 me-2"></i>Ưu tiên ghi chú cụ thể nếu cần chỉnh sửa lại.</div>
+                                        <div><i class="fa-solid fa-check me-2"></i>Kiểm tra caption có đúng định hướng nội dung.</div>
+                                        <div><i class="fa-solid fa-check me-2"></i>Đảm bảo hình ảnh khớp với thông điệp bài viết.</div>
+                                        <div><i class="fa-solid fa-check me-2"></i>Ưu tiên ghi chú cụ thể nếu cần chỉnh sửa lại.</div>
                                     </div>
                                 </div>
                             </div>
@@ -507,10 +507,10 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="button" class="btn btn-danger" wire:click="reject">
-                                <i class="bi bi-x-circle me-1"></i>Từ chối
+                                <i class="fa-solid fa-xmark-circle me-1"></i>Từ chối
                             </button>
                             <button type="button" class="btn btn-success" wire:click="approve">
-                                <i class="bi bi-check-circle me-1"></i>Duyệt
+                                <i class="fa-solid fa-circle-check me-1"></i>Duyệt
                             </button>
                         </div>
                     </div>
@@ -643,7 +643,7 @@
 
                                     @if($detailRecord->status === 'rejected' && $detailRecord->reviewer_note)
                                         <div class="alert alert-danger mt-4 mb-0">
-                                            <div class="fw-semibold mb-1"><i class="bi bi-x-circle me-1"></i>Lý do từ chối</div>
+                                            <div class="fw-semibold mb-1"><i class="fa-solid fa-xmark-circle me-1"></i>Lý do từ chối</div>
                                             <div class="small">{{ $detailRecord->reviewer_note }}</div>
                                         </div>
                                     @endif
@@ -659,25 +659,25 @@
                                     class="btn btn-warning text-dark fw-semibold"
                                     wire:click="submitForReview({{ $detailRecord->id }})"
                                     wire:confirm="Gửi bài này để duyệt?">
-                                    <i class="bi bi-send me-1"></i>Gửi duyệt
+                                    <i class="fa-solid fa-paper-plane me-1"></i>Gửi duyệt
                                 </button>
                             @endif
                             @if($isReviewer && $detailRecord->isPending())
                                 <button type="button"
                                     class="btn btn-success fw-semibold"
                                     wire:click="openReview({{ $detailRecord->id }})">
-                                    <i class="bi bi-check2-circle me-1"></i>Duyệt bài
+                                    <i class="fa-solid fa-check-circle me-1"></i>Duyệt bài
                                 </button>
                             @endif
                             <button type="button"
                                 class="btn btn-outline-primary"
                                 onclick="window.marketingContentCopy(this, @js($detailRecord->content), @js($detailImageUrls))">
-                                <i class="bi bi-clipboard-check me-1"></i>Copy đăng bài
+                                <i class="fa-solid fa-clipboard-check me-1"></i>Copy đăng bài
                             </button>
                             <button type="button"
                                 class="btn btn-outline-secondary"
                                 onclick="window.marketingContentDownload(@js($detailRecord->content), @js($detailImageUrls), @js($detailDownloadName))">
-                                <i class="bi bi-download me-1"></i>Tải xuống
+                                <i class="fa-solid fa-download me-1"></i>Tải xuống
                             </button>
                         </div>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>

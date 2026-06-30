@@ -9,7 +9,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-primary bg-opacity-10 text-primary">
-                        <i class="bi bi-people-fill"></i>
+                        <i class="fa-solid fa-users-fill"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >TỔNG NHÂN SỰ</div>
@@ -22,7 +22,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-green-pale text-green-dark" >
-                        <i class="bi bi-person-check-fill"></i>
+                        <i class="fa-solid fa-user-check-fill"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >CHÍNH THỨC</div>
@@ -35,7 +35,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-yellow-pale text-yellow-dark" >
-                        <i class="bi bi-hourglass-split"></i>
+                        <i class="fa-solid fa-hourglass-half"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >THỬ VIỆC</div>
@@ -48,7 +48,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-indigo-pale text-indigo-dark" >
-                        <i class="bi bi-mortarboard-fill"></i>
+                        <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >THỰC TẬP</div>
@@ -61,7 +61,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-red-pale text-red-dark" >
-                        <i class="bi bi-person-x-fill"></i>
+                        <i class="fa-solid fa-user-x-fill"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >ĐÃ NGHỈ</div>
@@ -79,7 +79,7 @@
                 <div class="row g-2 align-items-center">
                     <div class="col-md-4">
                         <div class="input-group input-group-sm">
-                            <span class="input-group-text border-light-subtle"><i class="bi bi-search"></i></span>
+                            <span class="input-group-text border-light-subtle"><i class="fa-solid fa-magnifying-glass"></i></span>
                             <input type="text" wire:model.live.debounce.400ms="search"
                                 class="form-control border-light-subtle rounded-end-2"
                                 placeholder="Tìm theo tên, mã NV, email, SĐT..."
@@ -181,7 +181,7 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-5">
-                                    <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+                                    <i class="fa-solid fa-inbox fs-1 d-block mb-2 opacity-50"></i>
                                     Không tìm thấy nhân viên nào.
                                 </td>
                             </tr>

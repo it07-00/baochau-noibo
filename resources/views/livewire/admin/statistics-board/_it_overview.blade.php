@@ -262,7 +262,7 @@
                                 <td class="">{{ $activity->description }}</td>
                                 <td class=" text-muted">
                                     <div class="d-flex flex-column">
-                                        <span><i class="bi bi-geo-alt"></i> {{ $activity->getExtraProperty('ip') ?? 'N/A' }}</span>
+                                        <span><i class="fa-solid fa-location-dot"></i> {{ $activity->getExtraProperty('ip') ?? 'N/A' }}</span>
                                         <span class="text-truncate mxw-150px"  title="{{ $activity->getExtraProperty('user_agent') }}">{{ $activity->getExtraProperty('user_agent') ?? 'N/A' }}</span>
                                     </div>
                                 </td>

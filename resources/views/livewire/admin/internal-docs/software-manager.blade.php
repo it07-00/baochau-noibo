@@ -3,13 +3,13 @@
     <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden" >
         <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h5 class="mb-0 fw-bold">
-                <i class="bi bi-laptop me-2 text-primary"></i>Phần mềm nội bộ
+                <i class="fa-solid fa-laptop me-2 text-primary"></i>Phần mềm nội bộ
             </h5>
 
             <div class="d-flex align-items-center gap-3">
                 <div class="input-group w-250px" >
                     <span class="input-group-text bg-light border-end-0 rounded-start-2" >
-                        <i class="bi bi-search text-muted"></i>
+                        <i class="fa-solid fa-magnifying-glass text-muted"></i>
                     </span>
                     <input type="text" wire:model.live.debounce.300ms="search" class="form-control border-start-0 ps-0 bg-light rounded-end-2 border"
                         placeholder="Tìm kiếm phần mềm..." >
@@ -25,7 +25,7 @@
 
                 @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                     <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2 rounded-8px" >
-                        <i class="bi bi-plus-lg"></i> Thêm mới
+                        <i class="fa-solid fa-plus-lg"></i> Thêm mới
                     </button>
                 @endif
             </div>
@@ -42,7 +42,7 @@
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center wh-48 fs-5" >
-                                    <i class="bi bi-box-seam"></i>
+                                    <i class="fa-solid fa-box"></i>
                                 </div>
                                 <div>
                                     <h6 class="mb-0 fw-bold text-dark">{{ $sw->name }}</h6>
@@ -58,11 +58,11 @@
                             @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-8px" >
-                                        <li><button wire:click="edit({{ $sw->id }})" class="dropdown-item py-2 fs-85" ><i class="bi bi-pencil me-2 text-primary"></i>Chỉnh sửa</button></li>
-                                        <li><button wire:click="delete({{ $sw->id }})" wire:confirm="Bạn có chắc muốn xóa phần mềm này?" class="dropdown-item py-2 text-danger fs-85" ><i class="bi bi-trash me-2"></i>Xóa</button></li>
+                                        <li><button wire:click="edit({{ $sw->id }})" class="dropdown-item py-2 fs-85" ><i class="fa-solid fa-pen me-2 text-primary"></i>Chỉnh sửa</button></li>
+                                        <li><button wire:click="delete({{ $sw->id }})" wire:confirm="Bạn có chắc muốn xóa phần mềm này?" class="dropdown-item py-2 text-danger fs-85" ><i class="fa-solid fa-trash me-2"></i>Xóa</button></li>
                                     </ul>
                                 </div>
                             @endif
@@ -74,7 +74,7 @@
 
                         <div class="mt-3">
                             <a href="{{ $sw->url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 fw-medium rounded-8px" >
-                                <i class="bi bi-link-45deg me-1"></i> Truy cập / Tải xuống
+                                <i class="fa-solid fa-link me-1"></i> Truy cập / Tải xuống
                             </a>
                         </div>
 
@@ -90,7 +90,7 @@
             </div>
         @empty
             <div class="col-12 text-center py-5">
-                <i class="bi bi-laptop text-muted opacity-25 fs-4rem" ></i>
+                <i class="fa-solid fa-laptop text-muted opacity-25 fs-4rem" ></i>
                 <p class="text-muted mt-3 mb-0">Chưa có phần mềm nào.</p>
             </div>
         @endforelse
@@ -157,7 +157,7 @@
                         <div class="modal-footer border-top py-3">
                             <button type="button" class="btn btn-light rounded-8px" wire:click="$set('showModal', false)" >Hủy</button>
                             <button type="submit" class="btn btn-primary rounded-8px" >
-                                <i class="bi bi-save me-1"></i> Lưu lại
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Lưu lại
                             </button>
                         </div>
                     </form>

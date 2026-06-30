@@ -10,7 +10,7 @@
                 <div class="pure-card-header al-header d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between">
                     <div>
                         <h3 class="al-title m-0">
-                            <i class="bi bi-clock-history me-2 text-primary"></i>Nhật ký hoạt động
+                            <i class="fa-solid fa-clock-history me-2 text-primary"></i>Nhật ký hoạt động
                         </h3>
                         <div class="text-muted small mt-1">Toàn bộ thao tác tạo, sửa, xóa trong hệ thống.</div>
                     </div>
@@ -18,7 +18,7 @@
                     <div class="al-toolbar d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-2 mt-lg-0">
                         <div class="input-group input-group-sm al-search flex-grow-1">
                             <span class="input-group-text bg-transparent border-end-0">
-                                <i class="bi bi-search"></i>
+                                <i class="fa-solid fa-magnifying-glass"></i>
                             </span>
                             <input wire:model.live.debounce.300ms="search"
                                    type="text"
@@ -26,7 +26,7 @@
                                    placeholder="Tìm theo mô tả, người thực hiện...">
                             @if($search)
                                 <button wire:click="$set('search', '')" class="btn btn-outline-secondary" type="button">
-                                    <i class="bi bi-x"></i>
+                                    <i class="fa-solid fa-xmark"></i>
                                 </button>
                             @endif
                         </div>
@@ -55,7 +55,7 @@
 
                         @if($search || $subjectType || $event || $dateFrom || $dateTo)
                             <button wire:click="resetFilters" class="btn btn-sm btn-outline-danger text-nowrap">
-                                <i class="bi bi-x-circle me-1"></i>Xóa lọc
+                                <i class="fa-solid fa-xmark-circle me-1"></i>Xóa lọc
                             </button>
                         @endif
                     </div>
@@ -89,7 +89,7 @@
                                                 </div>
                                             @else
                                                 <span class="text-muted fst-italic">
-                                                    <i class="bi bi-gear me-1"></i>Hệ thống
+                                                    <i class="fa-solid fa-gear me-1"></i>Hệ thống
                                                 </span>
                                             @endif
                                         </td>
@@ -116,7 +116,7 @@
                                                 <button class="btn btn-sm btn-light"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#alModal{{ $activity->id }}">
-                                                    <i class="bi bi-eye me-1"></i>Xem
+                                                    <i class="fa-solid fa-eye me-1"></i>Xem
                                                 </button>
                                             @else
                                                 <span class="text-muted">—</span>
@@ -124,13 +124,13 @@
                                         </td>
 
                                         <td class="text-muted text-nowrap" title="{{ $activity->created_at->format('d/m/Y H:i:s') }}">
-                                            <i class="bi bi-clock me-1 opacity-50"></i>{{ $activity->created_at->diffForHumans() }}
+                                            <i class="fa-solid fa-clock me-1 opacity-50"></i>{{ $activity->created_at->diffForHumans() }}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center py-5">
-                                            <i class="bi bi-inbox text-muted d-block mb-2 fs-25rem" ></i>
+                                            <i class="fa-solid fa-inbox text-muted d-block mb-2 fs-25rem" ></i>
                                             <span class="text-muted">
                                                 @if($search || $subjectType || $event || $dateFrom || $dateTo)
                                                     Không có kết quả phù hợp với bộ lọc.
@@ -164,7 +164,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">
-                                <i class="bi bi-clock-history me-2 text-primary"></i>
+                                <i class="fa-solid fa-clock-history me-2 text-primary"></i>
                                 Chi tiết — <span class="text-primary">{{ class_basename($activity->subject_type ?? '') }}</span> #{{ $activity->subject_id }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -176,8 +176,8 @@
                                         <thead class="table-light">
                                             <tr>
                                                 <th class="w-30pct">Trường</th>
-                                                <th class="w-35pct"><span class="text-danger"><i class="bi bi-dash-circle-fill me-1"></i>Cũ</span></th>
-                                                <th class="w-35pct"><span class="text-success"><i class="bi bi-plus-circle-fill me-1"></i>Mới</span></th>
+                                                <th class="w-35pct"><span class="text-danger"><i class="fa-solid fa-circle-minus me-1"></i>Cũ</span></th>
+                                                <th class="w-35pct"><span class="text-success"><i class="fa-solid fa-plus-circle-fill me-1"></i>Mới</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -220,9 +220,9 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <small class="text-muted">
-                                <i class="bi bi-person me-1"></i>{{ $activity->causer?->name ?? 'Hệ thống' }}
+                                <i class="fa-solid fa-user me-1"></i>{{ $activity->causer?->name ?? 'Hệ thống' }}
                                 &nbsp;·&nbsp;
-                                <i class="bi bi-clock me-1"></i>{{ $activity->created_at->format('d/m/Y H:i:s') }}
+                                <i class="fa-solid fa-clock me-1"></i>{{ $activity->created_at->format('d/m/Y H:i:s') }}
                             </small>
                             <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         </div>

@@ -2,13 +2,13 @@
         <div class="d-flex flex-column gap-2 mb-3">
             @foreach($existingContractFiles as $file)
                 <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
-                    <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
+                    <i class="fa-solid fa-file-pdf text-danger fs-5"></i>
                     <a href="{{ $file->file_url }}" target="_blank" class="text-truncate flex-grow-1 small text-danger fw-semibold text-decoration-none">
                         {{ $file->original_name }}
                     </a>
                     @if($this->canManageContractFiles)
                         <button type="button" class="btn btn-outline-danger py-0 px-2" wire:click="deleteContractFile({{ $file->id }})" wire:confirm="Xóa file này?">
-                            <i class="bi bi-trash fs-5"></i>
+                            <i class="fa-solid fa-trash fs-5"></i>
                         </button>
                     @endif
                 </div>
@@ -23,7 +23,7 @@
             <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($newContractFiles) }} file):</p>
             @foreach($newContractFiles as $file)
                 <div class="d-flex align-items-center gap-2 border border-primary rounded px-3 py-1 bg-light">
-                    <i class="bi bi-file-earmark-pdf text-primary"></i>
+                    <i class="fa-solid fa-file-pdf text-primary"></i>
                     <span class="small text-truncate flex-grow-1">{{ $file->getClientOriginalName() }}</span>
                 </div>
             @endforeach

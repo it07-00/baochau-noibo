@@ -8,12 +8,12 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                            <i class="bi bi-person-fill"></i> Thông tin người nhận & tài khoản
+                            <i class="fa-solid fa-user-fill"></i> Thông tin người nhận & tài khoản
                         </h5>
                         @if($savedAccounts->isNotEmpty())
                             <div class="d-flex align-items-center gap-2" style="max-width: 480px;">
                                 <span class="text-muted text-nowrap d-inline-flex align-items-center gap-1 fw-bold" style="font-size: 0.95rem;">
-                                    <i class="bi bi-clock-history text-primary"></i> Chọn nhanh:
+                                    <i class="fa-solid fa-clock-history text-primary"></i> Chọn nhanh:
                                 </span>
                                 <select wire:model.live="selectedSavedAccountId" class="form-select border-primary-subtle shadow-sm bg-white" style="border-radius: 6px; font-weight: 500; font-size: 0.95rem; padding-top: 0.35rem; padding-bottom: 0.35rem;">
                                     <option value="">-- Chọn tài khoản đã lưu --</option>
@@ -77,7 +77,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom py-3">
                         <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                            <i class="bi bi-file-earmark-text-fill"></i> Thông tin Yêu cầu chi hoa hồng
+                            <i class="fa-solid fa-file-text-fill"></i> Thông tin Yêu cầu chi hoa hồng
                         </h5>
                     </div>
                     <div class="card-body p-4">
@@ -132,7 +132,7 @@
                                 <label class="form-label fw-bold">Khách hàng hoặc giới thiệu</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="referrer_info" class="form-control" placeholder="Khách hàng hoặc giới thiệu">
-                                    <button class="btn btn-success"><i class="bi bi-plus-lg"></i></button>
+                                    <button class="btn btn-success"><i class="fa-solid fa-plus-lg"></i></button>
                                 </div>
                             </div>
 
@@ -147,16 +147,16 @@
                     <!-- Form actions footer -->
                     <div class="card-footer bg-light border-top p-3 d-flex gap-2">
                         <button wire:click="save" class="btn btn-primary d-flex align-items-center gap-1 shadow-sm">
-                            <i class="bi bi-save"></i> Lưu
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu
                         </button>
                         <button wire:click="save(true)" class="btn btn-success d-flex align-items-center gap-1 shadow-sm">
-                            <i class="bi bi-file-earmark-check"></i> Lưu tại trang
+                            <i class="fa-solid fa-file-check"></i> Lưu tại trang
                         </button>
                         <button wire:click="$refresh" class="btn btn-secondary d-flex align-items-center gap-1 shadow-sm">
-                            <i class="bi bi-arrow-clockwise"></i> Làm lại
+                            <i class="fa-solid fa-rotate-right"></i> Làm lại
                         </button>
                         <a href="{{ route('app.commissions.index') }}" class="btn btn-danger d-flex align-items-center gap-1 shadow-sm">
-                            <i class="bi bi-x-lg"></i> Thoát
+                            <i class="fa-solid fa-xmark-lg"></i> Thoát
                         </a>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
             <div class="card border-0 shadow-sm position-sticky" style="top: 24px;">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                        <i class="bi bi-qr-code-scan"></i> Thanh toán & QR Code
+                        <i class="fa-solid fa-qrcode-scan"></i> Thanh toán & QR Code
                     </h5>
                 </div>
                 <div class="card-body p-4 d-flex flex-column align-items-center text-center">
@@ -180,7 +180,7 @@
                             <img src="{{ $this->getVietQrUrl() }}" class="img-thumbnail rounded border shadow-sm" style="width: 100%; max-width: 380px; height: auto; aspect-ratio: 1/1; object-fit: contain;" alt="QR Code">
                         @else
                             <div class="text-muted d-flex flex-column align-items-center py-4">
-                                <i class="bi bi-qr-code text-secondary mb-3" style="font-size: 3.5rem; opacity: 0.4;"></i>
+                                <i class="fa-solid fa-qrcode text-secondary mb-3" style="font-size: 3.5rem; opacity: 0.4;"></i>
                                 <span class="fw-semibold text-secondary">Chưa tạo mã QR</span>
                                 <span class="text-muted small px-3 mt-1" style="font-size: 0.75rem;">Nhập Ngân hàng và Số tài khoản nhận ở cột bên để tự động tạo QR.</span>
                             </div>
@@ -189,7 +189,7 @@
 
                     <!-- Summary Recap Details -->
                     <div class="w-100 bg-light p-3 rounded-3 border border-light-subtle text-start">
-                        <h6 class="text-secondary fw-bold border-bottom pb-2 mb-3"><i class="bi bi-receipt-cutoff"></i> Tóm tắt thông tin</h6>
+                        <h6 class="text-secondary fw-bold border-bottom pb-2 mb-3"><i class="fa-solid fa-receipt"></i> Tóm tắt thông tin</h6>
                         
                         <div class="d-flex flex-column gap-2" style="font-size: 1.1rem;">
                             <div class="row align-items-center">

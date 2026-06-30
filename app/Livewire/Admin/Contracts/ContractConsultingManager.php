@@ -118,7 +118,7 @@ class ContractConsultingManager extends Component
         'ncc_payment_paid_at' => '',
         'province' => '',
         'info_source' => 'MỚI',
-        'payment_method' => 'Sau ký',
+        'payment_method' => 'Sau khi ký HĐ',
         'loai_dich_vu' => '',
         'status' => 'PTH đang kiểm tra',
         'renewal_status' => '',
@@ -135,7 +135,7 @@ class ContractConsultingManager extends Component
 
     public array $financialBase = ['value' => 0, 'commission' => 0, 'revenue' => 0];
 
-    public array $paymentMethods = ['Sau ký'];
+    public array $paymentMethods = ['Sau khi ký HĐ'];
 
     public $filter = [
         'signed_from' => '',
@@ -827,7 +827,7 @@ class ContractConsultingManager extends Component
     private function resetForm(): void
     {
         $this->newCustomerName = '';
-        $this->paymentMethods = ['Sau ký'];
+        $this->paymentMethods = ['Sau khi ký HĐ'];
         $this->formData = [
             'shd_cxl' => '',
             'shd_bc' => '',
@@ -849,7 +849,7 @@ class ContractConsultingManager extends Component
             'ncc_payment_paid_at' => '',
             'province' => '',
             'info_source' => 'MỚI',
-            'payment_method' => 'Sau ký',
+            'payment_method' => 'Sau khi ký HĐ',
             'loai_dich_vu' => '',
             'status' => 'PTH đang kiểm tra',
             'renewal_status' => '',
@@ -1089,7 +1089,7 @@ class ContractConsultingManager extends Component
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_status_options' => ContractVoucherStatus::values(),
             'loai_dich_vu_options' => $loaiDichVuOptions,
-            'payment_methods' => ['Sau ký', 'Trước ký', 'Đã ký hợp đồng', 'Đã có kết quả/Báo cáo', 'Đã nộp báo cáo', 'Đã gửi báo cáo KH ký', 'Bàn giao + nghiệm thu'],
+            'payment_methods' => ['Sau khi ký HĐ', 'Sau khi có kết quả/báo cáo', 'Sau khi bàn giao + Nghiệm thu'],
             'info_sources' => collect(['MỚI', 'Sale', 'Tái ký', 'Thông tin chuyển', 'Thông tin chuyển MKT'])
                 ->merge(ContractLegal::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source'))
                 ->unique()->values()->all(),

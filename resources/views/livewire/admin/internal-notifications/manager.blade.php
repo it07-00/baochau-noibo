@@ -6,7 +6,7 @@
         </div>
         <button type="button" class="btn btn-primary d-flex align-items-center gap-2"
             wire:click="$dispatch('openComposeModal')">
-            <i class="bi bi-megaphone-fill"></i>
+            <i class="fa-solid fa-bullhorn-fill"></i>
             Soạn thông báo mới
         </button>
     </div>
@@ -19,7 +19,7 @@
         <div class="card-body p-0">
             @if($sentNotifications->isEmpty())
                 <div class="text-center py-5 text-muted">
-                    <i class="bi bi-megaphone fs-1 d-block mb-2 opacity-50"></i>
+                    <i class="fa-solid fa-bullhorn fs-1 d-block mb-2 opacity-50"></i>
                     Chưa có thông báo nào được gửi.
                 </div>
             @else
@@ -67,7 +67,7 @@
             <div class="modal-content border-0 shadow-lg overflow-hidden">
                 <div class="modal-header bg-primary py-3">
                     <h5 class="modal-title fw-bold text-white" id="composeModalLabel">
-                        <i class="bi bi-megaphone-fill me-2"></i>Soạn thông báo nội bộ
+                        <i class="fa-solid fa-bullhorn-fill me-2"></i>Soạn thông báo nội bộ
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -163,7 +163,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
                             <span wire:loading wire:target="send" class="spinner-border spinner-border-sm me-1"></span>
-                            <i class="bi bi-send-fill me-1" wire:loading.remove wire:target="send"></i>
+                            <i class="fa-solid fa-paper-plane-fill me-1" wire:loading.remove wire:target="send"></i>
                             Gửi thông báo
                         </button>
                     </div>

@@ -8,14 +8,14 @@
                     <li class="nav-item">
                         <button wire:click="$set('activeTab', 'form')"
                             class="nav-link nav-pill-btn {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
-                            <i class="bi bi-pencil-square me-1 me-md-2"></i><span class="nav-pill-label">Gửi báo
+                            <i class="fa-solid fa-pen-square me-1 me-md-2"></i><span class="nav-pill-label">Gửi báo
                                 cáo</span>
                         </button>
                     </li>
                     <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'history')"
                             class="nav-link nav-pill-btn {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
-                            <i class="bi bi-calendar3 me-1 me-md-2"></i><span class="nav-pill-label">Lịch sử cá
+                            <i class="fa-solid fa-calendar-days me-1 me-md-2"></i><span class="nav-pill-label">Lịch sử cá
                                 nhân</span>
                         </button>
                     </li>
@@ -24,7 +24,7 @@
                     <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'management')"
                             class="nav-link nav-pill-btn {{ $activeTab === 'management' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
-                            <i class="bi bi-speedometer2 me-1 me-md-2"></i><span class="nav-pill-label">Quản lý
+                            <i class="fa-solid fa-gauge-high me-1 me-md-2"></i><span class="nav-pill-label">Quản lý
                                 chung</span>
                         </button>
                     </li>
@@ -40,7 +40,7 @@
                             @if ($isEditing)
                                 <span
                                     class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Đã gửi
+                                    <i class="fa-solid fa-circle-check-fill me-1"></i> Đã gửi
                                 </span>
                             @endif
                         </div>
@@ -88,7 +88,7 @@
                                 class="daily-report-tip-box mt-4 p-3 border-0 bg-light-subtle rounded-3 border border-dashed">
                                 <div class="d-flex gap-3">
                                     <div class="text-primary mt-1">
-                                        <i class="bi bi-lightbulb fs-4"></i>
+                                        <i class="fa-solid fa-lightbulb fs-4"></i>
                                     </div>
                                     <div>
                                         <h6 class="fw-bold mb-1  text-body">Mẹo viết báo cáo chuyên nghiệp:</h6>
@@ -118,7 +118,7 @@
                                     {{ $isEditing ? 'Cập nhật báo cáo' : 'Gửi báo cáo ngày' }}
                                 </button>
                                 @if ($isEditing)
-                                    <span class="text-success  fw-bold"><i class="bi bi-info-circle me-1"></i> Bạn đang
+                                    <span class="text-success  fw-bold"><i class="fa-solid fa-circle-info me-1"></i> Bạn đang
                                         chỉnh sửa báo cáo ngày
                                         {{ \Carbon\Carbon::parse($reportDate)->format('d/m/Y') }}</span>
                                 @else
@@ -131,7 +131,7 @@
 
                 <div class="daily-report-help-alert alert alert-warning border-0 shadow-sm py-3 bg-peach rounded-3">
                     <p class="mb-0  text-body">
-                        <i class="bi bi-info-circle me-1"></i> Nếu chọn <strong>"Gặp vấn đề, cần hỗ trợ"</strong> &rarr;
+                        <i class="fa-solid fa-circle-info me-1"></i> Nếu chọn <strong>"Gặp vấn đề, cần hỗ trợ"</strong> &rarr;
                         TPKD nhận thông báo ngay sau khi bạn gửi.
                     </p>
                 </div>
@@ -267,7 +267,7 @@
                             </div>
                             <button wire:click="export" wire:loading.attr="disabled"
                                 class="btn btn-success px-4 py-2 shadow-sm d-flex align-items-center gap-2 fw-semibold rounded-2 fs-095">
-                                <i class="bi bi-file-earmark-excel"></i> Xuất dữ liệu
+                                <i class="fa-solid fa-file-excel"></i> Xuất dữ liệu
                             </button>
                         </div>
                     </div>
@@ -317,10 +317,10 @@
                                                 </div>
                                                 <button @click="expanded = !expanded"
                                                     class="btn btn-link btn-sm p-0 mt-2 text-primary text-decoration-none fw-bold">
-                                                    <span x-show="!expanded"><i class="bi bi-chevron-down me-1"></i>
+                                                    <span x-show="!expanded"><i class="fa-solid fa-chevron-down me-1"></i>
                                                         Xem đầy đủ báo
                                                         cáo</span>
-                                                    <span x-show="expanded"><i class="bi bi-chevron-up me-1"></i> Thu
+                                                    <span x-show="expanded"><i class="fa-solid fa-chevron-up me-1"></i> Thu
                                                         gọn lại</span>
                                                 </button>
                                                 @if ($item->report->issues)
@@ -393,7 +393,7 @@
                     <div class="daily-report-mobile-day-body">
                         <div class="d-flex align-items-center justify-content-between gap-2">
                             <span class="fw-semibold text-body">{{ $day['reports']->count() }} báo cáo</span>
-                            <i class="bi bi-chevron-right text-muted"></i>
+                            <i class="fa-solid fa-chevron-right text-muted"></i>
                         </div>
                         <div class="daily-report-mobile-chip-row">
                             @if ($this->dayIssueCount($day['reports']) > 0)
@@ -417,7 +417,7 @@
                 </button>
             @empty
                 <div class="daily-report-mobile-empty">
-                    <i class="bi bi-calendar2-x"></i>
+                    <i class="fa-solid fa-calendar-xmark"></i>
                     <span>Chưa có báo cáo trong tháng này.</span>
                 </div>
             @endforelse
@@ -489,7 +489,7 @@
         <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; background: var(--daily-report-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
             @click.stop>
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
-                <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-event me-2"></i> Báo cáo ngày <span
+                <h5 class="mb-0 fw-bold"><i class="fa-solid fa-calendar-day me-2"></i> Báo cáo ngày <span
                         x-text="date"></span></h5>
                 <button @click="open = false" class="btn-close"></button>
             </div>
@@ -523,13 +523,13 @@
                                         <button @click="$wire.openReportModal(r.date); open = false"
                                             class="btn btn-sm btn-outline-primary py-0 px-2 fs-75 rounded-2"
                                             title="Chỉnh sửa">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="fa-solid fa-pen"></i>
                                         </button>
                                         <button
                                             @click="if(confirm('Bạn chắc chắn muốn xóa báo cáo này?')) { $wire.deleteReport(r.id); open = false }"
                                             class="btn btn-sm btn-outline-danger py-0 px-2 fs-75 rounded-2"
                                             title="Xóa">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
                                 </template>
@@ -559,7 +559,7 @@
             @click.stop>
             <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-pencil-square me-2 text-primary"></i>
+                    <i class="fa-solid fa-pen-square me-2 text-primary"></i>
                     {{ $isEditing ? 'Cập nhật báo cáo' : 'Gửi báo cáo mới' }}
                 </h5>
                 <button @click="open = false" class="btn-close shadow-none"></button>
@@ -612,7 +612,7 @@
                 <button @click="open = false" class="btn btn-light px-4 py-2 flex-grow-1 rounded-10px">Hủy</button>
                 <button wire:click="save" class="btn btn-dark px-4 py-2 flex-grow-1 rounded-10px"
                     wire:loading.attr="disabled">
-                    <span wire:loading.remove><i class="bi bi-check2-circle me-1"></i> Lưu báo cáo</span>
+                    <span wire:loading.remove><i class="fa-solid fa-check-circle me-1"></i> Lưu báo cáo</span>
                     <span wire:loading><span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...</span>
                 </button>
             </div>

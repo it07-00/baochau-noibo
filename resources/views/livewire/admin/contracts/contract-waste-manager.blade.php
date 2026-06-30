@@ -13,7 +13,7 @@
         <div class="d-flex gap-2 ms-auto justify-content-end">
             @can('contracts-waste.create')
                 <button wire:click="create" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-circle me-1"></i> Thêm Hợp Đồng
+                    <i class="fa-solid fa-plus-circle me-1"></i> Thêm Hợp Đồng
                 </button>
             @endcan
             <div class="input-group">
@@ -346,16 +346,16 @@
 
                     <div class="col-md-6 d-flex align-items-end gap-2 flex-wrap justify-content-start">
                         <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
-                            <i class="bi bi-search me-1"></i>Lọc
+                            <i class="fa-solid fa-magnifying-glass me-1"></i>Lọc
                         </button>
                         <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
-                            <i class="bi bi-arrow-counterclockwise me-1"></i>Xóa lọc
+                            <i class="fa-solid fa-rotate-left me-1"></i>Xóa lọc
                         </button>
                         @if ($this->canBulkDelete)
                             <button class="btn btn-danger px-4 btn-filter" wire:click="bulkDeleteSelected"
                                 wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
                                 @if (empty($selectedDocIds)) disabled @endif>
-                                <i class="bi bi-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
+                                <i class="fa-solid fa-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
                             </button>
                         @endif
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
@@ -364,11 +364,11 @@
                                 <span wire:loading wire:target="exportExcel"
                                     class="spinner-border spinner-border-sm me-1"></span>
                                 <i wire:loading.remove wire:target="exportExcel"
-                                    class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
+                                    class="fa-solid fa-file-excel me-1"></i>Xuất Excel
                             </button>
                         @endunless
                         <button class="btn btn-primary px-4 btn-filter">
-                            <i class="bi bi-diagram-3 me-1"></i>Quy trình
+                            <i class="fa-solid fa-sitemap me-1"></i>Quy trình
                         </button>
                     </div>
                 </div>
@@ -500,13 +500,13 @@
                                     @if($this->deadlineMeta($doc)['deadline'])
                                         @if($this->deadlineMeta($doc)['isFinished'])
                                             <span class="fw-semibold text-success fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
-                                            <br><span class="badge bg-success fs-60" ><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>
+                                            <br><span class="badge bg-success fs-60" ><i class="fa-solid fa-circle-check me-1"></i>Hoàn thành</span>
                                         @elseif($this->deadlineMeta($doc)['isOverdue'])
                                             <span class="fw-bold text-danger fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
-                                            <br><span class="badge bg-danger fs-60" ><i class="bi bi-exclamation-triangle me-1"></i>Quá hạn {{ abs($this->deadlineMeta($doc)['daysLeft']) }} ngày</span>
+                                            <br><span class="badge bg-danger fs-60" ><i class="fa-solid fa-triangle-exclamation me-1"></i>Quá hạn {{ abs($this->deadlineMeta($doc)['daysLeft']) }} ngày</span>
                                         @elseif($this->deadlineMeta($doc)['isNearDue'])
                                             <span class="fw-semibold text-warning fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
-                                            <br><span class="badge bg-warning text-dark fs-60" ><i class="bi bi-clock me-1"></i>Còn {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
+                                            <br><span class="badge bg-warning text-dark fs-60" ><i class="fa-solid fa-clock me-1"></i>Còn {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
                                         @else
                                             <span class="fw-semibold text-success fs-85" >{{ $this->deadlineMeta($doc)['deadline']->format('d/m/Y') }}</span>
                                             <br><span class="badge bg-success bg-opacity-75 fs-60" >Còn {{ $this->deadlineMeta($doc)['daysLeft'] }} ngày</span>
@@ -545,7 +545,7 @@
                                                         @click="open = false">
                                                         {{ $opt }}
                                                         @if ($doc->status === $opt)
-                                                            <i class="bi bi-check2 ms-2"></i>
+                                                            <i class="fa-solid fa-check ms-2"></i>
                                                         @endif
                                                     </button>
                                                 @endforeach
@@ -560,22 +560,22 @@
                                 <div class="d-flex justify-content-center gap-2">
                                     <button class="btn btn-sm p-0 text-primary"
                                         wire:click="viewDetail({{ $doc->id }})">
-                                        <i class="bi bi-eye fs-5"></i>
+                                        <i class="fa-solid fa-eye fs-5"></i>
                                     </button>
                                     <button class="btn btn-sm p-0 text-danger"
                                         wire:click="viewDetailDocs({{ $doc->id }})" title="Tải lên PDF hợp đồng">
-                                        <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                        <i class="fa-solid fa-file-pdf fs-5"></i>
                                     </button>
                                     @if ($this->canAssign())
                                         <button class="btn btn-sm p-0 text-success"
                                             wire:click="openAssign({{ $doc->id }})" title="Giao việc">
-                                            <i class="bi bi-person-check fs-5"></i>
+                                            <i class="fa-solid fa-user-check fs-5"></i>
                                         </button>
                                     @endif
                                     @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                                         <button class="btn btn-sm p-0 text-info"
                                             wire:click="openWorkflow({{ $doc->id }})" title="Cập nhật tiến độ">
-                                            <i class="bi bi-diagram-3 fs-5"></i>
+                                            <i class="fa-solid fa-sitemap fs-5"></i>
                                         </button>
                                     @endif
                                     @can('contracts-waste.edit')
@@ -583,12 +583,12 @@
                                             @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                                                 <button class="btn btn-sm p-0 text-secondary"
                                                     wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
-                                                    <i class="bi bi-copy fs-5"></i>
+                                                    <i class="fa-solid fa-copy fs-5"></i>
                                                 </button>
                                             @endif
                                             <button class="btn btn-sm p-0 text-warning"
                                                 wire:click="edit({{ $doc->id }})">
-                                                <i class="bi bi-pencil-square fs-5"></i>
+                                                <i class="fa-solid fa-pen-square fs-5"></i>
                                             </button>
                                         @endif
                                     @endcan
@@ -597,7 +597,7 @@
                                             <button class="btn btn-sm p-0 text-danger"
                                                 wire:click="delete({{ $doc->id }})"
                                                 wire:confirm="Xác nhận xóa hợp đồng này?">
-                                                <i class="bi bi-trash fs-5"></i>
+                                                <i class="fa-solid fa-trash fs-5"></i>
                                             </button>
                                         @endif
                                     @endcan
@@ -636,19 +636,19 @@
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'info' }"
                                     @click="tab = 'info'" type="button">
-                                    <i class="bi bi-info-circle me-1"></i>Thông tin HĐ
+                                    <i class="fa-solid fa-circle-info me-1"></i>Thông tin HĐ
                                 </button>
                             </li>
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'progress' }"
                                     @click="tab = 'progress'" type="button">
-                                    <i class="bi bi-diagram-3 me-1"></i>Tiến độ hoàn thành
+                                    <i class="fa-solid fa-sitemap me-1"></i>Tiến độ hoàn thành
                                 </button>
                             </li>
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'docs' }"
                                     @click="tab = 'docs'" type="button">
-                                    <i class="bi bi-paperclip me-1"></i>Tài liệu đính kèm
+                                    <i class="fa-solid fa-paperclip me-1"></i>Tài liệu đính kèm
                                 </button>
                             </li>
                         </ul>
@@ -770,7 +770,7 @@
                                                                     {{ $assign->assigner?->name }} lúc
                                                                     {{ $assign->created_at?->format('d/m/Y H:i') }}</small>
                                                                 @if($assign->deadline)
-                                                                    <br><small class="text-warning fw-semibold"><i class="bi bi-calendar-event me-1"></i>Hạn: {{ $assign->deadline->format('d/m/Y') }}</small>
+                                                                    <br><small class="text-warning fw-semibold"><i class="fa-solid fa-calendar-day me-1"></i>Hạn: {{ $assign->deadline->format('d/m/Y') }}</small>
                                                                 @endif
                                                             </div>
                                                         @endforeach
@@ -781,7 +781,7 @@
                                             </tr>
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3 align-middle" colspan="2"><i
-                                                        class="bi bi-journal-text me-1"></i> Ghi chú tiến độ</th>
+                                                        class="fa-solid fa-book me-1"></i> Ghi chú tiến độ</th>
                                             </tr>
                                             @if ($progressNotes && count($progressNotes) > 0)
                                                 @foreach ($progressNotes as $pNote)
@@ -817,7 +817,7 @@
                                                             wire:target="addProgressNote">
                                                             <span wire:loading wire:target="addProgressNote"
                                                                 class="spinner-border spinner-border-sm me-1"></span>
-                                                            <i class="bi bi-plus me-1"></i> Thêm ghi chú
+                                                            <i class="fa-solid fa-plus me-1"></i> Thêm ghi chú
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -870,7 +870,7 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-file-earmark-text me-1"></i>Thông tin hợp đồng</span>
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-file-text me-1"></i>Thông tin hợp đồng</span>
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
@@ -1024,7 +1024,7 @@
 
                             <div class="col-12 mt-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-cash-coin me-1"></i>Giá trị & Tài chính</span>
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-coins me-1"></i>Giá trị & Tài chính</span>
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
@@ -1110,7 +1110,7 @@
 
                             <div class="col-12 mt-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-calendar3 me-1"></i>Thời gian</span>
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-calendar-days me-1"></i>Thời gian</span>
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
@@ -1143,7 +1143,7 @@
 
                             <div class="col-12 mt-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-geo-alt me-1"></i>Địa chỉ</span>
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-location-dot me-1"></i>Địa chỉ</span>
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
@@ -1201,7 +1201,7 @@
 
                             <div class="col-12 mt-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-tags me-1"></i>Trạng thái & Phân loại</span>
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-tags me-1"></i>Trạng thái & Phân loại</span>
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
@@ -1278,7 +1278,7 @@
                             @include('livewire.admin.contracts.partials.service-submission-fields')
                             <div class="col-12 mt-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-pencil me-1"></i>Ghi chú</span>
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-pen me-1"></i>Ghi chú</span>
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
@@ -1295,7 +1295,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm"></span>
-                            <i class="bi bi-floppy me-1"></i>Lưu
+                            <i class="fa-solid fa-floppy-disk me-1"></i>Lưu
                         </button>
                     </div>
                 </form>
@@ -1308,7 +1308,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-success py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom"><i class="bi bi-person-check me-1"></i> Giao
+                    <h5 class="modal-title fw-bold modal-title-custom"><i class="fa-solid fa-user-check me-1"></i> Giao
                         việc hợp đồng</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -1352,7 +1352,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-info text-white py-3">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-diagram-3 me-2"></i>Cập nhật tiến độ hợp đồng</h5>
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-sitemap me-2"></i>Cập nhật tiến độ hợp đồng</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         wire:click="closeWorkflow"></button>
                 </div>

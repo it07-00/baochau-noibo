@@ -37,7 +37,7 @@
                 @foreach($issueReports as $ir)
                     <a class="dropdown-item notification-item py-3 border-bottom d-flex align-items-start gap-2" href="{{ route('app.daily-reports.index') }}?date={{ date('Y-m-d') }}">
                         <div class="notification-icon bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                            <i class="bi bi-exclamation-triangle-fill "></i>
+                            <i class="fa-solid fa-triangle-exclamation-fill "></i>
                         </div>
                         <div class="flex-grow-1 min-w-0">
                             <div class="notification-item-top d-flex justify-content-between align-items-start gap-2 mb-1">
@@ -78,7 +78,7 @@
                                         <span class="notification-time text-muted flex-shrink-0">{{ $notif->created_at->diffForHumans() }}</span>
                                     </div>
                                     @if(($this->notificationData($notif)['contract_type'] ?? '') === 'work_schedule' && !empty($this->notificationData($notif)['time_label']) && $this->notificationData($notif)['time_label'] !== 'Cả ngày')
-                                        <div class="text-muted small mb-1"><i class="bi bi-clock me-1"></i>{{ $this->notificationData($notif)['time_label'] }}</div>
+                                        <div class="text-muted small mb-1"><i class="fa-solid fa-clock me-1"></i>{{ $this->notificationData($notif)['time_label'] }}</div>
                                     @endif
                                     <div class="notification-message text-muted">{{ $this->notificationData($notif)['message'] ?? '' }}</div>
                                 </div>
@@ -114,17 +114,17 @@
                 <div class="modal-content border-0 shadow-lg overflow-hidden">
                     <div class="modal-header bg-info py-3">
                         <h5 class="modal-title fw-bold text-white">
-                            <i class="bi bi-megaphone-fill me-2"></i>
+                            <i class="fa-solid fa-bullhorn-fill me-2"></i>
                             <span id="internalNotifTitle"></span>
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body p-4">
                         <div class="d-flex align-items-center gap-2 mb-3 text-muted small">
-                            <i class="bi bi-person-circle"></i>
+                            <i class="fa-solid fa-user-circle"></i>
                             <span id="internalNotifSender"></span>
                             <span class="ms-auto">
-                                <i class="bi bi-clock me-1"></i>
+                                <i class="fa-solid fa-clock me-1"></i>
                                 <span id="internalNotifTime"></span>
                             </span>
                         </div>

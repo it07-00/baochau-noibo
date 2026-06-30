@@ -11,11 +11,11 @@
         </div>
         <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
             <button class="btn btn-success btn-sm d-flex align-items-center gap-1" wire:click="create">
-                <i class="bi bi-plus-lg"></i> Tạo mới
+                <i class="fa-solid fa-plus-lg"></i> Tạo mới
             </button>
             <div class="input-group w-230px">
                 <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
                             <span class="fw-semibold text-primary fs-82">{{ $item->document_number }}</span>
                             @if($item->quotation)
                             <a href="{{ route('app.quotation-tracking.index', ['search' => $item->document_number]) }}" class="badge bg-success bg-opacity-10 text-success border mt-1 text-decoration-none d-inline-flex align-items-center gap-1">
-                                <i class="bi bi-check2-circle"></i> Đã theo dõi
+                                <i class="fa-solid fa-check-circle"></i> Đã theo dõi
                             </a>
                             @endif
                         </td>
@@ -77,7 +77,7 @@
                         <td>
                             <div class="fw-bold text-primary text-capitalize fs-85 lh-sm">{{ $item->customer_name }}</div>
                             @if($item->customer_contact)
-                            <div class="text-muted mt-1 fs-75"><i class="bi bi-person-circle me-1"></i>{{ $item->customer_contact }}</div>
+                            <div class="text-muted mt-1 fs-75"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->customer_contact }}</div>
                             @endif
                         </td>
                         <td>
@@ -99,13 +99,13 @@
                         <td class="text-center pe-3">
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
-                                    <i class="bi bi-eye fs-5"></i>
+                                    <i class="fa-solid fa-eye fs-5"></i>
                                 </button>
                                 <a href="{{ route('app.quotation-docs.export-word', $item->id) }}" class="btn btn-sm p-0 text-primary" title="Xuất Word">
-                                    <i class="bi bi-file-earmark-word fs-5"></i>
+                                    <i class="fa-solid fa-file-word fs-5"></i>
                                 </a>
                                 <a href="{{ route('app.quotation-docs.export-pdf', $item->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xuất PDF">
-                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    <i class="fa-solid fa-file-pdf fs-5"></i>
                                 </a>
                                 <button class="btn btn-sm p-0 text-success"
                                         wire:click="transferToTracking({{ $item->id }})"
@@ -113,15 +113,15 @@
                                     <i class="bi {{ $item->quotation ? 'bi-arrow-repeat' : 'bi-arrow-right-circle' }} fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
-                                    <i class="bi bi-copy fs-5"></i>
+                                    <i class="fa-solid fa-copy fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
-                                    <i class="bi bi-pencil-square fs-5"></i>
+                                    <i class="fa-solid fa-pen-square fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-danger"
                                         wire:click="delete({{ $item->id }})"
                                         wire:confirm="Xác nhận xóa báo giá này?">
-                                    <i class="bi bi-trash fs-5"></i>
+                                    <i class="fa-solid fa-trash fs-5"></i>
                                 </button>
                             </div>
                         </td>
@@ -129,7 +129,7 @@
                     @empty
                     <tr>
                         <td colspan="9" class="text-center py-5 text-muted">
-                            <i class="bi bi-file-earmark-text fs-1 d-block mb-2 opacity-25"></i>
+                            <i class="fa-solid fa-file-text fs-1 d-block mb-2 opacity-25"></i>
                             Chưa có báo giá nào. Nhấn <strong>"Tạo mới"</strong> để bắt đầu.
                         </td>
                     </tr>
@@ -184,7 +184,7 @@
                         </div>
 
                         <!-- Table 01: Summary -->
-                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-table text-primary me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
+                        <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-table text-primary me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
                                 <thead class="table-primary" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
@@ -238,7 +238,7 @@
 
                         <!-- Table 02: Details Grouped -->
                         @if($this->groupedDetailItemsForDetail($selectedDoc)->isNotEmpty())
-                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-list-check text-success me-1"></i> Bảng 02. Chi tiết thực hiện</h6>
+                        <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-list-check text-success me-1"></i> Bảng 02. Chi tiết thực hiện</h6>
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
                                 <thead class="table-info" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
@@ -289,10 +289,10 @@
                     <!-- Actions -->
                     <div class="modal-footer bg-light px-4 py-3">
                         <a href="{{ route('app.quotation-docs.export-word', $selectedDoc->id) }}" class="btn btn-primary">
-                            <i class="bi bi-file-earmark-word me-1"></i> Xuất Word
+                            <i class="fa-solid fa-file-word me-1"></i> Xuất Word
                         </a>
                         <a href="{{ route('app.quotation-docs.export-pdf', $selectedDoc->id) }}" target="_blank" class="btn btn-danger">
-                            <i class="bi bi-file-earmark-pdf me-1"></i> Xuất PDF
+                            <i class="fa-solid fa-file-pdf me-1"></i> Xuất PDF
                         </a>
                         <button type="button" class="btn btn-success" wire:click="transferToTracking({{ $selectedDoc->id }})">
                             <i class="bi {{ $selectedDoc->quotation ? 'bi-arrow-repeat' : 'bi-arrow-right-circle' }} me-1"></i>
@@ -328,7 +328,7 @@
                         </datalist>
 
                         <!-- Thông tin chung -->
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-1"></i> Thông tin báo giá</h6>
+                        <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-circle-info me-1"></i> Thông tin báo giá</h6>
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Số báo giá <span class="text-danger">*</span></label>
@@ -356,7 +356,7 @@
                                             wire:click="applySelectedTemplatePreset"
                                             wire:confirm="Áp dụng mẫu sẽ đặt lại dòng tổng hợp và xóa các dòng chi tiết hiện tại. Tiếp tục?"
                                             title="Áp dụng lại mẫu mặc định">
-                                        <i class="bi bi-stars"></i> Áp dụng mẫu
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Áp dụng mẫu
                                     </button>
                                 </div>
                             </div>
@@ -377,7 +377,7 @@
                         </div>
 
                         <!-- Khách hàng -->
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-building me-1"></i> Thông tin khách hàng</h6>
+                        <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-building me-1"></i> Thông tin khách hàng</h6>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Chọn khách hàng cũ</label>
@@ -421,10 +421,10 @@
 
                         <!-- Bảng 01. Tổng hợp dự toán chi phí thực hiện -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-table me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
+                            <h6 class="fw-bold text-primary mb-0"><i class="fa-solid fa-table me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
                             @if(count($detailItems) > 0)
                             <button type="button" class="btn btn-xs btn-outline-success d-flex align-items-center gap-1" wire:click="syncDetailToSummary">
-                                <i class="bi bi-arrow-repeat"></i> Đồng bộ tổng tiền Bảng 02 sang Bảng 01
+                                <i class="fa-solid fa-arrows-rotate"></i> Đồng bộ tổng tiền Bảng 02 sang Bảng 01
                             </button>
                             @endif
                         </div>
@@ -467,13 +467,13 @@
                                         <td class="text-center">
                                             <div class="d-flex gap-1 justify-content-center">
                                                 @if($i > 0)
-                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveSummaryItemUp({{ $i }})" title="Lên"><i class="bi bi-chevron-up"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveSummaryItemUp({{ $i }})" title="Lên"><i class="fa-solid fa-chevron-up"></i></button>
                                                 @endif
                                                 @if($i < count($summaryItems) - 1)
-                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveSummaryItemDown({{ $i }})" title="Xuống"><i class="bi bi-chevron-down"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveSummaryItemDown({{ $i }})" title="Xuống"><i class="fa-solid fa-chevron-down"></i></button>
                                                 @endif
                                                 @if(count($summaryItems) > 1)
-                                                <button type="button" class="btn btn-sm p-0 text-danger" wire:click="removeSummaryItem({{ $i }})" title="Xóa"><i class="bi bi-x-lg"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-danger" wire:click="removeSummaryItem({{ $i }})" title="Xóa"><i class="fa-solid fa-xmark-lg"></i></button>
                                                 @endif
                                             </div>
                                         </td>
@@ -484,7 +484,7 @@
                                     <tr>
                                         <td colspan="7">
                                             <button type="button" class="btn btn-sm btn-outline-primary" wire:click="addSummaryItem">
-                                                <i class="bi bi-plus-lg me-1"></i> Thêm hạng mục tổng hợp
+                                                <i class="fa-solid fa-plus-lg me-1"></i> Thêm hạng mục tổng hợp
                                             </button>
                                         </td>
                                     </tr>
@@ -495,7 +495,7 @@
                         <!-- Bảng chi tiết thực hiện -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h6 class="fw-bold text-success mb-0">
-                                <i class="bi bi-list-check me-1"></i>
+                                <i class="fa-solid fa-list-check me-1"></i>
                                 Bảng 02. Chi tiết thực hiện (Đo đạc chỉ tiêu chi tiết)
                             </h6>
                             @if(count($detailItems) > 0)
@@ -503,9 +503,9 @@
                                 Tổng chi phí chi tiết Bảng 02:
                                 <span class="text-success">{{ number_format($detailTotal, 0, ',', '.') }}đ</span>
                                 @if($detailTotal !== (int)($formData['subtotal'] ?? 0))
-                                <span class="badge bg-warning text-dark ms-2"><i class="bi bi-exclamation-triangle-fill"></i> Chưa khớp Bảng 01</span>
+                                <span class="badge bg-warning text-dark ms-2"><i class="fa-solid fa-triangle-exclamation-fill"></i> Chưa khớp Bảng 01</span>
                                 @else
-                                <span class="badge bg-success text-white ms-2"><i class="bi bi-check-circle-fill"></i> Khớp Bảng 01</span>
+                                <span class="badge bg-success text-white ms-2"><i class="fa-solid fa-circle-check-fill"></i> Khớp Bảng 01</span>
                                 @endif
                             </div>
                             @endif
@@ -581,12 +581,12 @@
                                         <td class="text-center">
                                             <div class="d-flex gap-1 justify-content-center">
                                                 @if($i > 0)
-                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveDetailItemUp({{ $i }})" title="Lên"><i class="bi bi-chevron-up"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveDetailItemUp({{ $i }})" title="Lên"><i class="fa-solid fa-chevron-up"></i></button>
                                                 @endif
                                                 @if($i < count($detailItems) - 1)
-                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveDetailItemDown({{ $i }})" title="Xuống"><i class="bi bi-chevron-down"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveDetailItemDown({{ $i }})" title="Xuống"><i class="fa-solid fa-chevron-down"></i></button>
                                                 @endif
-                                                <button type="button" class="btn btn-sm p-0 text-danger" wire:click="removeDetailItem({{ $i }})" title="Xóa"><i class="bi bi-x-lg"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-danger" wire:click="removeDetailItem({{ $i }})" title="Xóa"><i class="fa-solid fa-xmark-lg"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -602,7 +602,7 @@
                                     <tr>
                                         <td colspan="9">
                                             <button type="button" class="btn btn-sm btn-outline-success" wire:click="addDetailItem">
-                                                <i class="bi bi-plus-lg me-1"></i> Thêm chỉ tiêu
+                                                <i class="fa-solid fa-plus-lg me-1"></i> Thêm chỉ tiêu
                                             </button>
                                         </td>
                                     </tr>
@@ -612,7 +612,7 @@
 
                         @if(($formData['template_key'] ?? '') === 'plld')
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-grid-3x3-gap me-1"></i> Ma trận chức danh phân loại lao động</h6>
+                            <h6 class="fw-bold text-primary mb-0"><i class="fa-solid fa-table-cells me-1"></i> Ma trận chức danh phân loại lao động</h6>
                             <div class="text-muted fw-bold" style="font-size: 0.85rem;">
                                 Tổng chỉ tiêu: <span class="text-primary">{{ number_format($matrixTotal, 0, ',', '.') }}</span>
                             </div>
@@ -658,12 +658,12 @@
                                         <td class="text-center">
                                             <div class="d-flex gap-1 justify-content-center">
                                                 @if($i > 0)
-                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveMatrixRowUp({{ $i }})" title="Lên"><i class="bi bi-chevron-up"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveMatrixRowUp({{ $i }})" title="Lên"><i class="fa-solid fa-chevron-up"></i></button>
                                                 @endif
                                                 @if($i < count($matrixRows) - 1)
-                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveMatrixRowDown({{ $i }})" title="Xuống"><i class="bi bi-chevron-down"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-muted" wire:click="moveMatrixRowDown({{ $i }})" title="Xuống"><i class="fa-solid fa-chevron-down"></i></button>
                                                 @endif
-                                                <button type="button" class="btn btn-sm p-0 text-danger" wire:click="removeMatrixRow({{ $i }})" title="Xóa"><i class="bi bi-x-lg"></i></button>
+                                                <button type="button" class="btn btn-sm p-0 text-danger" wire:click="removeMatrixRow({{ $i }})" title="Xóa"><i class="fa-solid fa-xmark-lg"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -679,7 +679,7 @@
                                     <tr>
                                         <td colspan="{{ 6 + count($this->plldMetricColumns()) }}">
                                             <button type="button" class="btn btn-sm btn-outline-primary" wire:click="addMatrixRow">
-                                                <i class="bi bi-plus-lg me-1"></i> Thêm chức danh
+                                                <i class="fa-solid fa-plus-lg me-1"></i> Thêm chức danh
                                             </button>
                                         </td>
                                     </tr>

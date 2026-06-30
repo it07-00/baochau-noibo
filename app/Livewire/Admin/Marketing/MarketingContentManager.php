@@ -515,22 +515,22 @@ class MarketingContentManager extends Component
     public function listScheduleIcon(?CarbonInterface $scheduledAt): string
     {
         if (! $scheduledAt) {
-            return 'bi bi-calendar3';
+            return 'fa-solid fa-calendar-days';
         }
 
         if ($scheduledAt->isToday()) {
-            return 'bi bi-lightning-charge';
+            return 'fa-solid fa-bolt-charge';
         }
 
         if ($scheduledAt->isPast()) {
-            return 'bi bi-exclamation-circle';
+            return 'fa-solid fa-circle-exclamation';
         }
 
         if ($this->daysUntilSchedule($scheduledAt) <= 7) {
-            return 'bi bi-calendar-week';
+            return 'fa-solid fa-calendar-week';
         }
 
-        return 'bi bi-calendar3';
+        return 'fa-solid fa-calendar-days';
     }
 
     public function listScheduleText(?CarbonInterface $scheduledAt): string

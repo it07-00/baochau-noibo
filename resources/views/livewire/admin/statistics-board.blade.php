@@ -49,14 +49,14 @@
     @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'kinh-doanh', 'tp-kinh-doanh']))
         <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4 rounded-3 border-start border-warning border-4" >
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 wh-44" >
-                <i class="bi bi-clock-fill text-warning fs-5"></i>
+                <i class="fa-solid fa-clock-fill text-warning fs-5"></i>
             </div>
             <div class="flex-grow-1">
                 <h6 class="mb-0 fw-bold text-body">Bạn chưa gửi báo cáo ngày hôm nay</h6>
                 <p class="mb-0  text-muted">Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</p>
             </div>
             <a href="{{ route('app.daily-reports.index') }}" class="btn btn-warning btn-sm px-3 fw-bold shadow-sm rounded-8px" >
-                <i class="bi bi-pencil-square me-1"></i> Gửi báo cáo
+                <i class="fa-solid fa-pen-square me-1"></i> Gửi báo cáo
             </a>
         </div>
     @endif
@@ -64,20 +64,20 @@
     <div class="card border-0 shadow-sm mb-4 border-start border-3 border-primary">
         <div class="card-body py-3 px-4 d-flex align-items-center gap-3 flex-wrap">
             <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                <i class="bi bi-calendar2-week text-primary fs-5"></i>
+                <i class="fa-solid fa-calendar-week text-primary fs-5"></i>
                 <span class="fw-bold text-body">Lịch công tác của bạn</span>
             </div>
             <div class="vr opacity-25 d-none d-md-block flex-shrink-0"></div>
             <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
                 <span class="badge bg-primary text-white px-3 py-2 fs-12px">
-                    <i class="bi bi-calendar-check me-1"></i>Hôm nay: {{ number_format($workScheduleSummary['today_total'] ?? 0) }}
+                    <i class="fa-solid fa-calendar-check me-1"></i>Hôm nay: {{ number_format($workScheduleSummary['today_total'] ?? 0) }}
                 </span>
                 <span class="badge bg-warning text-dark px-3 py-2 fs-12px">
-                    <i class="bi bi-calendar-event me-1"></i>Ngày mai: {{ number_format($workScheduleSummary['upcoming_tomorrow'] ?? 0) }}
+                    <i class="fa-solid fa-calendar-day me-1"></i>Ngày mai: {{ number_format($workScheduleSummary['upcoming_tomorrow'] ?? 0) }}
                 </span>
                 @if(($workScheduleSummary['overdue'] ?? 0) > 0)
                 <span class="badge bg-danger text-white px-3 py-2 fs-12px">
-                    <i class="bi bi-exclamation-circle me-1"></i>Quá hạn: {{ number_format($workScheduleSummary['overdue']) }}
+                    <i class="fa-solid fa-circle-exclamation me-1"></i>Quá hạn: {{ number_format($workScheduleSummary['overdue']) }}
                 </span>
                 @endif
                 @if($workScheduleRecentItems->isNotEmpty())
@@ -93,7 +93,7 @@
                 @endif
             </div>
             <a href="{{ route('app.work-schedules.index') }}" class="btn btn-outline-primary btn-sm flex-shrink-0">
-                <i class="bi bi-arrow-right-circle me-1"></i> Xem tất cả
+                <i class="fa-solid fa-circle-arrow-right me-1"></i> Xem tất cả
             </a>
         </div>
     </div>
@@ -140,7 +140,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-consulting-total h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-files"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-copy"></i></div>
                                 <div>
                                     <div class="role-kpi-label">Tổng hồ sơ</div>
                                     <div class="role-kpi-value">{{ number_format($consultingSummary['total'] ?? 0) }}</div>
@@ -153,7 +153,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-consulting-completed h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-check2-circle"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-check-circle"></i></div>
                                 <div>
                                     <div class="role-kpi-label">Đã hoàn thành</div>
                                     <div class="role-kpi-value">{{ number_format($consultingSummary['completed'] ?? 0) }}</div>
@@ -166,7 +166,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-consulting-processing h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-hourglass-split"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
                                 <div>
                                     <div class="role-kpi-label">Đang xử lý</div>
                                     <div class="role-kpi-value">{{ number_format($consultingSummary['processing'] ?? 0) }}</div>
@@ -179,7 +179,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-consulting-rate h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
                                 <div class="w-100">
                                     <div class="role-kpi-label">Tỷ lệ hoàn thành</div>
                                     <div class="role-kpi-value">{{ $consultingRate }}%</div>
@@ -255,7 +255,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-technical-total h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-journal-text"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-book"></i></div>
                                 <div>
                                     <div class="role-kpi-label">Hồ sơ được giao</div>
                                     <div class="role-kpi-value">{{ number_format($technicalSummary['total'] ?? 0) }}</div>
@@ -268,7 +268,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-technical-completed h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-patch-check"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-certificate"></i></div>
                                 <div>
                                     <div class="role-kpi-label">Đã hoàn thành</div>
                                     <div class="role-kpi-value">{{ number_format($technicalSummary['completed'] ?? 0) }}</div>
@@ -281,7 +281,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-technical-processing h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-tools"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
                                 <div>
                                     <div class="role-kpi-label">Đang xử lý</div>
                                     <div class="role-kpi-value">{{ number_format($technicalSummary['processing'] ?? 0) }}</div>
@@ -294,7 +294,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="role-kpi-card role-technical-rate h-100">
                             <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="bi bi-bar-chart-line"></i></div>
+                                <div class="role-kpi-icon"><i class="fa-solid fa-chart-column"></i></div>
                                 <div class="w-100">
                                     <div class="role-kpi-label">Tỷ lệ hoàn thành</div>
                                     <div class="role-kpi-value">{{ $technicalRate }}%</div>

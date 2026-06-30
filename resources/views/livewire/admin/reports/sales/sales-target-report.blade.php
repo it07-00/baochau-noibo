@@ -24,7 +24,7 @@
                 @endif
                 <div class="col-md-3 col-lg-2 ms-lg-auto">
                     <button type="button" wire:click="$refresh" class="btn btn-light border w-100">
-                        <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
+                        <i class="fa-solid fa-rotate-right me-1"></i> Làm mới
                     </button>
                 </div>
             </div>
@@ -193,7 +193,7 @@
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-primary py-3">
                     <h5 class="modal-title fw-bold text-white">
-                        <i class="bi bi-calendar3 me-2"></i>
+                        <i class="fa-solid fa-calendar-days me-2"></i>
                         Chi tiết hợp đồng tháng {{ $filter_month }}/{{ $year }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -201,7 +201,7 @@
                 <div class="modal-body p-0">
                     @if(empty($detail))
                         <div class="text-center text-muted py-5">
-                            <i class="bi bi-inbox d-block mb-3 text-muted" style="font-size: 3.5rem;"></i>
+                            <i class="fa-solid fa-inbox d-block mb-3 text-muted" style="font-size: 3.5rem;"></i>
                             Không có hợp đồng nào
                         </div>
                     @else
@@ -261,7 +261,7 @@
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-warning py-3">
                     <h5 class="modal-title fw-bold">
-                        <i class="bi bi-lightning-charge me-2"></i>
+                        <i class="fa-solid fa-bolt-charge me-2"></i>
                         Báo giá tiềm năng tháng {{ $filter_month }}/{{ $year }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -14,7 +14,7 @@
     @if(!$showSales && !$showConsulting && !$showTechnical)
         <div class="d-flex align-items-center justify-content-center mnh-60vh" >
             <div class="text-center text-muted">
-                <i class="bi bi-bar-chart-line fs-1 d-block mb-3 opacity-50"></i>
+                <i class="fa-solid fa-chart-column fs-1 d-block mb-3 opacity-50"></i>
                 <p class="mb-0">Không có bảng đường đua nào được phân quyền.</p>
             </div>
         </div>

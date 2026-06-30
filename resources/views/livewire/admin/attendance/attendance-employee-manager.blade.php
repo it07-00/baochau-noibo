@@ -13,7 +13,7 @@
                         {{-- Search --}}
                         <div class="input-group flex-grow-1" class="mnw-180px">
                             <span class="input-group-text bg-transparent border-end-0 pe-1">
-                                <i class="bi bi-search text-muted fs-85" ></i>
+                                <i class="fa-solid fa-magnifying-glass text-muted fs-85" ></i>
                             </span>
                             <input wire:model.live.debounce.300ms="search" type="text"
                                    class="form-control border-start-0 ps-1"
@@ -42,10 +42,10 @@
                         {{-- Buttons --}}
                         <div class="d-flex gap-2 flex-shrink-0">
                             <button class="btn btn-outline-secondary text-nowrap" wire:click="openSyncModal">
-                                <i class="bi bi-arrow-repeat me-1"></i>Đồng bộ
+                                <i class="fa-solid fa-arrows-rotate me-1"></i>Đồng bộ
                             </button>
                             <button class="btn btn-primary text-nowrap" wire:click="openCreate">
-                                <i class="bi bi-plus-circle me-1"></i>Thêm mới
+                                <i class="fa-solid fa-plus-circle me-1"></i>Thêm mới
                             </button>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                                                 <span class="fw-semibold">{{ $emp->name }}</span>
                                                 @if($emp->is_blocked)
                                                     <span class="badge rounded-pill text-bg-warning fs-68 fw-semibold" >
-                                                        <i class="bi bi-slash-circle me-1 fs-60" ></i>Bị chặn
+                                                        <i class="fa-solid fa-ban me-1 fs-60" ></i>Bị chặn
                                                     </span>
                                                 @elseif(!$emp->is_active)
                                                     <span class="badge rounded-pill text-bg-secondary fs-68 fw-semibold" >Đã nghỉ</span>
@@ -107,29 +107,29 @@
                                                     <button class="btn btn-sm btn-icon btn-light text-warning rounded-circle"
                                                             wire:click="unblock({{ $emp->id }})"
                                                             title="Bỏ chặn" class="icon-32">
-                                                        <i class="bi bi-unlock fs-85" ></i>
+                                                        <i class="fa-solid fa-unlock fs-85" ></i>
                                                     </button>
                                                 @elseif(!$emp->is_active)
                                                     <button class="btn btn-sm btn-icon btn-light text-success rounded-circle"
                                                             wire:click="reactivate({{ $emp->id }})"
                                                             title="Kích hoạt lại" class="icon-32">
-                                                        <i class="bi bi-arrow-repeat fs-85" ></i>
+                                                        <i class="fa-solid fa-arrows-rotate fs-85" ></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
                                                             wire:click="confirmBlock({{ $emp->id }})"
                                                             title="Chặn" class="icon-32">
-                                                        <i class="bi bi-slash-circle fs-85" ></i>
+                                                        <i class="fa-solid fa-ban fs-85" ></i>
                                                     </button>
                                                 @else
                                                     <button class="btn btn-sm btn-icon btn-light text-primary rounded-circle"
                                                             wire:click="openEdit({{ $emp->id }})"
                                                             title="Sửa" class="icon-32">
-                                                        <i class="bi bi-pencil fs-85" ></i>
+                                                        <i class="fa-solid fa-pen fs-85" ></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
                                                             wire:click="confirmBlock({{ $emp->id }})"
                                                             title="Chặn" class="icon-32">
-                                                        <i class="bi bi-slash-circle fs-85" ></i>
+                                                        <i class="fa-solid fa-ban fs-85" ></i>
                                                     </button>
                                                 @endif
                                             </div>
@@ -138,7 +138,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center py-5 text-muted">
-                                            <i class="bi bi-people d-block mb-2 fs-2rem opacity-25" ></i>
+                                            <i class="fa-solid fa-users d-block mb-2 fs-2rem opacity-25" ></i>
                                             Không có nhân viên nào.
                                         </td>
                                     </tr>

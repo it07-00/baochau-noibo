@@ -34,7 +34,7 @@
                         </select>
                     @else
                         <div class="d-flex align-items-center gap-2 form-control form-control-sm bg-light" style="min-width:180px;max-width:260px">
-                            <i class="bi bi-person-circle text-muted flex-shrink-0"></i>
+                            <i class="fa-solid fa-user-circle text-muted flex-shrink-0"></i>
                             <span class="fw-semibold text-truncate">{{ auth()->user()->name }}</span>
                         </div>
                     @endif
@@ -45,11 +45,11 @@
                         <div class="btn-group" role="group">
                             <button type="button" wire:click="switchMode('year')"
                                 class="btn btn-sm {{ $viewMode === 'year' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                <i class="bi bi-table"></i><span class="d-none d-sm-inline ms-1">Theo năm</span>
+                                <i class="fa-solid fa-table"></i><span class="d-none d-sm-inline ms-1">Theo năm</span>
                             </button>
                             <button type="button" wire:click="switchMode('month')"
                                 class="btn btn-sm {{ $viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                <i class="bi bi-calendar2-week"></i><span class="d-none d-sm-inline ms-1">Chi tiết tháng</span>
+                                <i class="fa-solid fa-calendar-week"></i><span class="d-none d-sm-inline ms-1">Chi tiết tháng</span>
                             </button>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         @if($isTpkd && $selectedStaffId !== auth()->id()) disabled title="Không thể lưu cam kết của nhân viên khác" @endif
                         class="btn btn-sm {{ $isTpkd && $selectedStaffId !== auth()->id() ? 'btn-secondary' : 'btn-primary' }} d-flex align-items-center gap-2 px-3 fw-semibold">
                         <span wire:loading wire:target="saveTargets" class="spinner-border spinner-border-sm"></span>
-                        <i wire:loading.remove wire:target="saveTargets" class="bi bi-floppy"></i>
+                        <i wire:loading.remove wire:target="saveTargets" class="fa-solid fa-floppy-disk"></i>
                         <span class="d-none d-sm-inline">Lưu cam kết</span>
                     </button>
                 </div>
@@ -198,7 +198,7 @@
                                         <button type="button" wire:click="viewMonthDetail({{ $m }})"
                                             class="btn btn-sm p-0 text-primary"
                                             title="Xem chi tiết tháng {{ $m }}">
-                                            <i class="bi bi-eye fs-5"></i>
+                                            <i class="fa-solid fa-eye fs-5"></i>
                                         </button>
                                     </td>
                                 </tr>

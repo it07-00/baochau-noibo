@@ -130,7 +130,7 @@
         <div class="card-body p-0">
             @if($filter_month === 0)
                 <div class="text-center text-muted py-5">
-                    <i class="bi bi-calendar3 d-block mb-3 text-muted" style="font-size: 3.5rem;"></i>
+                    <i class="fa-solid fa-calendar-days d-block mb-3 text-muted" style="font-size: 3.5rem;"></i>
                     Chọn tháng để xem danh sách hợp đồng
                 </div>
             @elseif($detail->isEmpty())

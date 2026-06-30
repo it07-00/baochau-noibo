@@ -18,7 +18,7 @@
 
                         @can('customers.create')
                         <button class="btn btn-primary btn-sm text-nowrap" wire:click="openCreate">
-                            <i class="bi bi-plus-circle me-1"></i>Tạo mới
+                            <i class="fa-solid fa-plus-circle me-1"></i>Tạo mới
                         </button>
                         @endcan
                     </div>
@@ -67,7 +67,7 @@
                                     <td class="text-end">
                                         @can('customers.edit')
                                         <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" wire:click="openEdit({{ $customer->id }})" title="Sửa">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="fa-solid fa-pen"></i>
                                         </button>
                                         @endcan
                                         @can('customers.delete')
@@ -75,7 +75,7 @@
                                                 wire:click="delete({{ $customer->id }})"
                                                 wire:confirm="Xác nhận xóa khách hàng này?"
                                                 title="Xóa" {{ $this->totalContractsCount($customer) > 0 ? 'disabled' : '' }}>
-                                            <i class="bi bi-trash"></i>
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                         @endcan
                                     </td>
@@ -111,20 +111,20 @@
                             </div>
                             <div class="mt-2 d-flex flex-column gap-1 fs-80 text-muted" >
                                 @if($customer->tax_code)
-                                    <span><i class="bi bi-card-text me-1"></i>MST: {{ $customer->tax_code }}</span>
+                                    <span><i class="fa-solid fa-address-card me-1"></i>MST: {{ $customer->tax_code }}</span>
                                 @endif
                                 @if($customer->province)
-                                    <span><i class="bi bi-geo-alt me-1"></i>{{ $customer->province }}</span>
+                                    <span><i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}</span>
                                 @endif
                                 @if($customer->representative)
-                                    <span><i class="bi bi-person me-1"></i>{{ $customer->representative }}</span>
+                                    <span><i class="fa-solid fa-user me-1"></i>{{ $customer->representative }}</span>
                                 @endif
                             </div>
                             @canany(['customers.edit', 'customers.delete'])
                             <div class="mt-2 d-flex gap-2 border-top pt-2">
                                 @can('customers.edit')
                                 <button class="btn btn-sm btn-outline-primary flex-fill" wire:click="openEdit({{ $customer->id }})">
-                                    <i class="bi bi-pencil me-1"></i>Sửa
+                                    <i class="fa-solid fa-pen me-1"></i>Sửa
                                 </button>
                                 @endcan
                                 @can('customers.delete')
@@ -132,7 +132,7 @@
                                         wire:click="delete({{ $customer->id }})"
                                         wire:confirm="Xác nhận xóa khách hàng này?"
                                         {{ $this->totalContractsCount($customer) > 0 ? 'disabled' : '' }}>
-                                    <i class="bi bi-trash me-1"></i>Xóa
+                                    <i class="fa-solid fa-trash me-1"></i>Xóa
                                 </button>
                                 @endcan
                             </div>

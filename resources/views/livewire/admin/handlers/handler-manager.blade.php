@@ -18,7 +18,7 @@
 
                         @can('handlers.create')
                         <button class="btn btn-primary btn-sm text-nowrap" wire:click="openCreate">
-                            <i class="bi bi-plus-circle me-1"></i>Tạo mới
+                            <i class="fa-solid fa-plus-circle me-1"></i>Tạo mới
                         </button>
                         @endcan
                     </div>
@@ -71,7 +71,7 @@
                                     <td class="text-end">
                                         @can('handlers.edit')
                                         <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" wire:click="openEdit({{ $handler->id }})" title="Sửa">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="fa-solid fa-pen"></i>
                                         </button>
                                         @endcan
                                         @can('handlers.delete')
@@ -79,7 +79,7 @@
                                                 wire:click="delete({{ $handler->id }})"
                                                 wire:confirm="Xác nhận xóa nhà thầu phụ này?"
                                                 title="Xóa" {{ $handler->contracts_count > 0 ? 'disabled' : '' }}>
-                                            <i class="bi bi-trash"></i>
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                         @endcan
                                     </td>
@@ -116,10 +116,10 @@
                             @if($handler->phone || $handler->address)
                             <div class="mt-2 d-flex flex-column gap-1 fs-80 text-muted" >
                                 @if($handler->phone)
-                                    <span><i class="bi bi-telephone me-1"></i>{{ $handler->phone }}</span>
+                                    <span><i class="fa-solid fa-phone me-1"></i>{{ $handler->phone }}</span>
                                 @endif
                                 @if($handler->address)
-                                    <span><i class="bi bi-geo-alt me-1"></i>{{ $handler->address }}</span>
+                                    <span><i class="fa-solid fa-location-dot me-1"></i>{{ $handler->address }}</span>
                                 @endif
                             </div>
                             @endif
@@ -127,7 +127,7 @@
                             <div class="mt-2 d-flex gap-2 border-top pt-2">
                                 @can('handlers.edit')
                                 <button class="btn btn-sm btn-outline-primary flex-fill" wire:click="openEdit({{ $handler->id }})">
-                                    <i class="bi bi-pencil me-1"></i>Sửa
+                                    <i class="fa-solid fa-pen me-1"></i>Sửa
                                 </button>
                                 @endcan
                                 @can('handlers.delete')
@@ -135,7 +135,7 @@
                                         wire:click="delete({{ $handler->id }})"
                                         wire:confirm="Xác nhận xóa nhà thầu phụ này?"
                                         {{ $handler->contracts_count > 0 ? 'disabled' : '' }}>
-                                    <i class="bi bi-trash me-1"></i>Xóa
+                                    <i class="fa-solid fa-trash me-1"></i>Xóa
                                 </button>
                                 @endcan
                             </div>
