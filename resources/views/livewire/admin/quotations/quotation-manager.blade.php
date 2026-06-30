@@ -179,12 +179,12 @@
                                 @endif
                                 @if($item->quotationDocuments->first())
                                 <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
-                                    <i class="fa-solid fa-file-richtext fs-5"></i>
+                                    <i class="fa-solid fa-file-word fs-5"></i>
                                 </a>
                                 @endif
                                 @can('quotation-tracking.edit')
                                 <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
-                                    <i class="fa-solid fa-file-plus fs-5"></i>
+                                    <i class="fa-solid fa-file-circle-plus fs-5"></i>
                                 </button>
                                 <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
                                     <i class="fa-solid fa-copy fs-5"></i>
@@ -307,7 +307,7 @@
                                     <td class="px-4 py-3">
                                         @if($selectedQuotation->quotationDocuments->first())
                                             <a href="{{ route('app.quotation-docs.export-pdf', $selectedQuotation->quotationDocuments->first()->id) }}" target="_blank" class="d-inline-flex align-items-center gap-2 text-success text-decoration-none small mb-2">
-                                                <i class="fa-solid fa-file-richtext"></i>
+                                                <i class="fa-solid fa-file-word"></i>
                                                 <span>Báo giá Word/PDF gốc: {{ $selectedQuotation->quotationDocuments->first()->document_number }}</span>
                                             </a>
                                         @endif
