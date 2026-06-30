@@ -3,22 +3,22 @@
 namespace App\Livewire\Admin\Reports\Sales;
 
 use App\Enums\Role;
-use App\Models\ContractResearch;
-use App\Models\ContractLegal;
 use App\Models\ContractEmission;
-use App\Models\ContractTechnical;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\SalesProgressive;
 use App\Models\SalesRenewal;
 use App\Models\SalesTarget;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class PersonalSalesReport extends Component
 {
     public int $year;
+
     public string $filter_staff = '';
 
     protected array $contractModels = [
@@ -60,9 +60,9 @@ class PersonalSalesReport extends Component
         $targetsByMonth = SalesTarget::query()
             ->where('year', $this->year)
             ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('staff_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
+                ! empty($targetStaffIds),
+                fn ($q) => $q->whereIn('staff_id', $targetStaffIds),
+                fn ($q) => $q->whereRaw('1 = 0')
             )
             ->selectRaw('month as m, SUM(target_amount) as total')
             ->groupBy('m')
@@ -70,7 +70,7 @@ class PersonalSalesReport extends Component
             ->keyBy('m');
 
         $actualByMonth = array_fill(1, 12, 0.0);
-        if (!empty($targetStaffIds)) {
+        if (! empty($targetStaffIds)) {
             foreach ($this->contractModels as $modelClass) {
                 $rows = $modelClass::query()
                     ->whereNotNull('submitted_at')
@@ -92,11 +92,11 @@ class PersonalSalesReport extends Component
         $potentialByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('user_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
+                ! empty($targetStaffIds),
+                fn ($q) => $q->whereIn('user_id', $targetStaffIds),
+                fn ($q) => $q->whereRaw('1 = 0')
             )
-            ->where('status', 'Báo giá tiềm năng')
+            ->where('status', 'BG tiềm năng')
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
             ->groupBy('m')
             ->get()
@@ -105,9 +105,9 @@ class PersonalSalesReport extends Component
         $sampleContractByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('user_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
+                ! empty($targetStaffIds),
+                fn ($q) => $q->whereIn('user_id', $targetStaffIds),
+                fn ($q) => $q->whereRaw('1 = 0')
             )
             ->where('status', 'Hợp đồng mẫu')
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
@@ -118,9 +118,9 @@ class PersonalSalesReport extends Component
         $officialContractByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('user_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
+                ! empty($targetStaffIds),
+                fn ($q) => $q->whereIn('user_id', $targetStaffIds),
+                fn ($q) => $q->whereRaw('1 = 0')
             )
             ->where('status', 'Đã ký')
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
@@ -131,9 +131,9 @@ class PersonalSalesReport extends Component
         $renewalByMonth = SalesRenewal::query()
             ->whereYear('sales_month', $this->year)
             ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('user_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
+                ! empty($targetStaffIds),
+                fn ($q) => $q->whereIn('user_id', $targetStaffIds),
+                fn ($q) => $q->whereRaw('1 = 0')
             )
             ->selectRaw('MONTH(sales_month) as m, SUM(sales_amount) as total')
             ->groupBy('m')
@@ -143,9 +143,9 @@ class PersonalSalesReport extends Component
         $progressiveByMonth = SalesProgressive::query()
             ->whereYear('sales_month', $this->year)
             ->when(
-                !empty($targetStaffIds),
-                fn($q) => $q->whereIn('user_id', $targetStaffIds),
-                fn($q) => $q->whereRaw('1 = 0')
+                ! empty($targetStaffIds),
+                fn ($q) => $q->whereIn('user_id', $targetStaffIds),
+                fn ($q) => $q->whereRaw('1 = 0')
             )
             ->selectRaw('MONTH(sales_month) as m, SUM(amount) as total')
             ->groupBy('m')
@@ -255,8 +255,8 @@ class PersonalSalesReport extends Component
             'forecastRows' => $forecastRows,
             'forecastTotals' => $forecastTotals,
             'staffDetail' => $staffDetail,
-            'staffs'      => User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get(),
-            'years'       => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'staffs' => User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get(),
+            'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'hasStaffFilter' => (bool) $staffId,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cá nhân']);
     }

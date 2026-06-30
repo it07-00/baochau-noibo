@@ -7,28 +7,32 @@ use App\Enums\ContractRenewalStatus;
 use App\Enums\ContractVoucherStatus;
 use App\Enums\Permission;
 use App\Enums\Role;
-use App\Models\ContractWaste;
-use App\Models\Customer;
-use App\Models\Handler;
-use App\Models\User;
-use App\Models\Department;
-use App\Models\ContractAssignment;
-use App\Models\ContractMilestoneFile;
-use App\Models\ContractProgressNote;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Attributes\Computed;
-use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Livewire\Concerns\HasContractFilters;
+use App\Models\ContractAssignment;
+use App\Models\ContractMilestoneFile;
+use App\Models\ContractProgressNote;
+use App\Models\ContractWaste;
+use App\Models\Customer;
+use App\Models\Department;
+use App\Models\Handler;
+use App\Models\Quotation;
+use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContractWasteManager extends Component
 {
-    use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation, HasContractFilters;
+    use CleanMoneyInput, ContractValidation, HasContractFilters, WithFileUploads, WithPagination;
 
     private const ALLOWED_STATUSES = [
         'Đã trình ký nhà thầu phụ',
@@ -44,27 +48,47 @@ class ContractWasteManager extends Component
     public string $contractTypeName = 'Chất thải';
 
     public $search = '';
+
     public $sortDirection = 'desc';
+
     public array $selectedDocIds = [];
 
     public $showDetail = false;
+
     public $showModal = false;
+
     public $isEditing = false;
+
     public $isDuplicating = false;
+
     public $selectedDoc = null;
+
     public string $detailActiveTab = 'info';
+
     public bool $showAssignModal = false;
+
     public ?int $assignContractId = null;
+
     public array $assignUserIds = [];
+
     public ?string $assignDeadline = null;
+
     public array $createAssignUserIds = [];
+
     public ?string $createAssignDeadline = null;
+
     public ?string $assignExternal = null;
+
     public ?string $createAssignExternal = null;
+
     public string $progressNote = '';
+
     public $progressNotes = [];
+
     public ?int $workflowContractId = null;
+
     public array $newContractFiles = [];
+
     public $existingContractFiles = [];
 
     public $formData = [
@@ -102,6 +126,9 @@ class ContractWasteManager extends Component
         'is_renewal' => false,
         'parent_contract_id' => '',
     ];
+
+    public string $newCustomerName = '';
+
     public $filter = [
         'signed_from' => '',
         'signed_to' => '',
@@ -129,6 +156,7 @@ class ContractWasteManager extends Component
     ];
 
     protected $queryString = ['search', 'quotation_id'];
+
     public $quotation_id;
 
     public function paginationView()
@@ -146,14 +174,14 @@ class ContractWasteManager extends Component
         if ($this->quotation_id) {
             abort_unless(auth()->user()->can(Permission::CONTRACTS_WASTE_CREATE->value), 403);
 
-            $quotation = \App\Models\Quotation::find($this->quotation_id);
+            $quotation = Quotation::find($this->quotation_id);
             if ($quotation) {
                 // Find or create customer
-                $customer = \App\Models\Customer::firstOrCreate(
+                $customer = Customer::firstOrCreate(
                     ['name' => $quotation->company_name],
                     [
-                        'address'        => $quotation->address,
-                        'province'       => $quotation->province ?? '',
+                        'address' => $quotation->address,
+                        'province' => $quotation->province ?? '',
                         'representative' => $quotation->contact_person ?? '',
                     ]
                 );
@@ -184,7 +212,7 @@ class ContractWasteManager extends Component
 
     public function updatedFormDataValue(): void
     {
-        if (!$this->isEditing) {
+        if (! $this->isEditing) {
             $this->formData['revenue'] = $this->formData['value'];
         }
     }
@@ -207,8 +235,9 @@ class ContractWasteManager extends Component
     public function edit($id)
     {
         $user = auth()->user();
-        if (!$user || !$user->can(Permission::CONTRACTS_WASTE_EDIT->value)) {
+        if (! $user || ! $user->can(Permission::CONTRACTS_WASTE_EDIT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+
             return;
         }
         $doc = ContractWaste::with(['assignments.user'])->findOrFail($id);
@@ -229,8 +258,9 @@ class ContractWasteManager extends Component
     public function duplicate($id): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can(Permission::CONTRACTS_WASTE_CREATE->value)) {
+        if (! $user || ! $user->can(Permission::CONTRACTS_WASTE_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+
             return;
         }
         $doc = ContractWaste::findOrFail($id);
@@ -255,18 +285,20 @@ class ContractWasteManager extends Component
     {
         $user = auth()->user();
 
-        if (!$user->can($this->isEditing ? Permission::CONTRACTS_WASTE_EDIT->value : Permission::CONTRACTS_WASTE_CREATE->value)) {
+        if (! $user->can($this->isEditing ? Permission::CONTRACTS_WASTE_EDIT->value : Permission::CONTRACTS_WASTE_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
+
             return;
         }
 
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($this->isEditing && $isRestrictedTpKd && $this->selectedDoc->staff_id !== $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
+
             return;
         }
 
-        if (!$user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value])) {
+        if (! $user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value])) {
             $this->formData['staff_id'] = ($this->isEditing && $this->selectedDoc)
                 ? ($this->selectedDoc->staff_id ?: $user->id)
                 : $user->id;
@@ -278,7 +310,7 @@ class ContractWasteManager extends Component
 
         try {
             $this->validate($this->wasteContractRules(), $this->contractValidationMessages());
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $firstError = $e->validator->errors()->first();
             if ($firstError) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => $firstError]);
@@ -286,35 +318,36 @@ class ContractWasteManager extends Component
             throw $e;
         }
 
+        $this->resolveManualCustomer();
         $data = collect($this->formData)->map(function ($value) {
             return $value === '' ? null : $value;
         })->toArray();
 
         [$newContract, $msg] = app(UpsertContractWasteAction::class)->execute($data, $user, $this->isEditing ? $this->selectedDoc : null);
 
-        if (!$this->isEditing && (count($this->createAssignUserIds) > 0 || !empty($this->createAssignExternal))) {
-            $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #' . $newContract->id);
+        if (! $this->isEditing && (count($this->createAssignUserIds) > 0 || ! empty($this->createAssignExternal))) {
+            $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #'.$newContract->id);
             foreach ($this->createAssignUserIds as $userId) {
                 ContractAssignment::create([
                     'assignable_type' => ContractWaste::class,
-                    'assignable_id'   => $newContract->id,
-                    'user_id'         => (int) $userId,
-                    'assigned_by'     => auth()->id(),
-                    'deadline'        => $this->createAssignDeadline ?: null,
+                    'assignable_id' => $newContract->id,
+                    'user_id' => (int) $userId,
+                    'assigned_by' => auth()->id(),
+                    'deadline' => $this->createAssignDeadline ?: null,
                 ]);
                 $assignedUser = User::find($userId);
                 if ($assignedUser && $assignedUser->id !== auth()->id()) {
                     $assignedUser->notify(new ContractAssignedNotification('waste', $newContract->id, $contractLabel, auth()->user()->name));
                 }
             }
-            if (!empty($this->createAssignExternal)) {
+            if (! empty($this->createAssignExternal)) {
                 ContractAssignment::create([
-                    'assignable_type'   => ContractWaste::class,
-                    'assignable_id'     => $newContract->id,
-                    'user_id'           => null,
+                    'assignable_type' => ContractWaste::class,
+                    'assignable_id' => $newContract->id,
+                    'user_id' => null,
                     'external_assignee' => $this->createAssignExternal,
-                    'assigned_by'       => auth()->id(),
-                    'deadline'          => $this->createAssignDeadline ?: null,
+                    'assigned_by' => auth()->id(),
+                    'deadline' => $this->createAssignDeadline ?: null,
                 ]);
             }
         }
@@ -329,29 +362,34 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
             return;
         }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($isRestrictedTpKd) {
             if ((int) $doc->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng này.']);
+
                 return;
             }
         } else {
             if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng.']);
+
                 return;
             }
         }
-        if (!$user->can(Permission::CONTRACTS_WASTE_EDIT->value)) {
+        if (! $user->can(Permission::CONTRACTS_WASTE_EDIT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng.']);
+
             return;
         }
 
-        if (!in_array($status, self::ALLOWED_STATUSES, true)) {
+        if (! in_array($status, self::ALLOWED_STATUSES, true)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Trạng thái không hợp lệ!']);
+
             return;
         }
 
@@ -368,19 +406,22 @@ class ContractWasteManager extends Component
     {
         $doc = ContractWaste::findOrFail($id);
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
             return;
         }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         if ($isRestrictedTpKd) {
             if ((int) $doc->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng này.']);
+
                 return;
             }
         }
-        if (!$user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
+        if (! $user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+
             return;
         }
 
@@ -391,19 +432,21 @@ class ContractWasteManager extends Component
     public function bulkDeleteSelected()
     {
         $user = auth()->user();
-        if (!$user || !$user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
+        if (! $user || ! $user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+
             return;
         }
 
         $selectedIds = collect($this->selectedDocIds)
-            ->map(static fn($id) => (int) $id)
-            ->filter(static fn($id) => $id > 0)
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
             ->unique()
             ->values();
 
         if ($selectedIds->isEmpty()) {
             $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng chọn ít nhất 1 hợp đồng để xóa.']);
+
             return;
         }
 
@@ -415,6 +458,7 @@ class ContractWasteManager extends Component
         foreach ($docs as $doc) {
             if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
                 $skippedCount++;
+
                 continue;
             }
 
@@ -426,6 +470,7 @@ class ContractWasteManager extends Component
 
         if ($deletedCount === 0) {
             $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có hợp đồng nào được xóa.']);
+
             return;
         }
 
@@ -440,6 +485,7 @@ class ContractWasteManager extends Component
 
     private function resetForm()
     {
+        $this->newCustomerName = '';
         $this->formData = [
             'shd_cxl' => '',
             'shd_bc' => '',
@@ -474,8 +520,8 @@ class ContractWasteManager extends Component
             'is_renewal' => false,
             'parent_contract_id' => '',
         ];
-        $this->selectedDoc          = null;
-        $this->createAssignUserIds  = [];
+        $this->selectedDoc = null;
+        $this->createAssignUserIds = [];
         $this->createAssignDeadline = null;
         $this->createAssignExternal = null;
     }
@@ -518,7 +564,7 @@ class ContractWasteManager extends Component
     {
         $currentUser = auth()->user();
 
-        return !$currentUser->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+        return ! $currentUser->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
     }
 
     public function workflowProgressMeta($doc): array
@@ -540,7 +586,7 @@ class ContractWasteManager extends Component
     {
         $deadline = $doc->assignments->first()?->deadline;
         $isFinished = in_array($doc->status ?? '', ['Đã hoàn thành', 'Hợp đồng hủy', 'HOÀN THÀNH'], true);
-        $isOverdue = $deadline && $deadline->isPast() && !$isFinished;
+        $isOverdue = $deadline && $deadline->isPast() && ! $isFinished;
         $daysLeft = $deadline ? (int) now()->startOfDay()->diffInDays($deadline->copy()->startOfDay(), false) : null;
 
         return [
@@ -548,7 +594,7 @@ class ContractWasteManager extends Component
             'daysLeft' => $daysLeft,
             'isFinished' => $isFinished,
             'isOverdue' => $isOverdue,
-            'isNearDue' => $deadline && !$isOverdue && !$isFinished && $daysLeft !== null && $daysLeft <= 3,
+            'isNearDue' => $deadline && ! $isOverdue && ! $isFinished && $daysLeft !== null && $daysLeft <= 3,
         ];
     }
 
@@ -626,15 +672,16 @@ class ContractWasteManager extends Component
 
     public function openAssign(int $id): void
     {
-        if (!$this->canAssign()) {
+        if (! $this->canAssign()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
             return;
         }
         $this->assignContractId = $id;
         $existing = ContractAssignment::where('assignable_type', ContractWaste::class)
             ->where('assignable_id', $id)
             ->get();
-        $this->assignUserIds  = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignUserIds = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
         $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
         $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
         $this->dispatch('openAssignModal');
@@ -642,8 +689,9 @@ class ContractWasteManager extends Component
 
     public function saveAssign(): void
     {
-        if (!$this->canAssign()) {
+        if (! $this->canAssign()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
             return;
         }
         ContractAssignment::where('assignable_type', ContractWaste::class)
@@ -652,20 +700,20 @@ class ContractWasteManager extends Component
         foreach ($this->assignUserIds as $userId) {
             ContractAssignment::create([
                 'assignable_type' => ContractWaste::class,
-                'assignable_id'   => $this->assignContractId,
-                'user_id'         => (int) $userId,
-                'assigned_by'     => auth()->id(),
-                'deadline'        => $this->assignDeadline ?: null,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => (int) $userId,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
             ]);
         }
-        if (!empty($this->assignExternal)) {
+        if (! empty($this->assignExternal)) {
             ContractAssignment::create([
-                'assignable_type'   => ContractWaste::class,
-                'assignable_id'     => $this->assignContractId,
-                'user_id'           => null,
+                'assignable_type' => ContractWaste::class,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => null,
                 'external_assignee' => $this->assignExternal,
-                'assigned_by'       => auth()->id(),
-                'deadline'          => $this->assignDeadline ?: null,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
             ]);
         }
         // Gửi thông báo đến users được giao
@@ -691,9 +739,9 @@ class ContractWasteManager extends Component
         $noteText = $this->progressNote;
         ContractProgressNote::create([
             'contract_type' => 'waste',
-            'contract_id'   => $contractId,
-            'user_id'       => auth()->id(),
-            'note'          => $noteText,
+            'contract_id' => $contractId,
+            'user_id' => auth()->id(),
+            'note' => $noteText,
         ]);
         $this->progressNote = '';
         $this->progressNotes = ContractProgressNote::where('contract_type', 'waste')
@@ -706,13 +754,13 @@ class ContractWasteManager extends Component
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractWaste::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
+        $recipients = User::whereHas('roles', fn ($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', ContractWaste::class)
             ->where('assignable_id', $contractId)
             ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
-            ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
+            ->flatMap(fn ($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()
             ->unique()
             ->values();
@@ -722,11 +770,13 @@ class ContractWasteManager extends Component
 
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
-            if ($staff) $recipients->push($staff);
+            if ($staff) {
+                $recipients->push($staff);
+            }
         }
         foreach ($recipients->unique('id') as $recipient) {
             if ($recipient->id !== auth()->id()) {
-                $recipient->notify(new ContractProgressNoteNotification('waste', $contractId, $contractLabel, \Illuminate\Support\Str::limit($noteText, 50), auth()->user()->name));
+                $recipient->notify(new ContractProgressNoteNotification('waste', $contractId, $contractLabel, Str::limit($noteText, 50), auth()->user()->name));
             }
         }
     }
@@ -814,12 +864,12 @@ class ContractWasteManager extends Component
     public function uploadContractFile(): void
     {
         $this->validate([
-            'newContractFiles'   => 'required|array|max:10',
+            'newContractFiles' => 'required|array|max:10',
             'newContractFiles.*' => 'file|max:51200|mimes:pdf',
         ], [
             'newContractFiles.required' => 'Vui lòng chọn ít nhất 1 file.',
-            'newContractFiles.*.max'    => 'File PDF không được vượt quá 50MB.',
-            'newContractFiles.*.mimes'  => 'Chỉ chấp nhận file PDF.',
+            'newContractFiles.*.max' => 'File PDF không được vượt quá 50MB.',
+            'newContractFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
         ]);
 
         $disk = config('filesystems.upload_disk', 'public');
@@ -828,11 +878,11 @@ class ContractWasteManager extends Component
             $path = $file->storePublicly('contract-files/waste/contract_document', $disk);
             ContractMilestoneFile::create([
                 'contract_type' => ContractWaste::class,
-                'contract_id'   => $this->selectedDoc->id,
-                'milestone'     => 'contract_document',
-                'file_path'     => $path,
+                'contract_id' => $this->selectedDoc->id,
+                'milestone' => 'contract_document',
+                'file_path' => $path,
                 'original_name' => $file->getClientOriginalName(),
-                'uploader_id'   => auth()->id(),
+                'uploader_id' => auth()->id(),
             ]);
         }
 
@@ -873,43 +923,53 @@ class ContractWasteManager extends Component
         $this->applyContractFilters($query);
 
         $f = $this->filter;
-        if ($f['end_from'] ?? null)     $query->whereDate('end_at', '>=', $f['end_from']);
-        if ($f['end_to'] ?? null)       $query->whereDate('end_at', '<=', $f['end_to']);
-        if ($f['service_type'] ?? null) $query->where('service_type', $f['service_type']);
-        if ($f['waste_type'] ?? null)   $query->where('waste_type', $f['waste_type']);
-        if ($f['info_source'] ?? null)  $query->where('info_source', $f['info_source']);
+        if ($f['end_from'] ?? null) {
+            $query->whereDate('end_at', '>=', $f['end_from']);
+        }
+        if ($f['end_to'] ?? null) {
+            $query->whereDate('end_at', '<=', $f['end_to']);
+        }
+        if ($f['service_type'] ?? null) {
+            $query->where('service_type', $f['service_type']);
+        }
+        if ($f['waste_type'] ?? null) {
+            $query->where('waste_type', $f['waste_type']);
+        }
+        if ($f['info_source'] ?? null) {
+            $query->where('info_source', $f['info_source']);
+        }
     }
 
-    public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function exportExcel(): StreamedResponse
     {
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = ContractWaste::with(['customer', 'handler', 'staff', 'department'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
-                    $sq->where('shd_cxl', 'like', '%' . $this->search . '%')
-                        ->orWhere('shd_bc', 'like', '%' . $this->search . '%')
+                    $sq->where('shd_cxl', 'like', '%'.$this->search.'%')
+                        ->orWhere('shd_bc', 'like', '%'.$this->search.'%')
                         ->orWhereHas('customer', function ($csq) {
-                            $csq->where('name', 'like', '%' . $this->search . '%');
+                            $csq->where('name', 'like', '%'.$this->search.'%');
                         });
                 });
             })
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
-        $docs           = $query->orderBy('id', $orderDirection)->get();
-        $title          = 'Hợp đồng chất thải';
-        $showFinancials = !auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+        $docs = $query->orderBy('id', $orderDirection)->get();
+        $title = 'Hợp đồng chất thải';
+        $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
         return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
             echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
-        }, 'HopDong_ChatThai_' . now()->format('d_m_Y') . '.xls', [
+        }, 'HopDong_ChatThai_'.now()->format('d_m_Y').'.xls', [
             'Content-Type' => 'application/vnd.ms-excel',
         ]);
     }
@@ -918,22 +978,22 @@ class ContractWasteManager extends Component
     {
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = ContractWaste::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'workflowSteps'])
-            ->when($this->search, function($q) {
-                $q->where(function($sq) {
+            ->when($this->search, function ($q) {
+                $q->where(function ($sq) {
                     $sq->where('shd_cxl', 'like', '%'.$this->search.'%')
-                      ->orWhere('shd_bc', 'like', '%'.$this->search.'%')
-                      ->orWhereHas('customer', function($csq) {
-                          $csq->where('name', 'like', '%'.$this->search.'%');
-                      });
+                        ->orWhere('shd_bc', 'like', '%'.$this->search.'%')
+                        ->orWhereHas('customer', function ($csq) {
+                            $csq->where('name', 'like', '%'.$this->search.'%');
+                        });
                 });
             })
             ->when($isRestrictedSales,
-                fn($q) => $q->where('staff_id', $user->id))
+                fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         // Apply filters
         $this->applyFilters($query);
@@ -954,9 +1014,9 @@ class ContractWasteManager extends Component
 
         $isRestrictedUser = $isRestrictedSales || $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
         $baseUserQuery = ContractWaste::query()
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         $loaiDichVuOptions = ContractWaste::SERVICE_TYPES;
 
@@ -978,8 +1038,7 @@ class ContractWasteManager extends Component
             'customers' => Customer::orderBy('name')->get(),
             'staffs' => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->where('is_active', true)->orderBy('name')->get(),
             'departments' => Department::all(),
-            'assignable_users' => \App\Models\User::where('is_active', true)->whereHas('roles', fn($q) =>
-                $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
+            'assignable_users' => User::where('is_active', true)->whereHas('roles', fn ($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
             // Dynamic filter options
             'service_types' => $scopedServiceTypes,
             'waste_types' => $scopedWasteTypes,

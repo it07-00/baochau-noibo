@@ -34,6 +34,15 @@
                             <input type="text" class="form-control border-start-0 ps-0 internal-doc-search-input" placeholder="Tìm kiếm quy định..." wire:model.live.debounce.300ms="search">
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <select class="form-select" wire:model.live="departmentFilter">
+                            <option value="">Tất cả phòng ban</option>
+                            <option value="company">Toàn công ty</option>
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -43,6 +52,7 @@
                         <tr>
                             <th class="text-center w-45px" >STT</th>
                             <th class="ps-4 w-50" >Thông tin quy định</th>
+                            <th>Phòng ban</th>
                             <th class="w-35pct">Tập tin</th>
                             @canany(['internal-docs.edit', 'internal-docs.delete'])
                             <th class="text-end pe-4">Thao tác</th>
@@ -55,6 +65,9 @@
                             <td class="text-center text-muted  fw-semibold w-45px" >{{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}</td>
                             <td class="ps-4">
                                 <span class="fw-bold">{{ $doc->title }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-info">{{ $doc->department?->name ?? 'Toàn công ty' }}</span>
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
@@ -91,7 +104,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="text-center py-5 text-muted internal-doc-empty-row">Không tìm thấy quy định nào</td>
+                            <td colspan="5" class="text-center py-5 text-muted internal-doc-empty-row">Không tìm thấy quy định nào</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -118,6 +131,17 @@
                             <label class="form-label fw-bold">Tiêu đề quy định <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror" wire:model="title" placeholder="Nhập tiêu đề...">
                             @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Phòng ban</label>
+                            <select class="form-select @error('departmentId') is-invalid @enderror" wire:model="departmentId">
+                                <option value="">Toàn công ty</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('departmentId') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mb-3">

@@ -21,6 +21,8 @@ class QuotationManager extends Component
 {
     use CleanMoneyInput, WithFileUploads, WithPagination;
 
+    public const SOURCES = ['Sale', 'Tái ký', 'Thông tin chuyển MKT'];
+
     public $search = '';
 
     public $filter_staff = '';
@@ -221,12 +223,25 @@ class QuotationManager extends Component
 
     public function updatedFormDataCommissionValue()
     {
+        $commission = $this->parseMoneyValue($this->formData['commission_value'] ?? 0);
+
+        $this->formData['commission_tax'] = match (true) {
+            $commission <= 1_000_000 => round($commission * 0.20),
+            $commission <= 5_000_000 => round($commission * 0.30),
+            default => 0,
+        };
+
         $this->recalculateTotals();
     }
 
     public function updatedFormDataCommissionTax()
     {
         $this->recalculateTotals();
+    }
+
+    public function isCommissionTaxManual(): bool
+    {
+        return $this->parseMoneyValue($this->formData['commission_value'] ?? 0) > 5_000_000;
     }
 
     public function updatedSortDirection($value): void
@@ -268,8 +283,15 @@ class QuotationManager extends Component
 
     public function recalculateTotals(): void
     {
+        $commission = $this->parseMoneyValue($this->formData['commission_value'] ?? 0);
+        if ($commission <= 1_000_000) {
+            $this->formData['commission_tax'] = round($commission * 0.20);
+        } elseif ($commission <= 5_000_000) {
+            $this->formData['commission_tax'] = round($commission * 0.30);
+        }
+
         $preVatValue = $this->parseMoneyValue($this->formData['original_value'] ?? 0)
-            + $this->parseMoneyValue($this->formData['commission_value'] ?? 0)
+            + $commission
             + $this->parseMoneyValue($this->formData['commission_tax'] ?? 0);
 
         $this->formData['value_inc_vat'] = round($preVatValue);
@@ -423,7 +445,7 @@ class QuotationManager extends Component
             QuotationStatus::DANG_THEO_DOI->value => 'bg-success bg-opacity-10 text-success',
             QuotationStatus::ROT_BAO_GIA->value => 'bg-dark bg-opacity-10 text-dark',
             QuotationStatus::KY_HOP_DONG->value => 'bg-danger bg-opacity-10 text-danger',
-            QuotationStatus::THAM_KHAO->value => 'bg-warning bg-opacity-10 text-warning',
+            QuotationStatus::BAO_GIA_TIEM_NANG->value => 'bg-warning bg-opacity-10 text-warning',
             default => 'bg-secondary bg-opacity-10 text-secondary',
         };
     }
@@ -652,6 +674,7 @@ class QuotationManager extends Component
                 ? User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->where('id', auth()->id())->orderBy('name')->get()
                 : User::role(['kinh-doanh', 'tp-kinh-doanh'])->where('is_active', true)->orderBy('name')->get(),
             'statuses' => QuotationStatus::values(),
+            'sources' => self::SOURCES,
             'availableFields' => $this->availableFields,
         ])->layout('admin.layouts.app', ['title' => 'Theo dõi Báo giá']);
     }

@@ -735,6 +735,11 @@
                                     @endforeach
                                 </div>
                             </div>
+                            <input type="text" wire:model="newCustomerName" class="form-control mt-2"
+                                placeholder="Hoặc nhập tên khách hàng mới">
+                            @error('newCustomerName')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
                             @error('formData.customer_id')
                                 <div class="text-danger ">{{ $message }}</div>
                             @enderror

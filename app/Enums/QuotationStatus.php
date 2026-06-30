@@ -4,11 +4,11 @@ namespace App\Enums;
 
 enum QuotationStatus: string
 {
-    case HEN_BAO_GIA  = 'hẹn báo giá thời gian sau';
+    case HEN_BAO_GIA = 'hẹn báo giá thời gian sau';
     case DANG_THEO_DOI = 'Đang theo dõi';
-    case ROT_BAO_GIA  = 'Rớt báo giá';
-    case KY_HOP_DONG  = 'Ký hợp đồng';
-    case THAM_KHAO    = 'Tham khảo';
+    case ROT_BAO_GIA = 'Rớt báo giá';
+    case KY_HOP_DONG = 'Ký hợp đồng';
+    case BAO_GIA_TIEM_NANG = 'BG tiềm năng';
 
     public function label(): string
     {
@@ -19,10 +19,10 @@ enum QuotationStatus: string
     {
         return match ($this) {
             self::DANG_THEO_DOI => 'success',
-            self::KY_HOP_DONG   => 'primary',
-            self::ROT_BAO_GIA   => 'danger',
-            self::HEN_BAO_GIA   => 'warning',
-            self::THAM_KHAO     => 'secondary',
+            self::KY_HOP_DONG => 'primary',
+            self::ROT_BAO_GIA => 'danger',
+            self::HEN_BAO_GIA => 'warning',
+            self::BAO_GIA_TIEM_NANG => 'secondary',
         };
     }
 
@@ -30,7 +30,7 @@ enum QuotationStatus: string
     public static function map(): array
     {
         return array_column(
-            array_map(fn($c) => [$c->value, $c->label()], self::cases()),
+            array_map(fn ($c) => [$c->value, $c->label()], self::cases()),
             1, 0
         );
     }

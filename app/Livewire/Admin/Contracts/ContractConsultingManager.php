@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Contracts;
 
 use App\Enums\ContractRenewalStatus;
 use App\Enums\ContractVoucherStatus;
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
@@ -12,17 +13,15 @@ use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractProgressNote;
-use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\Customer;
-use App\Models\Handler;
 use App\Models\Department;
+use App\Models\Handler;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
 use Illuminate\Support\Facades\Schema;
-use App\Support\VietnamProvinces;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -31,11 +30,10 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use App\Enums\Permission;
 
 class ContractConsultingManager extends Component
 {
-    use CleanMoneyInput, ContractValidation, WithPagination, WithFileUploads, HasContractFilters;
+    use CleanMoneyInput, ContractValidation, HasContractFilters, WithFileUploads, WithPagination;
 
     private const ALLOWED_STATUSES = [
         'PTH đang kiểm tra',
@@ -60,6 +58,7 @@ class ContractConsultingManager extends Component
     public bool $showModal = false;
 
     public bool $isEditing = false;
+
     public bool $isDuplicating = false;
 
     public $showDetail = false;
@@ -95,13 +94,14 @@ class ContractConsultingManager extends Component
     public string $detailActiveTab = 'info';
 
     public array $newContractFiles = [];
+
     public $existingContractFiles = [];
 
     public $formData = [
         'shd_cxl' => '',
         'shd_bc' => '',
         'customer_id' => '',
-        'handler_id'     => '',
+        'handler_id' => '',
         'staff_id' => '',
         'department_id' => '',
         'signed_at' => '',
@@ -128,6 +128,8 @@ class ContractConsultingManager extends Component
         'parent_contract_id' => '',
     ];
 
+    public string $newCustomerName = '';
+
     public $filter = [
         'signed_from' => '',
         'signed_to' => '',
@@ -145,7 +147,7 @@ class ContractConsultingManager extends Component
         'has_room_fund' => false,
         'is_overdue' => false,
         'loai_dich_vu' => '',
-        'handler_id'  => '',
+        'handler_id' => '',
         'hide_completed_workflow' => false,
     ];
 
@@ -169,8 +171,8 @@ class ContractConsultingManager extends Component
                 $customer = Customer::firstOrCreate(
                     ['name' => $quotation->company_name ?? ''],
                     [
-                        'address'        => $quotation->address ?? '',
-                        'province'       => $quotation->province ?? '',
+                        'address' => $quotation->address ?? '',
+                        'province' => $quotation->province ?? '',
                         'representative' => $quotation->contact_person ?? '',
                     ]
                 );
@@ -225,8 +227,9 @@ class ContractConsultingManager extends Component
     public function edit(int $id): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can(Permission::CONTRACTS_CONSULTING_EDIT->value)) {
+        if (! $user || ! $user->can(Permission::CONTRACTS_CONSULTING_EDIT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+
             return;
         }
         $this->selectedDoc = ContractLegal::with(['assignments.user'])->findOrFail($id);
@@ -281,18 +284,19 @@ class ContractConsultingManager extends Component
             throw $e;
         }
 
+        $this->resolveManualCustomer();
         $data = collect($this->formData)->map(fn ($v) => $v === '' ? null : $v)->toArray();
 
         $isAccountant = $user->hasRole(Role::KE_TOAN->value);
         if (! $this->isEditing) {
-            $data['shd_bc']      = null;
+            $data['shd_bc'] = null;
             $data['ncc_payment'] = 0;
             $data['ncc_payment_sheet_url'] = null;
             $data['ncc_payment_updated_at'] = null;
             $data['ncc_payment_status'] = 'unpaid';
             $data['ncc_payment_paid_at'] = null;
         } elseif (! $isAccountant && $this->selectedDoc) {
-            $data['shd_bc']      = $this->selectedDoc->shd_bc;
+            $data['shd_bc'] = $this->selectedDoc->shd_bc;
             $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
             $data['ncc_payment_sheet_url'] = $this->selectedDoc->ncc_payment_sheet_url;
             $data['ncc_payment_updated_at'] = $this->selectedDoc->ncc_payment_updated_at;
@@ -319,29 +323,29 @@ class ContractConsultingManager extends Component
         } else {
             $newContract = ContractLegal::create($data);
 
-            if (count($this->createAssignUserIds) > 0 || !empty($this->createAssignExternal)) {
-                $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #' . $newContract->id);
+            if (count($this->createAssignUserIds) > 0 || ! empty($this->createAssignExternal)) {
+                $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #'.$newContract->id);
                 foreach ($this->createAssignUserIds as $userId) {
                     ContractAssignment::create([
                         'assignable_type' => ContractLegal::class,
-                        'assignable_id'   => $newContract->id,
-                        'user_id'         => (int) $userId,
-                        'assigned_by'     => auth()->id(),
-                        'deadline'        => $this->createAssignDeadline ?: null,
+                        'assignable_id' => $newContract->id,
+                        'user_id' => (int) $userId,
+                        'assigned_by' => auth()->id(),
+                        'deadline' => $this->createAssignDeadline ?: null,
                     ]);
                     $assignedUser = User::find($userId);
                     if ($assignedUser && $assignedUser->id !== auth()->id()) {
                         $assignedUser->notify(new ContractAssignedNotification('consulting', $newContract->id, $contractLabel, auth()->user()->name));
                     }
                 }
-                if (!empty($this->createAssignExternal)) {
+                if (! empty($this->createAssignExternal)) {
                     ContractAssignment::create([
-                        'assignable_type'   => ContractLegal::class,
-                        'assignable_id'     => $newContract->id,
-                        'user_id'           => null,
+                        'assignable_type' => ContractLegal::class,
+                        'assignable_id' => $newContract->id,
+                        'user_id' => null,
                         'external_assignee' => $this->createAssignExternal,
-                        'assigned_by'       => auth()->id(),
-                        'deadline'          => $this->createAssignDeadline ?: null,
+                        'assigned_by' => auth()->id(),
+                        'deadline' => $this->createAssignDeadline ?: null,
                     ]);
                 }
             }
@@ -356,27 +360,31 @@ class ContractConsultingManager extends Component
     {
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
             return;
         }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         if ($isRestrictedTpKd || $isRestrictedSales) {
             if ((int) $doc->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng này.']);
+
                 return;
             }
         } else {
             if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng.']);
+
                 return;
             }
         }
-        if (!$user->can(Permission::CONTRACTS_CONSULTING_EDIT->value)) {
+        if (! $user->can(Permission::CONTRACTS_CONSULTING_EDIT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng.']);
+
             return;
         }
 
@@ -397,22 +405,25 @@ class ContractConsultingManager extends Component
     {
         $doc = ContractLegal::findOrFail($id);
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
             return;
         }
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         if ($isRestrictedTpKd || $isRestrictedSales) {
             if ((int) $doc->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng này.']);
+
                 return;
             }
         }
-        if (!$user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
+        if (! $user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+
             return;
         }
 
@@ -423,8 +434,9 @@ class ContractConsultingManager extends Component
     public function duplicate(int $id): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can(Permission::CONTRACTS_CONSULTING_CREATE->value)) {
+        if (! $user || ! $user->can(Permission::CONTRACTS_CONSULTING_CREATE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+
             return;
         }
         $doc = ContractLegal::findOrFail($id);
@@ -446,8 +458,9 @@ class ContractConsultingManager extends Component
     public function bulkDeleteSelected(): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
+        if (! $user || ! $user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+
             return;
         }
 
@@ -503,10 +516,11 @@ class ContractConsultingManager extends Component
         if ($this->selectedDoc) {
             $user = auth()->user();
             $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-                && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+                && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
             if ($isRestrictedSales && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
                 $this->selectedDoc = null;
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xem chi tiết hợp đồng này.']);
+
                 return;
             }
             $this->reportNumber = $this->selectedDoc->report_number ?? '';
@@ -536,12 +550,13 @@ class ContractConsultingManager extends Component
 
     public function saveReportNumber(): void
     {
-        if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {
+        if (! auth()->user()->hasRole(Role::KY_THUAT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Chỉ nhân viên Kỹ thuật mới được cập nhật Báo cáo số.']);
+
             return;
         }
 
-        if (!$this->selectedDoc) {
+        if (! $this->selectedDoc) {
             return;
         }
 
@@ -552,12 +567,12 @@ class ContractConsultingManager extends Component
     public function uploadContractFile(): void
     {
         $this->validate([
-            'newContractFiles'   => 'required|array|max:10',
+            'newContractFiles' => 'required|array|max:10',
             'newContractFiles.*' => 'file|max:51200|mimes:pdf',
         ], [
             'newContractFiles.required' => 'Vui lòng chọn ít nhất 1 file.',
-            'newContractFiles.*.max'    => 'File PDF không được vượt quá 50MB.',
-            'newContractFiles.*.mimes'  => 'Chỉ chấp nhận file PDF.',
+            'newContractFiles.*.max' => 'File PDF không được vượt quá 50MB.',
+            'newContractFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
         ]);
 
         $disk = config('filesystems.upload_disk', 'public');
@@ -566,11 +581,11 @@ class ContractConsultingManager extends Component
             $path = $file->storePublicly('contract-files/consulting/contract_document', $disk);
             ContractMilestoneFile::create([
                 'contract_type' => ContractLegal::class,
-                'contract_id'   => $this->selectedDoc->id,
-                'milestone'     => 'contract_document',
-                'file_path'     => $path,
+                'contract_id' => $this->selectedDoc->id,
+                'milestone' => 'contract_document',
+                'file_path' => $path,
                 'original_name' => $file->getClientOriginalName(),
-                'uploader_id'   => auth()->id(),
+                'uploader_id' => auth()->id(),
             ]);
         }
 
@@ -625,15 +640,16 @@ class ContractConsultingManager extends Component
 
     public function openAssign(int $id): void
     {
-        if (!$this->canAssign()) {
+        if (! $this->canAssign()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
             return;
         }
         $this->assignContractId = $id;
         $existing = ContractAssignment::where('assignable_type', ContractLegal::class)
             ->where('assignable_id', $id)
             ->get();
-        $this->assignUserIds  = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignUserIds = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
         $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
         $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
         $this->dispatch('openAssignModal');
@@ -641,8 +657,9 @@ class ContractConsultingManager extends Component
 
     public function saveAssign(): void
     {
-        if (!$this->canAssign()) {
+        if (! $this->canAssign()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
             return;
         }
         ContractAssignment::where('assignable_type', ContractLegal::class)
@@ -654,17 +671,17 @@ class ContractConsultingManager extends Component
                 'assignable_id' => $this->assignContractId,
                 'user_id' => (int) $userId,
                 'assigned_by' => auth()->id(),
-                'deadline'    => $this->assignDeadline ?: null,
+                'deadline' => $this->assignDeadline ?: null,
             ]);
         }
-        if (!empty($this->assignExternal)) {
+        if (! empty($this->assignExternal)) {
             ContractAssignment::create([
-                'assignable_type'   => ContractLegal::class,
-                'assignable_id'     => $this->assignContractId,
-                'user_id'           => null,
+                'assignable_type' => ContractLegal::class,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => null,
                 'external_assignee' => $this->assignExternal,
-                'assigned_by'       => auth()->id(),
-                'deadline'          => $this->assignDeadline ?: null,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
             ]);
         }
         // Gửi thông báo đến users được giao
@@ -762,7 +779,7 @@ class ContractConsultingManager extends Component
             'has_room_fund' => false,
             'is_overdue' => false,
             'loai_dich_vu' => '',
-            'handler_id'  => '',
+            'handler_id' => '',
             'hide_completed_workflow' => auth()->user()->hasAnyRole([
                 Role::TU_VAN->value,
                 Role::KY_THUAT->value,
@@ -776,11 +793,12 @@ class ContractConsultingManager extends Component
 
     private function resetForm(): void
     {
+        $this->newCustomerName = '';
         $this->formData = [
             'shd_cxl' => '',
             'shd_bc' => '',
             'customer_id' => '',
-            'handler_id'     => '',
+            'handler_id' => '',
             'staff_id' => auth()->id(),
             'department_id' => 3, // Phòng Kinh doanh
             'signed_at' => date('Y-m-d'),
@@ -808,7 +826,7 @@ class ContractConsultingManager extends Component
         ];
         $this->isDuplicating = false;
         $this->selectedDoc = null;
-        $this->createAssignUserIds  = [];
+        $this->createAssignUserIds = [];
         $this->createAssignDeadline = null;
         $this->createAssignExternal = null;
     }
@@ -837,7 +855,7 @@ class ContractConsultingManager extends Component
                         });
                 });
             })
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
                 fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
@@ -900,9 +918,9 @@ class ContractConsultingManager extends Component
 
             $progress[$item->id] = [
                 'completed_count' => $completedCount,
-                'total_steps'     => $totalSteps,
-                'percent'         => $totalSteps > 0 ? round(($completedCount / $totalSteps) * 100) : 0,
-                'current_label'   => $currentStep ? ($stepLabels[$currentStep] ?? $currentStep) : 'Chưa bắt đầu',
+                'total_steps' => $totalSteps,
+                'percent' => $totalSteps > 0 ? round(($completedCount / $totalSteps) * 100) : 0,
+                'current_label' => $currentStep ? ($stepLabels[$currentStep] ?? $currentStep) : 'Chưa bắt đầu',
             ];
         }
 
@@ -966,8 +984,9 @@ class ContractConsultingManager extends Component
 
     public function updateInlineReportNumber(int $docId, ?string $value): void
     {
-        if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {
+        if (! auth()->user()->hasRole(Role::KY_THUAT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Chỉ nhân viên Kỹ thuật mới được cập nhật Báo cáo số.']);
+
             return;
         }
 
@@ -1010,9 +1029,9 @@ class ContractConsultingManager extends Component
 
         $isRestrictedUser = $isRestrictedSales || $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
         $baseUserQuery = ContractLegal::query()
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         $loaiDichVuOptions = ContractLegal::SERVICE_TYPES;
 

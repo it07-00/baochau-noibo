@@ -85,6 +85,7 @@
                             <th class="w-120px">Tháng</th>
                             <th class="text-end text-truncate-220" >Mục tiêu (đ)</th>
                             <th class="text-end w-230px" >Thực tế (Doanh số từ HĐ) (đ)</th>
+                            <th class="text-end w-200px">Doanh số tiềm năng (đ)</th>
                             <th class="text-end text-truncate-220" >Chênh lệch (đ)</th>
                             <th class="mnw-220px">Tiến độ</th>
                             <th class="text-center w-120px" >Trạng thái</th>
@@ -102,6 +103,17 @@
                                 </td>
                                 <td class="text-end fw-semibold {{ $this->monthMetrics($data)['actual'] > 0 ? 'text-success' : 'text-muted' }}">
                                     {{ $this->monthMetrics($data)['actual'] > 0 ? number_format($this->monthMetrics($data)['actual'], 0, ',', '.') : '—' }}
+                                </td>
+                                <td class="text-end">
+                                    @if($data['potential'] > 0)
+                                        <button type="button"
+                                            class="btn btn-link btn-sm p-0 fw-semibold text-warning text-decoration-none"
+                                            wire:click.stop="openPotentialDetail({{ $m }})">
+                                            {{ number_format($data['potential'], 0, ',', '.') }}
+                                        </button>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
                                 </td>
                                 <td class="text-end fw-semibold {{ $this->monthMetrics($data)['delta'] >= 0 ? 'text-success' : 'text-danger' }}">
                                     {{ $this->monthMetrics($data)['target'] > 0 || $this->monthMetrics($data)['actual'] > 0 ? ($this->monthMetrics($data)['delta'] >= 0 ? '+' : '−') . number_format(abs($this->monthMetrics($data)['delta']), 0, ',', '.') : '—' }}
@@ -139,6 +151,7 @@
                             <td>Tổng năm {{ $year }}</td>
                             <td class="text-end">{{ number_format($totals['target'], 0, ',', '.') }} đ</td>
                             <td class="text-end text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</td>
+                            <td class="text-end text-warning">{{ number_format($totals['potential'], 0, ',', '.') }} đ</td>
                             <td class="text-end {{ $this->totalDelta($totals) >= 0 ? 'text-success' : 'text-danger' }}">
                                 {{ $this->totalDelta($totals) >= 0 ? '+' : '−' }}{{ number_format(abs($this->totalDelta($totals)), 0, ',', '.') }} đ
                             </td>
@@ -242,10 +255,72 @@
         </div>
     </div>
 
+    {{-- Modal danh sách báo giá tiềm năng theo tháng --}}
+    <div wire:ignore.self class="modal fade" id="potentialDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-warning py-3">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-lightning-charge me-2"></i>
+                        Báo giá tiềm năng tháng {{ $filter_month }}/{{ $year }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    @if(empty($potentialDetail))
+                        <div class="text-center text-muted py-5">Không có báo giá tiềm năng</div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th class="text-center">STT</th>
+                                        <th>Công ty</th>
+                                        <th>Dịch vụ</th>
+                                        <th>Nhân viên KD</th>
+                                        <th>Nguồn</th>
+                                        <th class="text-end">Giá trị HĐ có VAT (đ)</th>
+                                        <th class="text-center">Ngày báo giá</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($potentialDetail as $i => $row)
+                                        <tr>
+                                            <td class="text-center text-muted">{{ $i + 1 }}</td>
+                                            <td class="fw-semibold">{{ $row['company'] }}</td>
+                                            <td>{{ $row['service'] }}</td>
+                                            <td>{{ $row['staff'] }}</td>
+                                            <td>{{ $row['source'] }}</td>
+                                            <td class="text-end fw-semibold text-warning">{{ number_format($row['value'], 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ $row['date'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="table-light fw-bold">
+                                    <tr>
+                                        <td colspan="5" class="text-end">Tổng tháng {{ $filter_month }}</td>
+                                        <td class="text-end text-warning">{{ number_format(array_sum(array_column($potentialDetail, 'value')), 0, ',', '.') }} đ</td>
+                                        <td class="text-center text-muted">{{ count($potentialDetail) }} báo giá</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('openDetailModal', () => {
                 new bootstrap.Modal(document.getElementById('targetDetailModal')).show();
+            });
+            Livewire.on('openPotentialDetailModal', () => {
+                new bootstrap.Modal(document.getElementById('potentialDetailModal')).show();
             });
         });
     </script>

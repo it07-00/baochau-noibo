@@ -2,24 +2,30 @@
 
 namespace App\Livewire\Admin\Reports\Sales;
 
-use App\Models\ContractResearch;
-use App\Models\ContractLegal;
+use App\Enums\QuotationStatus;
+use App\Enums\Role;
 use App\Models\ContractEmission;
-use App\Models\ContractTechnical;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
+use App\Models\Quotation;
 use App\Models\SalesTarget;
 use App\Models\User;
-use App\Enums\Role;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesTargetReport extends Component
 {
     public int $year;
+
     public string $filter_staff = '';
+
     public int $filter_month = 0;
+
     public array $detail = [];
+
+    public array $potentialDetail = [];
 
     protected array $contractModels = [
         ContractWaste::class,
@@ -31,12 +37,12 @@ class SalesTargetReport extends Component
     ];
 
     protected array $contractTypeLabels = [
-        ContractWaste::class          => 'Chất thải',
-        ContractLegal::class          => 'Pháp lý & Hồ sơ MT',
-        ContractTechnical::class      => 'Ứng phó sự cố',
-        ContractResearch::class       => 'Nghiên cứu và chuyển đổi công nghệ',
+        ContractWaste::class => 'Chất thải',
+        ContractLegal::class => 'Pháp lý & Hồ sơ MT',
+        ContractTechnical::class => 'Ứng phó sự cố',
+        ContractResearch::class => 'Nghiên cứu và chuyển đổi công nghệ',
         ContractSustainability::class => 'Phát triển bền vững',
-        ContractEmission::class       => 'Giảm phát thải, tiết kiệm năng lượng',
+        ContractEmission::class => 'Giảm phát thải, tiết kiệm năng lượng',
     ];
 
     public function mount(): void
@@ -44,7 +50,7 @@ class SalesTargetReport extends Component
         $this->year = (int) now()->format('Y');
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
         } else {
@@ -57,7 +63,7 @@ class SalesTargetReport extends Component
         $this->filter_month = $month;
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
@@ -68,7 +74,7 @@ class SalesTargetReport extends Component
         }
 
         $detail = collect();
-        if (!empty($staffIds)) {
+        if (! empty($staffIds)) {
             foreach ($this->contractModels as $modelClass) {
                 $contracts = $modelClass::query()
                     ->with('customer', 'staff')
@@ -80,12 +86,12 @@ class SalesTargetReport extends Component
 
                 foreach ($contracts as $contract) {
                     $detail->push([
-                        'customer'   => $contract->customer?->name ?? '—',
-                        'staff'      => $contract->staff?->name ?? '—',
-                        'type'       => $this->contractTypeLabels[$modelClass],
-                        'value'      => (float) $contract->revenue,
+                        'customer' => $contract->customer?->name ?? '—',
+                        'staff' => $contract->staff?->name ?? '—',
+                        'type' => $this->contractTypeLabels[$modelClass],
+                        'value' => (float) $contract->revenue,
                         'is_renewal' => (bool) $contract->is_renewal,
-                        'date'       => $contract->submitted_at?->format('d/m/Y'),
+                        'date' => $contract->submitted_at?->format('d/m/Y'),
                     ]);
                 }
             }
@@ -93,6 +99,44 @@ class SalesTargetReport extends Component
 
         $this->detail = $detail->sortByDesc('date')->values()->toArray();
         $this->dispatch('openDetailModal');
+    }
+
+    public function openPotentialDetail(int $month): void
+    {
+        $this->filter_month = $month;
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+            $staffIds = [$user->id];
+        } else {
+            $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+            $staffIds = $this->filter_staff !== '' ? [(int) $this->filter_staff] : $salesStaffIds;
+        }
+
+        $this->potentialDetail = empty($staffIds)
+            ? []
+            : Quotation::query()
+                ->with('staff')
+                ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
+                ->whereYear('date', $this->year)
+                ->whereMonth('date', $month)
+                ->whereIn('staff_id', $staffIds)
+                ->orderByDesc('date')
+                ->get()
+                ->map(fn (Quotation $quotation) => [
+                    'company' => $quotation->company_name ?: '—',
+                    'service' => $quotation->service ?: '—',
+                    'staff' => $quotation->staff?->name ?? '—',
+                    'source' => $quotation->source ?: '—',
+                    'value' => (float) $quotation->total_value,
+                    'date' => $quotation->date?->format('d/m/Y') ?? '—',
+                ])
+                ->all();
+
+        $this->dispatch('openPotentialDetailModal');
     }
 
     public function totalPct(array $totals): ?float
@@ -164,12 +208,12 @@ class SalesTargetReport extends Component
     {
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
-            $months[$m] = ['target' => 0, 'actual' => 0];
+            $months[$m] = ['target' => 0, 'actual' => 0, 'potential' => 0];
         }
 
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
@@ -181,7 +225,7 @@ class SalesTargetReport extends Component
             $staffs = User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
         }
 
-        if (!empty($targetStaffIds)) {
+        if (! empty($targetStaffIds)) {
             foreach (SalesTarget::query()
                 ->where('year', $this->year)
                 ->whereIn('staff_id', $targetStaffIds)
@@ -204,19 +248,32 @@ class SalesTargetReport extends Component
                     $months[(int) $r->m]['actual'] += (float) $r->total;
                 }
             }
+
+            $potentialRows = Quotation::query()
+                ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
+                ->whereYear('date', $this->year)
+                ->whereIn('staff_id', $targetStaffIds)
+                ->selectRaw('MONTH(date) as m, SUM(total_value) as total')
+                ->groupBy('m')
+                ->get();
+
+            foreach ($potentialRows as $row) {
+                $months[(int) $row->m]['potential'] += (float) $row->total;
+            }
         }
 
-        $totals = ['target' => 0, 'actual' => 0];
+        $totals = ['target' => 0, 'actual' => 0, 'potential' => 0];
         foreach ($months as $m) {
             $totals['target'] += $m['target'];
             $totals['actual'] += $m['actual'];
+            $totals['potential'] += $m['potential'];
         }
 
         return view('livewire.admin.reports.sales.sales-target-report', [
-            'months'    => $months,
-            'totals'    => $totals,
-            'staffs'    => $staffs,
-            'years'     => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'months' => $months,
+            'totals' => $totals,
+            'staffs' => $staffs,
+            'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }
 }

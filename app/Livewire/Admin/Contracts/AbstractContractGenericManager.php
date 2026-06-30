@@ -6,10 +6,12 @@ use App\Enums\ContractRenewalStatus;
 use App\Enums\ContractVoucherStatus;
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Livewire\Concerns\CleanMoneyInput;
+use App\Livewire\Concerns\ContractValidation;
+use App\Livewire\Concerns\HasContractFilters;
 use App\Models\ContractAssignment;
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractProgressNote;
-use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Handler;
@@ -20,17 +22,16 @@ use App\Notifications\ContractProgressNoteNotification;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
-use App\Livewire\Concerns\CleanMoneyInput;
-use App\Livewire\Concerns\ContractValidation;
-use App\Livewire\Concerns\HasContractFilters;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 abstract class AbstractContractGenericManager extends Component
 {
-    use WithPagination, WithFileUploads, CleanMoneyInput, ContractValidation, HasContractFilters;
+    use CleanMoneyInput, ContractValidation, HasContractFilters, WithFileUploads, WithPagination;
 
     private const ALLOWED_STATUSES = [
         'PTH đang kiểm tra',
@@ -43,79 +44,104 @@ abstract class AbstractContractGenericManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
+
     public string $sortBy = 'id';
+
     public $sortDirection = 'desc';
+
     public array $selectedDocIds = [];
+
     public bool $showModal = false;
+
     public bool $isEditing = false;
+
     public bool $isDuplicating = false;
+
     public $showDetail = false;
+
     public $selectedDoc = null;
+
     public string $detailActiveTab = 'info';
+
     public bool $showAssignModal = false;
+
     public ?int $assignContractId = null;
+
     public array $assignUserIds = [];
+
     public ?string $assignDeadline = null;
+
     public array $createAssignUserIds = [];
+
     public ?string $createAssignDeadline = null;
+
     public ?string $assignExternal = null;
+
     public ?string $createAssignExternal = null;
+
     public string $progressNote = '';
+
     public $progressNotes = [];
+
     public ?int $workflowContractId = null;
+
     public ?int $quotation_id = null;
+
     public array $newContractFiles = [];
+
     public $existingContractFiles = [];
 
     public $formData = [
-        'shd_cxl'            => '',
-        'shd_bc'             => '',
-        'customer_id'        => '',
-        'handler_id'         => '',
-        'staff_id'           => '',
-        'department_id'      => '',
-        'signed_at'          => '',
-        'submitted_at'       => '',
-        'value'              => 0,
-        'commission'         => 0,
-        'revenue'            => 0,
-        'ncc_payment'        => 0,
+        'shd_cxl' => '',
+        'shd_bc' => '',
+        'customer_id' => '',
+        'handler_id' => '',
+        'staff_id' => '',
+        'department_id' => '',
+        'signed_at' => '',
+        'submitted_at' => '',
+        'value' => 0,
+        'commission' => 0,
+        'revenue' => 0,
+        'ncc_payment' => 0,
         'ncc_payment_sheet_url' => '',
         'ncc_payment_status' => 'unpaid',
         'ncc_payment_paid_at' => '',
-        'province'           => '',
-        'info_source'        => 'MỚI',
-        'payment_method'     => 'Sau ký',
-        'loai_dich_vu'       => '',
-        'status'             => 'PTH đang kiểm tra',
-        'renewal_status'     => '',
-        'voucher_status'     => '',
-        'is_offset'          => false,
-        'has_room_fund'      => false,
-        'is_overdue'         => false,
-        'notes'              => '',
-        'is_renewal'         => false,
+        'province' => '',
+        'info_source' => 'MỚI',
+        'payment_method' => 'Sau ký',
+        'loai_dich_vu' => '',
+        'status' => 'PTH đang kiểm tra',
+        'renewal_status' => '',
+        'voucher_status' => '',
+        'is_offset' => false,
+        'has_room_fund' => false,
+        'is_overdue' => false,
+        'notes' => '',
+        'is_renewal' => false,
         'parent_contract_id' => '',
     ];
 
+    public string $newCustomerName = '';
+
     public $filter = [
-        'signed_from'    => '',
-        'signed_to'      => '',
+        'signed_from' => '',
+        'signed_to' => '',
         'submitted_from' => '',
-        'submitted_to'   => '',
-        'province'       => '',
-        'department_id'  => '',
-        'staff_id'       => '',
-        'info_source'    => '',
+        'submitted_to' => '',
+        'province' => '',
+        'department_id' => '',
+        'staff_id' => '',
+        'info_source' => '',
         'payment_method' => '',
-        'status'         => '',
+        'status' => '',
         'renewal_status' => '',
         'voucher_status' => '',
-        'is_offset'      => false,
-        'has_room_fund'  => false,
-        'is_overdue'     => false,
-        'loai_dich_vu'   => '',
-        'handler_id'     => '',
+        'is_offset' => false,
+        'has_room_fund' => false,
+        'is_overdue' => false,
+        'loai_dich_vu' => '',
+        'handler_id' => '',
         'hide_completed_workflow' => false,
     ];
 
@@ -164,18 +190,18 @@ abstract class AbstractContractGenericManager extends Component
                 $customer = Customer::firstOrCreate(
                     ['name' => $quotation->company_name ?? ''],
                     [
-                        'address'        => $quotation->address ?? '',
-                        'province'       => $quotation->province ?? '',
+                        'address' => $quotation->address ?? '',
+                        'province' => $quotation->province ?? '',
                         'representative' => $quotation->contact_person ?? '',
                     ]
                 );
                 $this->formData['customer_id'] = $customer->id;
-                $this->formData['value']       = $quotation->total_value ?? 0;
-                $this->formData['commission']  = $quotation->commission_value ?? 0;
-                $this->formData['revenue']     = $quotation->original_value ?? 0;
-                $this->formData['staff_id']    = $quotation->staff_id ?? auth()->id();
-                $this->formData['province']    = $quotation->province ?? '';
-                $this->formData['notes']       = $quotation->notes ?? '';
+                $this->formData['value'] = $quotation->total_value ?? 0;
+                $this->formData['commission'] = $quotation->commission_value ?? 0;
+                $this->formData['revenue'] = $quotation->original_value ?? 0;
+                $this->formData['staff_id'] = $quotation->staff_id ?? auth()->id();
+                $this->formData['province'] = $quotation->province ?? '';
+                $this->formData['notes'] = $quotation->notes ?? '';
                 $this->formData['info_source'] = 'MỚI';
                 $this->ensureDepartmentId();
                 $this->showModal = true;
@@ -191,7 +217,7 @@ abstract class AbstractContractGenericManager extends Component
 
     public function updatedFormDataValue(): void
     {
-        if (!$this->isEditing) {
+        if (! $this->isEditing) {
             $this->formData['revenue'] = $this->formData['value'];
         }
     }
@@ -222,22 +248,24 @@ abstract class AbstractContractGenericManager extends Component
     public function edit(int $id): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can($this->getPermEdit()->value)) {
+        if (! $user || ! $user->can($this->getPermEdit()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+
             return;
         }
 
-        $modelClass        = $this->getModelClass();
+        $modelClass = $this->getModelClass();
         $this->selectedDoc = $modelClass::with(['assignments.user'])->findOrFail($id);
 
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedSales && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng này.']);
+
             return;
         }
 
-        $this->formData    = $this->selectedDoc->toArray();
+        $this->formData = $this->selectedDoc->toArray();
         if ($this->selectedDoc->signed_at) {
             $this->formData['signed_at'] = $this->selectedDoc->signed_at->format('Y-m-d');
         }
@@ -252,23 +280,25 @@ abstract class AbstractContractGenericManager extends Component
 
     public function save(): void
     {
-        $user       = auth()->user();
+        $user = auth()->user();
         $modelClass = $this->getModelClass();
 
-        if (!$user || !$user->can($this->isEditing ? $this->getPermEdit()->value : $this->getPermCreate()->value)) {
+        if (! $user || ! $user->can($this->isEditing ? $this->getPermEdit()->value : $this->getPermCreate()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền lưu hợp đồng này.']);
+
             return;
         }
 
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($this->isEditing && ($isRestrictedTpKd || $isRestrictedSales) && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn chỉ được cập nhật hợp đồng do bạn phụ trách.']);
+
             return;
         }
 
-        if (!$user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value])) {
+        if (! $user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value])) {
             $this->formData['staff_id'] = ($this->isEditing && $this->selectedDoc)
                 ? ($this->selectedDoc->staff_id ?: $user->id)
                 : $user->id;
@@ -280,7 +310,7 @@ abstract class AbstractContractGenericManager extends Component
 
         try {
             $this->validate($this->baseContractRules(), $this->contractValidationMessages());
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $firstError = $e->validator->errors()->first();
             if ($firstError) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => $firstError]);
@@ -288,17 +318,18 @@ abstract class AbstractContractGenericManager extends Component
             throw $e;
         }
 
-        $data = collect($this->formData)->map(fn($v) => $v === '' ? null : $v)->toArray();
+        $this->resolveManualCustomer();
+        $data = collect($this->formData)->map(fn ($v) => $v === '' ? null : $v)->toArray();
 
         $isAccountant = $user->hasRole(Role::KE_TOAN->value);
-        if (!$this->isEditing) {
+        if (! $this->isEditing) {
             $data['shd_bc'] = null;
             $data['ncc_payment'] = 0;
             $data['ncc_payment_sheet_url'] = null;
             $data['ncc_payment_updated_at'] = null;
             $data['ncc_payment_status'] = 'unpaid';
             $data['ncc_payment_paid_at'] = null;
-        } elseif (!$isAccountant && $this->selectedDoc) {
+        } elseif (! $isAccountant && $this->selectedDoc) {
             $data['shd_bc'] = $this->selectedDoc->shd_bc;
             $data['ncc_payment'] = $this->selectedDoc->ncc_payment;
             $data['ncc_payment_sheet_url'] = $this->selectedDoc->ncc_payment_sheet_url;
@@ -326,30 +357,30 @@ abstract class AbstractContractGenericManager extends Component
         } else {
             $newContract = $modelClass::create($data);
 
-            if (count($this->createAssignUserIds) > 0 || !empty($this->createAssignExternal)) {
-                $contractType  = $this->getContractType();
-                $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #' . $newContract->id);
+            if (count($this->createAssignUserIds) > 0 || ! empty($this->createAssignExternal)) {
+                $contractType = $this->getContractType();
+                $contractLabel = $newContract->shd_bc ?: ($newContract->customer?->name ?: 'HĐ #'.$newContract->id);
                 foreach ($this->createAssignUserIds as $userId) {
                     ContractAssignment::create([
                         'assignable_type' => $modelClass,
-                        'assignable_id'   => $newContract->id,
-                        'user_id'         => (int) $userId,
-                        'assigned_by'     => auth()->id(),
-                        'deadline'        => $this->createAssignDeadline ?: null,
+                        'assignable_id' => $newContract->id,
+                        'user_id' => (int) $userId,
+                        'assigned_by' => auth()->id(),
+                        'deadline' => $this->createAssignDeadline ?: null,
                     ]);
                     $assignedUser = User::find($userId);
                     if ($assignedUser && $assignedUser->id !== auth()->id()) {
                         $assignedUser->notify(new ContractAssignedNotification($contractType, $newContract->id, $contractLabel, auth()->user()->name));
                     }
                 }
-                if (!empty($this->createAssignExternal)) {
+                if (! empty($this->createAssignExternal)) {
                     ContractAssignment::create([
-                        'assignable_type'   => $modelClass,
-                        'assignable_id'     => $newContract->id,
-                        'user_id'           => null,
+                        'assignable_type' => $modelClass,
+                        'assignable_id' => $newContract->id,
+                        'user_id' => null,
                         'external_assignee' => $this->createAssignExternal,
-                        'assigned_by'       => auth()->id(),
-                        'deadline'          => $this->createAssignDeadline ?: null,
+                        'assigned_by' => auth()->id(),
+                        'deadline' => $this->createAssignDeadline ?: null,
                     ]);
                 }
             }
@@ -364,35 +395,39 @@ abstract class AbstractContractGenericManager extends Component
     public function updateStatus(int $id, string $status): void
     {
         $modelClass = $this->getModelClass();
-        $doc        = $modelClass::findOrFail($id);
-        $user       = auth()->user();
+        $doc = $modelClass::findOrFail($id);
+        $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
             return;
         }
 
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedTpKd || $isRestrictedSales) {
             if ((int) $doc->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng này.']);
+
                 return;
             }
         } else {
             if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền cập nhật trạng thái hợp đồng.']);
+
                 return;
             }
         }
 
-        if (!$user->can($this->getPermEdit()->value)) {
+        if (! $user->can($this->getPermEdit()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền chỉnh sửa hợp đồng.']);
+
             return;
         }
 
-        if (!in_array($status, self::ALLOWED_STATUSES, true)) {
+        if (! in_array($status, self::ALLOWED_STATUSES, true)) {
             return;
         }
 
@@ -408,26 +443,29 @@ abstract class AbstractContractGenericManager extends Component
     public function delete(int $id): void
     {
         $modelClass = $this->getModelClass();
-        $doc        = $modelClass::findOrFail($id);
-        $user       = auth()->user();
+        $doc = $modelClass::findOrFail($id);
+        $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
             return;
         }
 
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedTpKd || $isRestrictedSales) {
             if ((int) $doc->staff_id !== (int) $user->id) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng này.']);
+
                 return;
             }
         }
 
-        if (!$user->can($this->getPermDelete()->value)) {
+        if (! $user->can($this->getPermDelete()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+
             return;
         }
 
@@ -438,55 +476,59 @@ abstract class AbstractContractGenericManager extends Component
     public function duplicate(int $id): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can($this->getPermCreate()->value)) {
+        if (! $user || ! $user->can($this->getPermCreate()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+
             return;
         }
         $modelClass = $this->getModelClass();
-        $doc        = $modelClass::findOrFail($id);
+        $doc = $modelClass::findOrFail($id);
         $this->resetForm();
-        $this->formData                = $doc->toArray();
-        $this->formData['signed_at']   = $doc->signed_at ? $doc->signed_at->format('Y-m-d') : date('Y-m-d');
+        $this->formData = $doc->toArray();
+        $this->formData['signed_at'] = $doc->signed_at ? $doc->signed_at->format('Y-m-d') : date('Y-m-d');
         $this->formData['submitted_at'] = '';
-        $this->formData['shd_cxl']     = '';
-        $this->formData['shd_bc']      = '';
+        $this->formData['shd_cxl'] = '';
+        $this->formData['shd_bc'] = '';
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
         $this->normalizeContractEnumFields();
-        $this->isEditing     = false;
+        $this->isEditing = false;
         $this->isDuplicating = true;
-        $this->selectedDoc   = null;
-        $this->showModal     = true;
+        $this->selectedDoc = null;
+        $this->showModal = true;
         $this->dispatch('openFormModal');
     }
 
     public function bulkDeleteSelected(): void
     {
         $user = auth()->user();
-        if (!$user || !$user->can($this->getPermDelete()->value)) {
+        if (! $user || ! $user->can($this->getPermDelete()->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
+
             return;
         }
 
         $selectedIds = collect($this->selectedDocIds)
-            ->map(static fn($id) => (int) $id)
-            ->filter(static fn($id) => $id > 0)
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
             ->unique()
             ->values();
 
         if ($selectedIds->isEmpty()) {
             $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng chọn ít nhất 1 hợp đồng để xóa.']);
+
             return;
         }
 
         $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
-        $deletedCount     = 0;
-        $skippedCount     = 0;
+        $deletedCount = 0;
+        $skippedCount = 0;
 
         $modelClass = $this->getModelClass();
         $docs = $modelClass::whereIn('id', $selectedIds)->get();
         foreach ($docs as $doc) {
             if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
                 $skippedCount++;
+
                 continue;
             }
             $doc->delete();
@@ -497,6 +539,7 @@ abstract class AbstractContractGenericManager extends Component
 
         if ($deletedCount === 0) {
             $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có hợp đồng nào được xóa.']);
+
             return;
         }
 
@@ -616,8 +659,9 @@ abstract class AbstractContractGenericManager extends Component
 
     public function updateInlineReportNumber(int $docId, ?string $value): void
     {
-        if (!auth()->user()->hasRole(Role::KY_THUAT->value)) {
+        if (! auth()->user()->hasRole(Role::KY_THUAT->value)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Chỉ nhân viên Kỹ thuật mới được cập nhật Báo cáo số.']);
+
             return;
         }
 
@@ -634,19 +678,21 @@ abstract class AbstractContractGenericManager extends Component
     public function viewDetail(int $id): void
     {
         $this->detailActiveTab = 'info';
-        $modelClass        = $this->getModelClass();
+        $modelClass = $this->getModelClass();
         $this->selectedDoc = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'assignments.assigner', 'handler'])->find($id);
         if ($this->selectedDoc) {
             $user = auth()->user();
-            if (!$user) {
+            if (! $user) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Phiên đăng nhập hết hạn, vui lòng tải lại trang.']);
+
                 return;
             }
             $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-                && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+                && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
             if ($isRestrictedSales && (int) $this->selectedDoc->staff_id !== (int) $user->id) {
                 $this->selectedDoc = null;
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xem chi tiết hợp đồng này.']);
+
                 return;
             }
             $this->progressNotes = ContractProgressNote::where('contract_type', $this->getContractType())
@@ -686,17 +732,18 @@ abstract class AbstractContractGenericManager extends Component
 
     public function openAssign(int $id): void
     {
-        if (!$this->canAssign()) {
+        if (! $this->canAssign()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
             return;
         }
 
-        $modelClass             = $this->getModelClass();
+        $modelClass = $this->getModelClass();
         $this->assignContractId = $id;
-        $existing               = ContractAssignment::where('assignable_type', $modelClass)
+        $existing = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $id)
             ->get();
-        $this->assignUserIds  = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignUserIds = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
         $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
         $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
         $this->dispatch('openAssignModal');
@@ -704,13 +751,14 @@ abstract class AbstractContractGenericManager extends Component
 
     public function saveAssign(): void
     {
-        if (!$this->canAssign()) {
+        if (! $this->canAssign()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
             return;
         }
 
-        $modelClass    = $this->getModelClass();
-        $contractType  = $this->getContractType();
+        $modelClass = $this->getModelClass();
+        $contractType = $this->getContractType();
 
         ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $this->assignContractId)
@@ -719,26 +767,26 @@ abstract class AbstractContractGenericManager extends Component
         foreach ($this->assignUserIds as $userId) {
             ContractAssignment::create([
                 'assignable_type' => $modelClass,
-                'assignable_id'   => $this->assignContractId,
-                'user_id'         => (int) $userId,
-                'assigned_by'     => auth()->id(),
-                'deadline'        => $this->assignDeadline ?: null,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => (int) $userId,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
             ]);
         }
 
-        if (!empty($this->assignExternal)) {
+        if (! empty($this->assignExternal)) {
             ContractAssignment::create([
-                'assignable_type'   => $modelClass,
-                'assignable_id'     => $this->assignContractId,
-                'user_id'           => null,
+                'assignable_type' => $modelClass,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => null,
                 'external_assignee' => $this->assignExternal,
-                'assigned_by'       => auth()->id(),
-                'deadline'          => $this->assignDeadline ?: null,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
             ]);
         }
 
-        $contract      = $modelClass::with('customer')->find($this->assignContractId);
-        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #' . $this->assignContractId);
+        $contract = $modelClass::with('customer')->find($this->assignContractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
 
         foreach ($this->assignUserIds as $userId) {
             $user = User::find($userId);
@@ -748,9 +796,9 @@ abstract class AbstractContractGenericManager extends Component
         }
 
         $this->assignContractId = null;
-        $this->assignUserIds    = [];
-        $this->assignExternal   = null;
-        $this->assignDeadline   = null;
+        $this->assignUserIds = [];
+        $this->assignExternal = null;
+        $this->assignDeadline = null;
         $this->dispatch('closeAssignModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
     }
@@ -758,18 +806,18 @@ abstract class AbstractContractGenericManager extends Component
     public function addProgressNote(int $contractId): void
     {
         $this->validate(['progressNote' => 'required|min:1|max:2000']);
-        $modelClass   = $this->getModelClass();
+        $modelClass = $this->getModelClass();
         $contractType = $this->getContractType();
-        $noteText     = $this->progressNote;
+        $noteText = $this->progressNote;
 
         ContractProgressNote::create([
             'contract_type' => $contractType,
-            'contract_id'   => $contractId,
-            'user_id'       => auth()->id(),
-            'note'          => $noteText,
+            'contract_id' => $contractId,
+            'user_id' => auth()->id(),
+            'note' => $noteText,
         ]);
 
-        $this->progressNote  = '';
+        $this->progressNote = '';
         $this->progressNotes = ContractProgressNote::where('contract_type', $contractType)
             ->where('contract_id', $contractId)
             ->with('user')
@@ -777,9 +825,9 @@ abstract class AbstractContractGenericManager extends Component
             ->get();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm ghi chú!']);
 
-        $contract      = $modelClass::with('customer')->find($contractId);
-        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #' . $contractId);
-        $recipients    = User::whereHas('roles', fn($q) => $q->whereIn('name', [
+        $contract = $modelClass::with('customer')->find($contractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
+        $recipients = User::whereHas('roles', fn ($q) => $q->whereIn('name', [
             Role::GIAM_DOC->value,
             Role::TP_KINH_DOANH->value,
             Role::IT->value,
@@ -789,7 +837,7 @@ abstract class AbstractContractGenericManager extends Component
             ->where('assignable_id', $contractId)
             ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
-            ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
+            ->flatMap(fn ($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()
             ->unique()
             ->values();
@@ -832,68 +880,68 @@ abstract class AbstractContractGenericManager extends Component
     public function resetFilters(): void
     {
         $this->filter = [
-            'signed_from'    => '',
-            'signed_to'      => '',
+            'signed_from' => '',
+            'signed_to' => '',
             'submitted_from' => '',
-            'submitted_to'   => '',
-            'province'       => '',
-            'department_id'  => '',
-            'staff_id'       => '',
-            'info_source'    => '',
+            'submitted_to' => '',
+            'province' => '',
+            'department_id' => '',
+            'staff_id' => '',
+            'info_source' => '',
             'payment_method' => '',
-            'status'         => '',
+            'status' => '',
             'renewal_status' => '',
             'voucher_status' => '',
-            'is_offset'      => false,
-            'has_room_fund'  => false,
-            'is_overdue'     => false,
-            'loai_dich_vu'   => '',
-            'handler_id'     => '',
+            'is_offset' => false,
+            'has_room_fund' => false,
+            'is_overdue' => false,
+            'loai_dich_vu' => '',
+            'handler_id' => '',
             'hide_completed_workflow' => auth()->user()->hasAnyRole([
                 Role::TU_VAN->value,
                 Role::KY_THUAT->value,
             ]),
         ];
         $this->selectedDocIds = [];
-        $this->sortBy         = 'id';
-        $this->sortDirection  = 'desc';
+        $this->sortBy = 'id';
+        $this->sortDirection = 'desc';
         $this->resetPage();
     }
 
     // ── Export ───────────────────────────────────────────────────────────────
 
-    public function exportExcel(): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function exportExcel(): StreamedResponse
     {
-        $user             = auth()->user();
-        $modelClass       = $this->getModelClass();
+        $user = auth()->user();
+        $modelClass = $this->getModelClass();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = $modelClass::with(['customer', 'staff', 'department', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
-                    $sq->where('shd_bc', 'like', '%' . $this->search . '%')
+                    $sq->where('shd_bc', 'like', '%'.$this->search.'%')
                         ->orWhereHas('customer', function ($csq) {
-                            $csq->where('name', 'like', '%' . $this->search . '%');
+                            $csq->where('name', 'like', '%'.$this->search.'%');
                         });
                 });
             })
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $supportsReportNumberSorting = Schema::hasColumn((new $modelClass)->getTable(), 'report_number');
-        $sortColumn     = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
-        $docs           = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->get();
-        $title          = $this->getExportTitle();
-        $showFinancials = !$user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
+        $sortColumn = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
+        $docs = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->get();
+        $title = $this->getExportTitle();
+        $showFinancials = ! $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
         return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
             echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
-        }, $this->getExportFilenamePrefix() . '_' . now()->format('d_m_Y') . '.xls', [
+        }, $this->getExportFilenamePrefix().'_'.now()->format('d_m_Y').'.xls', [
             'Content-Type' => 'application/vnd.ms-excel',
         ]);
     }
@@ -902,36 +950,36 @@ abstract class AbstractContractGenericManager extends Component
 
     public function render()
     {
-        $user             = auth()->user();
-        $modelClass       = $this->getModelClass();
+        $user = auth()->user();
+        $modelClass = $this->getModelClass();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
         $query = $modelClass::with(['customer', 'staff', 'department', 'assignments.user', 'handler', 'workflowSteps'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sq) {
-                    $sq->where('shd_bc', 'like', '%' . $this->search . '%')
+                    $sq->where('shd_bc', 'like', '%'.$this->search.'%')
                         ->orWhereHas('customer', function ($csq) {
-                            $csq->where('name', 'like', '%' . $this->search . '%');
+                            $csq->where('name', 'like', '%'.$this->search.'%');
                         });
                 });
             })
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $supportsReportNumberSorting = Schema::hasColumn((new $modelClass)->getTable(), 'report_number');
-        $sortColumn     = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
-        $docs           = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->paginate(10);
+        $sortColumn = $supportsReportNumberSorting && ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
+        $docs = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->paginate(10);
 
         $isRestrictedUser = $isRestrictedSales || $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
         $baseUserQuery = $modelClass::query()
-            ->when($isRestrictedSales, fn($q) => $q->where('staff_id', $user->id))
+            ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
             ->when($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
-                fn($q) => $q->whereHas('assignments', fn($sq) => $sq->where('user_id', $user->id)));
+                fn ($q) => $q->whereHas('assignments', fn ($sq) => $sq->where('user_id', $user->id)));
 
         $loaiDichVuOptions = $modelClass::SERVICE_TYPES;
 
@@ -939,22 +987,22 @@ abstract class AbstractContractGenericManager extends Component
             ? (clone $baseUserQuery)->whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray()
             : $modelClass::whereNotNull('province')->where('province', '!=', '')->distinct()->orderBy('province')->pluck('province')->toArray();
 
-        return view('livewire.admin.contracts.' . $this->getViewName(), [
-            'docs'                   => $docs,
-            'customers'              => Customer::orderBy('name')->get(),
-            'staffs'                 => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->where('is_active', true)->orderBy('name')->get(),
-            'departments'            => Department::all(),
-            'assignable_users'       => User::where('is_active', true)->whereHas('roles', fn($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
-            'provinces'              => $scopedProvinces,
-            'all_statuses'           => self::ALLOWED_STATUSES,
-            'renewal_statuses'       => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
+        return view('livewire.admin.contracts.'.$this->getViewName(), [
+            'docs' => $docs,
+            'customers' => Customer::orderBy('name')->get(),
+            'staffs' => User::role([Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value])->where('is_active', true)->orderBy('name')->get(),
+            'departments' => Department::all(),
+            'assignable_users' => User::where('is_active', true)->whereHas('roles', fn ($q) => $q->whereIn('name', [Role::TU_VAN->value, Role::KY_THUAT->value, Role::KINH_DOANH->value, Role::TP_KINH_DOANH->value]))->orderBy('name')->get(),
+            'provinces' => $scopedProvinces,
+            'all_statuses' => self::ALLOWED_STATUSES,
+            'renewal_statuses' => $modelClass::whereNotNull('renewal_status')->where('renewal_status', '!=', '')->distinct()->pluck('renewal_status')->toArray(),
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_status_options' => ContractVoucherStatus::values(),
-            'loai_dich_vu_options'   => $loaiDichVuOptions,
-            'payment_methods'        => ['Sau ký', 'Trước ký'],
-            'info_sources'           => $modelClass::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
-            'parentContracts'        => $modelClass::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
-            'handlers'               => Handler::orderBy('name')->get(),
+            'loai_dich_vu_options' => $loaiDichVuOptions,
+            'payment_methods' => ['Sau ký', 'Trước ký'],
+            'info_sources' => $modelClass::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
+            'parentContracts' => $modelClass::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
+            'handlers' => Handler::orderBy('name')->get(),
             'supports_report_number_sorting' => $supportsReportNumberSorting,
         ])->layout('admin.layouts.app', ['title' => $this->getPageTitle()]);
     }
@@ -969,27 +1017,27 @@ abstract class AbstractContractGenericManager extends Component
     public function uploadContractFile(): void
     {
         $this->validate([
-            'newContractFiles'   => 'required|array|max:10',
+            'newContractFiles' => 'required|array|max:10',
             'newContractFiles.*' => 'file|max:51200|mimes:pdf',
         ], [
-            'newContractFiles.required'      => 'Vui lòng chọn ít nhất 1 file.',
-            'newContractFiles.*.max'         => 'File PDF không được vượt quá 50MB.',
-            'newContractFiles.*.mimes'       => 'Chỉ chấp nhận file PDF.',
+            'newContractFiles.required' => 'Vui lòng chọn ít nhất 1 file.',
+            'newContractFiles.*.max' => 'File PDF không được vượt quá 50MB.',
+            'newContractFiles.*.mimes' => 'Chỉ chấp nhận file PDF.',
         ]);
 
-        $disk         = config('filesystems.upload_disk', 'public');
+        $disk = config('filesystems.upload_disk', 'public');
         $contractType = $this->getContractType();
-        $modelClass   = $this->getModelClass();
+        $modelClass = $this->getModelClass();
 
         foreach ($this->newContractFiles as $file) {
             $path = $file->storePublicly("contract-files/{$contractType}/contract_document", $disk);
             ContractMilestoneFile::create([
                 'contract_type' => $modelClass,
-                'contract_id'   => $this->selectedDoc->id,
-                'milestone'     => 'contract_document',
-                'file_path'     => $path,
+                'contract_id' => $this->selectedDoc->id,
+                'milestone' => 'contract_document',
+                'file_path' => $path,
                 'original_name' => $file->getClientOriginalName(),
-                'uploader_id'   => auth()->id(),
+                'uploader_id' => auth()->id(),
             ]);
         }
 
@@ -1028,41 +1076,42 @@ abstract class AbstractContractGenericManager extends Component
 
     private function resetForm(): void
     {
+        $this->newCustomerName = '';
         $this->formData = [
-            'shd_cxl'            => '',
-            'shd_bc'             => '',
-            'customer_id'        => '',
-            'handler_id'         => '',
-            'staff_id'           => auth()->id(),
-            'department_id'      => 3,
-            'signed_at'          => date('Y-m-d'),
-            'submitted_at'       => '',
-            'value'              => 0,
-            'commission'         => 0,
-            'revenue'            => 0,
-            'ncc_payment'        => 0,
+            'shd_cxl' => '',
+            'shd_bc' => '',
+            'customer_id' => '',
+            'handler_id' => '',
+            'staff_id' => auth()->id(),
+            'department_id' => 3,
+            'signed_at' => date('Y-m-d'),
+            'submitted_at' => '',
+            'value' => 0,
+            'commission' => 0,
+            'revenue' => 0,
+            'ncc_payment' => 0,
             'ncc_payment_sheet_url' => '',
             'ncc_payment_status' => 'unpaid',
             'ncc_payment_paid_at' => '',
-            'province'           => '',
-            'info_source'        => 'MỚI',
-            'payment_method'     => 'Sau ký',
-            'loai_dich_vu'       => '',
-            'status'             => 'PTH đang kiểm tra',
-            'renewal_status'     => '',
-            'voucher_status'     => '',
-            'is_offset'          => false,
-            'has_room_fund'      => false,
-            'is_overdue'         => false,
-            'notes'              => '',
-            'is_renewal'         => false,
+            'province' => '',
+            'info_source' => 'MỚI',
+            'payment_method' => 'Sau ký',
+            'loai_dich_vu' => '',
+            'status' => 'PTH đang kiểm tra',
+            'renewal_status' => '',
+            'voucher_status' => '',
+            'is_offset' => false,
+            'has_room_fund' => false,
+            'is_overdue' => false,
+            'notes' => '',
+            'is_renewal' => false,
             'parent_contract_id' => '',
         ];
-        $this->isDuplicating         = false;
-        $this->selectedDoc            = null;
-        $this->createAssignUserIds    = [];
-        $this->createAssignDeadline   = null;
-        $this->createAssignExternal   = null;
+        $this->isDuplicating = false;
+        $this->selectedDoc = null;
+        $this->createAssignUserIds = [];
+        $this->createAssignDeadline = null;
+        $this->createAssignExternal = null;
     }
 
     private function filterDataForModelTable(string $modelClass, array $data): array

@@ -3,23 +3,32 @@
 namespace App\Livewire\Admin\InternalDocs;
 
 use App\Enums\Permission;
+use App\Models\Department;
 use App\Models\InternalDoc;
-use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class InternalDocManager extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     public $search = '';
+
     public $perPage = 10;
+
+    public $departmentFilter = '';
 
     // For Create/Edit
     public $docId;
+
     public $title;
+
+    public $departmentId = '';
+
     public $newFiles = [];
+
     public $existingFiles = [];
 
     protected $listeners = ['deleteConfirmed' => 'delete'];
@@ -29,10 +38,16 @@ class InternalDocManager extends Component
         $this->resetPage();
     }
 
+    public function updatingDepartmentFilter()
+    {
+        $this->resetPage();
+    }
+
     public function resetFields()
     {
         $this->docId = null;
         $this->title = '';
+        $this->departmentId = '';
         $this->newFiles = [];
         $this->existingFiles = [];
     }
@@ -47,12 +62,13 @@ class InternalDocManager extends Component
         \Log::info('InternalDocManager: Starting save process', [
             'title' => $this->title,
             'docId' => $this->docId,
-            'newFilesCount' => count($this->newFiles)
+            'newFilesCount' => count($this->newFiles),
         ]);
 
         $this->validate([
             'title' => 'required|string|max:255',
-            'newFiles' => ($this->docId ? 'nullable' : 'required') . '|array|max:10',
+            'departmentId' => 'nullable|exists:departments,id',
+            'newFiles' => ($this->docId ? 'nullable' : 'required').'|array|max:10',
             'newFiles.*' => 'file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png|max:102400',
         ], [
             'newFiles.required' => 'Vui lòng đính kèm ít nhất 1 file.',
@@ -83,13 +99,15 @@ class InternalDocManager extends Component
                 $doc = InternalDoc::find($this->docId);
                 $doc->update([
                     'title' => $this->title,
-                    'files' => $filesData
+                    'files' => $filesData,
+                    'department_id' => $this->departmentId ?: null,
                 ]);
                 $this->dispatch('swal:success', ['message' => 'Cập nhật thành công!']);
             } else {
                 InternalDoc::create([
                     'title' => $this->title,
-                    'files' => $filesData
+                    'files' => $filesData,
+                    'department_id' => $this->departmentId ?: null,
                 ]);
                 $this->dispatch('swal:success', ['message' => 'Thêm mới thành công!']);
             }
@@ -101,9 +119,9 @@ class InternalDocManager extends Component
         } catch (\Exception $e) {
             \Log::error('InternalDocManager: Save failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            $this->dispatch('swal:error', ['message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+            $this->dispatch('swal:error', ['message' => 'Có lỗi xảy ra: '.$e->getMessage()]);
         }
     }
 
@@ -112,6 +130,7 @@ class InternalDocManager extends Component
         $doc = InternalDoc::findOrFail($id);
         $this->docId = $doc->id;
         $this->title = $doc->title;
+        $this->departmentId = $doc->department_id ? (string) $doc->department_id : '';
         $this->existingFiles = $doc->files ?? [];
         $this->newFiles = [];
         $this->dispatch('openModal');
@@ -151,8 +170,16 @@ class InternalDocManager extends Component
     public function render()
     {
         $docs = InternalDoc::query()
-            ->when($this->search, function($query) {
-                $query->where('title', 'like', '%' . $this->search . '%');
+            ->with('department')
+            ->when($this->search, function ($query) {
+                $query->where('title', 'like', '%'.$this->search.'%');
+            })
+            ->when($this->departmentFilter !== '', function ($query) {
+                if ($this->departmentFilter === 'company') {
+                    $query->whereNull('department_id');
+                } else {
+                    $query->where('department_id', $this->departmentFilter);
+                }
             })
             ->orderBy('id', 'desc')
             ->paginate($this->perPage);
@@ -179,7 +206,11 @@ class InternalDocManager extends Component
         });
 
         return view('livewire.admin.internal-docs.internal-doc-manager', [
-            'docs' => $docs
+            'docs' => $docs,
+            'departments' => Department::query()
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get(),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Quy định']);
     }
 }

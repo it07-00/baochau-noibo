@@ -15,6 +15,14 @@
                         placeholder="Tìm kiếm phần mềm..." >
                 </div>
 
+                <select class="form-select form-select-sm w-auto" wire:model.live="departmentFilter">
+                    <option value="">Tất cả phòng ban</option>
+                    <option value="company">Toàn công ty</option>
+                    @foreach($departments as $department)
+                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                    @endforeach
+                </select>
+
                 @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                     <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2 rounded-8px" >
                         <i class="bi bi-plus-lg"></i> Thêm mới
@@ -41,6 +49,9 @@
                                     @if($sw->version)
                                         <small class="text-muted">Phiên bản: {{ $sw->version }}</small>
                                     @endif
+                                    <div class="mt-1">
+                                        <span class="badge bg-label-info">{{ $sw->department?->name ?? 'Toàn công ty' }}</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -113,6 +124,17 @@
                                 <label class="form-label fw-bold text-muted">Đường dẫn / Link tải <span class="text-danger">*</span></label>
                                 <input type="url" wire:model="url" class="form-control" placeholder="https://..." required>
                                 @error('url') <span class="text-danger small">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">Phòng ban</label>
+                                <select wire:model="departmentId" class="form-select">
+                                    <option value="">Toàn công ty</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('departmentId') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="mb-3">

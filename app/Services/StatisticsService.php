@@ -399,6 +399,7 @@ class StatisticsService
             ->whereIn('status', [
                 QuotationStatus::DANG_THEO_DOI->value,
                 QuotationStatus::HEN_BAO_GIA->value,
+                QuotationStatus::BAO_GIA_TIEM_NANG->value,
             ]);
 
         if ($contractDateFromParsed !== null || $contractDateToParsed !== null) {

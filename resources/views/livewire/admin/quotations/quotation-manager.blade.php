@@ -374,7 +374,12 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Nguồn</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.source" placeholder="VD: Referral, Zalo...">
+                                <select class="form-select" wire:model.defer="formData.source">
+                                    <option value="">-- Chọn nguồn --</option>
+                                    @foreach($sources as $source)
+                                        <option value="{{ $source }}">{{ $source }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-md-3">
@@ -439,9 +444,15 @@
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Thuế HH</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.commission_tax">
+                                    <input type="text"
+                                        class="form-control text-end money-input {{ $this->isCommissionTaxManual() ? '' : 'bg-light' }}"
+                                        wire:model.live.debounce.500ms="formData.commission_tax"
+                                        @readonly(!$this->isCommissionTaxManual())>
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
+                                @unless($this->isCommissionTaxManual())
+                                    <small class="text-muted">Tự tính 20%–30%</small>
+                                @endunless
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Giá trị chưa VAT</label>
