@@ -47,7 +47,7 @@ class PotentialQuotationSeeder extends Seeder
                     'company_name' => $sample['company'],
                     'service' => $sample['service'],
                     'contact_person' => 'Khách hàng mẫu '.($index + 1),
-                    'work_description' => 'Dữ liệu mẫu kiểm tra cột doanh số tiềm năng.',
+                    'work_description' => 'Dữ liệu mẫu kiểm tra cột doanh số chưa chắc chắn.',
                     'status' => QuotationStatus::BAO_GIA_TIEM_NANG->value,
                     'original_value' => $sample['original'],
                     'commission_value' => $commission,

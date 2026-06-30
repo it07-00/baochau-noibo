@@ -85,7 +85,7 @@
                             <th class="w-120px">Tháng</th>
                             <th class="text-end text-truncate-220" >Mục tiêu (đ)</th>
                             <th class="text-end w-230px" >Thực tế (Doanh số từ HĐ) (đ)</th>
-                            <th class="text-end w-200px">Doanh số tiềm năng (đ)</th>
+                            <th class="text-end w-200px">Doanh số chưa chắc chắn (đ)</th>
                             <th class="text-end text-truncate-220" >Chênh lệch (đ)</th>
                             <th class="mnw-220px">Tiến độ</th>
                             <th class="text-center w-120px" >Trạng thái</th>
