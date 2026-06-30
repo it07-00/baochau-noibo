@@ -13,8 +13,8 @@
         <div class="statistics-filter-bar d-flex gap-2 flex-wrap justify-content-end">
             <select wire:model.live="month" class="form-select statistics-filter-control mnw-170px min-h-42px" >
                 <option value="">Cả năm</option>
-                @for($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}">Tháng {{ $m }}</option>
+                @for($m = 1; $m <= $this->maximumVisibleMonth(); $m++)
+                    <option value="{{ $m }}">Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
                 @endfor
             </select>
             <select wire:model.live="year" class="form-select statistics-filter-control mnw-170px min-h-42px" >

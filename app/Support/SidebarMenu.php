@@ -152,7 +152,7 @@ class SidebarMenu
                 'title'      => 'Báo cáo Kinh doanh',
                 'icon'       => 'users',
                 'permission' => 'reports-sales.view',
-                'children'   => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Bảng doanh số cá nhân'],
+                'children'   => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết'],
             ],
             [
                 'title'      => 'Báo cáo Tư vấn',

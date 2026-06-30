@@ -45,7 +45,16 @@ class StatisticsBoard extends Component
 
     public function updatedYear(): void
     {
+        if ($this->month !== '' && (int) $this->month > $this->maximumVisibleMonth()) {
+            $this->month = '';
+        }
+
         $this->dispatch('chart-updated');
+    }
+
+    public function maximumVisibleMonth(): int
+    {
+        return $this->year === now()->year ? now()->month : 12;
     }
 
     public function updatedMonth(): void

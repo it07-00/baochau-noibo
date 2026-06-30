@@ -19,6 +19,10 @@ class SalesTargetReport extends Component
 {
     public int $year;
 
+    public int $viewMonth;
+
+    public string $viewMode = 'month';
+
     public string $filter_staff = '';
 
     public int $filter_month = 0;
@@ -48,6 +52,7 @@ class SalesTargetReport extends Component
     public function mount(): void
     {
         $this->year = (int) now()->format('Y');
+        $this->viewMonth = (int) now()->format('n');
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
             && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
@@ -56,10 +61,43 @@ class SalesTargetReport extends Component
         } else {
             $this->filter_staff = '';
         }
+
+        $this->loadMonthDetail();
+    }
+
+    public function switchMode(string $mode): void
+    {
+        if (in_array($mode, ['year', 'month'], true)) {
+            $this->viewMode = $mode;
+        }
+    }
+
+    public function updatedYear(): void
+    {
+        $this->loadMonthDetail();
+    }
+
+    public function updatedFilterStaff(): void
+    {
+        $this->loadMonthDetail();
+    }
+
+    public function updatedViewMonth(): void
+    {
+        $this->loadMonthDetail();
     }
 
     public function openDetail(int $month): void
     {
+        $this->viewMonth = $month;
+        $this->filter_month = $month;
+        $this->loadMonthDetail();
+        $this->dispatch('openDetailModal');
+    }
+
+    private function loadMonthDetail(): void
+    {
+        $month = $this->viewMonth;
         $this->filter_month = $month;
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
@@ -90,6 +128,10 @@ class SalesTargetReport extends Component
                         'staff' => $contract->staff?->name ?? '—',
                         'type' => $this->contractTypeLabels[$modelClass],
                         'value' => (float) $contract->revenue,
+                        'contract_value' => (float) $contract->value,
+                        'service' => $contract->loai_dich_vu ?: $this->contractTypeLabels[$modelClass],
+                        'payment_method' => $contract->payment_method,
+                        'notes' => $contract->notes,
                         'is_renewal' => (bool) $contract->is_renewal,
                         'date' => $contract->submitted_at?->format('d/m/Y'),
                     ]);
@@ -98,7 +140,6 @@ class SalesTargetReport extends Component
         }
 
         $this->detail = $detail->sortByDesc('date')->values()->toArray();
-        $this->dispatch('openDetailModal');
     }
 
     public function openPotentialDetail(int $month): void
@@ -272,6 +313,13 @@ class SalesTargetReport extends Component
         return view('livewire.admin.reports.sales.sales-target-report', [
             'months' => $months,
             'totals' => $totals,
+            'monthTarget' => (float) $months[$this->viewMonth]['target'],
+            'monthActual' => (float) $months[$this->viewMonth]['actual'],
+            'monthRemain' => max(0, (float) $months[$this->viewMonth]['target'] - (float) $months[$this->viewMonth]['actual']),
+            'monthPct' => $this->monthMetrics($months[$this->viewMonth])['pct'],
+            'selectedStaffName' => $this->filter_staff !== ''
+                ? ($staffs->firstWhere('id', (int) $this->filter_staff)?->name ?? '—')
+                : 'Tất cả nhân viên KD',
             'staffs' => $staffs,
             'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
