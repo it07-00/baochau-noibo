@@ -97,6 +97,10 @@ class SalesTargetReport extends Component
 
     private function loadMonthDetail(): void
     {
+        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
+        if ($this->viewMonth > $maxMonth) {
+            $this->viewMonth = $maxMonth;
+        }
         $month = $this->viewMonth;
         $this->filter_month = $month;
         $user = auth()->user();
@@ -140,6 +144,27 @@ class SalesTargetReport extends Component
         }
 
         $this->detail = $detail->sortByDesc('date')->values()->toArray();
+
+        $this->potentialDetail = empty($staffIds)
+            ? []
+            : Quotation::query()
+                ->with('staff')
+                ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
+                ->whereIn('staff_id', $staffIds)
+                ->whereYear(\DB::raw('COALESCE(expected_signing_date, date)'), $this->year)
+                ->whereMonth(\DB::raw('COALESCE(expected_signing_date, date)'), $month)
+                ->orderByDesc('date')
+                ->get()
+                ->map(fn (Quotation $quotation) => [
+                    'company' => $quotation->company_name ?: '—',
+                    'service' => $quotation->service ?: '—',
+                    'staff' => $quotation->staff?->name ?? '—',
+                    'source' => $quotation->source ?: '—',
+                    'value' => (float) $quotation->value_inc_vat,
+                    'date' => $quotation->expected_signing_date ? $quotation->expected_signing_date->format('d/m/Y') : ($quotation->date?->format('d/m/Y') ?? '—'),
+                    'notes' => $quotation->notes ?: '—',
+                ])
+                ->all();
     }
 
     public function openPotentialDetail(int $month): void
@@ -162,9 +187,9 @@ class SalesTargetReport extends Component
             : Quotation::query()
                 ->with('staff')
                 ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
-                ->whereYear('date', $this->year)
-                ->whereMonth('date', $month)
                 ->whereIn('staff_id', $staffIds)
+                ->whereYear(\DB::raw('COALESCE(expected_signing_date, date)'), $this->year)
+                ->whereMonth(\DB::raw('COALESCE(expected_signing_date, date)'), $month)
                 ->orderByDesc('date')
                 ->get()
                 ->map(fn (Quotation $quotation) => [
@@ -173,7 +198,7 @@ class SalesTargetReport extends Component
                     'staff' => $quotation->staff?->name ?? '—',
                     'source' => $quotation->source ?: '—',
                     'value' => (float) $quotation->value_inc_vat,
-                    'date' => $quotation->date?->format('d/m/Y') ?? '—',
+                    'date' => $quotation->expected_signing_date ? $quotation->expected_signing_date->format('d/m/Y') : ($quotation->date?->format('d/m/Y') ?? '—'),
                 ])
                 ->all();
 
@@ -247,8 +272,13 @@ class SalesTargetReport extends Component
 
     public function render()
     {
+        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
+        if ($this->viewMonth > $maxMonth) {
+            $this->viewMonth = $maxMonth;
+        }
+
         $months = [];
-        for ($m = 1; $m <= 12; $m++) {
+        for ($m = 1; $m <= $maxMonth; $m++) {
             $months[$m] = ['target' => 0, 'actual' => 0, 'potential' => 0];
         }
 
@@ -273,7 +303,10 @@ class SalesTargetReport extends Component
                 ->selectRaw('month, SUM(target_amount) as total_target')
                 ->groupBy('month')
                 ->get() as $r) {
-                $months[(int) $r->month]['target'] = (float) $r->total_target;
+                $mIdx = (int) $r->month;
+                if (isset($months[$mIdx])) {
+                    $months[$mIdx]['target'] = (float) $r->total_target;
+                }
             }
 
             foreach ($this->contractModels as $modelClass) {
@@ -286,20 +319,26 @@ class SalesTargetReport extends Component
                     ->get();
 
                 foreach ($rows as $r) {
-                    $months[(int) $r->m]['actual'] += (float) $r->total;
+                    $mIdx = (int) $r->m;
+                    if (isset($months[$mIdx])) {
+                        $months[$mIdx]['actual'] += (float) $r->total;
+                    }
                 }
             }
 
             $potentialRows = Quotation::query()
                 ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
-                ->whereYear('date', $this->year)
                 ->whereIn('staff_id', $targetStaffIds)
-                ->selectRaw('MONTH(date) as m, SUM(value_inc_vat) as total')
+                ->whereYear(\DB::raw('COALESCE(expected_signing_date, date)'), $this->year)
+                ->selectRaw('MONTH(COALESCE(expected_signing_date, date)) as m, SUM(value_inc_vat) as total')
                 ->groupBy('m')
                 ->get();
 
             foreach ($potentialRows as $row) {
-                $months[(int) $row->m]['potential'] += (float) $row->total;
+                $mIdx = (int) $row->m;
+                if (isset($months[$mIdx])) {
+                    $months[$mIdx]['potential'] += (float) $row->total;
+                }
             }
         }
 
@@ -313,15 +352,17 @@ class SalesTargetReport extends Component
         return view('livewire.admin.reports.sales.sales-target-report', [
             'months' => $months,
             'totals' => $totals,
-            'monthTarget' => (float) $months[$this->viewMonth]['target'],
-            'monthActual' => (float) $months[$this->viewMonth]['actual'],
-            'monthRemain' => max(0, (float) $months[$this->viewMonth]['target'] - (float) $months[$this->viewMonth]['actual']),
-            'monthPct' => $this->monthMetrics($months[$this->viewMonth])['pct'],
+            'monthTarget' => (float) ($months[$this->viewMonth]['target'] ?? 0),
+            'monthActual' => (float) ($months[$this->viewMonth]['actual'] ?? 0),
+            'monthPotential' => (float) ($months[$this->viewMonth]['potential'] ?? 0),
+            'monthRemain' => max(0, (float) ($months[$this->viewMonth]['target'] ?? 0) - (float) ($months[$this->viewMonth]['actual'] ?? 0)),
+            'monthPct' => isset($months[$this->viewMonth]) ? $this->monthMetrics($months[$this->viewMonth])['pct'] : null,
             'selectedStaffName' => $this->filter_staff !== ''
                 ? ($staffs->firstWhere('id', (int) $this->filter_staff)?->name ?? '—')
                 : 'Tất cả nhân viên KD',
             'staffs' => $staffs,
             'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'maxMonth' => $maxMonth,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }
 }

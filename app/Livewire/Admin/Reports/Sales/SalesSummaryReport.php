@@ -50,8 +50,10 @@ class SalesSummaryReport extends Component
 
     public function render()
     {
+        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
+
         $months = [];
-        for ($m = 1; $m <= 12; $m++) {
+        for ($m = 1; $m <= $maxMonth; $m++) {
             $months[$m] = [
                 'renewal'          => 0,
                 'progressive'      => 0,
@@ -86,8 +88,11 @@ class SalesSummaryReport extends Component
                     ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total, COUNT(*) as cnt')
                     ->groupBy('m')
                     ->get() as $r) {
-                    $months[(int) $r->m]['renewal']       += (float) $r->total;
-                    $months[(int) $r->m]['renewal_count'] += (int) $r->cnt;
+                    $mIdx = (int) $r->m;
+                    if (isset($months[$mIdx])) {
+                        $months[$mIdx]['renewal']       += (float) $r->total;
+                        $months[$mIdx]['renewal_count'] += (int) $r->cnt;
+                    }
                 }
 
                 // Hợp đồng mới dùng cùng quy tắc ngày với doanh số tái ký.
@@ -101,13 +106,16 @@ class SalesSummaryReport extends Component
                     ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total, COUNT(*) as cnt')
                     ->groupBy('m')
                     ->get() as $r) {
-                    $months[(int) $r->m]['progressive']       += (float) $r->total;
-                    $months[(int) $r->m]['progressive_count'] += (int) $r->cnt;
+                    $mIdx = (int) $r->m;
+                    if (isset($months[$mIdx])) {
+                        $months[$mIdx]['progressive']       += (float) $r->total;
+                        $months[$mIdx]['progressive_count'] += (int) $r->cnt;
+                    }
                 }
             }
         }
 
-        for ($m = 1; $m <= 12; $m++) {
+        for ($m = 1; $m <= $maxMonth; $m++) {
             $months[$m]['contract_total'] = $months[$m]['renewal'] + $months[$m]['progressive'];
         }
 
@@ -153,6 +161,7 @@ class SalesSummaryReport extends Component
             'staffs'  => $staffs,
             'years'   => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
             'detail'  => $detail,
+            'maxMonth' => $maxMonth,
         ])->layout('admin.layouts.app', ['title' => 'Bảng tổng kết doanh số']);
     }
 }

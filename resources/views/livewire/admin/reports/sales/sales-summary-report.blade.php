@@ -37,7 +37,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="fw-semibold">Chỉ tiêu</th>
-                            @for($m = 1; $m <= 12; $m++)
+                            @for($m = 1; $m <= $maxMonth; $m++)
                                 <th class="text-end">Tháng {{ $m }}</th>
                             @endfor
                             <th class="text-end fw-bold">Tổng năm</th>
@@ -46,7 +46,7 @@
                     <tbody>
                         <tr>
                             <td class="fw-semibold text-success">DS Tái ký</td>
-                            @for($m = 1; $m <= 12; $m++)
+                            @for($m = 1; $m <= $maxMonth; $m++)
                                 <td class="text-end {{ $months[$m]['renewal'] > 0 ? 'text-success' : 'text-muted' }}">
                                     @if($months[$m]['renewal'] > 0)
                                         <div>{{ number_format($months[$m]['renewal'], 0, ',', '.') }}</div>
@@ -63,7 +63,7 @@
                         </tr>
                         <tr>
                             <td class="fw-semibold text-warning">DS HĐ mới</td>
-                            @for($m = 1; $m <= 12; $m++)
+                            @for($m = 1; $m <= $maxMonth; $m++)
                                 <td class="text-end {{ $months[$m]['progressive'] > 0 ? 'text-warning' : 'text-muted' }}">
                                     @if($months[$m]['progressive'] > 0)
                                         <div>{{ number_format($months[$m]['progressive'], 0, ',', '.') }}</div>
@@ -80,7 +80,7 @@
                         </tr>
                         <tr class="table-secondary">
                             <td class="fw-bold">Tổng theo hợp đồng</td>
-                            @for($m = 1; $m <= 12; $m++)
+                            @for($m = 1; $m <= $maxMonth; $m++)
                                 <td class="text-end fw-bold {{ $months[$m]['contract_total'] > 0 ? 'text-dark' : 'text-muted' }}">
                                     @if($months[$m]['contract_total'] > 0)
                                         <div>{{ number_format($months[$m]['contract_total'], 0, ',', '.') }}</div>
@@ -98,7 +98,7 @@
                     </tbody>
                     <tfoot class="table-light fw-bold">
                         <tr>
-                            <td colspan="13" class="text-end">Tổng doanh số theo hợp đồng năm {{ $year }}</td>
+                            <td colspan="{{ $maxMonth + 1 }}" class="text-end">Tổng doanh số theo hợp đồng năm {{ $year }}</td>
                             <td class="text-end fs-6">{{ number_format($totals['grand'], 0, ',', '.') }} đ</td>
                         </tr>
                     </tfoot>
@@ -121,7 +121,7 @@
             <div class="w-min-160px">
                 <select wire:model.live="filter_month" class="form-select form-select-sm" style="font-size: 0.85rem;">
                     <option value="0">-- Chọn tháng --</option>
-                    @for($m = 1; $m <= 12; $m++)
+                    @for($m = 1; $m <= $maxMonth; $m++)
                         <option value="{{ $m }}">Tháng {{ $m }}</option>
                     @endfor
                 </select>

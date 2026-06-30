@@ -9,6 +9,7 @@ class Quotation extends Model
 {
     protected $fillable = [
         'date',
+        'expected_signing_date',
         'quotation_number',
         'staff_id',
         'source',           // Nguồn
@@ -32,6 +33,7 @@ class Quotation extends Model
 
     protected $casts = [
         'date' => 'date',
+        'expected_signing_date' => 'date',
         'original_value' => 'integer',
         'value_inc_vat' => 'integer',
         'commission_value' => 'integer',

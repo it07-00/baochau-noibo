@@ -73,6 +73,7 @@ class QuotationManager extends Component
 
     public $formData = [
         'date' => '',
+        'expected_signing_date' => '',
         'quotation_number' => '',
         'staff_id' => '',
         'source' => '',
@@ -95,6 +96,7 @@ class QuotationManager extends Component
 
     protected $rules = [
         'formData.date' => 'required|date',
+        'formData.expected_signing_date' => 'nullable|date',
         'formData.quotation_number' => 'nullable|string|max:100',
         'formData.staff_id' => 'required|exists:users,id',
         'formData.company_name' => 'required|string|max:255',
@@ -377,6 +379,7 @@ class QuotationManager extends Component
             'url' => Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path),
         ])->values()->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
+        $this->formData['expected_signing_date'] = $quotation->expected_signing_date ? $quotation->expected_signing_date->format('Y-m-d') : '';
         $this->recalculateTotals();
         $this->isEditing = true;
         $this->isDuplicating = false;
@@ -393,6 +396,7 @@ class QuotationManager extends Component
         $this->resetForm();
         $this->formData = $quotation->toArray();
         $this->formData['date'] = now()->format('Y-m-d');
+        $this->formData['expected_signing_date'] = $quotation->expected_signing_date ? $quotation->expected_signing_date->format('Y-m-d') : '';
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedId = null;
@@ -554,6 +558,7 @@ class QuotationManager extends Component
     {
         $this->formData = [
             'date' => now()->format('Y-m-d'),
+            'expected_signing_date' => '',
             'staff_id' => auth()->id(),
             'source' => '',
             'company_name' => '',

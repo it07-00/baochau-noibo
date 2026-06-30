@@ -351,15 +351,20 @@
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Ngày <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">Ngày báo giá <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" wire:model.defer="formData.date">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ngày dự kiến ký HĐ</label>
+                                <input type="date" class="form-control @error('formData.expected_signing_date') is-invalid @enderror" wire:model.defer="formData.expected_signing_date">
+                                @error('formData.expected_signing_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Số báo giá</label>
                                 <input type="text" class="form-control @error('formData.quotation_number') is-invalid @enderror" wire:model.defer="formData.quotation_number" placeholder="VD: BG2026-001">
                                 @error('formData.quotation_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Nhân viên sale <span class="text-danger">*</span></label>
                                 <select class="form-select @error('formData.staff_id') is-invalid @enderror" wire:model.defer="formData.staff_id">
                                     <option value="">Chọn nhân viên</option>
@@ -368,6 +373,7 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Công ty <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('formData.company_name') is-invalid @enderror" wire:model.defer="formData.company_name" placeholder="Tên công ty niêm yết">
@@ -381,7 +387,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Tỉnh thành</label>
                                 <select class="form-select" wire:model.defer="formData.province">
@@ -391,28 +396,29 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Địa chỉ xuất hóa đơn (XHĐ)</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.address">
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">Địa chỉ làm việc</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.work_address">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Dịch vụ</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.service" placeholder="VD: Xử lý chất thải...">
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">Ngành nghề</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.industry">
-                            </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Khách hàng</label>
                                 <input type="text" class="form-control" wire:model.defer="formData.contact_person">
                             </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Địa chỉ xuất hóa đơn (XHĐ)</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.address">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Địa chỉ làm việc</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.work_address">
+                            </div>
+
                             <div class="col-md-4">
+                                <label class="form-label fw-bold">Dịch vụ</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.service" placeholder="VD: Xử lý chất thải...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ngành nghề</label>
+                                <input type="text" class="form-control" wire:model.defer="formData.industry">
+                            </div>
+                            <div class="col-md-5">
                                 <label class="form-label fw-bold">Tình hình <span class="text-danger">*</span></label>
                                 <select class="form-select" wire:model.defer="formData.status">
                                     @foreach($statuses as $st)

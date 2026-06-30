@@ -34,6 +34,14 @@ class SalesAchievementReport extends Component
         $this->filter_month = (string) now()->month;
     }
 
+    public function updatedYear(): void
+    {
+        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
+        if ($this->filter_month !== '' && (int) $this->filter_month > $maxMonth) {
+            $this->filter_month = (string) $maxMonth;
+        }
+    }
+
     public function monthLabel(): string
     {
         return $this->filter_month !== ''
@@ -137,6 +145,11 @@ class SalesAchievementReport extends Component
         $companyActual = array_sum($actualByStaff) ?: 0;
         $companyPct = $companyTarget > 0 ? round($companyActual / $companyTarget * 100, 0) : 0;
 
+        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
+        if ($this->filter_month !== '' && (int) $this->filter_month > $maxMonth) {
+            $this->filter_month = (string) $maxMonth;
+        }
+
         return view('livewire.admin.reports.sales.sales-achievement-report', [
             'doanhSoRankings' => $doanhSoRankings,
             'kpiRankings'     => $kpiRankings,
@@ -146,7 +159,7 @@ class SalesAchievementReport extends Component
             'companyActual'   => $companyActual,
             'companyPct'      => $companyPct,
             'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'months'          => range(1, 12),
+            'months'          => range(1, $maxMonth),
         ])->layout('admin.layouts.app', ['title' => 'Đường đua Doanh Số']);
     }
 }

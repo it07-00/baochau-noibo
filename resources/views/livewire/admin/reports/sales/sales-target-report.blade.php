@@ -242,7 +242,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <label class="form-label mb-0 fw-semibold">Tháng:</label>
                     <select wire:model.live="viewMonth" class="form-select form-select-sm" style="width:auto">
-                        @for($mi = 1; $mi <= 12; $mi++)
+                        @for($mi = 1; $mi <= $maxMonth; $mi++)
                             <option value="{{ $mi }}">Tháng {{ str_pad($mi, 2, '0', STR_PAD_LEFT) }}</option>
                         @endfor
                     </select>
@@ -252,19 +252,21 @@
                 <div class="table-responsive">
                     <table class="table table-bordered mb-0">
                         <thead class="table-warning">
-                            <tr class="text-center fw-bold small">
+                            <tr class="text-center fw-bold small text-nowrap">
                                 <th>TÊN NHÂN VIÊN</th>
                                 <th>DOANH SỐ MỤC TIÊU</th>
                                 <th>DOANH SỐ ĐÃ VỀ</th>
+                                <th>BÁO GIÁ TIỀM NĂNG</th>
                                 <th>DOANH SỐ TÌM MỚI (CÒN THIẾU)</th>
                                 <th>TỶ LỆ HOÀN THÀNH</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center">
+                            <tr class="text-center text-nowrap">
                                 <td class="fw-bold">{{ $selectedStaffName }}</td>
                                 <td>{{ number_format($monthTarget, 0, ',', '.') }} đ</td>
                                 <td class="text-success fw-bold">{{ number_format($monthActual, 0, ',', '.') }} đ</td>
+                                <td class="text-warning fw-bold">{{ number_format($monthPotential, 0, ',', '.') }} đ</td>
                                 <td class="text-danger fw-bold">{{ number_format($monthRemain, 0, ',', '.') }} đ</td>
                                 <td>
                                     @if($monthPct !== null)
@@ -324,6 +326,62 @@
                                     <td class="text-success">{{ number_format(array_sum(array_column($detail, 'contract_value')), 0, ',', '.') }}</td>
                                     <td></td>
                                     <td class="text-success">{{ number_format(array_sum(array_column($detail, 'value')), 0, ',', '.') }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        @endif
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-warning bg-opacity-10 py-3">
+                <h6 class="mb-0 fw-bold text-warning-emphasis">CỤ THỂ BÁO GIÁ TIỀM NĂNG THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 table-xs">
+                        <thead class="table-light">
+                            <tr class="fw-bold small text-center text-nowrap">
+                                <th class="ps-3 text-start" style="width: 50px;">STT</th>
+                                <th class="text-start">TÊN CÔNG TY</th>
+                                <th class="text-start">DỊCH VỤ</th>
+                                <th>NHÂN VIÊN KD</th>
+                                <th>NGUỒN</th>
+                                <th class="text-end">GIÁ TRỊ BÁO GIÁ CHƯA VAT (Đ)</th>
+                                <th>NGÀY DỰ KIẾN KÝ</th>
+                                <th class="pe-3">TÌNH HÌNH / GHI CHÚ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($potentialDetail as $index => $row)
+                                <tr class="text-center text-nowrap">
+                                    <td class="ps-3 text-start text-muted">{{ $index + 1 }}</td>
+                                    <td class="fw-semibold text-start">{{ $row['company'] }}</td>
+                                    <td class="text-muted small text-start">{{ $row['service'] }}</td>
+                                    <td>{{ $row['staff'] }}</td>
+                                    <td>{{ $row['source'] ?: '—' }}</td>
+                                    <td class="text-end text-warning fw-semibold">
+                                        {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') : '—' }} đ
+                                    </td>
+                                    <td>{{ $row['date'] }}</td>
+                                    <td class="pe-3 small text-muted text-start">{{ $row['notes'] ?: '—' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-4 text-muted">Không có báo giá tiềm năng nào trong tháng này.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                        @if(!empty($potentialDetail))
+                            <tfoot class="table-secondary fw-bold">
+                                <tr class="text-center text-nowrap">
+                                    <td colspan="5" class="ps-3 text-start">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
+                                    <td class="text-end text-warning">
+                                        {{ number_format(array_sum(array_column($potentialDetail, 'value')), 0, ',', '.') }} đ
+                                    </td>
+                                    <td></td>
                                     <td></td>
                                 </tr>
                             </tfoot>
@@ -427,7 +485,7 @@
                                         <th>Nhân viên KD</th>
                                         <th>Nguồn</th>
                                         <th class="text-end">Giá trị báo giá chưa VAT (đ)</th>
-                                        <th class="text-center">Ngày báo giá</th>
+                                        <th class="text-center">Ngày dự kiến ký</th>
                                     </tr>
                                 </thead>
                                 <tbody>
