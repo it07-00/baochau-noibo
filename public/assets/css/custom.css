@@ -1658,3 +1658,6 @@
     --bs-text-opacity: 1;
     color: #000 !important;
 }
+.dropdown-menu {
+    --bs-dropdown-link-color: #000;
+}

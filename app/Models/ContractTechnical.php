@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContractTechnical extends Model
 {
-    use HasFactory, HasContractBehavior;
+    use HasContractBehavior, HasFactory;
 
     const TOTAL_STEPS = 6;
 
@@ -36,6 +36,9 @@ class ContractTechnical extends Model
         'value',
         'commission',
         'revenue',
+        'payment_percentage',
+        'service_content',
+        'submission_place',
         'ncc_payment',
         'ncc_payment_sheet_url',
         'ncc_payment_updated_at',

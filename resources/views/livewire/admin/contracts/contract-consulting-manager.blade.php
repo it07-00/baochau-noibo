@@ -611,10 +611,7 @@
                                             <th class="bg-light">Tỉnh thành</th>
                                             <td>{{ $selectedDoc->province }}</td>
                                         </tr>
-                                        <tr>
-                                            <th class="bg-light">Phương thức thanh toán</th>
-                                            <td>{{ $selectedDoc->payment_method }}</td>
-                                        </tr>
+                                        @include('livewire.admin.contracts.partials.contract-detail-extra-fields')
                                         <tr>
                                             <th class="bg-light">Nguồn thông tin</th>
                                             <td>{{ $selectedDoc->info_source }}</td>
@@ -934,6 +931,17 @@
                             </div>
                         </div>
                         <div class="col-md-3">
+                            <label class="form-label small fw-semibold">% thanh toán</label>
+                            <div class="input-group">
+                                <input type="number" min="0" max="100" step="0.01" class="form-control"
+                                    wire:model.live.debounce.300ms="formData.payment_percentage">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            @error('formData.payment_percentage')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label small fw-semibold">Giá trị HĐ <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="text" class="form-control money-input" wire:model="formData.value">
@@ -1027,23 +1035,16 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Nguồn thông tin</label>
-                            <input type="text" class="form-control" wire:model="formData.info_source"
-                                list="info-source-list-consulting" placeholder="Nhập hoặc chọn nguồn...">
-                            <datalist id="info-source-list-consulting">
+                            <select class="form-select" wire:model="formData.info_source">
+                                <option value="">-- Chọn nguồn thông tin --</option>
                                 @foreach ($info_sources as $src)
-                                    <option value="{{ $src }}">
+                                    <option value="{{ $src }}">{{ $src }}</option>
                                 @endforeach
-                            </datalist>
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">PT thanh toán</label>
-                            <input class="form-control" wire:model="formData.payment_method" list="pm-options"
-                                placeholder="VD: Sau ký, Trước ký...">
-                            <datalist id="pm-options">
-                                @foreach ($payment_methods as $pm)
-                                    <option value="{{ $pm }}">
-                                @endforeach
-                            </datalist>
+                            @include('livewire.admin.contracts.partials.payment-method-checkboxes')
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Tình trạng</label>
@@ -1098,6 +1099,14 @@
                                 </select>
                             </div>
                         @endif
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Nội dung dịch vụ</label>
+                            <textarea class="form-control" rows="3" wire:model="formData.service_content"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Nơi nộp</label>
+                            <textarea class="form-control" rows="3" wire:model="formData.submission_place"></textarea>
+                        </div>
                         <div class="col-md-12">
                             <label class="form-label small fw-semibold">Ghi chú</label>
                             <textarea class="form-control" rows="3" wire:model="formData.notes"></textarea>

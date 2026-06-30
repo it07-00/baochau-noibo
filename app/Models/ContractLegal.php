@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContractLegal extends Model
 {
-    use HasFactory, HasContractBehavior;
+    use HasContractBehavior, HasFactory;
 
     protected $table = 'contract_consultings';
 
@@ -22,21 +22,37 @@ class ContractLegal extends Model
     ];
 
     const STATUS_DRAFT = 'draft';
+
     const STATUS_PENDING_ACCOUNTING = 'pending_accounting';
+
     const STATUS_REJECTED_ACCOUNTING = 'rejected_accounting';
+
     const STATUS_PENDING_DIRECTOR = 'pending_director';
+
     const STATUS_REJECTED_DIRECTOR = 'rejected_director';
+
     const STATUS_APPROVED_DIRECTOR = 'approved_director';
+
     const STATUS_CONSULTANT_ASSIGNED = 'consultant_assigned';
+
     const STATUS_CONSULTING_RECEIVING = 'consulting_receiving';
+
     const STATUS_CONSULTING_SURVEY = 'consulting_survey';
+
     const STATUS_CONSULTING_PROCESSING = 'consulting_processing';
+
     const STATUS_WAITING_CLIENT = 'waiting_client';
+
     const STATUS_CLIENT_CONFIRMED = 'client_confirmed';
+
     const STATUS_PENDING_FINAL_REVIEW = 'pending_final_review';
+
     const STATUS_REJECTED_FINAL_REVIEW = 'rejected_final_review';
+
     const STATUS_FINISHED = 'finished';
+
     const STATUS_INCIDENT = 'incident';
+
     const TOTAL_STEPS = 6;
 
     protected $fillable = [
@@ -51,6 +67,9 @@ class ContractLegal extends Model
         'value',
         'commission',
         'revenue',
+        'payment_percentage',
+        'service_content',
+        'submission_place',
         'ncc_payment',
         'ncc_payment_sheet_url',
         'ncc_payment_updated_at',
@@ -75,6 +94,10 @@ class ContractLegal extends Model
         'loai_dich_vu',
         'is_renewal',
         'parent_contract_id',
+    ];
+
+    protected $casts = [
+        'payment_percentage' => 'float',
     ];
 
     public function getDetailedStatusColorAttribute(): array

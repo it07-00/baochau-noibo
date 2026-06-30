@@ -131,7 +131,7 @@ class SalesTargetReport extends Component
                     'service' => $quotation->service ?: '—',
                     'staff' => $quotation->staff?->name ?? '—',
                     'source' => $quotation->source ?: '—',
-                    'value' => (float) $quotation->total_value,
+                    'value' => (float) $quotation->value_inc_vat,
                     'date' => $quotation->date?->format('d/m/Y') ?? '—',
                 ])
                 ->all();
@@ -253,7 +253,7 @@ class SalesTargetReport extends Component
                 ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
                 ->whereYear('date', $this->year)
                 ->whereIn('staff_id', $targetStaffIds)
-                ->selectRaw('MONTH(date) as m, SUM(total_value) as total')
+                ->selectRaw('MONTH(date) as m, SUM(value_inc_vat) as total')
                 ->groupBy('m')
                 ->get();
 

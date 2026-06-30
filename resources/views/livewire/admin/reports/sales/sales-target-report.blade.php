@@ -279,7 +279,7 @@
                                         <th>Dịch vụ</th>
                                         <th>Nhân viên KD</th>
                                         <th>Nguồn</th>
-                                        <th class="text-end">Giá trị HĐ có VAT (đ)</th>
+                                        <th class="text-end">Giá trị báo giá chưa VAT (đ)</th>
                                         <th class="text-center">Ngày báo giá</th>
                                     </tr>
                                 </thead>

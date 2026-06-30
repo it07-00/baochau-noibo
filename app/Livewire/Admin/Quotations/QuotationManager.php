@@ -21,7 +21,7 @@ class QuotationManager extends Component
 {
     use CleanMoneyInput, WithFileUploads, WithPagination;
 
-    public const SOURCES = ['Sale', 'Tái ký', 'Thông tin chuyển MKT'];
+    public const SOURCES = ['Sale', 'Tái ký', 'Thông tin chuyển', 'Thông tin chuyển MKT'];
 
     public $search = '';
 

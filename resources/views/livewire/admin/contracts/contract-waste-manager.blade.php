@@ -705,10 +705,7 @@
                                                         {{ number_format($selectedDoc->ncc_payment ?? 0) }}đ</td>
                                                 </tr>
                                             @endunless
-                                            <tr>
-                                                <th class="bg-light fw-bold px-4 py-3">Phương thức thanh toán</th>
-                                                <td class="px-4 py-3">{{ $selectedDoc->payment_method }}</td>
-                                            </tr>
+                                            @include('livewire.admin.contracts.partials.contract-detail-extra-fields')
                                             <tr>
                                                 <th class="bg-light fw-bold px-4 py-3">Nhân viên chăm sóc</th>
                                                 <td class="px-4 py-3">{{ $selectedDoc->staff?->name }}</td>
@@ -1031,6 +1028,7 @@
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
+                            @include('livewire.admin.contracts.partials.payment-percentage-field')
                             <div class="col-md-3">
                                 <label class="form-label small fw-semibold">Giá trị hợp đồng <span
                                         class="text-danger">*</span></label>
@@ -1098,23 +1096,16 @@
 
                             <div class="col-md-3">
                                 <label class="form-label small fw-semibold">PT thanh toán</label>
-                                <input class="form-control" wire:model.defer="formData.payment_method"
-                                    list="pm-options-waste" placeholder="VD: Sau ký, Trước ký...">
-                                <datalist id="pm-options-waste">
-                                    @foreach ($payment_methods as $pm)
-                                        <option value="{{ $pm }}">
-                                    @endforeach
-                                </datalist>
+                                @include('livewire.admin.contracts.partials.payment-method-checkboxes')
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label small fw-semibold">Nguồn thông tin</label>
-                                <input type="text" class="form-control" wire:model.defer="formData.info_source"
-                                    list="source-list-waste" placeholder="Nhập hoặc chọn nguồn...">
-                                <datalist id="source-list-waste">
+                                <select class="form-select" wire:model.defer="formData.info_source">
+                                    <option value="">-- Chọn nguồn thông tin --</option>
                                     @foreach ($info_sources as $src)
-                                        <option value="{{ $src }}">
+                                        <option value="{{ $src }}">{{ $src }}</option>
                                     @endforeach
-                                </datalist>
+                                </select>
                             </div>
 
                             <div class="col-12 mt-2">
@@ -1284,6 +1275,7 @@
                                 </div>
                             @endif
 
+                            @include('livewire.admin.contracts.partials.service-submission-fields')
                             <div class="col-12 mt-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="bi bi-pencil me-1"></i>Ghi chú</span>

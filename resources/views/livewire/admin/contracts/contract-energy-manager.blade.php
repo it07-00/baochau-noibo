@@ -518,10 +518,7 @@
                                             <th class="bg-light">Tỉnh thành</th>
                                             <td>{{ $selectedDoc->province }}</td>
                                         </tr>
-                                        <tr>
-                                            <th class="bg-light">Phương thức thanh toán</th>
-                                            <td>{{ $selectedDoc->payment_method }}</td>
-                                        </tr>
+                                        @include('livewire.admin.contracts.partials.contract-detail-extra-fields')
                                         <tr>
                                             <th class="bg-light">Nguồn thông tin</th>
                                             <td>{{ $selectedDoc->info_source }}</td>
@@ -839,6 +836,7 @@
                                 <hr class="flex-fill my-0 border-primary border-opacity-25">
                             </div>
                         </div>
+                        @include('livewire.admin.contracts.partials.payment-percentage-field')
                         <div class="col-md-3">
                             <label class="form-label small fw-semibold">Giá trị HĐ <span class="text-danger">*</span></label>
                             <div class="input-group">
@@ -933,23 +931,16 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Nguồn thông tin</label>
-                            <input type="text" class="form-control" wire:model="formData.info_source"
-                                list="info-source-list-energy" placeholder="Nhập hoặc chọn nguồn...">
-                            <datalist id="info-source-list-energy">
+                            <select class="form-select" wire:model="formData.info_source">
+                                <option value="">-- Chọn nguồn thông tin --</option>
                                 @foreach ($info_sources as $src)
-                                    <option value="{{ $src }}">
+                                    <option value="{{ $src }}">{{ $src }}</option>
                                 @endforeach
-                            </datalist>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">PT thanh toán</label>
-                            <input class="form-control" wire:model="formData.payment_method" list="pm-options"
-                                placeholder="VD: Sau ký, Trước ký...">
-                            <datalist id="pm-options">
-                                @foreach ($payment_methods as $pm)
-                                    <option value="{{ $pm }}">
-                                @endforeach
-                            </datalist>
+                            @include('livewire.admin.contracts.partials.payment-method-checkboxes')
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Tình trạng</label>
@@ -1013,6 +1004,7 @@
                                 </select>
                             </div>
                         @endif
+                        @include('livewire.admin.contracts.partials.service-submission-fields')
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Ghi chú</label>
                             <textarea class="form-control" rows="3" wire:model="formData.notes"></textarea>

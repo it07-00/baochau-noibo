@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContractResearch extends Model
 {
-    use HasFactory, HasContractBehavior;
+    use HasContractBehavior, HasFactory;
 
     protected $table = 'contract_commercials';
 
@@ -32,6 +32,9 @@ class ContractResearch extends Model
         'value',
         'commission',
         'revenue',
+        'payment_percentage',
+        'service_content',
+        'submission_place',
         'ncc_payment',
         'ncc_payment_sheet_url',
         'ncc_payment_updated_at',

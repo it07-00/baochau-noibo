@@ -102,6 +102,9 @@ class ContractWasteManager extends Component
         'value' => 0,
         'commission' => 0,
         'revenue' => 0,
+        'payment_percentage' => 100,
+        'service_content' => '',
+        'submission_place' => '',
         'ncc_payment' => 0,
         'ncc_payment_sheet_url' => '',
         'ncc_payment_status' => 'unpaid',
@@ -128,6 +131,10 @@ class ContractWasteManager extends Component
     ];
 
     public string $newCustomerName = '';
+
+    public array $financialBase = ['value' => 0, 'commission' => 0, 'revenue' => 0];
+
+    public array $paymentMethods = ['Sau ký'];
 
     public $filter = [
         'signed_from' => '',
@@ -191,11 +198,14 @@ class ContractWasteManager extends Component
                 $this->formData['value'] = $quotation->total_value;
                 $this->formData['commission'] = $quotation->commission_value;
                 $this->formData['revenue'] = $quotation->original_value;
+                $this->formData['payment_percentage'] = 100;
+                $this->formData['service_content'] = $quotation->service ?? '';
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
                 $this->formData['province'] = $quotation->province ?? '';
                 $this->formData['notes'] = $quotation->notes;
-                $this->formData['info_source'] = 'MỚI';
+                $this->formData['info_source'] = $quotation->source ?: 'MỚI';
+                $this->captureFinancialBase();
                 $this->formData['status'] = self::ALLOWED_STATUSES[0];
                 $this->ensureDepartmentId();
 
@@ -214,6 +224,24 @@ class ContractWasteManager extends Component
     {
         if (! $this->isEditing) {
             $this->formData['revenue'] = $this->formData['value'];
+        }
+    }
+
+    public function updatedFormDataPaymentPercentage(): void
+    {
+        $percentage = max(0, min(100, (float) ($this->formData['payment_percentage'] ?? 100)));
+        $this->formData['payment_percentage'] = $percentage;
+        foreach (['value', 'commission', 'revenue'] as $field) {
+            $this->formData[$field] = (int) round($this->financialBase[$field] * $percentage / 100);
+        }
+    }
+
+    private function captureFinancialBase(): void
+    {
+        $percentage = max(0.01, (float) ($this->formData['payment_percentage'] ?? 100));
+        foreach (['value', 'commission', 'revenue'] as $field) {
+            $value = preg_replace('/\D+/', '', (string) ($this->formData[$field] ?? 0));
+            $this->financialBase[$field] = ((int) $value) * 100 / $percentage;
         }
     }
 
@@ -249,6 +277,9 @@ class ContractWasteManager extends Component
         $this->formData['end_at'] = $doc->end_at ? $doc->end_at->format('Y-m-d') : '';
         $this->formData['submitted_at'] = $doc->submitted_at ? $doc->submitted_at->format('Y-m-d') : '';
         $this->normalizeContractEnumFields();
+        $this->captureFinancialBase();
+        $paymentMethod = trim((string) ($this->formData['payment_method'] ?? ''));
+        $this->paymentMethods = $paymentMethod === '' ? [] : preg_split('/\s*\|\s*/', $paymentMethod);
 
         $this->isEditing = true;
         $this->showModal = true;
@@ -304,6 +335,7 @@ class ContractWasteManager extends Component
                 : $user->id;
         }
 
+        $this->formData['payment_method'] = implode(' | ', $this->paymentMethods);
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment']);
         $this->ensureDepartmentId();
         $this->normalizeContractEnumFields();
@@ -486,6 +518,7 @@ class ContractWasteManager extends Component
     private function resetForm()
     {
         $this->newCustomerName = '';
+        $this->paymentMethods = ['Sau ký'];
         $this->formData = [
             'shd_cxl' => '',
             'shd_bc' => '',
@@ -497,6 +530,9 @@ class ContractWasteManager extends Component
             'value' => 0,
             'commission' => 0,
             'revenue' => 0,
+            'payment_percentage' => 100,
+            'service_content' => '',
+            'submission_place' => '',
             'ncc_payment' => 0,
             'ncc_payment_sheet_url' => '',
             'ncc_payment_status' => 'unpaid',
@@ -1048,9 +1084,11 @@ class ContractWasteManager extends Component
             'renewal_status_options' => ContractRenewalStatus::map(),
             'voucher_statuses' => $voucherStatuses,
             'voucher_status_options' => ContractVoucherStatus::values(),
-            'payment_methods' => ['Sau ký', 'Trước ký'],
+            'payment_methods' => ['Sau ký', 'Trước ký', 'Đã ký hợp đồng', 'Đã có kết quả/Báo cáo', 'Đã nộp báo cáo', 'Đã gửi báo cáo KH ký', 'Bàn giao + nghiệm thu'],
             'provinces' => $scopedProvinces,
-            'info_sources' => ContractWaste::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source')->toArray(),
+            'info_sources' => collect(['MỚI', 'Sale', 'Tái ký', 'Thông tin chuyển', 'Thông tin chuyển MKT'])
+                ->merge(ContractWaste::whereNotNull('info_source')->where('info_source', '!=', '')->distinct()->pluck('info_source'))
+                ->unique()->values()->all(),
             'parentContracts' => ContractWaste::with('customer')->where('is_renewal', false)->orderByDesc('id')->get(),
         ])->layout('admin.layouts.app', ['title' => 'Chất thải']);
     }
