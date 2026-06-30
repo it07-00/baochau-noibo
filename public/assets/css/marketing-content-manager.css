@@ -10,6 +10,23 @@
 
 .marketing-content-page .mc-calendar-day {
 	min-height: 178px;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.marketing-content-page .mc-calendar-day > .d-grid,
+.marketing-content-page .mc-calendar-event {
+	min-width: 0;
+	max-width: 100%;
+}
+
+.marketing-content-page .mc-calendar-event {
+	overflow: hidden;
+}
+
+.marketing-content-page .mc-calendar-event > .d-flex:first-child > .min-w-0 {
+	flex: 1 1 auto;
+	overflow: hidden;
 }
 
 .marketing-content-page .mc-calendar-day-action,
