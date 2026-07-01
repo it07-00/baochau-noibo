@@ -41,6 +41,13 @@ class Quotation extends Model
         'total_value' => 'integer',
     ];
 
+    protected function expectedSigningDate(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            set: fn ($value) => $value ?: null,
+        );
+    }
+
     public function staff()
     {
         return $this->belongsTo(User::class, 'staff_id');

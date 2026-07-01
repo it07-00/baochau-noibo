@@ -36,9 +36,7 @@ class QuotationManagerExpectedSigningDateTest extends TestCase
 
     public function test_expected_signing_date_can_be_saved_as_empty_string_and_persisted_as_null(): void
     {
-        $salesUser = User::factory()->create(['is_active' => true]);
-        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
-        $salesUser->givePermissionTo(PermissionEnum::QUOTATION_TRACKING_CREATE->value);
+        $salesUser = $this->createSalesUser(PermissionEnum::QUOTATION_TRACKING_CREATE);
 
         $this->actingAs($salesUser);
 
@@ -53,5 +51,36 @@ class QuotationManagerExpectedSigningDateTest extends TestCase
 
         $quotation = Quotation::query()->firstOrFail();
         $this->assertNull($quotation->expected_signing_date);
+    }
+
+    public function test_expected_signing_date_can_be_cleared_when_updating_a_quotation(): void
+    {
+        $salesUser = $this->createSalesUser(PermissionEnum::QUOTATION_TRACKING_EDIT);
+        $quotation = Quotation::query()->create([
+            'date' => '2026-06-25',
+            'expected_signing_date' => '2026-07-15',
+            'staff_id' => $salesUser->id,
+            'company_name' => 'Test Company',
+            'status' => QuotationStatus::DANG_THEO_DOI->value,
+        ]);
+
+        $this->actingAs($salesUser);
+
+        Livewire::test(QuotationManager::class)
+            ->call('edit', $quotation->id)
+            ->set('formData.expected_signing_date', '')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertNull($quotation->refresh()->expected_signing_date);
+    }
+
+    private function createSalesUser(PermissionEnum $permission): User
+    {
+        $salesUser = User::factory()->create(['is_active' => true]);
+        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
+        $salesUser->givePermissionTo($permission->value);
+
+        return $salesUser;
     }
 }

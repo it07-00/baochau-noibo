@@ -16,8 +16,13 @@ final class UpsertQuotationAction
      */
     public function execute(array $data, User $actor, ?Quotation $existing = null): array
     {
+        $data['expected_signing_date'] = blank($data['expected_signing_date'] ?? null)
+            ? null
+            : $data['expected_signing_date'];
+
         if ($existing) {
             $existing->update($data);
+
             return [$existing, 'Cập nhật thành công'];
         }
 
@@ -26,6 +31,7 @@ final class UpsertQuotationAction
         }
 
         $quotation = Quotation::create($data);
+
         return [$quotation, 'Tạo mới thành công'];
     }
 }
