@@ -355,7 +355,7 @@ class SalesTargetReport extends Component
                 : 'Tất cả nhân viên KD',
             'staffs' => $staffs,
             'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'maxMonth' => 12,
+            'maxMonth' => $this->year === (int) now()->format('Y') ? (int) now()->format('n') : 12,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }
 }
