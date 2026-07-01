@@ -121,9 +121,7 @@
                         <div class="op-list-container">
                             @forelse($latestReports as $report)
                                 <div class="op-list-item">
-                                    <div class="op-user-avatar" style="background-color: {{ '#' . substr(md5($report->user?->name ?? 'A'), 0, 6) }}; color: #ffffff;">
-                                        {{ $report->user ? strtoupper(substr($report->user->name, 0, 1)) : '?' }}
-                                    </div>
+                                    <x-user-avatar :user="$report->user" :size="28" class="flex-shrink-0" />
                                     <div class="min-w-0 flex-grow-1">
                                         <div class="fw-bold text-dark text-truncate small">{{ $report->user?->name ?? 'Hệ thống' }}</div>
                                         <div class="text-muted" style="font-size: 11px;">
