@@ -302,6 +302,9 @@
                             <tr class="fw-bold small text-center">
                                 <th class="ps-3 text-start">TÊN CÔNG TY</th>
                                 <th class="text-start">DỊCH VỤ</th>
+                                @if($filter_staff === '')
+                                    <th>NHÂN VIÊN KD</th>
+                                @endif
                                 <th>GIÁ TRỊ HỢP ĐỒNG</th>
                                 <th>PTTT</th>
                                 <th>CHẮC CHẮN (ĐÃ VỀ)</th>
@@ -315,6 +318,9 @@
                                     <td class="text-start">
                                         <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                     </td>
+                                    @if($filter_staff === '')
+                                        <td>{{ $row['staff'] }}</td>
+                                    @endif
                                     <td class="text-success fw-semibold">
                                         {{ $row['contract_value'] > 0 ? number_format($row['contract_value'], 0, ',', '.') : '—' }}
                                     </td>
@@ -338,14 +344,14 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">Không có hợp đồng nào trong tháng này.</td>
+                                    <td colspan="{{ $filter_staff === '' ? 7 : 6 }}" class="text-center py-4 text-muted">Không có hợp đồng nào trong tháng này.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                         @if(!empty($detail))
                             <tfoot class="table-secondary fw-bold">
                                 <tr class="text-center">
-                                    <td colspan="2" class="ps-3 text-start">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
+                                    <td colspan="{{ $filter_staff === '' ? 3 : 2 }}" class="ps-3 text-start">Tổng tháng {{ $viewMonth }}/{{ $year }}</td>
                                     <td class="text-success">{{ number_format(array_sum(array_column($detail, 'contract_value')), 0, ',', '.') }}</td>
                                     <td></td>
                                     <td class="text-success">{{ number_format(array_sum(array_column($detail, 'value')), 0, ',', '.') }}</td>
