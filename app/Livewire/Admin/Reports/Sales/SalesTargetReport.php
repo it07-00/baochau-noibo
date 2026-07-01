@@ -97,10 +97,6 @@ class SalesTargetReport extends Component
 
     private function loadMonthDetail(): void
     {
-        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
-        if ($this->viewMonth > $maxMonth) {
-            $this->viewMonth = $maxMonth;
-        }
         $month = $this->viewMonth;
         $this->filter_month = $month;
         $user = auth()->user();
@@ -272,11 +268,6 @@ class SalesTargetReport extends Component
 
     public function render()
     {
-        $maxMonth = $this->year >= (int) now()->format('Y') ? (int) now()->format('n') : 12;
-        if ($this->viewMonth > $maxMonth) {
-            $this->viewMonth = $maxMonth;
-        }
-
         $months = [];
         for ($m = 1; $m <= 12; $m++) {
             $months[$m] = ['target' => 0, 'actual' => 0, 'potential' => 0];
@@ -362,7 +353,7 @@ class SalesTargetReport extends Component
                 : 'Tất cả nhân viên KD',
             'staffs' => $staffs,
             'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'maxMonth' => $maxMonth,
+            'maxMonth' => 12,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }
 }

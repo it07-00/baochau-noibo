@@ -188,4 +188,24 @@ class SalesReportsConsistencyTest extends TestCase
                     && $months[2]['actual'] === 80_000_000.0;
             });
     }
+
+    public function test_current_year_sales_target_report_allows_viewing_all_twelve_months(): void
+    {
+        $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
+        Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value);
+        $salesperson = User::factory()->create(['is_active' => true]);
+        $salesperson->assignRole($salesRole);
+
+        $this->actingAs($salesperson);
+
+        Livewire::test(SalesTargetReport::class)
+            ->set('year', (int) now()->format('Y'))
+            ->set('viewMonth', 12)
+            ->assertSet('viewMonth', 12)
+            ->assertViewHas('maxMonth', 12)
+            ->assertViewHas(
+                'months',
+                fn (array $months): bool => array_keys($months) === range(1, 12)
+            );
+    }
 }
