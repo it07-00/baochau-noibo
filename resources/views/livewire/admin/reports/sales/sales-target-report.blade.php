@@ -318,7 +318,19 @@
                                     <td class="text-success fw-semibold">
                                         {{ $row['contract_value'] > 0 ? number_format($row['contract_value'], 0, ',', '.') : '—' }}
                                     </td>
-                                    <td>{{ $row['payment_method'] ?: '—' }}</td>
+                                    <td>
+                                        @if(!empty($row['payment_methods']))
+                                            <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                                @foreach($row['payment_methods'] as $method)
+                                                    <span class="badge {{ $this->getPaymentMethodBadgeClass($method) }}" style="font-size: 11px; font-weight: 500;">
+                                                        {{ $method }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
                                     <td class="text-success fw-semibold">
                                         {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') : '—' }}
                                     </td>

@@ -130,7 +130,7 @@ class SalesTargetReport extends Component
                         'value' => (float) $contract->revenue,
                         'contract_value' => (float) $contract->value,
                         'service' => $contract->loai_dich_vu ?: $this->contractTypeLabels[$modelClass],
-                        'payment_method' => $this->normalizePaymentMethod($contract->payment_method),
+                        'payment_methods' => $this->getPaymentMethodsArray($contract->payment_method),
                         'notes' => $contract->notes,
                         'is_renewal' => (bool) $contract->is_renewal,
                         'date' => $contract->submitted_at?->format('d/m/Y'),
@@ -182,6 +182,26 @@ class SalesTargetReport extends Component
             ->map(fn (string $method): string => $legacyLabels[trim($method)] ?? trim($method))
             ->unique()
             ->implode(' | ');
+    }
+
+    public function getPaymentMethodsArray(?string $paymentMethod): array
+    {
+        $normalized = $this->normalizePaymentMethod($paymentMethod);
+        if ($normalized === null || trim($normalized) === '') {
+            return [];
+        }
+        return array_map('trim', explode('|', $normalized));
+    }
+
+    public function getPaymentMethodBadgeClass(string $method): string
+    {
+        $method = trim($method);
+        return match ($method) {
+            'Sau khi ký HĐ' => 'bg-soft-primary text-primary',
+            'Sau khi có kết quả/báo cáo' => 'bg-soft-success text-success',
+            'Sau khi bàn giao + Nghiệm thu' => 'bg-soft-warning text-warning',
+            default => 'bg-soft-info text-info',
+        };
     }
 
     public function openPotentialDetail(int $month): void
