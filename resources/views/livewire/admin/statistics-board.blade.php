@@ -11,6 +11,14 @@
             </nav>
         </div>
         <div class="statistics-filter-bar d-flex gap-2 flex-wrap justify-content-end">
+            @if($canFilterStaff)
+                <select wire:model.live="filter_staff" class="form-select statistics-filter-control mnw-200px min-h-42px" style="font-weight: 500;">
+                    <option value="">Tất cả nhân viên</option>
+                    @foreach($staffs as $s)
+                        <option value="{{ $s->id }}">{{ $s->name }}</option>
+                    @endforeach
+                </select>
+            @endif
             <select wire:model.live="month" class="form-select statistics-filter-control mnw-170px min-h-42px" >
                 <option value="">Cả năm</option>
                 @for($m = 1; $m <= $this->maximumVisibleMonth(); $m++)

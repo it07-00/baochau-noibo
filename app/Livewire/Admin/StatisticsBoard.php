@@ -31,7 +31,14 @@ class StatisticsBoard extends Component
 
     public string $activeTab = 'overview'; // overview, security, env
 
+    public string $filter_staff = '';
+
     protected $listeners = ['it-action-completed' => '$refresh'];
+
+    public function updatedFilterStaff(): void
+    {
+        $this->dispatch('chart-updated');
+    }
 
     public function mount(): void
     {
@@ -202,8 +209,11 @@ class StatisticsBoard extends Component
 
     public function render(StatisticsService $statisticsService)
     {
+        $user = auth()->user();
+        $canFilterStaff = $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
+
         $data = $statisticsService->getDashboardData(
-            auth()->user(),
+            $user,
             $this->year,
             $this->month,
             $this->contractDateFrom,
@@ -211,13 +221,23 @@ class StatisticsBoard extends Component
             $this->chartMode,
             $this->itStats,
             $this->envData,
-            $this->activeTab
+            $this->activeTab,
+            $this->filter_staff
         );
 
         // Synchronize IT stats back to component state so we cache them during AJAX re-renders
         if (isset($data['itStats'])) {
             $this->itStats = $data['itStats'];
         }
+
+        $staffs = collect();
+        if ($canFilterStaff) {
+            $salesStaffIds = \App\Models\User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+            $staffs = \App\Models\User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
+        }
+
+        $data['staffs'] = $staffs;
+        $data['canFilterStaff'] = $canFilterStaff;
 
         return view('livewire.admin.statistics-board', $data)
             ->layout('admin.layouts.app');

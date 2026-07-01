@@ -49,13 +49,20 @@ class ContractRenewalRadar
         ],
     ];
 
-    public static function visibleFor(User $viewer, int $days = 30, int $limit = 5): Collection
+    public static function visibleFor(User $viewer, int $days = 30, int $limit = 5, ?int $filterStaffId = null): Collection
     {
         if (! self::shouldShowFor($viewer)) {
             return collect();
         }
 
         $staffIds = self::visibleStaffIds($viewer);
+        if ($filterStaffId !== null) {
+            if ($staffIds->contains($filterStaffId)) {
+                $staffIds = collect([$filterStaffId]);
+            } else {
+                return collect();
+            }
+        }
         if ($staffIds->isEmpty()) {
             return collect();
         }
