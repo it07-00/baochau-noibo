@@ -139,17 +139,19 @@ class SalesTargetReport extends Component
             }
         }
 
-        $this->detail = $detail->sortByDesc('date')->values()->toArray();
+        $this->detail = $detail->sortBy([
+            ['service', 'asc'],
+            ['date', 'desc'],
+        ])->values()->toArray();
 
-        $this->potentialDetail = empty($staffIds)
-            ? []
+        $potentialDetailCollection = empty($staffIds)
+            ? collect()
             : Quotation::query()
                 ->with('staff')
                 ->where('status', QuotationStatus::BAO_GIA_TIEM_NANG->value)
                 ->whereIn('staff_id', $staffIds)
                 ->whereYear(\DB::raw('COALESCE(expected_signing_date, date)'), $this->year)
                 ->whereMonth(\DB::raw('COALESCE(expected_signing_date, date)'), $month)
-                ->orderByDesc('date')
                 ->get()
                 ->map(fn (Quotation $quotation) => [
                     'company' => $quotation->company_name ?: '—',
@@ -159,8 +161,12 @@ class SalesTargetReport extends Component
                     'value' => (float) $quotation->value_inc_vat,
                     'date' => $quotation->expected_signing_date ? $quotation->expected_signing_date->format('d/m/Y') : ($quotation->date?->format('d/m/Y') ?? '—'),
                     'notes' => $quotation->notes ?: '—',
-                ])
-                ->all();
+                ]);
+
+        $this->potentialDetail = $potentialDetailCollection->sortBy([
+            ['service', 'asc'],
+            ['date', 'desc'],
+        ])->values()->toArray();
     }
 
     private function normalizePaymentMethod(?string $paymentMethod): ?string
@@ -202,6 +208,43 @@ class SalesTargetReport extends Component
             'Sau khi bàn giao + Nghiệm thu' => 'bg-soft-warning text-warning',
             default => 'bg-soft-info text-info',
         };
+    }
+
+    public function getServiceBadgeClass(?string $service): string
+    {
+        if ($service === null || trim($service) === '' || trim($service) === '—') {
+            return 'bg-soft-secondary text-secondary';
+        }
+
+        $service = trim($service);
+        $serviceLower = mb_strtolower($service);
+
+        if (str_contains($serviceLower, 'quan trắc') || str_contains($serviceLower, 'qtmt')) {
+            return 'bg-soft-success text-success';
+        }
+        if (str_contains($serviceLower, 'huấn luyện') || str_contains($serviceLower, 'an toàn') || str_contains($serviceLower, 'đào tạo')) {
+            return 'bg-soft-warning text-warning';
+        }
+        if (str_contains($serviceLower, 'đăng ký') || str_contains($serviceLower, 'hồ sơ') || str_contains($serviceLower, 'pháp lý') || str_contains($serviceLower, 'bcctbvmt')) {
+            return 'bg-soft-primary text-primary';
+        }
+        if (str_contains($serviceLower, 'chất thải') || str_contains($serviceLower, 'ctnh')) {
+            return 'bg-soft-danger text-danger';
+        }
+        if (str_contains($serviceLower, 'năng lượng') || str_contains($serviceLower, 'phát thải')) {
+            return 'bg-soft-info text-info';
+        }
+
+        $colors = [
+            'bg-soft-primary text-primary',
+            'bg-soft-success text-success',
+            'bg-soft-warning text-warning',
+            'bg-soft-danger text-danger',
+            'bg-soft-info text-info',
+            'bg-soft-secondary text-secondary',
+        ];
+        $hash = crc32($service);
+        return $colors[abs($hash) % count($colors)];
     }
 
     public function openPotentialDetail(int $month): void

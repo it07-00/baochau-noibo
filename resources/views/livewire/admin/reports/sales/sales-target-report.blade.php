@@ -313,7 +313,7 @@
                                 <tr class="text-center">
                                     <td class="ps-3 fw-semibold text-start">{{ $row['customer'] }}</td>
                                     <td class="text-start">
-                                        <span class="badge bg-soft-primary text-primary">{{ $row['service'] }}</span>
+                                        <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                     </td>
                                     <td class="text-success fw-semibold">
                                         {{ $row['contract_value'] > 0 ? number_format($row['contract_value'], 0, ',', '.') : '—' }}
@@ -383,7 +383,7 @@
                                     <td class="ps-3 text-start text-muted">{{ $index + 1 }}</td>
                                     <td class="fw-semibold text-start">{{ $row['company'] }}</td>
                                     <td class="text-start">
-                                        <span class="badge bg-soft-primary text-primary">{{ $row['service'] }}</span>
+                                        <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                     </td>
                                     <td>{{ $row['staff'] }}</td>
                                     <td>{{ $row['source'] ?: '—' }}</td>
@@ -519,7 +519,7 @@
                                             <td class="text-center text-muted">{{ $i + 1 }}</td>
                                             <td class="fw-semibold">{{ $row['company'] }}</td>
                                             <td>
-                                                <span class="badge bg-soft-primary text-primary">{{ $row['service'] }}</span>
+                                                <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                             </td>
                                             <td>{{ $row['staff'] }}</td>
                                             <td>{{ $row['source'] }}</td>
