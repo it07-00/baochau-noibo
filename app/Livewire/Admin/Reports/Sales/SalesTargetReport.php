@@ -211,20 +211,22 @@ class SalesTargetReport extends Component
 
     public function totalDelta(array $totals): float
     {
-        return (float) ($totals['actual'] ?? 0) - (float) ($totals['target'] ?? 0);
+        return ((float) ($totals['actual'] ?? 0) + (float) ($totals['potential'] ?? 0)) - (float) ($totals['target'] ?? 0);
     }
 
     public function monthMetrics(array $data): array
     {
         $target = (float) ($data['target'] ?? 0);
         $actual = (float) ($data['actual'] ?? 0);
+        $potential = (float) ($data['potential'] ?? 0);
         $pct = $target > 0 ? round($actual / $target * 100, 1) : null;
 
         return [
             'target' => $target,
             'actual' => $actual,
+            'potential' => $potential,
             'pct' => $pct,
-            'delta' => $actual - $target,
+            'delta' => ($actual + $potential) - $target,
             'progressWidth' => $pct !== null ? max(0, min(100, $pct)) : 0,
             'progressClass' => $pct === null
                 ? 'bg-secondary'
@@ -346,7 +348,7 @@ class SalesTargetReport extends Component
             'monthTarget' => (float) ($months[$this->viewMonth]['target'] ?? 0),
             'monthActual' => (float) ($months[$this->viewMonth]['actual'] ?? 0),
             'monthPotential' => (float) ($months[$this->viewMonth]['potential'] ?? 0),
-            'monthRemain' => max(0, (float) ($months[$this->viewMonth]['target'] ?? 0) - (float) ($months[$this->viewMonth]['actual'] ?? 0)),
+            'monthRemain' => max(0, (float) ($months[$this->viewMonth]['target'] ?? 0) - ((float) ($months[$this->viewMonth]['actual'] ?? 0) + (float) ($months[$this->viewMonth]['potential'] ?? 0))),
             'monthPct' => isset($months[$this->viewMonth]) ? $this->monthMetrics($months[$this->viewMonth])['pct'] : null,
             'selectedStaffName' => $this->filter_staff !== ''
                 ? ($staffs->firstWhere('id', (int) $this->filter_staff)?->name ?? '—')

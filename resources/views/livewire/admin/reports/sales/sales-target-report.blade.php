@@ -62,7 +62,7 @@
     @if($viewMode === 'year')
     {{-- Tổng quan nhanh --}}
     <div class="row g-3 mb-4">
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-4 col-xl">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted small mb-1">Tổng cam kết {{ $year }}</p>
@@ -70,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-4 col-xl">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted small mb-1">Tổng thực tế đã ký</p>
@@ -78,7 +78,15 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-4 col-xl">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted small mb-1">Doanh số tiềm năng</p>
+                    <div class="fs-5 fw-bold text-warning">{{ number_format($totals['potential'], 0, ',', '.') }} đ</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xl">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted small mb-1">Chênh lệch so với cam kết</p>
@@ -88,7 +96,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-4 col-xl">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted small mb-1">Mức độ hoàn thành năm</p>
