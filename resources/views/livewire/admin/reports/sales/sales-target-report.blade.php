@@ -163,6 +163,7 @@
                                     @if($data['potential'] > 0)
                                         <button type="button"
                                             class="btn btn-link btn-sm p-0 fw-semibold text-warning text-decoration-none"
+                                            style="font-size: inherit;"
                                             wire:click.stop="openPotentialDetail({{ $m }})">
                                             {{ number_format($data['potential'], 0, ',', '.') }}
                                         </button>
