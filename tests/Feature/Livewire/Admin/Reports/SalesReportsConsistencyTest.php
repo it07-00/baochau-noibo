@@ -113,7 +113,9 @@ class SalesReportsConsistencyTest extends TestCase
         Livewire::test(SalesTargetReport::class)
             ->set('year', 2026)
             ->assertViewHas('months', function (array $months): bool {
-                return $months[2]['actual'] === 100_000_000.0
+                return count($months) === 12
+                    && array_keys($months) === range(1, 12)
+                    && $months[2]['actual'] === 100_000_000.0
                     && $months[3]['actual'] === 200_000_000.0;
             })
             ->assertViewHas(

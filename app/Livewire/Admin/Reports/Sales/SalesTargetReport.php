@@ -278,7 +278,7 @@ class SalesTargetReport extends Component
         }
 
         $months = [];
-        for ($m = 1; $m <= $maxMonth; $m++) {
+        for ($m = 1; $m <= 12; $m++) {
             $months[$m] = ['target' => 0, 'actual' => 0, 'potential' => 0];
         }
 
