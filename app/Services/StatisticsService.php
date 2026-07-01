@@ -219,11 +219,18 @@ class StatisticsService
         $workScheduleHasTime = Schema::hasColumn('work_schedules', 'start_time');
         $workScheduleHasEndTime = Schema::hasColumn('work_schedules', 'end_time');
 
-        $applyWorkScheduleScope = function ($query) use ($currentUser) {
-            $query->where(function ($inner) use ($currentUser) {
-                $inner->where('user_id', $currentUser->id)
-                    ->orWhereHas('participants', fn ($q) => $q->where('users.id', $currentUser->id));
-            });
+        $applyWorkScheduleScope = function ($query) use ($currentUser, $filterStaffId) {
+            if ($filterStaffId !== null) {
+                $query->where(function ($inner) use ($filterStaffId) {
+                    $inner->where('user_id', $filterStaffId)
+                        ->orWhereHas('participants', fn ($q) => $q->where('users.id', $filterStaffId));
+                });
+            } else {
+                $query->where(function ($inner) use ($currentUser) {
+                    $inner->where('user_id', $currentUser->id)
+                        ->orWhereHas('participants', fn ($q) => $q->where('users.id', $currentUser->id));
+                });
+            }
         };
 
         $workScheduleTodayQuery = WorkSchedule::query()
@@ -824,7 +831,11 @@ class StatisticsService
             })
             ->count();
 
-        $reportingUserIds = DailyReportVisibility::visibleReportingUsersQuery($currentUser)->pluck('id');
+        $reportingUserQuery = DailyReportVisibility::visibleReportingUsersQuery($currentUser);
+        if ($filterStaffId !== null) {
+            $reportingUserQuery->where('users.id', $filterStaffId);
+        }
+        $reportingUserIds = $reportingUserQuery->pluck('users.id');
         $reportingUsersCount = $reportingUserIds->count();
 
         $reportedTodayCount = $reportingUsersCount > 0
