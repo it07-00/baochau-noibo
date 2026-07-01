@@ -303,7 +303,9 @@
                             @forelse($detail as $row)
                                 <tr class="text-center">
                                     <td class="ps-3 fw-semibold text-start">{{ $row['customer'] }}</td>
-                                    <td class="text-muted small text-start">{{ $row['service'] }}</td>
+                                    <td class="text-start">
+                                        <span class="badge bg-soft-primary text-primary">{{ $row['service'] }}</span>
+                                    </td>
                                     <td class="text-success fw-semibold">
                                         {{ $row['contract_value'] > 0 ? number_format($row['contract_value'], 0, ',', '.') : '—' }}
                                     </td>
@@ -359,7 +361,9 @@
                                 <tr class="text-center text-nowrap">
                                     <td class="ps-3 text-start text-muted">{{ $index + 1 }}</td>
                                     <td class="fw-semibold text-start">{{ $row['company'] }}</td>
-                                    <td class="text-muted small text-start">{{ $row['service'] }}</td>
+                                    <td class="text-start">
+                                        <span class="badge bg-soft-primary text-primary">{{ $row['service'] }}</span>
+                                    </td>
                                     <td>{{ $row['staff'] }}</td>
                                     <td>{{ $row['source'] ?: '—' }}</td>
                                     <td class="text-end text-warning fw-semibold">
@@ -493,7 +497,9 @@
                                         <tr>
                                             <td class="text-center text-muted">{{ $i + 1 }}</td>
                                             <td class="fw-semibold">{{ $row['company'] }}</td>
-                                            <td>{{ $row['service'] }}</td>
+                                            <td>
+                                                <span class="badge bg-soft-primary text-primary">{{ $row['service'] }}</span>
+                                            </td>
                                             <td>{{ $row['staff'] }}</td>
                                             <td>{{ $row['source'] }}</td>
                                             <td class="text-end fw-semibold text-warning">{{ number_format($row['value'], 0, ',', '.') }}</td>
