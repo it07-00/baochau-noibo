@@ -336,7 +336,7 @@ abstract class AbstractContractGenericManager extends Component
         }
 
         $this->formData['payment_method'] = implode(' | ', $this->paymentMethods);
-        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment']);
+        $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment'], true);
         $this->ensureDepartmentId();
         $this->normalizeContractEnumFields();
 
