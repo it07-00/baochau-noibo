@@ -454,9 +454,14 @@
             const data = payload.datasets || [];
 
             const colorMap = {
-                'SALE': '#007bff', 'KHAI THÁC': '#c084fc', 'TÁI KÝ': '#facc15',
-                'MARKETING': '#b91c1c', 'CHUYỂN THÔNG TIN': '#15803d',
-                'CÔNG TY': '#f43f5e', 'MỚI': '#0ea5e9'
+                'SALE': '#007bff',
+                'KHAI THÁC': '#c084fc',
+                'TÁI KÝ': '#ef4444',
+                'MARKETING': '#b91c1c',
+                'CHUYỂN THÔNG TIN': '#15803d',
+                'THÔNG TIN CHUYỂN': '#15803d',
+                'CÔNG TY': '#f43f5e',
+                'MỚI': '#0ea5e9'
             };
             const fallback = ['#007bff','#c084fc','#facc15','#b91c1c','#15803d','#f43f5e','#0ea5e9','#6366f1','#f97316','#10b981'];
             const colors = labels.map((l, i) => colorMap[l.toUpperCase()] || fallback[i % fallback.length]);
