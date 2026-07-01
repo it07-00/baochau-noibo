@@ -247,9 +247,9 @@ class StatisticsService
             ->get();
 
         $statusClassMap = [
-            'overdue' => 'bg-danger-subtle text-danger-emphasis border border-danger-subtle',
-            'in_progress' => 'bg-success-subtle text-success-emphasis border border-success-subtle',
-            'upcoming' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+            'overdue' => 'bg-danger text-white',
+            'in_progress' => 'bg-success text-white',
+            'upcoming' => 'bg-warning text-dark',
         ];
 
         $workScheduleItems = $workScheduleRaw->map(function (WorkSchedule $schedule) use (
