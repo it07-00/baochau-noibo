@@ -208,4 +208,43 @@ class SalesReportsConsistencyTest extends TestCase
                 fn (array $months): bool => array_keys($months) === range(1, 12)
             );
     }
+
+    public function test_sales_target_report_normalizes_legacy_payment_methods(): void
+    {
+        $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
+        Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value);
+        $department = Department::create([
+            'name' => 'Phong Kinh Doanh',
+            'slug' => 'kinh-doanh',
+            'is_active' => true,
+        ]);
+        $salesperson = User::factory()->create([
+            'department_id' => $department->id,
+            'is_active' => true,
+        ]);
+        $salesperson->assignRole($salesRole);
+
+        $customer = Customer::create(['name' => 'Khach hang thanh toan']);
+        $handler = Handler::create(['name' => 'Nha thau phu thanh toan']);
+
+        ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $salesperson->id,
+            'department_id' => $department->id,
+            'value' => 10_000_000,
+            'revenue' => 9_000_000,
+            'submitted_at' => now(),
+            'payment_method' => 'Sau ký | Sau khi có kết quả/báo cáo',
+            'is_renewal' => false,
+        ]);
+
+        $this->actingAs($salesperson);
+
+        Livewire::test(SalesTargetReport::class)
+            ->assertSet(
+                'detail.0.payment_method',
+                'Sau khi ký HĐ | Sau khi có kết quả/báo cáo'
+            );
+    }
 }

@@ -130,7 +130,7 @@ class SalesTargetReport extends Component
                         'value' => (float) $contract->revenue,
                         'contract_value' => (float) $contract->value,
                         'service' => $contract->loai_dich_vu ?: $this->contractTypeLabels[$modelClass],
-                        'payment_method' => $contract->payment_method,
+                        'payment_method' => $this->normalizePaymentMethod($contract->payment_method),
                         'notes' => $contract->notes,
                         'is_renewal' => (bool) $contract->is_renewal,
                         'date' => $contract->submitted_at?->format('d/m/Y'),
@@ -161,6 +161,27 @@ class SalesTargetReport extends Component
                     'notes' => $quotation->notes ?: '—',
                 ])
                 ->all();
+    }
+
+    private function normalizePaymentMethod(?string $paymentMethod): ?string
+    {
+        if ($paymentMethod === null || trim($paymentMethod) === '') {
+            return null;
+        }
+
+        $legacyLabels = [
+            'Sau ký' => 'Sau khi ký HĐ',
+            'Sau khi ký' => 'Sau khi ký HĐ',
+            'Sau kết quả' => 'Sau khi có kết quả/báo cáo',
+            'Sau bàn giao + Nghiệm thu' => 'Sau khi bàn giao + Nghiệm thu',
+        ];
+
+        $methods = preg_split('/\s*\|\s*/', trim($paymentMethod), -1, PREG_SPLIT_NO_EMPTY);
+
+        return collect($methods)
+            ->map(fn (string $method): string => $legacyLabels[trim($method)] ?? trim($method))
+            ->unique()
+            ->implode(' | ');
     }
 
     public function openPotentialDetail(int $month): void
