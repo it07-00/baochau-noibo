@@ -25,8 +25,10 @@
                     </div>
                     <span class="text-center"
                         style="font-size: 0.62rem; line-height: 1.2; width: 62px; word-break: break-word;
-                        color: {{ in_array($key, $completedSteps) ? '#198754' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? '#0d6efd' : '#aaa') }};
-                        font-weight: {{ in_array($key, $completedSteps) || ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? '600' : '400' }};">
+                        @if (in_array($key, $completedSteps)) color: #198754;
+                        @elseif ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) color: #0d6efd;
+                        @endif
+                        font-weight: 600;">
                         {{ $steps[$key] }}
                     </span>
                 </div>
@@ -62,8 +64,10 @@
                 <div class="pb-3 pt-1 flex-grow-1">
                     <div class="d-flex align-items-center flex-wrap gap-1">
                         <span style="font-size: 0.85rem;
-                            font-weight: {{ in_array($key, $completedSteps) || ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? '600' : '400' }};
-                            color: {{ in_array($key, $completedSteps) ? '#198754' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? '#0d6efd' : '#aaa') }};">
+                            font-weight: 600;
+                            @if (in_array($key, $completedSteps)) color: #198754;
+                            @elseif ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) color: #0d6efd;
+                            @endif">
                             {{ $steps[$key] }}
                         </span>
                         @if (in_array($key, $completedSteps))

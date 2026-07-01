@@ -37,8 +37,10 @@
                             @endif
                             <span class="text-center"
                                 style="font-size: 0.7rem; line-height: 1.2; width: 80px; word-break: break-word;
-                                color: {{ in_array($key, $completedSteps) ? '#198754' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '#0d6efd' : '#aaa') }};
-                                font-weight: {{ in_array($key, $completedSteps) || ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '600' : '400' }};">
+                                @if (in_array($key, $completedSteps)) color: #198754;
+                                @elseif ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) color: #0d6efd;
+                                @endif
+                                font-weight: 600;">
                                 {{ $steps[$key] }}
                             </span>
                         </div>
@@ -86,8 +88,10 @@
                     <div class="pb-3 pt-2 flex-grow-1">
                         <div class="d-flex align-items-center flex-wrap gap-1">
                             <span style="font-size: 0.875rem;
-                                font-weight: {{ in_array($key, $completedSteps) || ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '600' : '400' }};
-                                color: {{ in_array($key, $completedSteps) ? '#198754' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? '#0d6efd' : '#aaa') }};">
+                                font-weight: 600;
+                                @if (in_array($key, $completedSteps)) color: #198754;
+                                @elseif ($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) color: #0d6efd;
+                                @endif">
                                 {{ $steps[$key] }}
                             </span>
                             @if (in_array($key, $completedSteps))
