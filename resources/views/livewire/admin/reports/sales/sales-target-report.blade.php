@@ -143,14 +143,14 @@
                             <tr class="{{ $year === now()->year && $m === now()->month ? 'table-primary bg-opacity-25' : ($this->monthMetrics($data)['target'] == 0 ? 'table-light' : '') }} cursor-pointer"
                                  wire:click="openDetail({{ $m }})">
                                 <td class="ps-3 text-nowrap">
-                                    <div class="d-flex align-items-center gap-2">
-                                        @if($year === now()->year && $m === now()->month)
-                                            <span class="badge bg-primary rounded-pill" style="font-size:0.6rem">Hiện tại</span>
-                                        @endif
-                                        <div>
-                                            <div class="fw-semibold">Tháng {{ $m }}</div>
-                                            <small class="text-muted">Quý {{ (int) ceil($m / 3) }}</small>
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-semibold text-dark">Tháng {{ $m }}</span>
+                                            @if($year === now()->year && $m === now()->month)
+                                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill" style="font-size: 10px; font-weight: 600; padding: 2px 6px; line-height: 1.2; border: 1px solid rgba(13, 110, 253, 0.25);">Hiện tại</span>
+                                            @endif
                                         </div>
+                                        <small class="text-muted">Quý {{ (int) ceil($m / 3) }}</small>
                                     </div>
                                 </td>
                                 <td class="text-end fw-semibold {{ $this->monthMetrics($data)['target'] > 0 ? 'text-dark' : 'text-muted' }}">
