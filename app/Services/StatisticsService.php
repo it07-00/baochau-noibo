@@ -71,6 +71,28 @@ class StatisticsService
             return $query;
         };
 
+        $applyRevenueDateFilter = function ($query, ?int $monthForFallback = null) use ($contractDateFromParsed, $contractDateToParsed, $year) {
+            $dateColumn = DB::raw('COALESCE(submitted_at, signed_at)');
+
+            if ($contractDateFromParsed !== null || $contractDateToParsed !== null) {
+                if ($contractDateFromParsed !== null) {
+                    $query->whereDate($dateColumn, '>=', $contractDateFromParsed);
+                }
+                if ($contractDateToParsed !== null) {
+                    $query->whereDate($dateColumn, '<=', $contractDateToParsed);
+                }
+
+                return $query;
+            }
+
+            $query->whereYear($dateColumn, $year);
+            if ($monthForFallback !== null) {
+                $query->whereMonth($dateColumn, $monthForFallback);
+            }
+
+            return $query;
+        };
+
         // All contract models use 'signed_at' as their date column.
         $getDateColumn = function (): string {
             return 'signed_at';
@@ -100,7 +122,7 @@ class StatisticsService
             $dateColumn = $getDateColumn();
 
             $yearOrDateQuery = $model::query();
-            $applyContractDateFilter($yearOrDateQuery, null, $dateColumn);
+            $applyContractDateFilter($yearOrDateQuery, $selectedMonth, $dateColumn);
             $row = $yearOrDateQuery
                 ->selectRaw('COUNT(*) as cnt, COALESCE(SUM(value),0) as val')
                 ->first();
@@ -126,19 +148,7 @@ class StatisticsService
         $totalSales = 0;
         foreach ($contractTypes as $modelClass) {
             $modelQuery = $modelClass::query();
-            if ($contractDateFromParsed || $contractDateToParsed) {
-                if ($contractDateFromParsed) {
-                    $modelQuery->whereDate(DB::raw('COALESCE(submitted_at, signed_at)'), '>=', $contractDateFromParsed);
-                }
-                if ($contractDateToParsed) {
-                    $modelQuery->whereDate(DB::raw('COALESCE(submitted_at, signed_at)'), '<=', $contractDateToParsed);
-                }
-            } else {
-                $modelQuery->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $year);
-                if ($selectedMonth !== null) {
-                    $modelQuery->whereMonth(DB::raw('COALESCE(submitted_at, signed_at)'), $selectedMonth);
-                }
-            }
+            $applyRevenueDateFilter($modelQuery, $selectedMonth);
             $totalSales += (float) $modelQuery->sum('revenue');
         }
 
@@ -151,7 +161,7 @@ class StatisticsService
 
             // Số lượng HĐ và giá trị: theo ngày ký (signed_at)
             $monthlyQuery = $model::query();
-            $applyContractDateFilter($monthlyQuery, null, $dateColumn);
+            $applyContractDateFilter($monthlyQuery, $selectedMonth, $dateColumn);
             $rows = $monthlyQuery
                 ->selectRaw("MONTH({$dateColumn}) as m, COUNT(*) as cnt, SUM(value) as val")
                 ->groupByRaw("MONTH({$dateColumn})")
@@ -163,8 +173,9 @@ class StatisticsService
             }
 
             // Doanh số: theo ngày xuất hóa đơn COALESCE(submitted_at, signed_at)
-            $revQuery = $model::query()
-                ->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $year)
+            $revQuery = $model::query();
+            $applyRevenueDateFilter($revQuery, $selectedMonth);
+            $revQuery = $revQuery
                 ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as rev')
                 ->groupByRaw('MONTH(COALESCE(submitted_at, signed_at))')
                 ->get();

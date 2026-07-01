@@ -12,14 +12,23 @@ use Livewire\Component;
 class StatisticsBoard extends Component
 {
     public int $year;
+
     public array $years = [];
+
     public string $month = '';
+
     public string $contractDateFrom = '';
+
     public string $contractDateTo = '';
+
     public string $chartMode = 'quarter'; // 'quarter' | 'year'
+
     public array $itStats = [];
+
     public array $envData = [];
+
     public bool $showEnv = false;
+
     public string $activeTab = 'overview'; // overview, security, env
 
     protected $listeners = ['it-action-completed' => '$refresh'];
@@ -46,16 +55,12 @@ class StatisticsBoard extends Component
 
     public function updatedYear(): void
     {
-        if ($this->month !== '' && (int) $this->month > $this->maximumVisibleMonth()) {
-            $this->month = '';
-        }
-
         $this->dispatch('chart-updated');
     }
 
     public function maximumVisibleMonth(): int
     {
-        return $this->year === now()->year ? now()->month : 12;
+        return 12;
     }
 
     public function updatedMonth(): void
@@ -82,20 +87,24 @@ class StatisticsBoard extends Component
 
     public function clearCache()
     {
-        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
+        if (! auth()->user()->hasRole(RoleEnum::IT->value)) {
+            return;
+        }
 
         try {
             Artisan::call('optimize:clear');
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã dọn dẹp toàn bộ bộ nhớ đệm (Cache) và tối ưu hóa hệ thống.']);
         } catch (\Exception $e) {
-            Log::error("IT Dash ClearCache Error: " . $e->getMessage());
+            Log::error('IT Dash ClearCache Error: '.$e->getMessage());
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Gặp lỗi khi dọn dẹp cache.']);
         }
     }
 
     public function clearLogs()
     {
-        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
+        if (! auth()->user()->hasRole(RoleEnum::IT->value)) {
+            return;
+        }
 
         try {
             $logFile = storage_path('logs/laravel.log');
@@ -107,24 +116,30 @@ class StatisticsBoard extends Component
                 $this->dispatch('swal:toast', ['type' => 'info', 'message' => 'Hiện không có tệp nhật ký nào.']);
             }
         } catch (\Exception $e) {
-            Log::error("IT Dash ClearLogs Error: " . $e->getMessage());
+            Log::error('IT Dash ClearLogs Error: '.$e->getMessage());
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Gặp lỗi khi xóa logs.']);
         }
     }
 
     public function loadEnv()
     {
-        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
+        if (! auth()->user()->hasRole(RoleEnum::IT->value)) {
+            return;
+        }
 
         $path = base_path('.env');
-        if (!file_exists($path)) return;
+        if (! file_exists($path)) {
+            return;
+        }
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $this->envData = [];
         foreach ($lines as $line) {
-            if (strpos(trim($line), '#') === 0) continue;
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
             if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
+                [$key, $value] = explode('=', $line, 2);
                 $this->envData[trim($key)] = trim($value, '"\' ');
             }
         }
@@ -132,11 +147,14 @@ class StatisticsBoard extends Component
 
     public function saveEnv()
     {
-        if (!auth()->user()->hasRole(RoleEnum::IT->value)) return;
+        if (! auth()->user()->hasRole(RoleEnum::IT->value)) {
+            return;
+        }
 
         try {
-            if (empty($this->envData) || !isset($this->envData['APP_KEY'])) {
+            if (empty($this->envData) || ! isset($this->envData['APP_KEY'])) {
                 $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Lỗi: Dữ liệu môi trường không hợp lệ hoặc thiếu APP_KEY.']);
+
                 return;
             }
 
@@ -144,9 +162,9 @@ class StatisticsBoard extends Component
             $backupPath = base_path('.env.bak');
             File::copy($path, $backupPath);
 
-            $content = "";
+            $content = '';
             foreach ($this->envData as $key => $value) {
-                $content .= "{$key}=" . (strpos($value, ' ') !== false ? "\"{$value}\"" : $value) . "\n";
+                $content .= "{$key}=".(strpos($value, ' ') !== false ? "\"{$value}\"" : $value)."\n";
             }
 
             File::put($path, $content);
@@ -155,21 +173,24 @@ class StatisticsBoard extends Component
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tệp .env và làm mới cấu hình.']);
             $this->showEnv = false;
         } catch (\Exception $e) {
-            Log::error("IT Dash SaveEnv Error: " . $e->getMessage());
+            Log::error('IT Dash SaveEnv Error: '.$e->getMessage());
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Lỗi khi lưu tệp .env.']);
         }
     }
 
     public function toggleEnv()
     {
-        $this->showEnv = !$this->showEnv;
-        if ($this->showEnv) $this->loadEnv();
+        $this->showEnv = ! $this->showEnv;
+        if ($this->showEnv) {
+            $this->loadEnv();
+        }
     }
 
     public function setTab($tab)
     {
-        if (!in_array($tab, ['overview', 'security'], true)) {
+        if (! in_array($tab, ['overview', 'security'], true)) {
             $this->activeTab = 'overview';
+
             return;
         }
 
