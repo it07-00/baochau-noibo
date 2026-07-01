@@ -53,6 +53,15 @@ class StatisticsBoard extends Component
         $this->year = now()->year;
         $this->month = (string) now()->month;
         $this->years = range(now()->year, now()->year - 4);
+
+        $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(RoleEnum::KINH_DOANH->value)
+            && ! $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+        } else {
+            $this->filter_staff = '';
+        }
     }
 
     public function updatedChartMode(): void
@@ -210,6 +219,12 @@ class StatisticsBoard extends Component
     public function render(StatisticsService $statisticsService)
     {
         $user = auth()->user();
+        $isRestrictedSales = $user->hasRole(RoleEnum::KINH_DOANH->value)
+            && ! $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
+        if ($isRestrictedSales) {
+            $this->filter_staff = (string) $user->id;
+        }
+
         $canFilterStaff = $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
 
         $data = $statisticsService->getDashboardData(
