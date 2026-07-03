@@ -358,7 +358,10 @@ class CustomerManager extends Component
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
             ->when($this->serviceFilter, function (Builder $query): void {
                 $canonical = self::canonicalizeService($this->serviceFilter);
-                $matchingValues = [Str::lower($canonical)];
+                $matchingValues = [];
+                foreach (self::getServiceVariants($canonical) as $v) {
+                    $matchingValues[] = Str::lower($v);
+                }
                 
                 $aliases = [
                     'qtmt' => 'Quan trắc môi trường',
@@ -369,10 +372,13 @@ class CustomerManager extends Component
                 
                 foreach ($aliases as $abbr => $full) {
                     if (strcasecmp($full, $canonical) === 0) {
-                        $matchingValues[] = Str::lower($abbr);
+                        foreach (self::getServiceVariants($abbr) as $v) {
+                            $matchingValues[] = Str::lower($v);
+                        }
                     }
                 }
                 
+                $matchingValues = array_values(array_unique($matchingValues));
                 $placeholders = implode(',', array_fill(0, count($matchingValues), '?'));
 
                 $query->where(function (Builder $q) use ($placeholders, $matchingValues): void {
@@ -435,6 +441,72 @@ class CustomerManager extends Component
             ->values();
     }
 
+    public static function normalizeVietnameseAccents(string $str): string
+    {
+        $map = [
+            "\xc5\xa9y" => "u\xe1\xbb\xb9", // ũy -> uỹ
+            "\xc5\xa8y" => "U\xe1\xbb\xb9", // Ũy -> Uỹ
+            "\xc5\xa8Y" => "U\xe1\xbb\xb8", // ŨY -> UỸ
+            
+            "\xc3\xbay" => "u\xc3\xbd",     // úy -> uý
+            "\xc3\x9ay" => "U\xc3\xbd",     // Úy -> Uý
+            "\xc3\x9aY" => "U\xc3\x9d",     // ÚY -> UÝ
+            
+            "\xc3\xb9y" => "u\xe1\xbb\xb3", // ùy -> uỳ
+            "\xc3\x99y" => "U\xe1\xbb\xb3", // Ùy -> Uỳ
+            "\xc3\x99Y" => "U\xe1\xbb\xb2", // ÙY -> UỲ
+            
+            "\xe1\xbb\xa7y" => "u\xe1\xbb\xb7", // ủy -> uỷ
+            "\xe1\xbb\xa6y" => "U\xe1\xbb\xb7", // Ủy -> Uỷ
+            "\xe1\xbb\xa6Y" => "U\xe1\xbb\xb6", // ỦY -> UỶ
+            
+            "\xe1\xbb\xa5y" => "u\xe1\xbb\xb5", // cụy -> uỵ
+            "\xe1\xbb\xa4y" => "U\xe1\xbb\xb5", // Ụy -> Uỵ
+            "\xe1\xbb\xa4Y" => "U\xe1\xbb\xb4", // ỤY -> UỴ
+        ];
+
+        return str_replace(array_keys($map), array_values($map), $str);
+    }
+
+    public static function getServiceVariants(string $service): array
+    {
+        $variants = [$service];
+        
+        $reverseMap = [
+            "u\xe1\xbb\xb9" => "\xc5\xa9y", // uỹ -> ũy
+            "U\xe1\xbb\xb9" => "\xc5\xa8y", // Uỹ -> Ũy
+            "U\xe1\xbb\xb8" => "\xc5\xa8Y", // UỸ -> ŨY
+            
+            "u\xc3\xbd"     => "\xc3\xbay", // uý -> úy
+            "U\xc3\xbd"     => "\xc3\x9ay", // Uý -> Úy
+            "U\xc3\x9d"     => "\xc3\x9aY", // UÝ -> ÚY
+            
+            "u\xe1\xbb\xb3" => "\xc3\xb9y", // uỳ -> ùy
+            "U\xe1\xbb\xb3" => "\xc3\x99y", // Uỳ -> Ùy
+            "U\xe1\xbb\xb2" => "\xc3\x99Y", // UỲ -> ÙY
+            
+            "u\xe1\xbb\xb7" => "\xe1\xbb\xa7y", // uỷ -> ủy
+            "U\xe1\xbb\xb7" => "\xe1\xbb\xa6y", // Uỷ -> Ủy
+            "U\xe1\xbb\xb6" => "\xe1\xbb\xa6Y", // UỶ -> ỦY
+            
+            "u\xe1\xbb\xb5" => "\xe1\xbb\xa5y", // uỵ -> cụy
+            "U\xe1\xbb\xb5" => "\xe1\xbb\xa4y", // Uỵ -> Ụy
+            "U\xe1\xbb\xb4" => "\xe1\xbb\xa4Y", // UỴ -> ỤY
+        ];
+
+        $alt = str_replace(array_keys($reverseMap), array_values($reverseMap), $service);
+        if ($alt !== $service) {
+            $variants[] = $alt;
+        }
+
+        $norm = self::normalizeVietnameseAccents($service);
+        if ($norm !== $service && !in_array($norm, $variants, true)) {
+            $variants[] = $norm;
+        }
+
+        return $variants;
+    }
+
     public static function canonicalizeService(?string $service): string
     {
         $service = trim((string) $service);
@@ -442,6 +514,7 @@ class CustomerManager extends Component
             return '';
         }
 
+        $service = self::normalizeVietnameseAccents($service);
         $lower = Str::lower($service);
 
         $aliases = [
