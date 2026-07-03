@@ -304,13 +304,35 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-6 col-lg-5">
-                    <label for="service-quotation-filter" class="form-label fw-bold">Dịch vụ báo giá</label>
-                    <select id="service-quotation-filter" class="form-select" wire:model.live="serviceQuotationFilter">
-                        <option value="">Tất cả dịch vụ báo giá</option>
-                        @foreach($serviceQuotationOptions as $service)
-                            <option value="{{ $service }}">{{ $service }}</option>
-                        @endforeach
-                    </select>
+                    <label class="form-label fw-bold">Dịch vụ báo giá</label>
+                    <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
+                        <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle" type="button" @click="open = !open">
+                            <span class="text-truncate me-2">
+                                @php
+                                    $selectedQuotationList = is_array($serviceQuotationFilter)
+                                        ? $serviceQuotationFilter
+                                        : (empty($serviceQuotationFilter) ? [] : [$serviceQuotationFilter]);
+                                @endphp
+                                @if(empty($selectedQuotationList))
+                                    Tất cả dịch vụ báo giá
+                                @elseif(count($selectedQuotationList) === 1)
+                                    {{ $selectedQuotationList[0] }}
+                                @else
+                                    {{ count($selectedQuotationList) }} dịch vụ được chọn
+                                @endif
+                            </span>
+                        </button>
+                        <div class="dropdown-menu w-100 p-2 shadow-sm border" :class="{ 'show': open }" style="max-height: 250px; overflow-y: auto; margin-top: 2px; z-index: 1050;">
+                            @foreach($serviceQuotationOptions as $index => $service)
+                                <div class="form-check py-1">
+                                    <input class="form-check-input" type="checkbox" value="{{ $service }}" id="service-quote-{{ $index }}" wire:model.live="serviceQuotationFilter">
+                                    <label class="form-check-label text-dark w-100 cursor-pointer" for="service-quote-{{ $index }}">
+                                        {{ $service }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-5">
                     <label for="service-contract-filter" class="form-label fw-bold">Dịch vụ hợp đồng</label>

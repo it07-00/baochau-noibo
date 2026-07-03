@@ -34,7 +34,7 @@ class CustomerManager extends Component
 
     public string $industrialParkFilter = '';
 
-    public string $serviceQuotationFilter = '';
+    public $serviceQuotationFilter = [];
 
     public string $serviceContractFilter = '';
 
@@ -364,32 +364,45 @@ class CustomerManager extends Component
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter))
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
-            ->when($this->serviceQuotationFilter, function (Builder $query): void {
-                $canonical = self::canonicalizeService($this->serviceQuotationFilter);
-                $matchingValues = [];
-                foreach (self::getServiceVariants($canonical) as $v) {
-                    $matchingValues[] = Str::lower($v);
-                }
-                
-                $aliases = [
-                    'qtmt' => 'Quan trắc môi trường',
-                    'pllđ' => 'Phân loại lao động',
-                    'plld' => 'Phân loại lao động',
-                    'qtmtld' => 'Quan trắc môi trường lao động',
-                ];
-                
-                foreach ($aliases as $abbr => $full) {
-                    if (strcasecmp($full, $canonical) === 0) {
-                        foreach (self::getServiceVariants($abbr) as $v) {
-                            $matchingValues[] = Str::lower($v);
+            ->when(!empty($this->serviceQuotationFilter), function (Builder $query): void {
+                $selectedServices = is_array($this->serviceQuotationFilter)
+                    ? $this->serviceQuotationFilter
+                    : [$this->serviceQuotationFilter];
+
+                $allMatchingValues = [];
+                foreach ($selectedServices as $selectedService) {
+                    $selectedService = trim((string) $selectedService);
+                    if ($selectedService === '') {
+                        continue;
+                    }
+
+                    $canonical = self::canonicalizeService($selectedService);
+                    foreach (self::getServiceVariants($canonical) as $v) {
+                        $allMatchingValues[] = Str::lower($v);
+                    }
+                    
+                    $aliases = [
+                        'qtmt' => 'Quan trắc môi trường',
+                        'pllđ' => 'Phân loại lao động',
+                        'plld' => 'Phân loại lao động',
+                        'qtmtld' => 'Quan trắc môi trường lao động',
+                    ];
+                    
+                    foreach ($aliases as $abbr => $full) {
+                        if (strcasecmp($full, $canonical) === 0) {
+                            foreach (self::getServiceVariants($abbr) as $v) {
+                                $allMatchingValues[] = Str::lower($v);
+                            }
                         }
                     }
                 }
-                
-                $matchingValues = array_values(array_unique($matchingValues));
-                $placeholders = implode(',', array_fill(0, count($matchingValues), '?'));
 
-                $query->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->whereRaw("LOWER(service) IN ($placeholders)", $matchingValues));
+                $allMatchingValues = array_values(array_unique($allMatchingValues));
+
+                if (!empty($allMatchingValues)) {
+                    $placeholders = implode(',', array_fill(0, count($allMatchingValues), '?'));
+                    $query->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->whereRaw("LOWER(service) IN ($placeholders)", $allMatchingValues));
+                }
             })
             ->when($this->serviceContractFilter, function (Builder $query): void {
                 $canonical = self::canonicalizeService($this->serviceContractFilter);
