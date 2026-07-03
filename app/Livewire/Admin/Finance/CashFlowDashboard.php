@@ -300,20 +300,6 @@ class CashFlowDashboard extends Component
         $value = substr(trim((string) $invoiceNumber), 0, 255);
         $stateKey = $this->sheetStateKey($sourceKey, $contractId);
 
-        if ($value !== '' && $this->baoChauInvoiceNumberExists($value, $sourceKey, $contractId)) {
-            $this->baoChauInvoiceMessages[$stateKey] = [
-                'type' => 'error',
-                'text' => 'Số hóa đơn Bảo Châu này đã tồn tại.',
-            ];
-
-            $this->dispatch('swal:toast', [
-                'type' => 'error',
-                'message' => 'Số hóa đơn Bảo Châu này đã tồn tại.',
-            ]);
-
-            return;
-        }
-
         $contract = $modelClass::query()->findOrFail($contractId);
         $contract->forceFill(['shd_bc' => $value !== '' ? $value : null])->save();
 
@@ -587,11 +573,6 @@ class CashFlowDashboard extends Component
             'type' => 'success',
             'message' => $message,
         ]);
-    }
-
-    private function baoChauInvoiceNumberExists(string $invoiceNumber, string $currentSourceKey, int $currentContractId): bool
-    {
-        return $this->contractColumnValueExists('shd_bc', $invoiceNumber, $currentSourceKey, $currentContractId);
     }
 
     private function contractColumnValueExists(string $column, string $value, string $currentSourceKey, int $currentContractId): bool
