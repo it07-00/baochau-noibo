@@ -335,7 +335,54 @@
     </div>
 
     <!-- Form Modal -->
-    <div wire:ignore.self class="modal fade" id="quotationModal" tabindex="-1" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="quotationModal" tabindex="-1" aria-hidden="true"
+         x-data="{
+             original_value: @entangle('formData.original_value'),
+             commission_value: @entangle('formData.commission_value'),
+             commission_tax: @entangle('formData.commission_tax'),
+             value_inc_vat: 0,
+             total_value: 0,
+
+             parseMoney(val) {
+                 if (val === null || val === undefined) return 0;
+                 let cleaned = String(val).replace(/\D/g, '');
+                 return cleaned !== '' ? parseInt(cleaned, 10) : 0;
+             },
+
+             formatMoney(val) {
+                 return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+             },
+
+             isCommissionTaxManual() {
+                 return this.parseMoney(this.commission_value) > 5000000;
+             },
+
+             recalculate() {
+                 let orig = this.parseMoney(this.original_value);
+                 let comm = this.parseMoney(this.commission_value);
+                 let tax = 0;
+
+                 if (this.isCommissionTaxManual()) {
+                     tax = this.parseMoney(this.commission_tax);
+                 } else {
+                     if (comm <= 1000000) {
+                         tax = Math.round(comm * 0.20);
+                     } else {
+                         tax = Math.round(comm * 0.30);
+                     }
+                     this.commission_tax = tax;
+                 }
+
+                 this.value_inc_vat = orig + comm + tax;
+                 this.total_value = Math.round(this.value_inc_vat * 1.08);
+             }
+         }"
+         x-init="
+             $watch('original_value', () => recalculate());
+             $watch('commission_value', () => recalculate());
+             $watch('commission_tax', () => recalculate());
+             recalculate();
+         ">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-primary py-3">
@@ -436,14 +483,18 @@
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Giá trị gốc</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-end money-input" wire:model.blur="formData.original_value">
+                                    <input type="text" class="form-control text-end money-input" 
+                                           x-model="original_value"
+                                           wire:model.blur="formData.original_value">
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Hoa hồng KH</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-end money-input" wire:model.blur="formData.commission_value">
+                                    <input type="text" class="form-control text-end money-input" 
+                                           x-model="commission_value"
+                                           wire:model.blur="formData.commission_value">
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                             </div>
@@ -451,17 +502,16 @@
                                 <label class="form-label fw-bold">Thuế HH</label>
                                 <div class="input-group">
                                     <input type="text"
-                                        class="form-control text-end money-input {{ $this->isCommissionTaxManual() ? '' : 'bg-light' }}"
-                                        wire:model.blur="formData.commission_tax"
-                                        @readonly(!$this->isCommissionTaxManual())
-                                        @if(!$this->isCommissionTaxManual())
-                                            value="{{ number_format((float) ($formData['commission_tax'] ?? 0), 0, ',', '.') }}"
-                                        @endif>
+                                        class="form-control text-end money-input"
+                                        x-bind:class="isCommissionTaxManual() ? '' : 'bg-light'"
+                                        x-model="commission_tax"
+                                        x-bind:readonly="!isCommissionTaxManual()"
+                                        wire:model.blur="formData.commission_tax">
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
-                                @unless($this->isCommissionTaxManual())
+                                <template x-if="!isCommissionTaxManual()">
                                     <small class="text-muted">Tự tính 20%–30%</small>
-                                @endunless
+                                </template>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Giá trị chưa VAT</label>
@@ -469,7 +519,7 @@
                                     <input
                                         type="text"
                                         class="form-control text-end fw-bold bg-light money-input"
-                                        value="{{ number_format((float) ($formData['value_inc_vat'] ?? 0), 0, ',', '.') }}"
+                                        x-bind:value="formatMoney(value_inc_vat)"
                                         readonly>
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
@@ -480,7 +530,7 @@
                                     <input
                                         type="text"
                                         class="form-control text-end fw-bold text-danger bg-light money-input"
-                                        value="{{ number_format((float) ($formData['total_value'] ?? 0), 0, ',', '.') }}"
+                                        x-bind:value="formatMoney(total_value)"
                                         readonly>
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
