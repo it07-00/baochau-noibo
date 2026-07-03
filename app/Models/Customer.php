@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
@@ -10,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Customer extends Model
 {
-    use SoftDeletes, LogsActivity;
+    use LogsActivity, SoftDeletes;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -18,12 +19,15 @@ class Customer extends Model
             ->logAll()
             ->logOnlyDirty();
     }
+
     protected $fillable = [
         'name',
         'slug',
         'tax_code',
         'address',
         'province',
+        'ward',
+        'industrial_park',
         'representative',
     ];
 
@@ -47,7 +51,7 @@ class Customer extends Model
                         ->when($customer->exists, fn ($q) => $q->where('id', '!=', $customer->id))
                         ->exists()
                 ) {
-                    $slug = $base . '-' . $i++;
+                    $slug = $base.'-'.$i++;
                 }
                 $customer->slug = $slug;
             }
@@ -82,5 +86,14 @@ class Customer extends Model
     public function contractsSustainability()
     {
         return $this->hasMany(ContractSustainability::class);
+    }
+
+    /**
+     * Báo giá hiện được liên kết với khách hàng bằng tên công ty.
+     * Tên khách hàng là duy nhất nên quan hệ này phản ánh dữ liệu theo dõi báo giá.
+     */
+    public function quotations(): HasMany
+    {
+        return $this->hasMany(Quotation::class, 'company_name', 'name');
     }
 }
