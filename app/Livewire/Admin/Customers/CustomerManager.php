@@ -277,14 +277,14 @@ class CustomerManager extends Component
         $services = [];
 
         foreach ($customer->quotations as $quotation) {
-            $label = trim((string) $quotation->service) ?: 'Chưa phân loại dịch vụ';
+            $label = self::canonicalizeService($quotation->service) ?: 'Chưa phân loại dịch vụ';
             $services[$label] ??= ['label' => $label, 'quotations' => 0, 'contracts' => 0];
             $services[$label]['quotations']++;
         }
 
         foreach (self::CONTRACT_RELATIONS as $relation => [, $fallbackLabel]) {
             foreach ($customer->{$relation} as $contract) {
-                $label = trim((string) $contract->loai_dich_vu) ?: $fallbackLabel;
+                $label = self::canonicalizeService($contract->loai_dich_vu) ?: $fallbackLabel;
                 $services[$label] ??= ['label' => $label, 'quotations' => 0, 'contracts' => 0];
                 $services[$label]['contracts']++;
             }
@@ -357,12 +357,29 @@ class CustomerManager extends Component
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter))
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
             ->when($this->serviceFilter, function (Builder $query): void {
-                $service = $this->serviceFilter;
-                $query->where(function (Builder $q) use ($service): void {
-                    $q->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->where('service', $service));
+                $canonical = self::canonicalizeService($this->serviceFilter);
+                $matchingValues = [Str::lower($canonical)];
+                
+                $aliases = [
+                    'qtmt' => 'Quan trắc môi trường',
+                    'pllđ' => 'Phân loại lao động',
+                    'plld' => 'Phân loại lao động',
+                    'qtmtld' => 'Quan trắc môi trường lao động',
+                ];
+                
+                foreach ($aliases as $abbr => $full) {
+                    if (strcasecmp($full, $canonical) === 0) {
+                        $matchingValues[] = Str::lower($abbr);
+                    }
+                }
+                
+                $placeholders = implode(',', array_fill(0, count($matchingValues), '?'));
+
+                $query->where(function (Builder $q) use ($placeholders, $matchingValues): void {
+                    $q->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->whereRaw("LOWER(service) IN ($placeholders)", $matchingValues));
 
                     foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
-                        $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->where('loai_dich_vu', $service));
+                        $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->whereRaw("LOWER(loai_dich_vu) IN ($placeholders)", $matchingValues));
                     }
                 });
             });
@@ -411,11 +428,34 @@ class CustomerManager extends Component
         }
 
         return $services
-            ->map(fn ($service) => trim((string) $service))
+            ->map(fn ($service) => self::canonicalizeService($service))
             ->filter()
             ->unique()
             ->sort(SORT_NATURAL | SORT_FLAG_CASE)
             ->values();
+    }
+
+    public static function canonicalizeService(?string $service): string
+    {
+        $service = trim((string) $service);
+        if ($service === '') {
+            return '';
+        }
+
+        $lower = Str::lower($service);
+
+        $aliases = [
+            'qtmt' => 'Quan trắc môi trường',
+            'pllđ' => 'Phân loại lao động',
+            'plld' => 'Phân loại lao động',
+            'qtmtld' => 'Quan trắc môi trường lao động',
+        ];
+
+        if (array_key_exists($lower, $aliases)) {
+            return $aliases[$lower];
+        }
+
+        return Str::ucfirst($service);
     }
 
     private function summary(Collection $customerIds): array

@@ -85,4 +85,47 @@ class CustomerManagerFilterTest extends TestCase
             ->assertSee('1 HĐ')
             ->assertSee('1 hợp đồng của Công ty KCN Long Hậu');
     }
+
+    public function test_it_normalizes_and_deduplicates_service_names_in_dropdown_and_filters_case_insensitively(): void
+    {
+        $user = User::factory()->create();
+        $user->givePermissionTo(Permission::findOrCreate('customers.view'));
+
+        $customer = Customer::create([
+            'name' => 'Công ty Việt Nam',
+            'province' => 'TP. Hồ Chí Minh',
+        ]);
+
+        Quotation::create([
+            'date' => '2026-07-01',
+            'staff_id' => $user->id,
+            'company_name' => $customer->name,
+            'service' => 'QTMT',
+        ]);
+
+        $department = Department::create([
+            'name' => 'Kinh doanh',
+            'slug' => 'kinh-doanh-service-case-test',
+            'is_active' => true,
+        ]);
+        $handler = Handler::create(['name' => 'Nhà thầu phụ A']);
+
+        ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $user->id,
+            'department_id' => $department->id,
+            'loai_dich_vu' => 'quan trắc môi trường',
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(CustomerManager::class)
+            ->assertViewHas('serviceOptions', function ($options) {
+                return $options->contains('Quan trắc môi trường') && !$options->contains('QTMT') && !$options->contains('quan trắc môi trường');
+            })
+            ->set('serviceFilter', 'Quan trắc môi trường')
+            ->assertSee('Quan trắc môi trường')
+            ->assertSee('1 BG')
+            ->assertSee('1 HĐ');
+    }
 }
