@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Admin\Finance;
 
+use App\Enums\ContractType;
 use App\Enums\Permission;
 use App\Enums\Role;
-use App\Enums\ContractType;
 use App\Services\GoogleSheetTotalExtractor;
-use Illuminate\Support\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -329,19 +329,21 @@ class CashFlowDashboard extends Component
         if ($raw === '') {
             $contract->forceFill(['submitted_at' => null])->save();
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa ngày xuất hóa đơn.']);
+
             return;
         }
 
         try {
-            $date = \Illuminate\Support\Carbon::createFromFormat('Y-m-d', $raw)->startOfDay();
-        } catch (\Throwable) {
+            $date = Carbon::createFromFormat('Y-m-d', $raw)->startOfDay();
+        } catch (Throwable) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Ngày không hợp lệ.']);
+
             return;
         }
 
         $contract->forceFill(['submitted_at' => $date])->save();
 
-        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật ngày xuất hóa đơn: ' . $date->format('d/m/Y') . '.']);
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật ngày xuất hóa đơn: '.$date->format('d/m/Y').'.']);
     }
 
     public function updateNccPaymentManual(string $sourceKey, int $contractId): void
@@ -356,8 +358,9 @@ class CashFlowDashboard extends Component
         // Allow formatted numbers like "1,500,000" or plain "1500000"
         $raw = str_replace([',', '.', ' '], '', $raw);
 
-        if ($raw === '' || !ctype_digit($raw)) {
+        if ($raw === '' || ! ctype_digit($raw)) {
             $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng nhập số tiền hợp lệ.']);
+
             return;
         }
 
@@ -366,13 +369,13 @@ class CashFlowDashboard extends Component
         [$modelClass] = $contractSources[$sourceKey];
         $contract = $modelClass::query()->findOrFail($contractId);
         $contract->forceFill([
-            'ncc_payment'            => $amount,
+            'ncc_payment' => $amount,
             'ncc_payment_updated_at' => now(),
         ])->save();
 
         $this->dispatch('swal:toast', [
-            'type'    => 'success',
-            'message' => 'Đã cập nhật chi NCC: ' . number_format($amount) . 'đ',
+            'type' => 'success',
+            'message' => 'Đã cập nhật chi NCC: '.number_format($amount).'đ',
         ]);
     }
 
@@ -455,7 +458,7 @@ class CashFlowDashboard extends Component
 
         $this->dispatch('swal:toast', [
             'type' => 'success',
-            'message' => 'Đã cập nhật chi nhà cung cấp: ' . number_format($amount) . 'đ',
+            'message' => 'Đã cập nhật chi nhà cung cấp: '.number_format($amount).'đ',
         ]);
     }
 
@@ -476,6 +479,7 @@ class CashFlowDashboard extends Component
 
             if ($sheetUrl === '') {
                 $skippedCount++;
+
                 continue;
             }
 
@@ -517,7 +521,7 @@ class CashFlowDashboard extends Component
 
         $this->dispatch('swal:toast', [
             'type' => $failedCount > 0 ? 'warning' : 'success',
-            'message' => $message . '.',
+            'message' => $message.'.',
         ]);
     }
 
@@ -562,7 +566,7 @@ class CashFlowDashboard extends Component
         $this->paymentDates[$stateKey] = $paidAt?->format('Y-m-d') ?? '';
 
         if ($status === self::PAYMENT_STATUS_PAID && $paidAt !== null) {
-            $message = 'Đã cập nhật: Đã thanh toán (' . $paidAt->format('d/m/Y') . ').';
+            $message = 'Đã cập nhật: Đã thanh toán ('.$paidAt->format('d/m/Y').').';
         } elseif ($status === self::PAYMENT_STATUS_PAID) {
             $message = 'Đã cập nhật: Đã thanh toán.';
         } else {
@@ -622,7 +626,7 @@ class CashFlowDashboard extends Component
 
     public function collapseId(string $sourceKey, int $contractId): string
     {
-        return 'sheetEditor_' . $this->stateKey($sourceKey, $contractId);
+        return 'sheetEditor_'.$this->stateKey($sourceKey, $contractId);
     }
 
     public function baoChauMessageFor(string $stateKey): ?array
@@ -642,7 +646,7 @@ class CashFlowDashboard extends Component
 
     public function isTdxRow(array $row): bool
     {
-        return !empty($row['is_tdx_handler']);
+        return ! empty($row['is_tdx_handler']);
     }
 
     private function buildTotals(array $rows): array
@@ -715,7 +719,7 @@ class CashFlowDashboard extends Component
 
     private function sheetStateKey(string $sourceKey, int $contractId): string
     {
-        return $sourceKey . '_' . $contractId;
+        return $sourceKey.'_'.$contractId;
     }
 
     private function isTdxHandler(?string $handlerName): bool
