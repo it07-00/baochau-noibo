@@ -501,12 +501,20 @@
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Thuế HH</label>
                                 <div class="input-group">
-                                    <input type="text"
-                                        class="form-control text-end money-input"
-                                        x-bind:class="isCommissionTaxManual() ? '' : 'bg-light'"
-                                        x-model="commission_tax"
-                                        x-bind:readonly="!isCommissionTaxManual()"
-                                        wire:model.blur="formData.commission_tax">
+                                    <!-- Readonly Input (Auto-calculated) -->
+                                    <template x-if="!isCommissionTaxManual()">
+                                        <input type="text"
+                                            class="form-control text-end money-input bg-light"
+                                            x-bind:value="formatMoney(commission_tax)"
+                                            readonly>
+                                    </template>
+                                    <!-- Editable Input (Manual) -->
+                                    <template x-if="isCommissionTaxManual()">
+                                        <input type="text"
+                                            class="form-control text-end money-input"
+                                            x-model="commission_tax"
+                                            wire:model.blur="formData.commission_tax">
+                                    </template>
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                                 <template x-if="!isCommissionTaxManual()">
