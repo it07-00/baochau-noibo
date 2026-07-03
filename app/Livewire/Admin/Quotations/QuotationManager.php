@@ -554,6 +554,24 @@ class QuotationManager extends Component
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã xóa báo giá']);
     }
 
+    public function updateStatus(int $quotationId, string $newStatus): void
+    {
+        abort_unless(auth()->user()->can(Permission::QUOTATION_TRACKING_EDIT->value), 403);
+
+        $quotation = Quotation::findOrFail($quotationId);
+        $this->authorizeQuotationAccess($quotation);
+
+        if (!in_array($newStatus, QuotationStatus::values(), true)) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Tình hình không hợp lệ.']);
+            return;
+        }
+
+        $quotation->status = $newStatus;
+        $quotation->save();
+
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật tình hình thành công.']);
+    }
+
     private function resetForm()
     {
         $this->formData = [

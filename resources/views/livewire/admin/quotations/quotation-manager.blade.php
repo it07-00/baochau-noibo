@@ -83,10 +83,9 @@
                         <th class="w-110px">Số báo giá</th>
                         <th class="text-truncate-220">Công ty / Khách hàng</th>
                         <th class="w-130px">Dịch vụ</th>
-                        <th class="w-100px">Ngành nghề</th>
                         <th>Tình hình làm việc</th>
                         <th class="text-center w-130px" >Tình hình</th>
-                        <th class="text-end w-110px" >Giá trị gốc</th>
+                        <th class="text-end w-130px" >Giá trị gốc</th>
                         <th class="text-end w-100px" >Hoa hồng KH</th>
                         <th class="text-end w-85px" >Thuế HH</th>
                         <th class="text-end fw-bold w-120px" >Giá trị HĐ</th>
@@ -123,19 +122,21 @@
                             @if($item->contact_person)
                             <div class=" text-muted mt-1"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->contact_person }}</div>
                             @endif
-                            @if($item->province)
-                            <span class="badge bg-info bg-opacity-10 text-info mt-1 fs-65" >{{ $item->province }}</span>
-                            @endif
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                @if($item->province)
+                                <span class="badge bg-info bg-opacity-10 text-info fs-65" >{{ $item->province }}</span>
+                                @endif
+                                @if($item->industry)
+                                <span class="badge bg-light text-dark border fs-65" title="Ngành nghề: {{ $item->industry }}">
+                                    <i class="fa-solid fa-briefcase me-1 text-muted"></i>{{ $item->industry }}
+                                </span>
+                                @endif
+                            </div>
                         </td>
                         <td class=" text-wrap mxw-130px" >
                             <div class="line-clamp-2" title="{{ $item->service }}">
                                 {{ $item->service ?: '-' }}
                             </div>
-                        </td>
-                        <td class="">
-                            @if($item->industry)
-                            <span class="badge bg-light text-dark border px-2 py-1 fs-70" >{{ $item->industry }}</span>
-                            @else <span class="text-muted">-</span> @endif
                         </td>
                         <td class="text-wrap  text-truncate-200" >
                             <div class="line-clamp-3" title="{{ $item->work_description }}">
@@ -143,9 +144,24 @@
                             </div>
                         </td>
                         <td class="text-center">
+                            @can('quotation-tracking.edit')
+                            <select 
+                                wire:change="updateStatus({{ $item->id }}, $event.target.value)"
+                                class="form-select form-select-sm rounded-pill fw-semibold text-center border-0 py-1 px-3 fs-72 {{ $this->statusBadgeClass($item->status) }}" 
+                                style="width: auto; display: inline-block; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center;"
+                                title="Nhấp để cập nhật nhanh tình hình"
+                            >
+                                @foreach($statuses as $st)
+                                    <option value="{{ $st }}" class="text-dark bg-white" {{ $item->status === $st ? 'selected' : '' }}>
+                                        {{ $st }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @else
                             <span class="badge rounded-pill {{ $this->statusBadgeClass($item->status) }} px-2 py-1 fs-72" >
                                 {{ $item->status }}
                             </span>
+                            @endcan
                         </td>
                         <td class="text-end ">{{ $item->original_value ? number_format($item->original_value, 0, ',', '.') : '-' }}</td>
                         <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value, 0, ',', '.') : '-' }}</td>
@@ -206,7 +222,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="13" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
+                        <td colspan="12" class="text-center py-5 text-muted">Không tìm thấy dữ liệu báo giá</td>
                     </tr>
                     @endforelse
                 </tbody>
