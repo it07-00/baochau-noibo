@@ -221,8 +221,8 @@ class CustomerManager extends Component
             'tax_code' => $this->nullableFormValue('tax_code'),
             'address' => $this->nullableFormValue('address'),
             'province' => $this->nullableFormValue('province') ?? $detected['province'],
-            'ward' => $this->nullableFormValue('ward') ?? $detected['ward'],
-            'industrial_park' => $this->nullableFormValue('industrial_park') ?? $detected['industrial_park'],
+            'ward' => VietnameseAddressParser::canonicalizeWard($this->nullableFormValue('ward') ?? $detected['ward']),
+            'industrial_park' => VietnameseAddressParser::canonicalizeIndustrialPark($this->nullableFormValue('industrial_park') ?? $detected['industrial_park']),
             'representative' => $this->nullableFormValue('representative'),
         ];
 

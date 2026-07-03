@@ -41,4 +41,33 @@ class CustomerRegionNormalizerTest extends TestCase
         $this->assertSame('Xã Long Hậu', $convertible->ward);
         $this->assertSame('KCN Long Hậu', $convertible->industrial_park);
     }
+
+    public function test_it_normalizes_casing_and_spacing_variations_for_existing_values(): void
+    {
+        $customer1 = Customer::create([
+            'name' => 'Khách hàng 1',
+            'province' => 'TP. Hồ Chí Minh',
+            'ward' => 'phường Bình Hòa',
+            'industrial_park' => 'khu công nghiệp Việt Nam - Singapore',
+        ]);
+        $customer2 = Customer::create([
+            'name' => 'Khách hàng 2',
+            'province' => 'TP. Hồ Chí Minh',
+            'ward' => 'Xã Long Hậu',
+            'industrial_park' => 'Khu công nghiệp Việt Nam- Singapore',
+        ]);
+
+        $normalizer = app(CustomerRegionNormalizer::class);
+        $preview = $normalizer->run();
+
+        $this->assertSame(2, $preview['changed']);
+
+        $normalizer->run(apply: true);
+
+        $this->assertSame('Phường Bình Hòa', $customer1->fresh()->ward);
+        $this->assertSame('Khu công nghiệp Việt Nam - Singapore', $customer1->fresh()->industrial_park);
+
+        $this->assertSame('Xã Long Hậu', $customer2->fresh()->ward);
+        $this->assertSame('Khu công nghiệp Việt Nam - Singapore', $customer2->fresh()->industrial_park);
+    }
 }

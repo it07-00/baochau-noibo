@@ -37,4 +37,24 @@ class VietnameseAddressParserTest extends TestCase
         $this->assertSame('Cà Mau', VietnamProvinces::canonicalize('Bạc Liêu'));
         $this->assertCount(34, VietnamProvinces::list());
     }
+
+    public function test_it_canonicalizes_wards(): void
+    {
+        $this->assertSame('Phường Bình Hòa', VietnameseAddressParser::canonicalizeWard('phường Bình Hòa'));
+        $this->assertSame('Xã Long Hậu', VietnameseAddressParser::canonicalizeWard('xã Long Hậu'));
+        $this->assertSame('Đặc khu Côn Đảo', VietnameseAddressParser::canonicalizeWard('đặc khu Côn Đảo'));
+        $this->assertNull(VietnameseAddressParser::canonicalizeWard(''));
+        $this->assertNull(VietnameseAddressParser::canonicalizeWard(null));
+    }
+
+    public function test_it_canonicalizes_industrial_parks(): void
+    {
+        $this->assertSame('Khu công nghiệp Việt Nam - Singapore', VietnameseAddressParser::canonicalizeIndustrialPark('khu công nghiệp Việt Nam - Singapore'));
+        $this->assertSame('Khu công nghiệp Việt Nam - Singapore', VietnameseAddressParser::canonicalizeIndustrialPark('Khu công nghiệp Việt Nam- Singapore'));
+        $this->assertSame('Khu công nghiệp Việt Nam - Singapore', VietnameseAddressParser::canonicalizeIndustrialPark('khu công nghiệp Việt Nam–Singapore'));
+        $this->assertSame('KCN Đông An', VietnameseAddressParser::canonicalizeIndustrialPark('kcn Đông An'));
+        $this->assertSame('KCN Đông An', VietnameseAddressParser::canonicalizeIndustrialPark('KCN  Đông An'));
+        $this->assertNull(VietnameseAddressParser::canonicalizeIndustrialPark(''));
+        $this->assertNull(VietnameseAddressParser::canonicalizeIndustrialPark(null));
+    }
 }

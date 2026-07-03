@@ -38,8 +38,8 @@ final class CustomerRegionNormalizer
                     $detected = VietnameseAddressParser::parse($customer->address);
                     $newValues = [
                         'province' => VietnamProvinces::canonicalize($customer->province) ?? $detected['province'],
-                        'ward' => $customer->ward ?: $detected['ward'],
-                        'industrial_park' => $customer->industrial_park ?: $detected['industrial_park'],
+                        'ward' => VietnameseAddressParser::canonicalizeWard($customer->ward) ?: $detected['ward'],
+                        'industrial_park' => VietnameseAddressParser::canonicalizeIndustrialPark($customer->industrial_park) ?: $detected['industrial_park'],
                     ];
 
                     $changes = [];
