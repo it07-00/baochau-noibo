@@ -78,4 +78,19 @@ class QuotationManagerMoneyInputTest extends TestCase
         $this->assertSame(0, $rawValues->commission_tax);
         $this->assertSame(0, $rawValues->total_value);
     }
+
+    public function test_recalculate_totals_on_original_value_change(): void
+    {
+        $salesUser = User::factory()->create(['is_active' => true]);
+        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
+
+        $this->actingAs($salesUser);
+
+        Livewire::test(QuotationManager::class)
+            ->set('formData.original_value', '8.888.888.000')
+            ->set('formData.commission_value', '1.000.000')
+            ->assertSet('formData.commission_tax', 200000)
+            ->assertSet('formData.value_inc_vat', 8890088000)
+            ->assertSet('formData.total_value', 9601295040);
+    }
 }

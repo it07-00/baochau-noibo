@@ -459,7 +459,7 @@
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent text-end money-input px-1"
-                                                   wire:model.live.debounce.500ms="summaryItems.{{ $i }}.unit_price">
+                                                   wire:model.blur="summaryItems.{{ $i }}.unit_price">
                                         </td>
                                         <td class="text-end fw-bold text-nowrap px-2">
                                             {{ number_format((float)($item['amount'] ?? 0), 0, ',', '.') }}đ
@@ -573,7 +573,7 @@
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent text-end money-input px-1"
-                                                   wire:model.live.debounce.500ms="detailItems.{{ $i }}.unit_price">
+                                                   wire:model.blur="detailItems.{{ $i }}.unit_price">
                                         </td>
                                         <td class="text-end fw-bold text-nowrap px-2">
                                             {{ number_format((float)($item['amount'] ?? 0), 0, ',', '.') }}đ
@@ -700,7 +700,7 @@
                                         <td class="fw-bold">Chiết khấu:</td>
                                         <td>
                                             <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control text-end money-input" wire:model.live.debounce.500ms="formData.discount">
+                                                <input type="text" class="form-control text-end money-input" wire:model.blur="formData.discount">
                                                 <span class="input-group-text p-1 fs-70">đ</span>
                                             </div>
                                         </td>

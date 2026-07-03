@@ -121,7 +121,7 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Số tiền hoa hồng</label>
                                 <div class="input-group">
-                                    <input type="text" wire:model.live.debounce.500ms="amount" class="form-control money-input @error('amount') is-invalid @enderror" placeholder="Số tiền hoa hồng">
+                                    <input type="text" wire:model.blur="amount" class="form-control money-input @error('amount') is-invalid @enderror" placeholder="Số tiền hoa hồng">
                                     <span class="input-group-text bg-light fw-bold text-muted">VNĐ</span>
                                 </div>
                                 @error('amount') <div class="invalid-feedback">{{ $message }}</div> @enderror
