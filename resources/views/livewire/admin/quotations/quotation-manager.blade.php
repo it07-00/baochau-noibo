@@ -453,7 +453,10 @@
                                     <input type="text"
                                         class="form-control text-end money-input {{ $this->isCommissionTaxManual() ? '' : 'bg-light' }}"
                                         wire:model.blur="formData.commission_tax"
-                                        @readonly(!$this->isCommissionTaxManual())>
+                                        @readonly(!$this->isCommissionTaxManual())
+                                        @if(!$this->isCommissionTaxManual())
+                                            value="{{ number_format((float) ($formData['commission_tax'] ?? 0), 0, ',', '.') }}"
+                                        @endif>
                                     <span class="input-group-text p-1 fs-70" >đ</span>
                                 </div>
                                 @unless($this->isCommissionTaxManual())
