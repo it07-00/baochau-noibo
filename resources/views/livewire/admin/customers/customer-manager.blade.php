@@ -102,12 +102,19 @@
             font-weight: 600;
         }
         .metric-badge {
+            display: inline-block;
             min-width: 42px;
             padding: .23rem .38rem;
             border-radius: .35rem;
             font-size: .68rem;
             font-variant-numeric: tabular-nums;
             text-align: center;
+            text-decoration: none;
+            transition: opacity .15s ease, transform .15s ease;
+        }
+        a.metric-badge:hover {
+            opacity: .85;
+            transform: translateY(-1px);
         }
         .metric-quote {
             color: #3d2cc8;
@@ -324,8 +331,6 @@
                         <th>Khách hàng</th>
                         <th>Khu vực</th>
                         <th>Dịch vụ & hiệu suất</th>
-                        <th class="text-center">Báo giá</th>
-                        <th class="text-center">Hợp đồng</th>
                         <th>Đại diện</th>
                         @canany(['customers.edit', 'customers.delete'])
                         <th class="text-end pe-3">Thao tác</th>
@@ -335,7 +340,7 @@
                 <tbody>
                     @php
                         $currentGroup = null;
-                        $columnCount = auth()->user()->canAny(['customers.edit', 'customers.delete']) ? 8 : 7;
+                        $columnCount = auth()->user()->canAny(['customers.edit', 'customers.delete']) ? 6 : 5;
                     @endphp
                     @forelse($customers as $customer)
                         @if($groupBy !== 'none' && $currentGroup !== $this->groupValue($customer))
@@ -384,7 +389,7 @@
                             <td>
                                 <div class="service-performance">
                                     @forelse(array_slice($breakdown, 0, 3) as $service)
-                                        @include('livewire.admin.customers.partials.service-line', ['service' => $service])
+                                        @include('livewire.admin.customers.partials.service-line', ['service' => $service, 'customer' => $customer])
                                     @empty
                                         <span class="small text-muted">Chưa phát sinh dịch vụ</span>
                                     @endforelse
@@ -393,27 +398,14 @@
                                             <summary>+ {{ count($breakdown) - 3 }} dịch vụ khác</summary>
                                             <div class="mt-1">
                                                 @foreach(array_slice($breakdown, 3) as $service)
-                                                    @include('livewire.admin.customers.partials.service-line', ['service' => $service])
+                                                    @include('livewire.admin.customers.partials.service-line', ['service' => $service, 'customer' => $customer])
                                                 @endforeach
                                             </div>
                                         </details>
                                     @endif
                                 </div>
                             </td>
-                            <td class="text-center">
-                                <a href="{{ route('app.quotation-tracking.index', ['search' => $customer->name]) }}"
-                                   class="customer-number badge metric-quote text-decoration-none"
-                                   aria-label="{{ $customer->quotations_count }} báo giá của {{ $customer->name }}">
-                                    {{ $customer->quotations_count }}
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <a href="{{ route('app.customers.contracts', $customer) }}"
-                                   class="customer-number badge metric-contract text-decoration-none"
-                                   aria-label="{{ $this->totalContractsCount($customer) }} hợp đồng của {{ $customer->name }}">
-                                    {{ $this->totalContractsCount($customer) }}
-                                </a>
-                            </td>
+
                             <td>
                                 <div class="small">{{ $customer->representative ?: '—' }}</div>
                             </td>
@@ -475,8 +467,8 @@
                             @endif
                         </div>
                         <div class="d-flex gap-1 flex-shrink-0">
-                            <span class="metric-badge metric-quote">{{ $customer->quotations_count }} BG</span>
-                            <span class="metric-badge metric-contract">{{ $this->totalContractsCount($customer) }} HĐ</span>
+                            <a href="{{ route('app.quotation-tracking.index', ['search' => $customer->name]) }}" class="metric-badge metric-quote text-decoration-none">{{ $customer->quotations_count }} BG</a>
+                            <a href="{{ route('app.customers.contracts', $customer) }}" class="metric-badge metric-contract text-decoration-none">{{ $this->totalContractsCount($customer) }} HĐ</a>
                         </div>
                     </div>
 
@@ -492,7 +484,7 @@
 
                     <div class="service-performance mt-3">
                         @forelse(array_slice($breakdown, 0, 3) as $service)
-                            @include('livewire.admin.customers.partials.service-line', ['service' => $service])
+                            @include('livewire.admin.customers.partials.service-line', ['service' => $service, 'customer' => $customer])
                         @empty
                             <span class="small text-muted">Chưa phát sinh dịch vụ</span>
                         @endforelse
