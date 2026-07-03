@@ -169,53 +169,64 @@
                         <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}</td>
                         @can('quotation-tracking.view')
                         <td class="text-center pe-3">
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
-                                    <i class="fa-solid fa-eye fs-5"></i>
-                                </button>
-                                @if($item->pdf_path)
-                                <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
-                                    <i class="fa-solid fa-file-pdf fs-5"></i>
-                                </a>
-                                @elseif($item->files_count > 0)
-                                <button class="btn btn-sm p-0 text-danger position-relative" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
-                                    <i class="fa-solid fa-file-pdf fs-5"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
-                                </button>
-                                @elseif($item->quotationDocuments->first())
-                                <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xem PDF báo giá tạo tự động">
-                                    <i class="fa-solid fa-file-pdf fs-5"></i>
-                                </a>
-                                @else
-                                @can('quotation-tracking.edit')
-                                <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
-                                    <i class="fa-solid fa-file-pdf fs-5"></i>
-                                </button>
-                                @endcan
-                                @endif
-                                @if($item->quotationDocuments->first())
-                                <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
-                                    <i class="fa-solid fa-file-word fs-5"></i>
-                                </a>
-                                @endif
-                                @can('quotation-tracking.edit')
-                                <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
-                                    <i class="fa-solid fa-file-circle-plus fs-5"></i>
-                                </button>
-                                <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
-                                    <i class="fa-solid fa-copy fs-5"></i>
-                                </button>
-                                <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
-                                    <i class="fa-solid fa-pen-square fs-5"></i>
-                                </button>
-                                @endcan
-                                @can('quotation-tracking.delete')
-                                <button class="btn btn-sm p-0 text-danger"
-                                        wire:click="delete({{ $item->id }})"
-                                        wire:confirm="Xác nhận xóa báo giá này?">
-                                    <i class="fa-solid fa-trash fs-5"></i>
-                                </button>
-                                @endcan
+                            <div class="d-flex flex-column gap-2 align-items-center">
+                                <!-- Row 1: View / Documents -->
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
+                                        <i class="fa-solid fa-eye fs-5"></i>
+                                    </button>
+                                    @if($item->pdf_path)
+                                    <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
+                                        <i class="fa-solid fa-file-pdf fs-5"></i>
+                                    </a>
+                                    @elseif($item->files_count > 0)
+                                    <button class="btn btn-sm p-0 text-danger position-relative me-2" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
+                                        <i class="fa-solid fa-file-pdf fs-5"></i>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
+                                    </button>
+                                    @elseif($item->quotationDocuments->first())
+                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xem PDF báo giá tạo tự động">
+                                        <i class="fa-solid fa-file-pdf fs-5"></i>
+                                    </a>
+                                    @else
+                                    @can('quotation-tracking.edit')
+                                    <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
+                                        <i class="fa-solid fa-file-pdf fs-5"></i>
+                                    </button>
+                                    @endcan
+                                    @endif
+                                    @if($item->quotationDocuments->first())
+                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
+                                        <i class="fa-solid fa-file-word fs-5"></i>
+                                    </a>
+                                    @endif
+                                    @can('quotation-tracking.edit')
+                                    <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
+                                        <i class="fa-solid fa-file-circle-plus fs-5"></i>
+                                    </button>
+                                    @endcan
+                                </div>
+
+                                <!-- Row 2: Management -->
+                                @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
+                                <div class="d-flex justify-content-center gap-2">
+                                    @can('quotation-tracking.edit')
+                                    <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
+                                        <i class="fa-solid fa-copy fs-5"></i>
+                                    </button>
+                                    <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-square fs-5"></i>
+                                    </button>
+                                    @endcan
+                                    @can('quotation-tracking.delete')
+                                    <button class="btn btn-sm p-0 text-danger"
+                                            wire:click="delete({{ $item->id }})"
+                                            wire:confirm="Xác nhận xóa báo giá này?">
+                                        <i class="fa-solid fa-trash fs-5"></i>
+                                    </button>
+                                    @endcan
+                                </div>
+                                @endcanany
                             </div>
                         </td>
                         @endcan
