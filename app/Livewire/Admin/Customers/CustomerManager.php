@@ -38,6 +38,8 @@ class CustomerManager extends Component
 
     public string $serviceContractFilter = '';
 
+    public string $serviceFilter = ''; // Backward compatibility for older/cached sessions
+
     public string $groupBy = 'province';
 
     public bool $showModal = false;
@@ -84,6 +86,7 @@ class CustomerManager extends Component
             'industrialParkFilter',
             'serviceQuotationFilter',
             'serviceContractFilter',
+            'serviceFilter',
             'groupBy',
         ], true)) {
             $this->resetPage();
@@ -135,6 +138,7 @@ class CustomerManager extends Component
             'industrialParkFilter',
             'serviceQuotationFilter',
             'serviceContractFilter',
+            'serviceFilter',
         ]);
         $this->groupBy = 'province';
         $this->resetPage();
