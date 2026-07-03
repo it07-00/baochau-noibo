@@ -55,7 +55,7 @@
                         <th class="w-100px">Ngày</th>
                         <th>Khách hàng</th>
                         <th class="w-150px">Loại dịch vụ</th>
-                        <th class="w-160px">Mẫu</th>
+
                         <th class="w-100px">NV tạo</th>
                         <th class="text-end w-130px">Tổng (có VAT)</th>
                         <th class="text-center pe-3 w-130px">#</th>
@@ -87,11 +87,7 @@
                             <span class="text-muted">-</span>
                             @endif
                         </td>
-                        <td>
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary border px-2 py-1 fs-70">
-                                {{ $this->selectedTemplateLabel($item->template_key ?? null) }}
-                            </span>
-                        </td>
+
                         <td>
                             <div class="text-truncate fs-82" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
                         </td>
