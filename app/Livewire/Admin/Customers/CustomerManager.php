@@ -34,7 +34,9 @@ class CustomerManager extends Component
 
     public string $industrialParkFilter = '';
 
-    public string $serviceFilter = '';
+    public string $serviceQuotationFilter = '';
+
+    public string $serviceContractFilter = '';
 
     public string $groupBy = 'province';
 
@@ -80,7 +82,8 @@ class CustomerManager extends Component
             'provinceFilter',
             'wardFilter',
             'industrialParkFilter',
-            'serviceFilter',
+            'serviceQuotationFilter',
+            'serviceContractFilter',
             'groupBy',
         ], true)) {
             $this->resetPage();
@@ -130,7 +133,8 @@ class CustomerManager extends Component
             'provinceFilter',
             'wardFilter',
             'industrialParkFilter',
-            'serviceFilter',
+            'serviceQuotationFilter',
+            'serviceContractFilter',
         ]);
         $this->groupBy = 'province';
         $this->resetPage();
@@ -356,8 +360,35 @@ class CustomerManager extends Component
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter))
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
-            ->when($this->serviceFilter, function (Builder $query): void {
-                $canonical = self::canonicalizeService($this->serviceFilter);
+            ->when($this->serviceQuotationFilter, function (Builder $query): void {
+                $canonical = self::canonicalizeService($this->serviceQuotationFilter);
+                $matchingValues = [];
+                foreach (self::getServiceVariants($canonical) as $v) {
+                    $matchingValues[] = Str::lower($v);
+                }
+                
+                $aliases = [
+                    'qtmt' => 'Quan trắc môi trường',
+                    'pllđ' => 'Phân loại lao động',
+                    'plld' => 'Phân loại lao động',
+                    'qtmtld' => 'Quan trắc môi trường lao động',
+                ];
+                
+                foreach ($aliases as $abbr => $full) {
+                    if (strcasecmp($full, $canonical) === 0) {
+                        foreach (self::getServiceVariants($abbr) as $v) {
+                            $matchingValues[] = Str::lower($v);
+                        }
+                    }
+                }
+                
+                $matchingValues = array_values(array_unique($matchingValues));
+                $placeholders = implode(',', array_fill(0, count($matchingValues), '?'));
+
+                $query->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->whereRaw("LOWER(service) IN ($placeholders)", $matchingValues));
+            })
+            ->when($this->serviceContractFilter, function (Builder $query): void {
+                $canonical = self::canonicalizeService($this->serviceContractFilter);
                 $matchingValues = [];
                 foreach (self::getServiceVariants($canonical) as $v) {
                     $matchingValues[] = Str::lower($v);
@@ -382,10 +413,14 @@ class CustomerManager extends Component
                 $placeholders = implode(',', array_fill(0, count($matchingValues), '?'));
 
                 $query->where(function (Builder $q) use ($placeholders, $matchingValues): void {
-                    $q->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->whereRaw("LOWER(service) IN ($placeholders)", $matchingValues));
-
+                    $first = true;
                     foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
-                        $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->whereRaw("LOWER(loai_dich_vu) IN ($placeholders)", $matchingValues));
+                        if ($first) {
+                            $q->whereHas($relation, fn (Builder $contractQuery) => $contractQuery->whereRaw("LOWER(loai_dich_vu) IN ($placeholders)", $matchingValues));
+                            $first = false;
+                        } else {
+                            $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->whereRaw("LOWER(loai_dich_vu) IN ($placeholders)", $matchingValues));
+                        }
                     }
                 });
             });
@@ -415,13 +450,23 @@ class CustomerManager extends Component
             ->pluck($column);
     }
 
-    private function serviceOptions(): Collection
+    private function serviceQuotationOptions(): Collection
     {
-        $services = Quotation::query()
+        return Quotation::query()
             ->whereNotNull('service')
             ->where('service', '!=', '')
             ->distinct()
-            ->pluck('service');
+            ->pluck('service')
+            ->map(fn ($service) => self::canonicalizeService($service))
+            ->filter()
+            ->unique()
+            ->sort(SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
+    }
+
+    private function serviceContractOptions(): Collection
+    {
+        $services = collect();
 
         foreach (self::CONTRACT_RELATIONS as [$model]) {
             $services = $services->merge(
@@ -580,7 +625,8 @@ class CustomerManager extends Component
             'provinces' => VietnamProvinces::list(),
             'wards' => $this->distinctValues('ward', $wardQuery),
             'industrialParks' => $this->distinctValues('industrial_park', $industrialParkQuery),
-            'serviceOptions' => $this->serviceOptions(),
+            'serviceQuotationOptions' => $this->serviceQuotationOptions(),
+            'serviceContractOptions' => $this->serviceContractOptions(),
             'summary' => $this->summary($customerIds),
         ])->layout('admin.layouts.app');
     }

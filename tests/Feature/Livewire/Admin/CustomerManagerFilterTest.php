@@ -78,7 +78,8 @@ class CustomerManagerFilterTest extends TestCase
             ->set('provinceFilter', 'Tây Ninh')
             ->set('wardFilter', 'Xã Long Hậu')
             ->set('industrialParkFilter', 'KCN Long Hậu')
-            ->set('serviceFilter', 'Thu gom CTNH')
+            ->set('serviceQuotationFilter', 'Thu gom CTNH')
+            ->set('serviceContractFilter', 'Thu gom CTNH')
             ->assertSee('Công ty KCN Long Hậu')
             ->assertDontSee('Công ty tại Đồng Nai')
             ->assertSee('1 BG')
@@ -120,10 +121,14 @@ class CustomerManagerFilterTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(CustomerManager::class)
-            ->assertViewHas('serviceOptions', function ($options) {
-                return $options->contains('Quan trắc môi trường') && !$options->contains('QTMT') && !$options->contains('quan trắc môi trường');
+            ->assertViewHas('serviceQuotationOptions', function ($options) {
+                return $options->contains('Quan trắc môi trường') && !$options->contains('QTMT');
             })
-            ->set('serviceFilter', 'Quan trắc môi trường')
+            ->assertViewHas('serviceContractOptions', function ($options) {
+                return $options->contains('Quan trắc môi trường') && !$options->contains('quan trắc môi trường');
+            })
+            ->set('serviceQuotationFilter', 'Quan trắc môi trường')
+            ->set('serviceContractFilter', 'Quan trắc môi trường')
             ->assertSee('Quan trắc môi trường')
             ->assertSee('1 BG')
             ->assertSee('1 HĐ');

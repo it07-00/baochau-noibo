@@ -303,11 +303,20 @@
                         <option value="none">Không nhóm</option>
                     </select>
                 </div>
-                <div class="col-12 col-md-7 col-lg-10">
-                    <label for="service-filter" class="form-label fw-bold">Dịch vụ báo giá / hợp đồng</label>
-                    <select id="service-filter" class="form-select" wire:model.live="serviceFilter">
-                        <option value="">Tất cả dịch vụ</option>
-                        @foreach($serviceOptions as $service)
+                <div class="col-12 col-md-6 col-lg-5">
+                    <label for="service-quotation-filter" class="form-label fw-bold">Dịch vụ báo giá</label>
+                    <select id="service-quotation-filter" class="form-select" wire:model.live="serviceQuotationFilter">
+                        <option value="">Tất cả dịch vụ báo giá</option>
+                        @foreach($serviceQuotationOptions as $service)
+                            <option value="{{ $service }}">{{ $service }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-md-6 col-lg-5">
+                    <label for="service-contract-filter" class="form-label fw-bold">Dịch vụ hợp đồng</label>
+                    <select id="service-contract-filter" class="form-select" wire:model.live="serviceContractFilter">
+                        <option value="">Tất cả dịch vụ hợp đồng</option>
+                        @foreach($serviceContractOptions as $service)
                             <option value="{{ $service }}">{{ $service }}</option>
                         @endforeach
                     </select>
@@ -319,7 +328,7 @@
                 </div>
             </div>
         </div>
-        <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,serviceFilter,groupBy,resetFilters"></div>
+        <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,serviceQuotationFilter,serviceContractFilter,groupBy,resetFilters"></div>
     </div>
 
     <div class="card border-0 shadow-sm overflow-hidden">
