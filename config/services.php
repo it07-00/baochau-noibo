@@ -48,4 +48,8 @@ return [
         'sender_province' => env('VIETTELPOST_SENDER_PROVINCE'),
     ],
 
+    'greeco' => [
+        'api_token' => env('GREECO_API_TOKEN', 'greeco-noibo-secret-2026'),
+    ],
+
 ];

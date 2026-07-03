@@ -1,0 +1,6 @@
+<?php
+
+use App\Http\Controllers\Api\WorkScheduleApiController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/work-schedules', [WorkScheduleApiController::class, 'index']);
