@@ -167,8 +167,13 @@
                                         {{ $evt->title }}
                                     </div>
                                     @if($evt->participants->isNotEmpty())
-                                        <div class="text-muted" style="font-size: 0.62rem; margin-top: 1px; color: #64748b; white-space: normal; word-break: break-word;">
-                                            • {{ $evt->participants->pluck('name')->join(', ') }}
+                                        <div class="text-muted text-truncate" style="font-size: 0.62rem; margin-top: 1px; color: #64748b;" title="{{ $evt->participants->pluck('name')->join(', ') }}">
+                                            • 
+                                            @if($evt->participants->count() > 2)
+                                                {{ $evt->participants->take(2)->pluck('name')->join(', ') }} +{{ $evt->participants->count() - 2 }}
+                                            @else
+                                                {{ $evt->participants->pluck('name')->join(', ') }}
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
