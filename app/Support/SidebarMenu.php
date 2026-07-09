@@ -152,7 +152,7 @@ class SidebarMenu
                 'title'      => 'Báo cáo Kinh doanh',
                 'icon'       => 'users',
                 'permission' => 'reports-sales.view',
-                'children'   => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết'],
+                'children'   => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Tiến độ dự án TV-KT'],
             ],
             [
                 'title'      => 'Báo cáo Tư vấn',
@@ -248,6 +248,7 @@ class SidebarMenu
             'app.sales.target-registration'              => ['Bộ phận kinh doanh',   'Đăng ký mục tiêu doanh số'],
             'app.reports.sales.target'                   => ['Báo cáo Kinh doanh',   'Bảng doanh số cam kết'],
             'app.reports.sales.personal'                 => ['Báo cáo Kinh doanh',   'Bảng doanh số cá nhân'],
+            'app.reports.sales.project-progress'         => ['Báo cáo Kinh doanh',   'Tiến độ dự án TV-KT'],
             'app.reports.consulting-work.waste'          => ['Báo cáo Tư vấn',       'Chất thải'],
             'app.reports.consulting-work.consulting'     => ['Báo cáo Tư vấn',       'Quan trắc và hồ sơ môi trường'],
             'app.reports.consulting-work.project'        => ['Báo cáo Tư vấn',       'Ứng phó sự cố'],
@@ -309,6 +310,7 @@ class SidebarMenu
                 'Bảng tổng kết doanh số' => 'app.reports.sales.summary',
                 'Bảng doanh số cam kết'  => 'app.reports.sales.target',
                 'Bảng doanh số cá nhân'  => 'app.reports.sales.personal',
+                'Tiến độ dự án TV-KT' => 'app.reports.sales.project-progress',
             ],
             'Báo cáo Tư vấn'     => [
                 'Chất thải'                              => 'app.reports.consulting-work.waste',
