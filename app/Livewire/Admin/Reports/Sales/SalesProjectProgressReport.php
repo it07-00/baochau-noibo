@@ -19,6 +19,7 @@ class SalesProjectProgressReport extends Component
     public string $filter_department = 'all'; // all | consulting | technical
     public string $filter_contract_type = 'all'; // all | waste | consulting | project | commercial | sustainability | energy
     public string $filter_status = 'all'; // all | not_started | in_progress | finished
+    public string $filter_staff_id = 'all'; // all | user_id
     public string $search = '';
 
     // Selected contract properties for the detail modal
@@ -31,6 +32,7 @@ class SalesProjectProgressReport extends Component
         'filter_department' => ['except' => 'all'],
         'filter_contract_type' => ['except' => 'all'],
         'filter_status' => ['except' => 'all'],
+        'filter_staff_id' => ['except' => 'all'],
         'search' => ['except' => ''],
     ];
 
@@ -56,6 +58,11 @@ class SalesProjectProgressReport extends Component
     }
 
     public function updatedFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStaffId(): void
     {
         $this->resetPage();
     }
@@ -126,6 +133,19 @@ class SalesProjectProgressReport extends Component
 
             $query = $modelClass::query()
                 ->with(['customer', 'staff', 'assignments.user', 'workflowSteps']);
+
+            // Role-based salesperson visibility limit
+            $user = auth()->user();
+            $isKinhDoanhOnly = $user && $user->hasRole(Role::KINH_DOANH->value) &&
+                               !$user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value, Role::IT->value]);
+            if ($isKinhDoanhOnly) {
+                $query->where('staff_id', $user->id);
+            }
+
+            // Assigned project staff filter
+            if ($this->filter_staff_id !== 'all') {
+                $query->whereHas('assignments', fn($q) => $q->where('user_id', $this->filter_staff_id));
+            }
 
             // Year filter (signed_at or submitted_at)
             $query->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year);
@@ -265,10 +285,15 @@ class SalesProjectProgressReport extends Component
 
         $contractTypes = array_map(fn($s) => $s[1], $this->contractSources());
 
+        $assignedStaffs = \App\Models\User::role([Role::TU_VAN->value, Role::KY_THUAT->value])
+            ->orderBy('name')
+            ->get();
+
         return view('livewire.admin.reports.sales.sales-project-progress-report', [
             'items' => $paginatedRows,
             'summary' => $summary,
-            'contractTypes' => $contractTypes
+            'contractTypes' => $contractTypes,
+            'assignedStaffs' => $assignedStaffs
         ])->layout('admin.layouts.app');
     }
 }

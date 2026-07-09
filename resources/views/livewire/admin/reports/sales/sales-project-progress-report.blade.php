@@ -46,7 +46,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <label class="form-label fw-semibold mb-1">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
@@ -54,7 +54,16 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold mb-1">Nhân sự thực hiện</label>
+                    <select wire:model.live="filter_staff_id" class="form-select form-select-sm">
+                        <option value="all">Tất cả nhân sự TV/KT</option>
+                        @foreach($assignedStaffs as $s)
+                            <option value="{{ $s->id }}">{{ $s->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1">Loại hợp đồng</label>
                     <select wire:model.live="filter_contract_type" class="form-select form-select-sm">
                         <option value="all">Tất cả loại hợp đồng</option>
@@ -63,8 +72,8 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1">Trạng thái thực hiện</label>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1">Trạng thái</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="all">Tất cả trạng thái</option>
                         <option value="not_started">Chưa bắt đầu</option>
