@@ -96,13 +96,9 @@
                     <thead class="table-light">
                         <tr class="text-muted fw-bold">
                             <th class="text-center w-45px">STT</th>
-                            <th>Số HĐ</th>
-                            <th>Khách hàng</th>
+                            <th class="ps-3">Thông tin hợp đồng</th>
                             <th>Loại dịch vụ / hợp đồng</th>
                             <th>Bộ phận</th>
-                            <th>Kinh doanh</th>
-                            <th>Nhân sự thực hiện</th>
-                            <th class="text-center">Ngày ký</th>
                             <th class="mnw-180px">Tiến độ thực hiện</th>
                             <th class="text-center">Trạng thái HĐ</th>
                             <th class="text-center">Thao tác</th>
@@ -112,9 +108,22 @@
                         @forelse($items as $item)
                         <tr class="border-bottom border-light">
                             <td class="text-center text-muted fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
-                            <td class="fw-bold">{{ $item['shd'] }}</td>
-                            <td class="text-wrap" style="max-width: 250px;">{{ $item['customer'] }}</td>
-                            <td class="text-muted text-wrap" style="max-width: 200px;">{{ $item['type'] }}</td>
+                            <td class="ps-3 py-2">
+                                <div class="d-flex flex-column gap-1">
+                                    <a href="{{ $item['customer_slug'] ? route('app.customers.contracts', $item['customer_slug']) : '#' }}" class="fw-bold text-primary text-decoration-none lh-sm">
+                                        {{ $item['customer'] }}
+                                    </a>
+                                    <div class="d-flex gap-3 flex-wrap border-top mt-1 pt-1 text-secondary" style="font-size: 0.75rem;">
+                                        @if($item['shd'] && $item['shd'] !== '—')<span>HĐ: <span class="fw-semibold text-dark">{{ $item['shd'] }}</span></span>@endif
+                                        @if($item['signed_at'])<span>Ký: <span class="fw-semibold text-dark">{{ $item['signed_at']->format('d/m/Y') }}</span></span>@endif
+                                        @if($item['staff'] && $item['staff'] !== '—')<span>CS: <span class="fw-semibold text-dark">{{ $item['staff'] }}</span></span>@endif
+                                        @if($item['assigned_staff'] && $item['assigned_staff'] !== 'Chưa phân công')
+                                            <span>Thực hiện: <span class="fw-semibold text-dark">{{ $item['assigned_staff'] }}</span></span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-muted text-wrap" style="max-width: 250px;">{{ $item['type'] }}</td>
                             <td>
                                 @if($item['department'] === 'Tư vấn')
                                     <span class="badge bg-soft-primary text-primary">Tư vấn</span>
@@ -126,9 +135,6 @@
                                     <span class="badge bg-soft-secondary text-secondary">{{ $item['department'] }}</span>
                                 @endif
                             </td>
-                            <td>{{ $item['staff'] }}</td>
-                            <td class="text-muted text-wrap" style="max-width: 180px;">{{ $item['assigned_staff'] }}</td>
-                            <td class="text-center text-muted">{{ $item['signed_at'] ? $item['signed_at']->format('d/m/Y') : '—' }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="progress flex-grow-1 h-8px" style="height: 8px;">
@@ -153,7 +159,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="11" class="text-center text-muted py-4">
+                            <td colspan="7" class="text-center text-muted py-4">
                                 Không tìm thấy hợp đồng nào khớp với bộ lọc
                             </td>
                         </tr>
