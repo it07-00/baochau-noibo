@@ -501,18 +501,32 @@
 
 /* Event chips */
 .ws-event-chip {
-    border-left: 4px solid transparent;
-    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    border-right: 1px solid rgba(226, 232, 240, 0.6);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    border-left: 3px solid transparent;
+    border-radius: 8px !important;
+    padding: 5px 8px !important;
     cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
     max-width: 100%;
     overflow: hidden;
-    padding: 7px 9px;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+    text-align: left;
+    flex-shrink: 0 !important;
+}
+.ws-event-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03) !important;
+    filter: brightness(0.97);
 }
 .ws-event-title {
     max-width: 100%;
     font-size: clamp(0.78rem, 0.78vw, 0.88rem);
-    line-height: 1.15;
+    line-height: 1.4;
 }
 .ws-event-author {
     max-width: 100%;
@@ -528,6 +542,20 @@
     font-size: 0.76rem;
     padding: 5px 6px;
 }
+.ws-event-chip.ws-chip-primary   { --theme-color: #2563eb; background: #eff6ff; border-left-color: #3b82f6; color: #1e3a5f; }
+.ws-event-chip.ws-chip-success   { --theme-color: #16a34a; background: #f0fdf4; border-left-color: #10b981; color: #14532d; }
+.ws-event-chip.ws-chip-warning   { --theme-color: #ca8a04; background: #fffbeb; border-left-color: #f59e0b; color: #78350f; }
+.ws-event-chip.ws-chip-danger    { --theme-color: #dc2626; background: #fef2f2; border-left-color: #ef4444; color: #7f1d1d; }
+.ws-event-chip.ws-chip-info      { --theme-color: #0891b2; background: #ecfeff; border-left-color: #06b6d4; color: #164e63; }
+.ws-event-chip.ws-chip-secondary { --theme-color: #4b5563; background: #f9fafb; border-left-color: #6b7280; color: #374151; }
+.ws-event-chip.ws-chip-pink      { --theme-color: #db2777; background: #fdf2f8; border-left-color: #ec4899; color: #831843; }
+.ws-event-chip.ws-chip-purple    { --theme-color: #7c3aed; background: #f5f3ff; border-left-color: #8b5cf6; color: #4c1d95; }
+.ws-event-chip.ws-chip-indigo    { --theme-color: #4f46e5; background: #eef2ff; border-left-color: #6366f1; color: #312e81; }
+.ws-event-chip.ws-chip-teal      { --theme-color: #0d9488; background: #f0fdfa; border-left-color: #14b8a6; color: #134e4a; }
+.ws-event-chip.ws-chip-orange    { --theme-color: #ea580c; background: #fff7ed; border-left-color: #f97316; color: #7c2d12; }
+.ws-event-chip.ws-chip-lime      { --theme-color: #65a30d; background: #f7fee7; border-left-color: #84cc16; color: #365314; }
+
+/* Keep old simple classes too for fallback */
 .ws-chip-primary   { background: #dbeafe; border-left-color: #3b82f6; color: #1e3a5f; }
 .ws-chip-success   { background: #dcfce7; border-left-color: #10b981; color: #14532d; }
 .ws-chip-warning   { background: #fef3c7; border-left-color: #f59e0b; color: #78350f; }

@@ -5,50 +5,49 @@
     }">
 
     {{-- Header --}}
+    {{-- Header --}}
     <div class="ws-calendar-toolbar card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div class="d-flex align-items-center gap-3 flex-wrap">
-                <h5 class="ws-toolbar-title mb-0 fw-bold">
-                    <span class="ws-title-icon"><i class="fa-solid fa-calendar-week"></i></span>
-                    <span>Lịch công tác</span>
-                </h5>
-
-                <div class="vr mx-1 d-none d-md-block h-24px" ></div>
-
-                <div class="ws-calendar-controls d-flex align-items-center gap-2">
-                    <button wire:click="previousMonth"
-                        class="ws-nav-button btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
-                        title="Tháng trước">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <select wire:model.live="monthFilter" class="form-select form-select-sm border-light-subtle">
-                        @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}">Tháng {{ $m }}</option>
-                        @endfor
-                    </select>
-                    <select wire:model.live="yearFilter" class="form-select form-select-sm border-light-subtle">
-                        @for($y = date('Y') - 1; $y <= date('Y') + 1; $y++)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endfor
-                    </select>
-                    <button wire:click="nextMonth"
-                        class="ws-nav-button btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
-                        title="Tháng sau">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                    <div class="vr mx-2 d-none d-lg-block" style="height: 20px;"></div>
-                    <div class="form-check form-switch mb-0 ms-2 d-flex align-items-center gap-2">
-                        <input class="form-check-input" type="checkbox" role="switch" id="showGreecoSwitch" wire:model.live="showGreecoSchedules">
-                        <label class="form-check-label text-muted small fw-semibold" for="showGreecoSwitch" style="user-select: none;">Hiện lịch Greeco</label>
-                    </div>
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3 py-3 px-4">
+            <div class="d-flex align-items-center gap-2">
+                <button wire:click="previousMonth"
+                    class="btn btn-light btn-sm border border-light-subtle rounded-3 px-3 py-2 fw-semibold d-flex align-items-center justify-content-center"
+                    style="height: 38px; width: 38px;"
+                    title="Tháng trước">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button wire:click="nextMonth"
+                    class="btn btn-light btn-sm border border-light-subtle rounded-3 px-3 py-2 fw-semibold d-flex align-items-center justify-content-center"
+                    style="height: 38px; width: 38px;"
+                    title="Tháng sau">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <button wire:click="goToToday"
+                    class="btn btn-light btn-sm border border-light-subtle rounded-3 px-3 py-2 fw-semibold ms-1"
+                    style="height: 38px;"
+                    title="Hôm nay">
+                    Hôm nay
+                </button>
+                <div class="vr mx-2" style="height: 24px;"></div>
+                <div class="form-check form-switch mb-0 ms-2 d-flex align-items-center gap-2">
+                    <input class="form-check-input" type="checkbox" role="switch" id="showGreecoSwitch" wire:model.live="showGreecoSchedules">
+                    <label class="form-check-label text-muted small fw-semibold" for="showGreecoSwitch" style="user-select: none;">Hiện lịch Greeco</label>
                 </div>
             </div>
 
-            <div class="ws-toolbar-actions d-flex align-items-center gap-3">
-                <span class="ws-event-total badge bg-soft-info text-info px-3 py-2 rounded-pill fw-normal">
+            <div class="text-center">
+                <h3 class="mb-0 fw-bold fs-4" style="color: #1e293b; font-family: 'Inter', sans-serif;">
+                    Tháng {{ $monthFilter }} Năm {{ $yearFilter }}
+                </h3>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="ws-event-total badge bg-soft-info text-info px-3 py-2 rounded-pill fw-semibold">
                     {{ $totalEvents }} sự kiện
                 </span>
-                <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
+                <button class="btn btn-primary btn-sm px-4 fw-semibold shadow-sm d-flex align-items-center justify-content-center" style="background-color: #2563eb; border-color: #2563eb; border-radius: 8px; height: 38px; cursor: default;">
+                    Tháng
+                </button>
+                <button wire:click="openCreateModal" class="btn btn-outline-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2 fw-semibold" style="height: 38px; border-radius: 8px;">
                     <i class="fa-solid fa-plus-lg"></i> Thêm sự kiện
                 </button>
             </div>
@@ -104,146 +103,79 @@
     </div>
 
     {{-- Calendar Grid --}}
-    <div class="ws-cal-wrapper d-none d-md-block">
-        <div class="ws-cal-header">
-            @foreach($this->weekdayShortNames() as $dow)
-                <div class="ws-cal-hcell">{{ $dow }}</div>
-            @endforeach
-        </div>
-
-        @foreach($weeksLayout as $week)
-            <section class="ws-cal-week">
-                <div class="ws-cal-dates">
-                    @foreach($week['dates'] as $dateString)
-                        @php($currentDate = \Carbon\Carbon::parse($dateString))
-                        @php($eventsForDay = $this->eventsForDate($calendarData, $currentDate))
-                        <div class="ws-date-cell {{ !$this->isInsideCurrentMonth($currentDate) ? 'ws-date-outside' : '' }} {{ $currentDate->isWeekend() ? 'ws-col-sunday' : '' }}"
-                            @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
-                                wire:click="openDayDetail('{{ $dateString }}')"
-                            @endif
-                        >
-                            <div class="ws-date-inner">
-                                <span class="ws-dnum {{ $currentDate->isToday() ? 'ws-dnum-today' : '' }} {{ !$this->isInsideCurrentMonth($currentDate) ? 'ws-dnum-dim' : '' }}">
-                                    {{ $currentDate->day }}
-                                </span>
-
-                                <span class="d-inline-flex align-items-center gap-1">
-                                    @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
-                                        <button type="button"
-                                            class="ws-overflow-badge"
-                                            wire:click.stop="openDayDetail('{{ $dateString }}')">
-                                            {{ count($eventsForDay) }}
-                                        </button>
-                                    @endif
-
-                                    @if($this->canAddInCalendarDate($currentDate))
-                                        <button type="button"
-                                            wire:click.stop="openCreateModal('{{ $dateString }}')"
-                                            class="ws-add-btn"
-                                            title="Them su kien">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                @forelse($week['lanes'] as $lane)
-                    <div class="ws-event-lane">
-                        @foreach($lane as $placement)
-                            <button type="button"
-                                class="ws-evt-chip ws-chip-{{ $placement['color'] }}"
-                                style="grid-column: {{ $placement['startCol'] }} / span {{ $placement['span'] }};"
-                                wire:click="openDayDetail('{{ $placement['startDate'] }}')">
-                                <span class="ws-evt-title">{{ $placement['title'] }}</span>
-                                <span class="ws-evt-people">
-                                    @if($placement['isMultiDay'])
-                                        {{ $placement['rangeLabel'] }} &middot;
-                                    @endif
-                                    {{ $placement['timeLabel'] }}
-                                    @if($placement['participants'])
-                                        &middot; {{ $placement['participants'] }}
-                                    @endif
-                                </span>
-                            </button>
-                        @endforeach
-                    </div>
-                @empty
-                    <div class="ws-event-lane ws-event-lane-empty"></div>
-                @endforelse
-
-                @if(collect($week['overflowPerDay'])->contains(fn ($count) => $count > 0))
-                    <div class="ws-event-lane ws-event-lane-empty">
-                        @foreach($week['dates'] as $dateString)
-                            @if(($week['overflowPerDay'][$dateString] ?? 0) > 0)
-                                <button type="button"
-                                    class="ws-overflow-badge"
-                                    style="grid-column: {{ $loop->iteration }} / span 1;"
-                                    wire:click="openDayDetail('{{ $dateString }}')">
-                                    +{{ $week['overflowPerDay'][$dateString] }}
-                                </button>
-                            @endif
-                        @endforeach
-                    </div>
-                @endif
-            </section>
-        @endforeach
-    </div>
-
-    @if(false)
-    <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none">
+    <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none d-md-block mb-4">
         <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
             @foreach($this->weekdayShortNames() as $dow)
-                <div class="calendar-header-cell fw-bold text-muted text-center">{{ $dow }}</div>
+                <div class="calendar-header-cell fw-bold text-muted text-center" style="font-size: 0.85rem; font-weight: 700; height: 48px; border-left: 1px solid var(--ws-border);">{{ $dow }}</div>
             @endforeach
         </div>
 
         <div class="calendar-body-grid">
             @foreach ($calendarDates as $currentDate)
-                <div class="calendar-day-cell position-relative
+                @php($eventsForDay = $this->eventsForDate($calendarData, $currentDate))
+                <div class="calendar-day-cell position-relative border-start border-bottom border-light-subtle d-flex flex-column
                     @if(!$this->isInsideCurrentMonth($currentDate)) bg-light opacity-50
                     @else bg-white @if($currentDate->isWeekend()) bg-sunday @endif
-                    @endif
-                    border-start border-bottom border-light-subtle
-                    @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0) cursor-pointer @endif"
-                    @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0)
-                        wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')"
-                    @endif
+                    @endif"
+                    @if($currentDate->isToday()) style="border-top: 3px solid #2563eb !important;" @endif
+                    style="min-height: 140px; padding: 8px; transition: background-color 0.15s ease;"
                 >
-                    <div class="ws-day-top d-flex justify-content-between align-items-start mb-2">
-                        <span class="ws-day-number fw-bold {{ $currentDate->isToday() ? 'is-today' : '' }} {{ !$this->isInsideCurrentMonth($currentDate) ? 'is-muted' : '' }}">
+                    <div class="ws-day-top d-flex justify-content-between align-items-center mb-2" style="min-height: auto;">
+                        <span class="ws-day-number fw-bold d-inline-flex align-items-center justify-content-center
+                            @if($currentDate->isToday()) is-today @endif
+                            @if(!$this->isInsideCurrentMonth($currentDate)) is-muted @endif"
+                            style="width: 28px; height: 28px; border-radius: 50%; font-size: 0.88rem; font-weight: 700;"
+                        >
                             {{ $currentDate->day }}
                         </span>
 
-                        <div class="d-flex align-items-center gap-1">
-                            @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0)
-                                <span class="ws-day-event-count">{{ count($this->eventsForDate($calendarData, $currentDate)) }}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
+                                <span class="text-muted fw-semibold" style="font-size: 0.72rem; color: #64748b;">{{ count($eventsForDay) }}</span>
                             @endif
 
                             @if($this->canAddInCalendarDate($currentDate))
                                 <button wire:click.stop="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')"
                                     class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
-                                    title="Thêm sự kiện">
+                                    title="Thêm sự kiện"
+                                    style="width: 22px; height: 22px; border-radius: 50%;">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             @endif
                         </div>
                     </div>
 
-                    <div class="calendar-day-content">
-                        @if($this->isInsideCurrentMonth($currentDate) && count($this->eventsForDate($calendarData, $currentDate)) > 0)
-                            @foreach(collect($this->eventsForDate($calendarData, $currentDate))->take(4) as $evt)
+                    <div class="calendar-day-content flex-grow-1 d-flex flex-column gap-1"
+                        style="overflow-y: auto; max-height: 120px; @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0) cursor: pointer; @endif"
+                        @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
+                            wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')"
+                        @endif
+                    >
+                        @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
+                            @foreach(collect($eventsForDay)->take(4) as $evt)
                                 <div class="ws-event-chip ws-chip-{{ $evt->color }}"
+                                    style="border-left: 3px solid transparent; border-radius: 6px; padding: 4px 6px; cursor: pointer; text-align: left;"
                                     wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
-                                    <div class="ws-event-title fw-bold text-truncate">{{ $evt->title }}</div>
-                                    <div class="ws-event-author text-truncate">{{ $evt->time_range_label }} • {{ $evt->participants->pluck('name')->join(', ') }}</div>
+                                    <div class="d-flex justify-content-between align-items-center gap-1 mb-1">
+                                        <span class="text-muted text-truncate fw-medium" style="font-size: 0.65rem; color: #64748b;">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 8, '...') }}</span>
+                                        <span class="fw-bold" style="font-size: 0.65rem; color: var(--theme-color);">{{ $evt->time_range_label }}</span>
+                                    </div>
+                                    <div class="ws-event-title fw-bold text-dark text-truncate mb-0" style="font-size: 0.72rem; color: #1e293b;">
+                                        @if($evt->is_private)
+                                            <i class="fa-solid fa-lock text-warning me-1" style="font-size: 0.65rem;"></i>
+                                        @endif
+                                        {{ $evt->title }}
+                                    </div>
+                                    @if($evt->participants->isNotEmpty())
+                                        <div class="text-muted text-truncate" style="font-size: 0.62rem; margin-top: 1px; color: #64748b;">
+                                            • {{ $evt->participants->pluck('name')->join(', ') }}
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
-                            @if(count($this->eventsForDate($calendarData, $currentDate)) > 4)
-                                <div class="ws-more-events text-muted text-center">
-                                    +{{ count($this->eventsForDate($calendarData, $currentDate)) - 4 }} sự kiện khác
+                            @if(count($eventsForDay) > 4)
+                                <div class="ws-more-events text-muted text-center py-1 fw-semibold" style="font-size: 0.7rem; border-radius: 6px; background: #f8fafc; border: 1px dashed #d8e0ec;">
+                                    +{{ count($eventsForDay) - 4 }} sự kiện khác
                                 </div>
                             @endif
                         @endif
@@ -252,8 +184,6 @@
             @endforeach
         </div>
     </div>
-
-    @endif
 
     {{-- Day Detail Modal --}}
     <div x-show="showDetail" x-cloak

@@ -77,6 +77,12 @@ class WorkScheduleManager extends Component
         $this->monthFilter++;
     }
 
+    public function goToToday(): void
+    {
+        $this->monthFilter = (int) date('m');
+        $this->yearFilter  = (int) date('Y');
+    }
+
     public function openCreateModal(string $date = ''): void
     {
         $this->resetForm();
@@ -432,7 +438,7 @@ class WorkScheduleManager extends Component
 
     public function weekdayShortNames(): array
     {
-        return ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        return ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     }
 
     public function calendarDayKey(Carbon $date): string
