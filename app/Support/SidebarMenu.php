@@ -98,7 +98,7 @@ class SidebarMenu
                 'title'      => 'Bộ phận kinh doanh',
                 'icon'       => 'stack',
                 'permission' => 'quotation-tracking.view',
-                'children'   => ['Bảng theo dõi báo giá', 'Tạo báo giá', 'Đăng ký mục tiêu doanh số'],
+                'children'   => ['Bảng theo dõi báo giá', 'Tạo báo giá', 'Đăng ký mục tiêu doanh số', 'Tiến độ dự án'],
             ],
             [
                 'title'      => 'Bộ phận tư vấn',
@@ -152,7 +152,7 @@ class SidebarMenu
                 'title'      => 'Báo cáo Kinh doanh',
                 'icon'       => 'users',
                 'permission' => 'reports-sales.view',
-                'children'   => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết', 'Tiến độ dự án TV-KT'],
+                'children'   => ['Bảng tổng kết doanh số', 'Bảng doanh số cam kết'],
             ],
             [
                 'title'      => 'Báo cáo Tư vấn',
@@ -248,7 +248,7 @@ class SidebarMenu
             'app.sales.target-registration'              => ['Bộ phận kinh doanh',   'Đăng ký mục tiêu doanh số'],
             'app.reports.sales.target'                   => ['Báo cáo Kinh doanh',   'Bảng doanh số cam kết'],
             'app.reports.sales.personal'                 => ['Báo cáo Kinh doanh',   'Bảng doanh số cá nhân'],
-            'app.reports.sales.project-progress'         => ['Báo cáo Kinh doanh',   'Tiến độ dự án TV-KT'],
+            'app.reports.sales.project-progress'         => ['Bộ phận kinh doanh',   'Tiến độ dự án'],
             'app.reports.consulting-work.waste'          => ['Báo cáo Tư vấn',       'Chất thải'],
             'app.reports.consulting-work.consulting'     => ['Báo cáo Tư vấn',       'Quan trắc và hồ sơ môi trường'],
             'app.reports.consulting-work.project'        => ['Báo cáo Tư vấn',       'Ứng phó sự cố'],
@@ -304,13 +304,13 @@ class SidebarMenu
                 'Đăng ký mục tiêu doanh số'  => 'app.sales.target-registration',
                 'Bảng theo dõi báo giá'      => 'app.quotation-tracking.index',
                 'Tạo báo giá'                => 'app.quotation-docs.index',
+                'Tiến độ dự án'              => 'app.reports.sales.project-progress',
             ],
             'Chuyển phát thư'    => ['Quản lý chuyển phát' => 'app.postal-deliveries.index'],
             'Báo cáo Kinh doanh' => [
                 'Bảng tổng kết doanh số' => 'app.reports.sales.summary',
                 'Bảng doanh số cam kết'  => 'app.reports.sales.target',
                 'Bảng doanh số cá nhân'  => 'app.reports.sales.personal',
-                'Tiến độ dự án TV-KT' => 'app.reports.sales.project-progress',
             ],
             'Báo cáo Tư vấn'     => [
                 'Chất thải'                              => 'app.reports.consulting-work.waste',

@@ -269,6 +269,7 @@
                                             @php
                                                 $records = $stepsMap->get($key, collect());
                                                 $isDone = in_array($key, $completedSteps);
+                                                $stepFiles = $selectedContract->milestoneFiles->where('milestone', $key);
                                             @endphp
                                             <div class="list-group-item d-flex align-items-start py-3 border-0 border-bottom border-light">
                                                 <div class="me-3 mt-1">
@@ -291,12 +292,41 @@
                                                             <strong>Thực hiện bởi:</strong> {{ $lastRecord->user?->name ?? 'Hệ thống' }}
                                                         </p>
                                                         @if($lastRecord->comment)
-                                                            <div class="bg-light p-2 rounded text-muted mt-1 border-start border-4 border-success">
+                                                            <div class="bg-light p-2 rounded text-muted mt-1 mb-2 border-start border-4 border-success">
                                                                 {{ $lastRecord->comment }}
                                                             </div>
                                                         @endif
                                                     @else
                                                         <p class="mb-0 text-muted">Bước này chưa được thực hiện.</p>
+                                                    @endif
+
+                                                    @if($stepFiles->count() > 0)
+                                                        <div class="mt-2">
+                                                            <div class="d-flex flex-column gap-1">
+                                                                @foreach($stepFiles as $file)
+                                                                    @php
+                                                                        $ext = pathinfo($file->original_name, PATHINFO_EXTENSION);
+                                                                        $iconClass = match(strtolower($ext)) {
+                                                                            'pdf' => 'fa-file-pdf text-danger',
+                                                                            'xls', 'xlsx' => 'fa-file-excel text-success',
+                                                                            'doc', 'docx' => 'fa-file-word text-primary',
+                                                                            'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp' => 'fa-file-image text-info',
+                                                                            'zip', 'rar' => 'fa-file-zipper text-warning',
+                                                                            default => 'fa-file text-secondary'
+                                                                        };
+                                                                    @endphp
+                                                                    <div class="d-flex align-items-center gap-2 bg-light p-1 px-2 rounded border border-light" style="font-size: 0.8rem;">
+                                                                        <i class="fa-regular {{ $iconClass }} fs-6"></i>
+                                                                        <a href="{{ $file->file_url }}" target="_blank" class="text-primary text-decoration-none fw-semibold text-truncate" style="max-width: 350px;" title="{{ $file->original_name }}">
+                                                                            {{ $file->original_name }}
+                                                                        </a>
+                                                                        <span class="text-muted ms-auto" style="font-size: 0.75rem;">
+                                                                            (Tải lên bởi: {{ $file->uploader?->name ?? 'Hệ thống' }})
+                                                                        </span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
                                                     @endif
                                                 </div>
                                             </div>
