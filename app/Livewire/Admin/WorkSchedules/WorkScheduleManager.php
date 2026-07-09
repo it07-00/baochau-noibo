@@ -441,6 +441,11 @@ class WorkScheduleManager extends Component
         return !$date->lt(today()) && $this->isInsideCurrentMonth($date);
     }
 
+    public function canAddForDetailDate(?string $date): bool
+    {
+        return !empty($date) && !Carbon::parse($date)->lt(today());
+    }
+
     public function render()
     {
         $monthStart = Carbon::create($this->yearFilter, $this->monthFilter, 1);
@@ -452,7 +457,7 @@ class WorkScheduleManager extends Component
                 $q->whereBetween('start_date', [$monthStart, $monthEnd])
                   ->orWhere(function ($q2) use ($monthStart, $monthEnd) {
                       $q2->where('start_date', '<', $monthStart)
-                         ->where(function ($q3) use ($monthEnd) {
+                         ->where(function ($q3) use ($monthStart) {
                              $q3->where('end_date', '>=', $monthStart)
                                 ->orWhereNull('end_date');
                          });
