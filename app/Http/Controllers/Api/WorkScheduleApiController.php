@@ -34,20 +34,6 @@ final class WorkScheduleApiController extends Controller
         $events = WorkSchedule::query()
             ->with(['user:id,name', 'participants:id,name'])
             ->where('is_private', false)
-            ->where(function ($query) {
-                // Creator has Director role
-                $query->whereHas('user', function ($q) {
-                    $q->whereHas('roles', function ($rq) {
-                        $rq->where('name', \App\Enums\Role::GIAM_DOC->value);
-                    });
-                })
-                // Or a participant has Director role
-                ->orWhereHas('participants', function ($q) {
-                    $q->whereHas('roles', function ($rq) {
-                        $rq->where('name', \App\Enums\Role::GIAM_DOC->value);
-                    });
-                });
-            })
             ->where(function ($query) use ($startDate, $endDate) {
                 $query->where(function ($q) use ($startDate, $endDate) {
                     $q->whereNotNull('end_date')

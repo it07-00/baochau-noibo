@@ -104,7 +104,96 @@
     </div>
 
     {{-- Calendar Grid --}}
-    <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none d-md-block">
+    <div class="ws-cal-wrapper d-none d-md-block">
+        <div class="ws-cal-header">
+            @foreach($this->weekdayShortNames() as $dow)
+                <div class="ws-cal-hcell">{{ $dow }}</div>
+            @endforeach
+        </div>
+
+        @foreach($weeksLayout as $week)
+            <section class="ws-cal-week">
+                <div class="ws-cal-dates">
+                    @foreach($week['dates'] as $dateString)
+                        @php($currentDate = \Carbon\Carbon::parse($dateString))
+                        @php($eventsForDay = $this->eventsForDate($calendarData, $currentDate))
+                        <div class="ws-date-cell {{ !$this->isInsideCurrentMonth($currentDate) ? 'ws-date-outside' : '' }} {{ $currentDate->isWeekend() ? 'ws-col-sunday' : '' }}"
+                            @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
+                                wire:click="openDayDetail('{{ $dateString }}')"
+                            @endif
+                        >
+                            <div class="ws-date-inner">
+                                <span class="ws-dnum {{ $currentDate->isToday() ? 'ws-dnum-today' : '' }} {{ !$this->isInsideCurrentMonth($currentDate) ? 'ws-dnum-dim' : '' }}">
+                                    {{ $currentDate->day }}
+                                </span>
+
+                                <span class="d-inline-flex align-items-center gap-1">
+                                    @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
+                                        <button type="button"
+                                            class="ws-overflow-badge"
+                                            wire:click.stop="openDayDetail('{{ $dateString }}')">
+                                            {{ count($eventsForDay) }}
+                                        </button>
+                                    @endif
+
+                                    @if($this->canAddInCalendarDate($currentDate))
+                                        <button type="button"
+                                            wire:click.stop="openCreateModal('{{ $dateString }}')"
+                                            class="ws-add-btn"
+                                            title="Them su kien">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                @forelse($week['lanes'] as $lane)
+                    <div class="ws-event-lane">
+                        @foreach($lane as $placement)
+                            <button type="button"
+                                class="ws-evt-chip ws-chip-{{ $placement['color'] }}"
+                                style="grid-column: {{ $placement['startCol'] }} / span {{ $placement['span'] }};"
+                                wire:click="openDayDetail('{{ $placement['startDate'] }}')">
+                                <span class="ws-evt-title">{{ $placement['title'] }}</span>
+                                <span class="ws-evt-people">
+                                    @if($placement['isMultiDay'])
+                                        {{ $placement['rangeLabel'] }} &middot;
+                                    @endif
+                                    {{ $placement['timeLabel'] }}
+                                    @if($placement['participants'])
+                                        &middot; {{ $placement['participants'] }}
+                                    @endif
+                                </span>
+                            </button>
+                        @endforeach
+                    </div>
+                @empty
+                    <div class="ws-event-lane ws-event-lane-empty"></div>
+                @endforelse
+
+                @if(collect($week['overflowPerDay'])->contains(fn ($count) => $count > 0))
+                    <div class="ws-event-lane ws-event-lane-empty">
+                        @foreach($week['dates'] as $dateString)
+                            @if(($week['overflowPerDay'][$dateString] ?? 0) > 0)
+                                <button type="button"
+                                    class="ws-overflow-badge"
+                                    style="grid-column: {{ $loop->iteration }} / span 1;"
+                                    wire:click="openDayDetail('{{ $dateString }}')">
+                                    +{{ $week['overflowPerDay'][$dateString] }}
+                                </button>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+        @endforeach
+    </div>
+
+    @if(false)
+    <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none">
         <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
             @foreach($this->weekdayShortNames() as $dow)
                 <div class="calendar-header-cell fw-bold text-muted text-center">{{ $dow }}</div>
@@ -163,6 +252,8 @@
             @endforeach
         </div>
     </div>
+
+    @endif
 
     {{-- Day Detail Modal --}}
     <div x-show="showDetail" x-cloak

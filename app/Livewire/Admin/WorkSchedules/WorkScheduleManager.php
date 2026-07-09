@@ -567,6 +567,8 @@ class WorkScheduleManager extends Component
                     'id'           => $event->id,
                     'title'        => $event->title,
                     'timeLabel'    => $event->time_range_label,
+                    'rangeLabel'   => $event->start_date->format('d/m') . ' - ' . $effectiveEnd->format('d/m'),
+                    'isMultiDay'   => $effectiveEnd->ne($event->start_date),
                     'color'        => $event->color,
                     'participants' => $event->participants->pluck('name')->join(', '),
                     'startCol'     => $startCol,
