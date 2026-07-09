@@ -54,15 +54,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1">Bộ phận</label>
-                    <select wire:model.live="filter_department" class="form-select form-select-sm">
-                        <option value="all">Tất cả bộ phận</option>
-                        <option value="consulting">Bộ phận Tư vấn</option>
-                        <option value="technical">Bộ phận Kỹ thuật</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label fw-semibold mb-1">Loại hợp đồng</label>
                     <select wire:model.live="filter_contract_type" class="form-select form-select-sm">
                         <option value="all">Tất cả loại hợp đồng</option>
@@ -71,7 +63,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1">Trạng thái thực hiện</label>
                     <select wire:model.live="filter_status" class="form-select form-select-sm">
                         <option value="all">Tất cả trạng thái</option>
@@ -98,7 +90,6 @@
                             <th class="text-center w-45px">STT</th>
                             <th class="ps-3">Thông tin hợp đồng</th>
                             <th>Loại dịch vụ / hợp đồng</th>
-                            <th>Bộ phận</th>
                             <th class="mnw-180px">Tiến độ thực hiện</th>
                             <th class="text-center">Trạng thái HĐ</th>
                             <th class="text-center">Thao tác</th>
@@ -125,17 +116,6 @@
                             </td>
                             <td class="text-muted text-wrap" style="max-width: 250px;">{{ $item['type'] }}</td>
                             <td>
-                                @if($item['department'] === 'Tư vấn')
-                                    <span class="badge bg-soft-primary text-primary">Tư vấn</span>
-                                @elseif($item['department'] === 'Kỹ thuật')
-                                    <span class="badge bg-soft-warning text-warning">Kỹ thuật</span>
-                                @elseif(str_contains($item['department'], '+'))
-                                    <span class="badge bg-soft-info text-info">TV + KT</span>
-                                @else
-                                    <span class="badge bg-soft-secondary text-secondary">{{ $item['department'] }}</span>
-                                @endif
-                            </td>
-                            <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="progress flex-grow-1 h-8px" style="height: 8px;">
                                         <div class="progress-bar {{ $item['workflow_progress']['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
@@ -159,7 +139,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
+                            <td colspan="6" class="text-center text-muted py-4">
                                 Không tìm thấy hợp đồng nào khớp với bộ lọc
                             </td>
                         </tr>
