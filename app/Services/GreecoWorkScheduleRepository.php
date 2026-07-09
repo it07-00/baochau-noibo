@@ -34,30 +34,34 @@ final class GreecoWorkScheduleRepository
             return [];
         }
 
-        try {
-            $response = Http::timeout(5)
-                ->get("{$this->apiUrl}/api/duty-schedules", [
-                    'start' => date('Y-m-d', strtotime($start)),
-                    'end' => date('Y-m-d', strtotime($end)),
-                    'token' => $this->apiToken,
-                ]);
+        $cacheKey = 'greeco_schedules_' . $start . '_' . $end;
 
-            if (!$response->successful()) {
-                Log::warning('Greeco API request failed', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
+        return cache()->remember($cacheKey, 300, function () use ($start, $end) {
+            try {
+                $response = Http::timeout(5)
+                    ->get("{$this->apiUrl}/api/duty-schedules", [
+                        'start' => date('Y-m-d', strtotime($start)),
+                        'end' => date('Y-m-d', strtotime($end)),
+                        'token' => $this->apiToken,
+                    ]);
+
+                if (!$response->successful()) {
+                    Log::warning('Greeco API request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+                    return [];
+                }
+
+                $data = $response->json('data', []);
+                return is_array($data) ? $data : [];
+            } catch (\Throwable $e) {
+                Log::warning('Greeco API connection error', [
+                    'message' => $e->getMessage(),
                 ]);
                 return [];
             }
-
-            $data = $response->json('data', []);
-            return is_array($data) ? $data : [];
-        } catch (\Throwable $e) {
-            Log::warning('Greeco API connection error', [
-                'message' => $e->getMessage(),
-            ]);
-            return [];
-        }
+        });
     }
 
     /**
