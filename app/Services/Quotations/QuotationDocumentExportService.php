@@ -67,7 +67,10 @@ class QuotationDocumentExportService
         try {
             $this->buildDocxWithFinalPageCount($doc, $docxPath);
 
-            $content = $this->convertDocxToPdf($docxPath, $pdfPath)
+            $pdfViewData = new \App\Support\QuotationPdfViewData();
+            $useFallback = $pdfViewData->hasFrequency($doc) && ! $this->templateSupportsFrequency($doc->template_key);
+
+            $content = (! $useFallback && $this->convertDocxToPdf($docxPath, $pdfPath))
                 ? file_get_contents($pdfPath)
                 : $this->generateFallbackPdfContent($doc, $this->estimatePageCount($doc));
 
@@ -95,7 +98,10 @@ class QuotationDocumentExportService
         try {
             $this->buildDocxWithFinalPageCount($doc, $docxPath);
 
-            return $this->convertDocxToPdf($docxPath, $pdfPath)
+            $pdfViewData = new \App\Support\QuotationPdfViewData();
+            $useFallback = $pdfViewData->hasFrequency($doc) && ! $this->templateSupportsFrequency($doc->template_key);
+
+            return (! $useFallback && $this->convertDocxToPdf($docxPath, $pdfPath))
                 ? file_get_contents($pdfPath)
                 : $this->generateFallbackPdfContent($doc, $this->estimatePageCount($doc));
         } finally {
@@ -2432,5 +2438,11 @@ POWERSHELL;
         }
 
         return $useEnglish ? 'Sales Manager' : 'Nhân viên kinh doanh';
+    }
+
+    private function templateSupportsFrequency(?string $templateKey): bool
+    {
+        $template = QuotationTemplateCatalog::find($templateKey);
+        return in_array('frequency', $template['requires'] ?? []);
     }
 }

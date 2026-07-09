@@ -23,6 +23,20 @@ class QuotationPdfViewData
         return $doc->items->where('item_type', 'summary')->values();
     }
 
+    public function hasFrequency(QuotationDocument $doc): bool
+    {
+        $template = QuotationTemplateCatalog::find($doc->template_key ?? null);
+        $requiresFrequency = in_array('frequency', $template['requires'] ?? []);
+
+        if ($requiresFrequency) {
+            return true;
+        }
+
+        return $doc->items
+            ->where('item_type', 'detail')
+            ->contains(fn ($item) => (int) ($item->frequency ?? 1) > 1);
+    }
+
     public function isLaborMonitoringTemplate(QuotationDocument $doc): bool
     {
         return ($doc->template_key ?? QuotationTemplateCatalog::DEFAULT_KEY) === QuotationTemplateCatalog::DEFAULT_KEY;

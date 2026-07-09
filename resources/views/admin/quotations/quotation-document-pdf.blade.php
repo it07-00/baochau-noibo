@@ -318,6 +318,17 @@
             width: 18%;
         }
 
+        .details .col-frequency {
+            width: 8%;
+        }
+
+        .details th.col-frequency {
+            padding-left: 0;
+            padding-right: 0;
+            font-size: 10pt;
+            line-height: 1.1;
+        }
+
         /* Notes styles */
         .notes {
             margin: 0 5mm;
@@ -587,11 +598,12 @@
 <table class="details">
     <colgroup>
         <col style="width: 6%" />
-        <col style="width: 44%" />
+        <col style="width: 37%" />
         <col style="width: 8%" />
-        <col style="width: 15%" />
-        <col style="width: 9%" />
-        <col style="width: 18%" />
+        <col style="width: 14%" />
+        <col style="width: 8%" />
+        <col style="width: 8%" />
+        <col style="width: 19%" />
     </colgroup>
     <thead>
         <tr>
@@ -600,6 +612,7 @@
             <th class="col-unit">ĐVT</th>
             <th class="col-cost">CHI PHÍ</th>
             <th class="col-quantity">SỐ<br />LƯỢNG</th>
+            <th class="col-frequency">TẦN<br />SUẤT</th>
             <th class="col-amount">THÀNH<br />TIỀN</th>
         </tr>
     </thead>
@@ -608,7 +621,7 @@
         @foreach($pdfViewData->groupedMainItems($doc) as $groupName => $groupItems)
             <tr class="group">
                 <td class="center b">{{ $pdfViewData->splitGroup((string) $groupName)[0] }}</td>
-                <td colspan="5" style="text-align: left; font-weight: 700;">{{ $pdfViewData->splitGroup((string) $groupName)[1] }}</td>
+                <td colspan="6" style="text-align: left; font-weight: 700;">{{ $pdfViewData->splitGroup((string) $groupName)[1] }}</td>
             </tr>
             @foreach($groupItems as $item)
                 <tr>
@@ -617,6 +630,7 @@
                     <td class="center">{{ $item->unit ?: 'Mẫu' }}</td>
                     <td class="right">{{ $pdfViewData->formatMoney($item->unit_price) }} đ</td>
                     <td class="center">{{ $pdfViewData->formatQty($item->quantity) }}</td>
+                    <td class="center">{{ $pdfViewData->frequencyOf($item) }}</td>
                     <td class="right">{{ $pdfViewData->formatMoney($item->amount) }} đ</td>
                 </tr>
             @endforeach
@@ -628,19 +642,20 @@
             <td class="center">Hồ sơ</td>
             <td class="right">{{ $pdfViewData->formatMoney($doc->subtotal) }} đ</td>
             <td class="center">1</td>
+            <td class="center">1</td>
             <td class="right">{{ $pdfViewData->formatMoney($doc->subtotal) }} đ</td>
         </tr>
     @endif
         <tr class="green-row">
-            <td colspan="5" class="right">Tổng trước VAT</td>
+            <td colspan="6" class="right">Tổng trước VAT</td>
             <td class="right">{{ $pdfViewData->formatMoney($doc->subtotal) }} đ</td>
         </tr>
         <tr class="green-row">
-            <td colspan="5" class="right">VAT</td>
+            <td colspan="6" class="right">VAT</td>
             <td class="right">{{ $pdfViewData->formatMoney($doc->vat_amount) }} đ</td>
         </tr>
         <tr class="green-row">
-            <td colspan="5" class="right">Tổng sau VAT</td>
+            <td colspan="6" class="right">Tổng sau VAT</td>
             <td class="right">{{ $pdfViewData->formatMoney($doc->total) }} đ</td>
         </tr>
     </tbody>

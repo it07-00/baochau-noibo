@@ -195,6 +195,73 @@ class QuotationDocumentExportServicePageCountTest extends TestCase
         $this->assertCount(3, $matches[0]);
     }
 
+    public function test_fallback_pdf_details_table_includes_frequency_column(): void
+    {
+        $doc = new QuotationDocument([
+            'document_number' => 'QTMTLD-FREQUENCY-001',
+            'date' => now(),
+            'customer_name' => 'Frequency Customer',
+            'service_type' => 'Labor monitoring',
+            'template_key' => 'qtmtld',
+            'subtotal' => 996000,
+            'discount' => 0,
+            'vat_rate' => 8,
+            'vat_amount' => 79680,
+            'total' => 1075680,
+            'terms' => 'Payment terms.',
+        ]);
+
+        $doc->setRelation('staff', new User(['name' => 'Sales Staff']));
+        $doc->setRelation('sections', collect());
+        $doc->setRelation('items', collect([
+            new QuotationDocumentItem([
+                'item_type' => 'summary',
+                'sort_order' => 0,
+                'description' => 'Perform labor monitoring',
+                'unit' => 'Report',
+                'quantity' => 1,
+                'unit_price' => 996000,
+                'amount' => 996000,
+            ]),
+            new QuotationDocumentItem([
+                'item_type' => 'detail',
+                'sort_order' => 1,
+                'group_name' => 'I. MICROCLIMATE',
+                'description' => 'Temperature',
+                'unit' => 'Sample',
+                'quantity' => 1,
+                'frequency' => 83,
+                'unit_price' => 12000,
+                'amount' => 996000,
+            ]),
+        ]));
+
+        $html = view('admin.quotations.quotation-document-pdf', [
+            'doc' => $doc,
+            'company' => [
+                'name' => 'Company',
+                'address' => 'Address',
+                'phone' => 'Phone',
+                'email' => 'Email',
+                'tax_code' => 'Tax',
+            ],
+            'amountInWords' => 'One million',
+            'serviceTitle' => 'Labor monitoring',
+            'year' => '2026',
+            'noteLines' => [],
+            'staffName' => 'Sales Staff',
+            'staffPhone' => '',
+            'staffEmail' => '',
+            'staffGenderPrefix' => 'Mr.',
+            'staffTitle' => 'Sales Manager',
+            'pageCount' => '03',
+        ])->render();
+
+        $this->assertStringContainsString('class="col-frequency"', $html);
+        $this->assertStringContainsString('TẦN<br />SUẤT', $html);
+        $this->assertStringContainsString('<td class="center">83</td>', $html);
+    }
+
     private function resolveStaffDetails(QuotationDocument $doc): array
     {
         $service = app(QuotationDocumentExportService::class);
