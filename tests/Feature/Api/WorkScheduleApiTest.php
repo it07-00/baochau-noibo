@@ -68,8 +68,8 @@ final class WorkScheduleApiTest extends TestCase
         $response = $this->getJson('/api/work-schedules?start=2026-07-23&end=2026-07-23&token=test-token');
 
         $response->assertOk()
-            ->assertJsonPath('data.0.id', $schedule->id)
-            ->assertJsonPath('data.0.start_date', '2026-07-22')
+            ->assertJsonPath('data.0.id', $schedule->id . '_2026-07-23')
+            ->assertJsonPath('data.0.start_date', '2026-07-23')
             ->assertJsonPath('data.0.end_date', '2026-07-23')
             ->assertJsonPath('data.0.start_time', '07:01')
             ->assertJsonPath('data.0.end_time', '17:25');

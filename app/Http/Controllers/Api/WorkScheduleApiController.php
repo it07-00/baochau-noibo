@@ -48,6 +48,41 @@ final class WorkScheduleApiController extends Controller
             ->orderBy('start_time')
             ->get();
 
+        $splitEvents = collect();
+        $qStart = \Carbon\Carbon::parse($startDate);
+        $qEnd = \Carbon\Carbon::parse($endDate);
+
+        foreach ($events as $event) {
+            $eventStart = $event->start_date;
+            $eventEnd = $event->effective_end_date;
+
+            if ($eventEnd->gt($eventStart)) {
+                $overlapStart = $eventStart->gt($qStart) ? $eventStart : $qStart;
+                $overlapEnd = $eventEnd->lt($qEnd) ? $eventEnd : $qEnd;
+
+                if ($overlapStart->lte($overlapEnd)) {
+                    $period = \Carbon\CarbonPeriod::create($overlapStart, $overlapEnd);
+                    foreach ($period as $date) {
+                        $clone = $event->replicate();
+                        $clone->id = $event->id . '_' . $date->format('Y-m-d');
+                        $clone->start_date = $date->copy();
+                        $clone->end_date = null;
+
+                        if ($event->relationLoaded('user')) {
+                            $clone->setRelation('user', $event->user);
+                        }
+                        if ($event->relationLoaded('participants')) {
+                            $clone->setRelation('participants', $event->participants);
+                        }
+                        $splitEvents->push($clone);
+                    }
+                }
+            } else {
+                $splitEvents->push($event);
+            }
+        }
+        $events = $splitEvents;
+
         $data = $events->map(function (WorkSchedule $event) {
             return [
                 'id' => $event->id,

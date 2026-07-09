@@ -72,11 +72,12 @@ final class WorkScheduleManagerTest extends TestCase
             ->html();
 
         $this->assertSame(
-            3,
+            4,
             substr_count($html, 'Greeco: GREECO MULTI DAY TRAINING'),
-            'The multi-day Greeco event should render as one spanning desktop event and once per covered day on mobile.',
+            'The multi-day Greeco event should render as separate daily events on each covered day for both desktop and mobile.',
         );
-        $this->assertStringContainsString('grid-column: 3 / span 2;', $html);
-        $this->assertStringContainsString('22/07 - 23/07', $html);
+        $this->assertStringContainsString('grid-column: 3 / span 1;', $html);
+        $this->assertStringContainsString('grid-column: 4 / span 1;', $html);
+        $this->assertStringNotContainsString('22/07 - 23/07', $html);
     }
 }

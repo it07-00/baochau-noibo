@@ -324,22 +324,36 @@ class WorkScheduleManager extends Component
             ->orderBy('start_time')
             ->get();
 
-        $detailEvents = $events->map(fn ($e) => [
-            'id'          => $e->id,
-            'title'       => $e->title,
-            'description' => $e->description ?? '',
-            'start_date'  => $e->start_date->format('d/m/Y'),
-            'end_date'    => $e->effective_end_date->format('d/m/Y'),
-            'time_label'  => $e->time_range_label,
-            'color'       => $e->color,
-            'user_name'   => $e->user->name ?? '',
-            'department'  => $e->user->department->name ?? '',
-            'is_owner'    => (int) $e->user_id === (int) auth()->id() || auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]),
-            'is_past'     => $e->ends_at->lt(now()),
-            'is_multi_day' => $e->end_date !== null && $e->end_date->ne($e->start_date),
-            'is_private'  => (bool) $e->is_private,
-            'participants' => $e->participants->map(fn($p) => $p->name)->join(', '),
-        ])->toArray();
+        $detailEvents = [];
+        foreach ($events as $e) {
+            $clone = $e->replicate();
+            $clone->id = $e->id;
+            $clone->start_date = $parsed->copy();
+            $clone->end_date = null;
+            if ($e->relationLoaded('user')) {
+                $clone->setRelation('user', $e->user);
+            }
+            if ($e->relationLoaded('participants')) {
+                $clone->setRelation('participants', $e->participants);
+            }
+
+            $detailEvents[] = [
+                'id'          => $clone->id,
+                'title'       => $clone->title,
+                'description' => $clone->description ?? '',
+                'start_date'  => $clone->start_date->format('d/m/Y'),
+                'end_date'    => $clone->effective_end_date->format('d/m/Y'),
+                'time_label'  => $clone->time_range_label,
+                'color'       => $clone->color,
+                'user_name'   => $clone->user->name ?? '',
+                'department'  => $clone->user->department->name ?? '',
+                'is_owner'    => (int) $clone->user_id === (int) auth()->id() || auth()->user()->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]),
+                'is_past'     => $clone->ends_at->lt(now()),
+                'is_multi_day' => false,
+                'is_private'  => (bool) $clone->is_private,
+                'participants' => $clone->participants->map(fn($p) => $p->name)->join(', '),
+            ];
+        }
 
         if ($this->showGreecoSchedules) {
             $greecoRepo = app(\App\Services\GreecoWorkScheduleRepository::class);
@@ -355,11 +369,11 @@ class WorkScheduleManager extends Component
                     $timeLabel = 'Cả ngày';
                 }
 
-                $startDate = (string) ($item['start_date'] ?? $date);
-                $endDate = (string) ($item['end_date'] ?? $startDate);
-                $endsAt = Carbon::parse($endDate);
+                $startDate = $date;
+                $endDate = $date;
+                $endsAt = Carbon::parse($date);
                 if ($endTime) {
-                    $endsAt = Carbon::parse($endDate . ' ' . $endTime);
+                    $endsAt = Carbon::parse($date . ' ' . $endTime);
                 } else {
                     $endsAt = $endsAt->endOfDay();
                 }
@@ -376,7 +390,7 @@ class WorkScheduleManager extends Component
                     'department'  => 'Greeco',
                     'is_owner'    => false,
                     'is_past'     => $endsAt->lt(now()),
-                    'is_multi_day' => $endDate !== $startDate,
+                    'is_multi_day' => false,
                     'is_private'  => false,
                     'participants' => collect($item['participants'] ?? [])->pluck('name')->join(', '),
                 ];
@@ -480,6 +494,32 @@ class WorkScheduleManager extends Component
                 $events->push($greecoRepo->toWorkScheduleModel($item));
             }
         }
+
+        $splitEvents = collect();
+        foreach ($events as $event) {
+            $startDate = $event->start_date;
+            $endDate = $event->effective_end_date;
+
+            if ($endDate->gt($startDate)) {
+                $eventPeriod = CarbonPeriod::create($startDate, $endDate);
+                foreach ($eventPeriod as $date) {
+                    $clone = $event->replicate();
+                    $clone->id = $event->id;
+                    $clone->start_date = $date->copy();
+                    $clone->end_date = null;
+                    if ($event->relationLoaded('user')) {
+                        $clone->setRelation('user', $event->user);
+                    }
+                    if ($event->relationLoaded('participants')) {
+                        $clone->setRelation('participants', $event->participants);
+                    }
+                    $splitEvents->push($clone);
+                }
+            } else {
+                $splitEvents->push($event);
+            }
+        }
+        $events = $splitEvents;
 
         $startOfCalendar = $monthStart->copy()->startOfWeek(Carbon::MONDAY);
         $endOfCalendar   = $monthEnd->copy()->endOfWeek(Carbon::SUNDAY);
