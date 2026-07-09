@@ -19,6 +19,8 @@ class SalesProjectProgressReportTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected Department $department;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,11 +36,21 @@ class SalesProjectProgressReportTest extends TestCase
 
         Role::findOrCreate(RoleEnum::TU_VAN->value);
         Role::findOrCreate(RoleEnum::KY_THUAT->value);
+
+        // Create a department
+        $this->department = Department::create([
+            'name' => 'Kinh doanh',
+            'slug' => 'kinh-doanh',
+            'is_active' => true,
+        ]);
     }
 
     public function test_unauthorized_user_cannot_access_project_progress_report(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $this->actingAs($user);
 
         $response = $this->get(route('app.reports.sales.project-progress'));
@@ -47,10 +59,16 @@ class SalesProjectProgressReportTest extends TestCase
 
     public function test_salesperson_only_sees_own_contracts(): void
     {
-        $salesperson1 = User::factory()->create();
+        $salesperson1 = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $salesperson1->assignRole(RoleEnum::KINH_DOANH->value);
 
-        $salesperson2 = User::factory()->create();
+        $salesperson2 = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $salesperson2->assignRole(RoleEnum::KINH_DOANH->value);
 
         $customer = Customer::create(['name' => 'Test Customer']);
@@ -61,6 +79,7 @@ class SalesProjectProgressReportTest extends TestCase
             'customer_id' => $customer->id,
             'handler_id' => $handler->id,
             'staff_id' => $salesperson1->id,
+            'department_id' => $this->department->id,
             'value' => 100_000_000,
             'signed_at' => '2026-05-10',
             'submitted_at' => '2026-05-10',
@@ -71,6 +90,7 @@ class SalesProjectProgressReportTest extends TestCase
             'customer_id' => $customer->id,
             'handler_id' => $handler->id,
             'staff_id' => $salesperson2->id,
+            'department_id' => $this->department->id,
             'value' => 150_000_000,
             'signed_at' => '2026-05-12',
             'submitted_at' => '2026-05-12',
@@ -89,10 +109,16 @@ class SalesProjectProgressReportTest extends TestCase
 
     public function test_sales_manager_can_see_all_contracts(): void
     {
-        $salesperson = User::factory()->create();
+        $salesperson = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $salesperson->assignRole(RoleEnum::KINH_DOANH->value);
 
-        $manager = User::factory()->create();
+        $manager = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $manager->assignRole(RoleEnum::TP_KINH_DOANH->value);
 
         $customer = Customer::create(['name' => 'Test Customer']);
@@ -102,6 +128,7 @@ class SalesProjectProgressReportTest extends TestCase
             'customer_id' => $customer->id,
             'handler_id' => $handler->id,
             'staff_id' => $salesperson->id,
+            'department_id' => $this->department->id,
             'value' => 100_000_000,
             'signed_at' => '2026-05-10',
             'submitted_at' => '2026-05-10',
@@ -111,6 +138,7 @@ class SalesProjectProgressReportTest extends TestCase
             'customer_id' => $customer->id,
             'handler_id' => $handler->id,
             'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
             'value' => 150_000_000,
             'signed_at' => '2026-05-12',
             'submitted_at' => '2026-05-12',
@@ -129,13 +157,22 @@ class SalesProjectProgressReportTest extends TestCase
 
     public function test_assigned_staff_filter_works(): void
     {
-        $manager = User::factory()->create();
+        $manager = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $manager->assignRole(RoleEnum::TP_KINH_DOANH->value);
 
-        $staff1 = User::factory()->create();
+        $staff1 = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $staff1->assignRole(RoleEnum::TU_VAN->value);
 
-        $staff2 = User::factory()->create();
+        $staff2 = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
         $staff2->assignRole(RoleEnum::KY_THUAT->value);
 
         $customer = Customer::create(['name' => 'Test Customer']);
@@ -145,21 +182,29 @@ class SalesProjectProgressReportTest extends TestCase
             'customer_id' => $customer->id,
             'handler_id' => $handler->id,
             'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
             'value' => 100_000_000,
             'signed_at' => '2026-05-10',
             'submitted_at' => '2026-05-10',
         ]);
-        $contract1->assignments()->create(['user_id' => $staff1->id]);
+        $contract1->assignments()->create([
+            'user_id' => $staff1->id,
+            'assigned_by' => $manager->id,
+        ]);
 
         $contract2 = ContractWaste::create([
             'customer_id' => $customer->id,
             'handler_id' => $handler->id,
             'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
             'value' => 150_000_000,
             'signed_at' => '2026-05-12',
             'submitted_at' => '2026-05-12',
         ]);
-        $contract2->assignments()->create(['user_id' => $staff2->id]);
+        $contract2->assignments()->create([
+            'user_id' => $staff2->id,
+            'assigned_by' => $manager->id,
+        ]);
 
         $this->actingAs($manager);
 

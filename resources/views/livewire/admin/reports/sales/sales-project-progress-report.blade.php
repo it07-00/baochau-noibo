@@ -46,7 +46,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
                         @foreach($years as $y)
@@ -81,7 +81,7 @@
                         <option value="finished">Đã hoàn thành</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Tìm kiếm nhanh</label>
                     <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm" placeholder="Số HĐ, khách hàng, nhân viên...">
                 </div>
