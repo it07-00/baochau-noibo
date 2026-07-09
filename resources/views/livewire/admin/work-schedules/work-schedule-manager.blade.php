@@ -36,6 +36,11 @@
                         title="Tháng sau">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
+                    <div class="vr mx-2 d-none d-lg-block" style="height: 20px;"></div>
+                    <div class="form-check form-switch mb-0 ms-2 d-flex align-items-center gap-2">
+                        <input class="form-check-input" type="checkbox" role="switch" id="showGreecoSwitch" wire:model.live="showGreecoSchedules">
+                        <label class="form-check-label text-muted small fw-semibold" for="showGreecoSwitch" style="user-select: none;">Hiện lịch Greeco</label>
+                    </div>
                 </div>
             </div>
 

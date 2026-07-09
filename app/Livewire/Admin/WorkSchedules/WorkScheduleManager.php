@@ -27,6 +27,7 @@ class WorkScheduleManager extends Component
     public string $endTime = '';
     public string $color = 'primary';
     public array $selectedParticipants = [];
+
     public bool $isPrivate = false;
 
     // Modal state
@@ -34,10 +35,12 @@ class WorkScheduleManager extends Component
     public bool $showDayDetailModal = false;
     public string $detailDate = '';
     public array $detailEvents = [];
+    public bool $showGreecoSchedules = true;
 
     protected $queryString = [
         'monthFilter' => ['except' => ''],
         'yearFilter'  => ['except' => ''],
+        'showGreecoSchedules' => ['except' => true],
     ];
 
     public function mount(): void
@@ -321,7 +324,7 @@ class WorkScheduleManager extends Component
             ->orderBy('start_time')
             ->get();
 
-        $this->detailEvents = $events->map(fn ($e) => [
+        $detailEvents = $events->map(fn ($e) => [
             'id'          => $e->id,
             'title'       => $e->title,
             'description' => $e->description ?? '',
@@ -337,6 +340,50 @@ class WorkScheduleManager extends Component
             'is_private'  => (bool) $e->is_private,
             'participants' => $e->participants->map(fn($p) => $p->name)->join(', '),
         ])->toArray();
+
+        if ($this->showGreecoSchedules) {
+            $greecoRepo = app(\App\Services\GreecoWorkScheduleRepository::class);
+            $greecoItems = $greecoRepo->getEventsInRange($date, $date);
+            foreach ($greecoItems as $item) {
+                $startTime = ! empty($item['start_time']) ? substr((string) $item['start_time'], 0, 5) : null;
+                $endTime = ! empty($item['end_time']) ? substr((string) $item['end_time'], 0, 5) : null;
+                if ($startTime && $endTime) {
+                    $timeLabel = $startTime . ' - ' . $endTime;
+                } elseif ($startTime) {
+                    $timeLabel = $startTime;
+                } else {
+                    $timeLabel = 'Cả ngày';
+                }
+
+                $startDate = (string) ($item['start_date'] ?? $date);
+                $endDate = (string) ($item['end_date'] ?? $startDate);
+                $endsAt = Carbon::parse($endDate);
+                if ($endTime) {
+                    $endsAt = Carbon::parse($endDate . ' ' . $endTime);
+                } else {
+                    $endsAt = $endsAt->endOfDay();
+                }
+
+                $detailEvents[] = [
+                    'id'          => 'greeco_' . ($item['id'] ?? md5(json_encode($item))),
+                    'title'       => 'Greeco: ' . ($item['title'] ?? 'Work schedule'),
+                    'description' => $item['description'] ?? '',
+                    'start_date'  => Carbon::parse($startDate)->format('d/m/Y'),
+                    'end_date'    => Carbon::parse($endDate)->format('d/m/Y'),
+                    'time_label'  => $timeLabel,
+                    'color'       => $item['color'] ?? 'primary',
+                    'user_name'   => $item['creator_name'] ?? 'N/A',
+                    'department'  => 'Greeco',
+                    'is_owner'    => false,
+                    'is_past'     => $endsAt->lt(now()),
+                    'is_multi_day' => $endDate !== $startDate,
+                    'is_private'  => false,
+                    'participants' => collect($item['participants'] ?? [])->pluck('name')->join(', '),
+                ];
+            }
+        }
+
+        $this->detailEvents = $detailEvents;
 
         $this->showDayDetailModal = true;
     }
@@ -394,50 +441,41 @@ class WorkScheduleManager extends Component
         return !$date->lt(today()) && $this->isInsideCurrentMonth($date);
     }
 
-    public function canAddForDetailDate(?string $date): bool
-    {
-        return !empty($date) && !Carbon::parse($date)->lt(today());
-    }
-
     public function render()
     {
         $monthStart = Carbon::create($this->yearFilter, $this->monthFilter, 1);
         $monthEnd   = $monthStart->copy()->endOfMonth();
 
-        $user = auth()->user();
-        $isGdOrIt = $user->hasAnyRole([\App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::IT->value]);
-
-        // Get all events that overlap with this month
-        $query = WorkSchedule::with('user', 'user.department', 'participants')
-            ->where(function ($query) use ($monthStart, $monthEnd) {
-                $query->where(function ($q) use ($monthStart, $monthEnd) {
-                    // Events with end_date that overlap the month
-                    $q->whereNotNull('end_date')
-                      ->where('start_date', '<=', $monthEnd)
-                      ->where('end_date', '>=', $monthStart);
-                })->orWhere(function ($q) use ($monthStart, $monthEnd) {
-                    // Single-day events within the month
-                    $q->whereNull('end_date')
-                      ->whereBetween('start_date', [$monthStart, $monthEnd]);
-                });
-            });
-
-        if (!$isGdOrIt) {
-            $query->where(function ($q) use ($user) {
-                $q->where('is_private', false)
-                  ->orWhere('user_id', $user->id)
-                  ->orWhereHas('participants', function ($pq) use ($user) {
-                      $pq->where('users.id', $user->id);
+        $events = WorkSchedule::query()
+            ->with(['user', 'participants'])
+            ->where(function ($q) use ($monthStart, $monthEnd) {
+                $q->whereBetween('start_date', [$monthStart, $monthEnd])
+                  ->orWhere(function ($q2) use ($monthStart, $monthEnd) {
+                      $q2->where('start_date', '<', $monthStart)
+                         ->where(function ($q3) use ($monthEnd) {
+                             $q3->where('end_date', '>=', $monthStart)
+                                ->orWhereNull('end_date');
+                         });
                   });
-            });
+            })
+            ->where(function ($q) {
+                $q->where('is_private', false)
+                  ->orWhere('user_id', auth()->id())
+                  ->orWhereHas('participants', function ($pq) {
+                      $pq->where('users.id', auth()->id());
+                  });
+            })->get();
+
+        if ($this->showGreecoSchedules) {
+            $greecoRepo = app(\App\Services\GreecoWorkScheduleRepository::class);
+            $greecoStart = $monthStart->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
+            $greecoEnd = $monthEnd->copy()->endOfWeek(Carbon::SUNDAY)->toDateString();
+            $greecoItems = $greecoRepo->getEventsInRange($greecoStart, $greecoEnd);
+            foreach ($greecoItems as $item) {
+                $events->push($greecoRepo->toWorkScheduleModel($item));
+            }
         }
 
-        $events = $query->orderBy('start_date')
-            ->orderBy('start_time')
-            ->get();
-
-        // Build calendar data: map each day to its events
-        $calendarData = [];
         $startOfCalendar = $monthStart->copy()->startOfWeek(Carbon::MONDAY);
         $endOfCalendar   = $monthEnd->copy()->endOfWeek(Carbon::SUNDAY);
         $period          = CarbonPeriod::create($startOfCalendar, $endOfCalendar);

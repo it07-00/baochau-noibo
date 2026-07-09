@@ -49,6 +49,7 @@ return [
     ],
 
     'greeco' => [
+        'api_url' => env('GREECO_API_URL', 'https://noibo.greeco.vn'),
         'api_token' => env('GREECO_API_TOKEN', 'greeco-noibo-secret-2026'),
     ],
 
