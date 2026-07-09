@@ -64,6 +64,8 @@ final class WorkScheduleApiController extends Controller
                     $period = \Carbon\CarbonPeriod::create($overlapStart, $overlapEnd);
                     foreach ($period as $date) {
                         $clone = $event->replicate();
+                        $clone->setIncrementing(false);
+                        $clone->setKeyType('string');
                         $clone->id = $event->id . '_' . $date->format('Y-m-d');
                         $clone->start_date = $date->copy();
                         $clone->end_date = null;
