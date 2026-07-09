@@ -48,7 +48,7 @@
                     Tháng
                 </button>
                 <button wire:click="openCreateModal" class="btn btn-outline-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2 fw-semibold" style="height: 38px; border-radius: 8px;">
-                    <i class="fa-solid fa-plus-lg"></i> Thêm sự kiện
+                    <i class="fa-solid fa-plus"></i> Thêm sự kiện
                 </button>
             </div>
         </div>
@@ -87,7 +87,7 @@
                     <button type="button"
                         class="ws-agenda-add btn btn-sm btn-outline-primary"
                         wire:click="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')">
-                        <i class="fa-solid fa-plus-lg me-1"></i> Thêm vào ngày này
+                        <i class="fa-solid fa-plus me-1"></i> Thêm vào ngày này
                     </button>
                 @endif
             </section>
@@ -96,7 +96,7 @@
                 <i class="fa-solid fa-calendar-week"></i>
                 <div class="fw-semibold">Chưa có sự kiện trong tháng này</div>
                 <button wire:click="openCreateModal" class="btn btn-primary btn-sm mt-2">
-                    <i class="fa-solid fa-plus-lg me-1"></i> Thêm sự kiện
+                    <i class="fa-solid fa-plus me-1"></i> Thêm sự kiện
                 </button>
             </div>
         @endforelse
@@ -166,7 +166,7 @@
                                         @endif
                                         {{ $evt->title }}
                                     </div>
-                                    @if($evt->participants->isNotEmpty())
+                                    @if($evt->participants->isNotEmpty() && !($evt->user_id && $evt->participants->count() === 1 && (int)$evt->participants->first()->id === (int)$evt->user_id))
                                         <div class="text-muted text-truncate" style="font-size: 0.62rem; margin-top: 1px; color: #64748b;" title="{{ $evt->participants->pluck('name')->join(', ') }}">
                                             • 
                                             @if($evt->participants->count() > 2)
@@ -257,7 +257,7 @@
                     <div class="text-center mt-4">
                         <button wire:click="openCreateModal('{{ $detailDate }}')"
                             class="btn btn-outline-primary px-4 py-2 fw-semibold rounded-10px fs-6" >
-                            <i class="fa-solid fa-plus-lg me-2"></i> Thêm sự kiện vào ngày này
+                            <i class="fa-solid fa-plus me-2"></i> Thêm sự kiện vào ngày này
                         </button>
                     </div>
                 @endif
