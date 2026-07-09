@@ -81,7 +81,7 @@
         /* First page banner */
         .banner {
             width: 94%;
-            max-height: 28mm;
+            height: auto;
             margin: 0 auto 2mm;
             display: block;
         }
@@ -249,7 +249,7 @@
 
         /* Details table styles */
         .details {
-            font-size: 10.5pt;
+            font-size: 9.4pt;
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 2mm;
@@ -258,16 +258,20 @@
         .details th {
             background: #c5eece;
             height: 8.5mm;
-            font-size: 11pt;
+            font-size: 9.6pt;
         }
 
         .details td {
-            padding: 0.6mm 0.8mm;
+            padding: 0.5mm 0.7mm;
             text-align: center;
         }
 
         .details td:nth-child(2) {
             text-align: left;
+        }
+
+        .details td:nth-child(3) {
+            white-space: nowrap;
         }
 
         .details .group td {
@@ -288,11 +292,11 @@
         }
 
         .details .col-index {
-            width: 6%;
+            width: 5%;
         }
 
         .details .col-item {
-            width: 43%;
+            width: 36%;
         }
 
         .details .col-unit {
@@ -300,33 +304,37 @@
         }
 
         .details .col-cost {
-            width: 15%;
+            width: 14%;
         }
 
         .details .col-quantity {
-            width: 10%;
+            width: 7%;
         }
 
         .details th.col-quantity {
             padding-left: 0;
             padding-right: 0;
-            font-size: 10pt;
+            font-size: 9pt;
             line-height: 1.1;
         }
 
         .details .col-amount {
-            width: 18%;
+            width: 23%;
         }
 
         .details .col-frequency {
-            width: 8%;
+            width: 7%;
         }
 
         .details th.col-frequency {
             padding-left: 0;
             padding-right: 0;
-            font-size: 10pt;
+            font-size: 9pt;
             line-height: 1.1;
+        }
+
+        .details .right {
+            white-space: nowrap;
         }
 
         /* Notes styles */
@@ -597,13 +605,13 @@
 <div class="table-title" style="margin-top: 10mm;">Bảng 02. Chi tiết thực hiện</div>
 <table class="details">
     <colgroup>
-        <col style="width: 6%" />
-        <col style="width: 37%" />
+        <col style="width: 5%" />
+        <col style="width: 36%" />
         <col style="width: 8%" />
         <col style="width: 14%" />
-        <col style="width: 8%" />
-        <col style="width: 8%" />
-        <col style="width: 19%" />
+        <col style="width: 7%" />
+        <col style="width: 7%" />
+        <col style="width: 23%" />
     </colgroup>
     <thead>
         <tr>
@@ -611,7 +619,7 @@
             <th class="col-item">CHỈ TIÊU</th>
             <th class="col-unit">ĐVT</th>
             <th class="col-cost">CHI PHÍ</th>
-            <th class="col-quantity">SỐ<br />LƯỢNG</th>
+            <th class="col-quantity">SL</th>
             <th class="col-frequency">TẦN<br />SUẤT</th>
             <th class="col-amount">THÀNH<br />TIỀN</th>
         </tr>
