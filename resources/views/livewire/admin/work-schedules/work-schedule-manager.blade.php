@@ -145,14 +145,14 @@
                         </div>
                     </div>
 
-                    <div class="calendar-day-content flex-grow-1 d-flex flex-column gap-1"
-                        style="overflow-y: auto; max-height: 120px; @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0) cursor: pointer; @endif"
+                    <div class="calendar-day-content flex-grow-1"
                         @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
+                            style="cursor: pointer;"
                             wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')"
                         @endif
                     >
                         @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
-                            @foreach(collect($eventsForDay)->take(4) as $evt)
+                            @foreach($eventsForDay as $evt)
                                 <div class="ws-event-chip ws-chip-{{ $evt->color }}"
                                     style="border-left: 3px solid transparent; border-radius: 6px; padding: 4px 6px; cursor: pointer; text-align: left;"
                                     wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
@@ -167,17 +167,12 @@
                                         {{ $evt->title }}
                                     </div>
                                     @if($evt->participants->isNotEmpty())
-                                        <div class="text-muted text-truncate" style="font-size: 0.62rem; margin-top: 1px; color: #64748b;">
+                                        <div class="text-muted" style="font-size: 0.62rem; margin-top: 1px; color: #64748b; white-space: normal; word-break: break-word;">
                                             • {{ $evt->participants->pluck('name')->join(', ') }}
                                         </div>
                                     @endif
                                 </div>
                             @endforeach
-                            @if(count($eventsForDay) > 4)
-                                <div class="ws-more-events text-muted text-center py-1 fw-semibold" style="font-size: 0.7rem; border-radius: 6px; background: #f8fafc; border: 1px dashed #d8e0ec;">
-                                    +{{ count($eventsForDay) - 4 }} sự kiện khác
-                                </div>
-                            @endif
                         @endif
                     </div>
                 </div>

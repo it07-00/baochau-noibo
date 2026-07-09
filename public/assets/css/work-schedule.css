@@ -354,8 +354,9 @@
     font-weight: 800;
 }
 .calendar-day-content {
-    display: grid;
-    gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 /* Add button */
