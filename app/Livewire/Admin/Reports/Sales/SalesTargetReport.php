@@ -123,6 +123,7 @@ class SalesTargetReport extends Component
                     ->get();
 
                 foreach ($contracts as $contract) {
+                    $normalizedPaymentMethod = $this->normalizePaymentMethod($contract->payment_method);
                     $detail->push([
                         'customer' => $contract->customer?->name ?? '—',
                         'staff' => $contract->staff?->name ?? '—',
@@ -130,7 +131,8 @@ class SalesTargetReport extends Component
                         'value' => (float) $contract->revenue,
                         'contract_value' => (float) $contract->value,
                         'service' => $contract->loai_dich_vu ?: $this->contractTypeLabels[$modelClass],
-                        'payment_methods' => $this->getPaymentMethodsArray($contract->payment_method),
+                        'payment_method' => $normalizedPaymentMethod,
+                        'payment_methods' => $this->getPaymentMethodsArray($normalizedPaymentMethod),
                         'notes' => $contract->notes,
                         'is_renewal' => (bool) $contract->is_renewal,
                         'date' => $contract->submitted_at?->format('d/m/Y'),
@@ -439,7 +441,7 @@ class SalesTargetReport extends Component
                 : 'Tất cả nhân viên KD',
             'staffs' => $staffs,
             'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'maxMonth' => $this->year === (int) now()->format('Y') ? (int) now()->format('n') : 12,
+            'maxMonth' => 12,
         ])->layout('admin.layouts.app', ['title' => 'Bảng doanh số cam kết']);
     }
 }

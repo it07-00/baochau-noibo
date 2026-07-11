@@ -76,9 +76,6 @@ class StatisticsBoard extends Component
 
     public function maximumVisibleMonth(): int
     {
-        if ($this->year === now()->year) {
-            return now()->month;
-        }
         return 12;
     }
 
