@@ -12,6 +12,11 @@ class ActivityLogViewer extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    public function paginationView(): string
+    {
+        return 'livewire.admin.users.pagination';
+    }
+
     public $search = '';
     public $logName = '';
     public $subjectType = '';

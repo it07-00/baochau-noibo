@@ -320,7 +320,7 @@
 
             @if($requests->hasPages())
                 <div class="px-4 py-3 border-top">
-                    {{ $requests->links() }}
+                    {{ $requests->links('pagination::bootstrap-5') }}
                 </div>
             @endif
         </div>
