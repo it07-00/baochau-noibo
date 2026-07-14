@@ -1,6 +1,8 @@
-<div class="d-flex align-items-center justify-content-between gap-2 px-2 py-1 mb-1 rounded-2" title="{{ $service['label'] }}" style="font-size: 0.8rem; border: 1px solid var(--bs-border-color-translucent);">
-    <span class="fw-semibold text-truncate text-body" style="max-width: 180px;">
-        <i class="fa-solid fa-circle-dot me-1 opacity-50" style="font-size: 0.55rem; vertical-align: middle; color: var(--bs-primary);"></i>{{ $service['label'] }}
+<div class="d-flex align-items-center justify-content-between gap-2 mb-1" title="{{ $service['label'] }}">
+    <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border px-2 py-1 text-truncate fw-semibold"
+          style="font-size: 0.75rem; max-width: 220px; white-space: normal; text-align: left; line-height: 1.3;"
+          title="Dịch vụ: {{ $service['label'] }}">
+        <i class="fa-solid fa-gear me-1"></i>{{ $service['label'] }}
     </span>
     <div class="d-flex gap-1 align-items-center flex-shrink-0">
         <a href="{{ route('app.quotation-tracking.index', ['search' => $customer->name]) }}"

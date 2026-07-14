@@ -275,17 +275,20 @@
                                 </div>
                             </td>
                             <td class="px-4">
-                                <div class="small" style="min-width: 175px; white-space: normal;">
-                                    <span class="fw-semibold d-block mb-1 text-body">
-                                        <i class="fa-solid fa-map-location-dot text-primary me-1 opacity-75"></i>
-                                        {{ $customer->province ?: 'Chưa có tỉnh/thành' }}
-                                    </span>
+                                <div class="d-flex flex-wrap gap-1" style="min-width: 175px;">
+                                    @if($customer->province)
+                                        <span class="badge bg-info bg-opacity-10 text-info px-2 py-1" style="font-size: 0.72rem;">
+                                            <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">Chưa có tỉnh/thành</span>
+                                    @endif
                                     @if($customer->ward)
-                                        <span class="text-muted d-block mb-1">{{ $customer->ward }}</span>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
                                     @endif
                                     @if($customer->industrial_park)
-                                        <span class="text-success fw-semibold d-block">
-                                            <i class="fa-solid fa-industry me-1 opacity-75"></i>{{ $customer->industrial_park }}
+                                        <span class="badge bg-success bg-opacity-10 text-success px-2 py-1" style="font-size: 0.72rem;">
+                                            <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                                         </span>
                                     @endif
                                 </div>
@@ -382,17 +385,21 @@
                         </div>
                     </div>
 
-                    <div class="small mt-3">
-                        <div class="mb-1.5 text-body">
-                            <i class="fa-solid fa-map-location-dot text-primary me-2 opacity-75"></i>{{ $customer->province ?: 'Chưa cập nhật' }}
-                        </div>
+                    <div class="d-flex flex-wrap gap-1 mt-3">
+                        @if($customer->province)
+                            <span class="badge bg-info bg-opacity-10 text-info px-2 py-1" style="font-size: 0.72rem;">
+                                <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
+                            </span>
+                        @else
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">Chưa cập nhật</span>
+                        @endif
                         @if($customer->ward)
-                            <div class="text-muted mb-1.5 ms-4">{{ $customer->ward }}</div>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
                         @endif
                         @if($customer->industrial_park)
-                            <div class="text-success fw-semibold ms-4">
-                                <i class="fa-solid fa-industry me-1 opacity-75"></i>{{ $customer->industrial_park }}
-                            </div>
+                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1" style="font-size: 0.72rem;">
+                                <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
+                            </span>
                         @endif
                     </div>
 
