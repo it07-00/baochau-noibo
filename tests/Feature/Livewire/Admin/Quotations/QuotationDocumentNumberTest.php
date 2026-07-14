@@ -95,4 +95,16 @@ class QuotationDocumentNumberTest extends TestCase
             ->call('create')
             ->assertSet('formData.document_number', $expectedNumber);
     }
+
+    public function test_detail_indicator_accepts_manual_text_alongside_catalog_suggestions(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        Livewire::test(QuotationDocumentManager::class)
+            ->call('create')
+            ->call('addDetailItem')
+            ->assertSee('Chọn hoặc nhập chỉ tiêu...')
+            ->set('detailItems.0.description', 'Chỉ tiêu nhập tay theo yêu cầu khách hàng')
+            ->assertSet('detailItems.0.description', 'Chỉ tiêu nhập tay theo yêu cầu khách hàng');
+    }
 }

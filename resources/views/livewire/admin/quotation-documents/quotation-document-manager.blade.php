@@ -539,16 +539,18 @@
                                         </td>
                                         <td>
                                             @if($rowDetailPriceCatalog !== [])
-                                            <select class="form-select form-select-sm border-0 bg-transparent px-1"
-                                                    wire:key="detail-description-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}"
-                                                    wire:model.live="detailItems.{{ $i }}.description">
-                                                <option value="">-- Chọn chỉ tiêu --</option>
+                                            <input type="text"
+                                                   list="detail-indicators-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}"
+                                                   class="form-control form-control-sm border-0 bg-transparent px-1"
+                                                   wire:key="detail-description-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}"
+                                                   wire:model.live.debounce.250ms="detailItems.{{ $i }}.description"
+                                                   placeholder="Chọn hoặc nhập chỉ tiêu...">
+                                            <datalist id="detail-indicators-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}">
                                                 @foreach($rowDetailPriceCatalog as $catalogItem)
                                                     <option value="{{ $catalogItem['description'] }}">
-                                                        {{ $catalogItem['description'] }}
                                                     </option>
                                                 @endforeach
-                                            </select>
+                                            </datalist>
                                             @else
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1"
                                                    wire:model.live.debounce.250ms="detailItems.{{ $i }}.description"
