@@ -152,7 +152,7 @@
                             <select 
                                 wire:change="updateStatus({{ $item->id }}, $event.target.value)"
                                 class="form-select rounded-pill fw-semibold text-center border-0 py-2 px-3 small {{ $this->statusBadgeClass($item->status) }}"
-                                style="min-width: 140px; width: auto; display: inline-block; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center;"
+                                style="min-width: 140px; width: auto; display: inline-block; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center; background-image: none; padding-right: 1rem !important; padding-left: 1rem !important;"
                                 title="Nhấp để cập nhật nhanh tình hình"
                             >
                                 @foreach($statuses as $st)
@@ -180,82 +180,78 @@
                             {{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}@if($item->total_value)<span class="ms-1 fw-semibold small">₫</span>@endif
                         </td>
                         @can('quotation-tracking.view')
-                        <td class="text-center pe-3 py-3" style="width: 160px; min-width: 160px;">
-                            <div class="d-inline-grid gap-1.5" style="grid-template-columns: repeat(4, 32px); justify-content: center;">
-                                <!-- 1. View -->
-                                <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết" aria-label="Xem chi tiết">
-                                    <i class="bi bi-eye-fill text-primary fs-6"></i>
-                                </button>
-
-                                <!-- 2. PDF Document -->
-                                @if($item->pdf_path)
-                                    <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;" title="File PDF báo giá" aria-label="Mở file PDF báo giá">
-                                        <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
-                                    </a>
-                                @elseif($item->files_count > 0)
-                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger position-relative" style="width: 32px; height: 32px;" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF" aria-label="Xem {{ $item->files_count }} file PDF">
-                                        <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px; padding: 2px 4px;">{{ $item->files_count }}</span>
+                        <td class="text-center pe-3 py-3" style="width: 150px; min-width: 150px;">
+                            <div class="d-flex flex-column gap-1.5 align-items-center justify-content-center">
+                                <!-- Hàng 1: Xem, Tải PDF, Word & Chuyển hợp đồng -->
+                                <div class="d-flex gap-1.5 justify-content-center">
+                                    <!-- 1. View -->
+                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết" aria-label="Xem chi tiết">
+                                        <i class="bi bi-eye-fill text-primary fs-6"></i>
                                     </button>
-                                @elseif($item->quotationDocuments->first())
-                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;" title="Xem PDF báo giá tạo tự động" aria-label="Xem PDF báo giá tạo tự động">
-                                        <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
-                                    </a>
-                                @else
+
+                                    <!-- 2. PDF Document -->
+                                    @if($item->pdf_path)
+                                        <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;" title="File PDF báo giá" aria-label="Mở file PDF báo giá">
+                                            <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
+                                        </a>
+                                    @elseif($item->files_count > 0)
+                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger position-relative" style="width: 32px; height: 32px;" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF" aria-label="Xem {{ $item->files_count }} file PDF">
+                                            <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px; padding: 2px 4px;">{{ $item->files_count }}</span>
+                                        </button>
+                                    @elseif($item->quotationDocuments->first())
+                                        <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;" title="Xem PDF báo giá tạo tự động" aria-label="Xem PDF báo giá tạo tự động">
+                                            <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
+                                        </a>
+                                    @else
+                                        @can('quotation-tracking.edit')
+                                            <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-muted" style="width: 32px; height: 32px;" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF" aria-label="Tải lên PDF">
+                                                <i class="bi bi-cloud-arrow-up-fill fs-6"></i>
+                                            </button>
+                                        @endcan
+                                    @endif
+
+                                    <!-- 3. Word Document -->
+                                    @if($item->quotationDocuments->first())
+                                        <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-success" style="width: 32px; height: 32px;" title="Mở báo giá Word/PDF gốc" aria-label="Mở báo giá Word hoặc PDF gốc">
+                                            <i class="bi bi-file-earmark-word-fill fs-6"></i>
+                                        </a>
+                                    @endif
+
+                                    <!-- 4. Convert to Contract -->
                                     @can('quotation-tracking.edit')
-                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-muted" style="width: 32px; height: 32px;" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF" aria-label="Tải lên PDF">
-                                            <i class="bi bi-cloud-arrow-up-fill fs-6"></i>
+                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-success" style="width: 32px; height: 32px;" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng" aria-label="Chuyển thành hợp đồng">
+                                            <i class="bi bi-file-earmark-arrow-down-fill fs-6"></i>
                                         </button>
                                     @endcan
-                                @endif
+                                </div>
 
-                                <!-- 3. Word Document -->
-                                @if($item->quotationDocuments->first())
-                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-success" style="width: 32px; height: 32px;" title="Mở báo giá Word/PDF gốc" aria-label="Mở báo giá Word hoặc PDF gốc">
-                                        <i class="bi bi-file-earmark-word-fill fs-6"></i>
-                                    </a>
-                                @else
-                                    <div></div> <!-- Giữ cột trống để hàng dưới không bị lệch cột -->
-                                @endif
+                                <!-- Hàng 2: Sao chép, Chỉnh sửa & Xóa -->
+                                <div class="d-flex gap-1.5 justify-content-center">
+                                    <!-- 5. Duplicate -->
+                                    @can('quotation-tracking.edit')
+                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-secondary" style="width: 32px; height: 32px;" wire:click="duplicate({{ $item->id }})" title="Sao chép" aria-label="Sao chép báo giá">
+                                            <i class="bi bi-copy fs-6"></i>
+                                        </button>
+                                    @endcan
 
-                                <!-- 4. Convert to Contract -->
-                                @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-success" style="width: 32px; height: 32px;" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng" aria-label="Chuyển thành hợp đồng">
-                                        <i class="bi bi-file-earmark-arrow-down-fill fs-6"></i>
-                                    </button>
-                                @else
-                                    <div></div>
-                                @endcan
+                                    <!-- 6. Edit -->
+                                    @can('quotation-tracking.edit')
+                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-warning" style="width: 32px; height: 32px;" wire:click="edit({{ $item->id }})" title="Chỉnh sửa" aria-label="Chỉnh sửa báo giá">
+                                            <i class="bi bi-pencil-square fs-6"></i>
+                                        </button>
+                                    @endcan
 
-                                <!-- 5. Duplicate -->
-                                @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-secondary" style="width: 32px; height: 32px;" wire:click="duplicate({{ $item->id }})" title="Sao chép" aria-label="Sao chép báo giá">
-                                        <i class="bi bi-copy fs-6"></i>
-                                    </button>
-                                @else
-                                    <div></div>
-                                @endcan
-
-                                <!-- 6. Edit -->
-                                @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-warning" style="width: 32px; height: 32px;" wire:click="edit({{ $item->id }})" title="Chỉnh sửa" aria-label="Chỉnh sửa báo giá">
-                                        <i class="bi bi-pencil-square fs-6"></i>
-                                    </button>
-                                @else
-                                    <div></div>
-                                @endcan
-
-                                <!-- 7. Delete -->
-                                @can('quotation-tracking.delete')
-                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;"
-                                            wire:click="delete({{ $item->id }})"
-                                            wire:confirm="Xác nhận xóa báo giá này?"
-                                            title="Xóa" aria-label="Xóa báo giá">
-                                        <i class="bi bi-trash3-fill fs-6"></i>
-                                    </button>
-                                @else
-                                    <div></div>
-                                @endcan
+                                    <!-- 7. Delete -->
+                                    @can('quotation-tracking.delete')
+                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;"
+                                                wire:click="delete({{ $item->id }})"
+                                                wire:confirm="Xác nhận xóa báo giá này?"
+                                                title="Xóa" aria-label="Xóa báo giá">
+                                            <i class="bi bi-trash3-fill fs-6"></i>
+                                        </button>
+                                    @endcan
+                                </div>
                             </div>
                         </td>
                         @endcan
