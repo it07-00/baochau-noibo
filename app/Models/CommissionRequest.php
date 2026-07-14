@@ -26,6 +26,7 @@ class CommissionRequest extends Model
     protected $fillable = [
         'contract_type',
         'contract_id',
+        'manual_contract_number',
         'receiver_name',
         'receiver_phone',
         'bank_account',
@@ -71,17 +72,25 @@ class CommissionRequest extends Model
 
     public function getQrUrlAttribute(): string
     {
-        if ($this->bank_code && $this->bank_number) {
-            $contractShd = 'Hoa hong';
+        $bankNumber = preg_replace('/\D+/', '', (string) $this->bank_number);
+        $phone = preg_replace('/\D+/', '', (string) $this->receiver_phone);
+
+        if ($this->bank_code && $bankNumber !== '' && ($phone === '' || $bankNumber !== $phone)) {
+            $contractShd = $this->contract_number;
             $contract = $this->contract;
             if ($contract && isset($contract->shd_bc)) {
                 $contractShd = $contract->shd_bc;
             }
             $receiverName = rawurlencode(strtoupper(\Illuminate\Support\Str::ascii($this->receiver_name ?: '')));
             $description = rawurlencode("Chi hoa hong HD {$contractShd}");
-            return "https://img.vietqr.io/image/{$this->bank_code}-{$this->bank_number}-compact2.png?amount={$this->amount}&addInfo={$description}&accountName={$receiverName}";
+            return "https://img.vietqr.io/image/{$this->bank_code}-{$bankNumber}-compact2.png?amount={$this->amount}&addInfo={$description}&accountName={$receiverName}";
         }
 
         return '';
+    }
+
+    public function getContractNumberAttribute(): string
+    {
+        return (string) ($this->contract?->shd_bc ?: $this->manual_contract_number ?: 'Hoa hong');
     }
 }

@@ -154,7 +154,7 @@
                             <tr>
                                 <td class="text-center text-muted  fw-semibold">{{ ($requests->currentPage() - 1) * $requests->perPage() + $loop->iteration }}</td>
                                 <td class="ps-4">
-                                    <div class="fw-semibold text-primary mb-1">BC {{ $request->contract->shd_bc ?? 'N/A' }}</div>
+                                    <div class="fw-semibold text-primary mb-1">BC {{ $request->contract_number }}</div>
                                     @if($request->contract && $request->contract->customer)
                                         <div class="fw-semibold">{{ $request->contract->customer->name }}</div>
                                         <div class=" text-muted text-truncate mxw-320px" >
@@ -379,7 +379,7 @@
 
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
                                                 <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-file-text text-secondary"></i> Hợp đồng:</span>
-                                                <span class="fw-bold text-primary text-end">BC {{ $viewingRequest->contract->shd_bc ?? 'N/A' }}</span>
+                                                <span class="fw-bold text-primary text-end">BC {{ $viewingRequest->contract_number }}</span>
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
@@ -585,7 +585,7 @@
                                     <div class="col-6 text-muted">Số tiền:</div>
                                     <div class="col-6 fw-bold text-danger">{{ number_format($uploadingReq->amount, 0, ',', '.') }} đ</div>
                                     <div class="col-6 text-muted">Hợp đồng:</div>
-                                    <div class="col-6 fw-bold text-primary">BC {{ $uploadingReq->contract->shd_bc ?? 'N/A' }}</div>
+                                    <div class="col-6 fw-bold text-primary">BC {{ $uploadingReq->contract_number }}</div>
                                 </div>
                             </div>
                         @endif

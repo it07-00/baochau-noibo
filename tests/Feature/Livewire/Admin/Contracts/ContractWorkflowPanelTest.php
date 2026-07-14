@@ -13,6 +13,8 @@ use App\Models\ContractWorkflowStep;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ContractWorkflowUpdatedNotification;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -141,5 +143,57 @@ class ContractWorkflowPanelTest extends TestCase
         // No uploadFiles set
         ->call('completeStep')
         ->assertHasErrors(['uploadFiles']);
+    }
+
+    public function test_finishing_project_notifies_accounting_but_not_it(): void
+    {
+        Notification::fake();
+        Storage::fake('public');
+
+        $accountant = User::factory()->create(['is_active' => true]);
+        $accountant->assignRole(Role::findByName(RoleEnum::KE_TOAN->value));
+
+        $itUser = User::factory()->create(['is_active' => true]);
+        $itUser->assignRole(Role::findByName(RoleEnum::IT->value));
+
+        $this->actingAs($this->techUser);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWorkflowPanel::class, [
+            'contractType' => 'commercial',
+            'contractId' => $this->contract->id,
+        ])
+            ->call('openStep', 'finished')
+            ->set('uploadFiles', [UploadedFile::fake()->create('ho-so-hoan-thanh.pdf', 500, 'application/pdf')])
+            ->call('completeStep')
+            ->assertHasNoErrors();
+
+        Notification::assertSentTo(
+            $accountant,
+            ContractWorkflowUpdatedNotification::class,
+            fn (ContractWorkflowUpdatedNotification $notification) => $notification->stepName === 'finished'
+        );
+        Notification::assertNotSentTo($itUser, ContractWorkflowUpdatedNotification::class);
+    }
+
+    public function test_accounting_is_not_notified_for_intermediate_steps(): void
+    {
+        Notification::fake();
+        Storage::fake('public');
+
+        $accountant = User::factory()->create(['is_active' => true]);
+        $accountant->assignRole(Role::findByName(RoleEnum::KE_TOAN->value));
+
+        $this->actingAs($this->techUser);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWorkflowPanel::class, [
+            'contractType' => 'commercial',
+            'contractId' => $this->contract->id,
+        ])
+            ->call('openStep', 'processing')
+            ->set('uploadFiles', [UploadedFile::fake()->create('dang-xu-ly.pdf', 500, 'application/pdf')])
+            ->call('completeStep')
+            ->assertHasNoErrors();
+
+        Notification::assertNotSentTo($accountant, ContractWorkflowUpdatedNotification::class);
     }
 }

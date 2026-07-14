@@ -303,7 +303,16 @@
                         <option value="none">Không nhóm</option>
                     </select>
                 </div>
-                <div class="col-12 col-md-6 col-lg-5">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label for="staff-filter" class="form-label fw-bold">Nhân viên phụ trách</label>
+                    <select id="staff-filter" class="form-select" wire:model.live="staffFilter">
+                        <option value="">Tất cả nhân viên</option>
+                        @foreach($staffOptions as $staff)
+                            <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
                     <label class="form-label fw-bold">Dịch vụ báo giá</label>
                     <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
                         <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle" type="button" @click="open = !open">
@@ -334,7 +343,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-5">
+                <div class="col-12 col-md-6 col-lg-3">
                     <label for="service-contract-filter" class="form-label fw-bold">Dịch vụ hợp đồng</label>
                     <select id="service-contract-filter" class="form-select" wire:model.live="serviceContractFilter">
                         <option value="">Tất cả dịch vụ hợp đồng</option>
@@ -350,7 +359,7 @@
                 </div>
             </div>
         </div>
-        <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,serviceQuotationFilter,serviceContractFilter,groupBy,resetFilters"></div>
+        <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,staffFilter,serviceQuotationFilter,serviceContractFilter,groupBy,resetFilters"></div>
     </div>
 
     <div class="card border-0 shadow-sm overflow-hidden">

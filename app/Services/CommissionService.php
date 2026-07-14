@@ -76,7 +76,7 @@ class CommissionService
             return;
         }
 
-        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#'.$request->id));
+        $contractLabel = $request->contract_number !== 'Hoa hong' ? $request->contract_number : '#'.$request->id;
 
         $requester->notify(new CommissionRequestStatusUpdatedNotification(
             status: $status,
@@ -90,7 +90,7 @@ class CommissionService
 
     private function notifyAccountants(CommissionRequest $request, User $creator): void
     {
-        $contractLabel = (string) ($request->contract?->shd_bc ?: ('#'.$request->id));
+        $contractLabel = $request->contract_number !== 'Hoa hong' ? $request->contract_number : '#'.$request->id;
 
         $recipients = User::role(Role::KE_TOAN->value)->get()->unique('id');
 

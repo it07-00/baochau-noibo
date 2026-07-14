@@ -133,4 +133,54 @@ class CustomerManagerFilterTest extends TestCase
             ->assertSee('1 BG')
             ->assertSee('1 HĐ');
     }
+
+    public function test_it_filters_customers_by_staff_across_quotations_and_contracts(): void
+    {
+        $viewer = User::factory()->create();
+        $viewer->givePermissionTo(Permission::findOrCreate('customers.view'));
+        $selectedStaff = User::factory()->create(['name' => 'Nhân viên được chọn']);
+        $otherStaff = User::factory()->create(['name' => 'Nhân viên khác']);
+
+        $quotationCustomer = Customer::create(['name' => 'Khách hàng báo giá']);
+        $contractCustomer = Customer::create(['name' => 'Khách hàng hợp đồng']);
+        $otherCustomer = Customer::create(['name' => 'Khách hàng không khớp']);
+
+        Quotation::create([
+            'date' => '2026-07-01',
+            'staff_id' => $selectedStaff->id,
+            'company_name' => $quotationCustomer->name,
+            'service' => 'Quan trắc môi trường',
+        ]);
+
+        $department = Department::create([
+            'name' => 'Kinh doanh lọc nhân viên',
+            'slug' => 'kinh-doanh-staff-filter-test',
+            'is_active' => true,
+        ]);
+        $handler = Handler::create(['name' => 'Nhà thầu lọc nhân viên']);
+
+        ContractWaste::create([
+            'customer_id' => $contractCustomer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $selectedStaff->id,
+            'department_id' => $department->id,
+            'loai_dich_vu' => 'Thu gom CTNH',
+        ]);
+        Quotation::create([
+            'date' => '2026-07-01',
+            'staff_id' => $otherStaff->id,
+            'company_name' => $otherCustomer->name,
+            'service' => 'Hồ sơ môi trường',
+        ]);
+
+        Livewire::actingAs($viewer)
+            ->test(CustomerManager::class)
+            ->assertViewHas('staffOptions', fn ($staff) => $staff->contains('id', $selectedStaff->id))
+            ->set('staffFilter', (string) $selectedStaff->id)
+            ->assertSee('Khách hàng báo giá')
+            ->assertSee('Khách hàng hợp đồng')
+            ->assertDontSee('Khách hàng không khớp')
+            ->call('resetFilters')
+            ->assertSet('staffFilter', '');
+    }
 }

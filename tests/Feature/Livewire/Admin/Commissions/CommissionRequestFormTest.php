@@ -115,6 +115,63 @@ class CommissionRequestFormTest extends TestCase
         ]);
     }
 
+    public function test_can_create_commission_request_with_manually_entered_contract_number(): void
+    {
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(CommissionRequestForm::class)
+            ->set('contract_type', ContractWaste::class)
+            ->set('manualContractEntry', true)
+            ->set('manual_contract_number', '65/2025/HĐKT.BC-NISSEI')
+            ->set('receiver_name', 'Tran Thi Hoai Thanh')
+            ->set('amount', '1.000.000')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('commission_requests', [
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => null,
+            'manual_contract_number' => '65/2025/HĐKT.BC-NISSEI',
+            'amount' => 1000000,
+        ]);
+    }
+
+    public function test_rejects_phone_number_used_as_vietqr_bank_account(): void
+    {
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(CommissionRequestForm::class)
+            ->set('contract_type', ContractWaste::class)
+            ->set('contract_id', $this->contract->id)
+            ->set('receiver_name', 'Tran Thi Hoai Thanh')
+            ->set('receiver_phone', '0933799891')
+            ->set('bank_code', 'EIB')
+            ->set('bank_number', '0933799891')
+            ->set('amount', '1.000.000')
+            ->call('save')
+            ->assertHasErrors(['bank_number' => 'different'])
+            ->assertSee('Số tài khoản đang trùng số điện thoại');
+    }
+
+    public function test_manual_contract_number_is_used_in_vietqr_description(): void
+    {
+        $this->actingAs($this->salesUser);
+
+        $component = Livewire::test(CommissionRequestForm::class)
+            ->set('contract_type', ContractWaste::class)
+            ->set('manualContractEntry', true)
+            ->set('manual_contract_number', '65/2025/HĐKT.BC-NISSEI')
+            ->set('bank_code', 'EIB')
+            ->set('bank_number', '1234567890123')
+            ->set('amount', '1.000.000');
+
+        $this->assertStringContainsString(
+            rawurlencode('Chi hoa hong HD 65/2025/HĐKT.BC-NISSEI'),
+            $component->instance()->getVietQrUrl()
+        );
+    }
+
     public function test_can_auto_fill_and_reuse_saved_account_details(): void
     {
         // First create a past request

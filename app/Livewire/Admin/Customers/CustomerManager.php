@@ -11,6 +11,7 @@ use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Quotation;
+use App\Models\User;
 use App\Services\CustomerRegionNormalizer;
 use App\Support\VietnameseAddressParser;
 use App\Support\VietnamProvinces;
@@ -37,6 +38,8 @@ class CustomerManager extends Component
     public $serviceQuotationFilter = [];
 
     public string $serviceContractFilter = '';
+
+    public string $staffFilter = '';
 
     public string $serviceFilter = ''; // Backward compatibility for older/cached sessions
 
@@ -86,6 +89,7 @@ class CustomerManager extends Component
             'industrialParkFilter',
             'serviceQuotationFilter',
             'serviceContractFilter',
+            'staffFilter',
             'serviceFilter',
             'groupBy',
         ], true)) {
@@ -138,6 +142,7 @@ class CustomerManager extends Component
             'industrialParkFilter',
             'serviceQuotationFilter',
             'serviceContractFilter',
+            'staffFilter',
             'serviceFilter',
         ]);
         $this->groupBy = 'province';
@@ -364,6 +369,17 @@ class CustomerManager extends Component
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter))
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
+            ->when($this->staffFilter, function (Builder $query): void {
+                $staffId = (int) $this->staffFilter;
+
+                $query->where(function (Builder $q) use ($staffId): void {
+                    $q->whereHas('quotations', fn (Builder $quotationQuery) => $quotationQuery->where('staff_id', $staffId));
+
+                    foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                        $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->where('staff_id', $staffId));
+                    }
+                });
+            })
             ->when(!empty($this->serviceQuotationFilter), function (Builder $query): void {
                 $selectedServices = is_array($this->serviceQuotationFilter)
                     ? $this->serviceQuotationFilter
@@ -501,6 +517,28 @@ class CustomerManager extends Component
             ->unique()
             ->sort(SORT_NATURAL | SORT_FLAG_CASE)
             ->values();
+    }
+
+    private function staffOptions(): Collection
+    {
+        $staffIds = Quotation::query()
+            ->whereNotNull('staff_id')
+            ->distinct()
+            ->pluck('staff_id');
+
+        foreach (self::CONTRACT_RELATIONS as [$model]) {
+            $staffIds = $staffIds->merge(
+                $model::query()
+                    ->whereNotNull('staff_id')
+                    ->distinct()
+                    ->pluck('staff_id')
+            );
+        }
+
+        return User::query()
+            ->whereIn('id', $staffIds->unique()->values())
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     public static function normalizeVietnameseAccents(string $str): string
@@ -644,6 +682,7 @@ class CustomerManager extends Component
             'industrialParks' => $this->distinctValues('industrial_park', $industrialParkQuery),
             'serviceQuotationOptions' => $this->serviceQuotationOptions(),
             'serviceContractOptions' => $this->serviceContractOptions(),
+            'staffOptions' => $this->staffOptions(),
             'summary' => $this->summary($customerIds),
         ])->layout('admin.layouts.app');
     }

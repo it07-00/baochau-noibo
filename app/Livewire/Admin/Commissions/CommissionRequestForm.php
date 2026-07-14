@@ -24,6 +24,10 @@ class CommissionRequestForm extends Component
 
     public $contract_id = '';
 
+    public $manual_contract_number = '';
+
+    public bool $manualContractEntry = false;
+
     public $receiver_name;
 
     public $receiver_phone;
@@ -64,6 +68,8 @@ class CommissionRequestForm extends Component
             $this->requestId = $request->id;
             $this->contract_type = $this->normalizeContractType($request->contract_type);
             $this->contract_id = $request->contract_id;
+            $this->manual_contract_number = $request->manual_contract_number ?: '';
+            $this->manualContractEntry = filled($request->manual_contract_number) && ! $request->contract_id;
             $this->receiver_name = $this->cleanReceiverName($request->receiver_name);
             $this->receiver_phone = $request->receiver_phone;
             $this->bank_account = $request->bank_account;
@@ -107,7 +113,7 @@ class CommissionRequestForm extends Component
 
     public function getVietQrUrl(): string
     {
-        if (! $this->bank_code || ! $this->bank_number) {
+        if (! $this->hasValidVietQrAccount()) {
             return '';
         }
 
@@ -116,8 +122,8 @@ class CommissionRequestForm extends Component
             $cleanAmount = (int) preg_replace('/\D+/', '', (string) $this->amount);
         }
 
-        $contractShd = 'Hoa hong';
-        if ($this->contract_id && $this->contract_type) {
+        $contractShd = trim((string) $this->manual_contract_number) ?: 'Hoa hong';
+        if (! $this->manualContractEntry && $this->contract_id && $this->contract_type) {
             $contractClass = $this->contract_type;
             if (class_exists($contractClass)) {
                 $contract = $contractClass::find($this->contract_id);
@@ -133,10 +139,29 @@ class CommissionRequestForm extends Component
         return "https://img.vietqr.io/image/{$this->bank_code}-{$this->bank_number}-compact2.png?amount={$cleanAmount}&addInfo={$description}&accountName={$receiverName}";
     }
 
+    public function hasValidVietQrAccount(): bool
+    {
+        $bankNumber = preg_replace('/\D+/', '', (string) $this->bank_number);
+        $phone = preg_replace('/\D+/', '', (string) $this->receiver_phone);
+
+        return filled($this->bank_code)
+            && $bankNumber !== ''
+            && ($phone === '' || $bankNumber !== $phone);
+    }
+
     public function updatedContractType()
     {
         $this->contract_type = $this->normalizeContractType($this->contract_type);
         $this->contract_id = '';
+    }
+
+    public function updatedManualContractEntry(bool $value): void
+    {
+        if ($value) {
+            $this->contract_id = '';
+        } else {
+            $this->manual_contract_number = '';
+        }
     }
 
     private function normalizeContractType(?string $type): string
@@ -198,12 +223,13 @@ class CommissionRequestForm extends Component
 
         $this->validate([
             'contract_type' => ['required', 'string', Rule::in($allowedTypes)],
-            'contract_id' => 'required|integer',
+            'contract_id' => [Rule::requiredIf(! $this->manualContractEntry), 'nullable', 'integer'],
+            'manual_contract_number' => [Rule::requiredIf($this->manualContractEntry), 'nullable', 'string', 'max:100'],
             'receiver_name' => 'required|string|max:255',
             'receiver_phone' => 'nullable|string|max:30',
             'bank_account' => 'nullable|string|max:100',
             'bank_code' => 'nullable|string|max:20',
-            'bank_number' => 'nullable|string|max:50',
+            'bank_number' => ['nullable', 'string', 'max:50', 'regex:/^\d+$/', 'different:receiver_phone'],
             'amount' => 'required|numeric|min:0',
             'referrer_info' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:2000',
@@ -211,13 +237,16 @@ class CommissionRequestForm extends Component
             'contract_type.required' => 'Vui lòng chọn loại hợp đồng.',
             'contract_type.in' => 'Loại hợp đồng không hợp lệ.',
             'contract_id.required' => 'Vui lòng chọn số hợp đồng.',
+            'manual_contract_number.required' => 'Vui lòng nhập số hợp đồng.',
+            'bank_number.regex' => 'Số tài khoản chỉ được gồm các chữ số.',
+            'bank_number.different' => 'Số tài khoản đang trùng số điện thoại. Vui lòng nhập số tài khoản ngân hàng thực tế để VietQR có thể tra cứu người nhận.',
             'receiver_name.required' => 'Vui lòng nhập tên người nhận.',
             'amount.required' => 'Vui lòng nhập số tiền.',
             'amount.min' => 'Số tiền không được âm.',
         ]);
 
         $modelClass = $this->getSelectedContractModelClass();
-        if (! $modelClass || ! $modelClass::query()->whereKey($this->contract_id)->exists()) {
+        if (! $this->manualContractEntry && (! $modelClass || ! $modelClass::query()->whereKey($this->contract_id)->exists())) {
             $this->addError('contract_id', 'Số hợp đồng không thuộc loại hợp đồng đã chọn.');
 
             return;
@@ -225,12 +254,15 @@ class CommissionRequestForm extends Component
 
         $data = [
             'contract_type' => $this->contract_type,
-            'contract_id' => $this->contract_id,
+            'contract_id' => $this->manualContractEntry ? null : $this->contract_id,
+            'manual_contract_number' => $this->manualContractEntry
+                ? trim((string) $this->manual_contract_number)
+                : null,
             'receiver_name' => $this->cleanReceiverName($this->receiver_name),
             'receiver_phone' => $this->receiver_phone,
             'bank_account' => $this->bank_account,
             'bank_code' => $this->bank_code ?: null,
-            'bank_number' => $this->bank_number ?: null,
+            'bank_number' => $this->bank_number ? preg_replace('/\D+/', '', (string) $this->bank_number) : null,
             'amount' => $this->amount,
             'referrer_info' => $this->referrer_info,
             'notes' => $this->notes,

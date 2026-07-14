@@ -68,6 +68,9 @@
                                 <label class="form-label fw-bold">Số tài khoản nhận</label>
                                 <input type="text" wire:model.live="bank_number" class="form-control @error('bank_number') is-invalid @enderror" placeholder="Số tài khoản">
                                 @error('bank_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                @if($bank_number && $receiver_phone && preg_replace('/\D+/', '', $bank_number) === preg_replace('/\D+/', '', $receiver_phone))
+                                    <div class="text-danger small mt-1">Số tài khoản không được dùng số điện thoại. Hãy nhập số tài khoản Eximbank thực tế.</div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -97,6 +100,12 @@
                             <!-- Contract BC Number -->
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Số hợp đồng BC: <span class="text-danger">*</span></label>
+                                @if($manualContractEntry)
+                                    <input type="text" wire:model.blur="manual_contract_number"
+                                           class="form-control @error('manual_contract_number') is-invalid @enderror"
+                                           placeholder="Nhập số hợp đồng BC">
+                                    @error('manual_contract_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                @else
                                 <select wire:model.live="contract_id"
                                         wire:key="contract-select-{{ $contract_type ?: 'none' }}"
                                         class="form-select @error('contract_id') is-invalid @enderror"
@@ -115,6 +124,12 @@
                                     @endforeach
                                 </select>
                                 @error('contract_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                @endif
+                                <div class="form-check mt-2">
+                                    <input id="manual-contract-entry" type="checkbox" class="form-check-input"
+                                           wire:model.live="manualContractEntry">
+                                    <label for="manual-contract-entry" class="form-check-label">Nhập số hợp đồng thủ công</label>
+                                </div>
                             </div>
 
                             <!-- Amount -->
@@ -176,7 +191,7 @@
                     
                     <!-- QR Preview Box -->
                     <div class="w-100 p-3 bg-light rounded-3 border d-flex flex-column align-items-center justify-content-center text-center mb-4 shadow-inner" style="min-height: 420px;">
-                        @if($bank_code && $bank_number)
+                        @if($this->hasValidVietQrAccount())
                             <img src="{{ $this->getVietQrUrl() }}" class="img-thumbnail rounded border shadow-sm" style="width: 100%; max-width: 380px; height: auto; aspect-ratio: 1/1; object-fit: contain;" alt="QR Code">
                         @else
                             <div class="text-muted d-flex flex-column align-items-center py-4">
@@ -210,7 +225,9 @@
                             <div class="row align-items-center">
                                 <div class="col-5 text-muted">Hợp đồng BC:</div>
                                 <div class="col-7 fw-bold text-primary">
-                                    @if($contract_id && $contract_type)
+                                    @if($manualContractEntry && $manual_contract_number)
+                                        BC {{ $manual_contract_number }}
+                                    @elseif($contract_id && $contract_type)
                                         @php
                                             $selectedContract = $contracts->firstWhere('id', $contract_id);
                                         @endphp
