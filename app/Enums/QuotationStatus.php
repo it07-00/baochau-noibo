@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum QuotationStatus: string
 {
-    case HEN_BAO_GIA = 'hẹn báo giá thời gian sau';
+    case HEN_BAO_GIA = 'Hẹn báo giá sau';
     case DANG_THEO_DOI = 'Đang theo dõi';
     case ROT_BAO_GIA = 'Rớt báo giá';
     case KY_HOP_DONG = 'Ký hợp đồng';
