@@ -1,4 +1,4 @@
-<div>
+<div class="commission-page">
     <div class="page-title-box d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
         <div>
             <h4 class="mb-1">Quản lý Yêu cầu chi hoa hồng</h4>
@@ -12,56 +12,62 @@
         </div>
         <div class="page-title-right d-flex gap-2 ms-auto">
             <a href="{{ route('app.commissions.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
-                <i class="fa-solid fa-plus-lg"></i>
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 Tạo yêu cầu
             </a>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-4" aria-label="Tổng quan yêu cầu hoa hồng">
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+            <div class="card border-0 border-start border-4 border-primary shadow-sm h-100 position-relative overflow-hidden">
+                <div class="card-body p-3 p-xl-4">
+                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span>
                     <p class="text-muted mb-1">Tổng yêu cầu</p>
                     <h4 class="mb-0">{{ number_format($summary['total']) }}</h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+            <div class="card border-0 border-start border-4 border-secondary shadow-sm h-100 position-relative overflow-hidden">
+                <div class="card-body p-3 p-xl-4">
+                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-secondary-subtle text-secondary fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i></span>
                     <p class="text-muted mb-1">Dự chi</p>
                     <h4 class="mb-0 text-secondary">{{ number_format($summary['estimated']) }}</h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+            <div class="card border-0 border-start border-4 border-warning shadow-sm h-100 position-relative overflow-hidden">
+                <div class="card-body p-3 p-xl-4">
+                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-warning-subtle text-warning fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-clock" aria-hidden="true"></i></span>
                     <p class="text-muted mb-1">Chờ chi</p>
                     <h4 class="mb-0 text-warning">{{ number_format($summary['pending']) }}</h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+            <div class="card border-0 border-start border-4 border-success shadow-sm h-100 position-relative overflow-hidden">
+                <div class="card-body p-3 p-xl-4">
+                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
                     <p class="text-muted mb-1">Đã chi</p>
                     <h4 class="mb-0 text-success">{{ number_format($summary['paid']) }}</h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+            <div class="card border-0 border-start border-4 border-danger shadow-sm h-100 position-relative overflow-hidden">
+                <div class="card-body p-3 p-xl-4">
+                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-danger-subtle text-danger fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i></span>
                     <p class="text-muted mb-1">Tổng đã chi</p>
                     <h4 class="mb-0 text-danger">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+            <div class="card border-0 border-start border-4 border-info shadow-sm h-100 position-relative overflow-hidden">
+                <div class="card-body p-3 p-xl-4">
+                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-info-subtle text-info fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-filter-circle-dollar" aria-hidden="true"></i></span>
                     <p class="text-muted mb-1">Tổng tiền lọc</p>
                     <h4 class="mb-0 text-primary">{{ number_format($summary['amount'], 0, ',', '.') }} đ</h4>
                 </div>
@@ -72,7 +78,7 @@
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
             <h5 class="card-title mb-0">Bộ lọc</h5>
-            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="$refresh">
+            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="$refresh" wire:loading.attr="disabled" aria-label="Làm mới danh sách yêu cầu hoa hồng">
                 <i class="fa-solid fa-rotate-right me-1"></i>
                 Làm mới
             </button>
@@ -140,7 +146,7 @@
                             <th class="text-center mnw-45px w-45px" >STT</th>
                             <th class="ps-4 mnw-300px" >Hợp đồng / Khách hàng</th>
                             <th class="mnw-220px">Người nhận</th>
-                            <th class="text-center" class="mnw-170px">Loại hợp đồng</th>
+                            <th class="text-center mnw-170px">Loại hợp đồng</th>
                             <th class="text-end mnw-150px" >Số tiền</th>
                             <th class="text-center mnw-180px" >Tình trạng</th>
                             <th class="text-center mnw-120px" >Ngày gửi</th>
@@ -274,7 +280,11 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">Không tìm thấy yêu cầu nào phù hợp bộ lọc.</td>
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-inbox d-block mb-2" aria-hidden="true"></i>
+                                    <strong class="d-block text-body mb-1">Chưa có yêu cầu phù hợp</strong>
+                                    <span>Thử thay đổi bộ lọc hoặc tạo yêu cầu hoa hồng mới.</span>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>

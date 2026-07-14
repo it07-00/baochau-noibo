@@ -1,21 +1,36 @@
-<div>
+<div class="commission-form-page">
+    <div class="page-title-box d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+        <div>
+            <h4 class="mb-1">{{ $requestId ? 'Chỉnh sửa yêu cầu hoa hồng' : 'Tạo yêu cầu hoa hồng' }}</h4>
+            <p class="text-muted mb-2">Khai báo người nhận, hợp đồng và thông tin thanh toán để kế toán xử lý.</p>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('app.commissions.index') }}">Hoa hồng</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $requestId ? 'Chỉnh sửa' : 'Tạo mới' }}</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="{{ route('app.commissions.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Quay lại danh sách
+        </a>
+    </div>
     <div class="row g-4">
         <!-- Left Side: Forms (col-lg-8) -->
         <div class="col-lg-8">
             <div class="d-flex flex-column gap-4">
                 
                 <!-- Card 1: Recipient and Payment Details -->
-                <div class="card border-0 shadow-sm">
+                <section class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                            <i class="fa-solid fa-user-fill"></i> Thông tin người nhận & tài khoản
+                            <span class="badge bg-primary rounded-3 px-2 py-2">01</span> Thông tin người nhận và tài khoản
                         </h5>
                         @if($savedAccounts->isNotEmpty())
                             <div class="d-flex align-items-center gap-2" style="max-width: 480px;">
                                 <span class="text-muted text-nowrap d-inline-flex align-items-center gap-1 fw-bold" style="font-size: 0.95rem;">
                                     <i class="fa-solid fa-clock-history text-primary"></i> Chọn nhanh:
                                 </span>
-                                <select wire:model.live="selectedSavedAccountId" class="form-select border-primary-subtle shadow-sm bg-white" style="border-radius: 6px; font-weight: 500; font-size: 0.95rem; padding-top: 0.35rem; padding-bottom: 0.35rem;">
+                                <select wire:model.live="selectedSavedAccountId" class="form-select border-primary-subtle">
                                     <option value="">-- Chọn tài khoản đã lưu --</option>
                                     @foreach($savedAccounts as $account)
                                         <option value="{{ $account->id }}">
@@ -31,7 +46,8 @@
                             <!-- Recipient Name -->
                             <div class="col-12 col-md-4">
                                 <label class="form-label fw-bold">Người nhận hoa hồng <span class="text-danger">*</span></label>
-                                <input type="text" 
+                                <input type="text"
+                                       autocomplete="name"
                                        wire:model.blur="receiver_name" 
                                        x-on:blur="$el.value = $el.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/Đ/g, 'D').replace(/đ/g, 'd'); $wire.set('receiver_name', $el.value);"
                                        class="form-control @error('receiver_name') is-invalid @enderror" 
@@ -42,7 +58,7 @@
                             <!-- Phone -->
                             <div class="col-12 col-md-4">
                                 <label class="form-label fw-bold">Số điện thoại</label>
-                                <input type="text" wire:model="receiver_phone" class="form-control" placeholder="Số điện thoại">
+                                <input type="tel" inputmode="tel" autocomplete="tel" wire:model="receiver_phone" class="form-control" placeholder="Số điện thoại">
                             </div>
 
                             <!-- Legacy Bank Account Info (Free Text) -->
@@ -66,7 +82,7 @@
                             <!-- Bank Account Number -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label fw-bold">Số tài khoản nhận</label>
-                                <input type="text" wire:model.live="bank_number" class="form-control @error('bank_number') is-invalid @enderror" placeholder="Số tài khoản">
+                                <input type="text" inputmode="numeric" autocomplete="off" wire:model.live="bank_number" class="form-control @error('bank_number') is-invalid @enderror" placeholder="Số tài khoản">
                                 @error('bank_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 @if($bank_number && $receiver_phone && preg_replace('/\D+/', '', $bank_number) === preg_replace('/\D+/', '', $receiver_phone))
                                     <div class="text-danger small mt-1">Số tài khoản không được dùng số điện thoại. Hãy nhập số tài khoản Eximbank thực tế.</div>
@@ -74,13 +90,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Card 2: Contract, Amount, Notes -->
-                <div class="card border-0 shadow-sm">
+                <section class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom py-3">
                         <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                            <i class="fa-solid fa-file-text-fill"></i> Thông tin Yêu cầu chi hoa hồng
+                            <span class="badge bg-primary rounded-3 px-2 py-2">02</span> Thông tin Yêu cầu chi hoa hồng
                         </h5>
                     </div>
                     <div class="card-body p-4">
@@ -147,7 +163,7 @@
                                 <label class="form-label fw-bold">Khách hàng hoặc giới thiệu</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="referrer_info" class="form-control" placeholder="Khách hàng hoặc giới thiệu">
-                                    <button class="btn btn-success"><i class="fa-solid fa-plus-lg"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary" aria-label="Thêm thông tin giới thiệu"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
                                 </div>
                             </div>
 
@@ -160,28 +176,28 @@
                     </div>
                     
                     <!-- Form actions footer -->
-                    <div class="card-footer bg-light border-top p-3 d-flex gap-2">
-                        <button wire:click="save" class="btn btn-primary d-flex align-items-center gap-1 shadow-sm">
+                    <div class="card-footer bg-body-tertiary border-top p-3 d-flex flex-wrap gap-2">
+                        <button type="button" wire:click="save" wire:loading.attr="disabled" wire:target="save" class="btn btn-primary d-flex align-items-center gap-1">
                             <i class="fa-solid fa-floppy-disk"></i> Lưu
                         </button>
-                        <button wire:click="save(true)" class="btn btn-success d-flex align-items-center gap-1 shadow-sm">
+                        <button type="button" wire:click="save(true)" wire:loading.attr="disabled" wire:target="save" class="btn btn-outline-primary d-flex align-items-center gap-1">
                             <i class="fa-solid fa-file-check"></i> Lưu tại trang
                         </button>
-                        <button wire:click="$refresh" class="btn btn-secondary d-flex align-items-center gap-1 shadow-sm">
+                        <button type="button" wire:click="$refresh" class="btn btn-outline-secondary d-flex align-items-center gap-1">
                             <i class="fa-solid fa-rotate-right"></i> Làm lại
                         </button>
-                        <a href="{{ route('app.commissions.index') }}" class="btn btn-danger d-flex align-items-center gap-1 shadow-sm">
+                        <a href="{{ route('app.commissions.index') }}" class="btn btn-link text-secondary d-flex align-items-center gap-1 text-decoration-none">
                             <i class="fa-solid fa-xmark-lg"></i> Thoát
                         </a>
                     </div>
-                </div>
+                </section>
 
             </div>
         </div>
 
         <!-- Right Side: Sticky VietQR Preview Summary (col-lg-4) -->
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm position-sticky" style="top: 24px;">
+            <aside class="card border-0 shadow-sm position-sticky" style="top: 92px;">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
                         <i class="fa-solid fa-qrcode-scan"></i> Thanh toán & QR Code
@@ -190,9 +206,9 @@
                 <div class="card-body p-4 d-flex flex-column align-items-center text-center">
                     
                     <!-- QR Preview Box -->
-                    <div class="w-100 p-3 bg-light rounded-3 border d-flex flex-column align-items-center justify-content-center text-center mb-4 shadow-inner" style="min-height: 420px;">
+                    <div class="w-100 p-3 bg-body-tertiary rounded-3 border d-flex flex-column align-items-center justify-content-center text-center mb-4" style="min-height: 360px;">
                         @if($this->hasValidVietQrAccount())
-                            <img src="{{ $this->getVietQrUrl() }}" class="img-thumbnail rounded border shadow-sm" style="width: 100%; max-width: 380px; height: auto; aspect-ratio: 1/1; object-fit: contain;" alt="QR Code">
+                            <img src="{{ $this->getVietQrUrl() }}" class="img-thumbnail rounded border w-100 h-auto object-fit-contain" style="max-width: 340px; aspect-ratio: 1;" alt="Mã QR thanh toán hoa hồng cho {{ $receiver_name ?: 'người nhận' }}">
                         @else
                             <div class="text-muted d-flex flex-column align-items-center py-4">
                                 <i class="fa-solid fa-qrcode text-secondary mb-3" style="font-size: 3.5rem; opacity: 0.4;"></i>
@@ -248,7 +264,7 @@
                     </div>
 
                 </div>
-            </div>
+            </aside>
         </div>
     </div>
 </div>
