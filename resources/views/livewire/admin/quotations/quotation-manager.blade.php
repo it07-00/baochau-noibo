@@ -22,10 +22,10 @@
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-3">
+        <div class="card-body p-3 p-lg-4">
             <div class="d-flex flex-wrap align-items-end gap-3">
                 <div class="flex-grow-1" style="min-width: 240px; max-width: 320px;">
-                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tìm kiếm</label>
+                    <label class="form-label fw-semibold small text-body mb-2">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-body-tertiary border-end-0 text-muted border-light-subtle">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div style="min-width: 180px;">
-                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Nhân viên sale</label>
+                    <label class="form-label fw-semibold small text-body mb-2">Nhân viên sale</label>
                     <select class="form-select border-light-subtle" wire:model.live="filter_staff">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
@@ -45,7 +45,7 @@
                     </select>
                 </div>
                 <div style="min-width: 160px;">
-                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tình trạng</label>
+                    <label class="form-label fw-semibold small text-body mb-2">Tình trạng</label>
                     <select class="form-select border-light-subtle" wire:model.live="filter_status">
                         <option value="">Tất cả tình trạng</option>
                         @foreach($statuses as $st)
@@ -54,14 +54,14 @@
                     </select>
                 </div>
                 <div class="flex-grow-1" style="min-width: 280px; max-width: 360px;">
-                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Khoảng thời gian</label>
+                    <label class="form-label fw-semibold small text-body mb-2">Khoảng thời gian</label>
                     <div class="d-flex gap-2">
                         <input type="date" class="form-control border-light-subtle" wire:model.live="date_from">
                         <input type="date" class="form-control border-light-subtle" wire:model.live="date_to">
                     </div>
                 </div>
                 <div style="min-width: 130px;">
-                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Sắp xếp</label>
+                    <label class="form-label fw-semibold small text-body mb-2">Sắp xếp</label>
                     <select class="form-select border-light-subtle" wire:model.live="sortDirection">
                         <option value="desc">Mới nhất</option>
                         <option value="asc">Cũ nhất</option>
@@ -78,40 +78,40 @@
 
     <!-- Table Card -->
     <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="table-responsive overflow-auto" >
-            <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem; min-width: 1200px;">
+        <div class="table-responsive overflow-auto">
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.925rem; min-width: 1480px;">
                 <thead class="bg-body-tertiary">
-                    <tr class="small text-muted text-uppercase" style="letter-spacing: 0.05em;">
-                        <th class="ps-3 w-40px">STT</th>
-                        <th class="w-200px">Sale / Số báo giá</th>
-                        <th>Công ty, Khách hàng &amp; Dịch vụ</th>
-                        <th>Tình hình làm việc</th>
-                        <th class="text-center w-140px">Tình hình</th>
-                        <th class="text-end w-130px">Giá trị gốc</th>
-                        <th class="text-end w-100px">Hoa hồng KH</th>
-                        <th class="text-end w-85px">Thuế HH</th>
-                        <th class="text-end fw-bold w-120px">Giá trị HĐ</th>
+                    <tr class="text-body-secondary text-uppercase" style="font-size: 0.78rem; letter-spacing: 0.04em;">
+                        <th class="ps-3 py-3 w-40px">STT</th>
+                        <th class="py-3 w-200px">Sale / Số báo giá</th>
+                        <th class="py-3">Công ty, Khách hàng &amp; Dịch vụ</th>
+                        <th class="py-3">Tình hình làm việc</th>
+                        <th class="py-3 text-center w-140px">Tình hình</th>
+                        <th class="py-3 text-end w-130px">Giá trị gốc</th>
+                        <th class="py-3 text-end w-100px">Hoa hồng KH</th>
+                        <th class="py-3 text-end w-85px">Thuế HH</th>
+                        <th class="py-3 text-end fw-bold w-120px">Giá trị HĐ</th>
                         @can('quotation-tracking.view')
-                        <th class="text-center pe-3 w-220px">Hành động</th>
+                        <th class="py-3 text-center pe-3 w-220px">Hành động</th>
                         @endcan
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($quotations as $index => $item)
                     <tr class="border-bottom border-light">
-                        <td class="ps-3">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
+                        <td class="ps-3 py-3 text-body-secondary">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
                         {{-- Cột gộp: Sale + Số báo giá --}}
-                        <td class="w-200px">
+                        <td class="w-200px py-3">
                             <div class="fw-semibold text-truncate" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
                             <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
                                 @if($item->source)
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary border fs-68">{{ $item->source }}</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border px-2 py-1">{{ $item->source }}</span>
                                 @endif
-                                <span class="text-muted fs-75 text-nowrap">{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</span>
+                                <span class="text-muted small text-nowrap">{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</span>
                             </div>
                             @if($item->quotation_number)
                             <div class="mt-1">
-                                <span class="fw-semibold text-primary fs-82">{{ $item->quotation_number }}</span>
+                                <span class="fw-semibold text-primary">{{ $item->quotation_number }}</span>
                                 @if($item->quotationDocuments->first())
                                 <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="badge bg-success bg-opacity-10 text-success border ms-1 text-decoration-none align-items-center gap-1">
                                     <i class="fa-solid fa-file-pdf"></i> PDF
@@ -121,38 +121,38 @@
                             @endif
                         </td>
                         {{-- Cột gộp: Công ty/Khách hàng + Dịch vụ --}}
-                        <td>
-                            <div class="fw-bold text-primary text-capitalize fs-85 lh-sm">{{ $item->company_name }}</div>
+                        <td class="py-3">
+                            <div class="fw-semibold text-primary text-capitalize lh-sm">{{ $item->company_name }}</div>
                             @if($item->contact_person)
                             <div class="text-muted mt-1 small"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->contact_person }}</div>
                             @endif
                             <div class="d-flex flex-wrap gap-1 mt-1">
                                 @if($item->province)
-                                <span class="badge bg-info bg-opacity-10 text-info fs-65">{{ $item->province }}</span>
+                                <span class="badge bg-info bg-opacity-10 text-info px-2 py-1">{{ $item->province }}</span>
                                 @endif
                                 @if($item->industry)
-                                <span class="badge bg-light text-dark border fs-65" title="Ngành nghề: {{ $item->industry }}">
+                                <span class="badge bg-light text-dark border px-2 py-1" title="Ngành nghề: {{ $item->industry }}">
                                     <i class="fa-solid fa-briefcase me-1 text-muted"></i>{{ $item->industry }}
                                 </span>
                                 @endif
                                 @if($item->service)
-                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border fs-65" title="Dịch vụ: {{ $item->service }}">
+                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border px-2 py-1" title="Dịch vụ: {{ $item->service }}">
                                     <i class="fa-solid fa-gear me-1"></i>{{ \Illuminate\Support\Str::limit($item->service, 30) }}
                                 </span>
                                 @endif
                             </div>
                         </td>
-                        <td class="text-wrap  text-truncate-200" >
+                        <td class="text-wrap text-truncate-200 py-3 lh-base">
                             <div class="line-clamp-3" title="{{ $item->work_description }}">
                                 {{ $item->work_description ?: '-' }}
                             </div>
                         </td>
-                        <td class="text-center">
+                        <td class="text-center py-3">
                             @can('quotation-tracking.edit')
                             <select 
                                 wire:change="updateStatus({{ $item->id }}, $event.target.value)"
-                                class="form-select rounded-pill fw-semibold text-center border-0 py-1 px-3 fs-72 {{ $this->statusBadgeClass($item->status) }}" 
-                                style="width: auto; display: inline-block; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center;"
+                                class="form-select rounded-pill fw-semibold text-center border-0 py-2 px-3 small {{ $this->statusBadgeClass($item->status) }}"
+                                style="min-width: 140px; width: auto; display: inline-block; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center;"
                                 title="Nhấp để cập nhật nhanh tình hình"
                             >
                                 @foreach($statuses as $st)
@@ -162,80 +162,88 @@
                                 @endforeach
                             </select>
                             @else
-                            <span class="badge rounded-pill {{ $this->statusBadgeClass($item->status) }} px-2 py-1 fs-72" >
+                            <span class="badge rounded-pill {{ $this->statusBadgeClass($item->status) }} px-3 py-2" >
                                 {{ $item->status }}
                             </span>
                             @endcan
                         </td>
-                        <td class="text-end ">{{ $item->original_value ? number_format($item->original_value, 0, ',', '.') : '-' }}</td>
-                        <td class="text-end ">{{ $item->commission_value ? number_format($item->commission_value, 0, ',', '.') : '-' }}</td>
-                        <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax, 0, ',', '.') : '-' }}</td>
-                        <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}</td>
+                        <td class="text-end py-3 text-nowrap fw-bold text-body-emphasis" style="font-variant-numeric: tabular-nums; font-size: 1rem;">
+                            {{ $item->original_value ? number_format($item->original_value, 0, ',', '.') : '-' }}@if($item->original_value)<span class="ms-1 fw-normal text-body-secondary small">₫</span>@endif
+                        </td>
+                        <td class="text-end py-3 text-nowrap fw-bold text-body-emphasis" style="font-variant-numeric: tabular-nums; font-size: 1rem;">
+                            {{ $item->commission_value ? number_format($item->commission_value, 0, ',', '.') : '-' }}@if($item->commission_value)<span class="ms-1 fw-normal text-body-secondary small">₫</span>@endif
+                        </td>
+                        <td class="text-end py-3 text-nowrap fw-bold text-body-emphasis" style="font-variant-numeric: tabular-nums; font-size: 1rem;">
+                            {{ $item->commission_tax ? number_format($item->commission_tax, 0, ',', '.') : '-' }}@if($item->commission_tax)<span class="ms-1 fw-normal text-body-secondary small">₫</span>@endif
+                        </td>
+                        <td class="text-end py-3 text-nowrap fw-bold text-danger" style="font-variant-numeric: tabular-nums; font-size: 1.05rem;">
+                            {{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}@if($item->total_value)<span class="ms-1 fw-semibold small">₫</span>@endif
+                        </td>
                         @can('quotation-tracking.view')
-                        <td class="text-center pe-3 text-nowrap">
-                            <div class="d-inline-flex gap-1">
+                        <td class="text-center pe-3 py-3">
+                            <div class="gap-1" style="display: inline-grid; grid-template-columns: repeat(6, 32px);">
                                 <!-- 1. View -->
-                                <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
-                                    <i class="fa-solid fa-eye text-primary"></i>
+                                <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết" aria-label="Xem chi tiết">
+                                    <i class="bi bi-eye-fill text-primary fs-6"></i>
                                 </button>
 
                                 <!-- 2. PDF Document -->
                                 @if($item->pdf_path)
-                                    <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-danger" title="File PDF báo giá">
-                                        <i class="fa-solid fa-file-pdf"></i>
+                                    <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;" title="File PDF báo giá" aria-label="Mở file PDF báo giá">
+                                        <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
                                     </a>
                                 @elseif($item->files_count > 0)
-                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-danger position-relative" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
-                                        <i class="fa-solid fa-file-pdf"></i>
+                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger position-relative" style="width: 32px; height: 32px;" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF" aria-label="Xem {{ $item->files_count }} file PDF">
+                                        <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px; padding: 2px 4px;">{{ $item->files_count }}</span>
                                     </button>
                                 @elseif($item->quotationDocuments->first())
-                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-danger" title="Xem PDF báo giá tạo tự động">
-                                        <i class="fa-solid fa-file-pdf"></i>
+                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;" title="Xem PDF báo giá tạo tự động" aria-label="Xem PDF báo giá tạo tự động">
+                                        <i class="bi bi-file-earmark-pdf-fill fs-6"></i>
                                     </a>
                                 @else
                                     @can('quotation-tracking.edit')
-                                        <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-muted" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
-                                            <i class="fa-solid fa-file-upload"></i>
+                                        <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-muted" style="width: 32px; height: 32px;" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF" aria-label="Tải lên PDF">
+                                            <i class="bi bi-cloud-arrow-up-fill fs-6"></i>
                                         </button>
                                     @endcan
                                 @endif
 
                                 <!-- 3. Word Document -->
                                 @if($item->quotationDocuments->first())
-                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-success" title="Mở báo giá Word/PDF gốc">
-                                        <i class="fa-solid fa-file-word"></i>
+                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-success" style="width: 32px; height: 32px;" title="Mở báo giá Word/PDF gốc" aria-label="Mở báo giá Word hoặc PDF gốc">
+                                        <i class="bi bi-file-earmark-word-fill fs-6"></i>
                                     </a>
                                 @endif
 
                                 <!-- 4. Convert to Contract -->
                                 @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
-                                        <i class="fa-solid fa-file-import"></i>
+                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-success" style="width: 32px; height: 32px;" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng" aria-label="Chuyển thành hợp đồng">
+                                        <i class="bi bi-file-earmark-arrow-down-fill fs-6"></i>
                                     </button>
                                 @endcan
 
                                 <!-- 5. Duplicate -->
                                 @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
-                                        <i class="fa-solid fa-clone"></i>
+                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-secondary" style="width: 32px; height: 32px;" wire:click="duplicate({{ $item->id }})" title="Sao chép" aria-label="Sao chép báo giá">
+                                        <i class="bi bi-copy fs-6"></i>
                                     </button>
                                 @endcan
 
                                 <!-- 6. Edit -->
                                 @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
-                                        <i class="fa-solid fa-pen"></i>
+                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-warning" style="width: 32px; height: 32px;" wire:click="edit({{ $item->id }})" title="Chỉnh sửa" aria-label="Chỉnh sửa báo giá">
+                                        <i class="bi bi-pencil-square fs-6"></i>
                                     </button>
                                 @endcan
 
                                 <!-- 7. Delete -->
                                 @can('quotation-tracking.delete')
-                                    <button class="btn btn-sm btn-outline-danger border-light-subtle rounded-8px px-2 py-1.5"
+                                    <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-danger" style="width: 32px; height: 32px;"
                                             wire:click="delete({{ $item->id }})"
                                             wire:confirm="Xác nhận xóa báo giá này?"
-                                            title="Xóa">
-                                        <i class="fa-solid fa-trash"></i>
+                                            title="Xóa" aria-label="Xóa báo giá">
+                                        <i class="bi bi-trash3-fill fs-6"></i>
                                     </button>
                                 @endcan
                             </div>
