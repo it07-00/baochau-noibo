@@ -1,6 +1,6 @@
 <div class="d-flex align-items-center justify-content-between gap-2 mb-1" title="{{ $service['label'] }}">
-    <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border px-2 py-1 text-truncate fw-semibold"
-          style="font-size: 0.75rem; max-width: 220px; white-space: normal; text-align: left; line-height: 1.3;"
+    <span class="badge px-2 py-1 text-truncate fw-semibold"
+          style="font-size: 0.75rem; max-width: 220px; white-space: normal; text-align: left; line-height: 1.3; background: rgba(194, 65, 12, 0.1); color: #9a3412; border: 1px solid rgba(194, 65, 12, 0.2);"
           title="Dịch vụ: {{ $service['label'] }}">
         <i class="fa-solid fa-gear me-1"></i>{{ $service['label'] }}
     </span>

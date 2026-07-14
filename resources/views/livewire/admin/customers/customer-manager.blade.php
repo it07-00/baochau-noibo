@@ -277,7 +277,7 @@
                             <td class="px-4">
                                 <div class="d-flex flex-wrap gap-1" style="min-width: 175px;">
                                     @if($customer->province)
-                                        <span class="badge bg-info bg-opacity-10 text-info px-2 py-1" style="font-size: 0.72rem;">
+                                        <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(29, 78, 216, 0.1); color: #1e40af; border: 1px solid rgba(29, 78, 216, 0.2);">
                                             <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
                                         </span>
                                     @else
@@ -287,7 +287,7 @@
                                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
                                     @endif
                                     @if($customer->industrial_park)
-                                        <span class="badge bg-success bg-opacity-10 text-success px-2 py-1" style="font-size: 0.72rem;">
+                                        <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(22, 163, 74, 0.1); color: #15803d; border: 1px solid rgba(22, 163, 74, 0.2);">
                                             <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                                         </span>
                                     @endif
@@ -387,7 +387,7 @@
 
                     <div class="d-flex flex-wrap gap-1 mt-3">
                         @if($customer->province)
-                            <span class="badge bg-info bg-opacity-10 text-info px-2 py-1" style="font-size: 0.72rem;">
+                            <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(29, 78, 216, 0.1); color: #1e40af; border: 1px solid rgba(29, 78, 216, 0.2);">
                                 <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
                             </span>
                         @else
@@ -397,7 +397,7 @@
                             <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
                         @endif
                         @if($customer->industrial_park)
-                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1" style="font-size: 0.72rem;">
+                            <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(22, 163, 74, 0.1); color: #15803d; border: 1px solid rgba(22, 163, 74, 0.2);">
                                 <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                             </span>
                         @endif

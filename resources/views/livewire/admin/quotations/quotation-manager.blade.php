@@ -128,7 +128,7 @@
                             @endif
                             <div class="d-flex flex-wrap gap-1 mt-1">
                                 @if($item->province)
-                                <span class="badge bg-info bg-opacity-10 text-info px-2 py-1">{{ $item->province }}</span>
+                                <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(29, 78, 216, 0.1); color: #1e40af; border: 1px solid rgba(29, 78, 216, 0.2);">{{ $item->province }}</span>
                                 @endif
                                 @if($item->industry)
                                 <span class="badge bg-light text-dark border px-2 py-1" title="Ngành nghề: {{ $item->industry }}">
@@ -136,7 +136,7 @@
                                 </span>
                                 @endif
                                 @if($item->service)
-                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border px-2 py-1" title="Dịch vụ: {{ $item->service }}">
+                                <span class="badge px-2 py-1" title="Dịch vụ: {{ $item->service }}" style="font-size: 0.72rem; background: rgba(194, 65, 12, 0.1); color: #9a3412; border: 1px solid rgba(194, 65, 12, 0.2);">
                                     <i class="fa-solid fa-gear me-1"></i>{{ \Illuminate\Support\Str::limit($item->service, 30) }}
                                 </span>
                                 @endif
