@@ -614,24 +614,3 @@
     </script>
     @endpush
 </div>
-
-    @push('scripts')
-    <script>
-        window.addEventListener('openCustomerFormModal', () => {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('customerFormModal')).show();
-        });
-
-        window.addEventListener('closeCustomerFormModal', () => {
-            bootstrap.Modal.getInstance(document.getElementById('customerFormModal'))?.hide();
-        });
-
-        window.addEventListener('openCustomerNormalizationModal', () => {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('customerNormalizationModal')).show();
-        });
-
-        window.addEventListener('closeCustomerNormalizationModal', () => {
-            bootstrap.Modal.getInstance(document.getElementById('customerNormalizationModal'))?.hide();
-        });
-    </script>
-    @endpush
-</div>
