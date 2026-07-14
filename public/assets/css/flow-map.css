@@ -268,18 +268,18 @@ a.flow-map-node:hover {
 }
 
 .flow-map-node.is-primary {
-    border-left-color: #5965d8;
+
 }
 
 .flow-map-node.is-success {
     background: #edf8f2;
     border-color: #bfe4d1;
-    border-left-color: #2f946f;
+
 }
 
 .flow-map-node.is-muted {
     background: #f7f8fa;
-    border-left-color: #c8ced8;
+
 }
 
 .flow-map-node.is-optional {

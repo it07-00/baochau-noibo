@@ -136,7 +136,7 @@
     border-bottom: none;
     border-left-width: 3px;
     border-left-style: solid;
-    border-left-color: transparent;
+
     border-radius: 5px;
     padding: 3px 7px;
     text-align: left;
@@ -173,18 +173,18 @@
 }
 
 /* Spanning chip color variants (higher specificity than .ws-chip-*) */
-.ws-evt-chip.ws-chip-primary   { background: #dbeafe; border-left-color: #3b82f6; color: #1e3a5f; }
-.ws-evt-chip.ws-chip-success   { background: #dcfce7; border-left-color: #10b981; color: #14532d; }
-.ws-evt-chip.ws-chip-warning   { background: #fef3c7; border-left-color: #f59e0b; color: #78350f; }
-.ws-evt-chip.ws-chip-danger    { background: #fee2e2; border-left-color: #ef4444; color: #7f1d1d; }
-.ws-evt-chip.ws-chip-info      { background: #cffafe; border-left-color: #06b6d4; color: #164e63; }
-.ws-evt-chip.ws-chip-secondary { background: #f3f4f6; border-left-color: #6b7280; color: #374151; }
-.ws-evt-chip.ws-chip-pink      { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
-.ws-evt-chip.ws-chip-purple    { background: #ede9fe; border-left-color: #8b5cf6; color: #4c1d95; }
-.ws-evt-chip.ws-chip-indigo    { background: #e0e7ff; border-left-color: #6366f1; color: #312e81; }
-.ws-evt-chip.ws-chip-teal      { background: #ccfbf1; border-left-color: #14b8a6; color: #134e4a; }
-.ws-evt-chip.ws-chip-orange    { background: #ffedd5; border-left-color: #f97316; color: #7c2d12; }
-.ws-evt-chip.ws-chip-lime      { background: #ecfccb; border-left-color: #84cc16; color: #365314; }
+.ws-evt-chip.ws-chip-primary   { background: #dbeafe;  color: #1e3a5f; }
+.ws-evt-chip.ws-chip-success   { background: #dcfce7;  color: #14532d; }
+.ws-evt-chip.ws-chip-warning   { background: #fef3c7;  color: #78350f; }
+.ws-evt-chip.ws-chip-danger    { background: #fee2e2;  color: #7f1d1d; }
+.ws-evt-chip.ws-chip-info      { background: #cffafe;  color: #164e63; }
+.ws-evt-chip.ws-chip-secondary { background: #f3f4f6;  color: #374151; }
+.ws-evt-chip.ws-chip-pink      { background: #fce7f3;  color: #831843; }
+.ws-evt-chip.ws-chip-purple    { background: #ede9fe;  color: #4c1d95; }
+.ws-evt-chip.ws-chip-indigo    { background: #e0e7ff;  color: #312e81; }
+.ws-evt-chip.ws-chip-teal      { background: #ccfbf1;  color: #134e4a; }
+.ws-evt-chip.ws-chip-orange    { background: #ffedd5;  color: #7c2d12; }
+.ws-evt-chip.ws-chip-lime      { background: #ecfccb;  color: #365314; }
 
 /* ── Dark Mode ───────────────────────────────────────────── */
 [data-bs-theme="dark"] .ws-cal-wrapper {
@@ -543,32 +543,32 @@
     font-size: 0.76rem;
     padding: 5px 6px;
 }
-.ws-event-chip.ws-chip-primary   { --theme-color: #2563eb; background: #eff6ff; border-left-color: #3b82f6; color: #1e3a5f; }
-.ws-event-chip.ws-chip-success   { --theme-color: #16a34a; background: #f0fdf4; border-left-color: #10b981; color: #14532d; }
-.ws-event-chip.ws-chip-warning   { --theme-color: #ca8a04; background: #fffbeb; border-left-color: #f59e0b; color: #78350f; }
-.ws-event-chip.ws-chip-danger    { --theme-color: #dc2626; background: #fef2f2; border-left-color: #ef4444; color: #7f1d1d; }
-.ws-event-chip.ws-chip-info      { --theme-color: #0891b2; background: #ecfeff; border-left-color: #06b6d4; color: #164e63; }
-.ws-event-chip.ws-chip-secondary { --theme-color: #4b5563; background: #f9fafb; border-left-color: #6b7280; color: #374151; }
-.ws-event-chip.ws-chip-pink      { --theme-color: #db2777; background: #fdf2f8; border-left-color: #ec4899; color: #831843; }
-.ws-event-chip.ws-chip-purple    { --theme-color: #7c3aed; background: #f5f3ff; border-left-color: #8b5cf6; color: #4c1d95; }
-.ws-event-chip.ws-chip-indigo    { --theme-color: #4f46e5; background: #eef2ff; border-left-color: #6366f1; color: #312e81; }
-.ws-event-chip.ws-chip-teal      { --theme-color: #0d9488; background: #f0fdfa; border-left-color: #14b8a6; color: #134e4a; }
-.ws-event-chip.ws-chip-orange    { --theme-color: #ea580c; background: #fff7ed; border-left-color: #f97316; color: #7c2d12; }
-.ws-event-chip.ws-chip-lime      { --theme-color: #65a30d; background: #f7fee7; border-left-color: #84cc16; color: #365314; }
+.ws-event-chip.ws-chip-primary   { --theme-color: #2563eb; background: #eff6ff;  color: #1e3a5f; }
+.ws-event-chip.ws-chip-success   { --theme-color: #16a34a; background: #f0fdf4;  color: #14532d; }
+.ws-event-chip.ws-chip-warning   { --theme-color: #ca8a04; background: #fffbeb;  color: #78350f; }
+.ws-event-chip.ws-chip-danger    { --theme-color: #dc2626; background: #fef2f2;  color: #7f1d1d; }
+.ws-event-chip.ws-chip-info      { --theme-color: #0891b2; background: #ecfeff;  color: #164e63; }
+.ws-event-chip.ws-chip-secondary { --theme-color: #4b5563; background: #f9fafb;  color: #374151; }
+.ws-event-chip.ws-chip-pink      { --theme-color: #db2777; background: #fdf2f8;  color: #831843; }
+.ws-event-chip.ws-chip-purple    { --theme-color: #7c3aed; background: #f5f3ff;  color: #4c1d95; }
+.ws-event-chip.ws-chip-indigo    { --theme-color: #4f46e5; background: #eef2ff;  color: #312e81; }
+.ws-event-chip.ws-chip-teal      { --theme-color: #0d9488; background: #f0fdfa;  color: #134e4a; }
+.ws-event-chip.ws-chip-orange    { --theme-color: #ea580c; background: #fff7ed;  color: #7c2d12; }
+.ws-event-chip.ws-chip-lime      { --theme-color: #65a30d; background: #f7fee7;  color: #365314; }
 
 /* Keep old simple classes too for fallback */
-.ws-chip-primary   { background: #dbeafe; border-left-color: #3b82f6; color: #1e3a5f; }
-.ws-chip-success   { background: #dcfce7; border-left-color: #10b981; color: #14532d; }
-.ws-chip-warning   { background: #fef3c7; border-left-color: #f59e0b; color: #78350f; }
-.ws-chip-danger    { background: #fee2e2; border-left-color: #ef4444; color: #7f1d1d; }
-.ws-chip-info      { background: #cffafe; border-left-color: #06b6d4; color: #164e63; }
-.ws-chip-secondary { background: #f3f4f6; border-left-color: #6b7280; color: #374151; }
-.ws-chip-pink      { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
-.ws-chip-purple    { background: #ede9fe; border-left-color: #8b5cf6; color: #4c1d95; }
-.ws-chip-indigo    { background: #e0e7ff; border-left-color: #6366f1; color: #312e81; }
-.ws-chip-teal      { background: #ccfbf1; border-left-color: #14b8a6; color: #134e4a; }
-.ws-chip-orange    { background: #ffedd5; border-left-color: #f97316; color: #7c2d12; }
-.ws-chip-lime      { background: #ecfccb; border-left-color: #84cc16; color: #365314; }
+.ws-chip-primary   { background: #dbeafe;  color: #1e3a5f; }
+.ws-chip-success   { background: #dcfce7;  color: #14532d; }
+.ws-chip-warning   { background: #fef3c7;  color: #78350f; }
+.ws-chip-danger    { background: #fee2e2;  color: #7f1d1d; }
+.ws-chip-info      { background: #cffafe;  color: #164e63; }
+.ws-chip-secondary { background: #f3f4f6;  color: #374151; }
+.ws-chip-pink      { background: #fce7f3;  color: #831843; }
+.ws-chip-purple    { background: #ede9fe;  color: #4c1d95; }
+.ws-chip-indigo    { background: #e0e7ff;  color: #312e81; }
+.ws-chip-teal      { background: #ccfbf1;  color: #134e4a; }
+.ws-chip-orange    { background: #ffedd5;  color: #7c2d12; }
+.ws-chip-lime      { background: #ecfccb;  color: #365314; }
 
 /* Detail items */
 .ws-detail-primary   { background: #eff6ff; border-color: #bfdbfe !important; }
@@ -778,18 +778,18 @@
 }
 
 /* Dark mode chips */
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-primary   { --theme-color: #3b82f6; background: rgba(59, 130, 246, 0.18) !important; color: #93c5fd !important; border-left-color: #3b82f6 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-success   { --theme-color: #10b981; background: rgba(16, 185, 129, 0.18) !important; color: #a7f3d0 !important; border-left-color: #10b981 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-warning   { --theme-color: #f59e0b; background: rgba(245, 158, 11, 0.18) !important; color: #fde68a !important; border-left-color: #f59e0b !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-danger    { --theme-color: #ef4444; background: rgba(239, 68, 68, 0.18) !important; color: #fca5a5 !important; border-left-color: #ef4444 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-info      { --theme-color: #06b6d4; background: rgba(6, 182, 212, 0.18) !important; color: #67e8f9 !important; border-left-color: #06b6d4 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-secondary { --theme-color: #6b7280; background: rgba(107, 114, 128, 0.18) !important; color: #d1d5db !important; border-left-color: #6b7280 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-pink      { --theme-color: #ec4899; background: rgba(236, 72, 153, 0.18) !important; color: #fbcfe8 !important; border-left-color: #ec4899 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-purple    { --theme-color: #8b5cf6; background: rgba(139, 92, 246, 0.18) !important; color: #ddd6fe !important; border-left-color: #8b5cf6 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-indigo    { --theme-color: #6366f1; background: rgba(99, 102, 241, 0.18) !important; color: #c7d2fe !important; border-left-color: #6366f1 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-teal      { --theme-color: #14b8a6; background: rgba(20, 184, 166, 0.18) !important; color: #99f6e4 !important; border-left-color: #14b8a6 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-orange    { --theme-color: #f97316; background: rgba(249, 115, 22, 0.18) !important; color: #fed7aa !important; border-left-color: #f97316 !important; }
-[data-bs-theme="dark"] .ws-event-chip.ws-chip-lime      { --theme-color: #84cc16; background: rgba(132, 204, 22, 0.18) !important; color: #d9f99d !important; border-left-color: #84cc16 !important; }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-primary   { --theme-color: #3b82f6; background: rgba(59, 130, 246, 0.18) !important; color: #93c5fd !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-success   { --theme-color: #10b981; background: rgba(16, 185, 129, 0.18) !important; color: #a7f3d0 !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-warning   { --theme-color: #f59e0b; background: rgba(245, 158, 11, 0.18) !important; color: #fde68a !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-danger    { --theme-color: #ef4444; background: rgba(239, 68, 68, 0.18) !important; color: #fca5a5 !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-info      { --theme-color: #06b6d4; background: rgba(6, 182, 212, 0.18) !important; color: #67e8f9 !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-secondary { --theme-color: #6b7280; background: rgba(107, 114, 128, 0.18) !important; color: #d1d5db !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-pink      { --theme-color: #ec4899; background: rgba(236, 72, 153, 0.18) !important; color: #fbcfe8 !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-purple    { --theme-color: #8b5cf6; background: rgba(139, 92, 246, 0.18) !important; color: #ddd6fe !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-indigo    { --theme-color: #6366f1; background: rgba(99, 102, 241, 0.18) !important; color: #c7d2fe !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-teal      { --theme-color: #14b8a6; background: rgba(20, 184, 166, 0.18) !important; color: #99f6e4 !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-orange    { --theme-color: #f97316; background: rgba(249, 115, 22, 0.18) !important; color: #fed7aa !important;  }
+[data-bs-theme="dark"] .ws-event-chip.ws-chip-lime      { --theme-color: #84cc16; background: rgba(132, 204, 22, 0.18) !important; color: #d9f99d !important;  }
 
 /* Keep old simple classes too for fallback */
 [data-bs-theme="dark"] .ws-chip-primary   { background: rgba(59, 130, 246, 0.18) !important; color: #93c5fd !important; }
@@ -833,4 +833,30 @@
 [data-bs-theme="dark"] .ws-add-btn:hover {
     background: #3b82f6;
     color: #fff;
+}
+
+/* Event chip inner elements theme compliance */
+.ws-event-author {
+    font-size: 0.65rem;
+    color: #64748b;
+}
+[data-bs-theme="dark"] .ws-event-author {
+    color: #a3b3c9;
+}
+.ws-event-time {
+    font-size: 0.65rem;
+    color: var(--theme-color);
+}
+[data-bs-theme="dark"] .ws-event-time {
+    color: inherit;
+    opacity: 0.88;
+}
+.ws-event-title {
+    max-width: 100%;
+    font-size: 0.72rem;
+    color: #1e293b;
+    line-height: 1.4;
+}
+[data-bs-theme="dark"] .ws-event-title {
+    color: inherit;
 }

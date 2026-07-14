@@ -485,7 +485,17 @@ class CustomerManager extends Component
 
     private function serviceQuotationOptions(): Collection
     {
+        $customerNamesWithContracts = Customer::query()
+            ->where(function (Builder $query) {
+                foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                    $query->orWhereHas($relation);
+                }
+            })
+            ->pluck('name')
+            ->all();
+
         return Quotation::query()
+            ->whereIn('company_name', $customerNamesWithContracts)
             ->whereNotNull('service')
             ->where('service', '!=', '')
             ->distinct()
@@ -669,15 +679,24 @@ class CustomerManager extends Component
             ->reorder()
             ->pluck('customers.id');
 
+        $contractCondition = function (Builder $query) {
+            foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                $query->orWhereHas($relation);
+            }
+        };
+
         $wardQuery = Customer::query()
+            ->where($contractCondition)
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter));
         $industrialParkQuery = Customer::query()
+            ->where($contractCondition)
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter));
 
         return view('livewire.admin.customers.customer-manager', [
             'customers' => $query->paginate(15),
             'provinces' => VietnamProvinces::list(),
+            'filterProvinces' => $this->provincesWithContracts(),
             'wards' => $this->distinctValues('ward', $wardQuery),
             'industrialParks' => $this->distinctValues('industrial_park', $industrialParkQuery),
             'serviceQuotationOptions' => $this->serviceQuotationOptions(),
@@ -685,5 +704,20 @@ class CustomerManager extends Component
             'staffOptions' => $this->staffOptions(),
             'summary' => $this->summary($customerIds),
         ])->layout('admin.layouts.app');
+    }
+
+    private function provincesWithContracts(): Collection
+    {
+        return Customer::query()
+            ->where(function (Builder $query) {
+                foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                    $query->orWhereHas($relation);
+                }
+            })
+            ->whereNotNull('province')
+            ->where('province', '!=', '')
+            ->distinct()
+            ->orderBy('province')
+            ->pluck('province');
     }
 }

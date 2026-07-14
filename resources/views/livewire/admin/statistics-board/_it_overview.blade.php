@@ -127,11 +127,11 @@
                         <div class="d-flex flex-column gap-1">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class=" text-muted">Laravel</span>
-                                <span class="badge bg-light text-dark border fw-bold">{{ $itStats['system']['laravel_version'] }}</span>
+                                <span class="badge bg-body-secondary text-body border fw-bold">{{ $itStats['system']['laravel_version'] }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class=" text-muted">PHP</span>
-                                <span class="badge bg-light text-dark border fw-bold">{{ $itStats['system']['php_version'] }}</span>
+                                <span class="badge bg-body-secondary text-body border fw-bold">{{ $itStats['system']['php_version'] }}</span>
                             </div>
                         </div>
                     </div>

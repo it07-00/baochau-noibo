@@ -154,13 +154,12 @@
                         @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
                             @foreach($eventsForDay as $evt)
                                 <div class="ws-event-chip ws-chip-{{ $evt->color }}"
-                                    style="border-left: 3px solid transparent; border-radius: 6px; padding: 4px 6px; cursor: pointer; text-align: left;"
                                     wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                                     <div class="d-flex justify-content-between align-items-center gap-1 mb-1">
-                                        <span class="text-muted text-truncate fw-medium" style="font-size: 0.65rem; color: #64748b;">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 8, '...') }}</span>
-                                        <span class="fw-bold" style="font-size: 0.65rem; color: var(--theme-color);">{{ $evt->time_range_label }}</span>
+                                        <span class="ws-event-author text-truncate fw-medium">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 8, '...') }}</span>
+                                        <span class="ws-event-time fw-bold">{{ $evt->time_range_label }}</span>
                                     </div>
-                                    <div class="ws-event-title fw-bold text-dark text-truncate mb-0" style="font-size: 0.72rem; color: #1e293b;">
+                                    <div class="ws-event-title fw-bold text-truncate mb-0">
                                         @if($evt->is_private)
                                             <i class="fa-solid fa-lock text-warning me-1" style="font-size: 0.65rem;"></i>
                                         @endif
@@ -168,7 +167,7 @@
                                     </div>
                                     @if($evt->participants->isNotEmpty() && !($evt->user_id && $evt->participants->count() === 1 && (int)$evt->participants->first()->id === (int)$evt->user_id))
                                         <div class="text-muted text-truncate" style="font-size: 0.62rem; margin-top: 1px; color: #64748b;" title="{{ $evt->participants->pluck('name')->join(', ') }}">
-                                            • 
+                                            •
                                             @if($evt->participants->count() > 2)
                                                 {{ $evt->participants->take(2)->pluck('name')->join(', ') }} +{{ $evt->participants->count() - 2 }}
                                             @else

@@ -1,71 +1,75 @@
 <div>
-    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mt-2 mb-4">
         <div>
-            <h4 class="mb-0">Theo dõi Báo giá</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Theo dõi Báo giá</li>
-                </ol>
-            </nav>
+            <h2 class="h4 fw-bold mb-1 text-body" style="letter-spacing: -0.025em;">Theo dõi Báo giá</h2>
+            <p class="text-muted mb-0 small" style="max-width: 680px;">
+                Quản lý tiến độ báo giá, hoa hồng, giá trị hợp đồng và các tài liệu Word/PDF liên quan.
+            </p>
         </div>
-        <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
+        <div class="d-flex flex-wrap gap-2">
             @can('quotation-tracking.create')
-            <button class="btn btn-success btn-sm d-flex align-items-center gap-1" wire:click="create">
-                <i class="fa-solid fa-plus-lg"></i> Thêm mới
+            <button class="btn btn-primary rounded-8px btn-mobile-touch" wire:click="create">
+                <i class="fa-solid fa-plus me-1"></i> Thêm mới
             </button>
-            <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+            <button class="btn btn-outline-secondary rounded-8px btn-mobile-touch"
                     wire:click="resetImport"
                     data-bs-toggle="modal" data-bs-target="#importModal">
-                <i class="fa-solid fa-file-arrow-up"></i> Import Excel
+                <i class="fa-solid fa-file-arrow-up me-1"></i> Import Excel
             </button>
             @endcan
-            <div class="input-group w-230px" >
-                <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm công ty, ngành nghề..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
         </div>
     </div>
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-3">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label  fw-bold">Nhân viên sale</label>
-                    <select class="form-select form-select-sm" wire:model.live="filter_staff">
+            <div class="d-flex flex-wrap align-items-end gap-3">
+                <div class="flex-grow-1" style="min-width: 240px; max-width: 320px;">
+                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-body-tertiary border-end-0 text-muted border-light-subtle">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="search" class="form-control border-start-0 ps-0 border-light-subtle"
+                               placeholder="Tìm kiếm công ty, ngành nghề..."
+                               wire:model.live.debounce.300ms="search">
+                    </div>
+                </div>
+                <div style="min-width: 180px;">
+                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Nhân viên sale</label>
+                    <select class="form-select border-light-subtle" wire:model.live="filter_staff">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label  fw-bold">Tình trạng</label>
-                    <select class="form-select form-select-sm" wire:model.live="filter_status">
+                <div style="min-width: 160px;">
+                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tình trạng</label>
+                    <select class="form-select border-light-subtle" wire:model.live="filter_status">
                         <option value="">Tất cả tình trạng</option>
                         @foreach($statuses as $st)
                             <option value="{{ $st }}">{{ $st }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label  fw-bold">Khoảng thời gian</label>
+                <div class="flex-grow-1" style="min-width: 280px; max-width: 360px;">
+                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Khoảng thời gian</label>
                     <div class="d-flex gap-2">
-                        <input type="date" class="form-control form-control-sm" wire:model.live="date_from">
-                        <input type="date" class="form-control form-control-sm" wire:model.live="date_to">
+                        <input type="date" class="form-control border-light-subtle" wire:model.live="date_from">
+                        <input type="date" class="form-control border-light-subtle" wire:model.live="date_to">
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label  fw-bold">Sắp xếp</label>
-                    <select class="form-select form-select-sm" wire:model.live="sortDirection">
-                        <option value="desc">Từ trên xuống</option>
-                        <option value="asc">Từ dưới lên</option>
+                <div style="min-width: 130px;">
+                    <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Sắp xếp</label>
+                    <select class="form-select border-light-subtle" wire:model.live="sortDirection">
+                        <option value="desc">Mới nhất</option>
+                        <option value="asc">Cũ nhất</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex align-items-end justify-content-end">
-                    <button class="btn btn-sm btn-outline-secondary" wire:click="resetFilters">
-                        <i class="fa-solid fa-xmark-circle"></i> Xóa lọc
+                <div>
+                    <button class="btn btn-outline-secondary rounded-8px text-nowrap" style="padding: 0.375rem 1rem;" wire:click="resetFilters">
+                        <i class="fa-solid fa-xmark me-1"></i> Xóa lọc
                     </button>
                 </div>
             </div>
@@ -75,22 +79,20 @@
     <!-- Table Card -->
     <div class="card border-0 shadow-sm overflow-hidden">
         <div class="table-responsive overflow-auto" >
-            <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem; min-width: 1400px;">
-                <thead class="bg-light bg-opacity-50" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
-                    <tr class="text-muted fw-bold">
-                        <th class="ps-3 w-40px" >STT</th>
-                        <th class="w-130px">Sale</th>
-                        <th class="w-110px">Số báo giá</th>
-                        <th class="text-truncate-220">Công ty / Khách hàng</th>
-                        <th class="w-130px">Dịch vụ</th>
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem; min-width: 1200px;">
+                <thead class="bg-body-tertiary">
+                    <tr class="small text-muted text-uppercase" style="letter-spacing: 0.05em;">
+                        <th class="ps-3 w-40px">STT</th>
+                        <th class="w-200px">Sale / Số báo giá</th>
+                        <th>Công ty, Khách hàng &amp; Dịch vụ</th>
                         <th>Tình hình làm việc</th>
-                        <th class="text-center w-130px" >Tình hình</th>
-                        <th class="text-end w-130px" >Giá trị gốc</th>
-                        <th class="text-end w-100px" >Hoa hồng KH</th>
-                        <th class="text-end w-85px" >Thuế HH</th>
-                        <th class="text-end fw-bold w-120px" >Giá trị HĐ</th>
+                        <th class="text-center w-140px">Tình hình</th>
+                        <th class="text-end w-130px">Giá trị gốc</th>
+                        <th class="text-end w-100px">Hoa hồng KH</th>
+                        <th class="text-end w-85px">Thuế HH</th>
+                        <th class="text-end fw-bold w-120px">Giá trị HĐ</th>
                         @can('quotation-tracking.view')
-                        <th class="text-center pe-3 w-110px" >#</th>
+                        <th class="text-center pe-3 w-220px">Hành động</th>
                         @endcan
                     </tr>
                 </thead>
@@ -98,44 +100,46 @@
                     @forelse($quotations as $index => $item)
                     <tr class="border-bottom border-light">
                         <td class="ps-3">{{ ($quotations->currentPage()-1) * $quotations->perPage() + $loop->iteration }}</td>
-                        <td class=" w-130px" >
-                            <div class="fw-semibold text-truncate"  title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
-                            @if($item->source)
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary border mt-1 fs-68" >{{ $item->source }}</span>
-                            @endif
-                            <div class="text-muted mt-1 fs-75 text-nowrap" >{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</div>
-                        </td>
-                        <td class="w-110px">
+                        {{-- Cột gộp: Sale + Số báo giá --}}
+                        <td class="w-200px">
+                            <div class="fw-semibold text-truncate" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
+                            <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                                @if($item->source)
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border fs-68">{{ $item->source }}</span>
+                                @endif
+                                <span class="text-muted fs-75 text-nowrap">{{ $item->date ? $item->date->format('d/m/Y') : '-' }}</span>
+                            </div>
                             @if($item->quotation_number)
-                            <span class="fw-semibold text-primary fs-82" >{{ $item->quotation_number }}</span>
-                            @else
-                            <span class="text-muted">-</span>
-                            @endif
-                            @if($item->quotationDocuments->first())
-                            <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="badge bg-success bg-opacity-10 text-success border mt-1 text-decoration-none d-inline-flex align-items-center gap-1">
-                                <i class="fa-solid fa-file-pdf"></i> Word/PDF
-                            </a>
+                            <div class="mt-1">
+                                <span class="fw-semibold text-primary fs-82">{{ $item->quotation_number }}</span>
+                                @if($item->quotationDocuments->first())
+                                <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="badge bg-success bg-opacity-10 text-success border ms-1 text-decoration-none align-items-center gap-1">
+                                    <i class="fa-solid fa-file-pdf"></i> PDF
+                                </a>
+                                @endif
+                            </div>
                             @endif
                         </td>
+                        {{-- Cột gộp: Công ty/Khách hàng + Dịch vụ --}}
                         <td>
-                            <div class="fw-bold text-primary text-capitalize fs-85 lh-sm" >{{ $item->company_name }}</div>
+                            <div class="fw-bold text-primary text-capitalize fs-85 lh-sm">{{ $item->company_name }}</div>
                             @if($item->contact_person)
-                            <div class=" text-muted mt-1"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->contact_person }}</div>
+                            <div class="text-muted mt-1 small"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->contact_person }}</div>
                             @endif
                             <div class="d-flex flex-wrap gap-1 mt-1">
                                 @if($item->province)
-                                <span class="badge bg-info bg-opacity-10 text-info fs-65" >{{ $item->province }}</span>
+                                <span class="badge bg-info bg-opacity-10 text-info fs-65">{{ $item->province }}</span>
                                 @endif
                                 @if($item->industry)
                                 <span class="badge bg-light text-dark border fs-65" title="Ngành nghề: {{ $item->industry }}">
                                     <i class="fa-solid fa-briefcase me-1 text-muted"></i>{{ $item->industry }}
                                 </span>
                                 @endif
-                            </div>
-                        </td>
-                        <td class=" text-wrap mxw-130px" >
-                            <div class="line-clamp-2" title="{{ $item->service }}">
-                                {{ $item->service ?: '-' }}
+                                @if($item->service)
+                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border fs-65" title="Dịch vụ: {{ $item->service }}">
+                                    <i class="fa-solid fa-gear me-1"></i>{{ \Illuminate\Support\Str::limit($item->service, 30) }}
+                                </span>
+                                @endif
                             </div>
                         </td>
                         <td class="text-wrap  text-truncate-200" >
@@ -147,7 +151,7 @@
                             @can('quotation-tracking.edit')
                             <select 
                                 wire:change="updateStatus({{ $item->id }}, $event.target.value)"
-                                class="form-select form-select-sm rounded-pill fw-semibold text-center border-0 py-1 px-3 fs-72 {{ $this->statusBadgeClass($item->status) }}" 
+                                class="form-select rounded-pill fw-semibold text-center border-0 py-1 px-3 fs-72 {{ $this->statusBadgeClass($item->status) }}" 
                                 style="width: auto; display: inline-block; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; text-align-last: center;"
                                 title="Nhấp để cập nhật nhanh tình hình"
                             >
@@ -168,65 +172,72 @@
                         <td class="text-end ">{{ $item->commission_tax ? number_format($item->commission_tax, 0, ',', '.') : '-' }}</td>
                         <td class="text-end fw-bold text-danger ">{{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}</td>
                         @can('quotation-tracking.view')
-                        <td class="text-center pe-3">
-                            <div class="d-flex flex-column gap-2 align-items-center">
-                                <!-- Row 1: View / Documents -->
-                                <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
-                                        <i class="fa-solid fa-eye fs-5"></i>
-                                    </button>
-                                    @if($item->pdf_path)
-                                    <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="File PDF báo giá">
-                                        <i class="fa-solid fa-file-pdf fs-5"></i>
-                                    </a>
-                                    @elseif($item->files_count > 0)
-                                    <button class="btn btn-sm p-0 text-danger position-relative me-2" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
-                                        <i class="fa-solid fa-file-pdf fs-5"></i>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">{{ $item->files_count }}</span>
-                                    </button>
-                                    @elseif($item->quotationDocuments->first())
-                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xem PDF báo giá tạo tự động">
-                                        <i class="fa-solid fa-file-pdf fs-5"></i>
-                                    </a>
-                                    @else
-                                    @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm p-0 text-secondary" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
-                                        <i class="fa-solid fa-file-pdf fs-5"></i>
-                                    </button>
-                                    @endcan
-                                    @endif
-                                    @if($item->quotationDocuments->first())
-                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm p-0 text-success" title="Mở báo giá Word/PDF gốc">
-                                        <i class="fa-solid fa-file-word fs-5"></i>
-                                    </a>
-                                    @endif
-                                    @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm p-0 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
-                                        <i class="fa-solid fa-file-circle-plus fs-5"></i>
-                                    </button>
-                                    @endcan
-                                </div>
+                        <td class="text-center pe-3 text-nowrap">
+                            <div class="d-inline-flex gap-1">
+                                <!-- 1. View -->
+                                <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
+                                    <i class="fa-solid fa-eye text-primary"></i>
+                                </button>
 
-                                <!-- Row 2: Management -->
-                                @canany(['quotation-tracking.edit', 'quotation-tracking.delete'])
-                                <div class="d-flex justify-content-center gap-2">
+                                <!-- 2. PDF Document -->
+                                @if($item->pdf_path)
+                                    <a href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-danger" title="File PDF báo giá">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </a>
+                                @elseif($item->files_count > 0)
+                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-danger position-relative" wire:click="openFiles({{ $item->id }})" title="{{ $item->files_count }} file PDF">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px; padding: 2px 4px;">{{ $item->files_count }}</span>
+                                    </button>
+                                @elseif($item->quotationDocuments->first())
+                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-danger" title="Xem PDF báo giá tạo tự động">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </a>
+                                @else
                                     @can('quotation-tracking.edit')
-                                    <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
-                                        <i class="fa-solid fa-copy fs-5"></i>
-                                    </button>
-                                    <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
-                                        <i class="fa-solid fa-pen-square fs-5"></i>
-                                    </button>
+                                        <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-muted" wire:click="openFiles({{ $item->id }})" title="Tải lên PDF">
+                                            <i class="fa-solid fa-file-upload"></i>
+                                        </button>
                                     @endcan
-                                    @can('quotation-tracking.delete')
-                                    <button class="btn btn-sm p-0 text-danger"
+                                @endif
+
+                                <!-- 3. Word Document -->
+                                @if($item->quotationDocuments->first())
+                                    <a href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-success" title="Mở báo giá Word/PDF gốc">
+                                        <i class="fa-solid fa-file-word"></i>
+                                    </a>
+                                @endif
+
+                                <!-- 4. Convert to Contract -->
+                                @can('quotation-tracking.edit')
+                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-success" wire:click="selectContractType({{ $item->id }})" title="Chuyển thành Hợp đồng">
+                                        <i class="fa-solid fa-file-import"></i>
+                                    </button>
+                                @endcan
+
+                                <!-- 5. Duplicate -->
+                                @can('quotation-tracking.edit')
+                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
+                                        <i class="fa-solid fa-clone"></i>
+                                    </button>
+                                @endcan
+
+                                <!-- 6. Edit -->
+                                @can('quotation-tracking.edit')
+                                    <button class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                @endcan
+
+                                <!-- 7. Delete -->
+                                @can('quotation-tracking.delete')
+                                    <button class="btn btn-sm btn-outline-danger border-light-subtle rounded-8px px-2 py-1.5"
                                             wire:click="delete({{ $item->id }})"
-                                            wire:confirm="Xác nhận xóa báo giá này?">
-                                        <i class="fa-solid fa-trash fs-5"></i>
+                                            wire:confirm="Xác nhận xóa báo giá này?"
+                                            title="Xóa">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
-                                    @endcan
-                                </div>
-                                @endcanany
+                                @endcan
                             </div>
                         </td>
                         @endcan

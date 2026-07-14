@@ -1,4 +1,7 @@
 <div>
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('assets/css/statistics-board.css') }}?v={{ config('app.version') }}">
+    @endpush
     @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
     <div class="statistics-page-header page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
@@ -114,10 +117,6 @@
 
         {{-- [2] KPI Tổng quan --}}
         @include('livewire.admin.statistics-board._kpi_cards')
-
-        @push('styles')
-            <link rel="stylesheet" href="{{ asset('assets/css/statistics-board.css') }}?v={{ config('app.version') }}">
-        @endpush
 
         {{-- [3] Tổng quan vận hành & Lịch --}}
         @include('livewire.admin.statistics-board._operational_overview')
@@ -385,6 +384,18 @@
             }
         }
 
+        function getThemeConfig() {
+            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            return {
+                isDark,
+                textColor: isDark ? '#94a3b8' : '#475569',
+                gridColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
+                tooltipBg: isDark ? '#1e293b' : '#ffffff',
+                tooltipBorder: isDark ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0',
+                tooltipText: isDark ? '#f8fafc' : '#0f172a'
+            };
+        }
+
         function renderMonthlyOverviewChart() {
             const configEl = document.getElementById('monthlyOverviewConfig');
             const canvas = document.getElementById('monthlyOverviewChart');
@@ -397,17 +408,33 @@
             const contractData = Object.values(monthly).map(item => Number(item.contracts || 0));
             const salesData = Object.values(monthly).map(item => Number(item.sales || 0));
 
+            const cfg = getThemeConfig();
+
             const datasets = [{
                 label: 'Hợp đồng ký mới', type: 'bar', data: contractData,
                 backgroundColor: 'rgba(79,124,255,0.75)', borderRadius: 4, yAxisID: 'y'
             }];
+
             const scales = {
-                y: { title: { display: true, text: 'Số HĐ' }, ticks: { stepSize: 1 } }
+                y: {
+                    title: { display: true, text: 'Số HĐ', color: cfg.textColor },
+                    ticks: { stepSize: 1, color: cfg.textColor },
+                    grid: { color: cfg.gridColor }
+                },
+                x: {
+                    ticks: { color: cfg.textColor },
+                    grid: { color: cfg.gridColor }
+                }
             };
 
             if (canSeeFinance) {
                 datasets.push({ label: 'Doanh số ghi nhận', type: 'bar', data: salesData, backgroundColor: 'rgba(240,82,82,0.7)', borderRadius: 4, yAxisID: 'y1' });
-                scales.y1 = { position: 'right', title: { display: true, text: 'Giá trị (VND)' }, grid: { drawOnChartArea: false }, ticks: { callback: v => compactCurrency(v) } };
+                scales.y1 = {
+                    position: 'right',
+                    title: { display: true, text: 'Giá trị (VND)', color: cfg.textColor },
+                    grid: { drawOnChartArea: false },
+                    ticks: { callback: v => compactCurrency(v), color: cfg.textColor }
+                };
             }
 
             canvas._chartInstance = new Chart(canvas, {
@@ -417,7 +444,12 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { position: 'top' } },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: cfg.textColor }
+                        }
+                    },
                     scales
                 }
             });
@@ -433,13 +465,24 @@
             const entries = Object.entries(byType);
             if (!entries.length) return;
 
+            const cfg = getThemeConfig();
+
             canvas._chartInstance = new Chart(canvas, {
                 type: 'doughnut',
                 data: {
                     labels: entries.map(([label]) => label),
                     datasets: [{ data: entries.map(([, item]) => Number(item.count || 0)), backgroundColor: palette }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: cfg.textColor }
+                        }
+                    }
+                }
             });
         }
 
@@ -466,6 +509,8 @@
             const fallback = ['#007bff','#c084fc','#facc15','#b91c1c','#15803d','#f43f5e','#0ea5e9','#6366f1','#f97316','#10b981'];
             const colors = labels.map((l, i) => colorMap[l.toUpperCase()] || fallback[i % fallback.length]);
 
+            const cfg = getThemeConfig();
+
             canvas._chartInstance = new Chart(canvas, {
                 type: 'pie',
                 data: { labels, datasets: [{ data, backgroundColor: colors }] },
@@ -473,11 +518,24 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right', labels: { font: { weight: '600' } } },
-                        tooltip: { callbacks: { label: ctx => {
-                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                            return ctx.label + ': ' + compactCurrency(ctx.raw) + ' (' + ((ctx.raw / total) * 100).toFixed(1) + '%)';
-                        }}}
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: cfg.textColor,
+                                font: { weight: '600' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: cfg.tooltipBg,
+                            titleColor: cfg.tooltipText,
+                            bodyColor: cfg.tooltipText,
+                            borderColor: cfg.tooltipBorder,
+                            borderWidth: 1,
+                            callbacks: { label: ctx => {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                return ctx.label + ': ' + compactCurrency(ctx.raw) + ' (' + ((ctx.raw / total) * 100).toFixed(1) + '%)';
+                            }}
+                        }
                     }
                 }
             });
@@ -492,6 +550,8 @@
             const payload = JSON.parse(configEl.dataset.chart || '{}');
             const labels = payload.labels || [];
 
+            const cfg = getThemeConfig();
+
             canvas._chartInstance = new Chart(canvas, {
                 type: 'bar',
                 data: {
@@ -504,8 +564,23 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { title: { display: true, text: 'Số lượng hồ sơ' }, ticks: { stepSize: 1 } } }
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: cfg.textColor }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Số lượng hồ sơ', color: cfg.textColor },
+                            ticks: { stepSize: 1, color: cfg.textColor },
+                            grid: { color: cfg.gridColor }
+                        },
+                        x: {
+                            ticks: { color: cfg.textColor },
+                            grid: { color: cfg.gridColor }
+                        }
+                    }
                 }
             });
         }
@@ -518,6 +593,8 @@
 
             const payload = JSON.parse(configEl.dataset.chart || '{}');
             const labels = payload.labels || [];
+
+            const cfg = getThemeConfig();
 
             canvas._chartInstance = new Chart(canvas, {
                 type: 'bar',
@@ -533,10 +610,28 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { position: 'top' } },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: cfg.textColor }
+                        }
+                    },
                     scales: {
-                        y: { title: { display: true, text: 'Số lượng hồ sơ' }, ticks: { stepSize: 1 } },
-                        y1: { position: 'right', title: { display: true, text: 'VND' }, grid: { drawOnChartArea: false }, ticks: { callback: v => compactCurrency(v) } }
+                        y: {
+                            title: { display: true, text: 'Số lượng hồ sơ', color: cfg.textColor },
+                            ticks: { stepSize: 1, color: cfg.textColor },
+                            grid: { color: cfg.gridColor }
+                        },
+                        y1: {
+                            position: 'right',
+                            title: { display: true, text: 'VND', color: cfg.textColor },
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: v => compactCurrency(v), color: cfg.textColor }
+                        },
+                        x: {
+                            ticks: { color: cfg.textColor },
+                            grid: { color: cfg.gridColor }
+                        }
                     }
                 }
             });
@@ -549,6 +644,13 @@
             renderServiceInsightChart();
             renderRegionInsightChart();
         };
+
+        // Re-render when theme changes in real-time
+        document.querySelectorAll("[data-bs-theme-value]").forEach((toggle) => {
+            toggle.addEventListener("click", () => {
+                setTimeout(function() { window.renderStatisticsBoardCharts(); }, 150);
+            });
+        });
 
         document.addEventListener('livewire:update', function () {
             setTimeout(function() { window.renderStatisticsBoardCharts(); }, 100);

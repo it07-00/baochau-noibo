@@ -9,7 +9,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-primary bg-opacity-10 text-primary">
-                        <i class="fa-solid fa-users-fill"></i>
+                        <i class="fa-solid fa-users"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >TỔNG NHÂN SỰ</div>
@@ -22,7 +22,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-green-pale text-green-dark" >
-                        <i class="fa-solid fa-user-check-fill"></i>
+                        <i class="fa-solid fa-user-check"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >CHÍNH THỨC</div>
@@ -61,7 +61,7 @@
             <div class="hr-stat-card bg-white shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-red-pale text-red-dark" >
-                        <i class="fa-solid fa-user-x-fill"></i>
+                        <i class="fa-solid fa-user-xmark"></i>
                     </div>
                     <div>
                         <div class="text-muted fs-75 fw-semibold" >ĐÃ NGHỈ</div>

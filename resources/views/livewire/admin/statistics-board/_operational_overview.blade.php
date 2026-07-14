@@ -30,7 +30,7 @@
                         <div class="op-stat-box">
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="op-stat-circle op-circle-success">
-                                    <i class="fa-solid fa-file-bar-graph"></i>
+                                    <i class="fa-solid fa-chart-column"></i>
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="text-muted small fw-semibold">Tỷ lệ báo cáo hôm nay</div>
@@ -53,7 +53,7 @@
                                 <i class="fa-solid fa-arrows-rotate"></i>
                             </div>
                             <div class="min-w-0">
-                                <h6 class="fw-bold text-dark mb-0">Hợp đồng sắp tái ký</h6>
+                                <h6 class="fw-bold text-body mb-0">Hợp đồng sắp tái ký</h6>
                                 <div class="text-muted" style="font-size: 11px;">Theo ngày ký cũ, nhắc trước 30 ngày</div>
                             </div>
                         </div>
@@ -64,8 +64,8 @@
                             <a href="{{ $contract['url'] }}" class="op-renewal-item">
                                 <div class="min-w-0 flex-grow-1">
                                     <div class="d-flex align-items-center gap-2 min-w-0">
-                                        <span class="fw-bold text-dark text-truncate small">{{ $contract['customer'] }}</span>
-                                        <span class="badge bg-light text-muted border fw-normal flex-shrink-0">{{ $contract['type'] }}</span>
+                                        <span class="fw-bold text-body text-truncate small">{{ $contract['customer'] }}</span>
+                                        <span class="badge bg-body-secondary text-secondary border fw-normal flex-shrink-0">{{ $contract['type'] }}</span>
                                     </div>
                                     <div class="text-muted text-truncate" style="font-size: 11px;">
                                         {{ $contract['contract_number'] }} · Ký {{ $contract['signed_at']->format('d/m/Y') }} · Tái ký {{ $contract['renewal_date']->format('d/m/Y') }} · {{ $contract['staff'] }}
@@ -87,7 +87,7 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h6 class="fw-bold text-dark mb-0">Lịch công tác sắp tới</h6>
+                                <h6 class="fw-bold text-body mb-0">Lịch công tác sắp tới</h6>
                             <a href="{{ route('app.work-schedules.index') }}" class="text-decoration-none small fw-bold text-primary">Xem tất cả</a>
                         </div>
                         <div class="op-list-container">
@@ -97,7 +97,7 @@
                                         <i class="fa-solid fa-calendar-day"></i>
                                     </div>
                                     <div class="min-w-0 flex-grow-1">
-                                        <div class="fw-bold text-dark text-truncate small" title="{{ $schedule->title }}">{{ $schedule->title }}</div>
+                                        <div class="fw-bold text-body text-truncate small" title="{{ $schedule->title }}">{{ $schedule->title }}</div>
                                         <div class="text-muted" style="font-size: 11px;">
                                             {{ $schedule->start_date->format('d/m/Y') }} · {{ $schedule->user?->name ?? 'Hệ thống' }}
                                         </div>
@@ -113,7 +113,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h6 class="fw-bold text-dark mb-0">Báo cáo mới nhất</h6>
+                                <h6 class="fw-bold text-body mb-0">Báo cáo mới nhất</h6>
                             @can('daily-reports.view')
                             <a href="{{ route('app.daily-reports.index') }}" class="text-decoration-none small fw-bold text-primary">Xem tất cả</a>
                             @endcan
@@ -123,7 +123,7 @@
                                 <div class="op-list-item">
                                     <x-user-avatar :user="$report->user" :size="28" class="flex-shrink-0" />
                                     <div class="min-w-0 flex-grow-1">
-                                        <div class="fw-bold text-dark text-truncate small">{{ $report->user?->name ?? 'Hệ thống' }}</div>
+                                        <div class="fw-bold text-body text-truncate small">{{ $report->user?->name ?? 'Hệ thống' }}</div>
                                         <div class="text-muted" style="font-size: 11px;">
                                             Báo cáo ngày {{ $report->date->format('d/m/Y') }} · {{ $report->created_at->diffForHumans() }}
                                         </div>
@@ -131,7 +131,7 @@
                                 </div>
                             @empty
                                 <div class="op-empty-state">
-                                    <i class="fa-solid fa-file-x"></i>
+                                    <i class="fa-solid fa-file-xmark"></i>
                                     <div>Chưa có báo cáo nào.</div>
                                 </div>
                             @endforelse
@@ -147,12 +147,12 @@
         <!-- Thao tác nhanh -->
         <div class="card op-card">
             <div class="card-body p-4">
-                <h6 class="fw-bold text-dark mb-3">Thao tác nhanh</h6>
+                <h6 class="fw-bold text-body mb-3">Thao tác nhanh</h6>
                 <div class="row g-2">
                     @can('hr-profiles.view')
                     <div class="col-6">
                         <a href="{{ route('app.hr.index') }}" class="op-quick-btn op-btn-primary">
-                            <i class="fa-solid fa-users-fill"></i> Nhân sự
+                            <i class="fa-solid fa-users"></i> Nhân sự
                         </a>
                     </div>
                     @endcan
@@ -164,7 +164,7 @@
                     @can('daily-reports.view')
                     <div class="col-6">
                         <a href="{{ route('app.daily-reports.index') }}" class="op-quick-btn op-btn-success">
-                            <i class="fa-solid fa-file-bar-graph"></i> Báo cáo
+                            <i class="fa-solid fa-chart-column"></i> Báo cáo
                         </a>
                     </div>
                     @endcan
@@ -191,7 +191,7 @@
         <div class="card op-card flex-grow-1">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h6 class="fw-bold text-dark mb-0">Phân bổ vai trò</h6>
+                    <h6 class="fw-bold text-body mb-0">Phân bổ vai trò</h6>
                     <span class="badge bg-soft-primary text-primary px-2 py-1" style="font-size: 11px;">{{ $totalActiveUsersCount }} users</span>
                 </div>
                 <div class="role-bars-list">

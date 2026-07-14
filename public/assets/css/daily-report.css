@@ -556,10 +556,10 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transform: translateY(-1px);
 }
-.cal-report-chip.cal-chip-done    { background-color: #dcfce7; border-left-color: #10b981; }
-.cal-report-chip.cal-chip-partial { background-color: #fef3c7; border-left-color: #f59e0b; }
-.cal-report-chip.cal-chip-issue   { background-color: #fee2e2; border-left-color: #ef4444; }
-.cal-report-chip.cal-chip-late    { background-color: #fff1f2; border-left-color: #e11d48; color: #881337; }
+.cal-report-chip.cal-chip-done    { background-color: #dcfce7;  }
+.cal-report-chip.cal-chip-partial { background-color: #fef3c7;  }
+.cal-report-chip.cal-chip-issue   { background-color: #fee2e2;  }
+.cal-report-chip.cal-chip-late    { background-color: #fff1f2;  color: #881337; }
 
 [data-bs-theme="dark"] .daily-report-manager .cal-report-chip.cal-chip-done {
     background-color: rgba(16, 185, 129, 0.18) !important;

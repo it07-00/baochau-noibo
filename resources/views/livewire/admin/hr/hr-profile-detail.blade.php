@@ -236,7 +236,7 @@
                                 </div>
                             @empty
                                 <div class="text-center text-muted py-5">
-                                    <i class="fa-solid fa-file-x fs-1 d-block mb-2 opacity-50"></i>
+                                    <i class="fa-solid fa-file-xmark fs-1 d-block mb-2 opacity-50"></i>
                                     Chưa có hợp đồng nào.
                                 </div>
                             @endforelse

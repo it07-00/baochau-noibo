@@ -16,12 +16,6 @@
     <link rel="icon" href="{{ asset('assets/images/favicon-32x32.png') }}" sizes="32x32" type="image/png">
     <link rel="icon" href="{{ asset('assets/images/favicon-192x192.png') }}" sizes="192x192" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/apple-touch-icon.png') }}">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-
     <link id="bootstrap-css" rel="stylesheet" type="text/css"
         href="{{ asset('assets/css/bootstrap.css') }}?v={{ config('app.version') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-icons.min.css') }}?v={{ config('app.version') }}">
