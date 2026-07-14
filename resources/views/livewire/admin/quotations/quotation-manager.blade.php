@@ -180,8 +180,8 @@
                             {{ $item->total_value ? number_format($item->total_value, 0, ',', '.') : '-' }}@if($item->total_value)<span class="ms-1 fw-semibold small">₫</span>@endif
                         </td>
                         @can('quotation-tracking.view')
-                        <td class="text-center pe-3 py-3">
-                            <div class="gap-1" style="display: inline-grid; grid-template-columns: repeat(6, 26px);">
+                        <td class="text-center pe-3 py-3 text-nowrap" style="width: 210px; min-width: 210px;">
+                            <div class="d-inline-flex align-items-center justify-content-center gap-1" style="flex-wrap: nowrap;">
                                 <!-- 1. View -->
                                 <button class="btn btn-sm border-0 bg-transparent rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 26px; height: 26px;" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết" aria-label="Xem chi tiết">
                                     <i class="bi bi-eye-fill text-primary" style="font-size: 0.9rem;"></i>
