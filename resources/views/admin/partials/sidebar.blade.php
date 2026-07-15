@@ -461,7 +461,6 @@
                         @endforeach
                     @endforeach
                 @endunless
-                @endif
             </ul>
         </div>
 
