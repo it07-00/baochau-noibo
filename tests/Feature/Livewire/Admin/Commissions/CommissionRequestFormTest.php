@@ -279,6 +279,34 @@ class CommissionRequestFormTest extends TestCase
         ]);
     }
 
+    public function test_sales_manager_with_edit_permission_can_open_another_users_pending_request(): void
+    {
+        $salesManagerRole = Role::findByName(RoleEnum::TP_KINH_DOANH->value);
+        $salesManagerRole->givePermissionTo([
+            PermissionEnum::COMMISSIONS_VIEW->value,
+            PermissionEnum::COMMISSIONS_EDIT->value,
+        ]);
+
+        $salesManager = User::factory()->create(['is_active' => true]);
+        $salesManager->assignRole($salesManagerRole);
+
+        $pendingRequest = CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'REQUEST FROM ANOTHER SALES USER',
+            'amount' => 1000000,
+            'status' => 'Dự chi',
+        ]);
+
+        $this->actingAs($salesManager);
+
+        Livewire::test(CommissionRequestForm::class, ['id' => $pendingRequest->id])
+            ->assertStatus(200)
+            ->assertSet('requestId', $pendingRequest->id)
+            ->assertSet('receiver_name', 'REQUEST FROM ANOTHER SALES USER');
+    }
+
     public function test_editing_rejected_request_clears_notes_and_resets_status(): void
     {
         $rejectedRequest = CommissionRequest::create([

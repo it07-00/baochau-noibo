@@ -144,7 +144,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="text-center mnw-45px w-45px" >STT</th>
-                            <th class="ps-4 mnw-300px" >Hợp đồng / Khách hàng</th>
+                            <th class="ps-4 mnw-300px" >Hợp đồng / Khách hàng / Người yêu cầu</th>
                             <th class="mnw-220px">Người nhận</th>
                             <th class="text-center mnw-170px">Loại hợp đồng</th>
                             <th class="text-end mnw-150px" >Số tiền</th>
@@ -169,6 +169,11 @@
                                     @else
                                         <div class=" text-muted">{{ $request->referrer_info ?: 'Không có thông tin khách hàng' }}</div>
                                     @endif
+                                    <div class="text-muted mt-2">
+                                        <i class="fa-solid fa-user me-1" aria-hidden="true"></i>
+                                        <span class="fw-semibold">Người yêu cầu:</span>
+                                        {{ $request->user?->name ?? 'Không xác định' }}
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="fw-semibold">{{ $request->receiver_name }}</div>

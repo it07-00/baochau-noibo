@@ -265,6 +265,7 @@ class CommissionRequestManagerTest extends TestCase
 
         Livewire::test(CommissionRequestManager::class)
             ->assertSee('Người yêu cầu')
+            ->assertSee('Hợp đồng / Khách hàng / Người yêu cầu')
             ->assertSee('REQUEST VISIBLE TO SALES MANAGER')
             ->call('viewRequest', $otherRequest->id)
             ->assertSet('viewingRequestId', $otherRequest->id)
