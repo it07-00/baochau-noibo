@@ -18,7 +18,7 @@ Nếu tài liệu mâu thuẫn với code, làm theo code và cập nhật lại
 - Các thao tác tài chính, phân quyền, notification và workflow phải có Feature/Livewire test.
 - Không giả định sáu loại hợp đồng dùng cùng bảng. Chúng là sáu model riêng, kết nối qua quan hệ polymorphic.
 - Khi thay đổi một luồng hợp đồng, kiểm tra cả manager riêng và `AbstractContractGenericManager`.
-- Không tạo QR VietQR nếu số tài khoản trùng số điện thoại. `EIB` là mã Eximbank hợp lệ; QR không tra được người nhận thường do số tài khoản không hợp lệ.
+- Cho phép dùng số điện thoại làm số tài khoản để hỗ trợ tài khoản alias; khi hai số trùng nhau phải cảnh báo người dùng kiểm tra ngân hàng có hỗ trợ alias. `EIB` là mã Eximbank hợp lệ; tạo được QR không đồng nghĩa tài khoản tồn tại.
 - Bước workflow cuối có key `finished`. Khi hoàn thành bước này, kế toán nhận thông báo để xử lý hồ sơ; IT không nhận thông báo tiến độ hợp đồng.
 - Notification được lưu database và chuông kiểm tra mỗi 15 giây. Browser popup chỉ hoạt động khi người dùng đã cấp quyền và đang mở hệ thống.
 - Tôn trọng thay đổi chưa commit của người dùng. Không reset hoặc ghi đè file ngoài phạm vi.

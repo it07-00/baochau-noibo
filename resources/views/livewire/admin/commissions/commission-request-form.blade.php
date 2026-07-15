@@ -85,7 +85,10 @@
                                 <input type="text" inputmode="numeric" autocomplete="off" wire:model.live="bank_number" class="form-control @error('bank_number') is-invalid @enderror" placeholder="Số tài khoản">
                                 @error('bank_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 @if($bank_number && $receiver_phone && preg_replace('/\D+/', '', $bank_number) === preg_replace('/\D+/', '', $receiver_phone))
-                                    <div class="text-danger small mt-1">Số tài khoản không được dùng số điện thoại. Hãy nhập số tài khoản Eximbank thực tế.</div>
+                                    <div class="text-warning-emphasis small mt-1">
+                                        <i class="fa-solid fa-triangle-exclamation me-1" aria-hidden="true"></i>
+                                        Đang dùng số điện thoại làm số tài khoản. Hãy kiểm tra ngân hàng có hỗ trợ tài khoản alias trước khi chuyển tiền.
+                                    </div>
                                 @endif
                             </div>
                         </div>

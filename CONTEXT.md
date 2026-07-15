@@ -158,9 +158,8 @@ VietQR dùng URL `img.vietqr.io/image/{bank_code}-{bank_number}-compact2.png`. D
 Quy tắc dữ liệu QR:
 
 - `bank_code` dùng mã VietQR, ví dụ `VCB`, `EIB`, `TCB`;
-- `bank_number` phải là số tài khoản thực tế, chỉ gồm chữ số;
-- không dùng số điện thoại làm số tài khoản;
-- nếu `bank_number` trùng `receiver_phone`, form từ chối lưu và không hiển thị QR;
+- `bank_number` chỉ gồm chữ số và có thể trùng `receiver_phone` để hỗ trợ tài khoản alias bằng số điện thoại;
+- khi `bank_number` trùng `receiver_phone`, form cảnh báo người dùng kiểm tra ngân hàng có hỗ trợ alias nhưng vẫn cho lưu và tạo QR;
 - VietQR tạo được ảnh không đồng nghĩa tài khoản tồn tại. Ngân hàng/NAPAS xác thực người nhận khi quét.
 
 ## 9. Notification

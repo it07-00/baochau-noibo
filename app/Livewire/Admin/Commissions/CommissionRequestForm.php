@@ -148,11 +148,9 @@ class CommissionRequestForm extends Component
     public function hasValidVietQrAccount(): bool
     {
         $bankNumber = preg_replace('/\D+/', '', (string) $this->bank_number);
-        $phone = preg_replace('/\D+/', '', (string) $this->receiver_phone);
 
         return filled($this->bank_code)
-            && $bankNumber !== ''
-            && ($phone === '' || $bankNumber !== $phone);
+            && $bankNumber !== '';
     }
 
     public function updatedContractType()
@@ -235,7 +233,7 @@ class CommissionRequestForm extends Component
             'receiver_phone' => 'nullable|string|max:30',
             'bank_account' => 'nullable|string|max:100',
             'bank_code' => 'nullable|string|max:20',
-            'bank_number' => ['nullable', 'string', 'max:50', 'regex:/^\d+$/', 'different:receiver_phone'],
+            'bank_number' => ['nullable', 'string', 'max:50', 'regex:/^\d+$/'],
             'amount' => 'required|numeric|min:0',
             'referrer_info' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:2000',
@@ -245,7 +243,6 @@ class CommissionRequestForm extends Component
             'contract_id.required' => 'Vui lòng chọn số hợp đồng.',
             'manual_contract_number.required' => 'Vui lòng nhập số hợp đồng.',
             'bank_number.regex' => 'Số tài khoản chỉ được gồm các chữ số.',
-            'bank_number.different' => 'Số tài khoản đang trùng số điện thoại. Vui lòng nhập số tài khoản ngân hàng thực tế để VietQR có thể tra cứu người nhận.',
             'receiver_name.required' => 'Vui lòng nhập tên người nhận.',
             'amount.required' => 'Vui lòng nhập số tiền.',
             'amount.min' => 'Số tiền không được âm.',

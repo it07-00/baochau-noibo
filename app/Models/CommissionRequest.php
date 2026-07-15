@@ -73,9 +73,8 @@ class CommissionRequest extends Model
     public function getQrUrlAttribute(): string
     {
         $bankNumber = preg_replace('/\D+/', '', (string) $this->bank_number);
-        $phone = preg_replace('/\D+/', '', (string) $this->receiver_phone);
 
-        if ($this->bank_code && $bankNumber !== '' && ($phone === '' || $bankNumber !== $phone)) {
+        if ($this->bank_code && $bankNumber !== '') {
             $contractShd = $this->contract_number;
             $contract = $this->contract;
             if ($contract && isset($contract->shd_bc)) {

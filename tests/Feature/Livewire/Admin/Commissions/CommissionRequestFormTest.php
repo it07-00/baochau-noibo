@@ -137,21 +137,33 @@ class CommissionRequestFormTest extends TestCase
         ]);
     }
 
-    public function test_rejects_phone_number_used_as_vietqr_bank_account(): void
+    public function test_allows_phone_number_used_as_vietqr_bank_account(): void
     {
         $this->actingAs($this->salesUser);
 
-        Livewire::test(CommissionRequestForm::class)
+        $component = Livewire::test(CommissionRequestForm::class)
             ->set('contract_type', ContractWaste::class)
             ->set('contract_id', $this->contract->id)
             ->set('receiver_name', 'Tran Thi Hoai Thanh')
             ->set('receiver_phone', '0933799891')
             ->set('bank_code', 'EIB')
             ->set('bank_number', '0933799891')
-            ->set('amount', '1.000.000')
+            ->set('amount', '1.000.000');
+
+        $this->assertStringContainsString(
+            'EIB-0933799891-compact2.png',
+            $component->instance()->getVietQrUrl()
+        );
+
+        $component
             ->call('save')
-            ->assertHasErrors(['bank_number' => 'different'])
-            ->assertSee('Số tài khoản đang trùng số điện thoại');
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('commission_requests', [
+            'receiver_phone' => '0933799891',
+            'bank_code' => 'EIB',
+            'bank_number' => '0933799891',
+        ]);
     }
 
     public function test_manual_contract_number_is_used_in_vietqr_description(): void
