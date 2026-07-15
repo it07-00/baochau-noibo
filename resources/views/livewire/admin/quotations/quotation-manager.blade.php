@@ -393,6 +393,7 @@
               commission_value: @entangle('formData.commission_value'),
               commission_tax: @entangle('formData.commission_tax'),
               commission_tax_manual: @entangle('commissionTaxManual').live,
+              commission_tax_rate: @entangle('commissionTaxRate').live,
               value_inc_vat: 0,
               total_value: 0,
 
@@ -404,6 +405,11 @@
 
              formatMoney(val) {
                  return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+             },
+
+             parsePercentage(val) {
+                 let percentage = Number(String(val ?? 0).replace(',', '.'));
+                 return Number.isFinite(percentage) ? Math.min(Math.max(percentage, 0), 100) : 0;
              },
 
               isCommissionTaxManual() {
@@ -420,8 +426,9 @@
                   }
 
                   if (this.isCommissionTaxManual()) {
-                     tax = this.parseMoney(this.commission_tax);
-                 } else {
+                     tax = Math.round(comm * this.parsePercentage(this.commission_tax_rate) / 100);
+                     this.commission_tax = tax;
+                  } else {
                      if (comm <= 1000000) {
                          tax = Math.round(comm * 0.20);
                      } else {
@@ -437,8 +444,8 @@
          x-init="
               $watch('original_value', () => recalculate());
               $watch('commission_value', () => recalculate());
-              $watch('commission_tax', () => recalculate());
               $watch('commission_tax_manual', () => recalculate());
+              $watch('commission_tax_rate', () => recalculate());
               recalculate();
          ">
         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -573,27 +580,36 @@
                                 </div>
                                 <div class="input-group">
                                     <!-- Readonly Input (Auto-calculated) -->
-                                    <template x-if="!isCommissionTaxManual()">
-                                        <input type="text"
-                                            class="form-control text-end money-input bg-light"
-                                            x-bind:value="formatMoney(commission_tax)"
-                                            readonly>
-                                    </template>
-                                    <!-- Editable Input (Manual) -->
-                                    <template x-if="isCommissionTaxManual()">
-                                        <input type="text"
-                                            class="form-control text-end money-input"
-                                            x-model="commission_tax"
-                                            wire:model.blur="formData.commission_tax">
-                                    </template>
-                                    <span class="input-group-text p-1 fs-70" >đ</span>
-                                </div>
+                                     <template x-if="!isCommissionTaxManual()">
+                                         <input type="text"
+                                             class="form-control text-end money-input bg-light"
+                                             x-bind:value="formatMoney(commission_tax)"
+                                             readonly>
+                                     </template>
+                                     <!-- Editable percentage (Manual) -->
+                                     <template x-if="isCommissionTaxManual()">
+                                         <input type="number"
+                                             class="form-control text-end"
+                                             min="0"
+                                             max="100"
+                                             step="0.01"
+                                             x-model.number="commission_tax_rate">
+                                     </template>
+                                     <template x-if="!isCommissionTaxManual()">
+                                         <span class="input-group-text p-1 fs-70">đ</span>
+                                     </template>
+                                     <template x-if="isCommissionTaxManual()">
+                                         <span class="input-group-text p-1 fs-70">%</span>
+                                     </template>
+                                 </div>
                                 <template x-if="!isCommissionTaxManual()">
                                     <small class="text-muted">Tự tính 20%–30%</small>
-                                </template>
-                                <template x-if="isCommissionTaxManual()">
-                                    <small class="text-muted">Nhập thuế hoa hồng thủ công</small>
-                                </template>
+                                 </template>
+                                 <template x-if="isCommissionTaxManual()">
+                                     <small class="text-muted">
+                                         Thuế HH: <span x-text="formatMoney(commission_tax)"></span>đ
+                                     </small>
+                                 </template>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Giá trị chưa VAT</label>

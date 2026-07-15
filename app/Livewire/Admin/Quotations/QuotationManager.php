@@ -53,6 +53,8 @@ class QuotationManager extends Component
 
     public bool $commissionTaxManual = false;
 
+    public float $commissionTaxRate = 0.0;
+
     // PDF
     public array $pdfFiles = [];
 
@@ -117,6 +119,7 @@ class QuotationManager extends Component
         'formData.commission_tax' => 'nullable|numeric|min:0',
         'formData.total_value' => 'nullable|numeric|min:0',
         'formData.notes' => 'nullable|string|max:2000',
+        'commissionTaxRate' => 'nullable|numeric|min:0|max:100',
     ];
 
     protected function quotationValidationMessages(): array
@@ -161,6 +164,9 @@ class QuotationManager extends Component
             'formData.total_value.min' => 'Giá trị hợp đồng có VAT không được âm.',
             'formData.notes.string' => 'Ghi chú không hợp lệ.',
             'formData.notes.max' => 'Ghi chú không được vượt quá 2000 ký tự.',
+            'commissionTaxRate.numeric' => 'Tỷ lệ thuế hoa hồng phải là số.',
+            'commissionTaxRate.min' => 'Tỷ lệ thuế hoa hồng không được âm.',
+            'commissionTaxRate.max' => 'Tỷ lệ thuế hoa hồng không được vượt quá 100%.',
         ];
     }
 
@@ -186,6 +192,7 @@ class QuotationManager extends Component
             'formData.commission_tax' => 'thuế hoa hồng',
             'formData.total_value' => 'giá trị hợp đồng có VAT',
             'formData.notes' => 'ghi chú',
+            'commissionTaxRate' => 'tỷ lệ thuế hoa hồng',
         ];
     }
 
@@ -234,6 +241,7 @@ class QuotationManager extends Component
 
             if ($automaticTax === null) {
                 $this->commissionTaxManual = true;
+                $this->commissionTaxRate = 0.0;
                 $this->formData['commission_tax'] = 0;
             } else {
                 $this->formData['commission_tax'] = $automaticTax;
@@ -256,6 +264,18 @@ class QuotationManager extends Component
             $this->commissionTaxManual = true;
         }
 
+        if ($this->commissionTaxManual && $this->commissionTaxRate <= 0 && $commission > 0) {
+            $this->commissionTaxRate = $this->calculateCommissionTaxRate(
+                $commission,
+                $this->parseMoneyValue($this->formData['commission_tax'] ?? 0)
+            );
+        }
+
+        $this->recalculateTotals();
+    }
+
+    public function updatedCommissionTaxRate(): void
+    {
         $this->recalculateTotals();
     }
 
@@ -309,7 +329,9 @@ class QuotationManager extends Component
         $commission = $this->parseMoneyValue($this->formData['commission_value'] ?? 0);
         $automaticTax = $this->calculateAutomaticCommissionTax($commission);
 
-        if (! $this->isCommissionTaxManual() && $automaticTax !== null) {
+        if ($this->isCommissionTaxManual()) {
+            $this->formData['commission_tax'] = round($commission * $this->commissionTaxRate / 100);
+        } elseif ($automaticTax !== null) {
             $this->formData['commission_tax'] = $automaticTax;
         }
 
@@ -328,6 +350,15 @@ class QuotationManager extends Component
             $commission <= 5_000_000 => round($commission * 0.30),
             default => null,
         };
+    }
+
+    private function calculateCommissionTaxRate(float $commission, float $tax): float
+    {
+        if ($commission <= 0) {
+            return 0.0;
+        }
+
+        return round($tax / $commission * 100, 4);
     }
 
     private function shouldUseManualCommissionTax(mixed $commission, mixed $tax): bool
@@ -415,6 +446,12 @@ class QuotationManager extends Component
             $quotation->commission_value,
             $quotation->commission_tax
         );
+        $this->commissionTaxRate = $this->commissionTaxManual
+            ? $this->calculateCommissionTaxRate(
+                $this->parseMoneyValue($quotation->commission_value),
+                $this->parseMoneyValue($quotation->commission_tax)
+            )
+            : 0.0;
         $this->editingFiles = $quotation->files->map(fn ($f) => [
             'id' => $f->id,
             'name' => $f->original_name,
@@ -443,6 +480,12 @@ class QuotationManager extends Component
             $quotation->commission_value,
             $quotation->commission_tax
         );
+        $this->commissionTaxRate = $this->commissionTaxManual
+            ? $this->calculateCommissionTaxRate(
+                $this->parseMoneyValue($quotation->commission_value),
+                $this->parseMoneyValue($quotation->commission_tax)
+            )
+            : 0.0;
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedId = null;
@@ -644,6 +687,7 @@ class QuotationManager extends Component
         ];
         $this->selectedId = null;
         $this->commissionTaxManual = false;
+        $this->commissionTaxRate = 0.0;
         $this->pdfFiles = [];
         $this->editingFiles = [];
     }
