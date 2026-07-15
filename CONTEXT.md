@@ -221,6 +221,7 @@ Các tích hợp đáng chú ý:
 - Quan hệ quotation-customer dựa trên tên công ty, không phải foreign key.
 - `IT` có nhiều quyền quản trị nhưng không mặc định là người nhận mọi notification nghiệp vụ.
 - Trạng thái text lịch sử có nhiều biến thể tiếng Việt/in hoa; workflow mới nên dựa vào key chuẩn thay vì so sánh label.
+- Báo cáo ngày chỉ được coi là trễ (nộp trễ / chậm) sau khi quá hạn từ 3 ngày trở lên (tính từ ngày cần báo cáo đến thời điểm tạo/gửi thực tế).
 
 ## 13. Checklist cho AI khi nhận task
 

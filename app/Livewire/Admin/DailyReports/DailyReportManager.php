@@ -282,7 +282,9 @@ class DailyReportManager extends Component
             return 0;
         }
 
-        return max(0, (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false));
+        $diff = (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false);
+
+        return $diff >= 3 ? max(0, $diff) : 0;
     }
 
     public function dayLateCount(Collection $reports): int
@@ -347,7 +349,7 @@ class DailyReportManager extends Component
             ];
         }
 
-        if ($daysDiff >= 1) {
+        if ($daysDiff >= 3) {
             return [
                 'itemClass' => 'border-warning-subtle',
                 'itemStyle' => 'background: rgba(255,193,7,0.07);',
@@ -502,8 +504,7 @@ class DailyReportManager extends Component
                 $this->reportStats['issues'] = $dailyReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->count();
                 $this->reportStats['missing'] = $usersToDisplay->whereNull(fn ($u) => $dailyReports->get($u->id))->count();
                 $this->reportStats['late'] = $dailyReports->filter(function ($report) {
-                    return $report->created_at
-                        && $report->created_at->copy()->startOfDay()->gt($report->date->copy()->startOfDay());
+                    return $this->reportLateDays($report) > 0;
                 })->count();
             } else {
                 $monthReports = DailyReport::with('user')->whereIn('user_id', $userIds)

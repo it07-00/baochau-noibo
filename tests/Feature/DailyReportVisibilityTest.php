@@ -108,6 +108,54 @@ class DailyReportVisibilityTest extends TestCase
         $this->assertDatabaseHas('daily_reports', ['id' => $report->id]);
     }
 
+    public function test_daily_report_late_calculation_with_three_day_threshold(): void
+    {
+        $user = $this->createUser(RoleEnum::KINH_DOANH);
+        $this->actingAs($user);
+
+        // 1. Report submitted 1 day late (diff = 1) -> not late (returns 0)
+        $report1 = DailyReport::create([
+            'user_id' => $user->id,
+            'date' => today()->subDays(1),
+            'content' => 'Report content 1',
+            'status' => DailyReportStatus::HOAN_THANH_DUNG_KH->value,
+            'plan' => '',
+            'issues' => '',
+        ]);
+        $report1->created_at = today();
+        $report1->save();
+
+        // 2. Report submitted 2 days late (diff = 2) -> not late (returns 0)
+        $report2 = DailyReport::create([
+            'user_id' => $user->id,
+            'date' => today()->subDays(2),
+            'content' => 'Report content 2',
+            'status' => DailyReportStatus::HOAN_THANH_DUNG_KH->value,
+            'plan' => '',
+            'issues' => '',
+        ]);
+        $report2->created_at = today();
+        $report2->save();
+
+        // 3. Report submitted 3 days late (diff = 3) -> late (returns 3)
+        $report3 = DailyReport::create([
+            'user_id' => $user->id,
+            'date' => today()->subDays(3),
+            'content' => 'Report content 3',
+            'status' => DailyReportStatus::HOAN_THANH_DUNG_KH->value,
+            'plan' => '',
+            'issues' => '',
+        ]);
+        $report3->created_at = today();
+        $report3->save();
+
+        $component = Livewire::test(DailyReportManager::class)->instance();
+
+        $this->assertSame(0, $component->reportLateDays($report1));
+        $this->assertSame(0, $component->reportLateDays($report2));
+        $this->assertSame(3, $component->reportLateDays($report3));
+    }
+
     private function createUser(RoleEnum $role, array $extraPermissions = []): User
     {
         $roleModel = Role::findByName($role->value);

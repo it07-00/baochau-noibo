@@ -13,7 +13,7 @@ final class SubmitDailyReportAction
      * Lưu hoặc cập nhật báo cáo ngày, rồi gửi thông báo cho Giám đốc/TPKD.
      */
     public function execute(
-        User   $reporter,
+        User $reporter,
         string $date,
         string $content,
         string $status,
@@ -24,15 +24,16 @@ final class SubmitDailyReportAction
             ['user_id' => $reporter->id, 'date' => $date],
             [
                 'content' => clean($content),
-                'status'  => $status,
-                'plan'    => $plan,
-                'issues'  => $issues,
+                'status' => $status,
+                'plan' => $plan,
+                'issues' => $issues,
             ]
         );
 
-        $lateDays = $report->created_at
-            ? max(0, (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false))
+        $diff = $report->created_at
+            ? (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false)
             : 0;
+        $lateDays = $diff >= 3 ? max(0, $diff) : 0;
 
         $this->notifyManagers($reporter, $date, $lateDays);
 
