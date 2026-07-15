@@ -252,13 +252,26 @@ class CommissionRequestManagerTest extends TestCase
             'status' => 'Dự chi',
         ]);
 
+        CommissionRequest::create([
+            'user_id' => $this->salesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'REQUEST HIDDEN BY REQUESTER FILTER',
+            'amount' => 2000000,
+            'status' => 'Dự chi',
+        ]);
+
         $this->actingAs($salesManager);
 
         Livewire::test(CommissionRequestManager::class)
+            ->assertSee('Người yêu cầu')
             ->assertSee('REQUEST VISIBLE TO SALES MANAGER')
             ->call('viewRequest', $otherRequest->id)
             ->assertSet('viewingRequestId', $otherRequest->id)
-            ->assertDispatched('open-view-modal');
+            ->assertDispatched('open-view-modal')
+            ->set('requesterFilter', $anotherSalesUser->id)
+            ->assertSee('REQUEST VISIBLE TO SALES MANAGER')
+            ->assertDontSee('REQUEST HIDDEN BY REQUESTER FILTER');
     }
 
     public function test_accountant_approval_moves_estimate_to_approved_not_paid(): void

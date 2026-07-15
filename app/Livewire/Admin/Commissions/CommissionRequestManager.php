@@ -404,6 +404,7 @@ class CommissionRequestManager extends Component
             'contractTypes' => ContractType::labelMap(),
             'summary' => $summary,
             'requesters' => $requesters,
+            'canFilterByRequester' => $isSpecialRole,
             'viewingRequest' => $viewingRequest,
             'canApprove' => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),
             'canEdit' => auth()->check()

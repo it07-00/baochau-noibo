@@ -108,7 +108,7 @@
                     <label class="form-label">Tháng yêu cầu</label>
                     <input type="month" wire:model.live="requestMonthFilter" class="form-control">
                 </div>
-                @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::IT->value)))
+                @if($canFilterByRequester)
                     <div class="col-12 col-lg-2">
                         <label class="form-label">Người yêu cầu</label>
                         <select wire:model.live="requesterFilter" class="form-select">
@@ -119,7 +119,7 @@
                         </select>
                     </div>
                 @endif
-                <div class="col-12 @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::IT->value))) col-lg-3 @else col-lg-5 @endif">
+                <div class="col-12 @if($canFilterByRequester) col-lg-3 @else col-lg-5 @endif">
                     <label class="form-label">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fa-solid fa-magnifying-glass"></i></span>
