@@ -92,31 +92,87 @@ class QuotationManagerMoneyInputTest extends TestCase
             ->assertSet('formData.commission_tax', 200000)
             ->assertSet('formData.value_inc_vat', 8890088000)
             ->assertSet('formData.total_value', 9601295040);
-     }
+    }
 
-     public function test_it_can_update_status_directly(): void
-     {
-         $salesUser = User::factory()->create(['is_active' => true]);
-         $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
-         $salesUser->givePermissionTo(PermissionEnum::QUOTATION_TRACKING_EDIT->value);
+    public function test_manual_commission_tax_is_preserved_when_totals_are_recalculated(): void
+    {
+        $salesUser = User::factory()->create(['is_active' => true]);
+        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
+        $salesUser->givePermissionTo(PermissionEnum::QUOTATION_TRACKING_CREATE->value);
 
-         $quotation = Quotation::create([
-             'date' => '2026-06-25',
-             'staff_id' => $salesUser->id,
-             'company_name' => 'Benh vien Da khoa Ba Ria',
-             'status' => QuotationStatus::DANG_THEO_DOI->value,
-             'original_value' => 0,
-             'value_inc_vat' => 0,
-             'commission_value' => 0,
-             'commission_tax' => 0,
-             'total_value' => 0,
-         ]);
+        $this->actingAs($salesUser);
 
-         Livewire::actingAs($salesUser)
-             ->test(QuotationManager::class)
-             ->call('updateStatus', $quotation->id, QuotationStatus::KY_HOP_DONG->value)
-             ->assertHasNoErrors();
+        Livewire::test(QuotationManager::class)
+            ->set('formData.date', '2026-07-15')
+            ->set('formData.staff_id', $salesUser->id)
+            ->set('formData.company_name', 'Công ty nhập thuế thủ công')
+            ->set('formData.status', QuotationStatus::DANG_THEO_DOI->value)
+            ->set('formData.original_value', '12.785.000')
+            ->set('formData.commission_value', '3.000.000')
+            ->assertSet('formData.commission_tax', 900000)
+            ->set('commissionTaxManual', true)
+            ->set('formData.commission_tax', '750.000')
+            ->assertSet('formData.commission_tax', '750.000')
+            ->assertSet('formData.value_inc_vat', 16535000)
+            ->assertSet('formData.total_value', 17857800)
+            ->set('formData.original_value', '13.000.000')
+            ->assertSet('formData.commission_tax', '750.000')
+            ->assertSet('formData.value_inc_vat', 16750000)
+            ->assertSet('formData.total_value', 18090000)
+            ->call('save')
+            ->assertHasNoErrors();
 
-         $this->assertEquals(QuotationStatus::KY_HOP_DONG->value, $quotation->fresh()->status);
-     }
- }
+        $this->assertDatabaseHas('quotations', [
+            'company_name' => 'Công ty nhập thuế thủ công',
+            'original_value' => 13000000,
+            'commission_value' => 3000000,
+            'commission_tax' => 750000,
+            'value_inc_vat' => 16750000,
+            'total_value' => 18090000,
+        ]);
+    }
+
+    public function test_disabling_manual_commission_tax_restores_automatic_calculation(): void
+    {
+        $salesUser = User::factory()->create(['is_active' => true]);
+        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
+
+        $this->actingAs($salesUser);
+
+        Livewire::test(QuotationManager::class)
+            ->set('formData.original_value', '12.785.000')
+            ->set('formData.commission_value', '3.000.000')
+            ->set('commissionTaxManual', true)
+            ->set('formData.commission_tax', '750.000')
+            ->set('commissionTaxManual', false)
+            ->assertSet('formData.commission_tax', 900000)
+            ->assertSet('formData.value_inc_vat', 16685000)
+            ->assertSet('formData.total_value', 18019800);
+    }
+
+    public function test_it_can_update_status_directly(): void
+    {
+        $salesUser = User::factory()->create(['is_active' => true]);
+        $salesUser->assignRole(RoleEnum::KINH_DOANH->value);
+        $salesUser->givePermissionTo(PermissionEnum::QUOTATION_TRACKING_EDIT->value);
+
+        $quotation = Quotation::create([
+            'date' => '2026-06-25',
+            'staff_id' => $salesUser->id,
+            'company_name' => 'Benh vien Da khoa Ba Ria',
+            'status' => QuotationStatus::DANG_THEO_DOI->value,
+            'original_value' => 0,
+            'value_inc_vat' => 0,
+            'commission_value' => 0,
+            'commission_tax' => 0,
+            'total_value' => 0,
+        ]);
+
+        Livewire::actingAs($salesUser)
+            ->test(QuotationManager::class)
+            ->call('updateStatus', $quotation->id, QuotationStatus::KY_HOP_DONG->value)
+            ->assertHasNoErrors();
+
+        $this->assertEquals(QuotationStatus::KY_HOP_DONG->value, $quotation->fresh()->status);
+    }
+}

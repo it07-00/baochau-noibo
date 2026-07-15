@@ -51,6 +51,8 @@ class QuotationManager extends Component
 
     public $convertingQuotation = null;
 
+    public bool $commissionTaxManual = false;
+
     // PDF
     public array $pdfFiles = [];
 
@@ -227,11 +229,16 @@ class QuotationManager extends Component
     {
         $commission = $this->parseMoneyValue($this->formData['commission_value'] ?? 0);
 
-        $this->formData['commission_tax'] = match (true) {
-            $commission <= 1_000_000 => round($commission * 0.20),
-            $commission <= 5_000_000 => round($commission * 0.30),
-            default => 0,
-        };
+        if (! $this->commissionTaxManual) {
+            $automaticTax = $this->calculateAutomaticCommissionTax($commission);
+
+            if ($automaticTax === null) {
+                $this->commissionTaxManual = true;
+                $this->formData['commission_tax'] = 0;
+            } else {
+                $this->formData['commission_tax'] = $automaticTax;
+            }
+        }
 
         $this->recalculateTotals();
     }
@@ -241,9 +248,23 @@ class QuotationManager extends Component
         $this->recalculateTotals();
     }
 
+    public function updatedCommissionTaxManual(): void
+    {
+        $commission = $this->parseMoneyValue($this->formData['commission_value'] ?? 0);
+
+        if (! $this->commissionTaxManual && $this->calculateAutomaticCommissionTax($commission) === null) {
+            $this->commissionTaxManual = true;
+        }
+
+        $this->recalculateTotals();
+    }
+
     public function isCommissionTaxManual(): bool
     {
-        return $this->parseMoneyValue($this->formData['commission_value'] ?? 0) > 5_000_000;
+        return $this->commissionTaxManual
+            || $this->calculateAutomaticCommissionTax(
+                $this->parseMoneyValue($this->formData['commission_value'] ?? 0)
+            ) === null;
     }
 
     public function updatedSortDirection($value): void
@@ -286,10 +307,10 @@ class QuotationManager extends Component
     public function recalculateTotals(): void
     {
         $commission = $this->parseMoneyValue($this->formData['commission_value'] ?? 0);
-        if ($commission <= 1_000_000) {
-            $this->formData['commission_tax'] = round($commission * 0.20);
-        } elseif ($commission <= 5_000_000) {
-            $this->formData['commission_tax'] = round($commission * 0.30);
+        $automaticTax = $this->calculateAutomaticCommissionTax($commission);
+
+        if (! $this->isCommissionTaxManual() && $automaticTax !== null) {
+            $this->formData['commission_tax'] = $automaticTax;
         }
 
         $preVatValue = $this->parseMoneyValue($this->formData['original_value'] ?? 0)
@@ -298,6 +319,23 @@ class QuotationManager extends Component
 
         $this->formData['value_inc_vat'] = round($preVatValue);
         $this->formData['total_value'] = round($preVatValue * 1.08);
+    }
+
+    private function calculateAutomaticCommissionTax(float $commission): ?float
+    {
+        return match (true) {
+            $commission <= 1_000_000 => round($commission * 0.20),
+            $commission <= 5_000_000 => round($commission * 0.30),
+            default => null,
+        };
+    }
+
+    private function shouldUseManualCommissionTax(mixed $commission, mixed $tax): bool
+    {
+        $automaticTax = $this->calculateAutomaticCommissionTax($this->parseMoneyValue($commission));
+
+        return $automaticTax === null
+            || (int) $this->parseMoneyValue($tax) !== (int) $automaticTax;
     }
 
     public function openFiles(int $id): void
@@ -373,6 +411,10 @@ class QuotationManager extends Component
         $this->selectedId = $id;
         $this->formData = $quotation->toArray();
         unset($this->formData['pdf_path']);
+        $this->commissionTaxManual = $this->shouldUseManualCommissionTax(
+            $quotation->commission_value,
+            $quotation->commission_tax
+        );
         $this->editingFiles = $quotation->files->map(fn ($f) => [
             'id' => $f->id,
             'name' => $f->original_name,
@@ -397,6 +439,10 @@ class QuotationManager extends Component
         $this->formData = $quotation->toArray();
         $this->formData['date'] = now()->format('Y-m-d');
         $this->formData['expected_signing_date'] = $quotation->expected_signing_date ? $quotation->expected_signing_date->format('Y-m-d') : '';
+        $this->commissionTaxManual = $this->shouldUseManualCommissionTax(
+            $quotation->commission_value,
+            $quotation->commission_tax
+        );
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedId = null;
@@ -561,8 +607,9 @@ class QuotationManager extends Component
         $quotation = Quotation::findOrFail($quotationId);
         $this->authorizeQuotationAccess($quotation);
 
-        if (!in_array($newStatus, QuotationStatus::values(), true)) {
+        if (! in_array($newStatus, QuotationStatus::values(), true)) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Tình hình không hợp lệ.']);
+
             return;
         }
 
@@ -596,6 +643,7 @@ class QuotationManager extends Component
             'notes' => '',
         ];
         $this->selectedId = null;
+        $this->commissionTaxManual = false;
         $this->pdfFiles = [];
         $this->editingFiles = [];
     }

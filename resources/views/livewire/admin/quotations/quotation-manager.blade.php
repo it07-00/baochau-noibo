@@ -389,11 +389,12 @@
     <!-- Form Modal -->
     <div wire:ignore.self class="modal fade" id="quotationModal" tabindex="-1" aria-hidden="true"
          x-data="{
-             original_value: @entangle('formData.original_value'),
-             commission_value: @entangle('formData.commission_value'),
-             commission_tax: @entangle('formData.commission_tax'),
-             value_inc_vat: 0,
-             total_value: 0,
+              original_value: @entangle('formData.original_value'),
+              commission_value: @entangle('formData.commission_value'),
+              commission_tax: @entangle('formData.commission_tax'),
+              commission_tax_manual: @entangle('commissionTaxManual').live,
+              value_inc_vat: 0,
+              total_value: 0,
 
              parseMoney(val) {
                  if (val === null || val === undefined) return 0;
@@ -405,16 +406,20 @@
                  return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
              },
 
-             isCommissionTaxManual() {
-                 return this.parseMoney(this.commission_value) > 5000000;
-             },
+              isCommissionTaxManual() {
+                  return this.commission_tax_manual || this.parseMoney(this.commission_value) > 5000000;
+              },
 
              recalculate() {
                  let orig = this.parseMoney(this.original_value);
-                 let comm = this.parseMoney(this.commission_value);
-                 let tax = 0;
+                  let comm = this.parseMoney(this.commission_value);
+                  let tax = 0;
 
-                 if (this.isCommissionTaxManual()) {
+                  if (comm > 5000000) {
+                      this.commission_tax_manual = true;
+                  }
+
+                  if (this.isCommissionTaxManual()) {
                      tax = this.parseMoney(this.commission_tax);
                  } else {
                      if (comm <= 1000000) {
@@ -430,10 +435,11 @@
              }
          }"
          x-init="
-             $watch('original_value', () => recalculate());
-             $watch('commission_value', () => recalculate());
-             $watch('commission_tax', () => recalculate());
-             recalculate();
+              $watch('original_value', () => recalculate());
+              $watch('commission_value', () => recalculate());
+              $watch('commission_tax', () => recalculate());
+              $watch('commission_tax_manual', () => recalculate());
+              recalculate();
          ">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
@@ -551,7 +557,20 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-bold">Thuế HH</label>
+                                <div class="d-flex align-items-center justify-content-between gap-2">
+                                    <label class="form-label fw-bold">Thuế HH</label>
+                                    <div class="form-check form-check-inline me-0 mb-2">
+                                        <input
+                                            id="commission-tax-manual"
+                                            type="checkbox"
+                                            class="form-check-input"
+                                            x-model="commission_tax_manual"
+                                            x-bind:disabled="parseMoney(commission_value) > 5000000">
+                                        <label class="form-check-label small text-nowrap" for="commission-tax-manual">
+                                            Tự nhập
+                                        </label>
+                                    </div>
+                                </div>
                                 <div class="input-group">
                                     <!-- Readonly Input (Auto-calculated) -->
                                     <template x-if="!isCommissionTaxManual()">
@@ -571,6 +590,9 @@
                                 </div>
                                 <template x-if="!isCommissionTaxManual()">
                                     <small class="text-muted">Tự tính 20%–30%</small>
+                                </template>
+                                <template x-if="isCommissionTaxManual()">
+                                    <small class="text-muted">Nhập thuế hoa hồng thủ công</small>
                                 </template>
                             </div>
                             <div class="col-md-3">

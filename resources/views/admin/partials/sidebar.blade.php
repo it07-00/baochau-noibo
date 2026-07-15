@@ -494,3 +494,154 @@
 
     </div>
 </div>
+                                            <a href="{{ route('app.hr.index') }}"
+                                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.hr.*') ? 'menu-current active' : '' }}">
+                                                <span class="menu-icon flex-shrink-0">
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </span>
+                                                <span class="menu-title flex-grow-1">Quản lý nhân sự</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('cham-cong.view')
+                                        <li>
+                                            <a href="{{ route('app.attendance.index') }}"
+                                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.index') ? 'menu-current active' : '' }}">
+                                                <span class="menu-icon flex-shrink-0">
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                                        <path d="M3 10H21" stroke="currentColor" stroke-width="1.5"/>
+                                                        <path d="M8 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                        <path d="M16 2V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                        <path d="M9 15L11 17L15 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </span>
+                                                <span class="menu-title flex-grow-1">Chấm công</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('cham-cong.edit')
+                                        <li>
+                                            <a href="{{ route('app.attendance.employees') }}"
+                                                class="menu-link d-flex align-items-center {{ request()->routeIs('app.attendance.employees') ? 'menu-current active' : '' }}">
+                                                <span class="menu-icon flex-shrink-0">
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+                                                        <path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                    </svg>
+                                                </span>
+                                                <span class="menu-title flex-grow-1">NV chấm công</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                        @endif
+                @endif
+
+                @if (auth()->user()->hasRole(\App\Enums\Role::IT->value))
+                    @can('daily-reports.view')
+                        <li class="app-sidebar-menu-heading">
+                            <span>
+                                <span class="app-sidebar-menu-heading-line"></span>
+                                NGHIỆP VỤ
+                            </span>
+                        </li>
+                        <li class="app-sidebar-menu-item">
+                            <a href="{{ route('app.daily-reports.index') }}"
+                                class="menu-link d-flex align-items-center {{ \App\Support\SidebarMenu::activeGroup(auth()->user()) === 'Báo cáo ngày' ? 'active' : '' }}">
+                                <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon('report') !!}</span>
+                                <span class="menu-title flex-grow-1">Báo cáo ngày</span>
+                            </a>
+                        </li>
+                    @endcan
+                @endif
+
+                @unless (auth()->user()->hasRole(\App\Enums\Role::IT->value))
+                    @foreach (\App\Support\SidebarMenu::groupedBySection(auth()->user()) as $section => $sectionMenus)
+                        <li class="app-sidebar-menu-heading">
+                            <span>
+                                <span class="app-sidebar-menu-heading-line"></span>
+                                {{ $section }}
+                            </span>
+                        </li>
+
+                        @foreach ($sectionMenus as $menu)
+                            @can($menu['permission'])
+                                <li class="app-sidebar-menu-item">
+                                    @if (isset($menu['href']))
+                                        <a href="{{ $menu['href'] }}"
+                                            class="menu-link d-flex align-items-center {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'active' : '' }}">
+                                            <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon($menu['icon']) !!}</span>
+                                            <span class="menu-title flex-grow-1">{{ $menu['title'] }}</span>
+                                        </a>
+                                    @else
+                                        <a href="javascript:void(0)"
+                                            class="menu-link d-flex align-items-center {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'active' : '' }}">
+                                            <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::icon($menu['icon']) !!}</span>
+                                            <span class="menu-title flex-grow-1">
+                                                {{ $menu['title'] }}
+                                                <span class="menu-arrow">{!! \App\Support\SidebarMenu::icon('chevron') !!}</span>
+                                            </span>
+                                        </a>
+
+                                        <ul class="app-sidebar-submenu"
+                                            style="display: {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) ? 'block' : 'none' }};">
+                                            @foreach ($menu['children'] as $child)
+                                                @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
+                                                @continue($child === 'Tạo báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles()]))
+                                                @continue($child === 'Đăng ký mục tiêu doanh số' && !auth()->user()->hasAnyRole(\App\Enums\Role::salesRoles()))
+
+                                                <li>
+                                                    <a href="{{ \App\Support\SidebarMenu::childHref($menu['title'], $child) }}"
+                                                        class="menu-link d-flex align-items-center {{ $menu['title'] === \App\Support\SidebarMenu::activeGroup(auth()->user()) && $child === \App\Support\SidebarMenu::activeChild(auth()->user()) ? 'menu-current active' : '' }}">
+                                                        <span class="menu-icon flex-shrink-0">{!! \App\Support\SidebarMenu::childIcon($menu['title'], $menu['section']) !!}</span>
+                                                        <span class="menu-title flex-grow-1">{{ \App\Support\SidebarMenu::childLabel($menu['title'], $child) }}</span>
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </li>
+                            @endcan
+                        @endforeach
+                    @endforeach
+                @endunless
+                @endif
+            </ul>
+        </div>
+
+        <div class="app-sidebar-footer">
+            <div class="d-flex align-items-center justify-content-between w-100 mb-2">
+                <a href="{{ auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value) ? route('app.daily-reports.index') : route('app.profile.index') }}" class="d-flex align-items-center gap-3 text-decoration-none flex-grow-1 overflow-hidden profile-link">
+                    <div class="avatar flex-shrink-0">
+                        <x-user-avatar :user="auth()->user()" :size="40" class="border border-2 border-white border-opacity-10" />
+                    </div>
+                    <div class="overflow-hidden">
+                        <h6 class="mb-0 text-white text-truncate fw-bold">{{ auth()->user()->name ?? 'Người dùng' }}</h6>
+                        <span class="profile-role text-truncate d-block">{{ \App\Support\SidebarMenu::roleLabel(auth()->user()) }}</span>
+                    </div>
+                </a>
+                <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" class="d-none">
+                    @csrf
+                </form>
+                <a href="javascript:void(0)"
+                   onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"
+                   class="btn-logout-sidebar ms-2"
+                   title="Đăng xuất">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
