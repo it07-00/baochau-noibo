@@ -116,6 +116,7 @@ class CommissionRequestManager extends Component
     {
         return $user && $user->hasAnyRole([
             Role::GIAM_DOC->value,
+            Role::TP_KINH_DOANH->value,
             Role::KE_TOAN->value,
             Role::IT->value,
         ]);
@@ -159,7 +160,7 @@ class CommissionRequestManager extends Component
         if (in_array($request->status, [
             CommissionRequestStatus::DA_DUYET->value,
             CommissionRequestStatus::DA_CHI->value,
-        ], true) && !$isAccountant) {
+        ], true) && ! $isAccountant) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể xóa yêu cầu đã được duyệt hoặc đã chi.']);
 
             return;

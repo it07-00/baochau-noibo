@@ -235,6 +235,32 @@ class CommissionRequestManagerTest extends TestCase
             ->assertSet('viewingRequestId', $requestB->id);
     }
 
+    public function test_sales_manager_can_see_and_open_all_requests(): void
+    {
+        $salesManager = User::factory()->create(['is_active' => true]);
+        $salesManager->assignRole(RoleEnum::TP_KINH_DOANH->value);
+
+        $anotherSalesUser = User::factory()->create(['is_active' => true]);
+        $anotherSalesUser->assignRole(RoleEnum::KINH_DOANH->value);
+
+        $otherRequest = CommissionRequest::create([
+            'user_id' => $anotherSalesUser->id,
+            'contract_type' => ContractWaste::class,
+            'contract_id' => $this->contract->id,
+            'receiver_name' => 'REQUEST VISIBLE TO SALES MANAGER',
+            'amount' => 1000000,
+            'status' => 'Dự chi',
+        ]);
+
+        $this->actingAs($salesManager);
+
+        Livewire::test(CommissionRequestManager::class)
+            ->assertSee('REQUEST VISIBLE TO SALES MANAGER')
+            ->call('viewRequest', $otherRequest->id)
+            ->assertSet('viewingRequestId', $otherRequest->id)
+            ->assertDispatched('open-view-modal');
+    }
+
     public function test_accountant_approval_moves_estimate_to_approved_not_paid(): void
     {
         $request = CommissionRequest::create([
