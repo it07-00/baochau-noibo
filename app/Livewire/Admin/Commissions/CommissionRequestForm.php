@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Commissions;
 
 use App\Enums\CommissionRequestStatus;
 use App\Enums\ContractType;
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Models\CommissionRequest;
@@ -55,7 +56,12 @@ class CommissionRequestForm extends Component
         if ($id) {
             abort_if(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403, 'Kế toán không được sửa yêu cầu chi hoa hồng.');
 
-            $request = CommissionRequest::where('user_id', auth()->id())->findOrFail($id);
+            $canEditAnyRequest = auth()->check()
+                && auth()->user()->can(Permission::COMMISSIONS_EDIT->value);
+
+            $request = CommissionRequest::query()
+                ->when(! $canEditAnyRequest, fn ($query) => $query->where('user_id', auth()->id()))
+                ->findOrFail($id);
             abort_if(
                 in_array($request->status, [
                     CommissionRequestStatus::DA_DUYET->value,
@@ -211,7 +217,7 @@ class CommissionRequestForm extends Component
 
         if ($this->requestId) {
             $isOwner = $existing->user_id === auth()->id();
-            $hasEditPermission = auth()->user()->can('commissions.edit');
+            $hasEditPermission = auth()->user()->can(Permission::COMMISSIONS_EDIT->value);
             abort_unless($isOwner || $hasEditPermission, 403);
         } else {
             abort_unless(auth()->user()->can('commissions.create'), 403);

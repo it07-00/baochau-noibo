@@ -147,7 +147,7 @@ Trong form tạo tài liệu báo giá, ô “Chỉ tiêu / Nội dung chi tiế
 Luồng hiện tại:
 
 - kinh doanh tạo yêu cầu;
-- TPKD xem được toàn bộ yêu cầu chi hoa hồng; nhân viên kinh doanh chỉ xem yêu cầu do chính mình tạo;
+- TPKD xem được toàn bộ yêu cầu chi hoa hồng và có thể sửa yêu cầu chưa duyệt/đã bị từ chối theo quyền `commissions.edit`; nhân viên kinh doanh chỉ xem yêu cầu do chính mình tạo;
 - kế toán nhận notification yêu cầu mới;
 - kế toán duyệt, từ chối hoặc xác nhận đã chi theo quyền;
 - người tạo nhận notification khi trạng thái thay đổi;
