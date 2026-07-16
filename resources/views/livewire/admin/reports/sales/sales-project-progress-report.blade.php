@@ -147,16 +147,6 @@
             </section>
         @endforeach
     </div>
-    @if($items->hasPages())
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-                <span class="text-muted small">
-                    Hiển thị {{ $items->firstItem() }}–{{ $items->lastItem() }} trong {{ number_format($items->total()) }} hợp đồng
-                </span>
-                {{ $items->links('livewire.admin.users.pagination') }}
-            </div>
-        </div>
-    @endif
 
     {{-- Danh sách dạng bảng cũ được giữ ẩn để không ảnh hưởng modal và phân trang --}}
     <div class="card mb-3 overflow-hidden d-none">

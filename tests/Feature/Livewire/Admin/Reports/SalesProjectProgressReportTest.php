@@ -315,7 +315,7 @@ class SalesProjectProgressReportTest extends TestCase
             ->assertSee('Đang thực hiện');
     }
 
-    public function test_pipeline_paginates_ten_contracts_and_keeps_summary_for_all_results(): void
+    public function test_pipeline_displays_all_contracts_and_keeps_summary_for_all_results(): void
     {
         $manager = User::factory()->create([
             'department_id' => $this->department->id,
@@ -348,7 +348,7 @@ class SalesProjectProgressReportTest extends TestCase
                 && $items->total() === 11)
             ->assertViewHas('summary', fn ($summary): bool => $summary->total === 11
                 && $summary->not_started === 11)
-            ->assertViewHas('pipeline', fn (array $pipeline): bool => collect($pipeline)->flatten(1)->count() === 10);
+            ->assertViewHas('pipeline', fn (array $pipeline): bool => collect($pipeline)->flatten(1)->count() === 11);
     }
 
     public function test_assigned_staff_filter_works(): void

@@ -317,7 +317,7 @@ class SalesProjectProgressReport extends Component
         $currentItems = array_slice($allRows, ($currentPage - 1) * $perPage, $perPage);
         $pipeline = collect(ContractWorkflowStep::STEP_KEYS)
             ->mapWithKeys(fn (string $stepKey): array => [
-                $stepKey => collect($currentItems)
+                $stepKey => collect($allRows)
                     ->where('current_step_key', $stepKey)
                     ->values()
                     ->all(),
