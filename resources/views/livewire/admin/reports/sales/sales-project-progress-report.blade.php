@@ -511,11 +511,21 @@
     @push('scripts')
         <script>
             window.addEventListener('open-detail-modal', () => {
-                let modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('detailModal'));
                 modal.show();
             });
             window.addEventListener('openAssignModal', () => {
-                new bootstrap.Modal(document.getElementById('assignModalReport')).show();
+                let detailEl = document.getElementById('detailModal');
+                let detailModal = bootstrap.Modal.getInstance(detailEl);
+                if (detailModal) {
+                    detailModal.hide();
+                }
+
+                setTimeout(() => {
+                    let modalElement = document.getElementById('assignModalReport');
+                    let modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
+                }, 200);
             });
             Livewire.on('closeAssignModal', () => {
                 let modalElement = document.getElementById('assignModalReport');
