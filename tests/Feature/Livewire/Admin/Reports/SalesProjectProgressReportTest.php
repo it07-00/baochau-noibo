@@ -228,6 +228,44 @@ class SalesProjectProgressReportTest extends TestCase
             ->assertViewHas('summary', fn ($summary): bool => $summary->total === 1);
     }
 
+    public function test_workflow_status_is_used_when_step_history_is_missing(): void
+    {
+        $manager = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
+        $manager->assignRole(RoleEnum::TP_KINH_DOANH->value);
+
+        $customer = Customer::create(['name' => 'Khách hàng có trạng thái tiến độ']);
+        $handler = Handler::create(['name' => 'Nhà thầu có trạng thái tiến độ']);
+        ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
+            'loai_dich_vu' => 'Quan trắc định kỳ',
+            'workflow_status' => 'consulting_processing',
+            'value' => 100_000_000,
+            'signed_at' => '2026-05-10',
+            'submitted_at' => '2026-05-10',
+        ]);
+
+        $this->actingAs($manager);
+
+        Livewire::test(SalesProjectProgressReport::class)
+            ->set('year', 2026)
+            ->assertViewHas('items', function ($items): bool {
+                $item = $items->items()[0];
+
+                return $item['workflow_progress']['completed_count'] === 3
+                    && $item['workflow_progress']['percent'] === 50.0
+                    && $item['current_step_key'] === 'waiting_client';
+            })
+            ->assertViewHas('summary', fn ($summary): bool => $summary->not_started === 0
+                && $summary->active === 1)
+            ->assertViewHas('pipeline', fn (array $pipeline): bool => count($pipeline['waiting_client']) === 1);
+    }
+
     public function test_report_uses_contract_tabs_and_six_workflow_columns(): void
     {
         $manager = User::factory()->create([

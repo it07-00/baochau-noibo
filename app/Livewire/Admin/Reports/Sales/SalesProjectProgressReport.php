@@ -118,6 +118,11 @@ class SalesProjectProgressReport extends Component
             }
         }
 
+        if ($completedCount === 0 && $completedSteps === []) {
+            $completedCount = $this->completedCountFromWorkflowStatus($contract->workflow_status);
+            $currentStep = $completedCount > 0 ? ($stepKeys[$completedCount - 1] ?? null) : null;
+        }
+
         return [
             'completed_count' => $completedCount,
             'total_steps' => $totalSteps,
@@ -135,12 +140,15 @@ class SalesProjectProgressReport extends Component
         );
         $labels = $isTechnical ? ContractWorkflowStep::STEPS_TECHNICAL : ContractWorkflowStep::STEPS;
         $recordsByStep = $contract->workflowSteps->groupBy('step_name');
+        $fallbackCompletedCount = $recordsByStep->isEmpty()
+            ? $this->completedCountFromWorkflowStatus($contract->workflow_status)
+            : 0;
         $firstPendingFound = false;
 
         return collect(ContractWorkflowStep::STEP_KEYS)
-            ->map(function (string $key) use ($labels, $recordsByStep, &$firstPendingFound): array {
+            ->map(function (string $key, int $index) use ($labels, $recordsByStep, $fallbackCompletedCount, &$firstPendingFound): array {
                 $record = $recordsByStep->get($key)?->sortByDesc('created_at')->first();
-                $isCompleted = $record !== null;
+                $isCompleted = $record !== null || $index < $fallbackCompletedCount;
                 $isCurrent = ! $isCompleted && ! $firstPendingFound;
 
                 if ($isCurrent) {
@@ -156,6 +164,19 @@ class SalesProjectProgressReport extends Component
                 ];
             })
             ->all();
+    }
+
+    private function completedCountFromWorkflowStatus(?string $status): int
+    {
+        return match ($status) {
+            'receiving' => 1,
+            'survey', 'consulting_survey' => 2,
+            'processing', 'consulting_processing' => 3,
+            'waiting_client' => 4,
+            'client_confirmed' => 5,
+            'finished', 'pending_accounting' => 6,
+            default => 0,
+        };
     }
 
     private function collectContracts(): array
