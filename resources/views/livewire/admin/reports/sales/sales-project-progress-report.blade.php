@@ -292,6 +292,11 @@
                                     <i class="fa-solid fa-list-check me-1"></i>Tiến độ thực hiện
                                 </button>
                             </li>
+                            <li class="nav-item">
+                                <button class="nav-link fw-bold border-bottom-0" :class="{ 'active text-primary': tab === 'docs' }" @click="tab = 'docs'" type="button">
+                                    <i class="fa-solid fa-paperclip me-1"></i>Tài liệu đính kèm
+                                </button>
+                            </li>
                         </ul>
 
                         <div class="tab-content p-4">
@@ -450,6 +455,44 @@
                                         @endforeach
                                     </div>
                                 </div>
+                            </div>
+
+                            {{-- Tab 3: Contract Files --}}
+                            <div class="tab-pane fade" :class="{ 'show active': tab === 'docs' }">
+                                @php
+                                    $contractFiles = $selectedContract->milestoneFiles->whereNull('milestone');
+                                @endphp
+                                <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-paperclip me-2"></i>Danh sách tài liệu hợp đồng</h6>
+                                @if($contractFiles->count() > 0)
+                                    <div class="d-flex flex-column gap-2">
+                                        @foreach($contractFiles as $file)
+                                            @php
+                                                $ext = pathinfo($file->original_name, PATHINFO_EXTENSION);
+                                                $iconClass = match(strtolower($ext)) {
+                                                    'pdf' => 'fa-file-pdf text-danger',
+                                                    'xls', 'xlsx' => 'fa-file-excel text-success',
+                                                    'doc', 'docx' => 'fa-file-word text-primary',
+                                                    'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp' => 'fa-file-image text-info',
+                                                    'zip', 'rar' => 'fa-file-zipper text-warning',
+                                                    default => 'fa-file text-secondary'
+                                                };
+                                            @endphp
+                                            <div class="d-flex align-items-center gap-3 border rounded p-3 bg-light">
+                                                <i class="fa-regular {{ $iconClass }} fs-4"></i>
+                                                <div class="flex-grow-1 min-w-0">
+                                                    <a href="{{ $file->file_url }}" target="_blank" class="text-primary text-decoration-none fw-bold text-truncate d-block" title="{{ $file->original_name }}">
+                                                        {{ $file->original_name }}
+                                                    </a>
+                                                    <span class="text-muted text-xs">
+                                                        Tải lên bởi: {{ $file->uploader?->name ?? 'Hệ thống' }} · {{ $file->created_at?->format('d/m/Y H:i') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="border border-dashed rounded-3 p-4 text-center text-muted">Chưa có tài liệu đính kèm cho hợp đồng này.</div>
+                                @endif
                             </div>
                         </div>
                     </div>
