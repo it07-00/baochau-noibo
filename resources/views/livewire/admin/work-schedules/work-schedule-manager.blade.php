@@ -80,7 +80,7 @@
                             wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                             <span class="ws-agenda-event-title">{{ $evt->title }}</span>
                             <span class="ws-agenda-event-people">{{ $evt->time_range_label }}</span>
-                            <span class="ws-agenda-event-people">{{ $evt->participants->pluck('name')->join(', ') }}</span>
+                            <span class="ws-agenda-event-people">{{ collect($evt->combined_participants)->pluck('name')->join(', ') }}</span>
                         </button>
                     @endforeach
                 </div>
@@ -163,16 +163,16 @@
                                     @endif
                                     {{ $evt->title }}
                                 </div>
-                                @if($evt->participants->isNotEmpty() && !($evt->user_id && $evt->participants->count() === 1 && (int) $evt->participants->first()->id === (int) $evt->user_id))
+                                @if(collect($evt->combined_participants)->isNotEmpty() && !($evt->user_id && collect($evt->combined_participants)->count() === 1 && (int) collect($evt->combined_participants)->first()['id'] === (int) $evt->user_id && collect($evt->combined_participants)->first()['system'] === 'baochau'))
                                     <div class="text-muted text-truncate"
                                         style="font-size: 0.62rem; margin-top: 1px; color: #64748b;"
-                                        title="{{ $evt->participants->pluck('name')->join(', ') }}">
+                                        title="{{ collect($evt->combined_participants)->pluck('name')->join(', ') }}">
                                         •
-                                        @if($evt->participants->count() > 2)
-                                            {{ $evt->participants->take(2)->pluck('name')->join(', ') }}
-                                            +{{ $evt->participants->count() - 2 }}
+                                        @if(collect($evt->combined_participants)->count() > 2)
+                                            {{ collect($evt->combined_participants)->take(2)->pluck('name')->join(', ') }}
+                                            +{{ collect($evt->combined_participants)->count() - 2 }}
                                         @else
-                                            {{ $evt->participants->pluck('name')->join(', ') }}
+                                            {{ collect($evt->combined_participants)->pluck('name')->join(', ') }}
                                         @endif
                                     </div>
                                 @endif
@@ -353,9 +353,10 @@
                     <label class="form-label fw-bold text-muted"><i class="fa-solid fa-users me-1"></i>Người tham gia
                         <span class="fw-normal text-muted">(tùy chọn)</span></label>
                     <div class="border rounded-3 p-2 border-light-subtle"
-                        style="max-height: 160px; overflow-y: auto; border-radius: 8px !important;">
+                        style="max-height: 220px; overflow-y: auto; border-radius: 8px !important;">
+                        <div class="small fw-bold text-primary mb-1 border-bottom pb-1"><i class="fa-solid fa-building me-1"></i>Bảo Châu</div>
                         @foreach($allUsers as $u)
-                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88"
+                            <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88 mb-1"
                                 onmouseover="this.style.background='#f1f5f9'"
                                 onmouseout="this.style.background='transparent'">
                                 <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
@@ -363,6 +364,19 @@
                                 <span>{{ $u->name }}@if($u->id === auth()->id()) (Bạn) @endif</span>
                             </label>
                         @endforeach
+
+                        @if(!empty($greecoUsers))
+                            <div class="small fw-bold text-success mt-2 mb-1 border-bottom pb-1"><i class="fa-solid fa-leaf me-1"></i>Greeco</div>
+                            @foreach($greecoUsers as $gu)
+                                <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88 mb-1"
+                                    onmouseover="this.style.background='#f1f5f9'"
+                                    onmouseout="this.style.background='transparent'">
+                                    <input type="checkbox" wire:model="selectedParticipants" value="greeco_{{ $gu['id'] }}"
+                                        class="form-check-input m-0 rounded-1">
+                                    <span>{{ $gu['name'] }} ({{ $gu['department'] ?? 'Greeco' }})</span>
+                                </label>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
 

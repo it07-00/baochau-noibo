@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\WorkSchedule;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -49,8 +52,8 @@ final class WorkScheduleApiController extends Controller
             ->get();
 
         $splitEvents = collect();
-        $qStart = \Carbon\Carbon::parse($startDate);
-        $qEnd = \Carbon\Carbon::parse($endDate);
+        $qStart = Carbon::parse($startDate);
+        $qEnd = Carbon::parse($endDate);
 
         foreach ($events as $event) {
             $eventStart = $event->start_date;
@@ -61,12 +64,12 @@ final class WorkScheduleApiController extends Controller
                 $overlapEnd = $eventEnd->lt($qEnd) ? $eventEnd : $qEnd;
 
                 if ($overlapStart->lte($overlapEnd)) {
-                    $period = \Carbon\CarbonPeriod::create($overlapStart, $overlapEnd);
+                    $period = CarbonPeriod::create($overlapStart, $overlapEnd);
                     foreach ($period as $date) {
                         $clone = $event->replicate();
                         $clone->setIncrementing(false);
                         $clone->setKeyType('string');
-                        $clone->id = $event->id . '_' . $date->format('Y-m-d');
+                        $clone->id = $event->id.'_'.$date->format('Y-m-d');
                         $clone->start_date = $date->copy();
                         $clone->end_date = null;
 
@@ -96,9 +99,9 @@ final class WorkScheduleApiController extends Controller
                 'end_time' => $event->formatted_end_time,
                 'color' => $event->color,
                 'creator_name' => $event->user?->name ?? 'N/A',
-                'participants' => $event->participants->map(fn ($p) => [
-                    'id' => $p->id,
-                    'name' => $p->name,
+                'participants' => collect($event->combined_participants)->map(fn ($p) => [
+                    'id' => $p['id'],
+                    'name' => $p['name'],
                 ])->toArray(),
             ];
         });
@@ -106,6 +109,38 @@ final class WorkScheduleApiController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data->toArray(),
+        ]);
+    }
+
+    /**
+     * Return all active users as JSON for cross-system participant selection.
+     *
+     * GET /api/users?token=xxx
+     */
+    public function users(Request $request): JsonResponse
+    {
+        $request->validate([
+            'token' => ['required', 'string'],
+        ]);
+
+        if ($request->input('token') !== config('services.greeco.api_token')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $users = User::query()
+            ->with('department')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'department' => $u->department?->name ?? 'Nhân viên',
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $users->toArray(),
         ]);
     }
 }
