@@ -464,10 +464,10 @@
 
     {{-- Assignment Modal --}}
     <div wire:ignore.self class="modal fade" id="assignModalReport" tabindex="-1" aria-labelledby="assignModalReportLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-success text-white py-3">
-                    <h5 class="modal-title fw-bold" id="assignModalReportLabel">
+                    <h5 class="modal-title fw-bold text-white" id="assignModalReportLabel">
                         <i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
