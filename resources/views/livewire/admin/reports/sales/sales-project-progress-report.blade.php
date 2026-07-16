@@ -511,8 +511,10 @@
     @push('scripts')
         <script>
             window.addEventListener('open-detail-modal', () => {
-                let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('detailModal'));
-                modal.show();
+                setTimeout(() => {
+                    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('detailModal'));
+                    modal.show();
+                }, 200);
             });
             window.addEventListener('openAssignModal', () => {
                 let detailEl = document.getElementById('detailModal');
