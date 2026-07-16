@@ -51,9 +51,11 @@
             @endif
 
             @foreach($notificationSections as $section)
-                <div class="border-bottom" x-data="{ open: {{ $this->sectionUnreadCount($section) > 0 ? 'true' : 'false' }} }">
+                <div class="border-bottom"
+                     x-data="notifSection({{ $this->sectionUnreadCount($section) > 0 ? 'true' : 'false' }}, '{{ $loop->index }}')"
+                     x-init="init()">
                     <button type="button" class="notification-section-toggle w-100 px-3 py-2 bg-light-subtle border-0 d-flex align-items-center justify-content-between gap-2"
-                        @click="open = !open">
+                        @click="toggle()">
                         <span class="notification-section-title fw-semibold text-uppercase text-start">{{ $section['label'] }}</span>
                         <div class="notification-section-meta d-flex align-items-center gap-2">
                             <span class="badge {{ $this->sectionUnreadCount($section) > 0 ? 'bg-danger' : 'bg-secondary' }} rounded-pill">{{ $section['items']->count() }}</span>
@@ -199,5 +201,39 @@
                 new bootstrap.Modal(el).show();
             });
         })();
+
+        /**
+         * notifSection — Alpine component for collapsible notification sections.
+         *
+         * Persists open/closed state in sessionStorage so Livewire re-renders
+         * (e.g., wire:poll.15s) do not forcibly re-open sections the user has
+         * manually closed.
+         *
+         * @param {boolean} defaultOpen  — true when section has unread items (server-side)
+         * @param {string}  key          — unique key (loop index) to identify this section
+         */
+        function notifSection(defaultOpen, key) {
+            return {
+                open: false,
+                _storageKey: 'notif_section_' + key,
+
+                init() {
+                    const stored = sessionStorage.getItem(this._storageKey);
+                    if (stored === null) {
+                        // First render: use server default (open if unread)
+                        this.open = defaultOpen;
+                    } else {
+                        // Restore what the user last chose
+                        this.open = stored === '1';
+                    }
+                },
+
+                toggle() {
+                    this.open = !this.open;
+                    sessionStorage.setItem(this._storageKey, this.open ? '1' : '0');
+                },
+            };
+        }
     </script>
 @endonce
+
