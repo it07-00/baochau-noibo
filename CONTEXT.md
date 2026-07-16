@@ -75,6 +75,7 @@ Middleware tùy chỉnh:
 | Hoa hồng | `Commissions/CommissionRequestForm/Manager` | `CommissionRequest` |
 | Dòng tiền | `Finance/CashFlowDashboard` | hợp đồng, `ContractPaymentSchedule` |
 | Báo cáo | `Reports/{Sales,Consulting,Technical,Marketing}` | query tổng hợp |
+| Báo cáo xu hướng | `Reports/PotentialTrendsReport`, route `/bao-cao` | `PotentialTrendsReportService`, sáu model hợp đồng và `Quotation` |
 | Báo cáo ngày | `DailyReports/DailyReportManager` | `DailyReport` |
 | Lịch công tác | `WorkSchedules/WorkScheduleManager` | `WorkSchedule` |
 | Nhân sự | `Hr/HrProfileManager` | `User`, `EmployeeContract`, `EmployeeDocument` |
@@ -83,6 +84,15 @@ Middleware tùy chỉnh:
 | Chuyển phát | `PostalDeliveries/PostalDeliveryManager` | `PostalDelivery` |
 | Nội bộ | `InternalDocs/*`, `InternalNotifications/*` | `InternalDoc`, `InternalSoftware` |
 | Quản trị | `Users`, `Roles`, `Departments`, `Handlers` | `User`, `Department`, `Handler` |
+
+### Báo cáo xu hướng tiềm năng
+
+- Route `/bao-cao` dùng permission `reports-sales.view`. `IT`, `Giám đốc` và `TP Kinh doanh` được xem toàn bộ nhân sự; tài khoản khác luôn bị khóa phạm vi query về chính mình, kể cả khi sửa query string.
+- Cơ hội và tỷ lệ chuyển đổi lấy từ `quotations.date`; trạng thái thành công là `QuotationStatus::KY_HOP_DONG`. Giá trị tiềm năng ưu tiên `total_value`, rồi `value_inc_vat`, rồi `original_value` ở các trạng thái đang theo dõi/hẹn/tiềm năng.
+- Doanh thu chỉ cộng `revenue` của hợp đồng đã có `submitted_at`; số hợp đồng ký và giá trị hợp đồng dùng `signed_at`. Sáu loại hợp đồng vẫn được tổng hợp từ sáu model/bảng riêng.
+- Điểm tiềm năng dịch vụ dùng trọng số chuyển đổi/tăng trưởng/giá trị/quy mô `30/30/25/15`; điểm khu vực dùng `35/25/20/20`. Các trọng số nằm trong `config/analytics.php` để có thể hiệu chỉnh mà không đổi query.
+- Báo cáo cache 5 phút theo người xem và bộ lọc. Bộ lọc, CSV export và dữ liệu biểu đồ dùng cùng một service để không lệch số liệu.
+- Dữ liệu lịch sử có thể còn trạng thái `Mất đơn`; báo cáo xem đây là trạng thái rớt cùng với enum chuẩn `Rớt báo giá` và hiển thị cảnh báo chất lượng khi thiếu dịch vụ/khu vực.
 
 ## 5. Mô hình hợp đồng
 

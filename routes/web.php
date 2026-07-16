@@ -43,6 +43,7 @@ use App\Livewire\Admin\Reports\Consulting\ConsultingAchievementReport;
 use App\Livewire\Admin\Reports\Consulting\ConsultingContractReport;
 use App\Livewire\Admin\Reports\Marketing\MarketingSummaryReport;
 use App\Livewire\Admin\Reports\Marketing\MarketingTargetReport;
+use App\Livewire\Admin\Reports\PotentialTrendsReport;
 use App\Livewire\Admin\Reports\Sales\PersonalSalesReport;
 use App\Livewire\Admin\Reports\Sales\SalesProjectProgressReport;
 use App\Livewire\Admin\Reports\Sales\SalesSummaryReport;
@@ -204,6 +205,10 @@ Route::middleware(['auth', 'active', 'intern.daily-report'])->name('app.')->grou
     });
 
     // Báo cáo Kinh doanh
+    Route::get('bao-cao', PotentialTrendsReport::class)
+        ->name('reports.index')
+        ->middleware(Permission::toMiddleware(Permission::REPORTS_SALES_VIEW));
+
     Route::prefix('bao-cao/kinh-doanh')->name('reports.sales.')->middleware(Permission::toMiddleware(Permission::REPORTS_SALES_VIEW))->group(function () {
         Route::get('tong-hop', SalesSummaryReport::class)->name('summary');
         Route::get('chi-tieu', SalesTargetReport::class)->name('target');

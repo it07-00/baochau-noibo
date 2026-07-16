@@ -3,7 +3,14 @@
 namespace App\Livewire\Admin\Reports\Sales;
 
 use App\Enums\Role;
+use App\Models\ContractEmission;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
+use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
+use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -15,25 +22,27 @@ class SalesProjectProgressReport extends Component
     use WithPagination;
 
     public int $year;
+
     public array $years = [];
-    public string $filter_department = 'all'; // all | consulting | technical
-    public string $filter_contract_type = 'all'; // all | waste | consulting | project | commercial | sustainability | energy
-    public string $filter_status = 'all'; // all | not_started | in_progress | finished
+
+    public string $filter_contract_type = 'waste'; // waste | consulting | project | commercial | sustainability | energy
+
     public string $filter_staff_id = 'all'; // all | user_id
-    public string $search = '';
+
+    public string $filter_service = 'all';
 
     // Selected contract properties for the detail modal
     public $selectedContract = null;
+
     public string $selectedContractSourceKey = '';
+
     public string $detailActiveTab = 'info';
 
     protected $queryString = [
         'year' => ['except' => ''],
-        'filter_department' => ['except' => 'all'],
-        'filter_contract_type' => ['except' => 'all'],
-        'filter_status' => ['except' => 'all'],
+        'filter_contract_type' => ['except' => 'waste'],
         'filter_staff_id' => ['except' => 'all'],
-        'search' => ['except' => ''],
+        'filter_service' => ['except' => 'all'],
     ];
 
     public function mount(): void
@@ -47,18 +56,17 @@ class SalesProjectProgressReport extends Component
         $this->resetPage();
     }
 
-    public function updatedFilterDepartment(): void
-    {
-        $this->resetPage();
-    }
-
     public function updatedFilterContractType(): void
     {
         $this->resetPage();
     }
 
-    public function updatedFilterStatus(): void
+    public function selectContractType(string $contractType): void
     {
+        abort_unless(array_key_exists($contractType, $this->contractSources()), 404);
+
+        $this->filter_contract_type = $contractType;
+        $this->filter_service = 'all';
         $this->resetPage();
     }
 
@@ -67,7 +75,7 @@ class SalesProjectProgressReport extends Component
         $this->resetPage();
     }
 
-    public function updatedSearch(): void
+    public function updatedFilterService(): void
     {
         $this->resetPage();
     }
@@ -75,12 +83,12 @@ class SalesProjectProgressReport extends Component
     public function contractSources(): array
     {
         return [
-            'waste' => [\App\Models\ContractWaste::class, 'BC Chất thải'],
-            'consulting' => [\App\Models\ContractLegal::class, 'Hồ sơ môi trường'],
-            'project' => [\App\Models\ContractTechnical::class, 'BC Ứng phó sự cố'],
-            'commercial' => [\App\Models\ContractResearch::class, 'BC Nghiên cứu và chuyển đổi công nghệ'],
-            'sustainability' => [\App\Models\ContractSustainability::class, 'BC Phát triển bền vững'],
-            'energy' => [\App\Models\ContractEmission::class, 'BC Giảm phát thải, tiết kiệm năng lượng'],
+            'waste' => [ContractWaste::class, 'BC Chất thải'],
+            'consulting' => [ContractLegal::class, 'Hồ sơ môi trường'],
+            'project' => [ContractTechnical::class, 'BC Ứng phó sự cố'],
+            'commercial' => [ContractResearch::class, 'BC Nghiên cứu và chuyển đổi công nghệ'],
+            'sustainability' => [ContractSustainability::class, 'BC Phát triển bền vững'],
+            'energy' => [ContractEmission::class, 'BC Giảm phát thải, tiết kiệm năng lượng'],
         ];
     }
 
@@ -120,64 +128,63 @@ class SalesProjectProgressReport extends Component
         ];
     }
 
+    private function getWorkflowMatrix($contract): array
+    {
+        $isTechnical = $contract->assignments->contains(
+            fn ($assignment): bool => $assignment->user?->hasRole(Role::KY_THUAT->value) === true,
+        );
+        $labels = $isTechnical ? ContractWorkflowStep::STEPS_TECHNICAL : ContractWorkflowStep::STEPS;
+        $recordsByStep = $contract->workflowSteps->groupBy('step_name');
+        $firstPendingFound = false;
+
+        return collect(ContractWorkflowStep::STEP_KEYS)
+            ->map(function (string $key) use ($labels, $recordsByStep, &$firstPendingFound): array {
+                $record = $recordsByStep->get($key)?->sortByDesc('created_at')->first();
+                $isCompleted = $record !== null;
+                $isCurrent = ! $isCompleted && ! $firstPendingFound;
+
+                if ($isCurrent) {
+                    $firstPendingFound = true;
+                }
+
+                return [
+                    'key' => $key,
+                    'label' => $labels[$key] ?? $key,
+                    'state' => $isCompleted ? 'completed' : ($isCurrent ? 'current' : 'pending'),
+                    'completed_at' => $record?->created_at,
+                    'completed_by' => $record?->user?->name,
+                ];
+            })
+            ->all();
+    }
+
     private function collectContracts(): array
     {
         $contractSources = $this->contractSources();
-        $sources = $this->filter_contract_type === 'all'
-            ? $contractSources
-            : [$this->filter_contract_type => $contractSources[$this->filter_contract_type]];
+        $sources = [$this->filter_contract_type => $contractSources[$this->filter_contract_type]];
 
         $rows = [];
         foreach ($sources as $key => $source) {
             [$modelClass, $label] = $source;
 
             $query = $modelClass::query()
-                ->with(['customer', 'staff', 'assignments.user', 'workflowSteps']);
+                ->with(['customer', 'staff', 'assignments.user', 'workflowSteps.user']);
 
             // Role-based salesperson visibility limit
             $user = auth()->user();
             $isKinhDoanhOnly = $user && $user->hasRole(Role::KINH_DOANH->value) &&
-                               !$user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value, Role::IT->value]);
+                               ! $user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value, Role::IT->value]);
             if ($isKinhDoanhOnly) {
                 $query->where('staff_id', $user->id);
             }
 
             // Assigned project staff filter
             if ($this->filter_staff_id !== 'all') {
-                $query->whereHas('assignments', fn($q) => $q->where('user_id', $this->filter_staff_id));
+                $query->whereHas('assignments', fn ($q) => $q->where('user_id', $this->filter_staff_id));
             }
 
             // Year filter (signed_at or submitted_at)
             $query->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year);
-
-            // Department filter (consultant or technical staff assigned)
-            if ($this->filter_department === 'consulting') {
-                $query->whereHas('assignments.user', fn($u) => $u->role(Role::TU_VAN->value));
-            } elseif ($this->filter_department === 'technical') {
-                $query->whereHas('assignments.user', fn($u) => $u->role(Role::KY_THUAT->value));
-            }
-
-            // Workflow status filter
-            if ($this->filter_status === 'not_started') {
-                $query->whereDoesntHave('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass));
-            } elseif ($this->filter_status === 'in_progress') {
-                $query->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass))
-                    ->whereDoesntHave('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'));
-            } elseif ($this->filter_status === 'finished') {
-                $query->whereHas('workflowSteps', fn ($s) => $s->where('contract_type', $modelClass)->where('step_name', 'finished'));
-            }
-
-            // Search filter
-            if ($this->search !== '') {
-                $search = '%' . $this->search . '%';
-                $query->where(function($q) use ($search) {
-                    $q->where('shd_bc', 'like', $search)
-                        ->orWhere('shd_cxl', 'like', $search)
-                        ->orWhereHas('customer', fn($cust) => $cust->where('name', 'like', $search))
-                        ->orWhereHas('staff', fn($st) => $st->where('name', 'like', $search))
-                        ->orWhereHas('assignments.user', fn($au) => $au->where('name', 'like', $search));
-                });
-            }
 
             foreach ($query->get() as $contract) {
                 // Determine departments & staffs assigned
@@ -200,11 +207,13 @@ class SalesProjectProgressReport extends Component
                 // Calculate progress
                 $completedSteps = $contract->workflowSteps->pluck('step_name')->unique()->toArray();
                 $progress = $this->getContractProgress($contract, $completedSteps);
+                $workflowMatrix = $this->getWorkflowMatrix($contract);
 
                 $rows[] = [
                     'id' => $contract->id,
                     'source_key' => $key,
-                    'type' => $label,
+                    'type' => filled($contract->loai_dich_vu) ? trim((string) $contract->loai_dich_vu) : $label,
+                    'contract_type' => $label,
                     'shd' => $contract->shd_bc ?: $contract->shd_cxl ?: '—',
                     'customer' => $contract->customer?->name ?? '—',
                     'customer_slug' => $contract->customer?->slug,
@@ -214,6 +223,9 @@ class SalesProjectProgressReport extends Component
                     'province' => $contract->province ?? '—',
                     'signed_at' => $contract->signed_at,
                     'workflow_progress' => $progress,
+                    'workflow_steps' => $workflowMatrix,
+                    'current_step_key' => collect($workflowMatrix)
+                        ->firstWhere('state', 'current')['key'] ?? 'finished',
                     'status_label' => $contract->status_label ?? $contract->status ?? '—',
                     'status_color' => $contract->status_color ?? 'secondary',
                 ];
@@ -224,6 +236,7 @@ class SalesProjectProgressReport extends Component
         usort($rows, function ($a, $b) {
             $dateA = $a['signed_at'] ? $a['signed_at']->timestamp : 0;
             $dateB = $b['signed_at'] ? $b['signed_at']->timestamp : 0;
+
             return $dateB <=> $dateA;
         });
 
@@ -234,14 +247,16 @@ class SalesProjectProgressReport extends Component
     {
         $this->selectedContractSourceKey = $sourceKey;
         $modelClass = $this->contractSources()[$sourceKey][0] ?? null;
-        if (!$modelClass) return;
+        if (! $modelClass) {
+            return;
+        }
 
         $this->selectedContract = $modelClass::with([
             'customer',
             'staff',
             'assignments.user',
             'workflowSteps.user',
-            'milestoneFiles.uploader'
+            'milestoneFiles.uploader',
         ])->findOrFail($id);
 
         $this->detailActiveTab = 'info';
@@ -250,31 +265,43 @@ class SalesProjectProgressReport extends Component
 
     public function render()
     {
-        $allRows = $this->collectContracts();
-
-        // Calculate summary counters
+        $unfilteredRows = $this->collectContracts();
+        $serviceOptions = collect($unfilteredRows)
+            ->pluck('type')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+        $allRows = $this->filter_service === 'all'
+            ? $unfilteredRows
+            : collect($unfilteredRows)->where('type', $this->filter_service)->values()->all();
         $totalContracts = count($allRows);
-        $inProgressContracts = 0;
-        $completedContracts = 0;
-
-        foreach ($allRows as $row) {
-            if ($row['workflow_progress']['percent'] == 100) {
-                $completedContracts++;
-            } elseif ($row['workflow_progress']['completed_count'] > 0) {
-                $inProgressContracts++;
-            }
-        }
-
-        $summary = (object)[
-            'total' => $totalContracts,
-            'active' => $inProgressContracts,
-            'completed' => $completedContracts
-        ];
-
+        $completedContracts = collect($allRows)
+            ->where('workflow_progress.completed_count', count(ContractWorkflowStep::STEP_KEYS))
+            ->count();
+        $notStartedContracts = collect($allRows)
+            ->where('workflow_progress.completed_count', 0)
+            ->count();
+        $inProgressContracts = collect($allRows)
+            ->filter(fn (array $row): bool => $row['workflow_progress']['completed_count'] > 0
+                && $row['workflow_progress']['completed_count'] < count(ContractWorkflowStep::STEP_KEYS))
+            ->count();
+        $overallProgress = $totalContracts > 0
+            ? round(collect($allRows)->avg('workflow_progress.percent'), 1)
+            : 0;
         // Manual Pagination
-        $perPage = 20;
+        $perPage = 10;
         $currentPage = $this->getPage();
         $currentItems = array_slice($allRows, ($currentPage - 1) * $perPage, $perPage);
+        $pipeline = collect(ContractWorkflowStep::STEP_KEYS)
+            ->mapWithKeys(fn (string $stepKey): array => [
+                $stepKey => collect($currentItems)
+                    ->where('current_step_key', $stepKey)
+                    ->values()
+                    ->all(),
+            ])
+            ->all();
         $paginatedRows = new LengthAwarePaginator(
             $currentItems,
             count($allRows),
@@ -283,17 +310,25 @@ class SalesProjectProgressReport extends Component
             ['path' => Paginator::resolveCurrentPath(), 'pageName' => 'page']
         );
 
-        $contractTypes = array_map(fn($s) => $s[1], $this->contractSources());
+        $contractTypes = array_map(fn ($s) => $s[1], $this->contractSources());
 
-        $assignedStaffs = \App\Models\User::role([Role::TU_VAN->value, Role::KY_THUAT->value])
+        $assignedStaffs = User::role([Role::TU_VAN->value, Role::KY_THUAT->value])
             ->orderBy('name')
             ->get();
 
         return view('livewire.admin.reports.sales.sales-project-progress-report', [
             'items' => $paginatedRows,
-            'summary' => $summary,
+            'summary' => (object) [
+                'total' => $totalContracts,
+                'not_started' => $notStartedContracts,
+                'active' => $inProgressContracts,
+                'completed' => $completedContracts,
+                'progress' => $overallProgress,
+            ],
+            'pipeline' => $pipeline,
+            'serviceOptions' => $serviceOptions,
             'contractTypes' => $contractTypes,
-            'assignedStaffs' => $assignedStaffs
+            'assignedStaffs' => $assignedStaffs,
         ])->layout('admin.layouts.app');
     }
 }

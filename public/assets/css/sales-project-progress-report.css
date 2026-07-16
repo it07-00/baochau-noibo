@@ -1,0 +1,216 @@
+.operation-kpi-card {
+    min-height: 7.25rem;
+}
+
+.operation-kpi-icon {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: .75rem;
+    font-size: 1.05rem;
+}
+
+.workflow-pipeline {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(17rem, 1fr));
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0 0 .75rem;
+}
+
+.workflow-pipeline-column {
+    min-width: 17rem;
+}
+
+.operation-pipeline-column {
+    min-height: 24rem;
+    border-top-width: 4px !important;
+    background: rgba(var(--bs-light-rgb), .55);
+}
+
+.operation-card-hover {
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.operation-card-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--bs-primary-rgb), .35) !important;
+    box-shadow: 0 .75rem 1.5rem rgba(15, 23, 42, .08) !important;
+}
+
+.workflow-card-progress {
+    height: .45rem;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+.text-xs {
+    font-size: .72rem;
+}
+
+.text-sm {
+    font-size: .82rem;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.workflow-summary {
+    display: flex;
+    align-items: center;
+}
+
+.workflow-summary-item {
+    min-width: 7.5rem;
+    padding: 0 1rem;
+    border-right: 1px solid var(--bs-border-color);
+    text-align: center;
+}
+
+.workflow-summary-item:last-child {
+    border-right: 0;
+}
+
+.workflow-summary-item span {
+    display: block;
+    color: var(--bs-secondary-color);
+    font-size: .75rem;
+}
+
+.workflow-summary-item strong {
+    display: block;
+    font-size: 1.25rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.workflow-overall-progress {
+    padding: .5rem 1rem .65rem;
+}
+
+.workflow-overall-progress .progress {
+    height: .5rem;
+}
+
+.workflow-matrix {
+    min-width: 88rem;
+    table-layout: fixed;
+}
+
+.workflow-matrix th,
+.workflow-matrix td {
+    font-size: .78rem;
+}
+
+.workflow-matrix thead th {
+    padding: .75rem .65rem;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.workflow-matrix tbody td {
+    padding: .75rem .65rem;
+}
+
+.workflow-contract-column {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: 19rem;
+    min-width: 19rem;
+    background: var(--bs-body-bg) !important;
+    text-align: left !important;
+}
+
+thead .workflow-contract-column {
+    z-index: 3;
+    background: var(--bs-light) !important;
+}
+
+.workflow-step-column {
+    width: 11.5rem;
+}
+
+.workflow-step-number {
+    display: inline-block;
+    margin-right: .25rem;
+    color: var(--bs-secondary-color);
+}
+
+.workflow-contract-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    color: var(--bs-secondary-color);
+    font-size: .72rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.workflow-contract-meta span + span::before {
+    margin-right: .5rem;
+    content: "•";
+}
+
+.workflow-contract-progress {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--bs-secondary-color);
+    font-size: .7rem;
+    font-weight: 700;
+}
+
+.workflow-contract-progress .progress {
+    width: 8rem;
+    height: .375rem;
+}
+
+.workflow-detail-button {
+    align-self: flex-start;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--bs-primary);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.workflow-state-meta {
+    margin-top: .3rem;
+    color: var(--bs-secondary-color);
+    font-size: .68rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.workflow-state-person {
+    max-width: 9rem;
+    margin: .15rem auto 0;
+    overflow: hidden;
+    color: var(--bs-secondary-color);
+    font-size: .65rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+    .workflow-summary {
+        width: 100%;
+    }
+
+    .workflow-summary-item {
+        flex: 1;
+        min-width: 0;
+        padding: 0 .45rem;
+    }
+
+    .workflow-contract-column {
+        width: 16rem;
+        min-width: 16rem;
+    }
+}

@@ -12,40 +12,31 @@
         </div>
     </div>
 
-    {{-- Thống kê tổng hợp --}}
-    @if($summary)
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-3">
-                    <div class="text-muted mb-1">Tổng hợp đồng</div>
-                    <div class="fw-bold fs-4 text-primary">{{ number_format($summary->total) }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-3">
-                    <div class="text-muted mb-1">Đang thực hiện</div>
-                    <div class="fw-bold fs-4 text-info">{{ number_format($summary->active) }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-3">
-                    <div class="text-muted mb-1">Hoàn thành</div>
-                    <div class="fw-bold fs-4 text-success">{{ number_format($summary->completed) }}</div>
-                </div>
-            </div>
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('assets/css/sales-project-progress-report.css') }}?v={{ config('app.version') }}">
+    @endpush
+
+    <div class="card mb-3">
+        <div class="card-body p-2">
+            <nav class="d-flex flex-wrap gap-2" aria-label="Nhóm hợp đồng">
+                @foreach($contractTypes as $typeKey => $typeName)
+                    <button
+                        type="button"
+                        wire:click="selectContractType('{{ $typeKey }}')"
+                        class="btn btn-sm {{ $filter_contract_type === $typeKey ? 'btn-primary' : 'btn-outline-secondary' }}"
+                        aria-pressed="{{ $filter_contract_type === $typeKey ? 'true' : 'false' }}"
+                    >
+                        {{ $typeName }}
+                    </button>
+                @endforeach
+            </nav>
         </div>
     </div>
-    @endif
 
-    {{-- Bộ lọc & Tìm kiếm --}}
-    <div class="card border-0 shadow-sm mb-4">
+    {{-- Bộ lọc --}}
+    <div class="card mb-3">
         <div class="card-body py-3">
-            <div class="row g-2 align-items-end">
+            <div class="row g-3 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1">Năm</label>
                     <select wire:model.live="year" class="form-select form-select-sm">
@@ -63,93 +54,208 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold mb-1">Loại hợp đồng</label>
-                    <select wire:model.live="filter_contract_type" class="form-select form-select-sm">
-                        <option value="all">Tất cả loại hợp đồng</option>
-                        @foreach($contractTypes as $typeKey => $typeName)
-                            <option value="{{ $typeKey }}">{{ $typeName }}</option>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold mb-1">Loại dịch vụ</label>
+                    <select wire:model.live="filter_service" class="form-select form-select-sm">
+                        <option value="all">Tất cả loại dịch vụ</option>
+                        @foreach($serviceOptions as $serviceOption)
+                            <option value="{{ $serviceOption }}">{{ $serviceOption }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1">Trạng thái</label>
-                    <select wire:model.live="filter_status" class="form-select form-select-sm">
-                        <option value="all">Tất cả trạng thái</option>
-                        <option value="not_started">Chưa bắt đầu</option>
-                        <option value="in_progress">Đang thực hiện</option>
-                        <option value="finished">Đã hoàn thành</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold mb-1">Tìm kiếm nhanh</label>
-                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control form-control-sm" placeholder="Số HĐ, khách hàng, nhân viên...">
+                <div class="col-md-3 text-md-end">
+                    <div class="small text-muted">Đang hiển thị</div>
+                    <div class="fw-semibold text-dark">{{ number_format($items->total()) }} hợp đồng · {{ $year }}</div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Danh sách hợp đồng --}}
-    <div class="card border-0 shadow-sm overflow-hidden">
+    <div class="row g-3 mb-4">
+        @php
+            $statistics = [
+                ['label' => 'Tổng hợp đồng', 'value' => $summary->total, 'sub' => 'theo bộ lọc hiện tại', 'icon' => 'fa-file-contract', 'accent' => 'bg-primary-subtle text-primary'],
+                ['label' => 'Chưa bắt đầu', 'value' => $summary->not_started, 'sub' => 'đang chờ tiếp nhận', 'icon' => 'fa-hourglass-start', 'accent' => 'bg-secondary-subtle text-secondary'],
+                ['label' => 'Đang thực hiện', 'value' => $summary->active, 'sub' => 'đã phát sinh tiến độ', 'icon' => 'fa-list-check', 'accent' => 'bg-warning-subtle text-warning'],
+                ['label' => 'Đã hoàn thành', 'value' => $summary->completed, 'sub' => 'hoàn tất đủ 6 bước', 'icon' => 'fa-circle-check', 'accent' => 'bg-success-subtle text-success'],
+                ['label' => 'Tiến độ trung bình', 'value' => number_format($summary->progress, 1, ',', '.').'%', 'sub' => 'trên toàn bộ hợp đồng', 'icon' => 'fa-chart-line', 'accent' => 'bg-info-subtle text-info'],
+            ];
+        @endphp
+        @foreach($statistics as $statistic)
+            <div class="col-6 col-xl">
+                <div class="card border-0 shadow-sm h-100 operation-kpi-card">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <span class="operation-kpi-icon {{ $statistic['accent'] }}">
+                            <i class="fa-solid {{ $statistic['icon'] }}"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <div class="text-muted text-xs">{{ $statistic['label'] }}</div>
+                            <div class="fw-bold fs-4 lh-sm">{{ $statistic['value'] }}</div>
+                            <div class="text-muted text-xs text-truncate">{{ $statistic['sub'] }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- Pipeline tiến độ hợp đồng --}}
+    @php
+        $pipelineColors = ['border-info', 'border-warning', 'border-primary', 'border-warning', 'border-info', 'border-success'];
+    @endphp
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+        <h5 class="mb-0">Pipeline tiến độ hợp đồng</h5>
+        <span class="text-muted small">Mỗi hợp đồng được xếp theo bước đang thực hiện.</span>
+    </div>
+    <div class="workflow-pipeline mb-4">
+        @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
+            <section class="workflow-pipeline-column">
+                <div class="card border shadow-sm h-100 operation-pipeline-column {{ $pipelineColors[$loop->index] }}">
+                    <div class="card-header border-0 bg-transparent pb-0 d-flex justify-content-between align-items-start gap-2">
+                        <h6 class="fw-bold mb-0">{{ \App\Models\ContractWorkflowStep::STEPS[$stepKey] }}</h6>
+                        <span class="badge bg-white text-muted border">{{ count($pipeline[$stepKey]) }}</span>
+                    </div>
+                    <div class="card-body">
+                        @forelse($pipeline[$stepKey] as $contract)
+                            <article class="card border-0 shadow-sm mb-3 operation-card-hover" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between gap-2 align-items-start">
+                                        <div class="min-w-0">
+                                            <h6 class="fw-bold mb-1 text-truncate" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</h6>
+                                            <div class="text-muted text-xs">{{ $contract['shd'] }} · {{ $contract['signed_at']?->format('d/m/Y') ?? 'Chưa có ngày ký' }}</div>
+                                        </div>
+                                        <span class="badge rounded-pill bg-primary-subtle text-primary">{{ $contract['workflow_progress']['completed_count'] }}/6</span>
+                                    </div>
+                                    <div class="border rounded-3 bg-light p-2 text-sm mt-3">{{ $contract['type'] }}</div>
+                                    <div class="d-flex justify-content-between gap-2 text-xs mt-3">
+                                        <span class="text-muted text-truncate" title="{{ $contract['assigned_staff'] }}">{{ $contract['assigned_staff'] }}</span>
+                                        <span class="text-muted text-nowrap">{{ $contract['workflow_progress']['percent'] }}%</span>
+                                    </div>
+                                    <div class="progress mt-2 workflow-card-progress">
+                                        <div class="progress-bar {{ $contract['workflow_progress']['percent'] >= 100 ? 'bg-success' : 'bg-primary' }}" style="width: {{ $contract['workflow_progress']['percent'] }}%"></div>
+                                    </div>
+                                    <button type="button" class="btn btn-light btn-sm w-100 mt-3" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                        <i class="fa-solid fa-eye me-1"></i> Chi tiết hợp đồng
+                                    </button>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="border border-dashed rounded-3 p-4 text-center text-muted">Trống</div>
+                        @endforelse
+                    </div>
+                </div>
+            </section>
+        @endforeach
+    </div>
+    @if($items->hasPages())
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <span class="text-muted small">
+                    Hiển thị {{ $items->firstItem() }}–{{ $items->lastItem() }} trong {{ number_format($items->total()) }} hợp đồng
+                </span>
+                {{ $items->links('livewire.admin.users.pagination') }}
+            </div>
+        </div>
+    @endif
+
+    {{-- Danh sách dạng bảng cũ được giữ ẩn để không ảnh hưởng modal và phân trang --}}
+    <div class="card mb-3 overflow-hidden d-none">
+        <div class="card-header bg-light d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <h6 class="mb-1 fw-bold">
+                    <i class="fa-solid fa-briefcase me-1 text-primary"></i>
+                    {{ $contractTypes[$filter_contract_type] }}
+                </h6>
+                <small class="text-muted">Theo dõi 6 bước thực hiện hợp đồng</small>
+            </div>
+            <div class="workflow-summary">
+                <div class="workflow-summary-item">
+                    <span>Tổng hợp đồng</span>
+                    <strong class="text-primary">{{ number_format($summary->total) }}</strong>
+                </div>
+                <div class="workflow-summary-item">
+                    <span>Đang thực hiện</span>
+                    <strong class="text-warning">{{ number_format($summary->active) }}</strong>
+                </div>
+                <div class="workflow-summary-item">
+                    <span>Hoàn thành</span>
+                    <strong class="text-success">{{ number_format($summary->completed) }}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="workflow-overall-progress">
+            <div class="progress">
+                <div class="progress-bar {{ $summary->progress >= 100 ? 'bg-success' : 'bg-primary' }}" role="progressbar" style="width: {{ min($summary->progress, 100) }}%" aria-valuenow="{{ $summary->progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small class="text-muted">Tổng tiến độ: {{ number_format($summary->progress, 1, ',', '.') }}%</small>
+        </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover table-bordered align-middle mb-0 workflow-matrix">
                     <thead class="table-light">
-                        <tr class="text-muted fw-bold">
-                            <th class="text-center w-45px">STT</th>
-                            <th class="ps-3">Thông tin hợp đồng</th>
-                            <th>Loại dịch vụ / hợp đồng</th>
-                            <th class="mnw-180px">Tiến độ thực hiện</th>
-                            <th class="text-center">Trạng thái HĐ</th>
-                            <th class="text-center">Thao tác</th>
+                        <tr>
+                            <th class="workflow-contract-column">Thông tin hợp đồng</th>
+                            @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
+                                <th class="workflow-step-column">
+                                    <span class="workflow-step-number">{{ $loop->iteration }}</span>
+                                    <span>{{ \App\Models\ContractWorkflowStep::STEPS[$stepKey] }}</span>
+                                </th>
+                            @endforeach
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($items as $item)
-                        <tr class="border-bottom border-light">
-                            <td class="text-center text-muted fw-semibold">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
-                            <td class="ps-3 py-2">
-                                <div class="d-flex flex-column gap-1">
+                        <tr>
+                            <td class="workflow-contract-column">
+                                <div class="d-flex flex-column gap-2">
                                     <a href="{{ $item['customer_slug'] ? route('app.customers.contracts', $item['customer_slug']) : '#' }}" class="fw-bold text-primary text-decoration-none lh-sm">
                                         {{ $item['customer'] }}
                                     </a>
-                                    <div class="d-flex gap-3 flex-wrap border-top mt-1 pt-1 text-secondary" style="font-size: 0.75rem;">
-                                        @if($item['shd'] && $item['shd'] !== '—')<span>HĐ: <span class="fw-semibold text-dark">{{ $item['shd'] }}</span></span>@endif
-                                        @if($item['signed_at'])<span>Ký: <span class="fw-semibold text-dark">{{ $item['signed_at']->format('d/m/Y') }}</span></span>@endif
-                                        @if($item['staff'] && $item['staff'] !== '—')<span>CS: <span class="fw-semibold text-dark">{{ $item['staff'] }}</span></span>@endif
-                                        @if($item['assigned_staff'] && $item['assigned_staff'] !== 'Chưa phân công')
-                                            <span>Thực hiện: <span class="fw-semibold text-dark">{{ $item['assigned_staff'] }}</span></span>
-                                        @endif
+                                    <div class="workflow-contract-meta">
+                                        <span>{{ $item['shd'] }}</span>
+                                        @if($item['signed_at'])<span>{{ $item['signed_at']->format('d/m/Y') }}</span>@endif
                                     </div>
-                                </div>
-                            </td>
-                            <td class="text-muted text-wrap" style="max-width: 250px;">{{ $item['type'] }}</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress flex-grow-1 h-8px" style="height: 8px;">
-                                        <div class="progress-bar {{ $item['workflow_progress']['percent'] == 100 ? 'bg-success' : 'bg-primary' }}"
-                                             role="progressbar" style="width: {{ $item['workflow_progress']['percent'] }}%">
+                                    <div class="small fw-semibold text-dark">{{ $item['type'] }}</div>
+                                    <div class="small text-muted">{{ $item['assigned_staff'] }}</div>
+                                    <div class="workflow-contract-progress">
+                                        <div class="progress" role="progressbar" aria-label="Tiến độ hợp đồng" aria-valuenow="{{ $item['workflow_progress']['percent'] }}" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar {{ $item['workflow_progress']['percent'] >= 100 ? 'bg-success' : 'bg-primary' }}" style="width: {{ $item['workflow_progress']['percent'] }}%"></div>
                                         </div>
+                                        <span>{{ $item['workflow_progress']['completed_count'] }}/{{ $item['workflow_progress']['total_steps'] }}</span>
                                     </div>
-                                    <span class="text-muted text-nowrap">{{ $item['workflow_progress']['completed_count'] }}/{{ $item['workflow_progress']['total_steps'] }}</span>
+                                    <button type="button" wire:click="showDetails('{{ $item['source_key'] }}', {{ $item['id'] }})" class="workflow-detail-button">
+                                        Xem chi tiết <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                                    </button>
                                 </div>
-                                <div class="small text-muted mt-1">{{ $item['workflow_progress']['current_label'] }}</div>
                             </td>
-                            <td class="text-center">
-                                <span class="badge bg-soft-{{ $item['status_color'] }} text-{{ $item['status_color'] }}">
-                                    {{ $item['status_label'] }}
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <button type="button" wire:click="showDetails('{{ $item['source_key'] }}', {{ $item['id'] }})" class="btn btn-sm btn-link text-primary text-decoration-none py-0">
-                                    <i class="fa-solid fa-eye me-1"></i>Chi tiết
-                                </button>
-                            </td>
+                            @foreach($item['workflow_steps'] as $step)
+                                <td class="text-center {{ $step['state'] === 'current' ? 'bg-primary-subtle' : '' }}">
+                                    @if($step['state'] === 'completed')
+                                        <span class="badge bg-success-subtle text-success px-2 py-1">
+                                            <i class="fa-solid fa-check me-1"></i>Hoàn thành
+                                        </span>
+                                    @elseif($step['state'] === 'current')
+                                        <span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1">
+                                            Đang thực hiện
+                                        </span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                    @if($step['completed_at'])
+                                        <div class="workflow-state-meta">{{ $step['completed_at']->format('d/m/Y') }}</div>
+                                        @if($step['completed_by'])
+                                            <div class="workflow-state-person" title="Hoàn thành bởi {{ $step['completed_by'] }}">{{ $step['completed_by'] }}</div>
+                                        @endif
+                                    @elseif($step['state'] === 'current')
+                                        <div class="workflow-state-meta">Chờ cập nhật</div>
+                                    @endif
+                                </td>
+                            @endforeach
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                Không tìm thấy hợp đồng nào khớp với bộ lọc
+                            <td colspan="7" class="text-center text-muted py-5">
+                                Chưa có hợp đồng nào trong nhóm và bộ lọc đã chọn
                             </td>
                         </tr>
                         @endforelse
