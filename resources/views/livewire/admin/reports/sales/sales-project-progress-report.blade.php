@@ -134,9 +134,16 @@
                                     <div class="progress mt-2 workflow-card-progress">
                                         <div class="progress-bar {{ $contract['workflow_progress']['percent'] >= 100 ? 'bg-success' : 'bg-primary' }}" style="width: {{ $contract['workflow_progress']['percent'] }}%"></div>
                                     </div>
-                                    <button type="button" class="btn btn-light btn-sm w-100 mt-3" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
-                                        <i class="fa-solid fa-eye me-1"></i> Chi tiết hợp đồng
-                                    </button>
+                                    <div class="d-flex gap-2 mt-3">
+                                        <button type="button" class="btn btn-light btn-sm flex-grow-1" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                            <i class="fa-solid fa-eye me-1"></i> Chi tiết
+                                        </button>
+                                        @if($this->canAssign())
+                                            <button type="button" class="btn btn-outline-success btn-sm flex-grow-1" wire:click="openAssign('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                                <i class="fa-solid fa-user-check me-1"></i> Giao việc
+                                            </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </article>
                         @empty
@@ -329,6 +336,11 @@
                                                             $assignees = $selectedContract->assignments->pluck('user.name')->filter()->unique()->toArray();
                                                         @endphp
                                                         {{ count($assignees) > 0 ? implode(', ', $assignees) : 'Chưa phân công' }}
+                                                        @if($this->canAssign())
+                                                            <button type="button" class="btn btn-link btn-sm text-success p-0 ms-2 text-decoration-none" wire:click="openAssign('{{ $selectedContractSourceKey }}', {{ $selectedContract->id }})">
+                                                                <i class="fa-solid fa-user-check me-1"></i> Giao việc
+                                                            </button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -447,6 +459,51 @@
                 </div>
                 @endif
             </div>
+    </div>
+
+    {{-- Assignment Modal --}}
+    <div wire:ignore.self class="modal fade" id="assignModalReport" tabindex="-1" aria-labelledby="assignModalReportLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white py-3">
+                    <h5 class="modal-title fw-bold" id="assignModalReportLabel">
+                        <i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
+                    <div class="list-group mh-320-scroll overflow-y-auto" style="max-height: 250px;">
+                        @foreach ($assignable_users as $u)
+                            <label class="list-group-item list-group-item-action d-flex gap-2 align-items-center py-2 px-3">
+                                <input class="form-check-input flex-shrink-0" type="checkbox"
+                                    value="{{ $u->id }}" wire:model="assignUserIds">
+                                <div class="min-w-0">
+                                    <div class="fw-semibold text-sm text-dark">{{ $u->name }}</div>
+                                    <small class="text-muted text-xs">{{ $this->roleDisplayFromSlug($u->roles->first()?->name ?? '') }}</small>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label small fw-semibold text-dark">Người ngoài công ty</label>
+                        <input type="text" class="form-control form-control-sm" wire:model="assignExternal"
+                            placeholder="Tên người ngoài (nếu có)">
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label small fw-semibold text-dark">Hạn chót</label>
+                        <input type="date" class="form-control form-control-sm" wire:model="assignDeadline">
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-2">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-success btn-sm px-3" wire:click="saveAssign"
+                        wire:loading.attr="disabled" wire:target="saveAssign">
+                        <span wire:loading wire:target="saveAssign" class="spinner-border spinner-border-sm me-1"></span>
+                        Lưu giao việc
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -455,6 +512,14 @@
             window.addEventListener('open-detail-modal', () => {
                 let modal = new bootstrap.Modal(document.getElementById('detailModal'));
                 modal.show();
+            });
+            window.addEventListener('openAssignModal', () => {
+                new bootstrap.Modal(document.getElementById('assignModalReport')).show();
+            });
+            Livewire.on('closeAssignModal', () => {
+                let modalElement = document.getElementById('assignModalReport');
+                let modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) modal.hide();
             });
         </script>
     @endpush

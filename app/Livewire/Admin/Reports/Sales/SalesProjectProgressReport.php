@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Reports\Sales;
 
 use App\Enums\Role;
+use App\Models\ContractAssignment;
 use App\Models\ContractEmission;
 use App\Models\ContractLegal;
 use App\Models\ContractResearch;
@@ -11,6 +12,7 @@ use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
+use App\Notifications\ContractAssignedNotification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +39,17 @@ class SalesProjectProgressReport extends Component
     public string $selectedContractSourceKey = '';
 
     public string $detailActiveTab = 'info';
+
+    // Assignment properties
+    public $assignContractId = null;
+
+    public string $assignSourceKey = '';
+
+    public array $assignUserIds = [];
+
+    public $assignExternal = null;
+
+    public $assignDeadline = null;
 
     protected $queryString = [
         'year' => ['except' => ''],
@@ -284,6 +297,129 @@ class SalesProjectProgressReport extends Component
         $this->dispatch('open-detail-modal');
     }
 
+    public function canAssign(): bool
+    {
+        $user = auth()->user();
+
+        return $user && $user->hasAnyRole([
+            Role::GIAM_DOC->value,
+            Role::TP_KINH_DOANH->value,
+            Role::KINH_DOANH->value,
+            Role::IT->value,
+        ]);
+    }
+
+    public function openAssign(string $sourceKey, int $id): void
+    {
+        if (! $this->canAssign()) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
+            return;
+        }
+
+        $modelClass = $this->contractSources()[$sourceKey][0] ?? null;
+        if (! $modelClass) {
+            return;
+        }
+
+        $this->assignContractId = $id;
+        $this->assignSourceKey = $sourceKey;
+
+        $existing = ContractAssignment::where('assignable_type', $modelClass)
+            ->where('assignable_id', $id)
+            ->get();
+
+        $this->assignUserIds = $existing->whereNotNull('user_id')->pluck('user_id')->toArray();
+        $this->assignExternal = $existing->whereNull('user_id')->first()?->external_assignee;
+        $this->assignDeadline = $existing->first()?->deadline?->format('Y-m-d');
+
+        $this->dispatch('openAssignModal');
+    }
+
+    public function saveAssign(): void
+    {
+        if (! $this->canAssign()) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền giao việc.']);
+
+            return;
+        }
+
+        $modelClass = $this->contractSources()[$this->assignSourceKey][0] ?? null;
+        if (! $modelClass) {
+            return;
+        }
+
+        ContractAssignment::where('assignable_type', $modelClass)
+            ->where('assignable_id', $this->assignContractId)
+            ->delete();
+
+        foreach ($this->assignUserIds as $userId) {
+            ContractAssignment::create([
+                'assignable_type' => $modelClass,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => (int) $userId,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
+            ]);
+        }
+
+        if (! empty($this->assignExternal)) {
+            ContractAssignment::create([
+                'assignable_type' => $modelClass,
+                'assignable_id' => $this->assignContractId,
+                'user_id' => null,
+                'external_assignee' => $this->assignExternal,
+                'assigned_by' => auth()->id(),
+                'deadline' => $this->assignDeadline ?: null,
+            ]);
+        }
+
+        // Gửi thông báo đến users được giao
+        $contract = $modelClass::with('customer')->find($this->assignContractId);
+        $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$this->assignContractId);
+        foreach ($this->assignUserIds as $userId) {
+            $user = User::find($userId);
+            if ($user && $user->id !== auth()->id()) {
+                $user->notify(new ContractAssignedNotification($this->assignSourceKey, $this->assignContractId, $contractLabel, auth()->user()->name));
+            }
+        }
+
+        // Nếu hợp đồng đang được xem trong modal chi tiết, cập nhật lại thông tin hiển thị
+        if ($this->selectedContract && (int) $this->selectedContract->id === (int) $this->assignContractId && $this->selectedContractSourceKey === $this->assignSourceKey) {
+            $this->selectedContract = $modelClass::with([
+                'customer',
+                'staff',
+                'assignments.user',
+                'workflowSteps.user',
+                'milestoneFiles.uploader',
+            ])->findOrFail($this->assignContractId);
+        }
+
+        $this->assignContractId = null;
+        $this->assignSourceKey = '';
+        $this->assignUserIds = [];
+        $this->assignExternal = null;
+        $this->assignDeadline = null;
+
+        $this->dispatch('closeAssignModal');
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Giao việc thành công!']);
+    }
+
+    public function roleDisplayFromSlug(string $roleSlug): string
+    {
+        return match ($roleSlug) {
+            'it' => 'IT Admin',
+            'giam-doc' => 'Giám đốc',
+            'tp-kinh-doanh' => 'Trưởng phòng KD',
+            'kinh-doanh' => 'Nhân viên KD',
+            'ke-toan' => 'Kế toán',
+            'tu-van' => 'Tư vấn',
+            'ky-thuat' => 'Kỹ thuật',
+            'marketing' => 'Marketing',
+            default => $roleSlug,
+        };
+    }
+
     public function render()
     {
         $unfilteredRows = $this->collectContracts();
@@ -350,6 +486,15 @@ class SalesProjectProgressReport extends Component
             'serviceOptions' => $serviceOptions,
             'contractTypes' => $contractTypes,
             'assignedStaffs' => $assignedStaffs,
+            'assignable_users' => User::where('is_active', true)
+                ->whereHas('roles', fn ($q) => $q->whereIn('name', [
+                    Role::TU_VAN->value,
+                    Role::KY_THUAT->value,
+                    Role::KINH_DOANH->value,
+                    Role::TP_KINH_DOANH->value,
+                ]))
+                ->orderBy('name')
+                ->get(),
         ])->layout('admin.layouts.app');
     }
 }

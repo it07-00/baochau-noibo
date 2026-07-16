@@ -414,4 +414,61 @@ class SalesProjectProgressReportTest extends TestCase
                 return $ids->contains($contract1->id) && ! $ids->contains($contract2->id);
             });
     }
+
+    public function test_authorized_user_can_assign_contracts_directly(): void
+    {
+        $manager = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
+        $manager->assignRole(RoleEnum::TP_KINH_DOANH->value);
+
+        $staff = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
+        $staff->assignRole(RoleEnum::KY_THUAT->value);
+
+        $customer = Customer::create(['name' => 'Test Giao Việc']);
+        $handler = Handler::create(['name' => 'Nhà thầu giao việc']);
+
+        $contract = ContractWaste::create([
+            'customer_id' => $customer->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
+            'value' => 100_000_000,
+            'signed_at' => '2026-05-10',
+            'submitted_at' => '2026-05-10',
+        ]);
+
+        $this->actingAs($manager);
+
+        Livewire::test(SalesProjectProgressReport::class)
+            ->set('year', 2026)
+            ->call('openAssign', 'waste', $contract->id)
+            ->assertSet('assignContractId', $contract->id)
+            ->assertSet('assignSourceKey', 'waste')
+            ->set('assignUserIds', [$staff->id])
+            ->set('assignExternal', 'Nguyen Van A')
+            ->set('assignDeadline', '2026-12-31')
+            ->call('saveAssign')
+            ->assertHasNoErrors()
+            ->assertDispatched('closeAssignModal');
+
+        // Assert database records
+        $this->assertDatabaseHas('contract_assignments', [
+            'assignable_type' => ContractWaste::class,
+            'assignable_id' => $contract->id,
+            'user_id' => $staff->id,
+            'deadline' => '2026-12-31 00:00:00',
+        ]);
+
+        $this->assertDatabaseHas('contract_assignments', [
+            'assignable_type' => ContractWaste::class,
+            'assignable_id' => $contract->id,
+            'user_id' => null,
+            'external_assignee' => 'Nguyen Van A',
+        ]);
+    }
 }
