@@ -271,7 +271,7 @@ class WorkScheduleManager extends Component
             $addedParticipantIds = array_values(array_diff($localParticipantIds, $previousParticipantIds));
             $event->load('participants');
 
-            // Notify participants
+            // Notify local participants
             foreach ($event->participants as $participant) {
                 if ($participant->id !== auth()->id()) {
                     $action = in_array((int) $participant->id, $addedParticipantIds, true) ? 'added' : 'updated';
@@ -284,6 +284,9 @@ class WorkScheduleManager extends Component
                     ));
                 }
             }
+
+            // Notify Greeco participants via cross-system API
+            $this->notifyGreecoParticipants($event, $greecoParticipantsData, 'updated');
 
             $this->dispatch('swal:success', ['message' => 'Cập nhật sự kiện thành công!']);
         } else {
@@ -339,7 +342,7 @@ class WorkScheduleManager extends Component
 
             $event->load('participants');
 
-            // Notify participants
+            // Notify local participants
             foreach ($event->participants as $participant) {
                 if ($participant->id !== auth()->id()) {
                     $participant->notify(new WorkScheduleNotification(
@@ -352,10 +355,50 @@ class WorkScheduleManager extends Component
                 }
             }
 
+            // Notify Greeco participants via cross-system API
+            $this->notifyGreecoParticipants($event, $greecoParticipantsData, 'added');
+
             $this->dispatch('swal:success', ['message' => 'Thêm sự kiện thành công!']);
         }
 
         $this->closeFormModal();
+    }
+
+    /**
+     * Fire a POST to Greeco's /api/notify so Greeco users receive a notification
+     * in their own system when added to a Bảo Châu work schedule.
+     *
+     * @param array<int, array{id: int, name: string}> $greecoParticipants
+     */
+    private function notifyGreecoParticipants(WorkSchedule $event, array $greecoParticipants, string $action = 'added'): void
+    {
+        if (empty($greecoParticipants)) {
+            return;
+        }
+
+        $baseUrl = config('services.greeco.base_url');
+        $token   = config('services.greeco.api_token');
+
+        if (! $baseUrl || ! $token) {
+            return;
+        }
+
+        $userIds = array_column($greecoParticipants, 'id');
+
+        try {
+            Http::timeout(5)->post(rtrim($baseUrl, '/').'/api/notify', [
+                'token'        => $token,
+                'user_ids'     => $userIds,
+                'event_title'  => $event->title,
+                'creator_name' => auth()->user()->name,
+                'action'       => $action,
+                'event_date'   => $event->start_date->format('Y-m-d'),
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('WorkScheduleManager: không thể gửi thông báo sang Greeco.', [
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function delete(int $id): void

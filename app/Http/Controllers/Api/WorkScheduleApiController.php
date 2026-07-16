@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\WorkSchedule;
+use App\Notifications\WorkScheduleNotification;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
@@ -90,17 +91,17 @@ final class WorkScheduleApiController extends Controller
 
         $data = $events->map(function (WorkSchedule $event) {
             return [
-                'id' => $event->id,
-                'title' => $event->title,
-                'description' => $event->description,
-                'start_date' => $event->start_date->format('Y-m-d'),
-                'start_time' => $event->formatted_start_time,
-                'end_date' => $event->effective_end_date->format('Y-m-d'),
-                'end_time' => $event->formatted_end_time,
-                'color' => $event->color,
+                'id'           => $event->id,
+                'title'        => $event->title,
+                'description'  => $event->description,
+                'start_date'   => $event->start_date->format('Y-m-d'),
+                'start_time'   => $event->formatted_start_time,
+                'end_date'     => $event->effective_end_date->format('Y-m-d'),
+                'end_time'     => $event->formatted_end_time,
+                'color'        => $event->color,
                 'creator_name' => $event->user?->name ?? 'N/A',
                 'participants' => collect($event->combined_participants)->map(fn ($p) => [
-                    'id' => $p['id'],
+                    'id'   => $p['id'],
                     'name' => $p['name'],
                 ])->toArray(),
             ];
@@ -108,7 +109,7 @@ final class WorkScheduleApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $data->toArray(),
+            'data'    => $data->toArray(),
         ]);
     }
 
@@ -133,14 +134,61 @@ final class WorkScheduleApiController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn ($u) => [
-                'id' => $u->id,
-                'name' => $u->name,
+                'id'         => $u->id,
+                'name'       => $u->name,
                 'department' => $u->department?->name ?? 'Nhân viên',
             ]);
 
         return response()->json([
             'success' => true,
-            'data' => $users->toArray(),
+            'data'    => $users->toArray(),
         ]);
+    }
+
+    /**
+     * Receive a cross-system notification request from Greeco.
+     * Greeco calls this when it adds Bảo Châu users to a duty schedule.
+     *
+     * POST /api/notify
+     * Body (JSON): { token, user_ids[], event_title, creator_name, action, event_date, event_time_label }
+     */
+    public function notify(Request $request): JsonResponse
+    {
+        $request->validate([
+            'token'           => ['required', 'string'],
+            'user_ids'        => ['required', 'array'],
+            'user_ids.*'      => ['integer'],
+            'event_title'     => ['required', 'string'],
+            'creator_name'    => ['required', 'string'],
+            'action'          => ['nullable', 'string', 'in:added,updated,deleted'],
+            'event_date'      => ['nullable', 'date'],
+            'event_time_label' => ['nullable', 'string'],
+        ]);
+
+        if ($request->input('token') !== config('services.greeco.api_token')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $users = User::whereIn('id', $request->input('user_ids', []))
+            ->where('is_active', true)
+            ->get();
+
+        if ($users->isEmpty()) {
+            return response()->json(['success' => true, 'notified' => 0]);
+        }
+
+        $notification = new WorkScheduleNotification(
+            eventTitle: $request->input('event_title'),
+            userName: $request->input('creator_name'),
+            action: $request->input('action', 'added'),
+            eventDate: $request->input('event_date'),
+            eventTimeLabel: $request->input('event_time_label'),
+        );
+
+        foreach ($users as $user) {
+            $user->notify($notification);
+        }
+
+        return response()->json(['success' => true, 'notified' => $users->count()]);
     }
 }
