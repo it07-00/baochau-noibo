@@ -167,7 +167,25 @@
             }
             window.__bcBrowserNotificationHooked = true;
 
-            window.addEventListener('browser-notification', function (event) {
+            const browserNotificationRegistration = function () {
+                if (!('serviceWorker' in navigator) || !window.isSecureContext) {
+                    return Promise.resolve(null);
+                }
+
+                if (!window.__bcBrowserNotificationRegistration) {
+                    window.__bcBrowserNotificationRegistration = navigator.serviceWorker
+                        .register('/browser-notification-sw.js')
+                        .catch(function () {
+                            return null;
+                        });
+                }
+
+                return window.__bcBrowserNotificationRegistration;
+            };
+
+            browserNotificationRegistration();
+
+            window.addEventListener('browser-notification', async function (event) {
                 if (typeof Notification === 'undefined') {
                     return;
                 }
@@ -178,7 +196,17 @@
                 const body = bodyRaw.length > 180 ? bodyRaw.slice(0, 180) + '...' : bodyRaw;
                 const url = String(detail.url || '');
 
-                const showBrowserNotification = function () {
+                const showBrowserNotification = async function () {
+                    const registration = await browserNotificationRegistration();
+
+                    if (registration) {
+                        await registration.showNotification(title, {
+                            body,
+                            data: { url },
+                        });
+                        return;
+                    }
+
                     const notification = new Notification(title, { body });
 
                     notification.onclick = function () {
@@ -191,7 +219,11 @@
                 };
 
                 if (Notification.permission === 'granted') {
-                    showBrowserNotification();
+                    try {
+                        await showBrowserNotification();
+                    } catch (error) {
+                        console.warn('Không thể hiển thị thông báo trình duyệt.', error);
+                    }
                     return;
                 }
 
@@ -233,6 +265,14 @@
                     if (!this.canRequest) return;
 
                     this.permission = await Notification.requestPermission();
+
+                    if (this.permission === 'granted' && 'serviceWorker' in navigator) {
+                        window.__bcBrowserNotificationRegistration = navigator.serviceWorker
+                            .register('/browser-notification-sw.js')
+                            .catch(function () {
+                                return null;
+                            });
+                    }
                 },
 
                 get canRequest() {

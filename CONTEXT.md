@@ -182,13 +182,13 @@ Notification nghiệp vụ hiện dùng channel `database`. Chuông nằm tại 
 - cập nhật badge và nhóm thông báo;
 - phát event `browser-notification` cho notification mới.
 
-Blade dùng Web Notification API để hiện popup. Popup chỉ hoạt động khi:
+Blade đăng ký `public/browser-notification-sw.js` và dùng `ServiceWorkerRegistration.showNotification()` để hiện popup, có fallback về Web Notification API cũ nếu trình duyệt không hỗ trợ service worker. Popup chỉ hoạt động khi:
 
 - trình duyệt hỗ trợ API và người dùng cấp quyền;
 - người dùng đang mở hệ thống, kể cả tab nền;
 - trình duyệt chưa bị đóng hoàn toàn.
 
-Đây chưa phải web push/service worker, nên không gửi được khi trình duyệt đã đóng.
+Service worker giúp việc hiển thị notification ổn định hơn nhưng đây chưa phải web push: notification mới vẫn được phát hiện bằng polling khi hệ thống đang mở, nên không gửi được khi trình duyệt đã đóng hoàn toàn.
 
 Notification contract phải có `contract_type` key ngắn để chuông phân nhóm và URL route tương ứng. Notification hoa hồng dùng `contract_type = commission`.
 
