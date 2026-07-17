@@ -155,7 +155,7 @@
                     return;
                 }
 
-                const detail = event.detail || {};
+                const detail = Array.isArray(event.detail) ? (event.detail[0] || {}) : (event.detail || {});
                 const title = String(detail.title || 'Thông báo mới');
                 const bodyRaw = String(detail.body || '');
                 const body = bodyRaw.length > 180 ? bodyRaw.slice(0, 180) + '...' : bodyRaw;
@@ -188,7 +188,7 @@
             });
 
             window.addEventListener('openInternalNotifModal', function (event) {
-                const d = event.detail || {};
+                const d = Array.isArray(event.detail) ? (event.detail[0] || {}) : (event.detail || {});
                 document.getElementById('internalNotifTitle').textContent  = d.title      || '';
                 document.getElementById('internalNotifSender').textContent = d.senderName || '';
                 document.getElementById('internalNotifTime').textContent   = d.createdAt  || '';
