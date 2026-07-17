@@ -1,4 +1,4 @@
-<div class="notification-bell" x-data wire:poll.15s x-on:hidden.bs.dropdown="$wire.markViewedAsRead()">
+<div class="notification-bell" x-data="browserNotificationPermission()" x-init="syncPermission()" wire:poll.15s x-on:hidden.bs.dropdown="$wire.markViewedAsRead()">
     <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Thông báo">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
@@ -24,6 +24,23 @@
                     Đọc tất cả
                     ({{ $unreadCount }})
                 </button>
+            </div>
+        </div>
+        <div x-show="permission !== 'granted'" x-cloak class="border-bottom px-3 py-2 bg-light-subtle">
+            <button
+                type="button"
+                class="btn btn-sm btn-outline-primary w-100"
+                :disabled="!canRequest"
+                @click.stop="requestPermission()"
+            >
+                <i class="bi bi-bell-fill me-1"></i>
+                <span x-text="permissionLabel"></span>
+            </button>
+            <div x-show="permission === 'denied'" class="small text-danger mt-1">
+                Trình duyệt đang chặn thông báo. Hãy cho phép thông báo trong cài đặt của trang web.
+            </div>
+            <div x-show="permission === 'insecure'" class="small text-danger mt-1">
+                Thông báo trình duyệt chỉ hoạt động trên HTTPS hoặc localhost.
             </div>
         </div>
         <div class="dropdown-body notification-panel-body py-0">
@@ -178,13 +195,8 @@
                     return;
                 }
 
-                if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(function (permission) {
-                        if (permission === 'granted') {
-                            showBrowserNotification();
-                        }
-                    });
-                }
+                // Browsers require permission prompts to originate from an explicit
+                // user gesture. Permission is requested by the button in the bell.
             });
 
             window.addEventListener('openInternalNotifModal', function (event) {
@@ -201,6 +213,42 @@
                 new bootstrap.Modal(el).show();
             });
         })();
+
+        function browserNotificationPermission() {
+            return {
+                permission: 'unsupported',
+
+                syncPermission() {
+                    if (!window.isSecureContext) {
+                        this.permission = 'insecure';
+                        return;
+                    }
+
+                    this.permission = typeof Notification === 'undefined'
+                        ? 'unsupported'
+                        : Notification.permission;
+                },
+
+                async requestPermission() {
+                    if (!this.canRequest) return;
+
+                    this.permission = await Notification.requestPermission();
+                },
+
+                get canRequest() {
+                    return this.permission === 'default';
+                },
+
+                get permissionLabel() {
+                    return {
+                        default: 'Bật thông báo trên trình duyệt',
+                        denied: 'Thông báo đã bị trình duyệt chặn',
+                        insecure: 'Trang web chưa dùng kết nối an toàn',
+                        unsupported: 'Trình duyệt không hỗ trợ thông báo',
+                    }[this.permission] || 'Bật thông báo trên trình duyệt';
+                },
+            };
+        }
 
         /**
          * notifSection — Alpine component for collapsible notification sections.
@@ -236,4 +284,3 @@
         }
     </script>
 @endonce
-
