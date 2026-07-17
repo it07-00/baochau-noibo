@@ -51,9 +51,9 @@ class QuotationManager extends Component
 
     public $convertingQuotation = null;
 
-    public bool $commissionTaxManual = false;
+    public $commissionTaxManual = false;
 
-    public float $commissionTaxRate = 0.0;
+    public $commissionTaxRate = 0.0;
 
     // PDF
     public array $pdfFiles = [];
