@@ -128,21 +128,9 @@ class CommissionRequestForm extends Component
             $cleanAmount = (int) preg_replace('/\D+/', '', (string) $this->amount);
         }
 
-        $contractShd = trim((string) $this->manual_contract_number) ?: 'Hoa hong';
-        if (! $this->manualContractEntry && $this->contract_id && $this->contract_type) {
-            $contractClass = $this->contract_type;
-            if (class_exists($contractClass)) {
-                $contract = $contractClass::find($this->contract_id);
-                if ($contract && isset($contract->shd_bc)) {
-                    $contractShd = $contract->shd_bc;
-                }
-            }
-        }
-
         $receiverName = rawurlencode(strtoupper(Str::ascii($this->receiver_name ?: '')));
-        $description = rawurlencode("Chi hoa hong HD {$contractShd}");
 
-        return "https://img.vietqr.io/image/{$this->bank_code}-{$this->bank_number}-compact2.png?amount={$cleanAmount}&addInfo={$description}&accountName={$receiverName}";
+        return "https://img.vietqr.io/image/{$this->bank_code}-{$this->bank_number}-compact2.png?amount={$cleanAmount}&accountName={$receiverName}";
     }
 
     public function hasValidVietQrAccount(): bool

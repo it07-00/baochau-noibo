@@ -171,6 +171,7 @@ Quy tắc dữ liệu QR:
 - `bank_number` chỉ gồm chữ số và có thể trùng `receiver_phone` để hỗ trợ tài khoản alias bằng số điện thoại;
 - khi `bank_number` trùng `receiver_phone`, form cảnh báo người dùng kiểm tra ngân hàng có hỗ trợ alias nhưng vẫn cho lưu và tạo QR;
 - VietQR tạo được ảnh không đồng nghĩa tài khoản tồn tại. Ngân hàng/NAPAS xác thực người nhận khi quét.
+- Mã QR không chứa tham số `addInfo` (nội dung thanh toán). Điều này để trống nội dung trên ứng dụng ngân hàng khi quét, cho phép kế toán tự nhập tay nội dung chuyển khoản theo nghiệp vụ thực tế.
 
 ## 9. Notification
 

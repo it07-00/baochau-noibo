@@ -166,7 +166,7 @@ class CommissionRequestFormTest extends TestCase
         ]);
     }
 
-    public function test_manual_contract_number_is_used_in_vietqr_description(): void
+    public function test_vietqr_url_does_not_contain_description_and_is_generated_correctly(): void
     {
         $this->actingAs($this->salesUser);
 
@@ -178,10 +178,10 @@ class CommissionRequestFormTest extends TestCase
             ->set('bank_number', '1234567890123')
             ->set('amount', '1.000.000');
 
-        $this->assertStringContainsString(
-            rawurlencode('Chi hoa hong HD 65/2025/HĐKT.BC-NISSEI'),
-            $component->instance()->getVietQrUrl()
-        );
+        $url = $component->instance()->getVietQrUrl();
+        $this->assertStringNotContainsString('addInfo', $url);
+        $this->assertStringContainsString('EIB-1234567890123-compact2.png', $url);
+        $this->assertStringContainsString('amount=1000000', $url);
     }
 
     public function test_can_auto_fill_and_reuse_saved_account_details(): void

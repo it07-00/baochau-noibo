@@ -78,15 +78,9 @@ class CommissionRequest extends Model
         $bankNumber = preg_replace('/\D+/', '', (string) $this->bank_number);
 
         if ($this->bank_code && $bankNumber !== '') {
-            $contractShd = $this->contract_number;
-            $contract = $this->contract;
-            if ($contract && isset($contract->shd_bc)) {
-                $contractShd = $contract->shd_bc;
-            }
             $receiverName = rawurlencode(strtoupper(Str::ascii($this->receiver_name ?: '')));
-            $description = rawurlencode("Chi hoa hong HD {$contractShd}");
 
-            return "https://img.vietqr.io/image/{$this->bank_code}-{$bankNumber}-compact2.png?amount={$this->amount}&addInfo={$description}&accountName={$receiverName}";
+            return "https://img.vietqr.io/image/{$this->bank_code}-{$bankNumber}-compact2.png?amount={$this->amount}&accountName={$receiverName}";
         }
 
         return '';
