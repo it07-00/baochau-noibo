@@ -116,24 +116,24 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-12px mb-4">
+    <div class="card border border-secondary-subtle bg-body shadow-sm rounded-12px mb-4">
         <div class="card-body p-4">
             <div class="row g-3 align-items-end">
                 <div class="col-12 col-lg-4">
                     <label for="customer-search" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-body-tertiary border-end-0 text-muted border-light-subtle">
+                        <span class="input-group-text bg-body-tertiary border-end-0 text-body-secondary border-secondary-subtle">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
                         <input id="customer-search" type="search"
-                               class="form-control border-start-0 ps-0 border-light-subtle"
+                               class="form-control border-start-0 ps-0 border-secondary-subtle"
                                wire:model.live.debounce.300ms="search"
                                placeholder="Tên, MST, người đại diện, địa chỉ...">
                     </div>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <label for="province-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tỉnh / thành mới</label>
-                    <select id="province-filter" class="form-select border-light-subtle" wire:model.live="provinceFilter">
+                    <select id="province-filter" class="form-select border-secondary-subtle" wire:model.live="provinceFilter">
                         <option value="">Tất cả tỉnh/thành</option>
                         @foreach($filterProvinces as $province)
                             <option value="{{ $province }}">{{ $province }}</option>
@@ -142,7 +142,7 @@
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <label for="ward-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Phường / xã</label>
-                    <select id="ward-filter" class="form-select border-light-subtle" wire:model.live="wardFilter">
+                    <select id="ward-filter" class="form-select border-secondary-subtle" wire:model.live="wardFilter">
                         <option value="">Tất cả phường/xã</option>
                         @foreach($wards as $ward)
                             <option value="{{ $ward }}">{{ $ward }}</option>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <label for="industrial-park-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Khu công nghiệp</label>
-                    <select id="industrial-park-filter" class="form-select border-light-subtle" wire:model.live="industrialParkFilter">
+                    <select id="industrial-park-filter" class="form-select border-secondary-subtle" wire:model.live="industrialParkFilter">
                         <option value="">Tất cả KCN</option>
                         @foreach($industrialParks as $industrialPark)
                             <option value="{{ $industrialPark }}">{{ $industrialPark }}</option>
@@ -160,7 +160,7 @@
                 </div>
                 <div class="col-6 col-md-5 col-lg-2">
                     <label for="group-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Nhóm danh sách theo</label>
-                    <select id="group-filter" class="form-select border-light-subtle" wire:model.live="groupBy">
+                    <select id="group-filter" class="form-select border-secondary-subtle" wire:model.live="groupBy">
                         <option value="province">Tỉnh / thành</option>
                         <option value="ward">Phường / xã</option>
                         <option value="industrial_park">Khu công nghiệp</option>
@@ -169,7 +169,7 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <label for="staff-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Nhân viên phụ trách</label>
-                    <select id="staff-filter" class="form-select border-light-subtle" wire:model.live="staffFilter">
+                    <select id="staff-filter" class="form-select border-secondary-subtle" wire:model.live="staffFilter">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffOptions as $staff)
                             <option value="{{ $staff->id }}">{{ $staff->name }}</option>
@@ -179,7 +179,7 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <label class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Dịch vụ báo giá</label>
                     <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
-                        <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle border-light-subtle" type="button" @click="open = !open">
+                        <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle border-secondary-subtle" type="button" @click="open = !open">
                             <span class="text-truncate me-2">
                                 @php
                                     $selectedQuotationList = is_array($serviceQuotationFilter)
@@ -195,7 +195,7 @@
                                 @endif
                             </span>
                         </button>
-                        <div class="dropdown-menu w-100 p-2 shadow-sm border border-light-subtle" :class="{ 'show': open }" style="max-height: 250px; overflow-y: auto; margin-top: 2px; z-index: 1050;">
+                        <div class="dropdown-menu w-100 p-2 shadow-sm border border-secondary-subtle" :class="{ 'show': open }" style="max-height: 250px; overflow-y: auto; margin-top: 2px; z-index: 1050;">
                             @foreach($serviceQuotationOptions as $index => $service)
                                 <div class="form-check py-1">
                                     <input class="form-check-input" type="checkbox" value="{{ $service }}" id="service-quote-{{ $index }}" wire:model.live="serviceQuotationFilter">
@@ -209,7 +209,7 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <label for="service-contract-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Dịch vụ hợp đồng</label>
-                    <select id="service-contract-filter" class="form-select border-light-subtle" wire:model.live="serviceContractFilter">
+                    <select id="service-contract-filter" class="form-select border-secondary-subtle" wire:model.live="serviceContractFilter">
                         <option value="">Tất cả dịch vụ hợp đồng</option>
                         @foreach($serviceContractOptions as $service)
                             <option value="{{ $service }}">{{ $service }}</option>
@@ -217,7 +217,7 @@
                     </select>
                 </div>
                 <div class="col-12 col-lg-2 d-grid">
-                    <button type="button" class="btn btn-outline-secondary border-light-subtle btn-mobile-touch" wire:click="resetFilters">
+                    <button type="button" class="btn btn-outline-primary fw-semibold btn-mobile-touch" wire:click="resetFilters">
                         <i class="fa-solid fa-rotate-left me-1"></i>Xóa bộ lọc
                     </button>
                 </div>
@@ -229,22 +229,21 @@
     <div class="card border-0 shadow-sm overflow-hidden rounded-12px">
         <div class="table-responsive d-none d-md-block">
             <table class="table table-hover align-middle mb-0">
-                <thead class="bg-body-tertiary text-uppercase text-secondary font-monospace" style="font-size: 0.75rem; border-bottom: 1px solid var(--bs-border-color-translucent);">
+                <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem; border-bottom: 1px solid var(--bs-border-color-translucent);">
                     <tr>
-                        <th class="text-center ps-4 py-3" style="width: 62px">STT</th>
-                        <th class="px-4 py-3">Khách hàng</th>
-                        <th class="px-4 py-3">Khu vực</th>
-                        <th class="px-4 py-3">Dịch vụ & hiệu suất</th>
-                        <th class="px-4 py-3">Đại diện</th>
+                        <th class="text-center px-3 py-3 text-nowrap" style="width: 80px">STT</th>
+                        <th class="px-4 py-3 text-nowrap">Khách hàng</th>
+                        <th class="px-4 py-3 text-nowrap">Khu vực</th>
+                        <th class="px-4 py-3 text-nowrap">Dịch vụ & hiệu suất</th>
                         @canany(['customers.edit', 'customers.delete'])
-                        <th class="text-end pe-4 py-3" style="width: 120px;">Thao tác</th>
+                        <th class="text-end pe-4 py-3 text-nowrap" style="width: 120px;">Thao tác</th>
                         @endcanany
                     </tr>
                 </thead>
                 <tbody class="border-0">
                     @php
                         $currentGroup = null;
-                        $columnCount = auth()->user()->canAny(['customers.edit', 'customers.delete']) ? 6 : 5;
+                        $columnCount = auth()->user()->canAny(['customers.edit', 'customers.delete']) ? 5 : 4;
                     @endphp
                     @forelse($customers as $customer)
                         @if($groupBy !== 'none' && $currentGroup !== $this->groupValue($customer))
@@ -272,12 +271,15 @@
                                     @if($customer->tax_code)
                                         <div class="small text-muted mt-1">MST: {{ $customer->tax_code }}</div>
                                     @endif
+                                    @if($customer->representative)
+                                        <div class="small text-muted mt-1">Đại diện: {{ $customer->representative }}</div>
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-4">
                                 <div class="d-flex flex-wrap gap-1" style="min-width: 175px;">
                                     @if($customer->province)
-                                        <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(29, 78, 216, 0.1); color: #1e40af; border: 1px solid rgba(29, 78, 216, 0.2);">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 fs-72">
                                             <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
                                         </span>
                                     @else
@@ -287,7 +289,7 @@
                                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
                                     @endif
                                     @if($customer->industrial_park)
-                                        <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(22, 163, 74, 0.1); color: #15803d; border: 1px solid rgba(22, 163, 74, 0.2);">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2 py-1 fs-72">
                                             <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                                         </span>
                                     @endif
@@ -311,10 +313,6 @@
                                         </details>
                                     @endif
                                 </div>
-                            </td>
-
-                            <td class="px-4">
-                                <div class="small text-body">{{ $customer->representative ?: '—' }}</div>
                             </td>
                             @canany(['customers.edit', 'customers.delete'])
                             <td class="text-end pe-4 text-nowrap">
@@ -370,6 +368,9 @@
                             @if($customer->tax_code)
                                 <div class="small text-muted mt-1">MST: {{ $customer->tax_code }}</div>
                             @endif
+                            @if($customer->representative)
+                                <div class="small text-muted mt-1">Đại diện: {{ $customer->representative }}</div>
+                            @endif
                         </div>
                         <div class="d-flex gap-1.5 flex-shrink-0">
                             <a href="{{ route('app.quotation-tracking.index', ['search' => $customer->name]) }}"
@@ -387,17 +388,17 @@
 
                     <div class="d-flex flex-wrap gap-1 mt-3">
                         @if($customer->province)
-                            <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(29, 78, 216, 0.1); color: #1e40af; border: 1px solid rgba(29, 78, 216, 0.2);">
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 fs-72">
                                 <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
                             </span>
                         @else
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">Chưa cập nhật</span>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 fs-72">Chưa cập nhật</span>
                         @endif
                         @if($customer->ward)
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 fs-72">{{ $customer->ward }}</span>
                         @endif
                         @if($customer->industrial_park)
-                            <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(22, 163, 74, 0.1); color: #15803d; border: 1px solid rgba(22, 163, 74, 0.2);">
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2 py-1 fs-72">
                                 <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                             </span>
                         @endif
@@ -485,9 +486,6 @@
                                           class="form-control border-light-subtle @error('formData.address') is-invalid @enderror"
                                           wire:model="formData.address"
                                           placeholder="Ví dụ: KCN Long Hậu, Xã Long Hậu, Tỉnh Tây Ninh"></textarea>
-                                <div class="form-text">
-                                    Hệ thống chỉ gợi ý phần nhận diện được; bạn vẫn có thể sửa lại bên dưới.
-                                </div>
                                 <button type="button" class="btn btn-sm btn-outline-primary rounded-8px mt-2"
                                         wire:click="detectAddressRegion"
                                         wire:loading.attr="disabled"

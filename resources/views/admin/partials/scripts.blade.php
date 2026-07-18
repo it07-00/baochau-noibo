@@ -1,8 +1,9 @@
-<script src="{{ asset('assets/js/jquery.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/perfect-scrollbar.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/bootstrap.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/conca-sidebar.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/conca.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<!-- Theme Required Page Scripts -->
+<script src="{{ asset('assets/libs/global/global.min.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/libs/flatpickr/flatpickr.min.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/libs/datatables/datatables.min.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/appSettings.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/main.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 <script src="{{ asset('assets/js/sweetalert2.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 <script src="{{ asset('assets/js/ckeditor.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 
@@ -20,7 +21,6 @@
         }
 
         function cleanupModalBackdrops() {
-            // Check if there are any visible/showing modals in the DOM (checking show class or block display style)
             const openModals = Array.from(document.querySelectorAll('.modal')).filter(modal => {
                 return modal.classList.contains('show') || modal.style.display === 'block' || window.getComputedStyle(modal).display === 'block';
             });
@@ -32,11 +32,9 @@
             }
         }
 
-        // Global listeners for standard Bootstrap modal hide/hidden events
         document.addEventListener('hidden.bs.modal', cleanupModalBackdrops);
         document.addEventListener('hide.bs.modal', cleanupModalBackdrops);
 
-        // Livewire Hooks for cleaning up during transitions & updates
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof Livewire !== 'undefined') {
                 Livewire.hook('request', ({ fail, respond }) => {
@@ -58,10 +56,8 @@
     window.__strip = function(s) {
         return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     };
+
     // ── Money format helper ─────────────────────────────────────────
-    // Format số tiền VND: 71900000 → 71.900.000
-    // Dùng: <input type="text" class="money-input" wire:model.defer="formData.value">
-    // JS format hiển thị, PHP strip dots khi nhận value
     (function () {
         function formatMoney(val) {
             let num = String(val).replace(/\D/g, '');
@@ -121,7 +117,6 @@
 
         let isFormatting = false;
 
-        // Format khi user gõ
         document.addEventListener('input', function (e) {
             if (!e.target.classList.contains('money-input') || isFormatting) return;
 
@@ -130,32 +125,28 @@
             isFormatting = false;
         });
 
-        // Đảm bảo field đang focus được format lại khi blur
         document.addEventListener('blur', function (e) {
             if (!e.target.classList.contains('money-input')) return;
             formatMoneyInput(e.target, false);
         }, true);
 
-        // Format khi Livewire cập nhật DOM (morph)
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof Livewire !== 'undefined') {
                 Livewire.hook('morph.updated', ({ el }) => {
                     formatMoneyInputs(el);
                 });
             }
-
-            // Format các input đã có giá trị sẵn khi trang load
             formatMoneyInputs(document);
         });
 
-        // Format khi modal mở (cho giá trị pre-filled từ Livewire)
         document.addEventListener('shown.bs.modal', function () {
             setTimeout(function () {
                 formatMoneyInputs(document);
             }, 50);
         });
     })();
-    // Toast configuration — guard để tránh re-declare khi wire:navigate
+
+    // Toast configuration
     if (!window.Toast) {
         window.Toast = Swal.mixin({
             toast: true,
@@ -180,7 +171,7 @@
         window.Toast.fire({ icon: 'error', title: "{{ session('error') }}" });
     @endif
 
-    // Listen for Livewire events — guard để tránh đăng ký 2 lần
+    // Listen for Livewire events
     if (!window._swalListenersRegistered) {
         window._swalListenersRegistered = true;
 

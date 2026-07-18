@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-#[Fillable(['user_id', 'date', 'content', 'plan', 'status', 'issues'])]
+#[Fillable([
+    'user_id', 'date', 'content', 'plan', 'status', 'issues',
+    'support_status', 'support_handler_id', 'support_response',
+    'support_started_at', 'support_resolved_at',
+])]
 class DailyReport extends Model
 {
     /** @use HasFactory */
@@ -25,6 +29,8 @@ class DailyReport extends Model
 
     protected $casts = [
         'date' => 'date',
+        'support_started_at' => 'datetime',
+        'support_resolved_at' => 'datetime',
     ];
 
     protected function content(): Attribute
@@ -38,5 +44,10 @@ class DailyReport extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function supportHandler(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'support_handler_id');
     }
 }

@@ -4,14 +4,17 @@ namespace App\Livewire\Admin\DailyReports;
 
 use App\Actions\DailyReports\SubmitDailyReportAction;
 use App\Enums\DailyReportStatus;
+use App\Enums\DailyReportSupportStatus;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\DailyReport;
 use App\Models\Department;
+use App\Notifications\DailyReportSupportUpdatedNotification;
 use App\Support\DailyReportVisibility;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class DailyReportManager extends Component
@@ -49,9 +52,27 @@ class DailyReportManager extends Component
 
     public $yearFilter;
 
+    public $periodFilter;
+
     public $deptIdFilter;
 
     public $userIdFilter;
+
+    public $supportStatusFilter = 'open';
+
+    public $supportSearch = '';
+
+    public $selectedSupportReportId;
+
+    public $supportResolution = '';
+
+    public $showSupportModal = false;
+
+    public $supportStats = [
+        'pending' => 0,
+        'in_progress' => 0,
+        'resolved' => 0,
+    ];
 
     public $reportStats = [
         'total' => 0,
@@ -69,8 +90,9 @@ class DailyReportManager extends Component
     {
         $this->reportDate = date('Y-m-d');
         $this->dateFilter = date('Y-m-d');
-        $this->monthFilter = (int) date('m');
-        $this->yearFilter = (int) date('Y');
+        $this->monthFilter = (int) now()->format('m');
+        $this->yearFilter = (int) now()->format('Y');
+        $this->periodFilter = now()->format('Y-m');
 
         $this->isDirector = auth()->user()->hasRole(Role::GIAM_DOC->value);
         $this->canSubmitOwnReport = ! $this->isDirector;
@@ -110,9 +132,138 @@ class DailyReportManager extends Component
 
     public function updatedActiveTab($value)
     {
-        if ($this->isDirector && $value !== 'management') {
+        if ($this->isDirector && ! in_array($value, ['management', 'support'], true)) {
             $this->activeTab = 'management';
         }
+    }
+
+    public function startSupport(int $reportId): void
+    {
+        $report = $this->findManageableSupportReport($reportId);
+
+        if ($report->support_status === DailyReportSupportStatus::RESOLVED->value) {
+            $this->dispatch('swal:error', ['message' => 'Yêu cầu này đã được xử lý.']);
+
+            return;
+        }
+
+        $report->update([
+            'support_status' => DailyReportSupportStatus::IN_PROGRESS->value,
+            'support_handler_id' => auth()->id(),
+            'support_started_at' => $report->support_started_at ?? now(),
+            'support_resolved_at' => null,
+        ]);
+
+        $this->notifySupportOwner($report);
+        $this->dispatch('swal:success', ['message' => 'Đã tiếp nhận yêu cầu hỗ trợ.']);
+    }
+
+    public function openSupportModal(int $reportId): void
+    {
+        $report = $this->findManageableSupportReport($reportId);
+        $this->selectedSupportReportId = $report->id;
+        $this->supportResolution = (string) ($report->support_response ?? '');
+        $this->showSupportModal = true;
+        $this->resetErrorBag('supportResolution');
+    }
+
+    public function closeSupportModal(): void
+    {
+        $this->showSupportModal = false;
+        $this->selectedSupportReportId = null;
+        $this->supportResolution = '';
+        $this->resetErrorBag('supportResolution');
+    }
+
+    public function resolveSupport(): void
+    {
+        $this->validate([
+            'selectedSupportReportId' => 'required|integer',
+            'supportResolution' => 'required|string|min:5|max:5000',
+        ], [
+            'supportResolution.required' => 'Vui lòng nhập nội dung đã hỗ trợ.',
+            'supportResolution.min' => 'Nội dung xử lý cần có ít nhất 5 ký tự.',
+            'supportResolution.max' => 'Nội dung xử lý không được vượt quá 5.000 ký tự.',
+        ]);
+
+        $report = $this->findManageableSupportReport((int) $this->selectedSupportReportId);
+        $report->update([
+            'support_status' => DailyReportSupportStatus::RESOLVED->value,
+            'support_handler_id' => auth()->id(),
+            'support_response' => trim($this->supportResolution),
+            'support_started_at' => $report->support_started_at ?? now(),
+            'support_resolved_at' => now(),
+        ]);
+
+        $this->notifySupportOwner($report);
+        $this->closeSupportModal();
+        $this->dispatch('swal:success', ['message' => 'Đã hoàn tất yêu cầu hỗ trợ.']);
+    }
+
+    public function reopenSupport(int $reportId): void
+    {
+        $report = $this->findManageableSupportReport($reportId);
+        $report->update([
+            'support_status' => DailyReportSupportStatus::PENDING->value,
+            'support_handler_id' => null,
+            'support_started_at' => null,
+            'support_resolved_at' => null,
+        ]);
+
+        $this->notifySupportOwner($report);
+        $this->dispatch('swal:success', ['message' => 'Đã mở lại yêu cầu hỗ trợ.']);
+    }
+
+    private function findManageableSupportReport(int $reportId): DailyReport
+    {
+        abort_unless($this->isManager && $this->canManageReports(), 403);
+
+        $visibleUserIds = $this->scopedUsersQuery()->select('users.id');
+
+        $report = DailyReport::query()
+            ->whereKey($reportId)
+            ->whereNotNull('support_status')
+            ->whereIn('user_id', $visibleUserIds)
+            ->first();
+
+        abort_if(! $report, 404);
+
+        return $report;
+    }
+
+    private function notifySupportOwner(DailyReport $report): void
+    {
+        $report->refresh()->load('user');
+
+        if ($report->user && $report->user_id !== auth()->id()) {
+            $report->user->notify(new DailyReportSupportUpdatedNotification($report, auth()->user()));
+        }
+    }
+
+    public function updatedPeriodFilter($value): void
+    {
+        if (! preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $value)) {
+            return;
+        }
+
+        [$year, $month] = array_map('intval', explode('-', $value));
+        $this->yearFilter = $year;
+        $this->monthFilter = $month;
+    }
+
+    public function updatedMonthFilter(): void
+    {
+        $this->syncPeriodFilter();
+    }
+
+    public function updatedYearFilter(): void
+    {
+        $this->syncPeriodFilter();
+    }
+
+    private function syncPeriodFilter(): void
+    {
+        $this->periodFilter = sprintf('%04d-%02d', (int) $this->yearFilter, (int) $this->monthFilter);
     }
 
     public function openReportModal($date)
@@ -173,7 +324,7 @@ class DailyReportManager extends Component
         $this->validate([
             'reportDate' => 'required|date|before_or_equal:today',
             'content' => 'required|min:10|max:10000',
-            'status' => 'required|in:'.implode(',', DailyReportStatus::values()),
+            'status' => ['required', Rule::in(DailyReportStatus::values())],
             'plan' => 'nullable|string|max:5000',
             'issues' => 'nullable|string|max:5000',
         ], [
@@ -245,7 +396,7 @@ class DailyReportManager extends Component
         return collect(range(1, $monthStart->daysInMonth))
             ->map(function ($day) use ($monthStart, $calendarData) {
                 $date = $monthStart->copy()->day($day);
-                $reportsForDay = collect($calendarData[$day] ?? []);
+                $reportsForDay = collect($calendarData[$date->format('Y-m-d')] ?? []);
 
                 return [
                     'date' => $date,
@@ -268,7 +419,7 @@ class DailyReportManager extends Component
 
     public function dayReportsForDate(array $calendarData, Carbon $currentDate): Collection
     {
-        return collect($calendarData[(int) $currentDate->day] ?? []);
+        return collect($calendarData[$currentDate->format('Y-m-d')] ?? []);
     }
 
     public function dayIssueCount(Collection $reports): int
@@ -456,6 +607,19 @@ class DailyReportManager extends Component
                 ->pluck('department_id');
 
             $departments = Department::whereIn('id', $departmentIds)->orderBy('name')->get();
+
+            $allSupportCounts = DailyReport::query()
+                ->whereIn('user_id', $this->scopedUsersQuery()->select('users.id'))
+                ->whereNotNull('support_status')
+                ->selectRaw('support_status, COUNT(*) as aggregate')
+                ->groupBy('support_status')
+                ->pluck('aggregate', 'support_status');
+
+            $this->supportStats = [
+                'pending' => (int) ($allSupportCounts[DailyReportSupportStatus::PENDING->value] ?? 0),
+                'in_progress' => (int) ($allSupportCounts[DailyReportSupportStatus::IN_PROGRESS->value] ?? 0),
+                'resolved' => (int) ($allSupportCounts[DailyReportSupportStatus::RESOLVED->value] ?? 0),
+            ];
         }
 
         if ($this->activeTab === 'history') {
@@ -474,17 +638,66 @@ class DailyReportManager extends Component
         }
 
         $reports = collect();
+        $supportReports = collect();
         $calendarData = [];
 
-        if ($this->activeTab === 'history') {
+        if ($this->activeTab === 'support' && $this->isManager) {
+            $visibleUserIds = $this->scopedUsersQuery();
+            if ($this->deptIdFilter) {
+                $visibleUserIds->where('department_id', $this->deptIdFilter);
+            }
+            if ($this->userIdFilter) {
+                $visibleUserIds->whereKey($this->userIdFilter);
+            }
+
+            $baseSupportQuery = DailyReport::query()
+                ->whereIn('user_id', $visibleUserIds->select('users.id'))
+                ->whereNotNull('support_status');
+
+            $statusCounts = (clone $baseSupportQuery)
+                ->selectRaw('support_status, COUNT(*) as aggregate')
+                ->groupBy('support_status')
+                ->pluck('aggregate', 'support_status');
+
+            $this->supportStats = [
+                'pending' => (int) ($statusCounts[DailyReportSupportStatus::PENDING->value] ?? 0),
+                'in_progress' => (int) ($statusCounts[DailyReportSupportStatus::IN_PROGRESS->value] ?? 0),
+                'resolved' => (int) ($statusCounts[DailyReportSupportStatus::RESOLVED->value] ?? 0),
+            ];
+
+            $supportQuery = (clone $baseSupportQuery)->with(['user.department', 'supportHandler']);
+
+            if ($this->supportStatusFilter === 'open') {
+                $supportQuery->whereIn('support_status', [
+                    DailyReportSupportStatus::PENDING->value,
+                    DailyReportSupportStatus::IN_PROGRESS->value,
+                ]);
+            } elseif (in_array($this->supportStatusFilter, DailyReportSupportStatus::values(), true)) {
+                $supportQuery->where('support_status', $this->supportStatusFilter);
+            }
+
+            $search = trim($this->supportSearch);
+            if ($search !== '') {
+                $supportQuery->where(function ($query) use ($search) {
+                    $query->where('issues', 'like', "%{$search}%")
+                        ->orWhere('support_response', 'like', "%{$search}%")
+                        ->orWhereHas('user', fn ($userQuery) => $userQuery->where('name', 'like', "%{$search}%"));
+                });
+            }
+
+            $supportReports = $supportQuery
+                ->orderByRaw("CASE support_status WHEN 'pending' THEN 0 WHEN 'in_progress' THEN 1 ELSE 2 END")
+                ->orderByDesc('date')
+                ->get();
+        } elseif ($this->activeTab === 'history') {
             $monthReports = DailyReport::with('user')->whereIn('user_id', $userIds)
                 ->whereYear('date', $this->yearFilter)
                 ->whereMonth('date', $this->monthFilter)
                 ->get();
 
             foreach ($monthReports as $report) {
-                $dayNum = (int) $report->date->format('j');
-                $calendarData[$dayNum][] = $report;
+                $dateStr = $report->date->format('Y-m-d');
+                $calendarData[$dateStr][] = $report;
             }
             $this->reportStats['total'] = $monthReports->count();
         } elseif ($this->isManager) {
@@ -502,7 +715,9 @@ class DailyReportManager extends Component
 
                 $this->reportStats['total'] = $usersToDisplay->count();
                 $this->reportStats['issues'] = $dailyReports->where('status', 'Gặp vấn đề, cần hỗ trợ')->count();
-                $this->reportStats['missing'] = $usersToDisplay->whereNull(fn ($u) => $dailyReports->get($u->id))->count();
+                $this->reportStats['missing'] = $usersToDisplay
+                    ->filter(fn ($user) => $dailyReports->get($user->id) === null)
+                    ->count();
                 $this->reportStats['late'] = $dailyReports->filter(function ($report) {
                     return $this->reportLateDays($report) > 0;
                 })->count();
@@ -513,8 +728,8 @@ class DailyReportManager extends Component
                     ->get();
 
                 foreach ($monthReports as $report) {
-                    $dayNum = (int) $report->date->format('j');
-                    $calendarData[$dayNum][] = $report;
+                    $dateStr = $report->date->format('Y-m-d');
+                    $calendarData[$dateStr][] = $report;
                 }
                 $this->reportStats['total'] = $monthReports->count();
             }
@@ -524,6 +739,7 @@ class DailyReportManager extends Component
             'users' => $allUsers,
             'departments' => $departments,
             'reports' => $reports,
+            'supportReports' => $supportReports,
             'calendarData' => $calendarData,
         ])->layout('admin.layouts.app', [
             'fullWidth' => $this->isManager || $this->activeTab === 'history',

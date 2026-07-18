@@ -1,4 +1,4 @@
-<div>
+<div class="contract-manager-page">
 
     <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
@@ -32,7 +32,7 @@
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
+        <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom">
             <h6 class="mb-0 fw-bold">Bộ lọc - Giảm phát thải, tiết kiệm năng lượng</h6>
             <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="collapse"
                 data-bs-target="#filterBodyEnergy">−</button>
@@ -196,7 +196,7 @@
 
     <!-- Table Card -->
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 border-bottom">
+        <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách HĐ {{ $contractTypeName }}</h6>
         </div>
         <div class="table-responsive mh-350" >
@@ -337,7 +337,7 @@
                                                 </svg>
                                             </button>
                                             <div x-show="open" @click.away="open = false" x-cloak
-                                                class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1 dropdown-menu-status"
+                                                class="position-absolute bg-body rounded-3 shadow-lg py-1 mt-1 dropdown-menu-status"
                                                 >
                                                 @foreach ($all_statuses as $opt)
                                                     <button type="button"
@@ -443,7 +443,7 @@
                     @if ($selectedDoc)
                         <div x-data="{ tab: @js($detailActiveTab ?? 'info') }">
                         {{-- Tabs --}}
-                        <ul class="nav nav-tabs px-4 pt-3 bg-white" role="tablist">
+                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'info' }"
                                     @click="tab = 'info'" type="button">

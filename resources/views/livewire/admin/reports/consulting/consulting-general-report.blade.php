@@ -61,7 +61,7 @@
 
     {{-- Bảng theo tháng --}}
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom py-3">
+        <div class="card-header border-bottom py-3">
             <h6 class="mb-0 fw-bold">
                 Theo dõi theo tháng — Năm {{ $year }}
                 @if($filter_service) <span class="text-muted  fw-normal">/ {{ $filter_service }}</span> @endif

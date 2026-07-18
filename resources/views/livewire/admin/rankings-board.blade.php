@@ -1,16 +1,12 @@
-<div>
-    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
+<div class="d-grid gap-4">
+    <div class="d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-3 p-3 p-md-4 bg-body border border-light-subtle rounded-3">
         <div>
-            <h4 class="mb-0">Bảng xếp hạng</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng thống kê</a></li>
-                    <li class="breadcrumb-item active">Bảng xếp hạng</li>
-                </ol>
-            </nav>
+            <h4 class="mb-1 fw-bold">Bảng xếp hạng</h4>
+            <p class="mb-0 small text-muted">Theo dõi kết quả nhân sự, khách hàng và dịch vụ theo năm.</p>
         </div>
-        <div>
-            <select wire:model.live="year" class="form-select form-select-sm w-auto" >
+        <div class="d-flex align-items-center gap-2">
+            <label for="ranking-year" class="small fw-semibold text-muted">Năm</label>
+            <select id="ranking-year" wire:model.live="year" class="form-select form-select-sm border-light-subtle rounded-2" >
                 @foreach($years as $y)
                     <option value="{{ $y }}">Năm {{ $y }}</option>
                 @endforeach
@@ -22,9 +18,10 @@
         @if($canSeeSales)
         {{-- Xếp hạng nhân viên kinh doanh --}}
         <div class="{{ $canSeeConsulting ? 'col-lg-7' : 'col-12' }}">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="mb-0 fw-bold">Xếp hạng doanh số nhân viên Kinh doanh — Năm {{ $year }}</h6>
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-2 p-2"><i class="fa-solid fa-trophy"></i></span>
+                    <h6 class="mb-0 fw-bold">Doanh số nhân viên Kinh doanh — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-3"
                     x-data="{ render() { if (window.renderRankingsBoardCharts) window.renderRankingsBoardCharts(); } }"
@@ -38,8 +35,8 @@
                     <div id="salesRankingBarChart" wire:ignore class="mnh-360px"></div>
 
                     <div class="mt-2">
-                        <div class="border rounded-3 px-3 py-2 bg-light-subtle">
-                            <div class=" text-muted">Tổng doanh số 6 loại hợp đồng (theo nhân viên)</div>
+                        <div class="d-flex align-items-center justify-content-between gap-3 border border-light-subtle rounded-3 px-3 py-2 bg-body-secondary">
+                            <div class="small text-muted">Tổng doanh số 6 loại hợp đồng</div>
                             <div class="fw-semibold text-primary">{{ number_format($salesRankings->sum('total'), 0, ',', '.') }} đ</div>
                         </div>
                     </div>
@@ -56,14 +53,15 @@
         @if($canSeeConsulting)
         {{-- Xếp hạng nhân viên tư vấn --}}
         <div class="{{ $canSeeSales ? 'col-lg-5' : 'col-12' }}">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="mb-0 fw-bold">Xếp hạng nhân viên Tư vấn — Năm {{ $year }}</h6>
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-info-subtle text-info rounded-2 p-2"><i class="fa-solid fa-user-tie"></i></span>
+                    <h6 class="mb-0 fw-bold">Nhân viên Tư vấn — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead class="table-light small text-uppercase">
                             <tr>
                                 <th class="text-center w-42px" >Hạng</th>
                                 <th>Nhân viên</th>
@@ -104,14 +102,15 @@
     <div class="row g-4 mb-4">
         {{-- Xếp hạng nhân viên kỹ thuật --}}
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h6 class="mb-0 fw-bold">Xếp hạng nhân viên Kỹ thuật — Năm {{ $year }}</h6>
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded-2 p-2"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                    <h6 class="mb-0 fw-bold">Nhân viên Kỹ thuật — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead class="table-light small text-uppercase">
                             <tr>
                                 <th class="text-center w-42px" >Hạng</th>
                                 <th>Nhân viên</th>
@@ -153,14 +152,15 @@
     <div class="row g-4">
         {{-- Top khách hàng --}}
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-success-subtle text-success rounded-2 p-2"><i class="fa-solid fa-building"></i></span>
                     <h6 class="mb-0 fw-bold">Top khách hàng theo giá trị HĐ — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="table-light small text-uppercase">
                                 <tr>
                                     <th class="text-center w-42px" >#</th>
                                     <th>Khách hàng</th>
@@ -194,14 +194,15 @@
 
         {{-- Top dịch vụ --}}
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-2 p-2"><i class="fa-solid fa-chart-line"></i></span>
                     <h6 class="mb-0 fw-bold">Top dịch vụ báo giá — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead class="table-light small text-uppercase">
                             <tr>
                                 <th class="text-center w-42px" >#</th>
                                 <th>Dịch vụ</th>
@@ -322,8 +323,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.rankingsBoardCharts.salesRanking.render();
             }
         }
+    };
 
     window.renderRankingsBoardCharts();
+
+    document.addEventListener('livewire:navigated', function () {
+        window.renderRankingsBoardCharts();
+    });
 });
 </script>
 @endpush

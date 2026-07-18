@@ -14,7 +14,7 @@
     background: var(--race-bg);
     color: var(--race-text);
     min-height: 100vh;
-    margin: -1.5rem;
+    margin: -30px 0 0;
     padding: 0;
     overflow-x: clip;
     overflow-y: visible;
@@ -325,7 +325,6 @@
     gap: 16px;
     background: rgba(245, 158, 11, 0.12);
     border: 1px solid rgba(245, 158, 11, 0.35);
-    border-left: 4px solid #f59e0b;
     border-radius: 12px;
     padding: 14px 20px;
     margin-bottom: 28px;
@@ -350,6 +349,78 @@
 
 /* ── FOOTER ── */
 .race-footer-quote { text-align: center; margin-top: 56px; font-size: 1rem; color: rgba(255, 255, 255, 0.25); font-style: italic; }
+
+/* ── PREMIUM CEREMONY LAYER ── */
+.sales-race-board {
+    background:
+        radial-gradient(circle at 50% 38%, rgba(25, 74, 123, .42), transparent 29rem),
+        radial-gradient(circle at 4% 8%, rgba(19, 98, 149, .24), transparent 24rem),
+        radial-gradient(circle at 96% 76%, rgba(158, 112, 25, .13), transparent 22rem),
+        linear-gradient(150deg, #041426 0%, #06182b 47%, #03101d 100%);
+    isolation: isolate;
+}
+.sales-race-board::before,
+.sales-race-board::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.sales-race-board::before {
+    opacity: .26;
+    z-index: 0;
+    background-image: linear-gradient(rgba(246, 211, 101, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(246, 211, 101, .08) 1px, transparent 1px);
+    background-size: 4.5rem 4.5rem;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .5), transparent 62%);
+}
+.sales-race-board::after {
+    z-index: 1;
+    box-shadow: inset 0 0 8rem rgba(0, 0, 0, .42);
+}
+.race-wrapper { z-index: 2; max-width: 1500px; padding-top: 3.5rem; }
+.race-filters { position: relative; z-index: 2; }
+.race-filters-loading { opacity: .6; pointer-events: none; }
+.race-select {
+    min-height: 2.8rem;
+    padding-inline: 1.1rem 2.5rem;
+    background-color: rgba(7, 29, 53, .76);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 .75rem 2rem rgba(0, 0, 0, .14);
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.race-select:hover,
+.race-select:focus-visible { border-color: var(--race-gold); box-shadow: 0 0 0 .2rem rgba(246, 211, 101, .15); transform: translateY(-1px); }
+.race-company-progress {
+    padding: 1.35rem 1.5rem 1.1rem;
+    border: 1px solid rgba(246, 211, 101, .17);
+    border-radius: 1rem;
+    background: linear-gradient(115deg, rgba(12, 40, 68, .84), rgba(6, 24, 43, .56));
+    box-shadow: inset 0 1px rgba(255, 255, 255, .06), 0 1.5rem 3rem rgba(0, 0, 0, .16);
+}
+.race-progress-summary { display: flex; justify-content: space-between; gap: 1rem; font-variant-numeric: tabular-nums; }
+.race-progress-summary span { display: block; color: rgba(248, 245, 232, .55); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; }
+.race-progress-summary strong { display: block; margin-top: .25rem; color: var(--race-gold-light); font-size: clamp(.95rem, 1.4vw, 1.2rem); }
+.race-progress-empty-state { display: flex; align-items: center; gap: .6rem; margin-top: 1.2rem; padding: .8rem 1rem; border: 1px solid rgba(246, 211, 101, .16); border-radius: .7rem; color: rgba(248, 245, 232, .66); background: rgba(255, 255, 255, .035); }
+.race-progress-empty-state i { color: var(--race-gold); }
+.race-progress-bar-wrap { background: rgba(255, 255, 255, .09); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .4); }
+.race-progress-fill { background: linear-gradient(90deg, #147dcc, #40b7ff 55%, #9ce0ff); box-shadow: 0 0 1.15rem rgba(69, 185, 255, .68); }
+.race-progress-fill::after { content: ''; position: absolute; right: -.3rem; top: 50%; width: .75rem; height: .75rem; border-radius: 50%; transform: translateY(-50%); background: #dff5ff; box-shadow: 0 0 0 .25rem rgba(112, 207, 255, .2), 0 0 1rem #82d6ff; }
+.race-progress-markers { position: absolute; top: 1.75rem; inset-inline: 0; display: flex; justify-content: space-between; color: rgba(248, 245, 232, .36); font-size: .67rem; }
+.race-hero-kicker { display: inline-flex; align-items: center; gap: .55rem; padding: .38rem .8rem; border: 1px solid rgba(246, 211, 101, .27); border-radius: 999px; color: var(--race-gold-light); background: rgba(246, 211, 101, .07); font-size: .72rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.race-hero-kicker i { color: var(--race-gold); }
+.race-header-badge { text-shadow: 0 0 1.8rem rgba(246, 211, 101, .2); }
+.race-columns { padding: 2rem 0; border-top: 1px solid rgba(246, 211, 101, .12); border-bottom: 1px solid rgba(246, 211, 101, .12); background: linear-gradient(90deg, rgba(7, 29, 53, .24), transparent 50%, rgba(7, 29, 53, .24)); }
+.race-section { position: relative; }
+.race-podium-1 { z-index: 2; }
+.race-podium-1 .race-avatar-wrap::after { content: ''; position: absolute; inset: -3.3rem; z-index: -1; border-radius: 50%; background: radial-gradient(circle, rgba(246, 211, 101, .38), transparent 66%); filter: blur(.3rem); }
+.race-podium-1 .race-avatar { box-shadow: 0 0 0 .25rem rgba(246, 211, 101, .18), 0 0 2.4rem rgba(246, 211, 101, .34); }
+.race-pedestal { transform: perspective(38rem) rotateX(2deg); }
+.race-podium-1 .race-pedestal { animation: raceChampionGlow 5.5s ease-in-out infinite; }
+.race-rank-card { backdrop-filter: blur(.45rem); }
+.race-rank-card:hover { transform: translateX(.35rem) translateY(-.15rem); box-shadow: 0 .85rem 1.5rem rgba(0, 0, 0, .14); }
+.race-rank-card:hover .race-avatar { transform: scale(1.05); }
+.race-avatar { transition: transform .25s ease; }
+@keyframes raceChampionGlow { 0%, 100% { box-shadow: 0 -4px 22px rgba(245, 200, 66, .42), inset 0 1px 0 rgba(255, 255, 255, .3); } 50% { box-shadow: 0 -5px 34px rgba(245, 200, 66, .68), inset 0 1px 0 rgba(255, 255, 255, .42); } }
+@media (prefers-reduced-motion: reduce) { .sales-race-board *, .sales-race-board *::before, .sales-race-board *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } .race-stars-canvas { display: none; } }
 
 /* ── ANIMATIONS ── */
 @keyframes raceFadeDown { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: translateY(0); } }
@@ -415,10 +486,14 @@
     .race-pedestal-1 { height: 110px; }
     .race-pedestal-2 { height: 85px; }
     .race-pedestal-3 { height: 70px; }
-    .sales-race-board { margin: -1rem; }
+    .sales-race-board { margin-top: -30px; }
     .race-wrapper { padding: 20px 32px 60px; }
 }
 @media (max-width: 520px) {
+    .race-company-progress { padding: 1rem; }
+    .race-progress-summary { align-items: flex-start; flex-direction: column; gap: .55rem; }
+    .race-progress-track { padding: 0; }
+    .race-progress-markers { top: 1.55rem; }
     .race-podium { gap: 2px; }
     .race-podium-slot { max-width: 110px; }
     .race-avatar-lg { width: 68px; height: 68px; font-size: 1.2rem; }

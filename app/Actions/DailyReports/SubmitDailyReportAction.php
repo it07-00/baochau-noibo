@@ -2,6 +2,8 @@
 
 namespace App\Actions\DailyReports;
 
+use App\Enums\DailyReportStatus;
+use App\Enums\DailyReportSupportStatus;
 use App\Enums\Role;
 use App\Models\DailyReport;
 use App\Models\User;
@@ -20,15 +22,29 @@ final class SubmitDailyReportAction
         string $plan = '',
         string $issues = '',
     ): DailyReport {
-        $report = DailyReport::updateOrCreate(
-            ['user_id' => $reporter->id, 'date' => $date],
-            [
-                'content' => clean($content),
-                'status' => $status,
-                'plan' => $plan,
-                'issues' => $issues,
-            ]
-        );
+        $report = DailyReport::firstOrNew(['user_id' => $reporter->id, 'date' => $date]);
+        $needsSupport = $status === DailyReportStatus::GAP_VAN_DE->value || trim($issues) !== '';
+
+        $report->fill([
+            'content' => clean($content),
+            'status' => $status,
+            'plan' => $plan,
+            'issues' => $issues,
+        ]);
+
+        if ($needsSupport && ! $report->support_status) {
+            $report->support_status = DailyReportSupportStatus::PENDING->value;
+        } elseif (! $needsSupport && $report->support_status === DailyReportSupportStatus::PENDING->value) {
+            $report->fill([
+                'support_status' => null,
+                'support_handler_id' => null,
+                'support_response' => null,
+                'support_started_at' => null,
+                'support_resolved_at' => null,
+            ]);
+        }
+
+        $report->save();
 
         $diff = $report->created_at
             ? (int) $report->date->copy()->startOfDay()->diffInDays($report->created_at->copy()->startOfDay(), false)

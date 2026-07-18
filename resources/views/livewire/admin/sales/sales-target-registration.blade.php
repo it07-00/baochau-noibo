@@ -117,7 +117,7 @@
     {{-- ════════════════════════════════════════════════════════════ --}}
     @if($viewMode === 'year')
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
                 <h6 class="mb-0 fw-bold">Chi tiết cam kết theo tháng — {{ $year }}</h6>
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Đạt</span>

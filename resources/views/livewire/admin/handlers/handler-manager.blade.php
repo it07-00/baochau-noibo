@@ -2,39 +2,42 @@
     @section('title', 'Quản lý Nhà thầu phụ')
     @section('page_title', 'Danh sách Nhà thầu phụ')
 
-    <div class="row g-3 mt-1 px-2 px-md-0">
+    <div class="row g-3 mt-2 px-2 px-md-0">
         <div class="col-12">
-            <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
-                    <h3 class="pure-card-title m-0">Danh sách nhà thầu phụ</h3>
+            <div class="card border-0 shadow-sm overflow-hidden rounded-12px">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3 p-3 p-md-4 border-bottom">
+                    <div>
+                        <h2 class="h4 fw-bold text-body mb-1">Danh sách nhà thầu phụ</h2>
+                        <p class="small text-muted mb-0">{{ number_format($totalHandlers) }} nhà thầu phụ đang được quản lý</p>
+                    </div>
 
-                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-md-0">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-transparent border-end-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch gap-2 w-100 w-md-auto" style="max-width: 440px;">
+                        <div class="input-group">
+                            <span class="input-group-text bg-body-tertiary border-end-0 text-body-secondary">
+                                <i class="fa-solid fa-magnifying-glass"></i>
                             </span>
-                            <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm theo tên, SĐT, địa chỉ...">
+                            <input wire:model.live.debounce.300ms="search" type="search" class="form-control border-start-0 ps-0" placeholder="Tên, SĐT hoặc địa chỉ...">
                         </div>
 
                         @can('handlers.create')
-                        <button class="btn btn-primary btn-sm text-nowrap" wire:click="openCreate">
-                            <i class="fa-solid fa-plus-circle me-1"></i>Tạo mới
+                        <button class="btn btn-primary text-nowrap btn-mobile-touch" wire:click="openCreate">
+                            <i class="fa-solid fa-plus me-1"></i>Thêm nhà thầu phụ
                         </button>
                         @endcan
                     </div>
                 </div>
 
-                <div class="pure-card-body pb-3">
+                <div class="card-body p-0">
                 {{-- Desktop: Table --}}
                     <div class="table-responsive d-none d-sm-block">
-                        <table class="table text-nowrap align-middle table-hover">
-                            <thead class="table-light">
+                        <table class="table text-nowrap align-middle table-hover mb-0">
+                            <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem;">
                                 <tr>
                                     <th width="60">ID</th>
-                                    <th>Tên Nhà thầu phụ</th>
+                                    <th>Tên nhà thầu phụ</th>
                                     <th class="d-none d-md-table-cell">Số điện thoại</th>
                                     <th class="d-none d-lg-table-cell">Địa chỉ</th>
-                                    <th class="text-center">Số HĐ</th>
+                                    <th class="text-center">Hợp đồng</th>
                                     @canany(['handlers.edit', 'handlers.delete'])
                                     <th class="text-end">Hành động</th>
                                     @endcanany
@@ -43,7 +46,7 @@
                             <tbody>
                                 @forelse($handlers as $handler)
                                 <tr wire:key="handler-{{ $handler->id }}">
-                                    <td>{{ $handler->id }}</td>
+                                    <td class="text-center text-muted fw-semibold">{{ $handler->id }}</td>
                                     <td class="fw-bold">
                                         <a href="{{ route('app.handlers.contracts', $handler) }}" class="text-body text-decoration-none link-hover-primary">
                                             {{ $handler->name }}
@@ -60,22 +63,22 @@
                                     <td class="text-center">
                                         @if($handler->contracts_count > 0)
                                             <a href="{{ route('app.handlers.contracts', $handler) }}"
-                                               class="badge bg-label-primary px-2 py-1 text-decoration-none">
-                                                {{ $handler->contracts_count }}
+                                               class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 text-decoration-none">
+                                                {{ $handler->contracts_count }} HĐ
                                             </a>
                                         @else
-                                            <span class="badge bg-label-secondary px-2 py-1">0</span>
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1">0 HĐ</span>
                                         @endif
                                     </td>
                                     @canany(['handlers.edit', 'handlers.delete'])
                                     <td class="text-end">
                                         @can('handlers.edit')
-                                        <button class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" wire:click="openEdit({{ $handler->id }})" title="Sửa">
+                                        <button class="btn btn-sm btn-outline-primary rounded-8px me-1" wire:click="openEdit({{ $handler->id }})" title="Sửa">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
                                         @endcan
                                         @can('handlers.delete')
-                                        <button class="btn btn-sm btn-icon btn-light text-danger rounded-pill"
+                                        <button class="btn btn-sm btn-outline-danger rounded-8px"
                                                 wire:click="delete({{ $handler->id }})"
                                                 wire:confirm="Xác nhận xóa nhà thầu phụ này?"
                                                 title="Xóa" {{ $handler->contracts_count > 0 ? 'disabled' : '' }}>
@@ -97,7 +100,7 @@
                     {{-- Mobile: Card list --}}
                     <div class="d-sm-none px-3 pb-3">
                         @forelse($handlers as $handler)
-                        <div wire:key="handler-card-{{ $handler->id }}" class="border rounded-3 p-3 mb-2 bg-body">
+                        <div wire:key="handler-card-{{ $handler->id }}" class="card border border-secondary-subtle shadow-sm rounded-12px p-3 mb-3 bg-body">
                             <div class="d-flex justify-content-between align-items-start gap-2">
                                 <a href="{{ route('app.handlers.contracts', $handler) }}" class="fw-bold text-body text-decoration-none fs-90 lh-base" >
                                     {{ $handler->name }}
@@ -148,7 +151,7 @@
                 </div>
 
                 @if($handlers->hasPages())
-                <div class="pure-card-footer border-top px-4 py-3">
+                <div class="card-footer border-top bg-body px-4 py-3">
                     {{ $handlers->links('livewire.admin.users.pagination') }}
                 </div>
                 @endif
@@ -157,38 +160,49 @@
     </div>
 
     <div wire:ignore.self class="modal fade" id="handlerFormModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-0 shadow-lg overflow-hidden">
-                <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white">{{ $isEditing ? 'Cập nhật Nhà thầu phụ' : 'Thêm Nhà thầu phụ mới' }}</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header align-items-start border-0 bg-body p-4 pb-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-3">
+                            <i class="fa-solid fa-handshake fs-5"></i>
+                        </span>
+                        <div>
+                            <h5 class="modal-title fw-bold text-body mb-1">
+                                {{ $isEditing ? 'Cập nhật nhà thầu phụ' : 'Thêm nhà thầu phụ mới' }}
+                            </h5>
+                            <p class="small text-muted mb-0">Thông tin liên hệ phục vụ quản lý và theo dõi hợp đồng.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close mt-1" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
 
                 <form wire:submit.prevent="save">
-                    <div class="modal-body p-4">
-                        <div class="row g-3">
+                    <div class="modal-body p-4 pt-3">
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Tên Nhà thầu phụ <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('formData.name') is-invalid @enderror" wire:model.defer="formData.name" placeholder="Nhập tên nhà thầu phụ">
+                                <label class="form-label fw-semibold text-body">Tên nhà thầu phụ <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('formData.name') is-invalid @enderror" wire:model.defer="formData.name" placeholder="Ví dụ: Công ty Môi trường An Phát" autocomplete="organization">
                                 @error('formData.name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Số điện thoại</label>
-                                <input type="text" class="form-control @error('formData.phone') is-invalid @enderror" wire:model.defer="formData.phone" placeholder="Nhập số điện thoại">
+                                <label class="form-label fw-semibold text-body">Số điện thoại</label>
+                                <input type="tel" class="form-control @error('formData.phone') is-invalid @enderror" wire:model.defer="formData.phone" placeholder="Ví dụ: 0901 234 567" autocomplete="tel">
                                 @error('formData.phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold">Địa chỉ</label>
-                                <textarea rows="2" class="form-control @error('formData.address') is-invalid @enderror" wire:model.defer="formData.address" placeholder="Nhập địa chỉ"></textarea>
+                                <label class="form-label fw-semibold text-body">Địa chỉ</label>
+                                <textarea rows="3" class="form-control @error('formData.address') is-invalid @enderror" wire:model.defer="formData.address" placeholder="Nhập địa chỉ văn phòng hoặc cơ sở" autocomplete="street-address"></textarea>
                                 @error('formData.address') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">
+                    <div class="modal-footer border-top bg-body px-4 py-3 gap-2">
+                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary px-4" wire:loading.attr="disabled" wire:target="save">
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm me-1"></span>
-                            Lưu
+                            <i wire:loading.remove wire:target="save" class="fa-solid fa-floppy-disk me-1"></i>
+                            {{ $isEditing ? 'Lưu thay đổi' : 'Thêm nhà thầu phụ' }}
                         </button>
                     </div>
                 </form>

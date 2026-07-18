@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Handlers;
 
+use App\Enums\Role;
 use App\Models\ContractEmission;
 use App\Models\ContractLegal;
 use App\Models\ContractProgressNote;
@@ -14,7 +15,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Enums\Role;
 
 class HandlerContractsView extends Component
 {
@@ -25,20 +25,37 @@ class HandlerContractsView extends Component
     public Handler $handler;
 
     public string $sortField = 'signed_at';
+
     public string $sortDir = 'desc';
 
     public string $dateFrom = '';
+
     public string $dateTo = '';
 
     public ?object $selectedContract = null;
+
     public string $selectedContractLabel = '';
+
     public string $selectedContractType = '';
+
     public $selectedProgressNotes = [];
+
     public string $progressNote = '';
 
-    public function updatingDateFrom(): void { $this->resetPage(); }
-    public function updatingDateTo(): void { $this->resetPage(); }
-    public function updatingSortField(): void { $this->resetPage(); }
+    public function updatingDateFrom(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateTo(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortField(): void
+    {
+        $this->resetPage();
+    }
 
     public function toggleDir(): void
     {
@@ -49,7 +66,7 @@ class HandlerContractsView extends Component
     public function resetFilter(): void
     {
         $this->dateFrom = '';
-        $this->dateTo   = '';
+        $this->dateTo = '';
         $this->resetPage();
     }
 
@@ -72,38 +89,42 @@ class HandlerContractsView extends Component
     public function viewDetail(int $id, string $modelClass): void
     {
         $allowed = [
-            ContractWaste::class          => 'waste',
-            ContractLegal::class          => 'consulting',
-            ContractTechnical::class      => 'project',
-            ContractResearch::class       => 'commercial',
+            ContractWaste::class => 'waste',
+            ContractLegal::class => 'consulting',
+            ContractTechnical::class => 'project',
+            ContractResearch::class => 'commercial',
             ContractSustainability::class => 'sustainability',
-            ContractEmission::class       => 'energy',
+            ContractEmission::class => 'energy',
         ];
-        if (!array_key_exists($modelClass, $allowed)) return;
+        if (! array_key_exists($modelClass, $allowed)) {
+            return;
+        }
 
         $contract = $modelClass::with(['customer', 'handler', 'staff', 'department', 'assignments.user', 'assignments.assigner'])->find($id);
-        if (!$contract || (int) $contract->handler_id !== $this->handler->id) return;
+        if (! $contract || (int) $contract->handler_id !== $this->handler->id) {
+            return;
+        }
 
         $user = auth()->user();
         $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
         if ($isRestrictedSales && $contract->staff_id !== $user->id) {
             abort(403, 'Bạn không có quyền xem chi tiết hợp đồng này.');
         }
 
         $typeLabels = [
-            'waste'          => 'Chất thải',
-            'consulting'     => 'Quan trắc và hồ sơ môi trường',
-            'project'        => 'Ứng phó sự cố',
-            'commercial'     => 'Nghiên cứu và chuyển đổi công nghệ',
+            'waste' => 'Chất thải',
+            'consulting' => 'Quan trắc và hồ sơ môi trường',
+            'project' => 'Ứng phó sự cố',
+            'commercial' => 'Nghiên cứu và chuyển đổi công nghệ',
             'sustainability' => 'Phát triển bền vững',
-            'energy'         => 'Giảm phát thải, tiết kiệm năng lượng',
+            'energy' => 'Giảm phát thải, tiết kiệm năng lượng',
         ];
 
         $contractType = $allowed[$modelClass];
 
-        $this->selectedContract      = $contract;
-        $this->selectedContractType  = $contractType;
+        $this->selectedContract = $contract;
+        $this->selectedContractType = $contractType;
         $this->selectedContractLabel = $typeLabels[$contractType] ?? '';
         $this->selectedProgressNotes = ContractProgressNote::where('contract_type', $contractType)
             ->where('contract_id', $id)
@@ -116,7 +137,9 @@ class HandlerContractsView extends Component
 
     public function addProgressNote(int $contractId): void
     {
-        if (!$this->selectedContractType) return;
+        if (! $this->selectedContractType) {
+            return;
+        }
 
         $this->validate(
             ['progressNote' => 'required|min:1|max:2000'],
@@ -126,9 +149,9 @@ class HandlerContractsView extends Component
 
         ContractProgressNote::create([
             'contract_type' => $this->selectedContractType,
-            'contract_id'   => $contractId,
-            'user_id'       => auth()->id(),
-            'note'          => $this->progressNote,
+            'contract_id' => $contractId,
+            'user_id' => auth()->id(),
+            'note' => $this->progressNote,
         ]);
 
         $this->progressNote = '';
@@ -148,24 +171,17 @@ class HandlerContractsView extends Component
 
         return match (true) {
             in_array($statusValue, ['HOÀN THÀNH', 'Đã hoàn thành', 'Đã hoàn thành KH ký trước'], true)
-            || in_array($statusKey, ['hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước'], true)
-                => ['bg' => '#d1e7dd', 'text' => '#198754'],
+            || in_array($statusKey, ['hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước'], true) => ['bg' => '#d1e7dd', 'text' => '#198754'],
             in_array($statusValue, ['Hợp đồng hủy', 'ĐÃ HỦY', 'Đã hủy', 'Hủy bỏ'], true)
-            || in_array($statusKey, ['hợp đồng hủy', 'đã hủy', 'hủy bỏ'], true)
-                => ['bg' => '#f8d7da', 'text' => '#dc3545'],
+            || in_array($statusKey, ['hợp đồng hủy', 'đã hủy', 'hủy bỏ'], true) => ['bg' => '#f8d7da', 'text' => '#dc3545'],
             in_array($statusValue, ['PTH đang kiểm tra', 'ĐANG THỰC HIỆN', 'ĐANG THỰC HIÊN'], true)
-            || in_array($statusKey, ['đang thực hiện', 'pth đang kiểm tra', ''], true)
-                => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
+            || in_array($statusKey, ['đang thực hiện', 'pth đang kiểm tra', ''], true) => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
             in_array($statusValue, ['Đang trình BGĐ ký'], true)
-            || in_array($statusKey, ['đã trình ký nhà thầu phụ', 'đang trình bgđ ký'], true)
-                => ['bg' => '#fff3cd', 'text' => '#b45309'],
-            in_array($statusKey, ['nhà thầu phụ đã gửi về'], true)
-                => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
+            || in_array($statusKey, ['đã trình ký nhà thầu phụ', 'đang trình bgđ ký'], true) => ['bg' => '#fff3cd', 'text' => '#b45309'],
+            in_array($statusKey, ['nhà thầu phụ đã gửi về'], true) => ['bg' => '#d1ecf1', 'text' => '#0c5460'],
             in_array($statusValue, ['Đã gửi khách hàng'], true)
-            || in_array($statusKey, ['đã gửi khách hàng'], true)
-                => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
-            in_array($statusKey, ['tạm dừng'], true)
-                => ['bg' => '#fff8e1', 'text' => '#e65100'],
+            || in_array($statusKey, ['đã gửi khách hàng'], true) => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
+            in_array($statusKey, ['tạm dừng'], true) => ['bg' => '#fff8e1', 'text' => '#e65100'],
             default => ['bg' => '#e9ecef', 'text' => '#495057'],
         };
     }
@@ -186,25 +202,25 @@ class HandlerContractsView extends Component
         foreach ($types as $type) {
             $user = auth()->user();
             $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-                && !$user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+                && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
 
             $rows = $type['model']::query()
                 ->where('handler_id', $this->handler->id)
                 ->when($this->dateFrom, fn ($q) => $q->whereDate('signed_at', '>=', $this->dateFrom))
-                ->when($this->dateTo,   fn ($q) => $q->whereDate('signed_at', '<=', $this->dateTo))
+                ->when($this->dateTo, fn ($q) => $q->whereDate('signed_at', '<=', $this->dateTo))
                 ->when($isRestrictedSales, fn ($q) => $q->where('staff_id', $user->id))
                 ->with('customer')
                 ->get()
                 ->map(fn ($contract) => (object) [
-                    'type_label'  => $type['label'],
+                    'type_label' => $type['label'],
                     'contract_id' => $contract->id,
                     'model_class' => $type['model'],
-                    'shd_cxl'    => $contract->shd_cxl,
-                    'shd_bc'     => $contract->shd_bc,
-                    'customer'   => $contract->customer?->name ?? '—',
-                    'signed_at'  => $contract->signed_at,
-                    'value'      => $contract->value,
-                    'status'     => $contract->status,
+                    'shd_cxl' => $contract->shd_cxl,
+                    'shd_bc' => $contract->shd_bc,
+                    'customer' => $contract->customer?->name ?? '—',
+                    'signed_at' => $contract->signed_at,
+                    'commission' => $contract->commission,
+                    'status' => $contract->status,
                 ]);
 
             $all = $all->concat($rows);
@@ -213,8 +229,8 @@ class HandlerContractsView extends Component
         return $all->sortBy(
             fn ($r) => match ($this->sortField) {
                 'signed_at' => optional($r->signed_at)->timestamp ?? 0,
-                'value'     => (float) $r->value,
-                default     => $r->{$this->sortField} ?? '',
+                'commission' => (float) $r->commission,
+                default => $r->{$this->sortField} ?? '',
             },
             SORT_REGULAR,
             $this->sortDir === 'desc'
@@ -223,7 +239,7 @@ class HandlerContractsView extends Component
 
     private function paginate(Collection $items, int $perPage = 15): LengthAwarePaginator
     {
-        $page  = $this->getPage();
+        $page = $this->getPage();
         $total = $items->count();
 
         return new LengthAwarePaginator(
@@ -237,14 +253,13 @@ class HandlerContractsView extends Component
 
     public function render()
     {
-        $all       = $this->fetchAll();
+        $all = $this->fetchAll();
         $contracts = $this->paginate($all, 15);
 
         return view('livewire.admin.handlers.handler-contracts-view', [
-            'contracts'      => $contracts,
-            'totalValue'     => $all->sum(fn ($r) => (float) $r->value),
+            'contracts' => $contracts,
+            'totalCommission' => $all->sum(fn ($r) => (float) $r->commission),
             'totalContracts' => $all->count(),
         ])->layout('admin.layouts.app');
     }
 }
-

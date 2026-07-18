@@ -2,17 +2,23 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\DailyReportSupportStatus;
 use App\Enums\Role;
 use App\Models\DailyReport;
+use App\Support\DailyReportVisibility;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class NotificationBell extends Component
 {
     public int $limit = 20;
+
     public ?string $lastRealtimeNotificationId = null;
+
     public bool $realtimeInitialized = false;
+
     public ?string $lastAutoShownInternalId = null;
+
     public bool $internalAutoShowInitialized = false;
 
     private const MAX_FETCH = 500;
@@ -38,17 +44,17 @@ class NotificationBell extends Component
     private function sectionLabelsForUser($user): array
     {
         $allLabels = [
-            'internal'       => 'Thông báo nội bộ',
-            'daily_report'   => 'Báo cáo ngày',
-            'work_schedule'  => 'Lịch công tác',
-            'commission'     => 'Yêu cầu chi hoa hồng',
-            'marketing'      => 'Kế hoạch content',
-            'waste'          => 'HĐ Chất thải và tiếng ồn',
-            'consulting'     => 'HĐ Pháp lý và hồ sơ MT',
-            'project'        => 'HĐ Kỹ thuật và ứng phó SC',
-            'commercial'     => 'HĐ NC và chuyển đổi CN',
+            'internal' => 'Thông báo nội bộ',
+            'daily_report' => 'Báo cáo ngày',
+            'work_schedule' => 'Lịch công tác',
+            'commission' => 'Yêu cầu chi hoa hồng',
+            'marketing' => 'Kế hoạch content',
+            'waste' => 'HĐ Chất thải và tiếng ồn',
+            'consulting' => 'HĐ Pháp lý và hồ sơ MT',
+            'project' => 'HĐ Kỹ thuật và ứng phó SC',
+            'commercial' => 'HĐ NC và chuyển đổi CN',
             'sustainability' => 'HĐ TV và báo cáo PTBV',
-            'energy'         => 'HĐ Phát thải và năng lượng',
+            'energy' => 'HĐ Phát thải và năng lượng',
         ];
 
         $allowedKeys = $this->allowedSectionKeysForUser($user);
@@ -98,6 +104,7 @@ class NotificationBell extends Component
             ->get()
             ->filter(function ($notification) use ($allowedSections) {
                 $sectionKey = $this->resolveSectionKey((array) ($notification->data ?? []));
+
                 return in_array($sectionKey, $allowedSections, true);
             })
             ->values();
@@ -112,19 +119,21 @@ class NotificationBell extends Component
         $newest = $notifications
             ->first(function ($n) {
                 $data = (array) ($n->data ?? []);
+
                 return ($data['contract_type'] ?? '') === 'internal' && $n->read_at === null;
             });
 
-        if (!$this->internalAutoShowInitialized) {
+        if (! $this->internalAutoShowInitialized) {
             $this->internalAutoShowInitialized = true;
             $this->lastAutoShownInternalId = $newest?->id;
             if ($newest) {
                 $this->doDispatchInternalModal($newest);
             }
+
             return;
         }
 
-        if (!$newest || $newest->id === $this->lastAutoShownInternalId) {
+        if (! $newest || $newest->id === $this->lastAutoShownInternalId) {
             return;
         }
 
@@ -138,10 +147,10 @@ class NotificationBell extends Component
         $data = (array) ($notification->data ?? []);
 
         $this->dispatch('openInternalNotifModal',
-            title:      $data['contract_label'] ?? '',
-            body:       $data['message'] ?? '',
+            title: $data['contract_label'] ?? '',
+            body: $data['message'] ?? '',
             senderName: $data['sender_name'] ?? '',
-            createdAt:  $notification->created_at?->format('d/m/Y H:i') ?? '',
+            createdAt: $notification->created_at?->format('d/m/Y H:i') ?? '',
         );
     }
 
@@ -150,13 +159,14 @@ class NotificationBell extends Component
         $latest = $notifications->first();
         $latestId = $latest?->id;
 
-        if (!$this->realtimeInitialized) {
+        if (! $this->realtimeInitialized) {
             $this->realtimeInitialized = true;
             $this->lastRealtimeNotificationId = $latestId;
+
             return;
         }
 
-        if (!$latestId || $latestId === $this->lastRealtimeNotificationId) {
+        if (! $latestId || $latestId === $this->lastRealtimeNotificationId) {
             return;
         }
 
@@ -167,7 +177,7 @@ class NotificationBell extends Component
         $timeLabel = trim((string) ($data['time_label'] ?? ''));
 
         if (($data['contract_type'] ?? '') === 'work_schedule' && $timeLabel !== '' && $timeLabel !== 'Cả ngày') {
-            $body .= ' | Giờ: ' . $timeLabel;
+            $body .= ' | Giờ: '.$timeLabel;
         }
 
         $this->dispatch(
@@ -187,7 +197,7 @@ class NotificationBell extends Component
     public function openInternalModal(string $id): void
     {
         $notification = auth()->user()->notifications()->find($id);
-        if (!$notification) {
+        if (! $notification) {
             return;
         }
 
@@ -195,10 +205,10 @@ class NotificationBell extends Component
         $data = (array) ($notification->data ?? []);
 
         $this->dispatch('openInternalNotifModal',
-            title:      $data['contract_label'] ?? '',
-            body:       $data['message'] ?? '',
+            title: $data['contract_label'] ?? '',
+            body: $data['message'] ?? '',
             senderName: $data['sender_name'] ?? '',
-            createdAt:  $notification->created_at?->format('d/m/Y H:i') ?? '',
+            createdAt: $notification->created_at?->format('d/m/Y H:i') ?? '',
         );
     }
 
@@ -207,6 +217,7 @@ class NotificationBell extends Component
         $notification = auth()->user()->notifications()->find($id);
         $url = $notification?->data['url'] ?? '/';
         $notification?->markAsRead();
+
         return $this->redirect($url);
     }
 
@@ -222,6 +233,7 @@ class NotificationBell extends Component
                 'type' => 'info',
                 'message' => 'Không có thông báo để đánh dấu đã đọc.',
             ]);
+
             return;
         }
 
@@ -280,15 +292,24 @@ class NotificationBell extends Component
         $dbNotifications = $allVisibleNotifications->take($this->limit)->values();
         $visibleUnreadCount = $allVisibleNotifications->whereNull('read_at')->count();
 
-        // DailyReport issues (giữ nguyên logic cũ)
+        // Yêu cầu hỗ trợ chưa hoàn tất trong phạm vi quản lý báo cáo ngày.
         $issueReports = [];
-        $issueCount   = 0;
+        $issueCount = 0;
         if ($user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value])) {
             $issueReports = DailyReport::with('user')
                 ->whereDate('date', date('Y-m-d'))
+                ->whereIn('user_id', DailyReportVisibility::visibleUsersQuery($user)->select('users.id'))
                 ->where(function ($q) {
-                    $q->where('status', 'Gặp vấn đề, cần hỗ trợ')
-                      ->orWhereRaw("TRIM(COALESCE(issues, '')) <> ''");
+                    $q->whereIn('support_status', [
+                        DailyReportSupportStatus::PENDING->value,
+                        DailyReportSupportStatus::IN_PROGRESS->value,
+                    ])->orWhere(function ($legacyQuery) {
+                        $legacyQuery->whereNull('support_status')
+                            ->where(function ($issueQuery) {
+                                $issueQuery->where('status', 'Gặp vấn đề, cần hỗ trợ')
+                                    ->orWhereRaw("TRIM(COALESCE(issues, '')) <> ''");
+                            });
+                    });
                 })
                 ->latest()
                 ->get();
@@ -298,8 +319,8 @@ class NotificationBell extends Component
         $sectionLabels = $this->sectionLabelsForUser($user);
 
         $notificationSections = collect($sectionLabels)
-            ->map(fn($label, $key) => [
-                'key'   => $key,
+            ->map(fn ($label, $key) => [
+                'key' => $key,
                 'label' => $label,
                 'items' => collect(),
             ]);
@@ -307,7 +328,7 @@ class NotificationBell extends Component
         foreach ($dbNotifications as $notification) {
             $sectionKey = $this->resolveSectionKey((array) ($notification->data ?? []));
 
-            if (!$notificationSections->has($sectionKey)) {
+            if (! $notificationSections->has($sectionKey)) {
                 continue;
             }
 
@@ -345,10 +366,10 @@ class NotificationBell extends Component
         return view('livewire.admin.notification-bell', [
             'dbNotifications' => $dbNotifications,
             'notificationSections' => $notificationSections,
-            'unreadCount'     => $visibleUnreadCount,
-            'issueReports'    => $issueReports,
-            'issueCount'      => $issueCount,
-            'totalBadge'      => $visibleUnreadCount + $issueCount,
+            'unreadCount' => $visibleUnreadCount,
+            'issueReports' => $issueReports,
+            'issueCount' => $issueCount,
+            'totalBadge' => $visibleUnreadCount + $issueCount,
             'hasMoreNotifications' => $allVisibleNotifications->count() > $dbNotifications->count(),
         ]);
     }

@@ -83,7 +83,7 @@
         {{-- Bảng theo tháng --}}
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom py-3">
+                <div class="card-header border-bottom py-3">
                     <h6 class="mb-0 fw-bold">Tổng kết theo tháng — Năm {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
@@ -124,7 +124,7 @@
         {{-- Bảng theo dịch vụ --}}
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom py-3">
+                <div class="card-header border-bottom py-3">
                     <h6 class="mb-0 fw-bold">Theo loại dịch vụ</h6>
                 </div>
                 <div class="card-body p-0">

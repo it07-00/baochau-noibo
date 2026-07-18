@@ -1,7 +1,4 @@
 <div>
-    @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/css/statistics-board.css') }}?v={{ config('app.version') }}">
-    @endpush
     @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
     <div class="statistics-page-header page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
@@ -58,7 +55,7 @@
     @endunless
 
     @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'kinh-doanh', 'tp-kinh-doanh']))
-        <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4 rounded-3 border-start border-warning border-4" >
+        <div class="daily-report-reminder-alert alert bg-warning-subtle border-0 shadow-sm mb-4 d-flex align-items-center gap-3 py-3 px-4 rounded-3" >
             <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 wh-44" >
                 <i class="fa-solid fa-clock text-warning fs-5"></i>
             </div>
@@ -72,7 +69,7 @@
         </div>
     @endif
 
-    <div class="card border-0 shadow-sm mb-4 border-start border-3 border-primary">
+    <div class="card border border-primary-subtle shadow-sm mb-4 bg-primary bg-opacity-05">
         <div class="card-body py-3 px-4 d-flex align-items-center gap-3 flex-wrap">
             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                 <i class="fa-solid fa-calendar-week text-primary fs-5"></i>
@@ -80,22 +77,22 @@
             </div>
             <div class="vr opacity-25 d-none d-md-block flex-shrink-0"></div>
             <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
-                <span class="badge bg-primary text-white px-3 py-2 fs-12px">
-                    <i class="fa-solid fa-calendar-check me-1"></i>Hôm nay: {{ number_format($workScheduleSummary['today_total'] ?? 0) }}
+                <span class="badge bg-primary text-white px-3 py-2 fs-12px d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-calendar-check"></i>Hôm nay: {{ number_format($workScheduleSummary['today_total'] ?? 0) }}
                 </span>
-                <span class="badge bg-warning text-dark px-3 py-2 fs-12px">
-                    <i class="fa-solid fa-calendar-day me-1"></i>Ngày mai: {{ number_format($workScheduleSummary['upcoming_tomorrow'] ?? 0) }}
+                <span class="badge bg-warning text-dark px-3 py-2 fs-12px d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-calendar-day"></i>Ngày mai: {{ number_format($workScheduleSummary['upcoming_tomorrow'] ?? 0) }}
                 </span>
                 @if(($workScheduleSummary['overdue'] ?? 0) > 0)
-                <span class="badge bg-danger text-white px-3 py-2 fs-12px">
-                    <i class="fa-solid fa-circle-exclamation me-1"></i>Quá hạn: {{ number_format($workScheduleSummary['overdue']) }}
+                <span class="badge bg-danger text-white px-3 py-2 fs-12px d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-circle-exclamation"></i>Quá hạn: {{ number_format($workScheduleSummary['overdue']) }}
                 </span>
                 @endif
                 @if($workScheduleRecentItems->isNotEmpty())
                 <div class="vr opacity-25 d-none d-md-block flex-shrink-0"></div>
                 @endif
                 @foreach($workScheduleRecentItems as $item)
-                <span class="badge rounded-pill {{ $item['status_class'] }} px-3 py-2 fs-12px text-truncate" style="max-width: 200px;" title="{{ $item['title'] }}">
+                <span class="badge rounded-pill {{ $item['status_class'] }} px-3 py-2 fs-12px text-truncate d-inline-flex align-items-center" style="max-width: 200px;" title="{{ $item['title'] }}">
                     {{ $item['time_label'] !== 'Cả ngày' ? $item['time_label'] . ' · ' : '' }}{{ $item['title'] }}
                 </span>
                 @endforeach
@@ -133,68 +130,76 @@
         @endif
 
         @if($canSeeConsulting)
-        <div class="role-dashboard-panel mb-4">
-            <div class="role-dashboard-header role-consulting">
+        <div class="card border border-primary-subtle shadow-sm mb-4 bg-primary bg-opacity-05">
+            <div class="card-header border-0 bg-primary bg-opacity-10 py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
-                    <h6 class="role-dashboard-title">Bộ phận Tư vấn</h6>
-                    <p class="role-dashboard-subtitle">Theo dõi hồ sơ theo nhóm dịch vụ và tiến độ xử lý</p>
+                    <h5 class="mb-0 fw-bold text-body">Bộ phận Tư vấn</h5>
+                    <p class="text-muted small mb-0">Theo dõi hồ sơ theo nhóm dịch vụ và tiến độ xử lý</p>
                 </div>
-                <span class="role-dashboard-year">Năm {{ $year }}</span>
+                <span class="badge bg-primary bg-opacity-15 text-primary border border-primary-subtle px-3 py-2 rounded-pill fs-7 d-inline-flex align-items-center">Năm {{ $year }}</span>
             </div>
 
             <div class="p-3 p-md-4">
                 <div class="row g-3 mb-3">
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-consulting-total h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-copy"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-copy"></i>
+                                </div>
                                 <div>
-                                    <div class="role-kpi-label">Tổng hồ sơ</div>
-                                    <div class="role-kpi-value">{{ number_format($consultingSummary['total'] ?? 0) }}</div>
-                                    <p class="role-kpi-note">Tổng hợp hồ sơ tư vấn trong kỳ</p>
+                                    <div class="text-muted small fw-bold text-uppercase">Tổng hồ sơ</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ number_format($consultingSummary['total'] ?? 0) }}</h3>
+                                    <p class="text-muted small mb-0">Tổng hợp hồ sơ tư vấn trong kỳ</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-consulting-completed h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-check-circle"></i>
+                                </div>
                                 <div>
-                                    <div class="role-kpi-label">Đã hoàn thành</div>
-                                    <div class="role-kpi-value">{{ number_format($consultingSummary['completed'] ?? 0) }}</div>
-                                    <p class="role-kpi-note">Đã kết thúc quy trình công việc</p>
+                                    <div class="text-muted small fw-bold text-uppercase">Đã hoàn thành</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ number_format($consultingSummary['completed'] ?? 0) }}</h3>
+                                    <p class="text-muted small mb-0">Đã kết thúc quy trình công việc</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-consulting-processing h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                </div>
                                 <div>
-                                    <div class="role-kpi-label">Đang xử lý</div>
-                                    <div class="role-kpi-value">{{ number_format($consultingSummary['processing'] ?? 0) }}</div>
-                                    <p class="role-kpi-note">Cần tiếp tục giám sát tiến độ</p>
+                                    <div class="text-muted small fw-bold text-uppercase">Đang xử lý</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ number_format($consultingSummary['processing'] ?? 0) }}</h3>
+                                    <p class="text-muted small mb-0">Cần tiếp tục giám sát tiến độ</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-consulting-rate h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-info bg-opacity-10 text-info rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-arrow-trend-up"></i>
+                                </div>
                                 <div class="w-100">
-                                    <div class="role-kpi-label">Tỷ lệ hoàn thành</div>
-                                    <div class="role-kpi-value">{{ $consultingRate }}%</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Tỷ lệ hoàn thành</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ $consultingRate }}%</h3>
                                     @if($canSeeFinance)
-                                        <p class="role-kpi-note">Giá trị hồ sơ: {{ number_format($consultingSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
+                                        <p class="text-muted small mb-0">Giá trị hồ sơ: {{ number_format($consultingSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
                                     @endif
-                                    <div class="role-kpi-progress">
-                                        <span style="width: {{ $consultingRate }}%"></span>
+                                    <div class="progress mt-2" style="height: 6px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $consultingRate }}%; border-radius: 99px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -202,36 +207,39 @@
                     </div>
                 </div>
 
-                <div class="role-table-card">
-                    <div class="card-header py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="card border border-light-subtle rounded-3 overflow-hidden mt-4">
+                    <div class="card-header border-bottom py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2 bg-body-secondary">
                         <div>
-                            <h6 class="role-table-title">Chi tiết tiến độ hồ sơ tư vấn</h6>
-                            <p class="role-table-subtitle">Thống kê theo từng loại hợp đồng</p>
+                            <h6 class="mb-0 fw-bold">Chi tiết tiến độ hồ sơ tư vấn</h6>
+                            <p class="text-muted small mb-0">Thống kê theo từng loại hợp đồng</p>
                         </div>
-                        <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">{{ number_format($consultingSummary['total'] ?? 0) }} hồ sơ</span>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle d-inline-flex align-items-center">{{ number_format($consultingSummary['total'] ?? 0) }} hồ sơ</span>
                     </div>
 
                     <div class="card-body p-0">
-                        <table class="table table-hover align-middle mb-0 role-data-table">
+                        <table class="table table-hover align-middle mb-0">
                             <thead>
-                                <tr>
-                                    <th>Loại HĐ</th>
+                                <tr class="table-light">
+                                    <th class="ps-3">Loại HĐ</th>
                                     <th class="text-center">Số HĐ</th>
                                     <th class="text-center">Đang xử lý</th>
                                     <th class="text-center">Hoàn thành</th>
-                                    <th class="text-center">Tiến độ</th>
+                                    <th class="text-center" style="width: 140px;">Tiến độ</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($consultingStats as $row)
+                                @php($pct = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0)
                                 <tr>
-                                    <td class="fw-semibold">{{ $row['label'] }}</td>
+                                    <td class="fw-semibold ps-3">{{ $row['label'] }}</td>
                                     <td class="text-center fw-bold">{{ number_format($row['count']) }}</td>
                                     <td class="text-center text-warning-emphasis">{{ number_format($row['processing']) }}</td>
                                     <td class="text-center text-success fw-semibold">{{ number_format($row['completed']) }}</td>
-                                    <td class="text-center">
-                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%"></span></div>
-                                        <small class="text-muted fw-semibold">{{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%</small>
+                                    <td class="text-center pe-3">
+                                        <div class="progress mx-auto mb-1" style="height: 5px; width: 90px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ $pct }}%; border-radius: 99px;"></div>
+                                        </div>
+                                        <small class="text-muted fw-semibold">{{ $pct }}%</small>
                                     </td>
                                 </tr>
                                 @empty
@@ -248,68 +256,76 @@
         @endif
 
         @if($canSeeTechnical)
-        <div class="role-dashboard-panel mb-4">
-            <div class="role-dashboard-header role-technical">
+        <div class="card border border-warning-subtle shadow-sm mb-4 bg-warning bg-opacity-05">
+            <div class="card-header border-0 bg-warning bg-opacity-10 py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
-                    <h6 class="role-dashboard-title">Bộ phận Kỹ thuật</h6>
-                    <p class="role-dashboard-subtitle">Tổng hợp khối lượng được giao và chất lượng hoàn tất</p>
+                    <h5 class="mb-0 fw-bold text-body">Bộ phận Kỹ thuật</h5>
+                    <p class="text-muted small mb-0">Tổng hợp khối lượng được giao và chất lượng hoàn tất</p>
                 </div>
-                <span class="role-dashboard-year">Năm {{ $year }}</span>
+                <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fs-7 d-inline-flex align-items-center">Năm {{ $year }}</span>
             </div>
 
             <div class="p-3 p-md-4">
                 <div class="row g-3 mb-3">
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-technical-total h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-book"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-book"></i>
+                                </div>
                                 <div>
-                                    <div class="role-kpi-label">Hồ sơ được giao</div>
-                                    <div class="role-kpi-value">{{ number_format($technicalSummary['total'] ?? 0) }}</div>
-                                    <p class="role-kpi-note">Tổng số đầu việc kỹ thuật đã tiếp nhận</p>
+                                    <div class="text-muted small fw-bold text-uppercase">Hồ sơ được giao</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ number_format($technicalSummary['total'] ?? 0) }}</h3>
+                                    <p class="text-muted small mb-0">Tổng số đầu việc kỹ thuật đã tiếp nhận</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-technical-completed h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-certificate"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-certificate"></i>
+                                </div>
                                 <div>
-                                    <div class="role-kpi-label">Đã hoàn thành</div>
-                                    <div class="role-kpi-value">{{ number_format($technicalSummary['completed'] ?? 0) }}</div>
-                                    <p class="role-kpi-note">Đã đạt trạng thái hoàn tất quy trình</p>
+                                    <div class="text-muted small fw-bold text-uppercase">Đã hoàn thành</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ number_format($technicalSummary['completed'] ?? 0) }}</h3>
+                                    <p class="text-muted small mb-0">Đã đạt trạng thái hoàn tất quy trình</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-technical-processing h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                                </div>
                                 <div>
-                                    <div class="role-kpi-label">Đang xử lý</div>
-                                    <div class="role-kpi-value">{{ number_format($technicalSummary['processing'] ?? 0) }}</div>
-                                    <p class="role-kpi-note">Đang theo dõi để đảm bảo tiến độ</p>
+                                    <div class="text-muted small fw-bold text-uppercase">Đang xử lý</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ number_format($technicalSummary['processing'] ?? 0) }}</h3>
+                                    <p class="text-muted small mb-0">Đang theo dõi để đảm bảo tiến độ</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-md-6">
-                        <div class="role-kpi-card role-technical-rate h-100">
-                            <div class="role-kpi-body">
-                                <div class="role-kpi-icon"><i class="fa-solid fa-chart-column"></i></div>
+                        <div class="card border border-light-subtle rounded-3 h-100">
+                            <div class="card-body p-3 d-flex align-items-start gap-3">
+                                <div class="avatar bg-info bg-opacity-10 text-info rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 fs-5" style="width: 38px !important; height: 38px !important; min-width: 38px !important;">
+                                    <i class="fa-solid fa-chart-column"></i>
+                                </div>
                                 <div class="w-100">
-                                    <div class="role-kpi-label">Tỷ lệ hoàn thành</div>
-                                    <div class="role-kpi-value">{{ $technicalRate }}%</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Tỷ lệ hoàn thành</div>
+                                    <h3 class="mb-1 fw-bold text-body">{{ $technicalRate }}%</h3>
                                     @if($canSeeFinance)
-                                        <p class="role-kpi-note">Giá trị hồ sơ: {{ number_format($technicalSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
+                                        <p class="text-muted small mb-0">Giá trị hồ sơ: {{ number_format($technicalSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
                                     @endif
-                                    <div class="role-kpi-progress">
-                                        <span style="width: {{ $technicalRate }}%"></span>
+                                    <div class="progress mt-2" style="height: 6px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $technicalRate }}%; border-radius: 99px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -317,36 +333,39 @@
                     </div>
                 </div>
 
-                <div class="role-table-card">
-                    <div class="card-header py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="card border border-light-subtle rounded-3 overflow-hidden mt-4">
+                    <div class="card-header border-bottom py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2 bg-body-secondary">
                         <div>
-                            <h6 class="role-table-title">Chi tiết tiến độ hồ sơ kỹ thuật</h6>
-                            <p class="role-table-subtitle">Theo nhóm công việc được phân công</p>
+                            <h6 class="mb-0 fw-bold">Chi tiết tiến độ hồ sơ kỹ thuật</h6>
+                            <p class="text-muted small mb-0">Theo nhóm công việc được phân công</p>
                         </div>
-                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">{{ number_format($technicalSummary['total'] ?? 0) }} hồ sơ</span>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle d-inline-flex align-items-center">{{ number_format($technicalSummary['total'] ?? 0) }} hồ sơ</span>
                     </div>
 
                     <div class="card-body p-0">
-                        <table class="table table-hover align-middle mb-0 role-data-table">
+                        <table class="table table-hover align-middle mb-0">
                             <thead>
-                                <tr>
-                                    <th>Loại HĐ</th>
+                                <tr class="table-light">
+                                    <th class="ps-3">Loại HĐ</th>
                                     <th class="text-center">Số HĐ</th>
                                     <th class="text-center">Đang xử lý</th>
                                     <th class="text-center">Hoàn thành</th>
-                                    <th class="text-center">Tiến độ</th>
+                                    <th class="text-center" style="width: 140px;">Tiến độ</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($technicalStats as $row)
+                                @php($pct = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0)
                                 <tr>
-                                    <td class="fw-semibold">{{ $row['label'] }}</td>
+                                    <td class="fw-semibold ps-3">{{ $row['label'] }}</td>
                                     <td class="text-center fw-bold">{{ number_format($row['count']) }}</td>
                                     <td class="text-center text-warning-emphasis">{{ number_format(max(0, $row['count'] - $row['completed'])) }}</td>
                                     <td class="text-center text-success fw-semibold">{{ number_format($row['completed']) }}</td>
-                                    <td class="text-center">
-                                        <div class="role-progress-inline mx-auto"><span style="width: {{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%"></span></div>
-                                        <small class="text-muted fw-semibold">{{ $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0 }}%</small>
+                                    <td class="text-center pe-3">
+                                        <div class="progress mx-auto mb-1" style="height: 5px; width: 90px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ $pct }}%; border-radius: 99px;"></div>
+                                        </div>
+                                        <small class="text-muted fw-semibold">{{ $pct }}%</small>
                                     </td>
                                 </tr>
                                 @empty

@@ -9,9 +9,9 @@
 
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
-    <link id="bootstrap-css" rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/perfect-scrollbar.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/libs/flaticon/css/all/all.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ config('app.version') }}">
 
 </head>
 
@@ -52,12 +52,8 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/js/jquery.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/perfect-scrollbar.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap.js') }}?v={{ config('app.version') }}"></script>
-
-    <script src="{{ asset('assets/js/conca-sidebar.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/conca.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/libs/global/global.min.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}?v={{ config('app.version') }}"></script>
 
 </body>
 

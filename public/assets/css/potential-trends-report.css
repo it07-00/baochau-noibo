@@ -15,7 +15,6 @@
 .report-filter-card .form-label {
     margin-bottom: .4rem;
     font-size: .78rem;
-    color: var(--bs-secondary-color);
 }
 
 .report-loading {
@@ -27,14 +26,16 @@
 .report-kpi-card {
     overflow: hidden;
     border-radius: 14px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.report-kpi-card::before {
-    display: block;
-    width: 100%;
-    height: 3px;
-    background: var(--report-accent);
-    content: "";
+.report-kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .report-kpi-card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
 }
 
 .report-kpi-card .card-body {
@@ -194,4 +195,17 @@
     .report-table td {
         padding: .7rem .75rem;
     }
+}
+
+.potential-report .card {
+    background: linear-gradient(135deg, var(--bs-tertiary-bg), var(--bs-card-bg)) !important;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.potential-report .card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-bs-theme="dark"] .potential-report .card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18) !important;
 }

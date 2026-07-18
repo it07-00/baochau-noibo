@@ -699,6 +699,7 @@
 [data-bs-theme="dark"] .work-schedule-manager .card-header.bg-white,
 [data-bs-theme="dark"] .work-schedule-manager .calendar-container,
 [data-bs-theme="dark"] .work-schedule-manager .calendar-header-grid.bg-white,
+[data-bs-theme="dark"] .work-schedule-manager .calendar-header-grid,
 [data-bs-theme="dark"] .work-schedule-manager .ws-agenda-day,
 [data-bs-theme="dark"] .work-schedule-manager .ws-agenda-empty,
 [data-bs-theme="dark"] .work-schedule-manager .ws-agenda-day-header {
@@ -724,7 +725,11 @@
     background: #151c26;
     border-color: rgba(255, 255, 255, 0.12);
 }
-[data-bs-theme="dark"] .work-schedule-manager .ws-nav-button,
+[data-bs-theme="dark"] .work-schedule-manager .ws-nav-button {
+    background-color: #141b24 !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    color: var(--bs-body-color) !important;
+}
 [data-bs-theme="dark"] .work-schedule-manager .ws-calendar-controls .form-select {
     background: #141b24;
     border-color: rgba(255, 255, 255, 0.16);

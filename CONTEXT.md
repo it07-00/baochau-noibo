@@ -1,6 +1,6 @@
 # Bối cảnh tổng thể dự án Bảo Châu
 
-Cập nhật lần cuối: 2026-07-14.
+Cập nhật lần cuối: 2026-07-18.
 
 ## 1. Mục tiêu hệ thống
 
@@ -85,6 +85,13 @@ Middleware tùy chỉnh:
 | Nội bộ | `InternalDocs/*`, `InternalNotifications/*` | `InternalDoc`, `InternalSoftware` |
 | Quản trị | `Users`, `Roles`, `Departments`, `Handlers` | `User`, `Department`, `Handler` |
 
+### Hỗ trợ từ báo cáo ngày
+
+- Báo cáo có trạng thái `Gặp vấn đề, cần hỗ trợ` hoặc có nội dung `issues` được đưa vào hàng đợi hỗ trợ.
+- Người có phạm vi quản lý báo cáo ngày xử lý yêu cầu trong tab `Hỗ trợ`; phạm vi nhân sự dùng chung `DailyReportVisibility`, vì vậy TPKD chỉ xử lý nhân sự kinh doanh còn Giám đốc/IT hoặc người có quyền xem toàn bộ xử lý theo phạm vi được cấp.
+- Workflow hỗ trợ gồm `pending` (Chờ xử lý), `in_progress` (Đang xử lý) và `resolved` (Đã xử lý). Báo cáo lưu người tiếp nhận, nội dung phản hồi, thời điểm bắt đầu và hoàn tất.
+- Nhân viên gửi báo cáo nhận database notification khi yêu cầu được tiếp nhận, hoàn tất hoặc mở lại.
+
 ### Báo cáo xu hướng tiềm năng
 
 - Route `/bao-cao` dùng permission `reports-sales.view`. `IT`, `Giám đốc` và `TP Kinh doanh` được xem toàn bộ nhân sự; tài khoản khác luôn bị khóa phạm vi query về chính mình, kể cả khi sửa query string.
@@ -140,6 +147,8 @@ Khi hoàn thành bước:
 
 Người nhận tiến độ thông thường: Giám đốc, Trưởng phòng kinh doanh, người được phân công, người phân công và nhân viên kinh doanh phụ trách. **IT không nhận thông báo tiến độ.** Khi step là `finished`, toàn bộ role **kế toán** được thêm vào để tiếp nhận xử lý hồ sơ thanh toán. Kế toán không nhận các bước trung gian.
 
+- Báo cáo `Tiến độ dự án TV-KT` lọc theo tháng và năm của `signed_at`; tháng mặc định là tháng hiện tại. KPI, phân trang và sáu cột pipeline dùng chung phạm vi thời gian này.
+
 ## 7. Khách hàng, báo giá và nhân viên phụ trách
 
 `Customer` liên kết báo giá bằng `Quotation.company_name -> Customer.name`, trong khi hợp đồng liên kết bằng `customer_id`. Đây là khác biệt quan trọng khi đổi tên khách hàng hoặc viết query.
@@ -153,6 +162,8 @@ Trong form tạo tài liệu báo giá, ô “Chỉ tiêu / Nội dung chi tiế
 ## 8. Hoa hồng và VietQR
 
 `CommissionRequest` có thể liên kết hợp đồng thật bằng `contract_type + contract_id`, hoặc lưu số hợp đồng nhập tay ở `manual_contract_number` với `contract_id = NULL`.
+
+Trong trang hợp đồng của từng nhà thầu phụ (`HandlerContractsView`), trường `commission` trên sáu model hợp đồng được hiểu là khoản chi trả nhà thầu phụ. Tổng tiền và cột chi tiết của trang này phải cộng `commission`, không dùng trường `value` (giá trị hợp đồng).
 
 Luồng hiện tại:
 
@@ -214,6 +225,8 @@ Các tích hợp đáng chú ý:
 ## 11. Quy ước phát triển
 
 - Component Livewire giữ state public, action phải authorize và validate.
+- Giao diện admin ưu tiên Bootstrap và các class CSS hiện có của dự án; không tự thêm CSS tùy biến cho từng màn nếu chưa có yêu cầu rõ ràng. Tránh dùng `border-left`/`border-start` có màu để biểu thị trạng thái; ưu tiên icon, badge hoặc màu nền Bootstrap nhẹ.
+- Nền canvas của ứng dụng admin dùng `--bs-secondary-bg`; card, form và nội dung có bề mặt riêng tiếp tục dùng màu nền mặc định để duy trì phân cấp.
 - Reset pagination khi filter thay đổi.
 - Query phạm vi người dùng phải được kiểm tra theo role/permission, không dựa vào UI.
 - Dùng eager loading cho bảng/list để tránh N+1.

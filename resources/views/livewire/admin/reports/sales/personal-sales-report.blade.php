@@ -31,11 +31,11 @@
     </div>
 
     <div class="mb-4  text-muted fw-semibold">
-        Dữ liệu theo: <span class="text-dark">{{ $staffDetail?->name ?? 'Tất cả nhân viên' }}</span> - Năm {{ $year }}
+        Dữ liệu theo: <span class="fw-bold">{{ $staffDetail?->name ?? 'Tất cả nhân viên' }}</span> - Năm {{ $year }}
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom py-3">
+        <div class="card-header border-bottom py-3">
             <h5 class="mb-0 fw-bold text-uppercase board-title board-title-kpi">Bảng doanh số cá nhân</h5>
         </div>
         <div class="table-responsive">
@@ -57,7 +57,7 @@
                             <td class="text-center fw-semibold">{{ $row['month'] }}</td>
                             <td class="text-end fw-semibold">{{ number_format($row['target'], 0, ',', '.') }}đ</td>
                             <td class="text-end fw-semibold text-danger">{{ number_format($row['target_cumulative'], 0, ',', '.') }}đ</td>
-                            <td class="text-end fw-semibold text-dark">{{ $row['actual'] > 0 ? number_format($row['actual'], 0, ',', '.') . 'đ' : '—' }}</td>
+                            <td class="text-end fw-semibold">{{ $row['actual'] > 0 ? number_format($row['actual'], 0, ',', '.') . 'đ' : '—' }}</td>
                             <td class="text-end fw-semibold text-success">{{ number_format($row['actual_cumulative'], 0, ',', '.') }}đ</td>
                             <td class="text-end fw-semibold text-danger">{{ number_format($row['remaining'], 0, ',', '.') }}đ</td>
                             <td class="text-center fw-bold {{ ($row['kpi_pct'] ?? 0) >= 100 ? 'text-success' : 'text-danger' }}">

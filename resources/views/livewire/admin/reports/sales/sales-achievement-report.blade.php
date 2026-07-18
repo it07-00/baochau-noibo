@@ -22,14 +22,16 @@
         @endif
 
         {{-- FILTERS --}}
-        <div class="race-filters">
-            <select wire:model.live="filter_month" class="race-select">
+        <div class="race-filters" wire:loading.class="race-filters-loading">
+            <label class="visually-hidden" for="race-month">Tháng báo cáo</label>
+            <select id="race-month" wire:model.live="filter_month" wire:loading.attr="disabled" class="race-select" aria-label="Tháng báo cáo">
                 <option value="">Cả năm</option>
                 @foreach ($months as $m)
                     <option value="{{ $m }}">Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
                 @endforeach
             </select>
-            <select wire:model.live="year" class="race-select">
+            <label class="visually-hidden" for="race-year">Năm báo cáo</label>
+            <select id="race-year" wire:model.live="year" wire:loading.attr="disabled" class="race-select" aria-label="Năm báo cáo">
                 @foreach ($years as $y)
                     <option value="{{ $y }}">{{ $y }}</option>
                 @endforeach
@@ -37,22 +39,42 @@
         </div>
 
         {{-- COMPANY PROGRESS BAR --}}
-        <div class="race-company-progress">
-            <div class="race-progress-track">
-                <div class="race-progress-bar-wrap">
-                    <div class="race-progress-fill" style="width: {{ min($companyPct, 100) }}%"></div>
-                    <div class="race-progress-label" style="left: {{ min($companyPct, 100) }}%; transform: translateX({{ $companyPct <= 5 ? '0%' : ($companyPct >= 95 ? '-100%' : '-50%') }})">
-                        {{ number_format($companyActual, 0, ',', '.') }}đ ({{ $companyPct }}%)
-                    </div>
+        @php($companyRemaining = max($companyTarget - $companyActual, 0))
+        <div class="race-company-progress" aria-label="Tiến độ doanh số toàn công ty">
+            <div class="race-progress-summary">
+                <div>
+                    <span>Doanh số hiện tại</span>
+                    <strong>{{ number_format($companyActual, 0, ',', '.') }}đ</strong>
                 </div>
-                <div class="race-progress-end">
-                    <span>{{ number_format($companyTarget, 0, ',', '.') }}đ</span>
+                <div>
+                    <span>Còn lại để đạt mục tiêu</span>
+                    <strong>{{ number_format($companyRemaining, 0, ',', '.') }}đ</strong>
                 </div>
             </div>
+            @if ($companyTarget > 0)
+                <div class="race-progress-track">
+                    <div class="race-progress-bar-wrap">
+                        <div class="race-progress-fill" style="width: {{ min($companyPct, 100) }}%"></div>
+                        <div class="race-progress-label" style="left: {{ min($companyPct, 100) }}%; transform: translateX({{ $companyPct <= 5 ? '0%' : ($companyPct >= 95 ? '-100%' : '-50%') }})">
+                            {{ number_format($companyActual, 0, ',', '.') }}đ ({{ $companyPct }}%)
+                        </div>
+                        <div class="race-progress-markers" aria-hidden="true"><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+                    </div>
+                    <div class="race-progress-end">
+                        <span>{{ number_format($companyTarget, 0, ',', '.') }}đ</span>
+                    </div>
+                </div>
+            @else
+                <div class="race-progress-empty-state">
+                    <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+                    <span>Chưa thiết lập chỉ tiêu cho kỳ này</span>
+                </div>
+            @endif
         </div>
 
         {{-- HEADER --}}
         <div class="race-header">
+            <div class="race-hero-kicker"><i class="fa-solid fa-trophy" aria-hidden="true"></i><span>Bảng vinh danh doanh số</span></div>
             <div class="race-header-badge">
                 Đường Đua Doanh Số – Chiến Binh Bảo Châu – {{ $this->monthLabel() }}/{{ $year }}
             </div>
@@ -158,7 +180,12 @@
             <div class="race-section">
                 <div class="race-col-title">📊 Đường Đua KPI</div>
 
-                @if ($kpiRankings->isEmpty())
+                @if (! $hasKpiTarget)
+                    <div class="race-empty">
+                        <i class="fa-solid fa-bullseye d-block mb-2 fs-4" aria-hidden="true"></i>
+                        Chưa thiết lập chỉ tiêu KPI cho kỳ này
+                    </div>
+                @elseif ($kpiRankings->isEmpty())
                     <div class="race-empty">Không có dữ liệu</div>
                 @else
                     {{-- TOP 3 PODIUM WITH PEDESTALS --}}
@@ -252,8 +279,15 @@
         (function() {
             const canvas = document.getElementById('raceStars');
             if (!canvas) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            if (window.salesRaceStars?.frameId) {
+                cancelAnimationFrame(window.salesRaceStars.frameId);
+            }
+
             const ctx = canvas.getContext('2d');
             let stars = [];
+            let frameId = null;
 
             function resize() {
                 const board = canvas.closest('.sales-race-board');
@@ -265,7 +299,8 @@
             function init() {
                 resize();
                 stars = [];
-                for (let i = 0; i < 200; i++) {
+                const count = window.innerWidth < 768 ? 36 : 72;
+                for (let i = 0; i < count; i++) {
                     stars.push({
                         x: Math.random() * canvas.width,
                         y: Math.random() * canvas.height,
@@ -277,6 +312,10 @@
             }
 
             function draw() {
+                if (document.hidden) {
+                    frameId = null;
+                    return;
+                }
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 stars.forEach(s => {
                     s.a += s.da;
@@ -286,17 +325,20 @@
                     ctx.fillStyle = `rgba(255,255,255,${s.a * 0.85})`;
                     ctx.fill();
                 });
-                requestAnimationFrame(draw);
+                frameId = requestAnimationFrame(draw);
+                window.salesRaceStars.frameId = frameId;
             }
 
             init();
+            window.salesRaceStars = { frameId: null };
             draw();
             window.addEventListener('resize', () => {
                 resize();
             });
-            document.addEventListener('livewire:navigated', () => {
-                init();
-                draw();
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && !frameId) {
+                    draw();
+                }
             });
         })();
     </script>

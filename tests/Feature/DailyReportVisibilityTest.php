@@ -86,6 +86,30 @@ class DailyReportVisibilityTest extends TestCase
             ->assertSet('isManager', true);
     }
 
+    public function test_management_missing_count_matches_every_visible_user_without_a_report(): void
+    {
+        $manager = $this->createUser(RoleEnum::TP_KINH_DOANH, [PermissionEnum::DAILY_REPORTS_VIEW_ALL]);
+        $firstMissingUser = $this->createUser(RoleEnum::KINH_DOANH);
+        $secondMissingUser = $this->createUser(RoleEnum::KINH_DOANH);
+
+        DailyReport::create([
+            'user_id' => $manager->id,
+            'date' => today(),
+            'content' => 'Báo cáo công việc của trưởng phòng',
+            'plan' => '',
+            'status' => DailyReportStatus::HOAN_THANH_DUNG_KH->value,
+        ]);
+
+        $this->actingAs($manager);
+
+        Livewire::test(DailyReportManager::class)
+            ->set('activeTab', 'management')
+            ->assertSet('reportStats.missing', 2)
+            ->assertSee($firstMissingUser->name)
+            ->assertSee($secondMissingUser->name)
+            ->assertSee('2 chưa báo cáo');
+    }
+
     public function test_view_all_permission_does_not_allow_deleting_other_users_reports(): void
     {
         $viewer = $this->createUser(RoleEnum::HCNS, [PermissionEnum::DAILY_REPORTS_VIEW_ALL]);

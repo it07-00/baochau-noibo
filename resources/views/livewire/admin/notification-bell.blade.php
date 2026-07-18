@@ -1,11 +1,11 @@
 <div class="notification-bell" x-data="browserNotificationPermission()" x-init="syncPermission()" wire:poll.15s x-on:hidden.bs.dropdown="$wire.markViewedAsRead()">
-    <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Thông báo">
+    <a class="header-nav-link position-relative" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Thông báo">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
             <path d="M10.5 19C10.5 19.8284 11.1716 20.5 12 20.5C12.8284 20.5 13.5 19.8284 13.5 19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
         </svg>
         @if($totalBadge > 0)
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-1 ms-n1" >{{ $totalBadge > 99 ? '99+' : $totalBadge }}</span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 9px; padding: 2px 4px; min-width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; margin-top: 3px; margin-left: -3px;">{{ $totalBadge > 99 ? '99+' : $totalBadge }}</span>
         @endif
     </a>
 
@@ -54,7 +54,7 @@
                 @foreach($issueReports as $ir)
                     <a class="dropdown-item notification-item py-3 border-bottom d-flex align-items-start gap-2" href="{{ route('app.daily-reports.index') }}?date={{ date('Y-m-d') }}">
                         <div class="notification-icon bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                            <i class="fa-solid fa-triangle-exclamation-fill "></i>
+                            <i class="fa-solid fa-triangle-exclamation "></i>
                         </div>
                         <div class="flex-grow-1 min-w-0">
                             <div class="notification-item-top d-flex justify-content-between align-items-start gap-2 mb-1">

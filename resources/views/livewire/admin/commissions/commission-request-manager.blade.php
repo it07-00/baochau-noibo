@@ -1,17 +1,19 @@
 <div class="commission-page">
-    <div class="page-title-box d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+    @section('title', 'Chi hoa hồng')
+    @section('page_title', 'Chi hoa hồng')
+
+    <div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mt-2 mb-4">
         <div>
-            <h4 class="mb-1">Quản lý Yêu cầu chi hoa hồng</h4>
-            <p class="text-muted mb-2">Theo dõi, kiểm soát và duyệt yêu cầu chi hoa hồng theo trạng thái xử lý.</p>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Quản lý Yêu cầu chi hoa hồng</li>
-                </ol>
-            </nav>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                </span>
+                <h2 class="h4 fw-bold text-body mb-0">Quản lý Yêu cầu chi hoa hồng</h2>
+            </div>
+            <p class="text-muted small mb-0">Theo dõi yêu cầu, phê duyệt và chứng từ thanh toán hoa hồng.</p>
         </div>
-        <div class="page-title-right d-flex gap-2 ms-auto">
-            <a href="{{ route('app.commissions.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
+        <div class="d-flex gap-2 ms-lg-auto">
+            <a href="{{ route('app.commissions.create') }}" class="btn btn-primary rounded-8px d-inline-flex align-items-center gap-2">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 Tạo yêu cầu
             </a>
@@ -20,73 +22,105 @@
 
     <div class="row g-3 mb-4" aria-label="Tổng quan yêu cầu hoa hồng">
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 border-start border-4 border-primary shadow-sm h-100 position-relative overflow-hidden">
-                <div class="card-body p-3 p-xl-4">
-                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span>
-                    <p class="text-muted mb-1">Tổng yêu cầu</p>
-                    <h4 class="mb-0">{{ number_format($summary['total']) }}</h4>
+            <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-3">
+                    <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary flex-shrink-0">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </span>
+                    <div>
+                        <div class="h5 fw-bold text-body mb-0">{{ number_format($summary['total']) }}</div>
+                        <div class="small text-muted">Tổng yêu cầu</div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 border-start border-4 border-secondary shadow-sm h-100 position-relative overflow-hidden">
-                <div class="card-body p-3 p-xl-4">
-                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-secondary-subtle text-secondary fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i></span>
-                    <p class="text-muted mb-1">Dự chi</p>
-                    <h4 class="mb-0 text-secondary">{{ number_format($summary['estimated']) }}</h4>
+            <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-3">
+                    <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-secondary bg-opacity-10 text-secondary flex-shrink-0">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </span>
+                    <div>
+                        <div class="h5 fw-bold text-body mb-0">{{ number_format($summary['estimated']) }}</div>
+                        <div class="small text-muted">Dự chi</div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 border-start border-4 border-warning shadow-sm h-100 position-relative overflow-hidden">
-                <div class="card-body p-3 p-xl-4">
-                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-warning-subtle text-warning fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-clock" aria-hidden="true"></i></span>
-                    <p class="text-muted mb-1">Chờ chi</p>
-                    <h4 class="mb-0 text-warning">{{ number_format($summary['pending']) }}</h4>
+            <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-3">
+                    <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-warning bg-opacity-10 text-warning flex-shrink-0">
+                        <i class="fa-solid fa-clock"></i>
+                    </span>
+                    <div>
+                        <div class="h5 fw-bold text-body mb-0">{{ number_format($summary['pending']) }}</div>
+                        <div class="small text-muted">Chờ chi</div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 border-start border-4 border-success shadow-sm h-100 position-relative overflow-hidden">
-                <div class="card-body p-3 p-xl-4">
-                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
-                    <p class="text-muted mb-1">Đã chi</p>
-                    <h4 class="mb-0 text-success">{{ number_format($summary['paid']) }}</h4>
+            <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-3">
+                    <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 text-success flex-shrink-0">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                    <div>
+                        <div class="h5 fw-bold text-body mb-0">{{ number_format($summary['paid']) }}</div>
+                        <div class="small text-muted">Đã chi</div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 border-start border-4 border-danger shadow-sm h-100 position-relative overflow-hidden">
-                <div class="card-body p-3 p-xl-4">
-                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-danger-subtle text-danger fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i></span>
-                    <p class="text-muted mb-1">Tổng đã chi</p>
-                    <h4 class="mb-0 text-danger">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</h4>
+            <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-3">
+                    <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 text-danger flex-shrink-0">
+                        <i class="fa-solid fa-money-bill-transfer"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <div class="fw-bold text-body mb-0 text-nowrap">{{ number_format($summary['total_payout'], 0, ',', '.') }}đ</div>
+                        <div class="small text-muted">Tổng đã chi</div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 border-start border-4 border-info shadow-sm h-100 position-relative overflow-hidden">
-                <div class="card-body p-3 p-xl-4">
-                    <span class="position-absolute top-0 end-0 m-3 d-inline-flex align-items-center justify-content-center rounded-3 bg-info-subtle text-info fs-5 lh-1" style="width: 40px; height: 40px;"><i class="fa-solid fa-filter-circle-dollar" aria-hidden="true"></i></span>
-                    <p class="text-muted mb-1">Tổng tiền lọc</p>
-                    <h4 class="mb-0 text-primary">{{ number_format($summary['amount'], 0, ',', '.') }} đ</h4>
+            <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-3">
+                    <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-info bg-opacity-10 text-info flex-shrink-0">
+                        <i class="fa-solid fa-filter-circle-dollar"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <div class="fw-bold text-body mb-0 text-nowrap">{{ number_format($summary['amount'], 0, ',', '.') }}đ</div>
+                        <div class="small text-muted">Tổng tiền lọc</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
-            <h5 class="card-title mb-0">Bộ lọc</h5>
+    <div class="card mb-4 border-0 shadow-sm rounded-12px overflow-hidden">
+        <div class="card-header bg-body border-bottom p-3 p-lg-4 d-flex align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
+                    <i class="fa-solid fa-filter"></i>
+                </span>
+                <div>
+                    <h3 class="h6 fw-bold text-body mb-0">Bộ lọc yêu cầu</h3>
+                    <small class="text-muted">Lọc theo hợp đồng, trạng thái và người tạo</small>
+                </div>
+            </div>
             <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="$refresh" wire:loading.attr="disabled" aria-label="Làm mới danh sách yêu cầu hoa hồng">
                 <i class="fa-solid fa-rotate-right me-1"></i>
                 Làm mới
             </button>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3 p-lg-4">
             <div class="row g-3">
-                <div class="col-12 col-lg-3">
-                    <label class="form-label">Loại hợp đồng</label>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                    <label class="form-label small fw-semibold text-body mb-1">Loại hợp đồng</label>
                     <select wire:model.live="contractTypeFilter" class="form-select">
                         <option value="">Tất cả loại hợp đồng</option>
                         @foreach($contractTypes as $class => $label)
@@ -94,8 +128,8 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-12 col-lg-2">
-                    <label class="form-label">Tình trạng</label>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                    <label class="form-label small fw-semibold text-body mb-1">Tình trạng</label>
                     <select wire:model.live="statusFilter" class="form-select">
                         <option value="">Tất cả tình trạng</option>
                         <option value="Dự chi">Dự chi</option>
@@ -104,13 +138,13 @@
                         <option value="Từ chối">Từ chối</option>
                     </select>
                 </div>
-                <div class="col-12 col-lg-2">
-                    <label class="form-label">Tháng yêu cầu</label>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                    <label class="form-label small fw-semibold text-body mb-1">Tháng yêu cầu</label>
                     <input type="month" wire:model.live="requestMonthFilter" class="form-control">
                 </div>
                 @if($canFilterByRequester)
-                    <div class="col-12 col-lg-2">
-                        <label class="form-label">Người yêu cầu</label>
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                        <label class="form-label small fw-semibold text-body mb-1">Người yêu cầu</label>
                         <select wire:model.live="requesterFilter" class="form-select">
                             <option value="">Tất cả người yêu cầu</option>
                             @foreach($requesters as $requester)
@@ -119,11 +153,11 @@
                         </select>
                     </div>
                 @endif
-                <div class="col-12 @if($canFilterByRequester) col-lg-3 @else col-lg-5 @endif">
-                    <label class="form-label">Tìm kiếm</label>
+                <div class="col-12 @if($canFilterByRequester) col-lg-8 col-xl-3 @else col-lg-8 col-xl-5 @endif">
+                    <label class="form-label small fw-semibold text-body mb-1">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="text"
+                        <span class="input-group-text bg-body-tertiary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="search"
                                wire:model.live.debounce.300ms="search"
                                class="form-control"
                                placeholder="Tìm theo số HĐ BC, khách hàng, người nhận...">
@@ -133,33 +167,49 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h5 class="card-title mb-0">Danh sách yêu cầu chi hoa hồng</h5>
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">{{ number_format($requests->total()) }} kết quả</span>
+    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
+        <div class="card-header bg-body border-bottom p-3 p-lg-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
+                    <i class="fa-solid fa-list-check"></i>
+                </span>
+                <div>
+                    <h3 class="h6 fw-bold text-body mb-0">Danh sách yêu cầu</h3>
+                    <small class="text-muted">Theo dõi tiến độ xử lý và thanh toán</small>
+                </div>
+            </div>
+            <span class="d-inline-flex align-items-center gap-1 rounded-3 bg-primary bg-opacity-10 text-primary px-2 py-1 small fw-semibold">
+                <i class="fa-solid fa-file-lines"></i>{{ number_format($requests->total()) }} kết quả
+            </span>
         </div>
         <div class="card-body p-0">
+            <div wire:loading.flex
+                wire:target="contractTypeFilter,statusFilter,requestMonthFilter,requesterFilter,search"
+                class="align-items-center gap-2 bg-primary bg-opacity-10 text-primary px-3 px-lg-4 py-2 small fw-semibold">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Đang cập nhật danh sách...
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                    <thead class="bg-body-tertiary text-uppercase text-secondary small">
                         <tr>
-                            <th class="text-center mnw-45px w-45px" >STT</th>
-                            <th class="ps-4 mnw-300px" >Hợp đồng / Khách hàng / Người yêu cầu</th>
-                            <th class="mnw-220px">Người nhận</th>
-                            <th class="text-center mnw-170px">Loại hợp đồng</th>
-                            <th class="text-end mnw-150px" >Số tiền</th>
-                            <th class="text-center mnw-180px" >Tình trạng</th>
-                            <th class="text-center mnw-120px" >Ngày gửi</th>
+                            <th class="text-center mnw-45px py-3">STT</th>
+                            <th class="ps-4 mnw-300px py-3">Hợp đồng / Khách hàng / Người yêu cầu</th>
+                            <th class="mnw-220px py-3">Người nhận</th>
+                            <th class="text-center mnw-170px py-3">Loại hợp đồng</th>
+                            <th class="text-end mnw-150px py-3">Số tiền</th>
+                            <th class="text-center mnw-180px py-3">Tình trạng</th>
+                            <th class="text-center mnw-120px py-3">Ngày gửi</th>
                             @canany(['commissions.edit', 'commissions.delete', 'commissions.create'])
-                            <th class="text-end pe-4 mnw-260px" >Thao tác</th>
+                            <th class="text-end pe-4 mnw-260px py-3">Thao tác</th>
                             @endcanany
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($requests as $request)
                             <tr>
-                                <td class="text-center text-muted  fw-semibold">{{ ($requests->currentPage() - 1) * $requests->perPage() + $loop->iteration }}</td>
-                                <td class="ps-4">
+                                <td class="text-center text-muted fw-semibold py-3">{{ ($requests->currentPage() - 1) * $requests->perPage() + $loop->iteration }}</td>
+                                <td class="ps-4 py-3">
                                     <div class="fw-semibold text-primary mb-1">BC {{ $request->contract_number }}</div>
                                     @if($request->contract && $request->contract->customer)
                                         <div class="fw-semibold">{{ $request->contract->customer->name }}</div>
@@ -175,7 +225,7 @@
                                         {{ $request->user?->name ?? 'Không xác định' }}
                                     </div>
                                 </td>
-                                <td>
+                                <td class="py-3">
                                     <div class="fw-semibold">{{ $request->receiver_name }}</div>
                                     <div class=" text-muted">{{ $request->receiver_phone ?: 'Chưa có số điện thoại' }}</div>
                                     <div class="text-muted text-truncate text-truncate-200">
@@ -196,27 +246,24 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-soft-primary text-primary px-2 py-1">{{ $request->contract_type_label }}</span>
+                                    <span class="d-inline-block rounded-2 bg-primary bg-opacity-10 text-primary px-2 py-1 small fw-semibold text-wrap lh-sm">{{ $request->contract_type_label }}</span>
                                 </td>
                                 <td class="text-end fw-bold">{{ number_format($request->amount, 0, ',', '.') }} đ</td>
                                 <td class="text-center">
                                     @if($request->status === 'Đã chi')
-                                        <span class="badge bg-soft-success text-success px-3 py-2">
-                                            Đã chi
-                                            <br>
-                                            <small>{{ $request->processed_at?->format('H:i - d/m/Y') }}</small>
+                                        <span class="d-inline-flex flex-column rounded-3 bg-success bg-opacity-10 text-success px-2 py-1 small fw-semibold lh-sm">
+                                            <span>Đã chi</span>
+                                            <small class="fw-normal mt-1">{{ $request->processed_at?->format('H:i - d/m/Y') }}</small>
                                         </span>
                                     @elseif($request->status === 'Đã duyệt')
-                                        <span class="badge bg-soft-warning text-warning px-3 py-2">
-                                            Đã duyệt
-                                            <br>
-                                            <small>Chờ chi</small>
+                                        <span class="d-inline-flex flex-column rounded-3 bg-warning bg-opacity-10 text-warning px-2 py-1 small fw-semibold lh-sm">
+                                            <span>Đã duyệt</span>
+                                            <small class="fw-normal mt-1">Chờ chi</small>
                                         </span>
                                     @elseif($request->status === 'Từ chối')
-                                        <span class="badge bg-soft-danger text-danger px-3 py-2">
-                                            Từ chối
-                                            <br>
-                                            <small>{{ $request->processed_at?->format('H:i - d/m/Y') }}</small>
+                                        <span class="d-inline-flex flex-column rounded-3 bg-danger bg-opacity-10 text-danger px-2 py-1 small fw-semibold lh-sm">
+                                            <span>Từ chối</span>
+                                            <small class="fw-normal mt-1">{{ $request->processed_at?->format('H:i - d/m/Y') }}</small>
                                         </span>
                                         @if($this->rejectionReason($request->notes))
                                             <div class=" text-muted mt-1 mxw-190px"  title="{{ $this->rejectionReason($request->notes) }}">
@@ -224,7 +271,7 @@
                                             </div>
                                         @endif
                                     @else
-                                        <span class="badge bg-soft-secondary text-secondary px-3 py-2">Dự chi</span>
+                                        <span class="d-inline-flex rounded-3 bg-secondary bg-opacity-10 text-secondary px-2 py-1 small fw-semibold">Dự chi</span>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $request->created_at->format('d/m/Y') }}</td>
@@ -285,16 +332,18 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">
-                                    <i class="fa-solid fa-inbox d-block mb-2" aria-hidden="true"></i>
+                                <td colspan="8" class="text-center py-5">
+                                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary bg-opacity-10 text-secondary p-3 mb-3">
+                                        <i class="fa-solid fa-inbox fs-3" aria-hidden="true"></i>
+                                    </span>
                                     <strong class="d-block text-body mb-1">Chưa có yêu cầu phù hợp</strong>
-                                    <span>Thử thay đổi bộ lọc hoặc tạo yêu cầu hoa hồng mới.</span>
+                                    <span class="text-muted small">Thử thay đổi bộ lọc hoặc tạo yêu cầu hoa hồng mới.</span>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                     @if($requests->isNotEmpty())
-                        <tfoot class="table-light fw-bold border-top-2">
+                        <tfoot class="bg-body-tertiary fw-bold">
                             <tr>
                                 <td colspan="5" class="text-end ps-4">
                                     <div class="d-flex justify-content-end align-items-center gap-4">
@@ -302,11 +351,11 @@
                                             <span class="text-secondary fw-semibold">Tổng dự chi:</span>
                                             <span class="font-monospace">{{ number_format($summary['total_estimated'], 0, ',', '.') }} đ</span>
                                         </div>
-                                        <div class="border-start ps-4 py-1">
+                                        <div class="ps-4 py-1">
                                             <span class="text-warning fw-semibold">Tổng chờ chi:</span>
                                             <span class="text-warning font-monospace">{{ number_format($summary['total_pending_payout'], 0, ',', '.') }} đ</span>
                                         </div>
-                                        <div class="border-start ps-4 py-1">
+                                        <div class="ps-4 py-1">
                                             <span class="text-success">Tổng đã chi:</span>
                                             <span class="text-success font-monospace">{{ number_format($summary['total_payout'], 0, ',', '.') }} đ</span>
                                         </div>
@@ -361,50 +410,53 @@
 
     <!-- View QR & Details Modal -->
     <div wire:ignore.self class="modal fade" id="viewRequestModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-3">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-credit-card"></i> Chi tiết thanh toán & QR Code
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-12px overflow-hidden">
+                <div class="modal-header bg-body border-bottom px-3 py-2">
+                    <h5 class="h6 modal-title d-flex align-items-center gap-2 text-body fw-bold">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-1">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </span>
+                        Chi tiết thanh toán & QR Code
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="closeView"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" wire:click="closeView"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body bg-body-tertiary p-3">
                     @if($viewingRequest)
-                        <div class="row g-4">
+                        <div class="row g-2 align-items-start">
                             <!-- Left Column: Recipient Details (col-md-6) -->
-                            <div class="col-md-6 d-flex">
-                                <div class="card border-light-subtle shadow-sm w-100 h-100">
-                                    <div class="card-header bg-light border-bottom py-3">
-                                        <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                                            <i class="fa-solid fa-user-bounding-box"></i> Thông tin người nhận
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm rounded-3">
+                                    <div class="card-header bg-body border-bottom p-2">
+                                        <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
+                                            <i class="fa-solid fa-user-bounding-box text-primary"></i> Thông tin người nhận
                                         </h6>
                                     </div>
-                                    <div class="card-body p-3">
-                                        <div class="d-flex flex-column gap-3" style="font-size: 1.05rem;">
-                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-user text-secondary"></i> Họ và tên:</span>
-                                                <span class="fw-bold text-dark text-end">{{ strtoupper(\Illuminate\Support\Str::ascii($viewingRequest->receiver_name)) }}</span>
+                                    <div class="card-body p-2">
+                                        <div class="d-flex flex-column gap-2 small">
+                                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                                <span class="text-muted text-nowrap"><i class="fa-solid fa-user me-2"></i>Họ và tên</span>
+                                                <span class="fw-semibold text-body text-end text-break">{{ strtoupper(\Illuminate\Support\Str::ascii($viewingRequest->receiver_name)) }}</span>
                                             </div>
                                             
-                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-phone text-secondary"></i> Số điện thoại:</span>
-                                                <span class="fw-bold text-dark text-end">{{ $viewingRequest->receiver_phone ?: 'Chưa cập nhật' }}</span>
+                                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                                <span class="text-muted text-nowrap"><i class="fa-solid fa-phone me-2"></i>Số điện thoại</span>
+                                                <span class="fw-semibold text-body text-end">{{ $viewingRequest->receiver_phone ?: 'Chưa cập nhật' }}</span>
                                             </div>
 
-                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-file-text text-secondary"></i> Hợp đồng:</span>
-                                                <span class="fw-bold text-primary text-end">BC {{ $viewingRequest->contract_number }}</span>
+                                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                                <span class="text-muted text-nowrap"><i class="fa-solid fa-file-lines me-2"></i>Hợp đồng</span>
+                                                <span class="fw-semibold text-primary text-end text-break">BC {{ $viewingRequest->contract_number }}</span>
                                             </div>
 
-                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-money-bill-wave text-secondary"></i> Số tiền:</span>
-                                                <span class="fw-bold text-danger fs-5 text-end">{{ number_format($viewingRequest->amount, 0, ',', '.') }} đ</span>
+                                            <div class="d-flex justify-content-between align-items-start gap-2 bg-body-tertiary rounded-3 p-2">
+                                                <span class="text-body fw-semibold text-nowrap"><i class="fa-solid fa-money-bill-wave me-2 text-danger"></i>Số tiền</span>
+                                                <span class="fw-bold text-danger text-end">{{ number_format($viewingRequest->amount, 0, ',', '.') }}đ</span>
                                             </div>
 
-                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-chart-line text-secondary"></i> Trạng thái:</span>
-                                                <span class="fw-bold text-end" style="font-size: 0.95rem;">
+                                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                                <span class="text-muted text-nowrap"><i class="fa-solid fa-chart-line me-2"></i>Trạng thái</span>
+                                                <span class="fw-semibold text-end">
                                                     @if($viewingRequest->status === 'Đã chi')
                                                         <span class="text-success"><i class="fa-solid fa-circle-check-fill"></i> Đã chi ({{ $viewingRequest->processed_at?->format('H:i - d/m/Y') }})</span>
                                                     @elseif($viewingRequest->status === 'Đã duyệt')
@@ -418,21 +470,21 @@
                                             </div>
 
                                             @if($viewingRequest->bank_code && $viewingRequest->bank_number)
-                                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-building-columns text-secondary"></i> Ngân hàng:</span>
-                                                    <span class="fw-bold text-dark font-monospace text-end">{{ $viewingRequest->bank_code }}</span>
+                                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                                    <span class="text-muted text-nowrap"><i class="fa-solid fa-building-columns me-2"></i>Ngân hàng</span>
+                                                    <span class="fw-semibold text-body font-monospace text-end">{{ $viewingRequest->bank_code }}</span>
                                                 </div>
 
-                                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-credit-card text-secondary"></i> Số tài khoản:</span>
-                                                    <span class="fw-bold text-dark font-monospace text-end">{{ $viewingRequest->bank_number }}</span>
+                                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                                    <span class="text-muted text-nowrap"><i class="fa-solid fa-credit-card me-2"></i>Số tài khoản</span>
+                                                    <span class="fw-semibold text-body font-monospace text-end text-break">{{ $viewingRequest->bank_number }}</span>
                                                 </div>
                                             @endif
 
                                             @if($viewingRequest->bank_account)
-                                                <div class="d-flex justify-content-between align-items-start border-bottom pb-2">
-                                                    <span class="text-muted d-flex align-items-center gap-2"><i class="fa-solid fa-circle-info text-secondary"></i> Thông tin khác:</span>
-                                                    <span class="text-dark small fw-semibold text-end ms-3">{{ $viewingRequest->bank_account }}</span>
+                                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                                    <span class="text-muted text-nowrap"><i class="fa-solid fa-circle-info me-2"></i>Thông tin khác</span>
+                                                    <span class="text-body fw-semibold text-end text-break">{{ $viewingRequest->bank_account }}</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -441,22 +493,22 @@
                             </div>
                             
                             <!-- Right Column: QR Code Preview (col-md-6) -->
-                            <div class="col-md-6 d-flex">
+                            <div class="col-md-6">
                                 @if($viewingRequest->qr_url)
-                                    <div class="card border-light-subtle shadow-sm w-100 h-100">
-                                        <div class="card-header bg-light border-bottom py-3 text-center">
-                                            <h6 class="card-title mb-0 fw-bold text-secondary">
-                                                <i class="fa-solid fa-qrcode-scan me-1"></i> Quét mã QR chuyển khoản
+                                    <div class="card border-0 shadow-sm rounded-3">
+                                        <div class="card-header bg-body border-bottom p-2">
+                                            <h6 class="card-title mb-0 fw-bold text-body">
+                                                <i class="fa-solid fa-qrcode-scan text-primary me-1"></i> Quét mã QR chuyển khoản
                                             </h6>
                                         </div>
-                                        <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center bg-white">
-                                            <img src="{{ $viewingRequest->qr_url }}" class="img-fluid rounded border shadow-sm" style="width: 100%; max-width: 340px; height: auto; aspect-ratio: 1/1; object-fit: contain;" alt="Payment QR Code">
+                                        <div class="card-body p-2 d-flex flex-column align-items-center justify-content-center">
+                                            <img src="{{ $viewingRequest->qr_url }}" class="img-fluid rounded w-100 h-auto object-fit-contain mxw-220px" alt="Mã QR thanh toán hoa hồng">
                                         </div>
                                     </div>
                                 @else
-                                    <div class="card border-light-subtle shadow-sm w-100 h-100">
-                                        <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
-                                            <i class="fa-solid fa-triangle-exclamation text-warning mb-3" style="font-size: 3rem;"></i>
+                                    <div class="card border-0 shadow-sm rounded-3">
+                                        <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center text-center">
+                                            <i class="fa-solid fa-triangle-exclamation text-warning fs-2 mb-2"></i>
                                             <h6 class="fw-bold text-secondary mb-1">Không tạo được QR</h6>
                                             <span class="text-muted small">Không tìm thấy tài khoản ngân hàng của người nhận.</span>
                                         </div>
@@ -466,20 +518,20 @@
                         </div>
 
                         <!-- Payment Bill section -->
-                        <div class="row mt-4">
+                        <div class="row mt-3">
                             <div class="col-12">
-                                <div class="card border-light-subtle shadow-sm">
-                                    <div class="card-header bg-light border-bottom py-3 d-flex justify-content-between align-items-center">
-                                        <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                                            <i class="fa-solid fa-file-image"></i> Hóa đơn thanh toán / Minh chứng
+                                <div class="card border-0 shadow-sm rounded-3">
+                                    <div class="card-header bg-body border-bottom p-2 d-flex justify-content-between align-items-center gap-2">
+                                        <h6 class="card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
+                                            <i class="fa-solid fa-file-image text-primary"></i> Hóa đơn thanh toán / Minh chứng
                                         </h6>
                                         @if($viewingRequest->payment_bill_path)
-                                            <span class="badge bg-soft-success text-success px-2 py-1"><i class="fa-solid fa-circle-check"></i> Đã tải lên</span>
+                                            <span class="d-inline-flex align-items-center gap-1 rounded-3 bg-success bg-opacity-10 text-success px-2 py-1 small fw-semibold text-nowrap"><i class="fa-solid fa-circle-check"></i> Đã tải lên</span>
                                         @else
-                                            <span class="badge bg-soft-secondary text-secondary px-2 py-1">Chưa có hóa đơn</span>
+                                            <span class="d-inline-flex rounded-3 bg-secondary bg-opacity-10 text-secondary px-2 py-1 small fw-semibold text-nowrap">Chưa có hóa đơn</span>
                                         @endif
                                     </div>
-                                    <div class="card-body p-3">
+                                    <div class="card-body p-2">
                                         @if($viewingRequest->payment_bill_path)
                                             <div class="d-flex flex-column align-items-center gap-3">
                                                 @php
@@ -516,11 +568,11 @@
                                                 @endif
                                             </div>
                                         @else
-                                            <div class="text-center py-3">
-                                                <p class="text-muted mb-3">Chưa có hóa đơn/minh chứng thanh toán nào được cập nhật.</p>
+                                            <div class="text-center py-2">
+                                                <p class="text-muted small mb-2">Chưa có hóa đơn/minh chứng thanh toán nào được cập nhật.</p>
 
                                                 @if($viewingRequest->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
-                                                    <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-light position-relative" style="border-style: dashed !important; border-width: 2px !important; border-color: #dee2e6 !important;">
+                                                    <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-body-secondary position-relative">
                                                         <i class="fa-solid fa-cloud-arrow-up text-primary fs-2 mb-2"></i>
                                                         <h6 class="fw-semibold text-secondary mb-2">Tải lên hóa đơn (Minh chứng)</h6>
                                                         <p class="text-muted small mb-3">Chấp nhận JPG, PNG, JPEG hoặc PDF. Tối đa 10MB.</p>
@@ -606,7 +658,7 @@
                         @endif
                     @endif
 
-                    <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-light position-relative" style="border-style: dashed !important; border-width: 2px !important; border-color: #dee2e6 !important;">
+                    <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-body-secondary position-relative">
                         <i class="fa-solid fa-cloud-arrow-up text-warning fs-2 mb-2"></i>
                         <h6 class="fw-semibold text-secondary mb-2">Chọn file minh chứng thanh toán</h6>
                         <p class="text-muted small mb-3">Chấp nhận JPG, PNG, JPEG hoặc PDF. Tối đa 10MB.</p>

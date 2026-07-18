@@ -128,7 +128,7 @@
                             @endif
                             <div class="d-flex flex-wrap gap-1 mt-1">
                                 @if($item->province)
-                                <span class="badge px-2 py-1" style="font-size: 0.72rem; background: rgba(29, 78, 216, 0.1); color: #1e40af; border: 1px solid rgba(29, 78, 216, 0.2);">{{ $item->province }}</span>
+                                <span class="badge px-2 py-1 bg-primary bg-opacity-10 text-primary border border-primary-subtle fs-72">{{ $item->province }}</span>
                                 @endif
                                 @if($item->industry)
                                 <span class="badge bg-light text-dark border px-2 py-1" title="Ngành nghề: {{ $item->industry }}">
@@ -136,7 +136,7 @@
                                 </span>
                                 @endif
                                 @if($item->service)
-                                <span class="badge px-2 py-1" title="Dịch vụ: {{ $item->service }}" style="font-size: 0.72rem; background: rgba(194, 65, 12, 0.1); color: #9a3412; border: 1px solid rgba(194, 65, 12, 0.2);">
+                                <span class="badge px-2 py-1 bg-warning bg-opacity-10 text-warning border border-warning-subtle fs-72" title="Dịch vụ: {{ $item->service }}">
                                     <i class="fa-solid fa-gear me-1"></i>{{ \Illuminate\Support\Str::limit($item->service, 30) }}
                                 </span>
                                 @endif
@@ -156,7 +156,7 @@
                                 title="Nhấp để cập nhật nhanh tình hình"
                             >
                                 @foreach($statuses as $st)
-                                    <option value="{{ $st }}" class="text-dark bg-white" {{ $item->status === $st ? 'selected' : '' }}>
+                                    <option value="{{ $st }}" {{ $item->status === $st ? 'selected' : '' }}>
                                         {{ $st }}
                                     </option>
                                 @endforeach
@@ -815,7 +815,7 @@
                         <label class="form-label fw-bold">2. Kiểm tra & điều chỉnh mapping cột</label>
                         <div class="table-responsive">
                             <table class="table table-sm table-bordered align-middle">
-                                <thead class="table-light" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr>
                                         <th class="w-50">Tên cột trong file</th>
                                         <th>Tương ứng với trường dữ liệu</th>
@@ -845,7 +845,7 @@
                         <label class="form-label fw-bold">3. Xem trước dữ liệu (5 dòng đầu)</label>
                         <div class="table-responsive border rounded">
                             <table class="table table-sm table-striped align-middle mb-0 fs-78" >
-                                <thead class="table-dark" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr>
                                         @foreach($importColumnMap as $colIdx => $fieldKey)
                                         <th>{{ $availableFields[$fieldKey] ?? $importHeaders[array_search($colIdx, array_keys($importColumnMap))] ?? $colIdx }}</th>

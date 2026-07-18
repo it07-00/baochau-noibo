@@ -1,100 +1,124 @@
 @inject('headerView', 'App\Support\HeaderViewData')
 @php($isIntern = auth()->user()->hasRole(\App\Enums\Role::THUC_TAP->value))
 
-<div class="app-header app-header-redesign">
-    {{-- LEFT: Hamburger + Greeting --}}
-    <div class="app-header-left-group">
-        <button type="button" class="app-header-bar-btn app-sidebar-open-btn d-none d-xl-inline-flex align-items-center justify-content-center flex-shrink-0" >
-            <span></span><span></span><span></span>
+<header class="app-header">
+    <div class="app-header-inner align-items-center">
+        <!-- Sidebar Toggler -->
+        <button class="app-toggler me-2" type="button" aria-label="app toggler">
+            <span></span>
+            <span></span>
+            <span></span>
         </button>
-        <button type="button" class="app-header-bar-btn app-sidebar-mobile-open d-xl-none d-inline-flex align-items-center justify-content-center flex-shrink-0" >
-            <span></span><span></span><span></span>
-        </button>
-
-        <div class="app-header-greeting d-none d-sm-flex">
-            <span class="app-header-greeting-name">{{ $headerView->displayName(auth()->user()) }}</span>
-            <span class="app-header-greeting-sub">{{ $headerView->wish() }}</span>
+        <!-- Header Start (Date) -->
+        <div class="app-header-start d-none d-md-flex align-items-center ms-2">
+            <div class="d-flex align-items-center text-muted fs-7">
+                <i class="fi fi-rr-calendar me-2"></i>
+                {{ $headerView->todayLabel() }}
+            </div>
         </div>
 
-        <span class="app-header-role-badge d-none d-md-inline-flex"
-              style="--role-c:{{ $headerView->roleColor(auth()->user()) }};">
-            <svg width="9" height="9" viewBox="0 0 9 9" fill="currentColor"><circle cx="4.5" cy="4.5" r="4.5"/></svg>
-            {{ $headerView->roleLabel(auth()->user()) }}
-        </span>
-    </div>
+        <!-- Header End (Actions & Settings) -->
+        <div class="app-header-end">
 
-    {{-- CENTER: Date --}}
-    <div class="app-header-date d-none d-lg-flex">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1.5" y="2.5" width="13" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M5 1v3M11 1v3M1.5 6.5h13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        {{ $headerView->todayLabel() }}
-    </div>
-
-    {{-- RIGHT: Actions --}}
-    <div class="app-header-right-group">
-        <ul class="navbar-nav flex-row align-items-center gap-1">
-                <li class="header-nav-item header-style-switcher me-2">
-                    <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown" title="Giao diện">
-                        <span class="d-flex align-items-center justify-content-center theme-icon light-icon">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.75 0.75V1.98077M8.75 15.5192V16.75M16.75 8.75H15.5192M1.98077 8.75H0.75M14.4115 3.08846L13.5377 3.96231M3.96231 13.5377L3.08846 14.4115M14.4115 14.4115L13.5377 13.5377M3.96231 3.96231L3.08846 3.08846M12.75 8.75C12.75 10.9591 10.9591 12.75 8.75 12.75C6.54086 12.75 4.75 10.9591 4.75 8.75C4.75 6.54086 6.54086 4.75 8.75 4.75C10.9591 4.75 12.75 6.54086 12.75 8.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </span>
-                        <span class="d-flex align-items-center justify-content-center theme-icon dark-icon">
-                            <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M11.7075 10.73C10.5458 10.7229 9.40692 10.407 8.4076 9.81463C7.40829 9.22228 6.58449 8.37482 6.02067 7.35913C5.45685 6.34345 5.17331 5.19609 5.1991 4.03469C5.22489 2.8733 5.5591 1.73965 6.16745 0.75C4.56463 1.03138 3.12395 1.89934 2.12605 3.1848C1.12815 4.47026 0.644493 6.08116 0.769304 7.7037C0.894115 9.32624 1.61845 10.8442 2.80121 11.9619C3.98397 13.0797 5.54045 13.7171 7.16745 13.75C8.28058 13.7528 9.37555 13.468 10.3462 12.9231C11.3168 12.3782 12.1302 11.5918 12.7075 10.64C12.3768 10.6946 12.0425 10.7247 11.7075 10.73V10.73Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </span>
-                        <span class="d-flex align-items-center justify-content-center theme-icon auto-icon">
-                            <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6.25 9.75L5.25 12.25M8.25 9.75L9.25 12.25M4.25 12.25H10.25M1.25 0.75H13.25C13.5261 0.75 13.75 0.973858 13.75 1.25V9.25C13.75 9.52614 13.5261 9.75 13.25 9.75H1.25C0.973858 9.75 0.75 9.52614 0.75 9.25V1.25C0.75 0.973858 0.973858 0.75 1.25 0.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </span>
-                    </a>
+            <!-- Light/Dark Mode Switcher -->
+            <div class="px-lg-3 px-2 ps-0 d-flex align-items-center">
+                <div class="dropdown">
+                    <button class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative" id="ld-theme" type="button" data-bs-auto-close="outside" aria-expanded="false" data-bs-toggle="dropdown">
+                        <i class="fi fi-rr-brightness scale-1x theme-icon-active"></i>
+                    </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0);" data-bs-theme-value="light">Sáng</a></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0);" data-bs-theme-value="dark">Tối</a></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0);" data-bs-theme-value="auto">Hệ thống</a></li>
+                        <li>
+                            <button type="button" class="dropdown-item d-flex gap-2 align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                <i class="fi fi-rr-brightness scale-1x" data-theme="light"></i> Sáng
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item d-flex gap-2 align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                <i class="fi fi-rr-moon scale-1x" data-theme="dark"></i> Tối
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item d-flex gap-2 align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                <i class="fi fi-br-circle-half-stroke scale-1x" data-theme="auto"></i> Hệ thống
+                            </button>
+                        </li>
                     </ul>
-                </li>
+                </div>
+            </div>
 
+            <div class="vr my-3"></div>
+
+            <!-- Notifications & Work Calendar Shortcut -->
+            <div class="d-flex align-items-center gap-sm-2 gap-0 px-lg-4 px-sm-2 px-1">
                 @unless($isIntern)
-                    <li class="header-nav-item me-4 position-relative">
-                        <livewire:admin.notification-bell />
-                    </li>
+                    <livewire:admin.notification-bell />
                 @endunless
 
-                <li class="header-nav-item header-user me-0">
-                    <a class="header-nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
-                        <x-user-avatar :user="auth()->user()" :size="34" />
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg py-0">
-                        <div class="dropdown-header d-flex align-items-center border-bottom py-4">
-                            <div class="me-3 flex-shrink-0">
-                                <x-user-avatar :user="auth()->user()" :size="48" />
-                            </div>
-                            <div class="flex-grow-1 text-start overflow-hidden">
-                                <h6 class="mb-0 text-truncate max-w-180px"  title="{{ auth()->user()?->name }}">{{ $headerView->displayName(auth()->user()) }}</h6>
-                                <span class="text-muted">{{ $headerView->roleLabel(auth()->user()) }}</span>
-                            </div>
-                        </div>
-                        <div class="dropdown-body py-2">
-                            @unless($isIntern)
-                            <a class="dropdown-item" href="{{ route('app.profile.index') }}">Hồ sơ của tôi</a>
-                            <a class="dropdown-item" href="{{ route('app.password.index') }}">Đổi mật khẩu</a>
-                            @can(\App\Enums\Permission::SETTINGS_VIEW->value)
-                            <a class="dropdown-item" href="{{ route('app.settings.index') }}">Cài đặt hệ thống</a>
-                            @endcan
-                            @endunless
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item">Đăng xuất</button>
-                            </form>
-                        </div>
+                <a href="{{ route('app.work-schedules.index') }}" class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light" title="Lịch công tác">
+                    <i class="fi fi-rr-calendar"></i>
+                </a>
+            </div>
+
+            <div class="vr my-3"></div>
+
+            <!-- User Profile Dropdown -->
+            <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
+                <a href="#" class="d-flex align-items-center py-2 text-decoration-none" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
+                    <div class="text-end me-2 d-none d-lg-inline-block">
+                        <div class="fw-bold text-dark">{{ $headerView->displayName(auth()->user()) }}</div>
+                        <small class="text-body d-block lh-sm">
+                            <i class="fi fi-rr-angle-down text-3xs me-1"></i> {{ $headerView->roleLabel(auth()->user()) }}
+                        </small>
                     </div>
-                </li>
-            </ul>
+                    <div class="avatar avatar-sm rounded-circle border border-2 border-primary border-opacity-10">
+                        <x-user-avatar :user="auth()->user()" :size="32" />
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
+                    <li class="d-flex align-items-center p-2">
+                        <div class="avatar avatar-sm rounded-circle me-2">
+                            <x-user-avatar :user="auth()->user()" :size="32" />
+                        </div>
+                        <div class="ms-1 overflow-hidden">
+                            <div class="fw-bold text-dark text-truncate" style="max-width: 150px;">{{ $headerView->displayName(auth()->user()) }}</div>
+                            <small class="text-body d-block lh-sm text-truncate" style="max-width: 150px;">{{ auth()->user()->email }}</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown-divider my-1"></div>
+                    </li>
+                    @unless($isIntern)
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('app.profile.index') }}">
+                                <i class="fi fi-rr-user scale-1x"></i> Hồ sơ của tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('app.password.index') }}">
+                                <i class="fi fi-rr-lock scale-1x"></i> Đổi mật khẩu
+                            </a>
+                        </li>
+                        @can(\App\Enums\Permission::SETTINGS_VIEW->value)
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('app.settings.index') }}">
+                                    <i class="fi fi-rr-settings scale-1x"></i> Cài đặt hệ thống
+                                </a>
+                            </li>
+                        @endcan
+                    @endunless
+                    <li>
+                        <div class="dropdown-divider my-1"></div>
+                    </li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}" id="header-logout-form" class="d-none">
+                            @csrf
+                        </form>
+                        <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('header-logout-form').submit();">
+                            <i class="fi fi-sr-exit scale-1x"></i> Đăng xuất
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-</div>
+    </div>
+</header>

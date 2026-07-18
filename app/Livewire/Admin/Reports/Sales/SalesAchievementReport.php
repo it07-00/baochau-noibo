@@ -11,12 +11,12 @@ use App\Models\ContractWaste;
 use App\Models\DailyReport;
 use App\Models\SalesTarget;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesAchievementReport extends Component
 {
     public int $year;
+
     public string $filter_month = '';
 
     protected array $contractModels = [
@@ -45,7 +45,7 @@ class SalesAchievementReport extends Component
     public function monthLabel(): string
     {
         return $this->filter_month !== ''
-            ? 'Tháng ' . str_pad($this->filter_month, 2, '0', STR_PAD_LEFT)
+            ? 'Tháng '.str_pad($this->filter_month, 2, '0', STR_PAD_LEFT)
             : 'Cả năm';
     }
 
@@ -65,7 +65,7 @@ class SalesAchievementReport extends Component
         $first = mb_substr($parts[0], 0, 1);
         $last = mb_substr($parts[count($parts) - 1], 0, 1);
 
-        return strtoupper($first . $last);
+        return strtoupper($first.$last);
     }
 
     public function salesHasDailyReport(): bool
@@ -117,10 +117,10 @@ class SalesAchievementReport extends Component
         }
 
         // Doanh Số rankings
-        $doanhSoRankings = $staffs->map(fn($user) => [
-            'name'       => $user->name,
+        $doanhSoRankings = $staffs->map(fn ($user) => [
+            'name' => $user->name,
             'avatar_url' => $user->avatar_url,
-            'total'      => (float) ($actualByStaff[$user->id] ?? 0),
+            'total' => (float) ($actualByStaff[$user->id] ?? 0),
         ])->sortByDesc('total')->values();
 
         $maxDoanhSo = $doanhSoRankings->max('total') ?: 1;
@@ -132,9 +132,9 @@ class SalesAchievementReport extends Component
             $pct = $target > 0 ? round($actual / $target * 100, 0) : 0;
 
             return [
-                'name'       => $user->name,
+                'name' => $user->name,
                 'avatar_url' => $user->avatar_url,
-                'pct'        => (int) $pct,
+                'pct' => (int) $pct,
             ];
         })->sortByDesc('pct')->values();
 
@@ -152,14 +152,18 @@ class SalesAchievementReport extends Component
 
         return view('livewire.admin.reports.sales.sales-achievement-report', [
             'doanhSoRankings' => $doanhSoRankings,
-            'kpiRankings'     => $kpiRankings,
-            'maxDoanhSo'      => $maxDoanhSo,
-            'maxKpi'          => $maxKpi,
-            'companyTarget'   => $companyTarget,
-            'companyActual'   => $companyActual,
-            'companyPct'      => $companyPct,
-            'years'           => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
-            'months'          => range(1, $maxMonth),
-        ])->layout('admin.layouts.app', ['title' => 'Đường đua Doanh Số']);
+            'kpiRankings' => $kpiRankings,
+            'maxDoanhSo' => $maxDoanhSo,
+            'maxKpi' => $maxKpi,
+            'companyTarget' => $companyTarget,
+            'companyActual' => $companyActual,
+            'companyPct' => $companyPct,
+            'hasKpiTarget' => $companyTarget > 0,
+            'years' => range((int) now()->format('Y'), (int) now()->format('Y') - 4),
+            'months' => range(1, $maxMonth),
+        ])->layout('admin.layouts.app', [
+            'title' => 'Đường đua Doanh Số',
+            'fullWidth' => true,
+        ]);
     }
 }

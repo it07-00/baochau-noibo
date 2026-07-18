@@ -1,4 +1,4 @@
-<div>
+<div class="contract-manager-page">
 
     <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
@@ -34,7 +34,7 @@
 
     <!-- Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
+        <div class="card-header py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter text-primary contract-text-13px" ></i>
                 <span class="fw-semibold contract-text-13px" >Bộ lọc Hồ sơ môi trường</span>
@@ -52,7 +52,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.signed_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white contract-text-11px" >đến</span>
+                                <span class="input-group-text px-2 text-muted bg-body-secondary contract-text-11px" >đến</span>
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.signed_to" title="Đến ngày">
                             </div>
@@ -62,7 +62,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_from" title="Từ ngày">
-                                <span class="input-group-text px-2 text-muted bg-white contract-text-11px" >đến</span>
+                                <span class="input-group-text px-2 text-muted bg-body-secondary contract-text-11px" >đến</span>
                                 <input type="date" class="form-control form-control-xs"
                                     wire:model.live="filter.submitted_to" title="Đến ngày">
                             </div>
@@ -222,7 +222,7 @@
 
     <!-- Table Card -->
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 border-bottom">
+        <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hồ sơ môi trường</h6>
         </div>
         <div class="table-responsive mh-350" >
@@ -408,7 +408,7 @@
                                                 </svg>
                                             </button>
                                             <div x-show="open" @click.away="open = false" x-cloak
-                                                class="position-absolute bg-white rounded-3 shadow-lg py-1 mt-1 dropdown-menu-status"
+                                                class="position-absolute bg-body rounded-3 shadow-lg py-1 mt-1 dropdown-menu-status"
                                                 >
                                                 @foreach ($all_statuses as $opt)
                                                     <button type="button"
@@ -520,7 +520,7 @@
                     @if ($selectedDoc)
                         <div x-data="{ tab: @js($detailActiveTab ?? 'info') }">
                         {{-- Tabs --}}
-                        <ul class="nav nav-tabs px-4 pt-3 bg-white" role="tablist">
+                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'info' }"
                                     @click="tab = 'info'" type="button">

@@ -20,17 +20,18 @@
             <div class="d-flex flex-column gap-4">
                 
                 <!-- Card 1: Recipient and Payment Details -->
-                <section class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                            <span class="badge bg-primary rounded-3 px-2 py-2">01</span> Thông tin người nhận và tài khoản
-                        </h5>
+                <section class="card border-0 shadow-sm rounded-12px overflow-hidden">
+                    <div class="card-header bg-body border-bottom p-3 d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+                        <h3 class="h6 card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2 small">01</span>
+                            Thông tin người nhận và tài khoản
+                        </h3>
                         @if($savedAccounts->isNotEmpty())
-                            <div class="d-flex align-items-center gap-2" style="max-width: 480px;">
-                                <span class="text-muted text-nowrap d-inline-flex align-items-center gap-1 fw-bold" style="font-size: 0.95rem;">
+                            <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2 flex-grow-1 justify-content-xl-end">
+                                <span class="text-muted text-nowrap d-inline-flex align-items-center gap-1 small fw-semibold">
                                     <i class="fa-solid fa-clock-history text-primary"></i> Chọn nhanh:
                                 </span>
-                                <select wire:model.live="selectedSavedAccountId" class="form-select border-primary-subtle">
+                                <select wire:model.live="selectedSavedAccountId" class="form-select form-select-sm mxw-320px">
                                     <option value="">-- Chọn tài khoản đã lưu --</option>
                                     @foreach($savedAccounts as $account)
                                         <option value="{{ $account->id }}">
@@ -96,11 +97,12 @@
                 </section>
 
                 <!-- Card 2: Contract, Amount, Notes -->
-                <section class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom py-3">
-                        <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
-                            <span class="badge bg-primary rounded-3 px-2 py-2">02</span> Thông tin Yêu cầu chi hoa hồng
-                        </h5>
+                <section class="card border-0 shadow-sm rounded-12px overflow-hidden">
+                    <div class="card-header bg-body border-bottom p-3">
+                        <h3 class="h6 card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2 small">02</span>
+                            Thông tin Yêu cầu chi hoa hồng
+                        </h3>
                     </div>
                     <div class="card-body p-4">
                         <div class="row g-4">
@@ -200,50 +202,50 @@
 
         <!-- Right Side: Sticky VietQR Preview Summary (col-lg-4) -->
         <div class="col-lg-4">
-            <aside class="card border-0 shadow-sm position-sticky" style="top: 92px;">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h5 class="card-title mb-0 d-flex align-items-center gap-2 text-primary fw-bold">
+            <aside class="card border-0 shadow-sm position-sticky top-100px rounded-12px overflow-hidden">
+                <div class="card-header bg-body border-bottom p-3">
+                    <h3 class="h6 card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
                         <i class="fa-solid fa-qrcode-scan"></i> Thanh toán & QR Code
-                    </h5>
+                    </h3>
                 </div>
-                <div class="card-body p-4 d-flex flex-column align-items-center text-center">
+                <div class="card-body p-3 d-flex flex-column align-items-center text-center">
                     
                     <!-- QR Preview Box -->
-                    <div class="w-100 p-3 bg-body-tertiary rounded-3 border d-flex flex-column align-items-center justify-content-center text-center mb-4" style="min-height: 360px;">
+                    <div class="w-100 p-3 bg-body-tertiary rounded-3 d-flex flex-column align-items-center justify-content-center text-center mb-3">
                         @if($this->hasValidVietQrAccount())
-                            <img src="{{ $this->getVietQrUrl() }}" class="img-thumbnail rounded border w-100 h-auto object-fit-contain" style="max-width: 340px; aspect-ratio: 1;" alt="Mã QR thanh toán hoa hồng cho {{ $receiver_name ?: 'người nhận' }}">
+                            <img src="{{ $this->getVietQrUrl() }}" class="img-fluid rounded w-100 h-auto object-fit-contain mxw-320px" alt="Mã QR thanh toán hoa hồng cho {{ $receiver_name ?: 'người nhận' }}">
                         @else
-                            <div class="text-muted d-flex flex-column align-items-center py-4">
-                                <i class="fa-solid fa-qrcode text-secondary mb-3" style="font-size: 3.5rem; opacity: 0.4;"></i>
+                            <div class="text-muted d-flex flex-column align-items-center py-5">
+                                <i class="fa-solid fa-qrcode text-secondary fs-1 opacity-25 mb-3"></i>
                                 <span class="fw-semibold text-secondary">Chưa tạo mã QR</span>
-                                <span class="text-muted small px-3 mt-1" style="font-size: 0.75rem;">Nhập Ngân hàng và Số tài khoản nhận ở cột bên để tự động tạo QR.</span>
+                                <span class="text-muted small px-3 mt-1">Nhập ngân hàng và số tài khoản để tạo QR.</span>
                             </div>
                         @endif
                     </div>
 
                     <!-- Summary Recap Details -->
-                    <div class="w-100 bg-light p-3 rounded-3 border border-light-subtle text-start">
-                        <h6 class="text-secondary fw-bold border-bottom pb-2 mb-3"><i class="fa-solid fa-receipt"></i> Tóm tắt thông tin</h6>
-                        
-                        <div class="d-flex flex-column gap-2" style="font-size: 1.1rem;">
-                            <div class="row align-items-center">
-                                <div class="col-5 text-muted">Người nhận:</div>
-                                <div class="col-7 fw-bold text-dark text-truncate">{{ $receiver_name ?: '(Chưa nhập)' }}</div>
-                            </div>
-                            
-                            <div class="row align-items-center">
-                                <div class="col-5 text-muted">Ngân hàng:</div>
-                                <div class="col-7 fw-bold text-dark font-monospace">{{ $bank_code ?: '(Chưa chọn)' }}</div>
+                    <div class="w-100 bg-body-tertiary p-3 rounded-3 text-start">
+                        <h4 class="h6 text-body fw-bold mb-3"><i class="fa-solid fa-receipt text-primary me-1"></i>Tóm tắt thông tin</h4>
+
+                        <div class="d-flex flex-column gap-3 small">
+                            <div class="d-flex align-items-start justify-content-between gap-3">
+                                <span class="text-muted text-nowrap">Người nhận</span>
+                                <span class="fw-semibold text-body text-end text-break">{{ $receiver_name ?: 'Chưa nhập' }}</span>
                             </div>
 
-                            <div class="row align-items-center">
-                                <div class="col-5 text-muted">Số tài khoản:</div>
-                                <div class="col-7 fw-bold text-dark font-monospace">{{ $bank_number ?: '(Chưa nhập)' }}</div>
+                            <div class="d-flex align-items-start justify-content-between gap-3">
+                                <span class="text-muted text-nowrap">Ngân hàng</span>
+                                <span class="fw-semibold text-body font-monospace text-end">{{ $bank_code ?: 'Chưa chọn' }}</span>
                             </div>
 
-                            <div class="row align-items-center">
-                                <div class="col-5 text-muted">Hợp đồng BC:</div>
-                                <div class="col-7 fw-bold text-primary">
+                            <div class="d-flex align-items-start justify-content-between gap-3">
+                                <span class="text-muted text-nowrap">Số tài khoản</span>
+                                <span class="fw-semibold text-body font-monospace text-end text-break">{{ $bank_number ?: 'Chưa nhập' }}</span>
+                            </div>
+
+                            <div class="d-flex align-items-start justify-content-between gap-3">
+                                <span class="text-muted text-nowrap">Hợp đồng BC</span>
+                                <span class="fw-semibold text-primary text-end text-break">
                                     @if($manualContractEntry && $manual_contract_number)
                                         BC {{ $manual_contract_number }}
                                     @elseif($contract_id && $contract_type)
@@ -252,16 +254,16 @@
                                         @endphp
                                         BC {{ $selectedContract->shd_bc ?? 'N/A' }}
                                     @else
-                                        (Chưa chọn)
+                                        Chưa chọn
                                     @endif
-                                </div>
+                                </span>
                             </div>
 
-                            <div class="row border-top pt-2 mt-2 align-items-center">
-                                <div class="col-5 text-muted fw-bold">Số tiền:</div>
-                                <div class="col-7 fw-bold text-danger fs-5">
+                            <div class="d-flex align-items-center justify-content-between gap-3 bg-body rounded-3 p-2 mt-1">
+                                <span class="text-body fw-semibold text-nowrap">Số tiền</span>
+                                <span class="fw-bold text-danger text-end">
                                     {{ $amount ? number_format((float) preg_replace('/\D+/', '', (string) $amount), 0, ',', '.') . ' đ' : '0 đ' }}
-                                </div>
+                                </span>
                             </div>
                         </div>
                     </div>

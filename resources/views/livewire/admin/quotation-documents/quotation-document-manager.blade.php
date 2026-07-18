@@ -48,7 +48,7 @@
     <div class="card border-0 shadow-sm overflow-hidden">
         <div class="table-responsive overflow-auto">
             <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem;">
-                <thead class="bg-light bg-opacity-50" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                <thead class="brand-table-header">
                     <tr class="text-muted fw-bold">
                         <th class="ps-3 w-40px">STT</th>
                         <th class="w-120px">Số báo giá</th>
@@ -183,7 +183,7 @@
                         <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-table text-primary me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
-                                <thead class="table-primary" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th>Nội dung dịch vụ</th>
@@ -237,7 +237,7 @@
                         <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-list-check text-success me-1"></i> Bảng 02. Chi tiết thực hiện</h6>
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
-                                <thead class="table-info" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th>Chỉ tiêu / Nội dung công việc</th>
@@ -426,7 +426,7 @@
                         </div>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.82rem;">
-                                <thead class="table-primary" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th>Nội dung dịch vụ <span class="text-danger">*</span></th>
@@ -508,7 +508,7 @@
                         </div>
                         <div class="table-responsive mb-3">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.82rem;">
-                                <thead class="table-success text-dark" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th class="w-250px">Tên nhóm / Phân loại <span class="text-danger">*</span></th>
@@ -617,7 +617,7 @@
                         </div>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.78rem; min-width: 1500px;">
-                                <thead class="table-primary" style="--bs-table-bg: #C5EECE; --bs-table-color: #000; background-color: #C5EECE;">
+                                <thead class="brand-table-header">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th style="min-width: 220px;">Chức danh công việc</th>

@@ -7,7 +7,7 @@
     {{-- Header --}}
     <div class="ws-calendar-toolbar card border-0 shadow-sm mb-4">
         <div
-            class="card-header bg-white border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3 py-3 px-4">
+            class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3 py-3 px-4">
             <div class="d-flex align-items-center gap-2">
                 <button wire:click="previousMonth"
                     class="btn btn-light btn-sm border border-light-subtle rounded-3 px-3 py-2 fw-semibold d-flex align-items-center justify-content-center"
@@ -34,13 +34,13 @@
             </div>
 
             <div class="text-center">
-                <h3 class="mb-0 fw-bold fs-4" style="color: #1e293b; font-family: 'Inter', sans-serif;">
+                <h3 class="mb-0 fw-bold fs-4 text-body" style="font-family: 'Inter', sans-serif;">
                     Tháng {{ $monthFilter }} Năm {{ $yearFilter }}
                 </h3>
             </div>
 
             <div class="d-flex align-items-center gap-3">
-                <span class="ws-event-total badge bg-soft-info text-info px-3 py-2 rounded-pill fw-semibold">
+                <span class="ws-event-total badge bg-soft-info text-info px-3 py-0 rounded-pill fw-semibold d-inline-flex align-items-center justify-content-center" style="height: 38px;">
                     {{ $totalEvents }} sự kiện
                 </span>
                 <button
@@ -60,7 +60,7 @@
     {{-- Mobile Agenda --}}
     <div class="ws-mobile-agenda d-md-none">
         @forelse($mobileEventDays as $currentDate)
-            <section class="ws-agenda-day bg-white shadow-sm">
+            <section class="ws-agenda-day bg-body shadow-sm">
                 <button type="button" class="ws-agenda-day-header"
                     wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                     <span class="ws-agenda-date {{ $currentDate->isToday() ? 'is-today' : '' }}">
@@ -93,7 +93,7 @@
                 @endif
             </section>
         @empty
-            <div class="ws-agenda-empty bg-white shadow-sm">
+            <div class="ws-agenda-empty bg-body shadow-sm">
                 <i class="fa-solid fa-calendar-week"></i>
                 <div class="fw-semibold">Chưa có sự kiện trong tháng này</div>
                 <button wire:click="openCreateModal" class="btn btn-primary btn-sm mt-2">
@@ -104,8 +104,8 @@
     </div>
 
     {{-- Calendar Grid --}}
-    <div class="calendar-container ws-desktop-calendar shadow-sm bg-white d-none d-md-block mb-4">
-        <div class="calendar-header-grid bg-white border-bottom border-light-subtle">
+    <div class="calendar-container ws-desktop-calendar shadow-sm bg-body d-none d-md-block mb-4">
+        <div class="calendar-header-grid bg-body-secondary border-bottom border-light-subtle">
             @foreach($this->weekdayShortNames() as $dow)
                 <div class="calendar-header-cell fw-bold text-muted text-center"
                     style="font-size: 0.85rem; font-weight: 700; height: 48px; border-left: 1px solid var(--ws-border);">
@@ -118,7 +118,7 @@
             @php($eventsForDay = $this->eventsForDate($calendarData, $currentDate))
             <div class="calendar-day-cell position-relative border-start border-bottom border-light-subtle d-flex flex-column
                     @if(!$this->isInsideCurrentMonth($currentDate)) bg-light opacity-50
-                    @else bg-white @if($currentDate->isWeekend()) bg-sunday @endif
+                    @else bg-body @if($currentDate->isWeekend()) bg-sunday @endif
                     @endif" @if($currentDate->isToday()) style="border-top: 3px solid #2563eb !important;" @endif
                 style="min-height: 140px; padding: 8px; transition: background-color 0.15s ease;">
                 <div class="ws-day-top d-flex justify-content-between align-items-center mb-2"
@@ -152,10 +152,9 @@
                         @foreach($eventsForDay as $evt)
                             <div class="ws-event-chip ws-chip-{{ $evt->color }}"
                                 wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
-                                <div class="d-flex justify-content-between align-items-center gap-1 mb-1">
-                                    <span
-                                        class="ws-event-author text-truncate fw-medium">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 8, '...') }}</span>
-                                    <span class="ws-event-time fw-bold">{{ $evt->time_range_label }}</span>
+                                <div class="d-flex flex-column mb-1">
+                                    <span class="ws-event-author text-truncate fw-semibold" style="font-size: 0.75rem;">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 15, '...') }}</span>
+                                    <span class="ws-event-time fw-medium" style="font-size: 0.62rem; opacity: 0.75;">{{ $evt->time_range_label }}</span>
                                 </div>
                                 <div class="ws-event-title fw-bold text-truncate mb-0">
                                     @if($evt->is_private)
@@ -357,8 +356,8 @@
                         <div class="small fw-bold text-primary mb-1 border-bottom pb-1"><i class="fa-solid fa-building me-1"></i>Bảo Châu</div>
                         @foreach($allUsers as $u)
                             <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88 mb-1"
-                                onmouseover="this.style.background='#f1f5f9'"
-                                onmouseout="this.style.background='transparent'">
+                                onmouseover="this.style.background='var(--bs-secondary-bg)'"
+                                onmouseout="this.style.background='transparent'">>
                                 <input type="checkbox" wire:model="selectedParticipants" value="{{ $u->id }}"
                                     class="form-check-input m-0 rounded-1">
                                 <span>{{ $u->name }}@if($u->id === auth()->id()) (Bạn) @endif</span>
@@ -369,7 +368,7 @@
                             <div class="small fw-bold text-success mt-2 mb-1 border-bottom pb-1"><i class="fa-solid fa-leaf me-1"></i>Greeco</div>
                             @foreach($greecoUsers as $gu)
                                 <label class="d-flex align-items-center gap-2 py-1 px-2 rounded-2 cursor-pointer fs-88 mb-1"
-                                    onmouseover="this.style.background='#f1f5f9'"
+                                    onmouseover="this.style.background='var(--bs-secondary-bg)'"
                                     onmouseout="this.style.background='transparent'">
                                     <input type="checkbox" wire:model="selectedParticipants" value="greeco_{{ $gu['id'] }}"
                                         class="form-check-input m-0 rounded-1">

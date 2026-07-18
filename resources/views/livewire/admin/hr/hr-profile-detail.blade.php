@@ -42,7 +42,7 @@
             <div class="col-md-9">
                 <div class="card border-0 shadow-sm rounded-16px" >
                     <!-- Tabs -->
-                    <div class="card-header bg-white border-bottom p-0">
+                    <div class="card-header border-bottom p-0">
                         <ul class="nav hr-tabs">
                             <li class="nav-item">
                                 <button wire:click="$set('activeTab', 'info')" class="nav-link {{ $activeTab === 'info' ? 'active' : '' }}">

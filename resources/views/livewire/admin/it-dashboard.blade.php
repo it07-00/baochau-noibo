@@ -159,7 +159,7 @@
         <div class="row g-3 mb-4">
             <div class="col-md-5">
                 <div class="card border-0 h-100 it-panel-card">
-                    <div class="card-header py-3 d-flex align-items-center justify-content-between bg-gradient-white border-bottom" >
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom" >
                         <h6 class="mb-0 fw-bold">Người dùng hệ thống</h6>
                         <div class="d-flex gap-3 text-center fs-12px" >
                             <div><div class="fw-bold text-success fs-6">{{ $activeUsers }}</div><div class="text-muted">Hoạt động</div></div>
@@ -296,7 +296,7 @@
 
         {{-- Sessions theo giờ --}}
         <div class="card border-0 it-panel-card mb-4">
-            <div class="card-header py-3 d-flex align-items-center justify-content-between bg-gradient-white border-bottom" >
+            <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom" >
                 <h6 class="mb-0 fw-bold">Phiên hoạt động theo giờ (24h gần nhất)</h6>
                 <span class="badge bg-primary">{{ $activeSessions }} sessions</span>
             </div>
@@ -356,7 +356,7 @@
     {{-- ═══ TAB: BACKUP DB ═══ --}}
     @if($activeTab === 'backup')
         <div class="card border-0 it-panel-card">
-            <div class="card-header py-3 d-flex align-items-center justify-content-between bg-gradient-white border-bottom">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom">
                 <div>
                     <h6 class="mb-0 fw-bold">Sao lưu cơ sở dữ liệu</h6>
                     <small class="text-muted">File backup được lưu tại <code>storage/app/backups/</code></small>

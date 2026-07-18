@@ -169,9 +169,7 @@ select.hr-badge-part_time  { background-color: #f3e8ff !important; color: #6b21a
 .hr-contract-card:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
-.hr-contract-status-active     { border-left: 3px solid #22c55e; }
-.hr-contract-status-expired    { border-left: 3px solid #f59e0b; }
-.hr-contract-status-terminated { border-left: 3px solid #ef4444; }
+
 
 /* ─── Document Cards ─── */
 .hr-doc-card {

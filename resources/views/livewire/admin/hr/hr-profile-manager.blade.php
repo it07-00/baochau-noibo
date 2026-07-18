@@ -6,7 +6,7 @@
     <div class="row g-3 mb-4 px-3 pt-3">
         <!-- Stats Cards -->
         <div class="col-6 col-md-3 col-xl">
-            <div class="hr-stat-card bg-white shadow-sm">
+            <div class="hr-stat-card shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-primary bg-opacity-10 text-primary">
                         <i class="fa-solid fa-users"></i>
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="col-6 col-md-3 col-xl">
-            <div class="hr-stat-card bg-white shadow-sm">
+            <div class="hr-stat-card shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-green-pale text-green-dark">
                         <i class="fa-solid fa-user-check"></i>
@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="col-6 col-md-3 col-xl">
-            <div class="hr-stat-card bg-white shadow-sm">
+            <div class="hr-stat-card shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-yellow-pale text-yellow-dark">
                         <i class="fa-solid fa-hourglass-half"></i>
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="col-6 col-md-3 col-xl">
-            <div class="hr-stat-card bg-white shadow-sm">
+            <div class="hr-stat-card shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-indigo-pale text-indigo-dark">
                         <i class="fa-solid fa-graduation-cap"></i>
@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="col-6 col-md-3 col-xl">
-            <div class="hr-stat-card bg-white shadow-sm">
+            <div class="hr-stat-card shadow-sm">
                 <div class="d-flex align-items-center gap-3">
                     <div class="hr-stat-icon bg-red-pale text-red-dark">
                         <i class="fa-solid fa-user-xmark"></i>
@@ -200,7 +200,7 @@
             </div>
 
             @if($users->hasPages())
-                <div class="card-footer bg-white border-top py-2 px-3">
+                <div class="card-footer border-top py-2 px-3">
                     {{ $users->links() }}
                 </div>
             @endif

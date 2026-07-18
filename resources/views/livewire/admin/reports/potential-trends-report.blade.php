@@ -11,17 +11,17 @@
             </p>
         </div>
         <button type="button" wire:click="exportCsv" class="btn btn-outline-primary d-inline-flex align-items-center gap-2">
-            <i class="bi bi-download"></i>
+            <i class="fa-solid fa-download"></i>
             Xuất CSV
         </button>
     </div>
 
-    <div class="card border-0 shadow-sm mb-4 report-filter-card">
+    <div class="card border-0 shadow-sm mb-4 report-filter-card rounded-12px overflow-hidden">
         <div class="card-body">
             <div class="row g-3 align-items-end">
                 <div class="col-xl-2 col-md-4">
                     <label class="form-label fw-semibold">Thời gian</label>
-                    <select wire:model.live="period" class="form-select">
+                    <select wire:model.live="period" class="form-select border-light-subtle rounded-8px shadow-sm">
                         @foreach($periodOptions as $value => $label)
                             <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
@@ -29,16 +29,16 @@
                 </div>
                 <div class="col-xl-2 col-md-4">
                     <label class="form-label fw-semibold">Từ ngày</label>
-                    <input type="date" wire:model.live="dateFrom" class="form-control">
+                    <input type="date" wire:model.live="dateFrom" class="form-control border-light-subtle rounded-8px shadow-sm">
                 </div>
                 <div class="col-xl-2 col-md-4">
                     <label class="form-label fw-semibold">Đến ngày</label>
-                    <input type="date" wire:model.live="dateTo" class="form-control">
+                    <input type="date" wire:model.live="dateTo" class="form-control border-light-subtle rounded-8px shadow-sm">
                 </div>
                 @if($canViewAllStaff)
                     <div class="col-xl-3 col-md-6">
                         <label class="form-label fw-semibold">Nhân sự phụ trách</label>
-                        <select wire:model.live="staffId" class="form-select">
+                        <select wire:model.live="staffId" class="form-select border-light-subtle rounded-8px shadow-sm">
                             <option value="">Toàn bộ đội ngũ</option>
                             @foreach($filterOptions['staffs'] as $staff)
                                 <option value="{{ $staff['id'] }}">{{ $staff['name'] }}</option>
@@ -48,7 +48,7 @@
                 @endif
                 <div class="col-xl-3 col-md-6">
                     <label class="form-label fw-semibold">Dịch vụ</label>
-                    <select wire:model.live="service" class="form-select">
+                    <select wire:model.live="service" class="form-select border-light-subtle rounded-8px shadow-sm">
                         <option value="">Tất cả dịch vụ</option>
                         @foreach($filterOptions['services'] as $serviceOption)
                             <option value="{{ $serviceOption }}">{{ $serviceOption }}</option>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="col-xl-3 col-md-4">
                     <label class="form-label fw-semibold">Khu vực</label>
-                    <select wire:model.live="province" class="form-select">
+                    <select wire:model.live="province" class="form-select border-light-subtle rounded-8px shadow-sm">
                         <option value="">Tất cả tỉnh/thành</option>
                         @foreach($filterOptions['provinces'] as $provinceOption)
                             <option value="{{ $provinceOption }}">{{ $provinceOption }}</option>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="col-xl-3 col-md-4">
                     <label class="form-label fw-semibold">Trạng thái báo giá</label>
-                    <select wire:model.live="status" class="form-select">
+                    <select wire:model.live="status" class="form-select border-light-subtle rounded-8px shadow-sm">
                         <option value="">Tất cả trạng thái</option>
                         @foreach($filterOptions['statuses'] as $statusOption)
                             <option value="{{ $statusOption }}">{{ $statusOption }}</option>
@@ -74,22 +74,16 @@
                     </select>
                 </div>
                 <div class="col-xl-3 col-md-4">
-                    <button type="button" wire:click="resetFilters" class="btn btn-light border w-100">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i> Đặt lại bộ lọc
+                    <button type="button" wire:click="resetFilters" class="btn btn-outline-secondary border-light-subtle w-100 rounded-8px shadow-sm fw-semibold">
+                        <i class="fa-solid fa-rotate-left me-1"></i> Đặt lại bộ lọc
                     </button>
                 </div>
-                <div class="col-xl-3 d-flex align-items-center">
-                    <div class="small text-muted">
-                        Dữ liệu {{ \Carbon\Carbon::parse($report['period']['from'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($report['period']['to'])->format('d/m/Y') }}
-                    </div>
-                </div>
             </div>
-            <div class="small text-muted mt-3">
-                Trạng thái chỉ lọc dữ liệu báo giá. Doanh số luôn lấy từ hợp đồng có ngày xuất hóa đơn trong kỳ.
-                @unless($canViewAllStaff)
+            @unless($canViewAllStaff)
+                <div class="small text-muted mt-3">
                     Báo cáo đã khóa theo dữ liệu của bạn.
-                @endunless
-            </div>
+                </div>
+            @endunless
         </div>
     </div>
 
@@ -100,7 +94,7 @@
 
     @if($canViewAllStaff && $report['data_quality']['total_issues'] > 0)
         <div class="alert alert-warning border-0 d-flex align-items-start gap-3 mb-4">
-            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <i class="fa-solid fa-triangle-exclamation fs-5"></i>
             <div>
                 <div class="fw-bold mb-1">Có {{ number_format($report['data_quality']['total_issues']) }} điểm thiếu dữ liệu trong kỳ</div>
                 <div class="small">
@@ -116,14 +110,14 @@
 
     @php
         $kpiCards = [
-            ['key' => 'opportunities', 'label' => 'Cơ hội báo giá', 'icon' => 'bi-briefcase', 'type' => 'number'],
-            ['key' => 'customers', 'label' => 'Khách hàng', 'icon' => 'bi-people', 'type' => 'number'],
-            ['key' => 'new_customers', 'label' => 'Khách hàng mới', 'icon' => 'bi-person-plus', 'type' => 'number'],
-            ['key' => 'conversion_rate', 'label' => 'Tỷ lệ chuyển đổi', 'icon' => 'bi-funnel', 'type' => 'percent'],
-            ['key' => 'potential_value', 'label' => 'Giá trị tiềm năng', 'icon' => 'bi-stars', 'type' => 'money'],
-            ['key' => 'revenue', 'label' => 'Doanh số ghi nhận', 'icon' => 'bi-graph-up-arrow', 'type' => 'money'],
-            ['key' => 'signed_contracts', 'label' => 'Hợp đồng đã ký', 'icon' => 'bi-file-earmark-check', 'type' => 'number'],
-            ['key' => 'returning_customers', 'label' => 'Khách hàng quay lại', 'icon' => 'bi-arrow-repeat', 'type' => 'number'],
+            ['key' => 'opportunities', 'label' => 'Báo giá', 'icon' => 'fa-solid fa-briefcase', 'type' => 'number'],
+            ['key' => 'customers', 'label' => 'Khách hàng', 'icon' => 'fa-solid fa-users', 'type' => 'number'],
+            ['key' => 'new_customers', 'label' => 'Khách hàng mới', 'icon' => 'fa-solid fa-user-plus', 'type' => 'number'],
+            ['key' => 'conversion_rate', 'label' => 'Tỷ lệ chuyển đổi', 'icon' => 'fa-solid fa-filter', 'type' => 'percent'],
+            ['key' => 'potential_value', 'label' => 'Giá trị tiềm năng', 'icon' => 'fa-solid fa-star', 'type' => 'money'],
+            ['key' => 'revenue', 'label' => 'Doanh số ghi nhận', 'icon' => 'fa-solid fa-chart-line', 'type' => 'money'],
+            ['key' => 'signed_contracts', 'label' => 'Hợp đồng đã ký', 'icon' => 'fa-solid fa-file-contract', 'type' => 'number'],
+            ['key' => 'returning_customers', 'label' => 'Khách hàng quay lại', 'icon' => 'fa-solid fa-rotate', 'type' => 'number'],
         ];
     @endphp
     <div class="row g-3 mb-4">
@@ -136,24 +130,42 @@
                     'percent' => number_format($metric['value'], 2, ',', '.') . '%',
                     default => number_format($metric['value']),
                 };
+
+                // Dynamic colors for each card to create a premium visual system
+                $theme = match($card['key']) {
+                    'opportunities' => ['bg' => '#2563eb', 'soft' => 'rgba(37, 99, 235, 0.05)'],
+                    'customers' => ['bg' => '#6366f1', 'soft' => 'rgba(99, 102, 241, 0.05)'],
+                    'new_customers' => ['bg' => '#0ea5e9', 'soft' => 'rgba(14, 165, 233, 0.05)'],
+                    'conversion_rate' => ['bg' => '#10b981', 'soft' => 'rgba(16, 185, 129, 0.05)'],
+                    'potential_value' => ['bg' => '#d97706', 'soft' => 'rgba(217, 119, 6, 0.05)'],
+                    'revenue' => ['bg' => '#dc2626', 'soft' => 'rgba(220, 38, 38, 0.05)'],
+                    'signed_contracts' => ['bg' => '#0d9488', 'soft' => 'rgba(13, 148, 136, 0.05)'],
+                    'returning_customers' => ['bg' => '#475569', 'soft' => 'rgba(71, 85, 105, 0.05)'],
+                    default => ['bg' => '#2563eb', 'soft' => 'rgba(37, 99, 235, 0.05)'],
+                };
             @endphp
             <div class="col-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100 report-kpi-card">
+                <div class="card border-0 shadow-sm h-100 report-kpi-card" style="background: linear-gradient({{ $theme['soft'] }}, {{ $theme['soft'] }}), var(--bs-tertiary-bg) !important;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start gap-2">
-                            <div class="report-kpi-label">{{ $card['label'] }}</div>
-                            <span class="report-kpi-icon"><i class="bi {{ $card['icon'] }}"></i></span>
+                            <div class="report-kpi-label text-uppercase text-secondary fw-bold" style="font-size: 0.72rem; letter-spacing: 0.02em;">{{ $card['label'] }}</div>
+                            <span class="rounded-circle shadow-sm d-flex align-items-center justify-content-center flex-shrink-0" style="width: 2rem; height: 2rem; background-color: var(--bs-card-bg) !important; color: {{ $theme['bg'] }} !important; border: 1px solid var(--bs-border-color-translucent);"><i class="{{ $card['icon'] }}"></i></span>
                         </div>
-                        <div class="report-kpi-value">{{ $formattedValue }}</div>
-                        <div class="small mt-2">
+                        <div class="report-kpi-value text-dark fw-bold mt-2" style="font-size: 1.5rem; line-height: 1.2;">{{ $formattedValue }}</div>
+                        <div class="mt-2.5 d-flex align-items-center flex-wrap gap-1">
                             @if($growth === null)
-                                <span class="text-muted">Chưa có kỳ đối chiếu</span>
+                                <span class="text-muted small" style="font-size: 0.72rem;">Chưa có kỳ đối chiếu</span>
                             @else
-                                <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
-                                    <i class="bi {{ $growth >= 0 ? 'bi-arrow-up-right' : 'bi-arrow-down-right' }}"></i>
-                                    {{ number_format(abs($growth), 2, ',', '.') }}%
-                                </span>
-                                <span class="text-muted"> so với kỳ trước</span>
+                                @if($growth >= 0)
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 fw-bold" style="font-size: 0.7rem;">
+                                        <i class="fa-solid fa-arrow-trend-up me-1"></i>{{ number_format(abs($growth), 1, ',', '.') }}%
+                                    </span>
+                                @else
+                                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 fw-bold" style="font-size: 0.7rem;">
+                                        <i class="fa-solid fa-arrow-trend-down me-1"></i>{{ number_format(abs($growth), 1, ',', '.') }}%
+                                    </span>
+                                @endif
+                                <span class="text-muted small ms-1" style="font-size: 0.72rem;">so với kỳ trước</span>
                             @endif
                         </div>
                     </div>
@@ -164,26 +176,30 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h6 class="mb-1 fw-bold">Xu hướng cơ hội và doanh số</h6>
-                    <div class="small text-muted">Tự động nhóm theo ngày, tuần, tháng hoặc quý dựa trên khoảng lọc.</div>
+            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
+                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-primary fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-dark">Xu hướng báo giá và doanh số</h6>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="potentialTrendConfig" class="d-none" data-chart='@json($report['trend'])'></div>
                     @if(array_sum($report['trend']['opportunities']) + array_sum($report['trend']['revenue']) > 0)
                         <div class="report-chart report-chart-lg"><canvas id="potentialTrendChart" wire:ignore></canvas></div>
                     @else
-                        <div class="report-empty-state">Chưa có cơ hội hoặc doanh số trong khoảng thời gian này.</div>
+                        <div class="report-empty-state">Chưa có báo giá hoặc doanh số trong khoảng thời gian này.</div>
                     @endif
                 </div>
             </div>
         </div>
         <div class="col-xl-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h6 class="mb-1 fw-bold">Cơ cấu trạng thái báo giá</h6>
-                    <div class="small text-muted">Tỷ trọng các cơ hội trong kỳ.</div>
+            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
+                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-indigo fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-dark">Cơ cấu trạng thái báo giá</h6>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="potentialStatusConfig" class="d-none" data-chart='@json($report['status_breakdown'])'></div>
@@ -199,13 +215,12 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-1 fw-bold">Dịch vụ tiềm năng</h6>
-                        <div class="small text-muted">Điểm từ lượng cơ hội, giá trị, chuyển đổi và tăng trưởng.</div>
+            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
+                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-cube text-primary fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-dark">Dịch vụ tiềm năng</h6>
                     </div>
-                    <i class="bi bi-grid text-primary fs-5"></i>
                 </div>
                 <div class="card-body">
                     <div id="potentialServicesConfig" class="d-none" data-chart='@json($report['services'])'></div>
@@ -218,13 +233,12 @@
             </div>
         </div>
         <div class="col-xl-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-1 fw-bold">Khu vực tiềm năng</h6>
-                        <div class="small text-muted">Kết hợp cơ hội báo giá và doanh số hợp đồng theo tỉnh/thành.</div>
+            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
+                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-success fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-dark">Khu vực tiềm năng</h6>
                     </div>
-                    <i class="bi bi-geo-alt text-primary fs-5"></i>
                 </div>
                 <div class="card-body">
                     <div id="potentialRegionsConfig" class="d-none" data-chart='@json($report['regions'])'></div>
@@ -240,10 +254,12 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-7">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h6 class="mb-1 fw-bold">Hiệu suất nhân sự</h6>
-                    <div class="small text-muted">Doanh số chỉ tính hợp đồng có ngày xuất hóa đơn.</div>
+            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
+                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-primary fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-dark">Hiệu suất nhân sự</h6>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="potentialStaffConfig" class="d-none" data-chart='@json($report['staff_performance'])'></div>
@@ -256,10 +272,12 @@
             </div>
         </div>
         <div class="col-xl-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-transparent border-bottom py-3">
-                    <h6 class="mb-1 fw-bold">Định hướng đề xuất</h6>
-                    <div class="small text-muted">Sinh tự động bằng quy tắc có thể kiểm chứng.</div>
+            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
+                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-warning fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-dark">Định hướng đề xuất</h6>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="potentialRecommendationsConfig" class="d-none" data-chart='@json($report['recommendations'])'></div>
@@ -269,13 +287,13 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
-            <div>
-                <h6 class="mb-1 fw-bold">Cơ hội gần nhất</h6>
-                <div class="small text-muted">12 báo giá mới nhất trong phạm vi bộ lọc.</div>
+    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
+        <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-secondary fs-5"></i>
+                <h6 class="mb-0 fw-bold text-dark">Báo giá gần nhất</h6>
             </div>
-            <span class="badge bg-body-secondary text-body border">Cập nhật {{ \Carbon\Carbon::parse($report['generated_at'])->format('H:i d/m/Y') }}</span>
+            <span class="badge bg-body-secondary text-secondary border border-light-subtle rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">Cập nhật {{ \Carbon\Carbon::parse($report['generated_at'])->format('H:i d/m/Y') }}</span>
         </div>
         <div class="card-body">
             <div id="potentialRecentConfig" class="d-none" data-chart='@json($report['recent_opportunities'])'></div>
@@ -294,10 +312,12 @@
                 function theme() {
                     const dark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
                     return {
-                        text: dark ? '#cbd5e1' : '#64748b',
-                        grid: dark ? 'rgba(148,163,184,.16)' : 'rgba(100,116,139,.12)',
-                        tooltipBg: dark ? '#111827' : '#ffffff',
-                        tooltipText: dark ? '#f8fafc' : '#0f172a'
+                        text: dark ? '#94a3b8' : '#64748b',
+                        subtext: dark ? '#64748b' : '#94a3b8',
+                        grid: dark ? 'rgba(148,163,184,.10)' : 'rgba(100,116,139,.10)',
+                        tooltipBg: dark ? '#1e293b' : '#ffffff',
+                        tooltipText: dark ? '#f1f5f9' : '#0f172a',
+                        tooltipBorder: dark ? 'rgba(148,163,184,.15)' : 'rgba(0,0,0,.06)'
                     };
                 }
 
@@ -325,28 +345,32 @@
                         data: {
                             labels: payload.labels || [],
                             datasets: [
-                                { label: 'Cơ hội', data: payload.opportunities || [], backgroundColor: 'rgba(37,99,235,.72)', borderRadius: 5, yAxisID: 'y' },
-                                { label: 'Ký hợp đồng', data: payload.won || [], backgroundColor: 'rgba(16,185,129,.72)', borderRadius: 5, yAxisID: 'y' },
-                                { label: 'Doanh số', type: 'line', data: payload.revenue || [], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.14)', tension: .35, pointRadius: 3, yAxisID: 'y1' }
+                                { label: 'Báo giá', data: payload.opportunities || [], backgroundColor: 'rgba(37,99,235,.75)', borderRadius: 6, borderSkipped: false, yAxisID: 'y' },
+                                { label: 'Ký hợp đồng', data: payload.won || [], backgroundColor: 'rgba(16,185,129,.75)', borderRadius: 6, borderSkipped: false, yAxisID: 'y' },
+                                { label: 'Doanh số', type: 'line', data: payload.revenue || [], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.10)', tension: .4, pointRadius: 4, pointBackgroundColor: '#f59e0b', fill: true, yAxisID: 'y1' }
                             ]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            animation: { duration: 500, easing: 'easeOutQuart' },
                             interaction: { mode: 'index', intersect: false },
                             plugins: {
-                                legend: { labels: { color: colors.text, usePointStyle: true } },
+                                legend: { labels: { color: colors.text, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
                                 tooltip: {
                                     backgroundColor: colors.tooltipBg,
                                     titleColor: colors.tooltipText,
-                                    bodyColor: colors.tooltipText,
+                                    bodyColor: colors.text,
+                                    borderColor: colors.tooltipBorder,
+                                    borderWidth: 1,
+                                    padding: 10,
                                     callbacks: { label: ctx => ctx.dataset.yAxisID === 'y1' ? ctx.dataset.label + ': ' + money(ctx.raw) : ctx.dataset.label + ': ' + ctx.raw }
                                 }
                             },
                             scales: {
-                                x: { ticks: { color: colors.text, maxRotation: 0, autoSkip: true }, grid: { display: false } },
-                                y: { beginAtZero: true, ticks: { color: colors.text, precision: 0 }, grid: { color: colors.grid } },
-                                y1: { beginAtZero: true, position: 'right', ticks: { color: colors.text, callback: value => money(value) }, grid: { drawOnChartArea: false } }
+                                x: { ticks: { color: colors.text, maxRotation: 0, autoSkip: true, font: { size: 11 } }, grid: { display: false } },
+                                y: { beginAtZero: true, ticks: { color: colors.text, precision: 0, font: { size: 11 } }, grid: { color: colors.grid } },
+                                y1: { beginAtZero: true, position: 'right', ticks: { color: colors.subtext, callback: value => money(value), font: { size: 11 } }, grid: { drawOnChartArea: false } }
                             }
                         }
                     });
@@ -367,16 +391,24 @@
                                 data: payload.map(item => item.count),
                                 backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#7c3aed', '#0ea5e9'],
                                 borderWidth: 0,
-                                hoverOffset: 4
+                                hoverOffset: 8
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            cutout: '68%',
+                            cutout: '70%',
+                            animation: { duration: 500, easing: 'easeOutQuart' },
                             plugins: {
-                                legend: { position: 'bottom', labels: { color: colors.text, usePointStyle: true, padding: 16 } },
-                                tooltip: { backgroundColor: colors.tooltipBg, titleColor: colors.tooltipText, bodyColor: colors.tooltipText }
+                                legend: { position: 'bottom', labels: { color: colors.text, usePointStyle: true, pointStyleWidth: 10, padding: 16, font: { size: 12 } } },
+                                tooltip: {
+                                    backgroundColor: colors.tooltipBg,
+                                    titleColor: colors.tooltipText,
+                                    bodyColor: colors.text,
+                                    borderColor: colors.tooltipBorder,
+                                    borderWidth: 1,
+                                    padding: 10
+                                }
                             }
                         }
                     });
@@ -399,19 +431,23 @@
                             indexAxis: 'y',
                             responsive: true,
                             maintainAspectRatio: false,
+                            animation: { duration: 500, easing: 'easeOutQuart' },
                             interaction: { mode: 'index', intersect: false },
                             plugins: {
-                                legend: { labels: { color: colors.text, usePointStyle: true } },
+                                legend: { labels: { color: colors.text, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
                                 tooltip: {
                                     backgroundColor: colors.tooltipBg,
                                     titleColor: colors.tooltipText,
-                                    bodyColor: colors.tooltipText,
+                                    bodyColor: colors.text,
+                                    borderColor: colors.tooltipBorder,
+                                    borderWidth: 1,
+                                    padding: 10,
                                     callbacks: settings.tooltipCallbacks || {}
                                 }
                             },
                             scales: {
-                                x: { beginAtZero: true, ticks: { color: colors.text }, grid: { color: colors.grid } },
-                                y: { ticks: { color: colors.text, autoSkip: false }, grid: { display: false } }
+                                x: { beginAtZero: true, ticks: { color: colors.text, font: { size: 11 } }, grid: { color: colors.grid } },
+                                y: { ticks: { color: colors.text, autoSkip: false, font: { size: 11 } }, grid: { display: false } }
                             }
                         }
                     });
@@ -448,7 +484,7 @@
                     renderHorizontalChart('potentialStaffConfig', 'potentialStaffChart', {
                         label: item => item.name,
                         datasets: payload => [
-                            { label: 'Cơ hội', data: payload.map(item => item.opportunities), backgroundColor: 'rgba(37,99,235,.78)', borderRadius: 6 },
+                            { label: 'Báo giá', data: payload.map(item => item.opportunities), backgroundColor: 'rgba(37,99,235,.78)', borderRadius: 6 },
                             { label: 'Đã ký', data: payload.map(item => item.won), backgroundColor: 'rgba(16,185,129,.72)', borderRadius: 6 }
                         ],
                         tooltipCallbacks: { afterBody: items => 'Doanh số: ' + money(payloadValue(items, 'revenue')) }
@@ -496,6 +532,7 @@
 
                 document.addEventListener('DOMContentLoaded', () => setTimeout(window.renderPotentialReportCharts, 120));
                 document.addEventListener('livewire:navigated', () => setTimeout(window.renderPotentialReportCharts, 120));
+                window.addEventListener('potential-report-updated', () => setTimeout(window.renderPotentialReportCharts, 150));
 
                 if (!window.__potentialReportThemeListener) {
                     window.__potentialReportThemeListener = true;

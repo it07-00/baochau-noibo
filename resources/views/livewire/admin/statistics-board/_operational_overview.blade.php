@@ -1,43 +1,39 @@
 <div class="row g-4 mb-4">
     <!-- Cột trái: Tổng quan vận hành -->
     <div class="col-lg-8">
-        <div class="card op-card h-100">
+        <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
             <div class="card-body p-4">
                 <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2">
                     <div>
                         <h5 class="fw-bold text-body mb-1">Tổng quan vận hành</h5>
                         <div class="text-muted small">Theo dõi lịch công tác và báo cáo nội bộ trong ngày.</div>
                     </div>
-                    <span class="op-office-badge">Bảo Châu Office</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 d-inline-flex align-items-center">Bảo Châu Office</span>
                 </div>
 
                 <!-- KPI Boxes -->
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <div class="op-stat-box">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="op-stat-circle op-circle-warning">
-                                    <i class="fa-solid fa-calendar-days"></i>
-                                </div>
-                                <div>
-                                    <div class="text-muted small fw-semibold">Lịch tuần này</div>
-                                    <div class="op-stat-num">{{ number_format($workScheduleWeekCount) }}</div>
-                                </div>
+                        <div class="d-flex align-items-center gap-3 p-3 bg-warning bg-opacity-05 border border-warning-subtle rounded-3">
+                            <div class="avatar bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center fs-5" style="width: 48px !important; height: 48px !important; min-width: 48px !important; flex-shrink: 0;">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small fw-semibold">Lịch tuần này</div>
+                                <h4 class="mb-0 fw-bold text-body mt-1">{{ number_format($workScheduleWeekCount) }}</h4>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="op-stat-box">
-                            <div class="d-flex align-items-center gap-3 w-100">
-                                <div class="op-stat-circle op-circle-success">
-                                    <i class="fa-solid fa-chart-column"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="text-muted small fw-semibold">Tỷ lệ báo cáo hôm nay</div>
-                                    <div class="d-flex align-items-baseline justify-content-between">
-                                        <span class="op-stat-num">{{ $dailyReportRate }}%</span>
-                                        <span class="small text-muted">{{ $reportedTodayCount }} đã nộp, {{ $unreportedTodayCount }} chưa nộp</span>
-                                    </div>
+                        <div class="d-flex align-items-center gap-3 p-3 bg-success bg-opacity-05 border border-success-subtle rounded-3 w-100">
+                            <div class="avatar bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center fs-5" style="width: 48px !important; height: 48px !important; min-width: 48px !important; flex-shrink: 0;">
+                                <i class="fa-solid fa-chart-column"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="text-muted small fw-semibold">Tỷ lệ báo cáo hôm nay</div>
+                                <div class="d-flex align-items-baseline justify-content-between mt-1">
+                                    <h4 class="mb-0 fw-bold text-body">{{ $dailyReportRate }}%</h4>
+                                    <span class="small text-muted">{{ $reportedTodayCount }} đã nộp, {{ $unreportedTodayCount }} chưa nộp</span>
                                 </div>
                             </div>
                         </div>
@@ -46,10 +42,10 @@
 
                 <!-- Renewal radar -->
                 @if(auth()->user()->hasAnyRole([\App\Enums\Role::KINH_DOANH->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
-                <div class="op-renewal-panel mb-4">
+                <div class="p-3 bg-warning-subtle bg-opacity-25 border border-warning-subtle rounded-3 mb-4">
                     <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
                         <div class="d-flex align-items-center gap-2 min-w-0">
-                            <div class="op-stat-circle op-circle-warning" style="width: 32px; height: 32px; font-size: 13px;">
+                            <div class="avatar bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center fs-6" style="width: 32px !important; height: 32px !important; min-width: 32px !important; flex-shrink: 0;">
                                 <i class="fa-solid fa-arrows-rotate"></i>
                             </div>
                             <div class="min-w-0">
@@ -57,25 +53,25 @@
                                 <div class="text-muted" style="font-size: 11px;">Theo ngày ký cũ, nhắc trước 30 ngày</div>
                             </div>
                         </div>
-                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">{{ $upcomingRenewalContracts->count() }} hợp đồng</span>
+                        <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle d-inline-flex align-items-center">{{ $upcomingRenewalContracts->count() }} hợp đồng</span>
                     </div>
-                    <div class="op-renewal-list">
+                    <div class="d-flex flex-column gap-2">
                         @forelse($upcomingRenewalContracts as $contract)
-                            <a href="{{ $contract['url'] }}" class="op-renewal-item">
+                            <a href="{{ $contract['url'] }}" class="d-flex align-items-center justify-content-between p-2 bg-warning bg-opacity-05 border border-warning-subtle rounded-2 text-decoration-none hover-lift">
                                 <div class="min-w-0 flex-grow-1">
                                     <div class="d-flex align-items-center gap-2 min-w-0">
                                         <span class="fw-bold text-body text-truncate small">{{ $contract['customer'] }}</span>
-                                        <span class="badge bg-body-secondary text-secondary border fw-normal flex-shrink-0">{{ $contract['type'] }}</span>
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle fw-normal flex-shrink-0 d-inline-flex align-items-center">{{ $contract['type'] }}</span>
                                     </div>
                                     <div class="text-muted text-truncate" style="font-size: 11px;">
                                         {{ $contract['contract_number'] }} · Ký {{ $contract['signed_at']->format('d/m/Y') }} · Tái ký {{ $contract['renewal_date']->format('d/m/Y') }} · {{ $contract['staff'] }}
                                     </div>
                                 </div>
-                                <span class="op-renewal-days">{{ $contract['days_label'] }}</span>
+                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle rounded-pill px-2 py-1 fs-8 flex-shrink-0 d-inline-flex align-items-center">{{ $contract['days_label'] }}</span>
                             </a>
                         @empty
-                            <div class="op-empty-state py-3">
-                                <i class="fa-solid fa-check-circle"></i>
+                            <div class="d-flex flex-column align-items-center justify-content-center py-3 text-muted" style="font-size: 13px;">
+                                <i class="fa-solid fa-check-circle text-success mb-2 fs-5"></i>
                                 <div>Chưa có hợp đồng sắp đến kỳ tái ký.</div>
                             </div>
                         @endforelse
@@ -87,13 +83,13 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="fw-bold text-body mb-0">Lịch công tác sắp tới</h6>
+                            <h6 class="fw-bold text-body mb-0">Lịch công tác sắp tới</h6>
                             <a href="{{ route('app.work-schedules.index') }}" class="text-decoration-none small fw-bold text-primary">Xem tất cả</a>
                         </div>
-                        <div class="op-list-container">
+                        <div class="d-flex flex-column gap-2">
                             @forelse($upcomingSchedules as $schedule)
-                                <div class="op-list-item">
-                                    <div class="op-stat-circle op-circle-warning" style="width: 32px; height: 32px; font-size: 13px;">
+                                <div class="d-flex align-items-center gap-3 p-2 bg-primary bg-opacity-05 border border-primary-subtle rounded-3">
+                                    <div class="avatar bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center fs-6" style="width: 32px !important; height: 32px !important; min-width: 32px !important; flex-shrink: 0;">
                                         <i class="fa-solid fa-calendar-day"></i>
                                     </div>
                                     <div class="min-w-0 flex-grow-1">
@@ -104,8 +100,8 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="op-empty-state">
-                                    <i class="fa-solid fa-calendar-xmark"></i>
+                                <div class="d-flex flex-column align-items-center justify-content-center py-4 text-muted border border-dashed rounded-3" style="font-size: 13px;">
+                                    <i class="fa-solid fa-calendar-xmark mb-2 fs-5 opacity-50"></i>
                                     <div>Chưa có lịch công tác sắp tới.</div>
                                 </div>
                             @endforelse
@@ -113,14 +109,14 @@
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="fw-bold text-body mb-0">Báo cáo mới nhất</h6>
+                            <h6 class="fw-bold text-body mb-0">Báo cáo mới nhất</h6>
                             @can('daily-reports.view')
                             <a href="{{ route('app.daily-reports.index') }}" class="text-decoration-none small fw-bold text-primary">Xem tất cả</a>
                             @endcan
                         </div>
-                        <div class="op-list-container">
+                        <div class="d-flex flex-column gap-2">
                             @forelse($latestReports as $report)
-                                <div class="op-list-item">
+                                <div class="d-flex align-items-center gap-3 p-2 bg-success bg-opacity-05 border border-success-subtle rounded-3">
                                     <x-user-avatar :user="$report->user" :size="28" class="flex-shrink-0" />
                                     <div class="min-w-0 flex-grow-1">
                                         <div class="fw-bold text-body text-truncate small">{{ $report->user?->name ?? 'Hệ thống' }}</div>
@@ -130,8 +126,8 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="op-empty-state">
-                                    <i class="fa-solid fa-file-xmark"></i>
+                                <div class="d-flex flex-column align-items-center justify-content-center py-4 text-muted border border-dashed rounded-3" style="font-size: 13px;">
+                                    <i class="fa-solid fa-file-xmark mb-2 fs-5 opacity-50"></i>
                                     <div>Chưa có báo cáo nào.</div>
                                 </div>
                             @endforelse
@@ -145,40 +141,40 @@
     <!-- Cột phải: Thao tác nhanh & Phân bổ vai trò -->
     <div class="col-lg-4 d-flex flex-column gap-4">
         <!-- Thao tác nhanh -->
-        <div class="card op-card">
+        <div class="card border border-light-subtle shadow-sm bg-secondary bg-opacity-05">
             <div class="card-body p-4">
                 <h6 class="fw-bold text-body mb-3">Thao tác nhanh</h6>
                 <div class="row g-2">
                     @can('hr-profiles.view')
                     <div class="col-6">
-                        <a href="{{ route('app.hr.index') }}" class="op-quick-btn op-btn-primary">
+                        <a href="{{ route('app.hr.index') }}" class="btn btn-primary w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7 text-white">
                             <i class="fa-solid fa-users"></i> Nhân sự
                         </a>
                     </div>
                     @endcan
                     <div class="col-6">
-                        <a href="{{ route('app.work-schedules.index') }}" class="op-quick-btn op-btn-warning">
+                        <a href="{{ route('app.work-schedules.index') }}" class="btn btn-warning text-dark w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
                             <i class="fa-solid fa-calendar-days"></i> Lịch
                         </a>
                     </div>
                     @can('daily-reports.view')
                     <div class="col-6">
-                        <a href="{{ route('app.daily-reports.index') }}" class="op-quick-btn op-btn-success">
+                        <a href="{{ route('app.daily-reports.index') }}" class="btn btn-success w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7 text-white">
                             <i class="fa-solid fa-chart-column"></i> Báo cáo
                         </a>
                     </div>
                     @endcan
                     @can('roles.view')
                     <div class="col-6">
-                        <a href="{{ route('app.roles.index') }}" class="op-quick-btn op-btn-danger">
+                        <a href="{{ route('app.roles.index') }}" class="btn btn-danger w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7 text-white">
                             <i class="fa-solid fa-shield-halved"></i> Quyền
                         </a>
                     </div>
                     @endcan
                     @can('settings.view')
                     <div class="col-12">
-                        <a href="{{ route('app.settings.index') }}" class="op-quick-btn op-btn-info justify-content-center">
-                            <i class="fa-solid fa-gear-fill"></i> Thiết lập hệ thống
+                        <a href="{{ route('app.settings.index') }}" class="btn btn-info text-dark w-100 py-3 px-3 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
+                            <i class="fa-solid fa-gear"></i> Thiết lập hệ thống
                         </a>
                     </div>
                     @endcan
@@ -188,21 +184,21 @@
 
         @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::HCNS->value]))
         <!-- Phân bổ vai trò -->
-        <div class="card op-card flex-grow-1">
+        <div class="card border border-light-subtle shadow-sm flex-grow-1 bg-secondary bg-opacity-05">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="fw-bold text-body mb-0">Phân bổ vai trò</h6>
-                    <span class="badge bg-soft-primary text-primary px-2 py-1" style="font-size: 11px;">{{ $totalActiveUsersCount }} users</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 d-inline-flex align-items-center" style="font-size: 11px;">{{ $totalActiveUsersCount }} users</span>
                 </div>
-                <div class="role-bars-list">
+                <div class="d-flex flex-column gap-3">
                     @foreach($dashboardRoleDistribution as $r)
-                        <div class="role-bar-container">
-                            <div class="role-bar-label">
-                                <span>{{ $r['name'] }}</span>
-                                <span>{{ $r['count'] }} người</span>
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 12px; font-weight: 600;">
+                                <span class="text-body">{{ $r['name'] }}</span>
+                                <span class="text-muted">{{ $r['count'] }} người</span>
                             </div>
-                            <div class="role-bar-track">
-                                <div class="role-bar-fill" style="width: {{ $totalActiveUsersCount > 0 ? ($r['count'] / $totalActiveUsersCount) * 100 : 0 }}%"></div>
+                            <div class="progress" style="height: 6px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $totalActiveUsersCount > 0 ? ($r['count'] / $totalActiveUsersCount) * 100 : 0 }}%; border-radius: 99px;"></div>
                             </div>
                         </div>
                     @endforeach

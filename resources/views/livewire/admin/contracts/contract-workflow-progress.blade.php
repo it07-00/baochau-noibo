@@ -1,4 +1,4 @@
-<div class="px-3 px-md-4 py-3 border-top bg-light" >
+<div class="px-3 px-md-4 py-3 border-top bg-body-secondary" >
     <div class="d-flex align-items-center justify-content-between mb-3">
         <span class="fw-bold text-muted">
             <i class="fa-solid fa-sitemap me-1 text-primary"></i> Tiến độ xử lý
@@ -15,7 +15,7 @@
             <div class="d-flex align-items-center flex-grow-1">
                 <div class="d-flex flex-column align-items-center flex-shrink-0 w-62px" >
                     <div class="rounded-circle d-flex align-items-center justify-content-center mb-1
-                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-white text-muted border border-secondary') }} wh-34 fs-85"
+                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-body text-muted border border-secondary') }} wh-34 fs-85"
                         >
                         @if (in_array($key, $completedSteps))
                             <i class="fa-solid fa-check"></i>
@@ -47,7 +47,7 @@
             <div class="d-flex align-items-stretch gap-3">
                 <div class="d-flex flex-column align-items-center flex-shrink-0 w-36px" >
                     <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0
-                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-white text-muted border border-secondary') }} wh-36 fs-82"
+                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-body text-muted border border-secondary') }} wh-36 fs-82"
                         >
                         @if (in_array($key, $completedSteps))
                             <i class="fa-solid fa-check"></i>

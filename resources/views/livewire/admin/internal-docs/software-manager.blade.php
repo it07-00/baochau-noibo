@@ -1,7 +1,7 @@
 <div class="software-manager w-100 px-2 px-md-3 pb-5">
     {{-- Header --}}
     <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden" >
-        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="card-header border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h5 class="mb-0 fw-bold">
                 <i class="fa-solid fa-laptop me-2 text-primary"></i>Phần mềm nội bộ
             </h5>
@@ -38,14 +38,14 @@
             <div class="col-md-4 col-sm-6">
                 <div class="card border-0 shadow-sm h-100 rounded-3 hover-lift cursor-pointer" 
                      onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <div class="card-body d-flex flex-column">
+                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center wh-48 fs-5" >
                                     <i class="fa-solid fa-box"></i>
                                 </div>
                                 <div>
-                                    <h6 class="mb-0 fw-bold text-dark">{{ $sw->name }}</h6>
+                                    <h6 class="mb-0 fw-bold text-body">{{ $sw->name }}</h6>
                                     @if($sw->version)
                                         <small class="text-muted">Phiên bản: {{ $sw->version }}</small>
                                     @endif

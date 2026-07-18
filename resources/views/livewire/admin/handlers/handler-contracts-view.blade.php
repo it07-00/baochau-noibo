@@ -2,34 +2,44 @@
     @section('title', 'Hợp đồng của ' . $handler->name)
     @section('page_title', 'Hợp đồng của ' . $handler->name)
 
-    <div class="row g-3 mt-1 px-2 px-md-0">
+    <div class="row g-4 mt-2 px-2 px-md-0">
         {{-- Thông tin nhà thầu phụ --}}
         <div class="col-12">
-            <div class="pure-card rounded-custom card-bg shadow-custom p-3 p-md-4">
-                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
+            <div class="card border-0 shadow-sm rounded-12px">
+                <div class="card-body d-flex flex-column flex-lg-row align-items-lg-center gap-4 p-3 p-md-4">
                     <div class="d-flex align-items-center gap-3 flex-grow-1">
-                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 icon-48"
-                             >
-                            <i class="fa-solid fa-building fs-5 text-primary"></i>
+                        <div class="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 icon-48">
+                            <i class="fa-solid fa-building-shield fs-5 text-primary"></i>
                         </div>
                         <div class="min-w-0">
-                            <div class="fw-bold fs-6 fs-md-5">{{ $handler->name }}</div>
-                            <div class="text-muted small">
-                                @if($handler->phone) <i class="fa-solid fa-phone me-1"></i>{{ $handler->phone }} @endif
-                                @if($handler->phone && $handler->address) &nbsp;·&nbsp; @endif
-                                @if($handler->address) <i class="fa-solid fa-location-dot me-1"></i>{{ $handler->address }} @endif
-                            </div>
+                            <div class="small fw-semibold text-primary mb-1">NHÀ THẦU PHỤ</div>
+                            <h2 class="h5 fw-bold text-body mb-1">{{ $handler->name }}</h2>
+                            @if($handler->phone)
+                                <div class="text-muted small mb-1"><i class="fa-solid fa-phone me-2"></i>{{ $handler->phone }}</div>
+                            @endif
+                            @if($handler->address)
+                                <div class="text-muted small"><i class="fa-solid fa-location-dot me-2"></i>{{ $handler->address }}</div>
+                            @endif
                         </div>
                     </div>
-                    <div class="d-flex gap-3 ms-sm-auto">
-                        <div class="text-center">
-                            <div class="fw-bold fs-5 text-primary">{{ $totalContracts }}</div>
-                            <div class="text-muted small">Hợp đồng</div>
+                    <div class="d-flex flex-column flex-sm-row gap-2 ms-lg-auto">
+                        <div class="d-flex align-items-center gap-3 border border-secondary-subtle bg-body-tertiary rounded-3 px-3 py-2">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </span>
+                            <div>
+                                <div class="h5 fw-bold text-body mb-0">{{ number_format($totalContracts) }}</div>
+                                <div class="text-muted small text-nowrap">Hợp đồng</div>
+                            </div>
                         </div>
-                        <div class="vr"></div>
-                        <div class="text-center">
-                            <div class="fw-bold fs-6 text-success">{{ number_format($totalValue, 0, ',', '.') }}</div>
-                            <div class="text-muted small">Tổng giá trị (VNĐ)</div>
+                        <div class="d-flex align-items-center gap-3 border border-danger-subtle bg-danger bg-opacity-10 rounded-3 px-3 py-2">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 text-danger p-2">
+                                <i class="fa-solid fa-wallet"></i>
+                            </span>
+                            <div>
+                                <div class="h5 fw-bold text-danger mb-0">{{ number_format($totalCommission, 0, ',', '.') }}đ</div>
+                                <div class="text-muted small text-nowrap">Tổng chi nhà thầu phụ</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -38,54 +48,59 @@
 
         {{-- Bảng hợp đồng --}}
         <div class="col-12">
-            <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-column gap-2">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="pure-card-title m-0">Tất cả hợp đồng</h3>
-                        <a href="{{ route('app.handlers.index') }}" class="btn btn-light btn-sm">
+            <div class="card border-0 shadow-sm overflow-hidden rounded-12px">
+                <div class="card-body border-bottom p-3 p-md-4">
+                    <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                        <div>
+                            <h3 class="h5 fw-bold text-body mb-1">Chi phí theo hợp đồng</h3>
+                            <p class="small text-muted mb-0">Theo dõi khoản hoa hồng trả cho nhà thầu phụ trên từng hợp đồng.</p>
+                        </div>
+                        <a href="{{ route('app.handlers.index') }}" class="btn btn-outline-secondary btn-sm text-nowrap">
                             <i class="fa-solid fa-arrow-left me-1"></i>Quay lại
                         </a>
                     </div>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <div class="d-flex align-items-center gap-1">
-                            <label class="form-label mb-0 small fw-semibold text-muted text-nowrap">Từ ngày</label>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-6 col-md-3 col-xl-2">
+                            <label class="form-label small fw-semibold text-body mb-1">Từ ngày</label>
                             <input type="date" class="form-control form-control-sm" wire:model.live="dateFrom">
                         </div>
-                        <div class="d-flex align-items-center gap-1">
-                            <label class="form-label mb-0 small fw-semibold text-muted text-nowrap">Đến ngày</label>
+                        <div class="col-6 col-md-3 col-xl-2">
+                            <label class="form-label small fw-semibold text-body mb-1">Đến ngày</label>
                             <input type="date" class="form-control form-control-sm" wire:model.live="dateTo">
                         </div>
-                        <div class="d-flex align-items-center gap-1">
-                            <label class="form-label mb-0 small fw-semibold text-muted text-nowrap">Sắp xếp</label>
-                            <select class="form-select form-select-sm mnw-110px" wire:model.live="sortField" >
+                        <div class="col-7 col-md-3 col-xl-2">
+                            <label class="form-label small fw-semibold text-body mb-1">Sắp xếp theo</label>
+                            <select class="form-select form-select-sm" wire:model.live="sortField">
                                 <option value="signed_at">Ngày ký</option>
-                                <option value="value">Giá trị</option>
+                                <option value="commission">Chi nhà thầu phụ</option>
                                 <option value="shd_cxl">Số HĐ NTP</option>
                             </select>
                         </div>
-                        <button class="btn btn-outline-secondary btn-sm px-2" wire:click="toggleDir">
-                            @if($sortDir === 'desc')
-                                <i class="fa-solid fa-sort-down me-1"></i><span class="small">Mới → Cũ</span>
-                            @else
-                                <i class="fa-solid fa-sort-up me-1"></i><span class="small">Cũ → Mới</span>
+                        <div class="col-5 col-md-3 col-xl-auto d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm flex-fill text-nowrap" wire:click="toggleDir">
+                                @if($sortDir === 'desc')
+                                    <i class="fa-solid fa-arrow-down-wide-short me-1"></i>Mới → Cũ
+                                @else
+                                    <i class="fa-solid fa-arrow-up-wide-short me-1"></i>Cũ → Mới
+                                @endif
+                            </button>
+                            @if($dateFrom || $dateTo)
+                            <button class="btn btn-outline-secondary btn-sm" wire:click="resetFilter" title="Xóa bộ lọc">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
                             @endif
-                        </button>
-                        @if($dateFrom || $dateTo)
-                        <button class="btn btn-outline-secondary btn-sm" wire:click="resetFilter">
-                            <i class="fa-solid fa-xmark-lg"></i>
-                        </button>
-                        @endif
+                        </div>
                     </div>
                 </div>
 
-                <div class="pure-card-body pb-3">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table text-nowrap align-middle table-hover">
-                            <thead class="table-light">
+                        <table class="table text-nowrap align-middle table-hover mb-0">
+                            <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem;">
                                 <tr>
                                     <th width="110">Loại HĐ</th>
                                     <th>
-                                        <button class="btn btn-link btn-sm p-0 text-dark fw-bold text-decoration-none"
+                                        <button class="btn btn-link btn-sm p-0 text-body fw-bold text-decoration-none"
                                                 wire:click="sortBy('shd_cxl')">
                                             Số HĐ NTP
                                             @if($sortField === 'shd_cxl')
@@ -96,7 +111,7 @@
                                     <th class="d-none d-md-table-cell">Số HĐ BC</th>
                                     <th class="d-none d-sm-table-cell">Khách hàng</th>
                                     <th class="d-none d-md-table-cell">
-                                        <button class="btn btn-link btn-sm p-0 text-dark fw-bold text-decoration-none"
+                                        <button class="btn btn-link btn-sm p-0 text-body fw-bold text-decoration-none"
                                                 wire:click="sortBy('signed_at')">
                                             Ngày ký
                                             @if($sortField === 'signed_at')
@@ -105,10 +120,10 @@
                                         </button>
                                     </th>
                                     <th class="text-end">
-                                        <button class="btn btn-link btn-sm p-0 text-dark fw-bold text-decoration-none"
-                                                wire:click="sortBy('value')">
-                                            Giá trị (VNĐ)
-                                            @if($sortField === 'value')
+                                        <button class="btn btn-link btn-sm p-0 text-body fw-bold text-decoration-none"
+                                                wire:click="sortBy('commission')">
+                                            Chi NTP (VNĐ)
+                                            @if($sortField === 'commission')
                                                 <i class="bi bi-arrow-{{ $sortDir === 'asc' ? 'up' : 'down' }}-short ms-1"></i>
                                             @endif
                                         </button>
@@ -122,7 +137,7 @@
                                 <tr class="cursor-pointer"
                                     wire:click="viewDetail({{ $contract->contract_id }}, '{{ addslashes($contract->model_class) }}')">
                                     <td>
-                                        <span class="badge bg-label-info px-2">{{ $contract->type_label }}</span>
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-2">{{ $contract->type_label }}</span>
                                     </td>
                                     <td class="fw-semibold">
                                         {{ $contract->shd_cxl ?: '—' }}
@@ -142,7 +157,7 @@
                                     <td class="d-none d-md-table-cell">{{ $contract->shd_bc ?: '—' }}</td>
                                     <td class="text-wrap d-none d-sm-table-cell mxw-200px" >{{ $contract->customer }}</td>
                                     <td class="d-none d-md-table-cell">{{ $contract->signed_at ? $contract->signed_at->format('d/m/Y') : '—' }}</td>
-                                    <td class="text-end">{{ $contract->value ? number_format($contract->value, 0, ',', '.') : '—' }}</td>
+                                    <td class="text-end fw-bold text-danger">{{ number_format((float) $contract->commission, 0, ',', '.') }}</td>
                                     <td class="d-none d-sm-table-cell">
                                         @if($contract->status)
                                             <span class="badge px-2 py-1 fw-semibold"
@@ -173,7 +188,7 @@
                 </div>
 
                 @if($contracts->hasPages())
-                <div class="pure-card-footer border-top px-4 py-3">
+                <div class="card-footer border-top bg-body px-4 py-3">
                     {{ $contracts->links('livewire.admin.users.pagination') }}
                 </div>
                 @endif
@@ -253,6 +268,11 @@
                                                     <th class="bg-light fw-bold px-4 py-3">Doanh số</th>
                                                     <td class="px-4 py-3 fw-bold text-danger">
                                                         {{ number_format($selectedContract->revenue) }}đ</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="bg-light fw-bold px-4 py-3">Chi nhà cung cấp</th>
+                                                    <td class="px-4 py-3 fw-bold text-danger">
+                                                        {{ number_format($selectedContract->ncc_payment ?? 0) }}đ</td>
                                                 </tr>
                                             @endunless
                                             <tr>

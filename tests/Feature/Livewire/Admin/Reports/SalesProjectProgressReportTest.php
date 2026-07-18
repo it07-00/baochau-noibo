@@ -58,6 +58,47 @@ class SalesProjectProgressReportTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_month_defaults_to_current_month_and_filters_by_signing_date(): void
+    {
+        $manager = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
+        $manager->assignRole(RoleEnum::TP_KINH_DOANH->value);
+
+        $handler = Handler::create(['name' => 'Nhà thầu lọc theo ngày ký']);
+        $signedInJuly = ContractWaste::create([
+            'customer_id' => Customer::create(['name' => 'Khách ký tháng 7'])->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
+            'value' => 100_000_000,
+            'signed_at' => '2026-07-10',
+            'submitted_at' => '2026-06-10',
+        ]);
+        $signedInJune = ContractWaste::create([
+            'customer_id' => Customer::create(['name' => 'Khách ký tháng 6'])->id,
+            'handler_id' => $handler->id,
+            'staff_id' => $manager->id,
+            'department_id' => $this->department->id,
+            'value' => 100_000_000,
+            'signed_at' => '2026-06-10',
+            'submitted_at' => '2026-07-10',
+        ]);
+
+        $this->actingAs($manager);
+
+        Livewire::test(SalesProjectProgressReport::class)
+            ->assertSet('month', now()->month)
+            ->set('year', 2026)
+            ->set('month', 7)
+            ->assertViewHas('items', function ($items) use ($signedInJuly, $signedInJune): bool {
+                $ids = collect($items->items())->pluck('id');
+
+                return $ids->contains($signedInJuly->id) && ! $ids->contains($signedInJune->id);
+            });
+    }
+
     public function test_salesperson_only_sees_own_contracts(): void
     {
         $salesperson1 = User::factory()->create([
@@ -102,6 +143,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertViewHas('items', function ($items) use ($contract1, $contract2) {
                 $ids = collect($items->items())->pluck('id');
 
@@ -151,6 +193,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertViewHas('items', function ($items) use ($contract1, $contract2) {
                 $ids = collect($items->items())->pluck('id');
 
@@ -184,6 +227,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertViewHas('items', function ($items): bool {
                 $item = collect($items->items())->first();
 
@@ -221,6 +265,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertViewHas('serviceOptions', fn (array $options): bool => $options === ['Quan trắc lao động', 'Xử lý chất thải'])
             ->set('filter_service', 'Xử lý chất thải')
             ->assertViewHas('items', fn ($items): bool => $items->total() === 1
@@ -254,6 +299,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertViewHas('items', function ($items): bool {
                 $item = $items->items()[0];
 
@@ -296,6 +342,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertSet('filter_contract_type', 'waste')
             ->assertViewHas('items', function ($items): bool {
                 $steps = collect($items->items())->first()['workflow_steps'];
@@ -343,6 +390,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->assertViewHas('items', fn ($items): bool => $items->perPage() === 10
                 && $items->count() === 10
                 && $items->total() === 11)
@@ -407,6 +455,7 @@ class SalesProjectProgressReportTest extends TestCase
         // Filter by staff 1
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->set('filter_staff_id', $staff1->id)
             ->assertViewHas('items', function ($items) use ($contract1, $contract2) {
                 $ids = collect($items->items())->pluck('id');
@@ -446,6 +495,7 @@ class SalesProjectProgressReportTest extends TestCase
 
         Livewire::test(SalesProjectProgressReport::class)
             ->set('year', 2026)
+            ->set('month', 5)
             ->call('openAssign', 'waste', $contract->id)
             ->assertSet('assignContractId', $contract->id)
             ->assertSet('assignSourceKey', 'waste')

@@ -11,11 +11,9 @@
     <link rel="icon" href="{{ asset('assets/images/favicon-192x192.png') }}" sizes="192x192" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/apple-touch-icon.png') }}">
 
-    <link id="bootstrap-css" rel="stylesheet" type="text/css"
-        href="{{ asset('assets/css/bootstrap.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('assets/css/perfect-scrollbar.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/conca.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/libs/flaticon/css/all/all.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ config('app.version') }}">
 </head>
 
 <body>
@@ -119,11 +117,8 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/js/jquery.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/perfect-scrollbar.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/conca-sidebar.js') }}?v={{ config('app.version') }}"></script>
-    <script src="{{ asset('assets/js/conca.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/libs/global/global.min.js') }}?v={{ config('app.version') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}?v={{ config('app.version') }}"></script>
 </body>
 
 </html>

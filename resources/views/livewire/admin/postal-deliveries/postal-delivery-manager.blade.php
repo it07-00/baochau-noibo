@@ -1,7 +1,7 @@
 <div class="container-fluid py-4">
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h3 class="mb-0 fw-bold text-dark">Quản lý Chuyển phát thư</h3>
+            <h3 class="mb-0 fw-bold">Quản lý Chuyển phát thư</h3>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}" class="text-decoration-none">Bảng điều khiển</a></li>
@@ -19,8 +19,8 @@
 
     <!-- Filters Section -->
     <div class="card border-0 shadow-sm mb-4 rounded-15px" >
-        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
-            <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-filter me-2 text-primary"></i>Bộ lọc Chuyển phát thư</h6>
+        <div class="card-header pt-4 px-4 pb-0">
+            <h6 class="fw-bold mb-0"><i class="fa-solid fa-filter me-2 text-primary"></i>Bộ lọc Chuyển phát thư</h6>
         </div>
         <div class="card-body p-4">
             <div class="row g-3 align-items-end">
@@ -54,8 +54,8 @@
 
     <!-- List Table -->
     <div class="card border-0 shadow-sm rounded-15px overflow-hidden" >
-        <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
-            <h6 class="fw-bold text-dark mb-0">Danh sách Chuyển phát thư</h6>
+        <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between">
+            <h6 class="fw-bold mb-0">Danh sách Chuyển phát thư</h6>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -79,14 +79,14 @@
                         <td class="text-center text-muted  fw-semibold">{{ ($deliveries->currentPage() - 1) * $deliveries->perPage() + $loop->iteration }}</td>
                         <td class="ps-4 py-3">
                             <div class="d-flex flex-column">
-                                <span class="fw-bold text-dark  mb-1">{{ $delivery->customer_name }}</span>
+                                <span class="fw-bold mb-1">{{ $delivery->customer_name }}</span>
                                 @if($delivery->customer_phone)
                                     <span class="text-muted  mb-1"><i class="fa-solid fa-phone me-1"></i> {{ $delivery->customer_phone }}</span>
                                 @endif
                                 @if($delivery->address)
                                     <span class="text-muted  mb-1"><i class="fa-solid fa-location-dot me-1"></i> {{ $delivery->address }}</span>
                                 @endif
-                                <span class="text-dark "><i class="fa-solid fa-user me-1"></i> Người gửi: <strong>{{ $delivery->sender_name }}</strong></span>
+                                <span><i class="fa-solid fa-user me-1"></i> Người gửi: <strong>{{ $delivery->sender_name }}</strong></span>
                             </div>
                         </td>
                         <td class="text-center">
@@ -125,7 +125,7 @@
                             <span class="text-muted ">{{ $delivery->created_at->format('d/m/Y') }}</span>
                         </td>
                         <td>
-                            <div class="text-dark  line-clamp-2 lh-base" >
+                            <div class="line-clamp-2 lh-base" >
                                 {{ $delivery->content }}
                             </div>
                         </td>
@@ -192,7 +192,7 @@
             </table>
         </div>
         @if($deliveries->hasPages())
-        <div class="card-footer bg-white border-top py-3 px-4">
+        <div class="card-footer border-top py-3 px-4">
             {{ $deliveries->links() }}
         </div>
         @endif
@@ -204,7 +204,7 @@
             <form wire:submit.prevent="save">
                 <div class="modal-content border-0 shadow-lg rounded-pill" >
                     <div class="modal-header border-0 pt-4 px-4 pb-0">
-                        <h5 class="modal-title fw-bold text-dark">{{ $deliveryId ? 'Cập nhật Chuyển phát' : 'Thêm mới Chuyển phát' }}</h5>
+                        <h5 class="modal-title fw-bold">{{ $deliveryId ? 'Cập nhật Chuyển phát' : 'Thêm mới Chuyển phát' }}</h5>
                         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4">
@@ -340,7 +340,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg rounded-pill" >
                 <div class="modal-header border-0 pt-4 px-4 pb-2">
-                    <h5 class="modal-title fw-bold text-dark">
+                    <h5 class="modal-title fw-bold">
                         <i class="fa-solid fa-location-dot-fill text-danger me-2"></i>Tracking Viettel Post
                     </h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -383,7 +383,7 @@
                                 @endif
                             </div>
                             <div class="flex-grow-1 pb-2">
-                                <div class="fw-bold  {{ $index === 0 ? 'text-primary' : 'text-dark' }}">
+                                <div class="fw-bold  {{ $index === 0 ? 'text-primary' : '' }}">
                                     {{ $item['STATUS_NAME'] ?? 'N/A' }}
                                 </div>
                                 <div class="text-muted ">

@@ -15,7 +15,6 @@ use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -24,6 +23,8 @@ class SalesProjectProgressReport extends Component
     use WithPagination;
 
     public int $year;
+
+    public int $month;
 
     public array $years = [];
 
@@ -53,6 +54,7 @@ class SalesProjectProgressReport extends Component
 
     protected $queryString = [
         'year' => ['except' => ''],
+        'month' => ['except' => ''],
         'filter_contract_type' => ['except' => 'waste'],
         'filter_staff_id' => ['except' => 'all'],
         'filter_service' => ['except' => 'all'],
@@ -61,10 +63,16 @@ class SalesProjectProgressReport extends Component
     public function mount(): void
     {
         $this->year = now()->year;
+        $this->month = now()->month;
         $this->years = range(now()->year, now()->year - 4);
     }
 
     public function updatedYear(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMonth(): void
     {
         $this->resetPage();
     }
@@ -217,8 +225,9 @@ class SalesProjectProgressReport extends Component
                 $query->whereHas('assignments', fn ($q) => $q->where('user_id', $this->filter_staff_id));
             }
 
-            // Year filter (signed_at or submitted_at)
-            $query->whereYear(DB::raw('COALESCE(submitted_at, signed_at)'), $this->year);
+            // The report period is based on the contract signing date.
+            $query->whereYear('signed_at', $this->year)
+                ->whereMonth('signed_at', $this->month);
 
             foreach ($query->get() as $contract) {
                 // Determine departments & staffs assigned
