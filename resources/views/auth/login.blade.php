@@ -53,7 +53,13 @@
             <section class="col-lg-6 d-flex align-items-center bg-body">
                 <div class="w-100 p-4 p-sm-5 maxw-450px mx-auto">
                     <div class="d-lg-none text-center mb-5">
-                        <img src="{{ asset('assets/images/logo-full.svg') }}" width="180" height="50" class="img-fluid" alt="Bảo Châu">
+                        <div class="d-inline-flex align-items-center gap-3 text-start">
+                            <img src="{{ asset('assets/images/logo.png') }}" width="56" height="56" class="img-fluid" alt="Logo Bảo Châu">
+                            <div>
+                                <div class="fs-3 fw-bold text-dark lh-1">BẢO CHÂU</div>
+                                <div class="small text-muted fw-semibold mt-1">BAO CHAU ENVIRONMENT</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-5">

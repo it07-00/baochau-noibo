@@ -1,12 +1,4 @@
 <div class="sales-race-board" x-data>
-    {{-- NEBULA BLOBS --}}
-    <div class="race-nebula race-nebula-1"></div>
-    <div class="race-nebula race-nebula-2"></div>
-    <div class="race-nebula race-nebula-3"></div>
-
-    {{-- STAR CANVAS --}}
-    <canvas class="race-stars-canvas" id="raceStars" wire:ignore></canvas>
-
     <div class="race-wrapper">
 
         {{-- DAILY REPORT REMINDER --}}
@@ -106,6 +98,7 @@
                     {{-- TOP 3 PODIUM WITH PEDESTALS --}}
                     @if ($doanhSoRankings->count() >= 3)
                         <div class="race-podium">
+                            <img src="{{ asset('assets/images/sales-race/podium.png') }}" class="race-stage-podium" alt="" aria-hidden="true">
                             {{-- #2 LEFT --}}
                             <div class="race-podium-slot race-podium-2">
                                 <div class="race-avatar-wrap">
@@ -213,6 +206,7 @@
                     {{-- TOP 3 PODIUM WITH PEDESTALS --}}
                     @if ($kpiRankings->count() >= 3)
                         <div class="race-podium">
+                            <img src="{{ asset('assets/images/sales-race/podium.png') }}" class="race-stage-podium" alt="" aria-hidden="true">
                             {{-- #2 LEFT --}}
                             <div class="race-podium-slot race-podium-2">
                                 <div class="race-avatar-wrap">
@@ -299,73 +293,3 @@
         <div class="race-footer-quote">"Chiến binh không sợ khó – chỉ sợ không cố gắng hết mình."</div>
     </div>
 </div>
-
-@push('scripts')
-    <script>
-        (function() {
-            const canvas = document.getElementById('raceStars');
-            if (!canvas) return;
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-            if (window.salesRaceStars?.frameId) {
-                cancelAnimationFrame(window.salesRaceStars.frameId);
-            }
-
-            const ctx = canvas.getContext('2d');
-            let stars = [];
-            let frameId = null;
-
-            function resize() {
-                const board = canvas.closest('.sales-race-board');
-                if (!board) return;
-                canvas.width = board.offsetWidth;
-                canvas.height = board.offsetHeight;
-            }
-
-            function init() {
-                resize();
-                stars = [];
-                const count = window.innerWidth < 768 ? 36 : 72;
-                for (let i = 0; i < count; i++) {
-                    stars.push({
-                        x: Math.random() * canvas.width,
-                        y: Math.random() * canvas.height,
-                        r: Math.random() * 1.2 + 0.2,
-                        a: Math.random(),
-                        da: (Math.random() - 0.5) * 0.008
-                    });
-                }
-            }
-
-            function draw() {
-                if (document.hidden) {
-                    frameId = null;
-                    return;
-                }
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                stars.forEach(s => {
-                    s.a += s.da;
-                    if (s.a <= 0 || s.a >= 1) s.da *= -1;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,255,255,${s.a * 0.85})`;
-                    ctx.fill();
-                });
-                frameId = requestAnimationFrame(draw);
-                window.salesRaceStars.frameId = frameId;
-            }
-
-            init();
-            window.salesRaceStars = { frameId: null };
-            draw();
-            window.addEventListener('resize', () => {
-                resize();
-            });
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && !frameId) {
-                    draw();
-                }
-            });
-        })();
-    </script>
-@endpush

@@ -541,3 +541,265 @@
     .race-podium-slot .race-avatar-wrap::before { inset: -10px; }
     .race-podium-1 .race-avatar-wrap::before { inset: -12px; }
 }
+
+/* 2026 sales race redesign: premium award-stage layout */
+.sales-race-board {
+    --race-gold: #f6c453;
+    --race-gold-light: #fff0b3;
+    --race-blue: #31a8ff;
+    --race-line: rgba(148, 190, 232, .18);
+    --race-panel: rgba(6, 22, 42, .86);
+    background:
+        linear-gradient(180deg, rgba(2, 11, 28, .08), #030b19 44rem),
+        url('../images/sales-race/spotlight.png') top center / min(100%, 118rem) auto no-repeat,
+        #030b19;
+}
+
+.sales-race-board::before {
+    opacity: .18;
+    background-image:
+        linear-gradient(rgba(78, 169, 255, .12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(78, 169, 255, .12) 1px, transparent 1px);
+    background-size: 5rem 5rem;
+    mask-image: linear-gradient(to bottom, transparent 5rem, #000 24rem, transparent 62rem);
+}
+
+.sales-race-board::after {
+    box-shadow: inset 0 0 12rem rgba(0, 0, 0, .64);
+}
+
+.race-wrapper {
+    max-width: 1680px;
+    padding: 2rem clamp(1rem, 3vw, 3.5rem) 5rem;
+}
+
+.race-filters {
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.race-select {
+    min-width: 8.5rem;
+    min-height: 2.65rem;
+    border-color: rgba(194, 222, 249, .22);
+    background-color: rgba(3, 15, 32, .88);
+    color: #f7fbff;
+    font-weight: 700;
+}
+
+.race-company-progress {
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem .9rem;
+    border-color: var(--race-line);
+    background: linear-gradient(110deg, rgba(4, 18, 37, .92), rgba(8, 34, 62, .78));
+    backdrop-filter: blur(.75rem);
+}
+
+.race-progress-track { margin-top: 1.75rem; }
+.race-progress-bar-wrap { height: .7rem; }
+.race-progress-fill { min-width: .75rem; }
+.race-progress-label { top: -1.7rem; }
+
+.race-header {
+    max-width: 62rem;
+    margin: 0 auto 1rem;
+}
+
+.race-header-badge {
+    display: block;
+    margin-top: .8rem;
+    font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
+    font-size: clamp(1.35rem, 2.6vw, 2.35rem);
+    letter-spacing: .035em;
+}
+
+.race-header-sub { color: rgba(232, 241, 251, .68); }
+.race-gold-divider { margin-bottom: 1.75rem; }
+
+.race-columns {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+.race-col-divider { display: none; }
+
+.race-section,
+.race-section:last-of-type {
+    overflow: hidden;
+    padding: 1.25rem;
+    border: 1px solid var(--race-line);
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, rgba(9, 32, 60, .9), var(--race-panel));
+    box-shadow: inset 0 1px rgba(255, 255, 255, .06), 0 1.5rem 4rem rgba(0, 0, 0, .26);
+}
+
+.race-col-title {
+    position: relative;
+    z-index: 3;
+    margin: 0 0 .75rem;
+    padding: .3rem 0 .8rem;
+    color: #fff5cf;
+    letter-spacing: .09em;
+}
+
+.race-col-title::after {
+    width: 4rem;
+    height: 2px;
+    margin-top: .7rem;
+    background: linear-gradient(90deg, transparent, var(--race-gold), transparent);
+}
+
+.race-podium {
+    position: relative;
+    isolation: isolate;
+    min-height: 30rem;
+    margin: 0 -1.25rem 1rem;
+    padding: 4.5rem 2rem 3rem;
+    background:
+        radial-gradient(ellipse at 50% 76%, rgba(37, 157, 233, .3), transparent 48%),
+        linear-gradient(180deg, rgba(1, 9, 22, .08), rgba(1, 10, 23, .64));
+}
+
+.race-podium::before,
+.race-podium::after {
+    content: '';
+    position: absolute;
+    top: -1rem;
+    bottom: 5rem;
+    width: 28%;
+    z-index: -1;
+    pointer-events: none;
+    filter: blur(.35rem);
+    opacity: .48;
+}
+
+.race-podium::before {
+    left: 8%;
+    background: linear-gradient(165deg, rgba(79, 181, 255, .5), transparent 63%);
+    clip-path: polygon(20% 0, 52% 0, 100% 100%, 0 100%);
+}
+
+.race-podium::after {
+    right: 8%;
+    background: linear-gradient(195deg, rgba(247, 204, 91, .42), transparent 63%);
+    clip-path: polygon(48% 0, 80% 0, 100% 100%, 0 100%);
+}
+
+.race-stage-podium {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    bottom: .2rem;
+    width: min(92%, 42rem);
+    max-height: 18rem;
+    object-fit: contain;
+    transform: translateX(-50%);
+    opacity: .32;
+    filter: hue-rotate(168deg) saturate(1.15) brightness(.78) drop-shadow(0 0 2rem rgba(29, 167, 255, .4));
+}
+
+.race-podium-slot { z-index: 2; }
+.race-podium-1 { z-index: 3; }
+
+.race-podium-slot .race-avatar-wrap::before { display: none; }
+.race-podium-1 .race-avatar-wrap::after { inset: -2rem; }
+
+.race-avatar {
+    border: 2px solid rgba(174, 218, 255, .58);
+    background: linear-gradient(145deg, #173f69, #07182c);
+    box-shadow: 0 0 0 .35rem rgba(50, 165, 246, .1), 0 1rem 2rem rgba(0, 0, 0, .42);
+}
+
+.race-podium-1 .race-avatar { border-color: var(--race-gold); }
+.race-avatar-lg { width: 8.5rem; height: 8.5rem; }
+.race-avatar-md { width: 6.75rem; height: 6.75rem; }
+
+.race-pedestal,
+.race-pedestal-1,
+.race-pedestal-2,
+.race-pedestal-3 {
+    min-height: 0;
+    margin-top: .8rem;
+    padding: .85rem .7rem .8rem;
+    border: 1px solid rgba(161, 208, 249, .22);
+    border-radius: .85rem;
+    background: linear-gradient(180deg, rgba(18, 72, 112, .94), rgba(5, 25, 48, .96));
+    box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 .8rem 1.6rem rgba(0, 0, 0, .28);
+    transform: none;
+}
+
+.race-podium-1 .race-pedestal {
+    border-color: rgba(246, 196, 83, .56);
+    background: linear-gradient(180deg, rgba(112, 80, 24, .96), rgba(34, 27, 18, .98));
+}
+
+.race-medal-img { width: 2.6rem; margin: -1.55rem 0 .25rem; }
+.race-podium-1 .race-medal-img { width: 3.15rem; }
+
+.race-podium-name,
+.race-name-gold {
+    color: #f7fbff !important;
+    font-size: .78rem !important;
+    text-shadow: none;
+}
+
+.race-podium-value,
+.race-value-gold {
+    color: var(--race-gold-light) !important;
+    font-size: .86rem !important;
+    font-variant-numeric: tabular-nums;
+}
+
+.race-rank-card {
+    margin-bottom: .55rem;
+    padding: .7rem .85rem;
+    border-color: rgba(151, 198, 238, .13);
+    border-radius: .75rem;
+    background: rgba(3, 17, 34, .68);
+}
+
+.race-rank-card:hover {
+    border-color: rgba(50, 169, 255, .42);
+    background: rgba(10, 45, 77, .78);
+    transform: translateY(-2px);
+}
+
+.race-avatar-sm { width: 2.4rem; height: 2.4rem; }
+.race-rank-num { color: #9fb4ca; font-size: .9rem; }
+.race-card-name { color: #f0f6fc; font-size: .9rem; }
+.race-card-value { color: var(--race-gold-light); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.race-footer-quote { margin-top: 2rem; color: rgba(220, 232, 244, .48); }
+
+@media (max-width: 1280px) {
+    .race-podium { min-height: 25rem; padding-inline: 1rem; }
+    .race-avatar-lg { width: 6.6rem; height: 6.6rem; }
+    .race-avatar-md { width: 5.4rem; height: 5.4rem; }
+}
+
+@media (max-width: 980px) {
+    .race-columns { grid-template-columns: 1fr; }
+    .race-podium { min-height: 27rem; }
+}
+
+@media (max-width: 560px) {
+    .race-wrapper { padding-inline: .75rem; }
+    .race-filters { justify-content: stretch; }
+    .race-select { flex: 1; min-width: 0; }
+    .race-company-progress { padding: .9rem; }
+    .race-progress-end { display: none; }
+    .race-section,
+    .race-section:last-of-type { padding: .8rem; border-radius: 1rem; }
+    .race-podium { min-height: 20rem; margin-inline: -.8rem; padding: 2.5rem .5rem 2rem; }
+    .race-avatar-lg { width: 4.7rem; height: 4.7rem; }
+    .race-avatar-md { width: 3.8rem; height: 3.8rem; }
+    .race-podium-name,
+    .race-name-gold { font-size: .6rem !important; }
+    .race-podium-value,
+    .race-value-gold { font-size: .67rem !important; }
+    .race-medal-img { width: 2rem; }
+    .race-podium-1 .race-medal-img { width: 2.35rem; }
+    .race-stage-podium { width: 110%; opacity: .26; }
+}
