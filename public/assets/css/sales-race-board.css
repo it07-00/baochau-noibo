@@ -177,7 +177,7 @@
     flex-direction: row;
     align-items: flex-end;
     justify-content: center;
-    gap: 0;
+    gap: 12px;
     margin-bottom: 30px;
     padding-top: 20px;
     width: 100%;
@@ -191,9 +191,9 @@
     flex: 1;
     min-width: 0;
 }
-.race-podium-1 { animation-delay: .1s; flex: 1.2; max-width: 240px; }
-.race-podium-2 { animation-delay: .2s; flex: 1; max-width: 200px; }
-.race-podium-3 { animation-delay: .3s; flex: 1; max-width: 200px; }
+.race-podium-1 { animation-delay: .1s; flex: 1.1; max-width: 210px; }
+.race-podium-2 { animation-delay: .2s; flex: 1; max-width: 175px; }
+.race-podium-3 { animation-delay: .3s; flex: 1; max-width: 175px; }
 
 /* ── AVATAR WRAPPER ── */
 .race-avatar-wrap { position: relative; display: inline-block; z-index: 2; }
@@ -226,7 +226,7 @@
     flex-direction: column;
     align-items: center;
     padding: 14px 10px 12px;
-    border-radius: 8px 8px 0 0;
+    border-radius: 14px 14px 8px 8px;
     margin-top: 14px;
 }
 .race-pedestal-1 {

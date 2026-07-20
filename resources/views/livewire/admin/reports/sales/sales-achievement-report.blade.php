@@ -12,7 +12,11 @@
         {{-- DAILY REPORT REMINDER --}}
         @if (!$this->salesHasDailyReport())
             <div class="race-reminder">
-                <div class="race-reminder-icon">📋</div>
+                <div class="race-reminder-icon text-warning">
+                    <svg class="dept-svg-icon" viewBox="0 0 24 24" fill="currentColor" width="26" height="26" aria-hidden="true">
+                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                </div>
                 <div class="race-reminder-text">
                     <strong>Bạn chưa gửi báo cáo ngày hôm nay</strong>
                     <span>Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</span>
@@ -87,7 +91,14 @@
 
             {{-- LEFT: DOANH SỐ --}}
             <div class="race-section">
-                <div class="race-col-title">🏆 Đường Đua Doanh Số</div>
+                <div class="race-col-title">
+                    <span class="d-inline-flex align-items-center justify-content-center">
+                        <svg class="dept-svg-icon dept-svg-trophy me-2" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+                            <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V18H8v2h8v-2h-3v-2.1c2.16-.42 3.84-2.11 4.39-4.36A5.006 5.006 0 0 0 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+                        </svg>
+                        <span>Đường Đua Doanh Số</span>
+                    </span>
+                </div>
 
                 @if ($doanhSoRankings->isEmpty())
                     <div class="race-empty">Không có dữ liệu</div>
@@ -116,7 +127,11 @@
 
                             {{-- #1 CENTER --}}
                             <div class="race-podium-slot race-podium-1">
-                                <div class="race-crown">👑</div>
+                                <div class="race-crown" title="Quán quân">
+                                    <svg class="dept-svg-icon dept-svg-crown" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+                                        <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                                    </svg>
+                                </div>
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-lg">
                                         @if ($doanhSoRankings[0]['avatar_url'])
@@ -178,7 +193,14 @@
 
             {{-- RIGHT: KPI --}}
             <div class="race-section">
-                <div class="race-col-title">📊 Đường Đua KPI</div>
+                <div class="race-col-title">
+                    <span class="d-inline-flex align-items-center justify-content-center">
+                        <svg class="dept-svg-icon dept-svg-chart me-2" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+                            <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zM16.2 13H19v6h-2.8z"/>
+                        </svg>
+                        <span>Đường Đua KPI</span>
+                    </span>
+                </div>
 
                 @if (! $hasKpiTarget)
                     <div class="race-empty">
@@ -212,7 +234,11 @@
 
                             {{-- #1 CENTER --}}
                             <div class="race-podium-slot race-podium-1">
-                                <div class="race-crown">👑</div>
+                                <div class="race-crown" title="Quán quân">
+                                    <svg class="dept-svg-icon dept-svg-crown" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+                                        <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                                    </svg>
+                                </div>
                                 <div class="race-avatar-wrap">
                                     <div class="race-avatar race-avatar-lg">
                                         @if ($kpiRankings[0]['avatar_url'])

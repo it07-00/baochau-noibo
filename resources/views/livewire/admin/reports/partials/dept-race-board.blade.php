@@ -1,17 +1,8 @@
-{{--
-    Shared Department Race Board partial
-    Variables expected:
-        $boardTitle     - e.g. "Đường Đua Tư Vấn"
-        $boardSubtitle  - e.g. "Chiến Binh Tư Vấn"
-        $colLeftTitle   - e.g. "🏆 Xếp Hạng Hoàn Thành"
-        $colRightTitle  - e.g. "📊 Xếp Hạng Tiến Độ"
-        $completionRankings  - collection: name, avatar_url, finished, total
-        $rateRankings        - collection: name, avatar_url, finished, total, pct
-        $years
-        $year
-        $wireYearModel  - wire model string e.g. "year"
---}}
-<div class="dept-race-board" x-data>
+
+<div class="dept-race-board"
+     x-data="{ mode: localStorage.getItem('dept_race_mode') || 'dark' }"
+     :class="{ 'dept-mode-light': mode === 'light' }"
+     x-init="$watch('mode', val => localStorage.setItem('dept_race_mode', val))">
     {{-- NEBULA BLOBS --}}
     <div class="dept-nebula dept-nebula-1"></div>
     <div class="dept-nebula dept-nebula-2"></div>
@@ -22,27 +13,65 @@
 
     <div class="dept-wrapper">
 
-        {{-- DAILY REPORT REMINDER (dark-themed, chỉ hiện nếu chưa gửi báo cáo ngày) --}}
+        @php
+            $formatRaceTitle = function($title) {
+                $clean = trim(str_replace(['🏆', '📊', '👑', '📋'], '', $title));
+                $isTrophy = str_contains($title, '🏆') || str_contains(mb_strtolower($title), 'doanh số') || str_contains(mb_strtolower($title), 'số hđ');
+                if ($isTrophy) {
+                    $icon = '<svg class="dept-svg-icon dept-svg-trophy me-2" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V18H8v2h8v-2h-3v-2.1c2.16-.42 3.84-2.11 4.39-4.36A5.006 5.006 0 0 0 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>';
+                } else {
+                    $icon = '<svg class="dept-svg-icon dept-svg-chart me-2" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zM16.2 13H19v6h-2.8z"/></svg>';
+                }
+                return '<span class="d-inline-flex align-items-center justify-content-center">' . $icon . '<span>' . e($clean) . '</span></span>';
+            };
+        @endphp
+
+        {{-- DAILY REPORT REMINDER (chỉ hiện nếu chưa gửi báo cáo ngày) --}}
         @if(!$this->hasDailyReportToday())
         <div class="dept-reminder">
-            <div class="dept-reminder-icon">⏰</div>
+            <div class="dept-reminder-icon text-warning">
+                <svg class="dept-svg-icon" viewBox="0 0 24 24" fill="currentColor" width="26" height="26" aria-hidden="true">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                </svg>
+            </div>
             <div class="dept-reminder-text">
                 <strong>Bạn chưa gửi báo cáo ngày hôm nay</strong>
                 <span>Vui lòng gửi báo cáo trước khi kết thúc ngày làm việc.</span>
             </div>
-            <a href="{{ route('app.daily-reports.index') }}" class="dept-reminder-btn">
-                ✏️ Gửi báo cáo
+            <a href="{{ route('app.daily-reports.index') }}" class="dept-reminder-btn d-inline-flex align-items-center gap-1.5">
+                <svg class="dept-svg-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                <span>Gửi báo cáo</span>
             </a>
         </div>
         @endif
 
-        {{-- FILTERS --}}
-        <div class="dept-filters">
-            <select wire:model.live="{{ $wireYearModel ?? 'year' }}" class="dept-select">
-                @foreach($years as $y)
-                    <option value="{{ $y }}">{{ $y }}</option>
-                @endforeach
-            </select>
+        {{-- FILTERS & MODE TOGGLE BAR --}}
+        <div class="dept-filters d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <select wire:model.live="{{ $wireYearModel ?? 'year' }}" class="dept-select">
+                    @foreach($years as $y)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- 2 Mode Toggle Buttons --}}
+            <div class="dept-mode-toggle p-1 d-inline-flex gap-1">
+                <button type="button" @click="mode = 'dark'"
+                        class="btn btn-sm px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5"
+                        :class="mode === 'dark' ? 'dept-mode-btn-active' : 'dept-mode-btn-inactive'">
+                    <i class="fa-solid fa-moon"></i>
+                    <span>Tối</span>
+                </button>
+                <button type="button" @click="mode = 'light'"
+                        class="btn btn-sm px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5"
+                        :class="mode === 'light' ? 'dept-mode-btn-active' : 'dept-mode-btn-inactive'">
+                    <i class="fa-solid fa-sun"></i>
+                    <span>Sáng</span>
+                </button>
+            </div>
         </div>
 
         {{-- HEADER --}}
@@ -57,7 +86,7 @@
 
             {{-- LEFT: Completion Rate --}}
             <div class="dept-section">
-                <div class="dept-col-title">{{ $colLeftTitle }}</div>
+                <div class="dept-col-title">{!! $formatRaceTitle($colLeftTitle) !!}</div>
 
                 @if($rateRankings->isEmpty())
                     <div class="dept-empty">Không có dữ liệu</div>
@@ -85,7 +114,11 @@
 
                         {{-- #1 --}}
                         <div class="dept-podium-slot dept-podium-1">
-                            <div class="dept-crown">👑</div>
+                            <div class="dept-crown" title="Quán quân">
+                                <svg class="dept-svg-icon dept-svg-crown" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+                                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                                </svg>
+                            </div>
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-lg dept-border-gold">
                                     @if($rateRankings[0]['avatar_url'])
@@ -146,7 +179,7 @@
 
             {{-- RIGHT: Completion Count --}}
             <div class="dept-section">
-                <div class="dept-col-title">{{ $colRightTitle }}</div>
+                <div class="dept-col-title">{!! $formatRaceTitle($colRightTitle) !!}</div>
 
                 @if($completionRankings->isEmpty())
                     <div class="dept-empty">Không có dữ liệu</div>
@@ -174,7 +207,11 @@
 
                         {{-- #1 --}}
                         <div class="dept-podium-slot dept-podium-1">
-                            <div class="dept-crown">👑</div>
+                            <div class="dept-crown" title="Quán quân">
+                                <svg class="dept-svg-icon dept-svg-crown" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+                                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                                </svg>
+                            </div>
                             <div class="dept-avatar-wrap">
                                 <div class="dept-avatar dept-avatar-lg dept-border-gold">
                                     @if($completionRankings[0]['avatar_url'])
