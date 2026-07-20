@@ -2,57 +2,82 @@
     @section('title', 'Quản lý nhân viên chấm công')
     @section('page_title', 'Nhân viên chấm công')
 
-    <div class="row g-3 mt-1 px-2 px-md-0">
+    <div class="row g-3 mt-1">
         <div class="col-12">
-            <div class="pure-card rounded-custom card-bg shadow-custom">
-                {{-- Header --}}
-                <div class="pure-card-header d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
-                    <h3 class="pure-card-title m-0 text-nowrap">Nhân viên chấm công</h3>
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-transparent border-bottom p-3 p-md-4 d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary flex-shrink-0 wh-44">
+                            <i class="fa-solid fa-users-gear fs-5"></i>
+                        </span>
+                        <div>
+                            <h4 class="mb-1 fw-bold">Nhân viên chấm công</h4>
+                            <p class="text-muted small mb-0">Quản lý mã máy, phòng ban và trạng thái đồng bộ</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ route('app.attendance.index') }}" class="btn btn-outline-secondary min-h-42px d-inline-flex align-items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i>Bảng chấm công
+                        </a>
+                        <button class="btn btn-outline-primary min-h-42px" wire:click="openSyncModal">
+                            <i class="fa-solid fa-arrows-rotate me-1"></i>Đồng bộ
+                        </button>
+                        <button class="btn btn-primary min-h-42px" wire:click="openCreate">
+                            <i class="fa-solid fa-user-plus me-1"></i>Thêm nhân viên
+                        </button>
+                    </div>
+                </div>
 
-                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100 mxw-860px" >
+                <div class="card-body border-bottom p-3 p-md-4">
+                    <div class="row g-3 align-items-end">
                         {{-- Search --}}
-                        <div class="input-group flex-grow-1" class="mnw-180px">
+                        <div class="col-lg-6">
+                            <label for="attendance-employee-search" class="form-label small fw-semibold">Tìm kiếm</label>
+                            <div class="input-group">
                             <span class="input-group-text bg-transparent border-end-0 pe-1">
-                                <i class="fa-solid fa-magnifying-glass text-muted fs-85" ></i>
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
                             </span>
-                            <input wire:model.live.debounce.300ms="search" type="text"
+                            <input id="attendance-employee-search" wire:model.live.debounce.300ms="search" type="search"
                                    class="form-control border-start-0 ps-1"
-                                   placeholder="Tìm tên hoặc mã...">
+                                   placeholder="Tên hoặc mã máy chấm công">
+                            </div>
                         </div>
 
                         {{-- Department filter --}}
-                        <select wire:model.live="filterDepartment" class="form-select mnw-160px mxw-220px" >
+                        <div class="col-md-6 col-lg-3">
+                            <label for="attendance-department" class="form-label small fw-semibold">Phòng ban</label>
+                            <select id="attendance-department" wire:model.live="filterDepartment" class="form-select">
                             <option value="">Tất cả phòng ban</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept }}">{{ $dept }}</option>
                             @endforeach
-                        </select>
-
-                        {{-- Toggle đã nghỉ --}}
-                        <div class="d-flex align-items-center gap-2 text-nowrap px-1">
-                            <div class="form-check form-switch mb-0">
-                                <input class="form-check-input" type="checkbox" role="switch"
-                                       wire:model.live="showInactive" id="toggleInactive"
-                                       style="cursor:pointer; width:2.2em; height:1.1em;">
-                            </div>
-                            <label class="form-check-label text-muted fs-83 cursor-pointer" for="toggleInactive"
-                                   >Hiện đã nghỉ</label>
+                            </select>
                         </div>
 
-                        {{-- Buttons --}}
-                        <div class="d-flex gap-2 flex-shrink-0">
-                            <button class="btn btn-outline-secondary text-nowrap" wire:click="openSyncModal">
-                                <i class="fa-solid fa-arrows-rotate me-1"></i>Đồng bộ
-                            </button>
-                            <button class="btn btn-primary text-nowrap" wire:click="openCreate">
-                                <i class="fa-solid fa-plus-circle me-1"></i>Thêm mới
-                            </button>
+                        {{-- Toggle đã nghỉ --}}
+                        <div class="col-md-6 col-lg-3">
+                        <div class="border rounded-3 min-h-42px px-3 d-flex align-items-center gap-2">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                       wire:model.live="showInactive" id="toggleInactive">
+                            </div>
+                            <label class="form-check-label small" for="toggleInactive">Hiện nhân viên đã nghỉ/bị chặn</label>
+                        </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Table --}}
-                <div class="pure-card-body pb-2 px-0">
+                <div class="card-body p-0">
+                    <div class="px-3 px-md-4 py-3 d-flex align-items-center justify-content-between gap-2 border-bottom">
+                        <div>
+                            <h6 class="fw-bold mb-0">Danh sách nhân viên</h6>
+                            <small class="text-muted">{{ number_format($employees->total()) }} kết quả phù hợp</small>
+                        </div>
+                        <span wire:loading wire:target="search,filterDepartment,showInactive" class="text-primary small" role="status">
+                            <span class="spinner-border spinner-border-sm me-1"></span>Đang lọc
+                        </span>
+                    </div>
                     <div class="table-responsive">
                         <table class="table align-middle table-hover mb-0 fs-92" >
                             <thead>
@@ -106,29 +131,29 @@
                                                 @if($emp->is_blocked)
                                                     <button class="btn btn-sm btn-icon btn-light text-warning rounded-circle"
                                                             wire:click="unblock({{ $emp->id }})"
-                                                            title="Bỏ chặn" class="icon-32">
+                                                            title="Bỏ chặn" aria-label="Bỏ chặn {{ $emp->name }}">
                                                         <i class="fa-solid fa-unlock fs-85" ></i>
                                                     </button>
                                                 @elseif(!$emp->is_active)
                                                     <button class="btn btn-sm btn-icon btn-light text-success rounded-circle"
                                                             wire:click="reactivate({{ $emp->id }})"
-                                                            title="Kích hoạt lại" class="icon-32">
+                                                            title="Kích hoạt lại" aria-label="Kích hoạt lại {{ $emp->name }}">
                                                         <i class="fa-solid fa-arrows-rotate fs-85" ></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
                                                             wire:click="confirmBlock({{ $emp->id }})"
-                                                            title="Chặn" class="icon-32">
+                                                            title="Chặn" aria-label="Chặn {{ $emp->name }}">
                                                         <i class="fa-solid fa-ban fs-85" ></i>
                                                     </button>
                                                 @else
                                                     <button class="btn btn-sm btn-icon btn-light text-primary rounded-circle"
                                                             wire:click="openEdit({{ $emp->id }})"
-                                                            title="Sửa" class="icon-32">
+                                                            title="Sửa" aria-label="Sửa {{ $emp->name }}">
                                                         <i class="fa-solid fa-pen fs-85" ></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
                                                             wire:click="confirmBlock({{ $emp->id }})"
-                                                            title="Chặn" class="icon-32">
+                                                            title="Chặn" aria-label="Chặn {{ $emp->name }}">
                                                         <i class="fa-solid fa-ban fs-85" ></i>
                                                     </button>
                                                 @endif
@@ -138,8 +163,9 @@
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center py-5 text-muted">
-                                            <i class="fa-solid fa-users d-block mb-2 fs-2rem opacity-25" ></i>
-                                            Không có nhân viên nào.
+                                            <i class="fa-solid fa-user-slash d-block mb-3 fs-2rem opacity-50"></i>
+                                            <div class="fw-semibold text-body mb-1">Không tìm thấy nhân viên</div>
+                                            <small>Thử đổi từ khóa, phòng ban hoặc bật hiển thị nhân viên đã nghỉ.</small>
                                         </td>
                                     </tr>
                                 @endforelse
