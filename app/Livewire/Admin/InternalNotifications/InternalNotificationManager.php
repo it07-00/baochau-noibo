@@ -117,9 +117,9 @@ class InternalNotificationManager extends Component
         $sentNotifications = DB::table('notifications')
             ->selectRaw("
                 JSON_UNQUOTE(JSON_EXTRACT(data, '$.batch_id')) as batch_id,
-                ANY_VALUE(JSON_UNQUOTE(JSON_EXTRACT(data, '$.contract_label'))) as title,
-                ANY_VALUE(JSON_UNQUOTE(JSON_EXTRACT(data, '$.message'))) as message,
-                ANY_VALUE(JSON_UNQUOTE(JSON_EXTRACT(data, '$.recipients_label'))) as recipients_label,
+                MAX(JSON_UNQUOTE(JSON_EXTRACT(data, '$.contract_label'))) as title,
+                MAX(JSON_UNQUOTE(JSON_EXTRACT(data, '$.message'))) as message,
+                MAX(JSON_UNQUOTE(JSON_EXTRACT(data, '$.recipients_label'))) as recipients_label,
                 COUNT(*) as recipient_count,
                 MIN(created_at) as sent_at
             ")
