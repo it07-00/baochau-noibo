@@ -1,11 +1,25 @@
-<div class="user-manager-page">
+<div>
     @section('title', 'Người dùng')
     @section('page_title', 'Người dùng')
 
-    @push('styles')
-    @endpush
+    <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3">
+                <i class="fa-solid fa-users fs-5"></i>
+            </span>
+            <div>
+                <h4 class="fw-bold text-body mb-1">Quản lý người dùng</h4>
+                <p class="text-secondary mb-0">Theo dõi tài khoản, trạng thái hoạt động và quyền truy cập.</p>
+            </div>
+        </div>
+        @can('users.create')
+            <a href="{{ route('app.users.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2" wire:navigate>
+                <i class="fa-solid fa-user-plus"></i>Tạo người dùng
+            </a>
+        @endcan
+    </div>
 
-    <div class="row g-3 user-summary-grid px-2 px-md-0">
+    <div class="row g-3 mb-4">
         <div class="col-lg-4 col-md-6">
             <x-admin.summary-card title="Tổng người dùng" value="{{ $totalUsers }}" badge="Tổng hệ thống" iconClass="bg-glow-primary" />
         </div>
@@ -24,41 +38,39 @@
         <div class="alert alert-danger mt-3 shadow-sm border-0">{{ session('error') }}</div>
     @endif
 
-    <div class="row g-3 mt-2 px-2 px-md-0">
+    <div class="row g-3">
         <div class="col-12">
-            <div class="pure-card user-list-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header user-list-header d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-body border-bottom p-3 d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
                     <div>
-                        <h3 class="user-list-title m-0">Danh sách người dùng</h3>
-                        <div class="text-muted small mt-1">Quản lý tài khoản, trạng thái và quyền truy cập.</div>
+                        <h6 class="fw-bold text-body mb-1"><i class="fa-solid fa-address-book text-primary me-2"></i>Danh sách người dùng</h6>
+                        <div class="text-secondary small">Tìm kiếm và thao tác trên từng tài khoản.</div>
                     </div>
 
-                    <div class="user-toolbar d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-1 mt-lg-0">
-                        <div class="input-group input-group-sm user-search">
-                            <span class="input-group-text bg-transparent border-end-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
+                        <div class="input-group">
+                            <span class="input-group-text bg-body-tertiary">
+                                <i class="fa-solid fa-magnifying-glass text-secondary"></i>
                             </span>
-                            <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm tên, email, tài khoản...">
+                            <input wire:model.live.debounce.300ms="search" type="search" class="form-control" aria-label="Tìm người dùng" placeholder="Tên, email, tài khoản...">
                         </div>
 
                         <div class="d-flex gap-2">
-                            <select wire:model.live="perPage" class="form-select form-select-sm user-per-page">
+                            <select wire:model.live="perPage" class="form-select" aria-label="Số dòng mỗi trang">
                                 <option value="10">10 dòng</option>
                                 <option value="25">25 dòng</option>
                                 <option value="50">50 dòng</option>
                             </select>
 
-                            <a href="{{ route('app.users.create') }}" class="btn btn-primary btn-sm text-nowrap user-create-btn d-inline-flex align-items-center gap-1" wire:navigate>
-                                <span>+</span> Tạo mới
-                            </a>
                         </div>
+                        <div wire:loading wire:target="search,perPage" class="text-primary small text-nowrap" role="status"><span class="spinner-border spinner-border-sm me-1"></span>Đang tải</div>
                     </div>
                 </div>
 
-                <div class="pure-card-body user-list-body pb-3 position-relative">
+                <div class="card-body p-0 position-relative">
                     <div class="table-responsive d-none d-md-block">
-                        <table class="table user-table text-nowrap align-middle table-hover">
-                            <thead>
+                        <table class="table text-nowrap align-middle table-hover mb-0">
+                            <thead class="table-light text-secondary small">
                                 <tr>
                                     <th class="text-center w-58px" >STT</th>
                                     <th>Người dùng</th>
@@ -249,7 +261,7 @@
                 </div>
 
                 @if($users->hasPages())
-                <div class="pure-card-footer border-top px-4 py-3">
+                <div class="card-footer bg-body border-top px-4 py-3">
                     {{ $users->links() }}
                 </div>
                 @endif

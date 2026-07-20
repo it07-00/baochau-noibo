@@ -3,73 +3,73 @@
     <span class="text-muted fw-semibold small text-uppercase">Tổng quan kinh doanh</span>
     <hr class="flex-grow-1 m-0 opacity-25">
 </div>
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="card bg-secondary bg-opacity-05 shadow-none border-0 h-100">
-            <div class="card-body p-3 p-md-4">
-                <div class="avatar bg-secondary shadow-secondary rounded-circle text-white mb-3">
+<div class="row g-3 mb-4 row-cols-2 row-cols-xl-4">
+    <div class="col">
+        <div class="card bg-body border shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div class="avatar bg-secondary text-white rounded-3 flex-shrink-0">
                     <i class="fi fi-rr-user"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ number_format($totalCustomers) }}</h3>
-                <h6 class="mb-0 text-muted fw-semibold fs-7">
+                <div class="min-w-0"><h3 class="fw-bold text-body mb-1">{{ number_format($totalCustomers) }}</h3>
+                <div class="mb-0 text-secondary fw-semibold small">
                     Tổng KH
                     @if($month !== '')
                         - T{{ $month }}/{{ $year }}
                     @else
                         - Năm {{ $year }}
                     @endif
-                </h6>
+                </div></div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card bg-info bg-opacity-05 shadow-none border-0 h-100">
-            <div class="card-body p-3 p-md-4">
-                <div class="avatar bg-info shadow-info rounded-circle text-white mb-3">
+    <div class="col">
+        <div class="card bg-body border shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div class="avatar bg-info text-white rounded-3 flex-shrink-0">
                     <i class="fi fi-rr-file"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ number_format($totalContracts) }}</h3>
-                <h6 class="mb-0 text-muted fw-semibold fs-7">
+                <div class="min-w-0"><h3 class="fw-bold text-body mb-1">{{ number_format($totalContracts) }}</h3>
+                <div class="mb-0 text-secondary fw-semibold small">
                     Hợp đồng
                     @if($month !== '')
                         - T{{ $month }}/{{ $year }}
                     @else
                         - Năm {{ $year }}
                     @endif
-                </h6>
+                </div></div>
             </div>
         </div>
     </div>
     @if($canSeeFinance)
-    <div class="col-6 col-md-3">
-        <div class="card bg-success bg-opacity-05 shadow-none border-0 h-100">
-            <div class="card-body p-3 p-md-4">
-                <div class="avatar bg-success shadow-success rounded-circle text-white mb-3">
+    <div class="col">
+        <div class="card bg-body border shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div class="avatar bg-success text-white rounded-3 flex-shrink-0">
                     <i class="fi fi-rr-usd-circle"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ number_format($totalContractValue/1000000, 2) }} Tr</h3>
-                <h6 class="mb-0 text-muted fw-semibold fs-7">
+                <div class="min-w-0"><h3 class="fw-bold text-body mb-1 text-nowrap">{{ number_format($totalContractValue/1000000, 2) }} Tr</h3>
+                <div class="mb-0 text-secondary fw-semibold small">
                     Giá trị HĐ
                     @if($month !== '')
                         - T{{ $month }}/{{ $year }}
                     @endif
-                </h6>
+                </div></div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="card bg-warning bg-opacity-05 shadow-none border-0 h-100">
-            <div class="card-body p-3 p-md-4">
-                <div class="avatar bg-warning shadow-warning rounded-circle text-white mb-3">
+    <div class="col">
+        <div class="card bg-body border shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div class="avatar bg-warning text-dark rounded-3 flex-shrink-0">
                     <i class="fi fi-rr-chart-pie-alt"></i>
                 </div>
-                <h3 class="fw-bold mb-1">{{ number_format($totalSales/1000000, 2) }} Tr</h3>
-                <h6 class="mb-0 text-muted fw-semibold fs-7">
+                <div class="min-w-0"><h3 class="fw-bold text-body mb-1 text-nowrap">{{ number_format($totalSales/1000000, 2) }} Tr</h3>
+                <div class="mb-0 text-secondary fw-semibold small">
                     Doanh số ghi nhận
                     @if($month !== '')
                         - T{{ $month }}/{{ $year }}
                     @endif
-                </h6>
+                </div></div>
             </div>
         </div>
     </div>

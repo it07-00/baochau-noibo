@@ -2,6 +2,19 @@
     @section('title', 'Vai trò và Quyền')
     @section('page_title', 'Quản lý Vai trò')
 
+    <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3"><i class="fa-solid fa-shield-halved fs-5"></i></span>
+            <div>
+                <h4 class="fw-bold text-body mb-1">Vai trò và quyền</h4>
+                <p class="text-secondary mb-0">Quản lý nhóm quyền và phạm vi truy cập của người dùng.</p>
+            </div>
+        </div>
+        @can('roles.create')
+            <a href="{{ route('app.roles.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2" wire:navigate><i class="fa-solid fa-plus"></i>Tạo vai trò</a>
+        @endcan
+    </div>
+
     @if (session('status'))
         <div class="alert alert-success mt-1 shadow-sm border-0">{{ session('status') }}</div>
     @endif
@@ -11,29 +24,31 @@
 
     <div class="row g-3 mt-1">
         <div class="col-12">
-            <div class="pure-card rounded-custom card-bg shadow-custom">
-                <div class="pure-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <h3 class="pure-card-title m-0">Danh sách vai trò</h3>
+            <div class="card border shadow-sm">
+                <div class="card-header bg-body border-bottom p-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div>
+                        <h6 class="fw-bold text-body mb-1"><i class="fa-solid fa-list-check text-primary me-2"></i>Danh sách vai trò</h6>
+                        <p class="text-secondary small mb-0">{{ number_format($totalRoles) }} vai trò trong hệ thống</p>
+                    </div>
 
                     <div class="d-flex align-items-center gap-2">
                         <!-- Ô tìm kiếm realtime -->
-                        <div class="input-group input-group-sm w-250px" >
-                            <span class="input-group-text bg-transparent border-end-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <div class="input-group">
+                            <span class="input-group-text bg-body-tertiary">
+                                <i class="fa-solid fa-magnifying-glass text-secondary"></i>
                             </span>
-                            <input wire:model.live.debounce.300ms="search" type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm vai trò...">
+                            <input wire:model.live.debounce.300ms="search" type="search" class="form-control" aria-label="Tìm vai trò" placeholder="Tìm vai trò...">
                         </div>
-
-                        <a href="{{ route('app.roles.create') }}" class="btn btn-primary btn-sm" wire:navigate>Tạo mới</a>
+                        <div wire:loading wire:target="search" class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Đang tải</span></div>
                     </div>
                 </div>
 
-                <div class="pure-card-body pb-3 position-relative">
+                <div class="card-body p-0 position-relative">
                     <div class="table-responsive">
-                        <table class="table text-nowrap align-middle table-hover">
+                        <table class="table text-nowrap align-middle table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="80">ID</th>
+                                    <th>ID</th>
                                     <th>Tên vai trò</th>
                                     <th>Số nhân viên</th>
                                     <th>Số quyền hạn</th>
@@ -102,7 +117,7 @@
                     </div>
                 </div>
                 @if($roles->hasPages())
-                <div class="pure-card-footer border-top px-4 py-3">
+                <div class="card-footer bg-body border-top px-4 py-3">
                     {{ $roles->links() }}
                 </div>
                 @endif

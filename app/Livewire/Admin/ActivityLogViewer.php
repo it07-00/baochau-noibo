@@ -18,20 +18,53 @@ class ActivityLogViewer extends Component
     }
 
     public $search = '';
+
     public $logName = '';
+
     public $subjectType = '';
+
     public $event = '';
+
     public $dateFrom = '';
+
     public $dateTo = '';
+
     public $perPage = 20;
 
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatingLogName() { $this->resetPage(); }
-    public function updatingSubjectType() { $this->resetPage(); }
-    public function updatingEvent() { $this->resetPage(); }
-    public function updatingDateFrom() { $this->resetPage(); }
-    public function updatingDateTo() { $this->resetPage(); }
-    public function updatingPerPage() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingLogName()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSubjectType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingEvent()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateFrom()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateTo()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
 
     public function resetFilters(): void
     {
@@ -41,7 +74,7 @@ class ActivityLogViewer extends Component
 
     public function getActiveFilterCountProperty(): int
     {
-        return collect([$this->search, $this->subjectType, $this->event, $this->dateFrom, $this->dateTo])
+        return collect([$this->search, $this->logName, $this->subjectType, $this->event, $this->dateFrom, $this->dateTo])
             ->filter()
             ->count();
     }
@@ -80,9 +113,9 @@ class ActivityLogViewer extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('description', 'like', "%{$this->search}%")
-                  ->orWhereHas('causer', function ($q2) {
-                      $q2->where('name', 'like', "%{$this->search}%");
-                  });
+                    ->orWhereHas('causer', function ($q2) {
+                        $q2->where('name', 'like', "%{$this->search}%");
+                    });
             });
         }
 

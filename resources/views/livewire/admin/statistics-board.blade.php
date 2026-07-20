@@ -1,57 +1,78 @@
 <div>
     @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-    <div class="statistics-page-header page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-        <div>
-            <h4 class="mb-0">Bảng thống kê</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item">Hệ thống</li>
-                    <li class="breadcrumb-item active">Bảng thống kê</li>
-                </ol>
-            </nav>
+    <div class="d-flex align-items-start justify-content-between mb-3 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3">
+                <i class="fa-solid fa-chart-line fs-5"></i>
+            </span>
+            <div>
+                <h4 class="fw-bold text-body mb-1">Bảng điều khiển</h4>
+                <p class="text-secondary mb-0">Theo dõi hoạt động, hiệu suất và số liệu kinh doanh tập trung.</p>
+            </div>
         </div>
-        <div class="statistics-filter-bar d-flex gap-2 flex-wrap justify-content-end">
-            @if($canFilterStaff)
-                <select wire:model.live="filter_staff" class="form-select statistics-filter-control mnw-200px min-h-42px" style="font-weight: 500;">
-                    <option value="">Tất cả nhân viên</option>
-                    @foreach($staffs as $s)
-                        <option value="{{ $s->id }}">{{ $s->name }}</option>
-                    @endforeach
-                </select>
-            @endif
-            <select wire:model.live="month" class="form-select statistics-filter-control mnw-170px min-h-42px" >
-                <option value="">Cả năm</option>
-                @for($m = 1; $m <= $this->maximumVisibleMonth(); $m++)
-                    <option value="{{ $m }}">Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
-                @endfor
-            </select>
-            <select wire:model.live="year" class="form-select statistics-filter-control mnw-170px min-h-42px" >
-                @foreach($years as $y)
-                    <option value="{{ $y }}">Năm {{ $y }}</option>
-                @endforeach
-            </select>
-            <input
-                type="date"
-                wire:model.live="contractDateFrom"
-                class="form-control statistics-filter-control statistics-date-control mnw-195px min-h-42px"
-                title="Lọc hợp đồng từ ngày ký"
-            >
-            <input
-                type="date"
-                wire:model.live="contractDateTo"
-                class="form-control statistics-filter-control statistics-date-control mnw-195px min-h-42px"
-                title="Lọc hợp đồng đến ngày ký"
-            >
-            <button
-                type="button"
-                wire:click="clearContractDateFilter"
-                class="btn btn-outline-secondary px-3 statistics-clear-date min-h-42px"
-                @disabled($contractDateFrom === '' && $contractDateTo === '')
-            >
-                Xóa ngày
-            </button>
-        </div>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+            <i class="fa-regular fa-calendar me-1"></i>{{ $month !== '' ? 'Tháng '.str_pad($month, 2, '0', STR_PAD_LEFT).' / '.$year : 'Năm '.$year }}
+        </span>
     </div>
+
+    <section class="card border shadow-sm mb-4" aria-labelledby="dashboard-filter-title">
+        <div class="card-header bg-body border-bottom d-flex align-items-center justify-content-between gap-2 flex-wrap px-3 py-3">
+            <div>
+                <h6 id="dashboard-filter-title" class="fw-bold text-body mb-1">
+                    <i class="fa-solid fa-sliders text-primary me-2"></i>Bộ lọc dữ liệu
+                </h6>
+                <p class="text-secondary small mb-0">Chọn kỳ báo cáo hoặc khoảng ngày ký hợp đồng.</p>
+            </div>
+            <div wire:loading wire:target="filter_staff,month,year,contractDateFrom,contractDateTo,clearContractDateFilter" class="text-primary small fw-semibold" role="status">
+                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Đang cập nhật
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <div class="row g-3 align-items-end">
+                @if($canFilterStaff)
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label for="dashboard-staff" class="form-label fw-semibold">Nhân viên</label>
+                    <select id="dashboard-staff" wire:model.live="filter_staff" class="form-select">
+                        <option value="">Tất cả nhân viên</option>
+                        @foreach($staffs as $s)
+                            <option value="{{ $s->id }}">{{ $s->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+                <div class="col-6 col-md-3 col-xl-2">
+                    <label for="dashboard-month" class="form-label fw-semibold">Kỳ báo cáo</label>
+                    <select id="dashboard-month" wire:model.live="month" class="form-select">
+                        <option value="">Cả năm</option>
+                        @for($m = 1; $m <= $this->maximumVisibleMonth(); $m++)
+                            <option value="{{ $m }}">Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-6 col-md-3 col-xl-2">
+                    <label for="dashboard-year" class="form-label fw-semibold">Năm</label>
+                    <select id="dashboard-year" wire:model.live="year" class="form-select">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-2">
+                    <label for="dashboard-date-from" class="form-label fw-semibold">Ký từ ngày</label>
+                    <input id="dashboard-date-from" type="date" wire:model.live="contractDateFrom" class="form-control">
+                </div>
+                <div class="col-12 col-sm-6 col-xl-2">
+                    <label for="dashboard-date-to" class="form-label fw-semibold">Đến ngày</label>
+                    <input id="dashboard-date-to" type="date" wire:model.live="contractDateTo" class="form-control">
+                </div>
+                <div class="col-12 col-xl-auto">
+                    <button type="button" wire:click="clearContractDateFilter" class="btn btn-outline-secondary w-100 text-nowrap" @disabled($contractDateFrom === '' && $contractDateTo === '')>
+                        <i class="fa-solid fa-rotate-left me-1"></i>Xóa ngày
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
     @endunless
 
     @if($dailyReportReminder && !auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'kinh-doanh', 'tp-kinh-doanh']))

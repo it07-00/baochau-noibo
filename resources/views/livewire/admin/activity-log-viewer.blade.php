@@ -1,91 +1,117 @@
-<div class="container-fluid px-4 py-4">
+<div class="container-fluid px-3 px-lg-4 py-4">
     @section('title', 'Nhật ký hoạt động')
     @section('page_title', 'Nhật ký hoạt động')
 
-    {{-- Page Header --}}
-    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-        <div>
-            <h4 class="fw-bold mb-0">
-                <i class="fa-solid fa-clock-history me-2 text-primary"></i>Nhật ký hoạt động
-            </h4>
-            <p class="text-muted small mb-0 mt-1">Toàn bộ thao tác tạo, sửa, xóa trong hệ thống.</p>
+    <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3">
+                <i class="fa-solid fa-clock-rotate-left fs-5"></i>
+            </span>
+            <div>
+                <h4 class="fw-bold text-body mb-1">Nhật ký hoạt động</h4>
+                <p class="text-secondary mb-0">Tra cứu lịch sử thay đổi và người thực hiện trong hệ thống.</p>
+            </div>
         </div>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+            {{ number_format($activities->total()) }} kết quả
+        </span>
     </div>
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-12px">
+            <div class="card border shadow-sm">
 
                 {{-- Filters & Toolbar --}}
-                <div class="card-header border-0 bg-transparent p-4 pb-0">
-                    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
-                        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100">
-                            {{-- Search Input --}}
-                            <div class="input-group flex-grow-1">
-                                <span class="input-group-text bg-body-tertiary border-end-0 border-light-subtle">
-                                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                                </span>
-                                <input wire:model.live.debounce.300ms="search"
-                                       type="text"
-                                       class="form-control border-start-0 ps-0 border-light-subtle"
-                                       placeholder="Tìm theo mô tả, người thực hiện...">
-                                @if($search)
-                                    <button wire:click="$set('search', '')" class="btn btn-outline-secondary border-light-subtle" type="button">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                @endif
-                            </div>
-
-                            {{-- Filters Dropdowns --}}
-                            <div class="d-flex gap-2">
-                                <select wire:model.live="subjectType" class="form-select border-light-subtle" style="min-width: 180px;">
-                                    <option value="">Tất cả đối tượng</option>
-                                    @foreach ($subjectTypes as $st)
-                                        <option value="{{ $st['value'] }}">{{ $st['label'] }}</option>
-                                    @endforeach
-                                </select>
-
-                                <select wire:model.live="event" class="form-select border-light-subtle" style="min-width: 140px;">
-                                    <option value="">Tất cả sự kiện</option>
-                                    @foreach ($events as $ev)
-                                        <option value="{{ $ev }}">{{ ucfirst($ev) }}</option>
-                                    @endforeach
-                                </select>
-
-                                <select wire:model.live="perPage" class="form-select border-light-subtle" style="width: 120px;">
-                                    <option value="20">20 dòng</option>
-                                    <option value="50">50 dòng</option>
-                                    <option value="100">100 dòng</option>
-                                </select>
-                            </div>
-
-                            @if($search || $subjectType || $event || $dateFrom || $dateTo)
-                                <button wire:click="resetFilters" class="btn btn-outline-danger text-nowrap">
-                                    <i class="fa-solid fa-circle-xmark me-1"></i>Xóa lọc
+                <div class="card-header bg-body border-bottom p-3">
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-3 flex-wrap">
+                        <div>
+                            <h6 class="fw-bold text-body mb-1"><i class="fa-solid fa-filter text-primary me-2"></i>Bộ lọc nhật ký</h6>
+                            <p class="text-secondary small mb-0">Có thể kết hợp nhiều điều kiện để thu hẹp kết quả.</p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            @if($this->activeFilterCount > 0)
+                                <span class="badge bg-primary-subtle text-primary">{{ $this->activeFilterCount }} bộ lọc</span>
+                                <button wire:click="resetFilters" class="btn btn-outline-secondary btn-sm text-nowrap" type="button">
+                                    <i class="fa-solid fa-rotate-left me-1"></i>Đặt lại
                                 </button>
                             @endif
+                            <div wire:loading wire:target="search,logName,subjectType,event,dateFrom,dateTo,perPage,resetFilters" class="text-primary small fw-semibold" role="status">
+                                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Đang lọc
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-12 col-xl-4">
+                            <label for="activity-search" class="form-label fw-semibold">Tìm kiếm</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-body-tertiary"><i class="fa-solid fa-magnifying-glass text-secondary"></i></span>
+                                <input id="activity-search" wire:model.live.debounce.300ms="search" type="search" class="form-control" placeholder="Mô tả hoặc người thực hiện">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 col-xl-2">
+                            <label for="activity-subject" class="form-label fw-semibold">Đối tượng</label>
+                            <select id="activity-subject" wire:model.live="subjectType" class="form-select">
+                                <option value="">Tất cả</option>
+                                @foreach ($subjectTypes as $st)
+                                    <option value="{{ $st['value'] }}">{{ $st['label'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3 col-xl-2">
+                            <label for="activity-event" class="form-label fw-semibold">Sự kiện</label>
+                            <select id="activity-event" wire:model.live="event" class="form-select">
+                                <option value="">Tất cả</option>
+                                @foreach ($events as $ev)
+                                    <option value="{{ $ev }}">{{ $this->eventBadge($ev)['label'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3 col-xl-2">
+                            <label for="activity-from" class="form-label fw-semibold">Từ ngày</label>
+                            <input id="activity-from" wire:model.live="dateFrom" type="date" class="form-control">
+                        </div>
+                        <div class="col-6 col-md-3 col-xl-2">
+                            <label for="activity-to" class="form-label fw-semibold">Đến ngày</label>
+                            <input id="activity-to" wire:model.live="dateTo" type="date" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2">
+                            <label for="activity-log-name" class="form-label fw-semibold">Nhóm nhật ký</label>
+                            <select id="activity-log-name" wire:model.live="logName" class="form-select">
+                                <option value="">Tất cả</option>
+                                @foreach ($logNames as $name)
+                                    <option value="{{ $name }}">{{ $name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2">
+                            <label for="activity-per-page" class="form-label fw-semibold">Hiển thị</label>
+                            <select id="activity-per-page" wire:model.live="perPage" class="form-select">
+                                <option value="20">20 dòng</option>
+                                <option value="50">50 dòng</option>
+                                <option value="100">100 dòng</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 {{-- Table --}}
-                <div class="card-body p-0 mt-3">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-body-tertiary text-uppercase text-secondary font-monospace" style="font-size: 0.75rem; border-bottom: 1px solid var(--bs-border-color-translucent);">
+                        <table class="table table-hover align-middle mb-0 text-nowrap">
+                            <thead class="table-light text-secondary small">
                                 <tr>
-                                    <th class="border-0 px-4 py-3" style="width: 80px;">ID</th>
+                                    <th class="px-3 py-3">ID</th>
                                     <th class="border-0 px-4 py-3">Người thực hiện</th>
-                                    <th class="border-0 px-4 py-3" style="width: 140px;">Sự kiện</th>
+                                    <th class="px-3 py-3">Sự kiện</th>
                                     <th class="border-0 px-4 py-3">Đối tượng</th>
                                     <th class="border-0 px-4 py-3">Mô tả</th>
-                                    <th class="border-0 px-4 py-3" style="width: 100px; text-align: center;">Thay đổi</th>
-                                    <th class="border-0 px-4 py-3" style="width: 180px;">Thời gian</th>
+                                    <th class="px-3 py-3 text-center">Thay đổi</th>
+                                    <th class="px-3 py-3">Thời gian</th>
                                 </tr>
                             </thead>
                             <tbody class="border-0">
                                 @forelse ($activities as $activity)
-                                    <tr wire:key="al-{{ $activity->id }}" style="border-bottom: 1px solid var(--bs-border-color-translucent);">
+                                    <tr wire:key="al-{{ $activity->id }}">
                                         <td class="text-muted fw-semibold px-4">{{ $activity->id }}</td>
 
                                         <td class="px-4">
@@ -139,14 +165,20 @@
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center py-5">
-                                            <i class="fa-solid fa-inbox text-muted d-block mb-3" style="font-size: 3rem; opacity: 0.4;"></i>
-                                            <span class="text-muted d-block">
-                                                @if($search || $subjectType || $event || $dateFrom || $dateTo)
-                                                    Không có kết quả phù hợp với bộ lọc.
-                                                @else
-                                                    Chưa có nhật ký hoạt động nào.
-                                                @endif
+                                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-body-tertiary text-secondary p-4 mb-3">
+                                                <i class="fa-solid fa-box-open fs-3"></i>
                                             </span>
+                                            <h6 class="fw-bold text-body mb-1">
+                                                {{ $this->activeFilterCount > 0 ? 'Không tìm thấy kết quả' : 'Chưa có nhật ký hoạt động' }}
+                                            </h6>
+                                            <p class="text-secondary mb-3">
+                                                {{ $this->activeFilterCount > 0 ? 'Hãy thay đổi hoặc đặt lại bộ lọc để xem thêm dữ liệu.' : 'Các thao tác trong hệ thống sẽ xuất hiện tại đây.' }}
+                                            </p>
+                                            @if($this->activeFilterCount > 0)
+                                                <button type="button" wire:click="resetFilters" class="btn btn-outline-primary btn-sm">
+                                                    <i class="fa-solid fa-rotate-left me-1"></i>Đặt lại bộ lọc
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforelse
@@ -176,7 +208,7 @@
                                 <i class="fa-solid fa-clock-history me-2 text-primary"></i>
                                 Chi tiết — <span class="text-primary">{{ class_basename($activity->subject_type ?? '') }}</span> #{{ $activity->subject_id }}
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                         </div>
                         <div class="modal-body p-0 border-0">
                             @if ($activity->properties->has('old') && $activity->properties->has('attributes'))

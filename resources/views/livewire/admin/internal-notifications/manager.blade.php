@@ -1,31 +1,40 @@
 <div>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="page-title mb-1 fw-bold">Thông báo nội bộ</h4>
-            <p class="text-muted mb-0">Soạn và gửi thông báo đến nhân viên trong công ty.</p>
+    <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3"><i class="fa-solid fa-bullhorn fs-5"></i></span>
+            <div>
+                <h4 class="fw-bold text-body mb-1">Thông báo nội bộ</h4>
+                <p class="text-secondary mb-0">Soạn và gửi thông tin đến đúng nhóm nhân viên.</p>
+            </div>
         </div>
         <button type="button" class="btn btn-primary d-flex align-items-center gap-2"
             wire:click="$dispatch('openComposeModal')">
-            <i class="fa-solid fa-bullhorn-fill"></i>
+            <i class="fa-solid fa-pen-to-square"></i>
             Soạn thông báo mới
         </button>
     </div>
 
     {{-- Sent notifications table --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-header border-bottom py-3">
-            <h6 class="mb-0 fw-semibold">Đã gửi gần đây</h6>
+    <div class="card border shadow-sm">
+        <div class="card-header bg-body border-bottom p-3 d-flex align-items-center justify-content-between gap-3 flex-wrap">
+            <div>
+                <h6 class="fw-bold text-body mb-1"><i class="fa-solid fa-paper-plane text-primary me-2"></i>Thông báo đã gửi</h6>
+                <p class="text-secondary small mb-0">Tối đa 50 thông báo gần nhất do bạn gửi.</p>
+            </div>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">{{ number_format($sentNotifications->count()) }} thông báo</span>
         </div>
         <div class="card-body p-0">
             @if($sentNotifications->isEmpty())
-                <div class="text-center py-5 text-muted">
-                    <i class="fa-solid fa-bullhorn fs-1 d-block mb-2 opacity-50"></i>
-                    Chưa có thông báo nào được gửi.
+                <div class="text-center py-5 px-3">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-body-tertiary text-secondary p-4 mb-3"><i class="fa-solid fa-envelope-open-text fs-3"></i></span>
+                    <h6 class="fw-bold text-body mb-1">Chưa có thông báo đã gửi</h6>
+                    <p class="text-secondary mb-3">Thông báo đầu tiên của bạn sẽ xuất hiện tại đây.</p>
+                    <button type="button" class="btn btn-outline-primary btn-sm" wire:click="$dispatch('openComposeModal')"><i class="fa-solid fa-plus me-1"></i>Soạn thông báo</button>
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-secondary small">
                             <tr>
                                 <th class="ps-4">Tiêu đề</th>
                                 <th>Nội dung</th>
@@ -38,8 +47,8 @@
                             @foreach($sentNotifications as $notif)
                                 <tr>
                                     <td class="ps-4 fw-semibold">{{ $notif->title }}</td>
-                                    <td class="text-muted" style="max-width: 300px;">
-                                        <span class="d-inline-block text-truncate" style="max-width: 280px;" title="{{ $notif->message }}">
+                                    <td class="text-secondary">
+                                        <span class="d-inline-block text-truncate w-100" title="{{ $notif->message }}">
                                             {{ $notif->message }}
                                         </span>
                                     </td>
@@ -63,13 +72,13 @@
 
     {{-- Compose Modal --}}
     <div wire:ignore.self class="modal fade" id="composeModal" tabindex="-1" aria-labelledby="composeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg overflow-hidden">
                 <div class="modal-header bg-primary py-3">
                     <h5 class="modal-title fw-bold text-white" id="composeModalLabel">
                         <i class="fa-solid fa-bullhorn-fill me-2"></i>Soạn thông báo nội bộ
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
 
                 <form wire:submit.prevent="send">
@@ -77,17 +86,17 @@
 
                         {{-- Title --}}
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+                            <label for="notification-title" class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                wire:model.defer="title" placeholder="Nhập tiêu đề thông báo...">
+                                id="notification-title" wire:model.defer="title" placeholder="Nhập tiêu đề thông báo...">
                             @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         {{-- Body --}}
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Nội dung <span class="text-danger">*</span></label>
+                            <label for="notification-body" class="form-label fw-semibold">Nội dung <span class="text-danger">*</span></label>
                             <textarea class="form-control @error('body') is-invalid @enderror"
-                                wire:model.defer="body" rows="5"
+                                id="notification-body" wire:model.defer="body" rows="5"
                                 placeholder="Nhập nội dung thông báo..."></textarea>
                             @error('body') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
@@ -141,7 +150,7 @@
                         @if($recipientType === 'users')
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Chọn người nhận</label>
-                                <div style="max-height: 200px; overflow-y: auto;" class="border rounded p-2">
+                                <div class="border rounded p-3">
                                     @foreach($allUsers as $u)
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox"
@@ -159,8 +168,8 @@
                         @endif
 
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <div class="modal-footer bg-body-tertiary">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
                             <span wire:loading wire:target="send" class="spinner-border spinner-border-sm me-1"></span>
                             <i class="fa-solid fa-paper-plane-fill me-1" wire:loading.remove wire:target="send"></i>
