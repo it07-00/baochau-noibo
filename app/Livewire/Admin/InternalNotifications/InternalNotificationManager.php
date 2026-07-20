@@ -115,20 +115,40 @@ class InternalNotificationManager extends Component
         $authUser = auth()->user();
 
         $sentNotifications = DB::table('notifications')
-            ->selectRaw("
-                JSON_UNQUOTE(JSON_EXTRACT(data, '$.batch_id')) as batch_id,
-                MAX(JSON_UNQUOTE(JSON_EXTRACT(data, '$.contract_label'))) as title,
-                MAX(JSON_UNQUOTE(JSON_EXTRACT(data, '$.message'))) as message,
-                MAX(JSON_UNQUOTE(JSON_EXTRACT(data, '$.recipients_label'))) as recipients_label,
-                COUNT(*) as recipient_count,
-                MIN(created_at) as sent_at
-            ")
             ->where('type', InternalNotification::class)
-            ->whereRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(data, '$.sender_id')) AS UNSIGNED) = ?", [$authUser->id])
-            ->groupByRaw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.batch_id'))")
-            ->orderByDesc('sent_at')
-            ->limit(50)
-            ->get();
+            ->where('data->sender_id', $authUser->id)
+            ->latest('created_at')
+            ->get(['data', 'created_at'])
+            ->map(function ($notification) {
+                $data = is_string($notification->data)
+                    ? json_decode($notification->data, true)
+                    : (array) $notification->data;
+
+                return [
+                    'batch_id' => $data['batch_id'] ?? '',
+                    'title' => $data['contract_label'] ?? 'Thông báo nội bộ',
+                    'message' => $data['message'] ?? '',
+                    'recipients_label' => $data['recipients_label'] ?? 'Không xác định',
+                    'created_at' => $notification->created_at,
+                ];
+            })
+            ->filter(fn (array $notification) => $notification['batch_id'] !== '')
+            ->groupBy('batch_id')
+            ->map(function ($batch) {
+                $notification = $batch->first();
+
+                return (object) [
+                    'batch_id' => $notification['batch_id'],
+                    'title' => $notification['title'],
+                    'message' => $notification['message'],
+                    'recipients_label' => $notification['recipients_label'],
+                    'recipient_count' => $batch->count(),
+                    'sent_at' => $batch->min('created_at'),
+                ];
+            })
+            ->sortByDesc('sent_at')
+            ->take(50)
+            ->values();
 
         $allRoles = collect(Role::cases())
             ->map(fn ($r) => ['value' => $r->value, 'label' => $r->label()]);
