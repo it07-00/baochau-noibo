@@ -2,270 +2,160 @@
     @section('title', 'Người dùng')
     @section('page_title', 'Người dùng')
 
-    <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
-        <div class="d-flex align-items-center gap-3">
-            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3">
-                <i class="fa-solid fa-users fs-5"></i>
-            </span>
+    <header class="mb-4">
+        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
             <div>
-                <h4 class="fw-bold text-body mb-1">Quản lý người dùng</h4>
-                <p class="text-secondary mb-0">Theo dõi tài khoản, trạng thái hoạt động và quyền truy cập.</p>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+                        <i class="fa-solid fa-user-shield me-1"></i>Quản trị truy cập
+                    </span>
+                </div>
+                <h4 class="fw-bold text-body mb-1">Người dùng</h4>
+                <p class="text-secondary mb-0">Quản lý tài khoản, vai trò và trạng thái truy cập hệ thống.</p>
+            </div>
+            @can('users.create')
+                <a href="{{ route('app.users.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3" wire:navigate>
+                    <i class="fa-solid fa-user-plus"></i><span>Tạo người dùng</span>
+                </a>
+            @endcan
+        </div>
+
+        <div class="d-flex align-items-center gap-4 mt-4 flex-wrap">
+            <div>
+                <div class="h4 fw-bold text-body mb-0">{{ number_format($totalUsers) }}</div>
+                <div class="small text-secondary">Tổng tài khoản</div>
+            </div>
+            <div class="vr"></div>
+            <div>
+                <div class="h4 fw-bold text-success mb-0">{{ number_format($activeUsers) }}</div>
+                <div class="small text-secondary">Đang hoạt động</div>
+            </div>
+            <div class="vr"></div>
+            <div>
+                <div class="h4 fw-bold text-danger mb-0">{{ number_format($totalUsers - $activeUsers) }}</div>
+                <div class="small text-secondary">Đã khóa</div>
             </div>
         </div>
-        @can('users.create')
-            <a href="{{ route('app.users.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2" wire:navigate>
-                <i class="fa-solid fa-user-plus"></i>Tạo người dùng
-            </a>
-        @endcan
-    </div>
-
-    <div class="row g-3 mb-4">
-        <div class="col-lg-4 col-md-6">
-            <x-admin.summary-card title="Tổng người dùng" value="{{ $totalUsers }}" badge="Tổng hệ thống" iconClass="bg-glow-primary" />
-        </div>
-        <div class="col-lg-4 col-md-6">
-            <x-admin.summary-card title="Đang hoạt động" value="{{ $activeUsers }}" badge="Tài khoản kích hoạt" iconClass="bg-glow-success" />
-        </div>
-        <div class="col-lg-4 col-md-6">
-            <x-admin.summary-card title="Tài khoản khóa" value="{{ $totalUsers - $activeUsers }}" badge="Ngừng hoạt động" iconClass="bg-glow-danger" />
-        </div>
-    </div>
+    </header>
 
     @if (session('status'))
-        <div class="alert alert-success mt-3 shadow-sm border-0">{{ session('status') }}</div>
+        <div class="alert alert-success d-flex align-items-center gap-2" role="alert"><i class="fa-solid fa-circle-check"></i>{{ session('status') }}</div>
     @endif
     @if (session('error'))
-        <div class="alert alert-danger mt-3 shadow-sm border-0">{{ session('error') }}</div>
+        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert"><i class="fa-solid fa-circle-exclamation"></i>{{ session('error') }}</div>
     @endif
 
-    <div class="row g-3">
-        <div class="col-12">
-            <div class="card border shadow-sm">
-                <div class="card-header bg-body border-bottom p-3 d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
-                    <div>
-                        <h6 class="fw-bold text-body mb-1"><i class="fa-solid fa-address-book text-primary me-2"></i>Danh sách người dùng</h6>
-                        <div class="text-secondary small">Tìm kiếm và thao tác trên từng tài khoản.</div>
-                    </div>
-
-                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
-                        <div class="input-group">
-                            <span class="input-group-text bg-body-tertiary">
-                                <i class="fa-solid fa-magnifying-glass text-secondary"></i>
-                            </span>
-                            <input wire:model.live.debounce.300ms="search" type="search" class="form-control" aria-label="Tìm người dùng" placeholder="Tên, email, tài khoản...">
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <select wire:model.live="perPage" class="form-select" aria-label="Số dòng mỗi trang">
-                                <option value="10">10 dòng</option>
-                                <option value="25">25 dòng</option>
-                                <option value="50">50 dòng</option>
-                            </select>
-
-                        </div>
-                        <div wire:loading wire:target="search,perPage" class="text-primary small text-nowrap" role="status"><span class="spinner-border spinner-border-sm me-1"></span>Đang tải</div>
+    <section class="card border shadow-none overflow-hidden" aria-labelledby="users-list-title">
+        <div class="card-header bg-body p-3 border-bottom">
+            <div class="row g-3 align-items-center">
+                <div class="col-12 col-lg">
+                    <h6 id="users-list-title" class="fw-bold text-body mb-1">Danh sách tài khoản</h6>
+                    <p class="text-secondary small mb-0">Chọn một tài khoản để chỉnh sửa hoặc thay đổi trạng thái.</p>
+                </div>
+                <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+                    <label for="user-search" class="visually-hidden">Tìm người dùng</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-body-tertiary border-end-0"><i class="fa-solid fa-magnifying-glass text-secondary"></i></span>
+                        <input id="user-search" wire:model.live.debounce.300ms="search" type="search" class="form-control bg-body-tertiary border-start-0 ps-0" placeholder="Tìm tên, email, tài khoản...">
                     </div>
                 </div>
-
-                <div class="card-body p-0 position-relative">
-                    <div class="table-responsive d-none d-md-block">
-                        <table class="table text-nowrap align-middle table-hover mb-0">
-                            <thead class="table-light text-secondary small">
-                                <tr>
-                                    <th class="text-center w-58px" >STT</th>
-                                    <th>Người dùng</th>
-                                    <th>Tên đăng nhập</th>
-                                    <th class="d-none d-lg-table-cell">Phòng ban</th>
-                                    <th>Vai trò</th>
-                                    <th>Trạng thái</th>
-                                    @canany(['users.edit', 'users.delete'])
-                                    <th class="text-end">Hành động</th>
-                                    @endcanany
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($users as $user)
-                                <tr wire:key="user-row-{{ $user->id }}">
-                                    <td class="text-center text-muted fw-semibold">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <x-user-avatar :user="$user" :size="36" class="me-2 flex-shrink-0" />
-                                            <div class="user-name-block">
-                                                <h6 class="user-name-text mb-0 text-truncate">{{ $user->name }}</h6>
-                                                <small class="user-email-text text-muted d-block text-truncate">{{ $user->email }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="fw-semibold">{{ $user->username }}</span>
-                                        @if($user->phone)
-                                            <small class="user-meta-text text-muted d-block text-truncate">{{ $user->phone }}</small>
-                                        @endif
-                                    </td>
-                                    <td class="d-none d-lg-table-cell">
-                                        <span class="badge bg-label-info">{{ $user->department?->name ?? 'Không có' }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="user-role-stack">
-                                            @forelse($user->roles as $role)
-                                                <span class="badge bg-label-primary">{{ $role->name }}</span>
-                                            @empty
-                                                <span class="text-muted small">Chưa gán</span>
-                                            @endforelse
-                                        </div>
-                                    </td>
-                                    <td>
-                                        @if($user->is_active)
-                                            <span class="badge bg-label-success">Đang hoạt động</span>
-                                        @else
-                                            <span class="badge bg-label-danger">Đã khóa</span>
-                                        @endif
-                                    </td>
-                                    @canany(['users.edit', 'users.delete'])
-                                    <td class="text-end">
-                                        <div class="user-action-group d-flex align-items-center justify-content-end">
-                                            @can('users.edit')
-                                            <button
-                                                wire:click="resetPassword({{ $user->id }})"
-                                                wire:confirm="Mật khẩu của tài khoản {{ $user->username }} sẽ được đưa về mặc định của hệ thống!"
-                                                class="btn btn-sm btn-icon btn-light text-warning rounded-pill" title="Reset mật khẩu">
-                                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                                </svg>
-                                            </button>
-
-                                            @if($user->is_active)
-                                                <button
-                                                    wire:click="lockAccount({{ $user->id }})"
-                                                    wire:confirm="Người dùng {{ $user->name }} sẽ không thể đăng nhập!"
-                                                    class="btn btn-sm btn-icon btn-light text-secondary rounded-pill" title="Khóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
-                                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                                    </svg>
-                                                </button>
-                                            @else
-                                                <button wire:click="unlockAccount({{ $user->id }})" class="btn btn-sm btn-icon btn-light text-success rounded-pill" title="Mở khóa">
-                                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                                                    </svg>
-                                                </button>
-                                            @endif
-
-                                            <a href="{{ route('app.users.edit', $user) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill" title="Sửa" wire:navigate>
-                                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                </svg>
-                                            </a>
-                                            @endcan
-
-                                            @can('users.delete')
-                                            <button
-                                                wire:click="deleteUser({{ $user->id }})"
-                                                wire:confirm="Bạn có chắc chắn muốn xóa {{ $user->name }}?"
-                                                class="btn btn-sm btn-icon btn-light text-danger rounded-pill" title="Xóa" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
-                                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                            @endcan
-                                        </div>
-                                    </td>
-                                    @endcanany
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="7" class="user-empty-state text-center text-muted">Không tìm thấy người dùng.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="user-mobile-list d-md-none">
-                        @forelse($users as $user)
-                            <article class="user-mobile-card" wire:key="user-card-{{ $user->id }}">
-                                <div class="d-flex align-items-start gap-3">
-                                    <x-user-avatar :user="$user" :size="42" class="flex-shrink-0" />
-                                    <div class="user-mobile-main flex-grow-1">
-                                        <div class="d-flex align-items-start justify-content-between gap-2">
-                                            <div class="min-w-0">
-                                                <div class="user-mobile-name text-truncate">{{ $user->name }}</div>
-                                                <div class="user-mobile-email text-truncate">{{ $user->email }}</div>
-                                            </div>
-                                            @if($user->is_active)
-                                                <span class="badge bg-label-success flex-shrink-0">Hoạt động</span>
-                                            @else
-                                                <span class="badge bg-label-danger flex-shrink-0">Khóa</span>
-                                            @endif
-                                        </div>
-
-                                        <div class="user-mobile-meta">
-                                            <div class="user-mobile-meta-row">
-                                                <span>Tài khoản</span>
-                                                <strong>{{ $user->username }}</strong>
-                                            </div>
-                                            <div class="user-mobile-meta-row">
-                                                <span>Phòng ban</span>
-                                                <strong>{{ $user->department?->name ?? 'Không có' }}</strong>
-                                            </div>
-                                            <div class="d-flex flex-wrap gap-1">
-                                                @forelse($user->roles as $role)
-                                                    <span class="badge bg-label-primary">{{ $role->name }}</span>
-                                                @empty
-                                                    <span class="text-muted small">Chưa gán vai trò</span>
-                                                @endforelse
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                @canany(['users.edit', 'users.delete'])
-                                <div class="user-mobile-actions">
-                                    @can('users.edit')
-                                    <button
-                                        wire:click="resetPassword({{ $user->id }})"
-                                        wire:confirm="Mật khẩu của tài khoản {{ $user->username }} sẽ được đưa về mặc định của hệ thống!"
-                                        class="btn btn-sm btn-light text-warning fw-semibold">
-                                        Reset
-                                    </button>
-                                    @if($user->is_active)
-                                        <button
-                                            wire:click="lockAccount({{ $user->id }})"
-                                            wire:confirm="Người dùng {{ $user->name }} sẽ không thể đăng nhập!"
-                                            class="btn btn-sm btn-light text-secondary fw-semibold" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
-                                            Khóa
-                                        </button>
-                                    @else
-                                        <button wire:click="unlockAccount({{ $user->id }})" class="btn btn-sm btn-light text-success fw-semibold">
-                                            Mở khóa
-                                        </button>
-                                    @endif
-                                    <a href="{{ route('app.users.edit', $user) }}" class="btn btn-sm btn-light text-primary fw-semibold" wire:navigate>Sửa</a>
-                                    @endcan
-
-                                    @can('users.delete')
-                                    <button
-                                        wire:click="deleteUser({{ $user->id }})"
-                                        wire:confirm="Bạn có chắc chắn muốn xóa {{ $user->name }}?"
-                                        class="btn btn-sm btn-light text-danger fw-semibold" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
-                                        Xóa
-                                    </button>
-                                    @endcan
-                                </div>
-                                @endcanany
-                            </article>
-                        @empty
-                            <div class="user-empty-state text-center text-muted">Không tìm thấy người dùng.</div>
-                        @endforelse
-                    </div>
+                <div class="col-8 col-md-3 col-lg-auto">
+                    <label for="user-per-page" class="visually-hidden">Số dòng</label>
+                    <select id="user-per-page" wire:model.live="perPage" class="form-select">
+                        <option value="10">10 dòng</option>
+                        <option value="25">25 dòng</option>
+                        <option value="50">50 dòng</option>
+                    </select>
                 </div>
-
-                @if($users->hasPages())
-                <div class="card-footer bg-body border-top px-4 py-3">
-                    {{ $users->links() }}
+                <div class="col-4 col-md-1 col-lg-auto text-center">
+                    <span wire:loading wire:target="search,perPage" class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Đang tải</span></span>
                 </div>
-                @endif
             </div>
         </div>
-    </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-nowrap">
+                <thead class="table-light text-secondary small">
+                    <tr>
+                        <th class="ps-3">Người dùng</th>
+                        <th>Tài khoản</th>
+                        <th>Phòng ban</th>
+                        <th>Vai trò</th>
+                        <th>Trạng thái</th>
+                        @canany(['users.edit', 'users.delete'])<th class="text-end pe-3">Thao tác</th>@endcanany
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($users as $user)
+                        <tr wire:key="user-row-{{ $user->id }}">
+                            <td class="ps-3 py-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <x-user-avatar :user="$user" :size="38" class="flex-shrink-0" />
+                                    <div class="min-w-0">
+                                        <div class="fw-semibold text-body">{{ $user->name }}</div>
+                                        <div class="small text-secondary">{{ $user->email ?: 'Chưa có email' }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-body">{{ $user->username }}</div>
+                                @if($user->phone)<div class="small text-secondary">{{ $user->phone }}</div>@endif
+                            </td>
+                            <td><span class="text-body">{{ $user->department?->name ?? 'Chưa phân phòng' }}</span></td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @forelse($user->roles as $role)
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-medium">{{ $role->name }}</span>
+                                    @empty
+                                        <span class="text-secondary small">Chưa gán</span>
+                                    @endforelse
+                                </div>
+                            </td>
+                            <td>
+                                @if($user->is_active)
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill"><i class="fa-solid fa-circle-check me-1"></i>Hoạt động</span>
+                                @else
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill"><i class="fa-solid fa-lock me-1"></i>Đã khóa</span>
+                                @endif
+                            </td>
+                            @canany(['users.edit', 'users.delete'])
+                                <td class="text-end pe-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Thao tác</button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                            @can('users.edit')
+                                                <li><a href="{{ route('app.users.edit', $user) }}" class="dropdown-item d-flex align-items-center gap-2" wire:navigate><i class="fa-solid fa-pen text-primary"></i>Chỉnh sửa</a></li>
+                                                <li><button type="button" wire:click="resetPassword({{ $user->id }})" wire:confirm="Mật khẩu của tài khoản {{ $user->username }} sẽ được đưa về mặc định của hệ thống!" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-key text-warning"></i>Đặt lại mật khẩu</button></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                @if($user->is_active)
+                                                    <li><button type="button" wire:click="lockAccount({{ $user->id }})" wire:confirm="Người dùng {{ $user->name }} sẽ không thể đăng nhập!" class="dropdown-item d-flex align-items-center gap-2" @disabled($user->id === auth()->id())><i class="fa-solid fa-lock text-secondary"></i>Khóa tài khoản</button></li>
+                                                @else
+                                                    <li><button type="button" wire:click="unlockAccount({{ $user->id }})" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-lock-open text-success"></i>Mở khóa</button></li>
+                                                @endif
+                                            @endcan
+                                            @can('users.delete')
+                                                <li><button type="button" wire:click="deleteUser({{ $user->id }})" wire:confirm="Bạn có chắc chắn muốn xóa {{ $user->name }}?" class="dropdown-item d-flex align-items-center gap-2 text-danger" @disabled($user->id === auth()->id())><i class="fa-solid fa-trash"></i>Xóa tài khoản</button></li>
+                                            @endcan
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endcanany
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="fa-solid fa-user-slash fs-2 text-secondary mb-3 d-block"></i>
+                                <h6 class="fw-bold text-body mb-1">Không tìm thấy người dùng</h6>
+                                <p class="text-secondary mb-0">Thử thay đổi từ khóa tìm kiếm.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if($users->hasPages())
+            <div class="card-footer bg-body border-top px-3 py-3">{{ $users->links() }}</div>
+        @endif
+    </section>
 </div>
