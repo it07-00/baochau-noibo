@@ -225,7 +225,7 @@ Các tích hợp đáng chú ý:
 ## 11. Quy ước phát triển
 
 - Component Livewire giữ state public, action phải authorize và validate.
-- Giao diện admin ưu tiên Bootstrap và các class CSS hiện có của dự án; không tự thêm CSS tùy biến cho từng màn nếu chưa có yêu cầu rõ ràng. Tránh dùng `border-left`/`border-start` có màu để biểu thị trạng thái; ưu tiên icon, badge hoặc màu nền Bootstrap nhẹ.
+- **Quy tắc UI toàn dự án (No Custom CSS):** Trên toàn bộ dự án, tuyệt đối không viết custom CSS mới hay style inline cho các trang/thành phần. Mọi vị trí có card, form, bộ lọc, danh sách hoặc container bắt buộc phải dùng màu nền và hệ thống utility class chuẩn có sẵn của Bootstrap 5 (như `bg-body`, `bg-body-tertiary`, `bg-light-subtle`, `border`, `shadow-sm`, `rounded-3`) để phân định khối card/nền, đảm bảo giao diện thống nhất và tự động tương thích cả Light Mode lẫn Dark Mode. Tránh dùng `border-left`/`border-start` có màu để biểu thị trạng thái; ưu tiên icon, badge hoặc màu nền Bootstrap nhẹ.
 - Nền canvas của ứng dụng admin dùng `--bs-secondary-bg`; card, form và nội dung có bề mặt riêng tiếp tục dùng màu nền mặc định để duy trì phân cấp.
 - Reset pagination khi filter thay đổi.
 - Query phạm vi người dùng phải được kiểm tra theo role/permission, không dựa vào UI.

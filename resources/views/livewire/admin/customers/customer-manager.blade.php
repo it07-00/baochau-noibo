@@ -61,7 +61,7 @@
 
     <div class="row g-3 mb-4">
         <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 48px; height: 48px; font-size: 1.25rem;">
                         <i class="fa-solid fa-users"></i>
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 48px; height: 48px; font-size: 1.25rem;">
                         <i class="fa-solid fa-location-dot"></i>
@@ -89,7 +89,7 @@
             </div>
         </div>
         <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle" style="width: 48px; height: 48px; font-size: 1.25rem;">
                         <i class="fa-solid fa-file-lines"></i>
@@ -102,7 +102,7 @@
             </div>
         </div>
         <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle" style="width: 48px; height: 48px; font-size: 1.25rem;">
                         <i class="fa-solid fa-file-signature"></i>
@@ -120,7 +120,7 @@
         $hasAdvancedFilters = !empty($wardFilter) || !empty($staffFilter) || !empty($serviceQuotationFilter) || !empty($serviceContractFilter) || ($groupBy && $groupBy !== 'province');
     @endphp
 
-    <div class="card border border-secondary-subtle bg-body shadow-sm rounded-12px mb-4"
+    <div class="card border border-secondary-subtle bg-body shadow-sm rounded-3 mb-4"
          x-data="{ showAdvanced: @json($hasAdvancedFilters) }">
         <div class="card-body p-3 p-md-4">
             {{-- Primary Filter Row --}}
@@ -252,7 +252,7 @@
         <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,staffFilter,serviceQuotationFilter,serviceContractFilter,groupBy,resetFilters"></div>
     </div>
 
-    <div class="card border-0 shadow-sm overflow-hidden rounded-12px">
+    <div class="card border border-light-subtle shadow-sm overflow-hidden rounded-3 bg-body">
         <div class="table-responsive d-none d-md-block">
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem; border-bottom: 1px solid var(--bs-border-color-translucent);">

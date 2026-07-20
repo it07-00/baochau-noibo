@@ -1,20 +1,20 @@
 <div>
     {{-- Bộ lọc --}}
-    <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden">
-        <div class="card-body py-3.5 bg-white">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body">
+        <div class="card-body py-3.5 bg-body">
             <div class="row g-3 align-items-center">
                 <div class="col-12 col-md-auto d-flex align-items-center gap-2">
                     <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                         <i class="fa-solid fa-filter fs-5"></i>
                     </div>
                     <div>
-                        <h6 class="mb-0 fw-bold text-dark">Bộ lọc báo cáo</h6>
+                        <h6 class="mb-0 fw-bold text-body">Bộ lọc báo cáo</h6>
                         <small class="text-muted">Chọn năm và nhân sự để xem số liệu</small>
                     </div>
                 </div>
                 <div class="col-12 col-md-3 col-lg-2 ms-md-auto">
                     <label class="form-label fw-bold mb-1 small text-secondary">Năm báo cáo</label>
-                    <select wire:model.live="year" class="form-select border-light-subtle rounded-8px shadow-sm" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
+                    <select wire:model.live="year" class="form-select border-light-subtle rounded-3 shadow-sm" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -23,7 +23,7 @@
                 @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::TP_KINH_DOANH->value]))
                 <div class="col-12 col-md-4 col-lg-3">
                     <label class="form-label fw-bold mb-1 small text-secondary">Nhân viên kinh doanh</label>
-                    <select wire:model.live="filter_staff" class="form-select border-light-subtle rounded-8px shadow-sm" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
+                    <select wire:model.live="filter_staff" class="form-select border-light-subtle rounded-3 shadow-sm" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
@@ -36,23 +36,23 @@
     </div>
 
     {{-- Bảng tổng kết --}}
-    <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden">
-        <div class="card-header bg-white py-3.5 border-bottom border-light-subtle d-flex align-items-center justify-content-between">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-chart-line text-primary fs-5"></i>
-                <h6 class="mb-0 fw-bold text-dark">Tổng kết doanh số theo hợp đồng năm {{ $year }}</h6>
+                <h6 class="mb-0 fw-bold text-body">Tổng kết doanh số theo hợp đồng năm {{ $year }}</h6>
             </div>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
+                    <thead class="bg-body-tertiary border-bottom border-light-subtle">
                         <tr>
                             <th class="fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-left: 1.25rem; min-width: 150px;">CHỈ TIÊU</th>
                             @for($m = 1; $m <= $maxMonth; $m++)
                                 <th class="text-end fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em; min-width: 120px;">THÁNG {{ $m }}</th>
                             @endfor
-                            <th class="text-end fw-bold text-dark py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-right: 1.25rem; min-width: 150px;">TỔNG NĂM</th>
+                            <th class="text-end fw-bold text-body py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-right: 1.25rem; min-width: 150px;">TỔNG NĂM</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,9 +95,9 @@
                             </td>
                         </tr>
                         <tr style="background-color: rgba(37, 99, 235, 0.05) !important;">
-                            <td class="fw-bold text-dark py-3 text-nowrap" style="padding-left: 1.25rem;">Tổng theo hợp đồng</td>
+                            <td class="fw-bold text-body py-3 text-nowrap" style="padding-left: 1.25rem;">Tổng theo hợp đồng</td>
                             @for($m = 1; $m <= $maxMonth; $m++)
-                                <td class="text-end fw-bold {{ $months[$m]['contract_total'] > 0 ? 'text-dark' : 'text-muted' }} py-3">
+                                <td class="text-end fw-bold {{ $months[$m]['contract_total'] > 0 ? 'text-body' : 'text-muted' }} py-3">
                                     @if($months[$m]['contract_total'] > 0)
                                         <div>{{ number_format($months[$m]['contract_total'], 0, ',', '.') }}</div>
                                         <div class="text-muted fw-normal" style="font-size: 0.72rem;">{{ $months[$m]['renewal_count'] + $months[$m]['progressive_count'] }} HĐ</div>
@@ -106,7 +106,7 @@
                                     @endif
                                 </td>
                             @endfor
-                            <td class="text-end fw-bold text-dark py-3 text-nowrap" style="padding-right: 1.25rem; font-size: 0.95rem;">
+                            <td class="text-end fw-bold text-body py-3 text-nowrap" style="padding-right: 1.25rem; font-size: 0.95rem;">
                                 <div>{{ number_format($totals['contract_total'], 0, ',', '.') }} đ</div>
                                 <div class="text-muted fw-normal" style="font-size: 0.72rem;">{{ $totals['renewal_count'] + $totals['progressive_count'] }} HĐ</div>
                             </td>
@@ -124,8 +124,8 @@
     </div>
 
     {{-- Bộ lọc tháng + Chi tiết hợp đồng --}}
-    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
-        <div class="card-header bg-white py-3.5 border-bottom border-light-subtle d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-list-check text-primary fs-5"></i>
                 <h6 class="mb-0 fw-bold text-dark">

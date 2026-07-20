@@ -3,17 +3,17 @@
     <div class="row">
         <div class="{{ in_array($activeTab, ['management', 'history', 'support'], true) ? 'col-12' : 'col-lg-8 mx-auto' }}">
             <!-- Unified Tab Navigation -->
-            <ul class="nav nav-pills mb-3 bg-white p-2 shadow-sm d-flex flex-wrap rounded-12px">
+            <ul class="nav nav-pills mb-3 bg-body p-2 border border-light-subtle shadow-sm d-flex flex-wrap rounded-3">
                 @if ($canSubmitOwnReport)
                     <li class="nav-item">
                         <button wire:click="$set('activeTab', 'form')"
-                            class="nav-link nav-pill-btn {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
+                            class="nav-link nav-pill-btn {{ $activeTab === 'form' ? 'active bg-dark' : 'text-muted' }} rounded-3">
                             <i class="fa-solid fa-pen-to-square me-2"></i><span class="nav-pill-label fw-semibold">Gửi báo cáo</span>
                         </button>
                     </li>
                     <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'history')"
-                            class="nav-link nav-pill-btn {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
+                            class="nav-link nav-pill-btn {{ $activeTab === 'history' ? 'active bg-dark' : 'text-muted' }} rounded-3">
                             <i class="fa-solid fa-calendar-days me-2"></i><span class="nav-pill-label fw-semibold">Lịch sử cá nhân</span>
                         </button>
                     </li>
@@ -21,13 +21,13 @@
                 @if ($isManager)
                     <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'management')"
-                            class="nav-link nav-pill-btn {{ $activeTab === 'management' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
+                            class="nav-link nav-pill-btn {{ $activeTab === 'management' ? 'active bg-dark' : 'text-muted' }} rounded-3">
                             <i class="fa-solid fa-chart-line me-2"></i><span class="nav-pill-label fw-semibold">Quản lý chung</span>
                         </button>
                     </li>
                     <li class="nav-item ms-1 ms-md-2">
                         <button wire:click="$set('activeTab', 'support')"
-                            class="nav-link nav-pill-btn {{ $activeTab === 'support' ? 'active bg-dark' : 'text-muted' }} rounded-10px">
+                            class="nav-link nav-pill-btn {{ $activeTab === 'support' ? 'active bg-dark' : 'text-muted' }} rounded-3">
                             <i class="fa-solid fa-life-ring me-2"></i><span class="nav-pill-label fw-semibold">Hỗ trợ</span>
                             @if (($supportStats['pending'] ?? 0) + ($supportStats['in_progress'] ?? 0) > 0)
                                 <span class="badge bg-danger text-white rounded-pill ms-2">
@@ -41,8 +41,8 @@
 
             @if ($canSubmitOwnReport && $activeTab === 'form')
                 <!-- Daily Report Form -->
-                <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden">
-                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body">
+                    <div class="card-header bg-body-tertiary border-bottom py-3 d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center gap-3">
                             <h5 class="mb-0 fw-bold text-body">Báo cáo ngày của tôi</h5>
                             @if ($isEditing)
@@ -176,17 +176,16 @@
         <!-- MANAGER VIEW -->
         <div class="row g-0">
             <div class="col-12 px-3">
-                <div class="{{ $viewType === 'month' ? 'border-0 border-bottom' : 'card border-0 shadow-sm mb-4' }}"
-                    style="{{ $viewType === 'month' ? '' : 'border-radius: 12px; overflow: hidden;' }}">
-                    <div class="card-header daily-report-management-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-4">
+                <div class="{{ $viewType === 'month' ? 'border-0 border-bottom' : 'card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body' }}">
+                    <div class="card-header daily-report-management-header bg-body-tertiary border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-4">
                         <div class="daily-report-management-controls d-flex align-items-center gap-3 flex-wrap">
-                            <div class="daily-report-view-switch p-1 bg-light rounded-pill d-inline-flex border border-light-subtle">
+                            <div class="daily-report-view-switch p-1 bg-body-tertiary rounded-pill d-inline-flex border border-light-subtle">
                                 <button type="button" wire:click="$set('viewType', 'day')"
-                                    class="btn rounded-pill px-4 py-2 {{ $viewType === 'day' ? 'bg-white shadow-sm fw-bold text-primary' : 'border-0 text-muted fw-semibold' }} fs-095">
+                                    class="btn rounded-pill px-4 py-2 {{ $viewType === 'day' ? 'bg-body shadow-sm fw-bold text-primary' : 'border-0 text-muted fw-semibold' }} fs-095">
                                     Xem theo ngày
                                 </button>
                                 <button type="button" wire:click="$set('viewType', 'month')"
-                                    class="btn rounded-pill px-4 py-2 {{ $viewType === 'month' ? 'bg-white shadow-sm fw-bold text-primary' : 'border-0 text-muted fw-semibold' }} fs-095">
+                                    class="btn rounded-pill px-4 py-2 {{ $viewType === 'month' ? 'bg-body shadow-sm fw-bold text-primary' : 'border-0 text-muted fw-semibold' }} fs-095">
                                     Xem theo tháng
                                 </button>
                             </div>
@@ -261,8 +260,8 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
+                    <div class="card-body p-3 p-lg-4 bg-body-tertiary">
+                        <div class="d-flex flex-column gap-3">
                             @if ($viewType === 'day')
                                 @foreach ($reports as $item)
                                     @if ($item->report)
@@ -270,7 +269,7 @@
                                         @php
                                             $hasLongContent = \Illuminate\Support\Str::length(strip_tags($item->report->content)) > 220;
                                         @endphp
-                                        <div class="daily-report-entry list-group-item p-3 p-lg-4 border-light-subtle transition-all {{ $item->report->status === 'Gặp vấn đề, cần hỗ trợ' ? 'bg-danger bg-opacity-5' : '' }}"
+                                        <div class="daily-report-entry card border border-light-subtle shadow-sm rounded-3 p-3 p-lg-4 bg-body transition-all {{ $item->report->status === 'Gặp vấn đề, cần hỗ trợ' ? 'border-danger-subtle bg-danger-subtle bg-opacity-25' : '' }}"
                                             x-data="{ expanded: false }">
                                             <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                                 <div class="d-flex align-items-center gap-3">
@@ -334,7 +333,7 @@
                                         @php
                                             $meta = $this->lateMissingMeta($this->daysDiffFromDateFilter());
                                         @endphp
-                                        <div class="daily-report-missing-entry list-group-item px-3 px-lg-4 py-3 border-light-subtle transition-all {{ $meta['itemClass'] }}" style="{{ $meta['itemStyle'] }}">
+                                        <div class="daily-report-missing-entry card border border-light-subtle shadow-sm rounded-3 px-3 px-lg-4 py-3 bg-body transition-all {{ $meta['itemClass'] }}" style="{{ $meta['itemStyle'] }}">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center gap-3">
                                                     <div class="rounded-circle d-flex align-items-center justify-content-center wh-38 {{ $meta['avatarClass'] }}" style="width: 38px; height: 38px;">
@@ -364,8 +363,8 @@
     @if ($activeTab === 'support' && $isManager)
         <div class="row g-0">
             <div class="col-12 px-3">
-                <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden">
-                    <div class="card-header bg-white border-bottom p-3 p-lg-4">
+                <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden">
+                    <div class="card-header bg-body-tertiary border-bottom p-3 p-lg-4">
                         <div class="d-flex flex-column flex-xl-row justify-content-between gap-3">
                             <div>
                                 <h5 class="mb-1 fw-bold text-body"><i class="fa-solid fa-life-ring text-danger me-2"></i>Hỗ trợ báo cáo ngày</h5>
@@ -380,7 +379,7 @@
 
                         <div class="row g-2 mt-2">
                             <div class="col-12 col-md-4 col-xl-3">
-                                <select wire:model.live="supportStatusFilter" class="form-select border-light-subtle rounded-8px">
+                                <select wire:model.live="supportStatusFilter" class="form-select border-light-subtle rounded-3">
                                     <option value="open">Chưa hoàn tất</option>
                                     <option value="pending">Chờ xử lý</option>
                                     <option value="in_progress">Đang xử lý</option>
@@ -389,7 +388,7 @@
                                 </select>
                             </div>
                             <div class="col-12 col-md-4 col-xl-3">
-                                <select wire:model.live="deptIdFilter" class="form-select border-light-subtle rounded-8px">
+                                <select wire:model.live="deptIdFilter" class="form-select border-light-subtle rounded-3">
                                     <option value="">Tất cả phòng ban</option>
                                     @foreach ($departments as $dept)
                                         <option value="{{ $dept->id }}">{{ $dept->name }}</option>
@@ -397,7 +396,7 @@
                                 </select>
                             </div>
                             <div class="col-12 col-md-4 col-xl-3">
-                                <select wire:model.live="userIdFilter" class="form-select border-light-subtle rounded-8px">
+                                <select wire:model.live="userIdFilter" class="form-select border-light-subtle rounded-3">
                                     <option value="">Tất cả nhân viên</option>
                                     @foreach ($users as $user)
                                         @if (!$deptIdFilter || $user->department_id == $deptIdFilter)
@@ -408,30 +407,30 @@
                             </div>
                             <div class="col-12 col-xl-3">
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-light-subtle"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                                    <span class="input-group-text bg-body border-light-subtle"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
                                     <input wire:model.live.debounce.400ms="supportSearch" type="search" class="form-control border-light-subtle" placeholder="Tìm nhân viên, nội dung...">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
+                    <div class="card-body p-3 p-lg-4 bg-body-tertiary">
+                        <div class="d-flex flex-column gap-3">
                             @forelse ($supportReports as $supportReport)
                                 @php
                                     $supportStatus = \App\Enums\DailyReportSupportStatus::tryFrom((string) $supportReport->support_status);
                                     $supportColor = $supportStatus?->color() ?? 'secondary';
                                 @endphp
-                                <div class="list-group-item p-3 p-lg-4 border-light-subtle">
+                                <div class="card border border-light-subtle shadow-sm rounded-3 p-3 p-lg-4 bg-body">
                                     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                                         <div class="flex-grow-1 min-w-0">
                                             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                                                <strong class="text-body">{{ $supportReport->user->name }}</strong>
+                                                <strong class="text-body fs-6">{{ $supportReport->user->name }}</strong>
                                                 <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill fw-normal">{{ $supportReport->user->department?->name ?? 'Chưa có phòng ban' }}</span>
                                                 <span class="text-muted small">Báo cáo ngày {{ $supportReport->date->format('d/m/Y') }}</span>
                                                 <span class="badge bg-{{ $supportColor }} bg-opacity-10 text-{{ $supportColor }} border border-{{ $supportColor }}-subtle rounded-pill">{{ $supportStatus?->label() }}</span>
                                             </div>
-                                            <div class="alert alert-danger border-0 shadow-sm p-3 rounded-12px mb-2">
+                                            <div class="alert alert-danger border-0 shadow-sm p-3 rounded-3 mb-2">
                                                 <div class="small fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation me-1"></i>Nội dung cần hỗ trợ</div>
                                                 <div class="text-break">{{ $supportReport->issues ?: strip_tags($supportReport->content) }}</div>
                                             </div>
@@ -446,7 +445,7 @@
                                             @endif
 
                                             @if ($supportReport->support_response)
-                                                <div class="alert alert-success border-0 shadow-sm p-3 rounded-12px mt-3">
+                                                <div class="alert alert-success border-0 shadow-sm p-3 rounded-3 mt-3">
                                                     <div class="small fw-bold mb-1"><i class="fa-solid fa-circle-check me-1"></i>Kết quả hỗ trợ</div>
                                                     <div class="text-break">{!! nl2br(e($supportReport->support_response)) !!}</div>
                                                     @if ($supportReport->support_resolved_at)
@@ -458,12 +457,12 @@
 
                                         <div class="d-flex flex-row flex-lg-column align-items-start gap-2 flex-shrink-0">
                                             @if ($supportReport->support_status === \App\Enums\DailyReportSupportStatus::PENDING->value)
-                                                <button wire:click="startSupport({{ $supportReport->id }})" wire:loading.attr="disabled" class="btn btn-warning fw-semibold text-nowrap">
+                                                <button wire:click="startSupport({{ $supportReport->id }})" wire:loading.attr="disabled" class="btn btn-warning fw-semibold text-nowrap shadow-sm">
                                                     <i class="fa-solid fa-hand me-1"></i> Tiếp nhận
                                                 </button>
                                             @endif
                                             @if ($supportReport->support_status !== \App\Enums\DailyReportSupportStatus::RESOLVED->value)
-                                                <button wire:click="openSupportModal({{ $supportReport->id }})" class="btn btn-success fw-semibold text-nowrap">
+                                                <button wire:click="openSupportModal({{ $supportReport->id }})" class="btn btn-success fw-semibold text-nowrap shadow-sm">
                                                     <i class="fa-solid fa-check me-1"></i> Hoàn tất
                                                 </button>
                                             @else
@@ -475,7 +474,7 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-center py-5 text-muted">
+                                <div class="text-center py-5 text-muted bg-body rounded-3 border">
                                     <i class="fa-solid fa-circle-check fs-2 text-success mb-3 d-block"></i>
                                     Không có yêu cầu hỗ trợ phù hợp bộ lọc.
                                 </div>

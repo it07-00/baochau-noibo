@@ -12,7 +12,7 @@
     </div>
 
     {{-- ── Controls bar ───────────────────────────────────────────── --}}
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border border-light-subtle shadow-sm mb-4 bg-body rounded-3">
         <div class="card-body py-3">
             <div class="d-flex align-items-end flex-wrap gap-3">
                 <div>
@@ -33,7 +33,7 @@
                             @endforeach
                         </select>
                     @else
-                        <div class="d-flex align-items-center gap-2 form-control form-control-sm bg-light" style="min-width:180px;max-width:260px">
+                        <div class="d-flex align-items-center gap-2 form-control form-control-sm bg-body-tertiary" style="min-width:180px;max-width:260px">
                             <i class="fa-solid fa-user-circle text-muted flex-shrink-0"></i>
                             <span class="fw-semibold text-truncate">{{ auth()->user()->name }}</span>
                         </div>
@@ -70,7 +70,7 @@
     @if($viewMode === 'year')
         <div class="row g-3 mb-4">
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-light-subtle shadow-sm h-100 bg-body rounded-3">
                     <div class="card-body">
                         <p class="text-muted small mb-1">Tổng cam kết {{ $year }}</p>
                         <div class="fs-5 fw-bold">{{ number_format($totals['target'], 0, ',', '.') }} đ</div>
@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-light-subtle shadow-sm h-100 bg-body rounded-3">
                     <div class="card-body">
                         <p class="text-muted small mb-1">Tổng thực tế đã ký</p>
                         <div class="fs-5 fw-bold text-success">{{ number_format($totals['actual'], 0, ',', '.') }} đ</div>
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-light-subtle shadow-sm h-100 bg-body rounded-3">
                     <div class="card-body">
                         <p class="text-muted small mb-1">Còn thiếu để đạt năm</p>
                         <div class="fs-5 fw-bold text-danger">{{ number_format($remaining, 0, ',', '.') }} đ</div>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-light-subtle shadow-sm h-100 bg-body rounded-3">
                     <div class="card-body">
                         <p class="text-muted small mb-1">Mức độ hoàn thành năm</p>
                         <div class="fs-5 fw-bold {{ $totalPct !== null && $totalPct >= 100 ? 'text-success' : ($totalPct !== null && $totalPct >= 70 ? 'text-warning' : 'text-danger') }}">
@@ -116,8 +116,8 @@
     {{-- MODE: THEO NĂM                                              --}}
     {{-- ════════════════════════════════════════════════════════════ --}}
     @if($viewMode === 'year')
-        <div class="card border-0 shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
+        <div class="card border border-light-subtle shadow-sm bg-body rounded-3">
+            <div class="card-header bg-body-tertiary border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
                 <h6 class="mb-0 fw-bold">Chi tiết cam kết theo tháng — {{ $year }}</h6>
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Đạt</span>
@@ -230,7 +230,7 @@
     @if($viewMode === 'month')
 
         {{-- Summary table --}}
-        <div class="card border-0 shadow-sm mt-4">
+        <div class="card border border-light-subtle shadow-sm mt-4 bg-body rounded-3">
             <div class="card-header bg-warning bg-opacity-10 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <h6 class="mb-0 fw-bold">CAM KẾT DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
                 <div class="d-flex align-items-center gap-2">
@@ -277,8 +277,8 @@
         </div>
 
         {{-- Contract detail table --}}
-        <div class="card border-0 shadow-sm mt-3">
-            <div class="card-header bg-light py-3">
+        <div class="card border border-light-subtle shadow-sm mt-3 bg-body rounded-3">
+            <div class="card-header bg-body-tertiary border-bottom py-3">
                 <h6 class="mb-0 fw-bold">CỤ THỂ DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
             </div>
             <div class="card-body p-0">

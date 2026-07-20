@@ -4,7 +4,7 @@
     }">
 
     {{-- Toolbar Header --}}
-    <div class="ws-calendar-toolbar card border-0 shadow-sm mb-4">
+    <div class="ws-calendar-toolbar card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body">
         <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3 py-3 px-4 bg-body-tertiary">
             <div class="d-flex align-items-center gap-2">
                 <button wire:click="previousMonth"

@@ -45,8 +45,8 @@
         <div class="alert alert-danger d-flex align-items-center gap-2" role="alert"><i class="fa-solid fa-circle-exclamation"></i>{{ session('error') }}</div>
     @endif
 
-    <section class="card border shadow-none overflow-hidden" aria-labelledby="users-list-title">
-        <div class="card-header bg-body p-3 border-bottom">
+    <section class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body" aria-labelledby="users-list-title">
+        <div class="card-header bg-body-tertiary p-3 border-bottom border-light-subtle">
             <div class="row g-3 align-items-center">
                 <div class="col-12 col-lg">
                     <h6 id="users-list-title" class="fw-bold text-body mb-1">Danh sách tài khoản</h6>

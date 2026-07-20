@@ -12,6 +12,7 @@ Nếu tài liệu mâu thuẫn với code, làm theo code và cập nhật lại
 
 ## Quy tắc làm việc
 
+- Không viết custom CSS mới hay style inline trên toàn bộ dự án. Mọi vị trí có card, form, container phải dùng màu nền và utility class chuẩn của Bootstrap 5 (như `bg-body`, `bg-body-tertiary`, `bg-light-subtle`, `border`, `shadow-sm`, `rounded-3`) để phân định khối và tương thích Light/Dark Mode.
 - Giữ nguyên tiếng Việt trong giao diện và thông báo validation.
 - Dùng `App\Enums\Role`, `App\Enums\Permission`, `App\Enums\ContractType`; không rải chuỗi role, permission hoặc model mapping mới.
 - Kiểm tra đồng thời route middleware, authorization trong action và phạm vi dữ liệu trong query.

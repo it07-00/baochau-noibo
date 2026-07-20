@@ -1,13 +1,13 @@
 <div class="personal-sales-board">
 
     {{-- Bộ lọc --}}
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 bg-body">
         <div class="card-body py-3 px-4">
             <div class="row g-3 align-items-end">
                 @if(auth()->user()->hasAnyRole([\App\Enums\Role::IT->value, \App\Enums\Role::GIAM_DOC->value, \App\Enums\Role::TP_KINH_DOANH->value]) || auth()->user()->can('roles.view'))
                 <div class="col-md-4 col-lg-4">
                     <label class="form-label fw-semibold mb-1  text-muted">Nhân viên</label>
-                    <select wire:model.live="filter_staff" class="form-select">
+                    <select wire:model.live="filter_staff" class="form-select border-light-subtle">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
@@ -17,7 +17,7 @@
                 @endif
                 <div class="col-md-3 col-lg-2">
                     <label class="form-label fw-semibold mb-1  text-muted">Năm</label>
-                    <select wire:model.live="year" class="form-select">
+                    <select wire:model.live="year" class="form-select border-light-subtle">
                         @foreach($years as $y)
                             <option value="{{ $y }}">Năm {{ $y }}</option>
                         @endforeach
@@ -34,8 +34,8 @@
         Dữ liệu theo: <span class="fw-bold">{{ $staffDetail?->name ?? 'Tất cả nhân viên' }}</span> - Năm {{ $year }}
     </div>
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header border-bottom py-3">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary border-bottom py-3">
             <h5 class="mb-0 fw-bold text-uppercase board-title board-title-kpi">Bảng doanh số cá nhân</h5>
         </div>
         <div class="table-responsive">
