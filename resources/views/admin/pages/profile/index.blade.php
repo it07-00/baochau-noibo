@@ -4,140 +4,163 @@
 @section('page_title', 'Hồ sơ của tôi')
 
 @section('content')
+    <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mt-1 mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary flex-shrink-0 wh-44">
+                <i class="fa-solid fa-user-gear fs-5"></i>
+            </span>
+            <div>
+                <h4 class="fw-bold mb-1">Cài đặt tài khoản</h4>
+                <p class="text-muted mb-0">Quản lý thông tin cá nhân và bảo mật đăng nhập.</p>
+            </div>
+        </div>
+        <div class="btn-group" role="navigation" aria-label="Điều hướng cài đặt tài khoản">
+            <a href="{{ route('app.profile.index') }}" class="btn btn-primary" aria-current="page">
+                <i class="fa-solid fa-address-card me-1"></i>Hồ sơ
+            </a>
+            <a href="{{ route('app.password.index') }}" class="btn btn-outline-primary">
+                <i class="fa-solid fa-lock me-1"></i>Mật khẩu
+            </a>
+        </div>
+    </div>
+
     @if (session('status'))
-        <div class="alert alert-success mt-3" role="alert">
-            {{ session('status') }}
+        <div class="alert alert-success d-flex align-items-center gap-2" role="status">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ session('status') }}</span>
         </div>
     @endif
 
     @if ($errors->any())
-        <div class="alert alert-danger mt-3" role="alert">
-            <ul class="mb-0 ps-3">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+        <div class="alert alert-danger d-flex align-items-start gap-2" role="alert">
+            <i class="fa-solid fa-circle-exclamation mt-1"></i>
+            <div>
+                <div class="fw-semibold">Chưa thể lưu thông tin</div>
+                <div>Vui lòng kiểm tra lại các trường được đánh dấu bên dưới.</div>
+            </div>
         </div>
     @endif
 
-    <div class="row g-3 mt-1">
-        <div class="col-xl-8">
-            <div class="card shadow-custom rounded-custom h-100">
-                <div class="card-body p-6">
-                    <h3 class="h6 fs-4 fw-semibold mb-5">Chỉnh sửa thông tin cá nhân</h3>
+    <div class="row g-4">
+        <div class="col-xl-3 col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4 text-center">
+                    <div class="d-inline-block mb-3">
+                        <x-user-avatar :user="auth()->user()" :size="88" />
+                    </div>
+                    <h5 class="fw-bold mb-1">{{ auth()->user()->name }}</h5>
+                    <div class="text-muted small mb-3">{{ '@'.auth()->user()->username }}</div>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                        <i class="fa-solid fa-building me-1"></i>
+                        {{ auth()->user()->department?->name ?? 'Chưa có phòng ban' }}
+                    </span>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-4 py-3 d-flex justify-content-between gap-3">
+                        <span class="text-muted">Email</span>
+                        <span class="fw-semibold text-end text-break">{{ auth()->user()->email ?: 'Chưa cập nhật' }}</span>
+                    </div>
+                    <div class="list-group-item px-4 py-3 d-flex justify-content-between gap-3">
+                        <span class="text-muted">Điện thoại</span>
+                        <span class="fw-semibold text-end">{{ auth()->user()->phone ?: 'Chưa cập nhật' }}</span>
+                    </div>
+                </div>
+            </div>
 
-                    <form method="POST" action="{{ route('app.profile.update') }}" enctype="multipart/form-data">
-                        @csrf
-
-                        <div class="mb-4">
-                            <label class="form-label" for="avatar">Ảnh đại diện</label>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <x-user-avatar :user="auth()->user()" :size="64" />
-                                <span class="text-muted">JPG, PNG, WEBP. Tối đa 2MB.</span>
-                            </div>
-                            <input
-                                type="file"
-                                id="avatar"
-                                name="avatar"
-                                class="form-control"
-                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                            >
-                        </div>
-
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <label class="form-label" for="username">Tài khoản</label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    name="username"
-                                    class="form-control"
-                                    value="{{ old('username', auth()->user()->username) }}"
-                                    required
-                                >
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="name">Họ tên</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    class="form-control"
-                                    value="{{ old('name', auth()->user()->name) }}"
-                                    required
-                                >
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="email">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    class="form-control"
-                                    value="{{ old('email', auth()->user()->email ?? '') }}"
-                                    placeholder="Để trống nếu chưa dùng email"
-                                >
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="phone">Điện thoại</label>
-                                <input
-                                    type="text"
-                                    id="phone"
-                                    name="phone"
-                                    class="form-control"
-                                    value="{{ old('phone', auth()->user()->phone ?? '') }}"
-                                    placeholder="Nhập số điện thoại"
-                                >
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="gender">Giới tính</label>
-                                <select id="gender" name="gender" class="form-select">
-                                    <option value="">Chọn giới tính</option>
-                                    <option value="female" {{ old('gender', auth()->user()->gender) === 'female' ? 'selected' : '' }}>Nữ</option>
-                                    <option value="male" {{ old('gender', auth()->user()->gender) === 'male' ? 'selected' : '' }}>Nam</option>
-                                    <option value="other" {{ old('gender', auth()->user()->gender) === 'other' ? 'selected' : '' }}>Khác</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="date_of_birth">Ngày sinh</label>
-                                <input
-                                    type="date"
-                                    id="date_of_birth"
-                                    name="date_of_birth"
-                                    class="form-control"
-                                    value="{{ old('date_of_birth', auth()->user()->date_of_birth?->format('Y-m-d')) }}"
-                                >
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label" for="address">Địa chỉ</label>
-                                <textarea
-                                    id="address"
-                                    name="address"
-                                    class="form-control"
-                                    rows="3"
-                                    placeholder="Nhập địa chỉ"
-                                >{{ old('address', auth()->user()->address ?? '') }}</textarea>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-primary mt-4" type="submit">Lưu thay đổi</button>
-                    </form>
+            <div class="card border border-primary-subtle bg-primary-subtle shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-primary">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <h6 class="fw-bold mb-0">Bảo mật tài khoản</h6>
+                    </div>
+                    <p class="small text-body-secondary mb-3">Nên thay đổi mật khẩu định kỳ và không sử dụng chung với dịch vụ khác.</p>
+                    <a href="{{ route('app.password.index') }}" class="btn btn-outline-primary w-100 min-h-42px">Đổi mật khẩu</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-4">
-            <div class="card shadow-custom rounded-custom h-100">
-                <div class="card-body p-6">
-                    <h3 class="h6 fs-4 fw-semibold mb-4">Đổi mật khẩu</h3>
-                    <a href="{{ route('app.password.index') }}" class="btn btn-label-primary w-100">Đi tới trang đổi mật khẩu</a>
+        <div class="col-xl-9 col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom p-4">
+                    <h5 class="fw-bold mb-1">Thông tin cá nhân</h5>
+                    <p class="text-muted small mb-0">Thông tin này được sử dụng trong hồ sơ và các nghiệp vụ nội bộ.</p>
                 </div>
+                <form method="POST" action="{{ route('app.profile.update') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" for="avatar">Ảnh đại diện</label>
+                            <input type="file" id="avatar" name="avatar"
+                                   class="form-control @error('avatar') is-invalid @enderror"
+                                   accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                   aria-describedby="avatar-help">
+                            <div id="avatar-help" class="form-text">Định dạng JPG, PNG hoặc WEBP; dung lượng tối đa 2MB.</div>
+                            @error('avatar') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="username">Tài khoản <span class="text-danger">*</span></label>
+                                <input type="text" id="username" name="username"
+                                       class="form-control @error('username') is-invalid @enderror"
+                                       value="{{ old('username', auth()->user()->username) }}" autocomplete="username" required>
+                                @error('username') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="name">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" id="name" name="name"
+                                       class="form-control @error('name') is-invalid @enderror"
+                                       value="{{ old('name', auth()->user()->name) }}" autocomplete="name" required>
+                                @error('name') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="email">Email</label>
+                                <input type="email" id="email" name="email"
+                                       class="form-control @error('email') is-invalid @enderror"
+                                       value="{{ old('email', auth()->user()->email ?? '') }}" autocomplete="email"
+                                       placeholder="ten@congty.vn">
+                                @error('email') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="phone">Điện thoại</label>
+                                <input type="tel" id="phone" name="phone"
+                                       class="form-control @error('phone') is-invalid @enderror"
+                                       value="{{ old('phone', auth()->user()->phone ?? '') }}" autocomplete="tel" inputmode="tel"
+                                       placeholder="Nhập số điện thoại">
+                                @error('phone') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="gender">Giới tính</label>
+                                <select id="gender" name="gender" class="form-select @error('gender') is-invalid @enderror">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="female" @selected(old('gender', auth()->user()->gender) === 'female')>Nữ</option>
+                                    <option value="male" @selected(old('gender', auth()->user()->gender) === 'male')>Nam</option>
+                                    <option value="other" @selected(old('gender', auth()->user()->gender) === 'other')>Khác</option>
+                                </select>
+                                @error('gender') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="date_of_birth">Ngày sinh</label>
+                                <input type="date" id="date_of_birth" name="date_of_birth"
+                                       class="form-control @error('date_of_birth') is-invalid @enderror"
+                                       value="{{ old('date_of_birth', auth()->user()->date_of_birth?->format('Y-m-d')) }}">
+                                @error('date_of_birth') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" for="address">Địa chỉ</label>
+                                <textarea id="address" name="address" class="form-control @error('address') is-invalid @enderror"
+                                          rows="3" maxlength="500" placeholder="Nhập địa chỉ">{{ old('address', auth()->user()->address ?? '') }}</textarea>
+                                <div class="form-text">Tối đa 500 ký tự.</div>
+                                @error('address') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top p-4 d-flex justify-content-end">
+                        <button class="btn btn-primary min-h-42px px-4" type="submit">
+                            <i class="fa-solid fa-floppy-disk me-1"></i>Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
