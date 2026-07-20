@@ -1,5 +1,11 @@
 <div class="contract-manager-page">
 
+    @include('livewire.admin.contracts.partials.contract-page-header', [
+        'title' => 'Nghiên cứu và chuyển đổi công nghệ',
+        'icon' => 'fa-flask-vial',
+        'createPermission' => 'contracts-commercial.create',
+    ])
+    {{--
     <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Nghiên cứu và chuyển đổi công nghệ</h4>
@@ -29,11 +35,12 @@
             </div>
         </div>
     </div>
+    --}}
 
 
 
     <!-- Filter Card -->
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border shadow-sm mb-4">
         <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom">
             <h6 class="mb-0 fw-bold">Bộ lọc Hợp đồng thương mại</h6>
             <button class="btn btn-sm btn-link text-decoration-none"
@@ -204,13 +211,13 @@
     </div>
 
     <!-- Table Card -->
-    <div class="card border-0 shadow-sm">
+    <div class="card border shadow-sm overflow-hidden">
         <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng thương mại</h6>
         </div>
         <div class="table-responsive mh-350">
-            <table class="table table-hover align-middle mb-0 table-xs">
-                <thead class="bg-light bg-opacity-50">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
                     <tr class=" text-muted fw-bold">
                         @if ($this->canBulkDelete)
                             <th class="text-center w-42px">Chọn</th>

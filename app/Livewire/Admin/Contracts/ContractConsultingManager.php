@@ -53,8 +53,6 @@ class ContractConsultingManager extends Component
 
     public $sortDirection = 'asc';
 
-    public array $selectedDocIds = [];
-
     public bool $showModal = false;
 
     public bool $isEditing = false;
@@ -488,60 +486,6 @@ class ContractConsultingManager extends Component
         $this->dispatch('openFormModal');
     }
 
-    public function bulkDeleteSelected(): void
-    {
-        $user = auth()->user();
-        if (! $user || ! $user->can(Permission::CONTRACTS_CONSULTING_DELETE->value)) {
-            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
-
-            return;
-        }
-
-        $selectedIds = collect($this->selectedDocIds)
-            ->map(static fn ($id) => (int) $id)
-            ->filter(static fn ($id) => $id > 0)
-            ->unique()
-            ->values();
-
-        if ($selectedIds->isEmpty()) {
-            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng chọn ít nhất 1 hợp đồng để xóa.']);
-
-            return;
-        }
-
-        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
-        $deletedCount = 0;
-        $skippedCount = 0;
-
-        $docs = ContractLegal::whereIn('id', $selectedIds)->get();
-        foreach ($docs as $doc) {
-            if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
-                $skippedCount++;
-
-                continue;
-            }
-
-            $doc->delete();
-            $deletedCount++;
-        }
-
-        $this->selectedDocIds = [];
-
-        if ($deletedCount === 0) {
-            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có hợp đồng nào được xóa.']);
-
-            return;
-        }
-
-        $message = "Đã xóa {$deletedCount} hợp đồng.";
-        if ($skippedCount > 0) {
-            $message .= " Bỏ qua {$skippedCount} hợp đồng không thuộc quyền.";
-        }
-
-        $this->resetPage();
-        $this->dispatch('swal:toast', ['type' => 'success', 'message' => $message]);
-    }
-
     public function viewDetail(int $id): void
     {
         $this->detailActiveTab = 'info';
@@ -669,6 +613,12 @@ class ContractConsultingManager extends Component
     public function canManageContractFiles(): bool
     {
         return auth()->user()->hasRole(Role::KE_TOAN->value);
+    }
+
+    #[Computed]
+    public function canBulkDelete(): bool
+    {
+        return false;
     }
 
     public function openAssign(int $id): void
@@ -818,7 +768,6 @@ class ContractConsultingManager extends Component
                 Role::KY_THUAT->value,
             ]),
         ];
-        $this->selectedDocIds = [];
         $this->sortBy = 'id';
         $this->sortDirection = 'asc';
         $this->resetPage();
@@ -962,12 +911,6 @@ class ContractConsultingManager extends Component
         }
 
         return $progress;
-    }
-
-    #[Computed]
-    public function canBulkDelete(): bool
-    {
-        return auth()->user()->can(Permission::CONTRACTS_CONSULTING_DELETE->value);
     }
 
     #[Computed]

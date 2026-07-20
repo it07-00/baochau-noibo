@@ -51,8 +51,6 @@ class ContractWasteManager extends Component
 
     public $sortDirection = 'desc';
 
-    public array $selectedDocIds = [];
-
     public $showDetail = false;
 
     public $showModal = false;
@@ -461,60 +459,6 @@ class ContractWasteManager extends Component
         $this->dispatch('swal:toast', ['message' => 'Đã xóa hợp đồng', 'type' => 'success']);
     }
 
-    public function bulkDeleteSelected()
-    {
-        $user = auth()->user();
-        if (! $user || ! $user->can(Permission::CONTRACTS_WASTE_DELETE->value)) {
-            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa hợp đồng.']);
-
-            return;
-        }
-
-        $selectedIds = collect($this->selectedDocIds)
-            ->map(static fn ($id) => (int) $id)
-            ->filter(static fn ($id) => $id > 0)
-            ->unique()
-            ->values();
-
-        if ($selectedIds->isEmpty()) {
-            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Vui lòng chọn ít nhất 1 hợp đồng để xóa.']);
-
-            return;
-        }
-
-        $isRestrictedTpKd = false; // TPKD has permission to edit contracts of all staff
-        $deletedCount = 0;
-        $skippedCount = 0;
-
-        $docs = ContractWaste::whereIn('id', $selectedIds)->get();
-        foreach ($docs as $doc) {
-            if ($isRestrictedTpKd && (int) $doc->staff_id !== (int) $user->id) {
-                $skippedCount++;
-
-                continue;
-            }
-
-            $doc->delete();
-            $deletedCount++;
-        }
-
-        $this->selectedDocIds = [];
-
-        if ($deletedCount === 0) {
-            $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có hợp đồng nào được xóa.']);
-
-            return;
-        }
-
-        $message = "Đã xóa {$deletedCount} hợp đồng.";
-        if ($skippedCount > 0) {
-            $message .= " Bỏ qua {$skippedCount} hợp đồng không thuộc quyền.";
-        }
-
-        $this->resetPage();
-        $this->dispatch('swal:toast', ['type' => 'success', 'message' => $message]);
-    }
-
     private function resetForm()
     {
         $this->newCustomerName = '';
@@ -582,7 +526,7 @@ class ContractWasteManager extends Component
     #[Computed]
     public function canBulkDelete(): bool
     {
-        return auth()->user()->can(Permission::CONTRACTS_WASTE_DELETE->value);
+        return false;
     }
 
     #[Computed]
@@ -688,6 +632,21 @@ class ContractWasteManager extends Component
             'đã gửi khách hàng' => ['bg' => '#e2d9f3', 'text' => '#6f42c1'],
             'đang thực hiện', '' => ['bg' => '#cfe2ff', 'text' => '#0d6efd'],
             default => ['bg' => '#e9ecef', 'text' => '#495057'],
+        };
+    }
+
+    public function wasteStatusBootstrapClassForDoc($doc): string
+    {
+        $statusKey = mb_strtolower(trim((string) ($doc->status ?? '')));
+
+        return match ($statusKey) {
+            'hoàn thành', 'đã hoàn thành', 'đã hoàn thành kh ký trước' => 'btn-success',
+            'đã hủy', 'hợp đồng hủy', 'hủy bỏ' => 'btn-danger',
+            'đã trình ký nhà thầu phụ' => 'btn-warning',
+            'nhà thầu phụ đã gửi về' => 'btn-info',
+            'đã gửi khách hàng' => 'btn-primary',
+            'đang thực hiện', '' => 'btn-primary',
+            default => 'btn-secondary',
         };
     }
 
@@ -858,7 +817,6 @@ class ContractWasteManager extends Component
                 Role::KY_THUAT->value,
             ]),
         ];
-        $this->selectedDocIds = [];
         $this->sortDirection = 'desc';
     }
 

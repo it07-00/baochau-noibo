@@ -1,37 +1,13 @@
 <div class="contract-manager-page">
 
-    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
-        <div>
-            <h4 class="mb-0">Ứng phó sự cố</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng thống kê</a></li>
-                    <li class="breadcrumb-item active">Ứng phó sự cố</li>
-                </ol>
-            </nav>
-        </div>
-        <div class="d-flex gap-2 ms-auto justify-content-end">
-            @can('contracts-project.create')
-                <button wire:click="create" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-plus-circle me-1"></i> Thêm Hợp Đồng
-                </button>
-            @endcan
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Tìm kiếm theo SHD hoặc Tên KH"
-                    wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+    @include('livewire.admin.contracts.partials.contract-page-header', [
+        'title' => 'Ứng phó sự cố',
+        'icon' => 'fa-shield-halved',
+        'createPermission' => 'contracts-project.create',
+    ])
 
     <!-- Filter Card -->
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border shadow-sm mb-4">
         <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom">
             <h6 class="mb-0 fw-bold">Bộ lọc Hợp đồng dự án</h6>
             <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="collapse"
@@ -172,13 +148,6 @@
                         <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
                             <i class="fa-solid fa-xmark-circle me-1"></i>Xóa lọc
                         </button>
-                        @if ($this->canBulkDelete)
-                            <button class="btn btn-danger px-4 btn-filter" wire:click="bulkDeleteSelected"
-                                wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
-                                @if (empty($selectedDocIds)) disabled @endif>
-                                <i class="fa-solid fa-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
-                            </button>
-                        @endif
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                             <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
                                 class="btn btn-success px-4 btn-filter">
@@ -198,17 +167,14 @@
     </div>
 
     <!-- Table Card -->
-    <div class="card border-0 shadow-sm">
+    <div class="card border shadow-sm overflow-hidden">
         <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng dự án</h6>
         </div>
         <div class="table-responsive mh-350" >
-            <table class="table table-hover align-middle mb-0 table-xs">
-                <thead class="bg-light bg-opacity-50">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
                     <tr class=" text-muted fw-bold">
-                        @if ($this->canBulkDelete)
-                            <th class="text-center w-42px" >Chọn</th>
-                        @endif
                         <th class="text-center w-45px" >STT</th>
                         <th class="ps-4 col-ct-customer">Khách hàng</th>
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
@@ -228,14 +194,6 @@
                 <tbody>
                     @forelse($docs as $doc)
                         <tr class="border-bottom border-light" wire:key="project-row-{{ $doc->id }}">
-                            @if ($this->canBulkDelete)
-                                <td class="text-center">
-                                    @if (!auth()->user()->hasRole(\App\Enums\Role::TP_KINH_DOANH->value) || $doc->staff_id === auth()->id())
-                                        <input class="form-check-input" type="checkbox"
-                                            wire:model.live="selectedDocIds" value="{{ $doc->id }}">
-                                    @endif
-                                </td>
-                            @endif
                             <td class="text-center text-muted  fw-semibold">
                                 {{ ($docs->currentPage() - 1) * $docs->perPage() + $loop->iteration }}
                             </td>
@@ -406,7 +364,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ ($this->isRestrictedRole ? 5 : 8) + ($this->canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ $this->isRestrictedRole ? 5 : 8 }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse

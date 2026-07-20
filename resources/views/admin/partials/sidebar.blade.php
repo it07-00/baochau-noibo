@@ -257,7 +257,7 @@
 
                                                 <li class="menu-item">
                                                     <a href="{{ \App\Support\SidebarMenu::childHref($menu['title'], $child) }}" class="menu-link">
-                                                        {!! \App\Support\SidebarMenu::childIcon($menu['title'], $section) !!}
+                                                        {!! \App\Support\SidebarMenu::childIcon($menu['title'], $section, $child) !!}
                                                         <span class="menu-label">{{ \App\Support\SidebarMenu::childLabel($menu['title'], $child) }}</span>
                                                     </a>
                                                 </li>

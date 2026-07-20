@@ -357,8 +357,20 @@ class SidebarMenu
 
     // ── Child icon ────────────────────────────────────────────────────────────
 
-    public static function childIcon(string $menuTitle, string $section): string
+    public static function childIcon(string $menuTitle, string $section, string $child = ''): string
     {
+        if (in_array($menuTitle, ['Quản lý hợp đồng', 'Bộ phận tư vấn', 'Bộ phận kỹ thuật'], true)) {
+            return match ($child) {
+                'HĐ Chất thải' => '<i class="fa-solid fa-recycle"></i>',
+                'HĐ Quan trắc và hồ sơ môi trường' => '<i class="fa-solid fa-clipboard-check"></i>',
+                'HĐ Ứng phó sự cố' => '<i class="fa-solid fa-shield-halved"></i>',
+                'HĐ Nghiên cứu và chuyển đổi công nghệ' => '<i class="fa-solid fa-flask-vial"></i>',
+                'HĐ Phát triển bền vững' => '<i class="fa-solid fa-seedling"></i>',
+                'HĐ Giảm phát thải, tiết kiệm năng lượng' => '<i class="fa-solid fa-bolt"></i>',
+                default => self::icon('doc'),
+            };
+        }
+
         if ($menuTitle === 'Nội bộ') {
             return self::icon('file');
         }

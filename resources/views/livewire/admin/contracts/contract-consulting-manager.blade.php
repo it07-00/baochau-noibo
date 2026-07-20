@@ -1,5 +1,11 @@
 <div class="contract-manager-page">
 
+    @include('livewire.admin.contracts.partials.contract-page-header', [
+        'title' => 'Hồ sơ môi trường',
+        'icon' => 'fa-clipboard-check',
+        'createPermission' => 'contracts-consulting.create',
+    ])
+    {{--
     <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-0">Hồ sơ môi trường</h4>
@@ -29,11 +35,12 @@
             </div>
         </div>
     </div>
+    --}}
 
 
 
     <!-- Filter Card -->
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border shadow-sm mb-4">
         <div class="card-header py-2 px-4 d-flex align-items-center justify-content-between border-bottom">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter text-primary contract-text-13px" ></i>
@@ -221,13 +228,13 @@
     </div>
 
     <!-- Table Card -->
-    <div class="card border-0 shadow-sm">
+    <div class="card border shadow-sm overflow-hidden">
         <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hồ sơ môi trường</h6>
         </div>
         <div class="table-responsive mh-350" >
-            <table class="table table-hover align-middle mb-0 table-xs">
-                <thead class="bg-light bg-opacity-50">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
                     <tr class=" text-muted fw-bold">
                         @if ($this->canBulkDelete)
                             <th class="text-center w-42px" >Chọn</th>

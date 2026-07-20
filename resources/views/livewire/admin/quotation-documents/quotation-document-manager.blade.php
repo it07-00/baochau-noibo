@@ -1,144 +1,143 @@
 <div>
-    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
-        <div>
-            <h4 class="mb-0">Tạo Báo giá</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Tạo Báo giá</li>
-                </ol>
-            </nav>
-        </div>
-        <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
-            <button class="btn btn-success btn-sm d-flex align-items-center gap-1" wire:click="create">
-                <i class="fa-solid fa-plus-lg"></i> Tạo mới
-            </button>
-            <div class="input-group w-230px">
-                <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm..." wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <span class="d-none d-sm-inline-flex align-items-center justify-content-center rounded-3 text-bg-primary p-3 shadow-sm" aria-hidden="true">
+                <i class="fa-solid fa-file-signature fa-lg"></i>
+            </span>
+            <div>
+                <h1 class="h4 fw-bold text-body mb-1">Tạo báo giá</h1>
+                <p class="text-secondary-emphasis mb-1">Soạn thảo, xuất file và chuyển báo giá sang danh sách theo dõi.</p>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb small mb-0">
+                        <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Tạo báo giá</li>
+                    </ol>
+                </nav>
             </div>
         </div>
-    </div>
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2" wire:click="create" wire:loading.attr="disabled" wire:target="create">
+            <span wire:loading.remove wire:target="create"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
+            <span wire:loading wire:target="create" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span>Tạo báo giá mới</span>
+        </button>
+    </header>
 
-    <!-- Filter Card -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-3">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Nhân viên</label>
-                    <select class="form-select form-select-sm" wire:model.live="filter_staff">
+    <section class="card border shadow-sm mb-4" aria-labelledby="quotation-document-filter-heading">
+        <div class="card-header bg-body border-bottom px-3 px-lg-4 py-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-2 text-bg-primary p-2" aria-hidden="true"><i class="fa-solid fa-sliders"></i></span>
+                <div>
+                    <h2 id="quotation-document-filter-heading" class="h6 fw-bold text-body mb-1">Tìm và lọc báo giá</h2>
+                    <p class="small text-secondary-emphasis mb-0">Tra cứu theo khách hàng, số báo giá, nhân viên hoặc ngày tạo.</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-3 p-lg-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-lg-5">
+                    <label for="quotation-document-search" class="form-label fw-semibold small">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-body-tertiary text-primary"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
+                        <input id="quotation-document-search" type="search" class="form-control" placeholder="Khách hàng hoặc số báo giá..." wire:model.live.debounce.300ms="search">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 col-lg-3">
+                    <label for="quotation-document-staff" class="form-label fw-semibold small">Nhân viên</label>
+                    <select id="quotation-document-staff" class="form-select" wire:model.live="filter_staff">
                         <option value="">Tất cả nhân viên</option>
                         @foreach($staffs as $s)
-                            <option value="{{ $s->id }}">{{ $s->name }}</option>
+                        <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Khoảng thời gian</label>
-                    <div class="d-flex gap-2">
-                        <input type="date" class="form-control form-control-sm" wire:model.live="date_from">
-                        <input type="date" class="form-control form-control-sm" wire:model.live="date_to">
+                <div class="col-12 col-md-8 col-lg-4">
+                    <label class="form-label fw-semibold small">Khoảng thời gian</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label for="quotation-document-date-from" class="visually-hidden">Từ ngày</label>
+                            <input id="quotation-document-date-from" type="date" class="form-control" wire:model.live="date_from" title="Từ ngày">
+                        </div>
+                        <div class="col-6">
+                            <label for="quotation-document-date-to" class="visually-hidden">Đến ngày</label>
+                            <input id="quotation-document-date-to" type="date" class="form-control" wire:model.live="date_to" title="Đến ngày">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Table Card -->
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="table-responsive overflow-auto">
-            <table class="table table-hover align-middle mb-0 table-sm" style="font-size: 0.85rem;">
-                <thead class="brand-table-header">
-                    <tr class="text-muted fw-bold">
-                        <th class="ps-3 w-40px">STT</th>
-                        <th class="w-120px">Số báo giá</th>
-                        <th class="w-100px">Ngày</th>
-                        <th>Khách hàng</th>
-                        <th class="w-150px">Loại dịch vụ</th>
-
-                        <th class="w-100px">NV tạo</th>
-                        <th class="text-end w-130px">Tổng (có VAT)</th>
-                        <th class="text-center pe-3 w-130px">#</th>
+    <section class="card border shadow-sm overflow-hidden" aria-labelledby="quotation-document-list-heading">
+        <div class="card-header bg-body border-bottom px-3 px-lg-4 py-3 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-primary bg-opacity-10 text-primary p-2" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
+                <div>
+                    <h2 id="quotation-document-list-heading" class="h6 fw-bold text-body mb-1">Danh sách báo giá</h2>
+                    <p class="small text-secondary-emphasis mb-0">Các tài liệu báo giá theo bộ lọc hiện tại</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-primary rounded-pill px-3 py-2">{{ number_format($documents->total(), 0, ',', '.') }} báo giá</span>
+                <div wire:loading.flex wire:target="search,filter_staff,date_from,date_to" class="align-items-center gap-2 small text-primary" role="status">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span>Đang cập nhật...</span>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr class="text-nowrap">
+                        <th scope="col" class="ps-3 ps-lg-4 py-3 text-center">STT</th>
+                        <th scope="col" class="py-3">Báo giá</th>
+                        <th scope="col" class="py-3">Khách hàng</th>
+                        <th scope="col" class="py-3">Dịch vụ</th>
+                        <th scope="col" class="py-3">Người tạo</th>
+                        <th scope="col" class="py-3 text-end">Tổng có VAT</th>
+                        <th scope="col" class="py-3 pe-3 pe-lg-4 text-end">Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($documents as $index => $item)
-                    <tr class="border-bottom border-light">
-                        <td class="ps-3">{{ ($documents->currentPage()-1) * $documents->perPage() + $loop->iteration }}</td>
-                        <td>
-                            <span class="fw-semibold text-primary fs-82">{{ $item->document_number }}</span>
+                <tbody class="table-group-divider">
+                    @forelse($documents as $item)
+                    <tr wire:key="quotation-document-row-{{ $item->id }}">
+                        <td class="ps-3 ps-lg-4 py-3 text-center text-secondary-emphasis fw-semibold">{{ ($documents->currentPage() - 1) * $documents->perPage() + $loop->iteration }}</td>
+                        <td class="py-3">
+                            <button type="button" class="btn btn-link p-0 fw-bold text-start text-decoration-none" wire:click="viewDetail({{ $item->id }})">{{ $item->document_number }}</button>
+                            <div class="small text-secondary-emphasis mt-1"><i class="fa-regular fa-calendar me-1" aria-hidden="true"></i>{{ $item->date->format('d/m/Y') }}</div>
                             @if($item->quotation)
-                            <a href="{{ route('app.quotation-tracking.index', ['search' => $item->document_number]) }}" class="badge bg-success bg-opacity-10 text-success border mt-1 text-decoration-none d-inline-flex align-items-center gap-1">
-                                <i class="fa-solid fa-check-circle"></i> Đã theo dõi
-                            </a>
+                            <a href="{{ route('app.quotation-tracking.index', ['search' => $item->document_number]) }}" class="badge text-bg-success mt-2 text-decoration-none"><i class="fa-solid fa-circle-check me-1" aria-hidden="true"></i>Đã theo dõi</a>
                             @endif
                         </td>
-                        <td class="text-nowrap fs-82">{{ $item->date->format('d/m/Y') }}</td>
-                        <td>
-                            <div class="fw-bold text-primary text-capitalize fs-85 lh-sm">{{ $item->customer_name }}</div>
-                            @if($item->customer_contact)
-                            <div class="text-muted mt-1 fs-75"><i class="fa-solid fa-user-circle me-1"></i>{{ $item->customer_contact }}</div>
-                            @endif
+                        <td class="py-3">
+                            <div class="fw-bold text-body">{{ $item->customer_name }}</div>
+                            @if($item->customer_contact)<div class="small text-secondary-emphasis mt-1"><i class="fa-regular fa-address-card me-1" aria-hidden="true"></i>{{ $item->customer_contact }}</div>@endif
                         </td>
-                        <td>
-                            @if($item->service_type)
-                            <span class="badge bg-info bg-opacity-10 text-info border px-2 py-1 fs-70">{{ $item->service_type }}</span>
-                            @else
-                            <span class="text-muted">-</span>
-                            @endif
-                        </td>
-
-                        <td>
-                            <div class="text-truncate fs-82" title="{{ $item->staff?->name }}">{{ $item->staff?->name }}</div>
-                        </td>
-                        <td class="text-end fw-bold text-danger">{{ number_format($item->total, 0, ',', '.') }}đ</td>
-                        <td class="text-center pe-3">
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm p-0 text-primary" wire:click="viewDetail({{ $item->id }})" title="Xem chi tiết">
-                                    <i class="fa-solid fa-eye fs-5"></i>
-                                </button>
-                                <a href="{{ route('app.quotation-docs.export-word', $item->id) }}" class="btn btn-sm p-0 text-primary" title="Xuất Word">
-                                    <i class="fa-solid fa-file-word fs-5"></i>
-                                </a>
-                                <a href="{{ route('app.quotation-docs.export-pdf', $item->id) }}" target="_blank" class="btn btn-sm p-0 text-danger" title="Xuất PDF">
-                                    <i class="fa-solid fa-file-pdf fs-5"></i>
-                                </a>
-                                <button class="btn btn-sm p-0 text-success"
-                                        wire:click="transferToTracking({{ $item->id }})"
-                                        title="{{ $item->quotation ? 'Cập nhật bảng theo dõi' : 'Chuyển sang bảng theo dõi' }}">
-                                    <i class="bi {{ $item->quotation ? 'bi-arrow-repeat' : 'bi-arrow-right-circle' }} fs-5"></i>
-                                </button>
-                                <button class="btn btn-sm p-0 text-secondary" wire:click="duplicate({{ $item->id }})" title="Sao chép">
-                                    <i class="fa-solid fa-copy fs-5"></i>
-                                </button>
-                                <button class="btn btn-sm p-0 text-warning" wire:click="edit({{ $item->id }})" title="Chỉnh sửa">
-                                    <i class="fa-solid fa-pen-square fs-5"></i>
-                                </button>
-                                <button class="btn btn-sm p-0 text-danger"
-                                        wire:click="delete({{ $item->id }})"
-                                        wire:confirm="Xác nhận xóa báo giá này?">
-                                    <i class="fa-solid fa-trash fs-5"></i>
-                                </button>
+                        <td class="py-3">@if($item->service_type)<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-2 py-1">{{ $item->service_type }}</span>@else<span class="text-secondary-emphasis">—</span>@endif</td>
+                        <td class="py-3 text-body fw-medium">{{ $item->staff?->name ?: '—' }}</td>
+                        <td class="py-3 text-end text-nowrap"><span class="fw-bold text-danger">{{ number_format($item->total, 0, ',', '.') }}</span><span class="small text-secondary-emphasis">đ</span></td>
+                        <td class="py-3 pe-3 pe-lg-4 text-end text-nowrap">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-primary" wire:click="viewDetail({{ $item->id }})"><i class="fa-regular fa-eye me-1" aria-hidden="true"></i>Xem</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false"><span class="visually-hidden">Mở thêm thao tác</span></button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    <li><a class="dropdown-item" href="{{ route('app.quotation-docs.export-word', $item->id) }}"><i class="fa-regular fa-file-word me-2 text-primary" aria-hidden="true"></i>Xuất Word</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('app.quotation-docs.export-pdf', $item->id) }}" target="_blank"><i class="fa-regular fa-file-pdf me-2 text-danger" aria-hidden="true"></i>Xuất PDF</a></li>
+                                    <li><button type="button" class="dropdown-item" wire:click="transferToTracking({{ $item->id }})"><i class="fa-solid fa-arrow-right-arrow-left me-2 text-success" aria-hidden="true"></i>{{ $item->quotation ? 'Cập nhật theo dõi' : 'Chuyển sang theo dõi' }}</button></li>
+                                    <li><button type="button" class="dropdown-item" wire:click="duplicate({{ $item->id }})"><i class="fa-regular fa-copy me-2 text-secondary" aria-hidden="true"></i>Sao chép</button></li>
+                                    <li><button type="button" class="dropdown-item" wire:click="edit({{ $item->id }})"><i class="fa-regular fa-pen-to-square me-2 text-warning" aria-hidden="true"></i>Chỉnh sửa</button></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><button type="button" class="dropdown-item text-danger" wire:click="delete({{ $item->id }})" wire:confirm="Xác nhận xóa báo giá này?"><i class="fa-regular fa-trash-can me-2" aria-hidden="true"></i>Xóa báo giá</button></li>
+                                </ul>
                             </div>
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="9" class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-file-text fs-1 d-block mb-2 opacity-25"></i>
-                            Chưa có báo giá nào. Nhấn <strong>"Tạo mới"</strong> để bắt đầu.
-                        </td>
-                    </tr>
+                    <tr><td colspan="7" class="text-center px-3 py-5"><i class="fa-regular fa-file-lines d-block fs-1 text-secondary mb-3" aria-hidden="true"></i><h3 class="h6 fw-bold mb-1">Chưa có báo giá</h3><p class="text-secondary-emphasis mb-3">Tạo báo giá đầu tiên hoặc thay đổi bộ lọc hiện tại.</p><button type="button" class="btn btn-sm btn-primary" wire:click="create">Tạo báo giá mới</button></td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        @if($documents->hasPages())
-        <div class="px-3 py-3 border-top">
-            {{ $documents->links('livewire.admin.users.pagination') }}
-        </div>
-        @endif
-    </div>
+        @if($documents->hasPages())<div class="px-3 px-lg-4 py-3 border-top">{{ $documents->links('livewire.admin.users.pagination') }}</div>@endif
+    </section>
 
     <!-- Detail Modal -->
     <div wire:ignore.self class="modal fade" id="qdocDetailModal" tabindex="-1">
@@ -182,8 +181,8 @@
                         <!-- Table 01: Summary -->
                         <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-table text-primary me-1"></i> Bảng 01. Tổng hợp dự toán chi phí thực hiện</h6>
                         <div class="table-responsive mb-4">
-                            <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
-                                <thead class="brand-table-header">
+                            <table class="table table-bordered table-sm align-middle mb-0 small">
+                                <thead class="table-dark">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th>Nội dung dịch vụ</th>
@@ -236,8 +235,8 @@
                         @if($this->groupedDetailItemsForDetail($selectedDoc)->isNotEmpty())
                         <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-list-check text-success me-1"></i> Bảng 02. Chi tiết thực hiện</h6>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
-                                <thead class="brand-table-header">
+                            <table class="table table-bordered table-sm align-middle mb-0 small">
+                                <thead class="table-dark">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th>Chỉ tiêu / Nội dung công việc</th>
@@ -315,7 +314,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form wire:submit.prevent="save">
-                    <div class="modal-body p-4" style="max-height: 75vh; overflow-y: auto;">
+                    <div class="modal-body p-4 overflow-auto">
                         <!-- Datalist for autocomplete group names -->
                         <datalist id="group-names">
                             @foreach($groupOptions as $g)
@@ -425,8 +424,8 @@
                             @endif
                         </div>
                         <div class="table-responsive mb-4">
-                            <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.82rem;">
-                                <thead class="brand-table-header">
+                            <table class="table table-bordered table-sm align-middle mb-0 small">
+                                <thead class="table-dark">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th>Nội dung dịch vụ <span class="text-danger">*</span></th>
@@ -495,7 +494,7 @@
                                 Bảng 02. Chi tiết thực hiện (Đo đạc chỉ tiêu chi tiết)
                             </h6>
                             @if(count($detailItems) > 0)
-                            <div class="text-muted fw-bold" style="font-size: 0.85rem;">
+                            <div class="text-muted fw-bold small">
                                 Tổng chi phí chi tiết Bảng 02:
                                 <span class="text-success">{{ number_format($detailTotal, 0, ',', '.') }}đ</span>
                                 @if($detailTotal !== (int)($formData['subtotal'] ?? 0))
@@ -507,8 +506,8 @@
                             @endif
                         </div>
                         <div class="table-responsive mb-3">
-                            <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.82rem;">
-                                <thead class="brand-table-header">
+                            <table class="table table-bordered table-sm align-middle mb-0 small">
+                                <thead class="table-dark">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th class="w-250px">Tên nhóm / Phân loại <span class="text-danger">*</span></th>
@@ -611,13 +610,13 @@
                         @if(($formData['template_key'] ?? '') === 'plld')
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h6 class="fw-bold text-primary mb-0"><i class="fa-solid fa-table-cells me-1"></i> Ma trận chức danh phân loại lao động</h6>
-                            <div class="text-muted fw-bold" style="font-size: 0.85rem;">
+                            <div class="text-muted fw-bold small">
                                 Tổng chỉ tiêu: <span class="text-primary">{{ number_format($matrixTotal, 0, ',', '.') }}</span>
                             </div>
                         </div>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.78rem; min-width: 1500px;">
-                                <thead class="brand-table-header">
+                                <thead class="table-dark">
                                     <tr class="text-center fw-bold">
                                         <th class="w-40px">STT</th>
                                         <th style="min-width: 220px;">Chức danh công việc</th>

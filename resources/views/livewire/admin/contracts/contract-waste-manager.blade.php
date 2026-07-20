@@ -1,94 +1,94 @@
-<div class="contract-manager-page">
+<div>
 
-    <div class="page-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2 mb-4">
-        <div>
-            <h4 class="mb-0">Chất thải</h4>
+    <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <span class="d-none d-sm-inline-flex align-items-center justify-content-center rounded-3 text-bg-primary p-3 shadow-sm" aria-hidden="true"><i class="fa-solid fa-recycle fa-lg"></i></span>
+            <div>
+            <h1 class="h4 fw-bold text-body mb-1">Hợp đồng chất thải và tiếng ồn</h1>
+            <p class="text-secondary-emphasis mb-1">Theo dõi tài chính, chứng từ, phân công và tiến độ thực hiện hợp đồng.</p>
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
+                <ol class="breadcrumb small mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng thống kê</a></li>
-                    <li class="breadcrumb-item active">Chất thải</li>
+                    <li class="breadcrumb-item active" aria-current="page">Chất thải và tiếng ồn</li>
                 </ol>
             </nav>
-        </div>
-        <div class="d-flex gap-2 ms-auto justify-content-end">
-            @can('contracts-waste.create')
-                <button wire:click="create" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-plus-circle me-1"></i> Thêm Hợp Đồng
-                </button>
-            @endcan
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Tìm kiếm"
-                    wire:model.live.debounce.300ms="search">
-                <button class="btn btn-primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                </button>
             </div>
         </div>
-    </div>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+            <div class="input-group">
+                <span class="input-group-text bg-body-tertiary text-primary"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
+                <input type="search" class="form-control" placeholder="Tìm khách hàng, số hợp đồng..." wire:model.live.debounce.300ms="search" aria-label="Tìm kiếm hợp đồng">
+            </div>
+            @can('contracts-waste.create')
+                <button type="button" wire:click="create" class="btn btn-primary text-nowrap d-inline-flex align-items-center justify-content-center gap-2" wire:loading.attr="disabled" wire:target="create">
+                    <span wire:loading.remove wire:target="create"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
+                    <span wire:loading wire:target="create" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span>Thêm hợp đồng</span>
+                </button>
+            @endcan
+        </div>
+    </header>
 
     <!-- Filter Card -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header py-3 d-flex align-items-center justify-content-between border-bottom">
-            <h6 class="mb-0 fw-bold">Bộ lọc Hợp đồng chất thải</h6>
-            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#filterCollapse">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
+    <section class="card border shadow-sm mb-4" aria-labelledby="waste-contract-filter-heading">
+        <div class="card-header bg-body py-3 px-3 px-lg-4 d-flex align-items-center justify-content-between border-bottom">
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-2 text-bg-primary p-2" aria-hidden="true"><i class="fa-solid fa-sliders"></i></span>
+                <div>
+                    <h2 id="waste-contract-filter-heading" class="h6 fw-bold text-body mb-1">Bộ lọc hợp đồng</h2>
+                    <p class="small text-secondary-emphasis mb-0">Lọc theo thời gian, phụ trách, phân loại và trạng thái xử lý.</p>
+                </div>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-controls="filterCollapse" aria-expanded="true">
+                <i class="fa-solid fa-chevron-up" aria-hidden="true"></i><span class="visually-hidden">Thu gọn bộ lọc</span>
             </button>
         </div>
         <div class="collapse show" id="filterCollapse">
-            <div class="card-body p-4">
-                <div class="row g-4">
+            <div class="card-body p-3 p-lg-4">
+                <div class="row g-3">
                     @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                         <!-- Row 1 -->
                         <div class="col-md-4">
-                            <label class="form-label fw-bold custom-filter-label">Ngày ký hợp đồng</label>
+                            <label class="form-label fw-semibold small">Ngày ký hợp đồng</label>
                             <div class="d-flex gap-2">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.signed_from">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.signed_to">
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold custom-filter-label">Ngày kết thúc</label>
+                            <label class="form-label fw-semibold small">Ngày kết thúc</label>
                             <div class="d-flex gap-2">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.end_from">
-                                <input type="date" class="form-control form-control-xs" wire:model.live="filter.end_to">
+                                <input type="date" class="form-control" wire:model.live="filter.end_to">
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold custom-filter-label">Ngày xuất hóa đơn</label>
+                            <label class="form-label fw-semibold small">Ngày xuất hóa đơn</label>
                             <div class="d-flex gap-2">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.returned_from">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.returned_to">
                             </div>
                         </div>
 
                         <!-- Row 2 -->
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Ngày trình ký</label>
+                            <label class="form-label fw-semibold small">Ngày trình ký</label>
                             <div class="d-flex gap-2">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.submitted_from">
-                                <input type="date" class="form-control form-control-xs"
+                                <input type="date" class="form-control"
                                     wire:model.live="filter.submitted_to">
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Nhà thầu phụ</label>
+                            <label class="form-label fw-semibold small">Nhà thầu phụ</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
+                                <button class="form-select text-start text-wrap" type="button"
                                     @click.prevent="open = !open"
                                     >
                                     {{ $handlers->find($filter['handler_id'])?->name ?? 'Chọn nhà thầu phụ' }}
@@ -117,9 +117,9 @@
                         </div>
                         @if (auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
                             <div class="col-md-3">
-                                <label class="form-label fw-bold custom-filter-label">Nhân viên chăm sóc</label>
+                                <label class="form-label fw-semibold small">Nhân viên chăm sóc</label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                    <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
+                                    <button class="form-select text-start text-wrap" type="button"
                                         @click.prevent="open = !open"
                                         >
                                         {{ $staffs->find($filter['staff_id'])?->name ?? 'Chọn nhân viên' }}
@@ -149,8 +149,8 @@
                             </div>
                         @endif
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Tỉnh thành</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.province">
+                            <label class="form-label fw-semibold small">Tỉnh thành</label>
+                            <select class="form-select" wire:model.live="filter.province">
                                 <option value="">Chọn tỉnh thành</option>
                                 @foreach ($provinces as $p)
                                     <option value="{{ $p }}">{{ $p }}</option>
@@ -160,8 +160,8 @@
 
                         <!-- Row 3 -->
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Nguồn thông tin</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.info_source">
+                            <label class="form-label fw-semibold small">Nguồn thông tin</label>
+                            <select class="form-select" wire:model.live="filter.info_source">
                                 <option value="">Chọn Nguồn...</option>
                                 @foreach ($info_sources as $src)
                                     <option value="{{ $src }}">{{ $src }}</option>
@@ -169,8 +169,8 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Phương thức thanh toán</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.payment_method">
+                            <label class="form-label fw-semibold small">Phương thức thanh toán</label>
+                            <select class="form-select" wire:model.live="filter.payment_method">
                                 <option value="">Chọn phương thức...</option>
                                 @foreach ($payment_methods as $pm)
                                     <option value="{{ $pm }}">{{ $pm }}</option>
@@ -183,9 +183,9 @@
                     @endunless
                     @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                     <div class="col-md-3">
-                        <label class="form-label fw-bold custom-filter-label">Tình trạng</label>
+                        <label class="form-label fw-semibold small">Tình trạng</label>
                         <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                            <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
+                            <button class="form-select text-start text-wrap" type="button"
                                 @click.prevent="open = !open"
                                 >
                                 {{ $filter['status'] ?: 'Chọn tình trạng' }}
@@ -213,9 +213,9 @@
                     @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                         <!-- Row 4 -->
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Loại dịch vụ</label>
+                            <label class="form-label fw-semibold small">Loại dịch vụ</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
+                                <button class="form-select text-start text-wrap" type="button"
                                     @click.prevent="open = !open"
                                     >
                                     {{ $filter['service_type'] ?: 'Chọn Loại dịch vụ' }}
@@ -240,9 +240,9 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Loại chất thải</label>
+                            <label class="form-label fw-semibold small">Loại chất thải</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
+                                <button class="form-select text-start text-wrap" type="button"
                                     @click.prevent="open = !open"
                                     >
                                     {{ $filter['waste_type'] ?: 'Chọn Loại chất thải' }}
@@ -267,9 +267,9 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Tình trạng tái ký</label>
+                            <label class="form-label fw-semibold small">Tình trạng tái ký</label>
                             <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                <button class="form-select form-control-xs text-start text-wrap select-full-sm" type="button"
+                                <button class="form-select text-start text-wrap" type="button"
                                     @click.prevent="open = !open"
                                     >
                                     {{ $filter['renewal_status'] ?: 'Chọn tình trạng' }}
@@ -294,8 +294,8 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Tình trạng phản hồi chứng từ</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.voucher_status">
+                            <label class="form-label fw-semibold small">Tình trạng phản hồi chứng từ</label>
+                            <select class="form-select" wire:model.live="filter.voucher_status">
                                 <option value="">Chọn tình trạng</option>
                                 @foreach ($voucher_statuses as $vstatus)
                                     <option value="{{ $vstatus }}">{{ $vstatus }}</option>
@@ -303,8 +303,8 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-bold custom-filter-label">Hạng mục dịch vụ</label>
-                            <select class="form-select form-control-xs" wire:model.live="filter.loai_dich_vu">
+                            <label class="form-label fw-semibold small">Hạng mục dịch vụ</label>
+                            <select class="form-select" wire:model.live="filter.loai_dich_vu">
                                 <option value="">Chọn hạng mục</option>
                                 @foreach ($loai_dich_vu_options as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
@@ -336,8 +336,8 @@
                     @endunless
 
                     <div class="col-md-3">
-                        <label class="form-label fw-bold custom-filter-label">Sắp xếp</label>
-                        <select class="form-select form-control-xs" wire:model.live="sortDirection">
+                        <label class="form-label fw-semibold small">Sắp xếp</label>
+                        <select class="form-select" wire:model.live="sortDirection">
                             <option value="asc">Cũ nhất trước</option>
                             <option value="desc">Mới nhất trước</option>
                         </select>
@@ -345,14 +345,14 @@
                     @endunless
 
                     <div class="col-md-6 d-flex align-items-end gap-2 flex-wrap justify-content-start">
-                        <button class="btn btn-info text-white px-4 btn-filter" wire:click="$refresh">
+                        <button class="btn btn-primary px-3" wire:click="$refresh" wire:loading.attr="disabled">
                             <i class="fa-solid fa-magnifying-glass me-1"></i>Lọc
                         </button>
-                        <button class="btn btn-secondary px-4 btn-filter" wire:click="resetFilters">
+                        <button class="btn btn-outline-secondary px-3" wire:click="resetFilters" wire:loading.attr="disabled" wire:target="resetFilters">
                             <i class="fa-solid fa-rotate-left me-1"></i>Xóa lọc
                         </button>
                         @if ($this->canBulkDelete)
-                            <button class="btn btn-danger px-4 btn-filter" wire:click="bulkDeleteSelected"
+                            <button class="btn btn-danger px-3" wire:click="bulkDeleteSelected"
                                 wire:confirm="Xác nhận xóa các hợp đồng đã chọn?"
                                 @if (empty($selectedDocIds)) disabled @endif>
                                 <i class="fa-solid fa-trash me-1"></i>Xóa đã chọn ({{ count($selectedDocIds) }})
@@ -360,31 +360,41 @@
                         @endif
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                             <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
-                                class="btn btn-success px-4 btn-filter">
+                                class="btn btn-success px-3">
                                 <span wire:loading wire:target="exportExcel"
                                     class="spinner-border spinner-border-sm me-1"></span>
                                 <i wire:loading.remove wire:target="exportExcel"
                                     class="fa-solid fa-file-excel me-1"></i>Xuất Excel
                             </button>
                         @endunless
-                        <button class="btn btn-primary px-4 btn-filter">
+                        <button type="button" class="btn btn-outline-primary px-3">
                             <i class="fa-solid fa-sitemap me-1"></i>Quy trình
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Table Card -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header py-3 border-bottom">
-            <h6 class="mb-0 fw-bold">Danh sách Hợp đồng chất thải</h6>
+    <section class="card border shadow-sm overflow-hidden" aria-labelledby="waste-contract-list-heading">
+        <div class="card-header bg-body px-3 px-lg-4 py-3 border-bottom d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-primary bg-opacity-10 text-primary p-2" aria-hidden="true"><i class="fa-solid fa-table-list"></i></span>
+                <div>
+                    <h2 id="waste-contract-list-heading" class="h6 fw-bold text-body mb-1">Danh sách hợp đồng</h2>
+                    <p class="small text-secondary-emphasis mb-0">Hợp đồng chất thải và tiếng ồn theo phạm vi được phân quyền</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-primary rounded-pill px-3 py-2">{{ number_format($docs->total(), 0, ',', '.') }} hợp đồng</span>
+                <div wire:loading.flex wire:target="search,filter,sortDirection,resetFilters" class="align-items-center gap-2 small text-primary" role="status"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span>Đang cập nhật...</span></div>
+            </div>
         </div>
-        <div class="table-responsive mh-350" >
-            <table class="table table-hover align-middle mb-0 table-xs">
-                <thead class="bg-light bg-opacity-50">
-                    <tr class=" text-muted fw-bold">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr class="text-nowrap">
                         @if ($this->canBulkDelete)
                             <th class="text-center w-42px" >Chọn</th>
                         @endif
@@ -405,7 +415,7 @@
                         <th class="text-center col-ct-actions pe-2">Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-group-divider">
                     @forelse($docs as $doc)
                         <tr class="border-bottom border-light" wire:key="waste-row-{{ $doc->id }}">
                             @if ($this->canBulkDelete)
@@ -490,10 +500,8 @@
                                         <span class="text-muted">—</span>
                                     @endif
                                     <div class="mt-2">
-                                        <div class="progress h-6px w-80px mx-auto" >
-                                            <div class="progress-bar bg-{{ $this->workflowProgressMeta($doc)['progressColor'] }}" style="width: {{ $this->workflowProgressMeta($doc)['progressPercent'] }}%"></div>
-                                        </div>
-                                        <span class="fw-semibold text-{{ $this->workflowProgressMeta($doc)['progressColor'] }} fs-72" >{{ $this->workflowProgressMeta($doc)['completedSteps'] }}/{{ $this->workflowProgressMeta($doc)['totalSteps'] }}</span>
+                                        <progress class="w-100" value="{{ $this->workflowProgressMeta($doc)['progressPercent'] }}" max="100" aria-label="Tiến độ {{ $this->workflowProgressMeta($doc)['progressPercent'] }} phần trăm"></progress>
+                                        <span class="small fw-semibold text-{{ $this->workflowProgressMeta($doc)['progressColor'] }}">{{ $this->workflowProgressMeta($doc)['completedSteps'] }}/{{ $this->workflowProgressMeta($doc)['totalSteps'] }} bước</span>
                                     </div>
                                 </td>
                                 <td class="text-center">
@@ -519,88 +527,47 @@
                             <td class="text-center">
                                 <div class="d-flex flex-column align-items-center">
                                     @if (!$this->canUpdateStatusForDoc($doc))
-                                        <span class="btn btn-sm rounded-pill px-3 py-1 fw-semibold border-0 status-badge-view"
-                                            style="--sbc:{{ $this->wasteStatusColorForDoc($doc)['bg'] }}; --stc:{{ $this->wasteStatusColorForDoc($doc)['text'] }};">
-                                            {{ $doc->status ?: '—' }}
-                                        </span>
+                                        <span class="btn btn-sm rounded-pill fw-bold text-nowrap {{ $this->wasteStatusBootstrapClassForDoc($doc) }}" aria-label="Tình trạng {{ $doc->status ?: 'chưa cập nhật' }}">{{ $doc->status ?: '—' }}</span>
                                     @else
-                                        <div class="position-relative" x-data="{ open: false }">
-                                            <button type="button" @click="open = !open"
-                                                class="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-1 fw-semibold border-0 status-badge-btn" style="--sbc:{{ $this->wasteStatusColorForDoc($doc)['bg'] }}; --stc:{{ $this->wasteStatusColorForDoc($doc)['text'] }};">
-                                                {{ $doc->status ?: '—' }}
-                                                <svg width="12" height="12" viewBox="0 0 12 12"
-                                                    fill="currentColor">
-                                                    <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor"
-                                                        stroke-width="1.5" fill="none" stroke-linecap="round" />
-                                                </svg>
-                                            </button>
-                                            <div x-show="open" @click.away="open = false" x-cloak
-                                                class="position-absolute bg-body rounded-3 shadow-lg py-1 mt-1 dropdown-menu-status"
-                                                >
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-sm dropdown-toggle rounded-pill fw-bold text-nowrap {{ $this->wasteStatusBootstrapClassForDoc($doc) }}" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">{{ $doc->status ?: '—' }}</button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow">
                                                 @foreach ($all_statuses as $opt)
-                                                    <button type="button"
-                                                        class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 {{ $doc->status === $opt ? 'fw-bold' : '' }} fs-85"
-
-                                                        wire:click="updateStatus({{ $doc->id }}, '{{ $opt }}')"
-                                                        @click="open = false">
-                                                        {{ $opt }}
-                                                        @if ($doc->status === $opt)
-                                                            <i class="fa-solid fa-check ms-2"></i>
-                                                        @endif
-                                                    </button>
+                                                <li><button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-3 {{ $doc->status === $opt ? 'active' : '' }}" wire:click="updateStatus({{ $doc->id }}, '{{ addslashes($opt) }}')"><span>{{ $opt }}</span>@if ($doc->status === $opt)<i class="fa-solid fa-check" aria-hidden="true"></i>@endif</button></li>
                                                 @endforeach
-                                            </div>
+                                            </ul>
                                         </div>
                                     @endif
-                                    <span
-                                        class=" text-muted mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
+                                    <span class="small text-secondary-emphasis mt-1">{{ $doc->submitted_at ? $doc->submitted_at->format('d/m/Y') : '-' }}</span>
                                 </div>
                             </td>
-                            <td class="text-center pe-4">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-sm p-0 text-primary"
-                                        wire:click="viewDetail({{ $doc->id }})">
-                                        <i class="fa-solid fa-eye fs-5"></i>
-                                    </button>
-                                    <button class="btn btn-sm p-0 text-danger"
-                                        wire:click="viewDetailDocs({{ $doc->id }})" title="Tải lên PDF hợp đồng">
-                                        <i class="fa-solid fa-file-pdf fs-5"></i>
-                                    </button>
+                            <td class="text-center pe-3 pe-lg-4">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" wire:click="viewDetail({{ $doc->id }})"><i class="fa-regular fa-eye me-1" aria-hidden="true"></i>Xem</button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false"><span class="visually-hidden">Mở thêm thao tác</span></button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    <li><button type="button" class="dropdown-item" wire:click="viewDetailDocs({{ $doc->id }})"><i class="fa-regular fa-file-pdf me-2 text-danger" aria-hidden="true"></i>Tài liệu hợp đồng</button></li>
                                     @if ($this->canAssign())
-                                        <button class="btn btn-sm p-0 text-success"
-                                            wire:click="openAssign({{ $doc->id }})" title="Giao việc">
-                                            <i class="fa-solid fa-user-check fs-5"></i>
-                                        </button>
+                                    <li><button type="button" class="dropdown-item" wire:click="openAssign({{ $doc->id }})"><i class="fa-solid fa-user-check me-2 text-success" aria-hidden="true"></i>Giao việc</button></li>
                                     @endif
                                     @if (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
-                                        <button class="btn btn-sm p-0 text-info"
-                                            wire:click="openWorkflow({{ $doc->id }})" title="Cập nhật tiến độ">
-                                            <i class="fa-solid fa-sitemap fs-5"></i>
-                                        </button>
+                                    <li><button type="button" class="dropdown-item" wire:click="openWorkflow({{ $doc->id }})"><i class="fa-solid fa-list-check me-2 text-info" aria-hidden="true"></i>Cập nhật tiến độ</button></li>
                                     @endif
                                     @can('contracts-waste.edit')
                                         @if ($this->canManageOwnedDoc($doc))
                                             @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
-                                                <button class="btn btn-sm p-0 text-secondary"
-                                                    wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
-                                                    <i class="fa-solid fa-copy fs-5"></i>
-                                                </button>
+                                    <li><button type="button" class="dropdown-item" wire:click="duplicate({{ $doc->id }})"><i class="fa-regular fa-copy me-2 text-secondary" aria-hidden="true"></i>Nhân bản</button></li>
                                             @endif
-                                            <button class="btn btn-sm p-0 text-warning"
-                                                wire:click="edit({{ $doc->id }})">
-                                                <i class="fa-solid fa-pen-square fs-5"></i>
-                                            </button>
+                                    <li><button type="button" class="dropdown-item" wire:click="edit({{ $doc->id }})"><i class="fa-regular fa-pen-to-square me-2 text-warning" aria-hidden="true"></i>Chỉnh sửa</button></li>
                                         @endif
                                     @endcan
                                     @can('contracts-waste.delete')
                                         @if ($this->canManageOwnedDoc($doc))
-                                            <button class="btn btn-sm p-0 text-danger"
-                                                wire:click="delete({{ $doc->id }})"
-                                                wire:confirm="Xác nhận xóa hợp đồng này?">
-                                                <i class="fa-solid fa-trash fs-5"></i>
-                                            </button>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><button type="button" class="dropdown-item text-danger" wire:click="delete({{ $doc->id }})" wire:confirm="Xác nhận xóa hợp đồng này?"><i class="fa-regular fa-trash-can me-2" aria-hidden="true"></i>Xóa hợp đồng</button></li>
                                         @endif
                                     @endcan
+                                    </ul>
                                 </div>
                             </td>
                         </tr>
@@ -618,7 +585,7 @@
                 {{ $docs->links('livewire.admin.contracts.pagination') }}
             </div>
         @endif
-    </div>
+    </section>
 
     <!-- Detail Modal -->
     <div wire:ignore.self class="modal fade" id="detailModal" tabindex="-1">

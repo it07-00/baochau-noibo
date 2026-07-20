@@ -534,12 +534,24 @@ class QuotationManager extends Component
     public function statusBadgeClass(?string $status): string
     {
         return match ($status) {
-            QuotationStatus::HEN_BAO_GIA->value => 'bg-info bg-opacity-10 text-info',
-            QuotationStatus::DANG_THEO_DOI->value => 'bg-success bg-opacity-10 text-success',
-            QuotationStatus::ROT_BAO_GIA->value => 'bg-dark bg-opacity-10 text-dark',
-            QuotationStatus::KY_HOP_DONG->value => 'bg-danger bg-opacity-10 text-danger',
-            QuotationStatus::BAO_GIA_TIEM_NANG->value => 'bg-warning bg-opacity-10 text-warning',
-            default => 'bg-secondary bg-opacity-10 text-secondary',
+            QuotationStatus::HEN_BAO_GIA->value => 'text-bg-info',
+            QuotationStatus::DANG_THEO_DOI->value => 'text-bg-success',
+            QuotationStatus::ROT_BAO_GIA->value => 'text-bg-dark',
+            QuotationStatus::KY_HOP_DONG->value => 'text-bg-danger',
+            QuotationStatus::BAO_GIA_TIEM_NANG->value => 'text-bg-warning',
+            default => 'text-bg-secondary',
+        };
+    }
+
+    public function statusButtonClass(?string $status): string
+    {
+        return match ($status) {
+            QuotationStatus::HEN_BAO_GIA->value => 'btn-info',
+            QuotationStatus::DANG_THEO_DOI->value => 'btn-success',
+            QuotationStatus::ROT_BAO_GIA->value => 'btn-dark',
+            QuotationStatus::KY_HOP_DONG->value => 'btn-danger',
+            QuotationStatus::BAO_GIA_TIEM_NANG->value => 'btn-warning',
+            default => 'btn-secondary',
         };
     }
 
