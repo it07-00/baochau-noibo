@@ -6,8 +6,8 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
         <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
-            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between">
-                <div>
+            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="min-w-0">
                     <h6 class="mb-0 fw-bold">Tổng quan vận hành theo tháng</h6>
                     <small class="text-muted">
                         {{ $canSeeFinance
@@ -15,7 +15,7 @@
                             : 'Biến động số lượng hợp đồng theo tháng trong năm ' . $year }}
                     </small>
                 </div>
-                <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center">Năm {{ $year }}</span>
+                <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center flex-shrink-0">Năm {{ $year }}</span>
             </div>
             <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                 <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
@@ -28,12 +28,12 @@
 
     <div class="col-lg-4">
         <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
-            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between">
-                <div>
+            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="min-w-0">
                     <h6 class="mb-0 fw-bold">Cơ cấu hợp đồng theo dịch vụ</h6>
                     <small class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</small>
                 </div>
-                <span class="badge bg-secondary bg-opacity-15 text-secondary border border-secondary-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center">Năm {{ $year }}</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center flex-shrink-0">Năm {{ $year }}</span>
             </div>
             <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
                 <div id="workloadChartConfig" class="d-none" data-by-type='@json($byType)'></div>
@@ -50,8 +50,8 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-6">
         <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
-            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between">
-                <div>
+            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="min-w-0">
                     <h6 class="mb-0 fw-bold">TỈ LỆ DOANH SỐ THEO NGUỒN THÔNG TIN</h6>
                     <small class="text-muted">Dựa trên doanh số ghi nhận của tất cả loại hợp đồng</small>
                 </div>
@@ -67,8 +67,8 @@
 
     <div class="col-lg-6">
         <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
-            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between">
-                <div>
+            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="min-w-0">
                     <h6 class="mb-0 fw-bold">Dịch vụ: báo giá vs ký hợp đồng</h6>
                     <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
                 </div>
@@ -86,8 +86,8 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-12">
         <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
-            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between">
-                <div>
+            <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="min-w-0">
                     <h6 class="mb-0 fw-bold">Khu vực: báo giá, ký hợp đồng, doanh số</h6>
                     <small class="text-muted">Tháng {{ $insightMonth }}/{{ $year }}</small>
                 </div>

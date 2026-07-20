@@ -288,7 +288,7 @@
                 <h6 class="mb-0 fw-bold text-dark">CAM KẾT DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
                 <div class="d-flex align-items-center gap-2">
                     <label class="form-label mb-0 fw-bold small text-secondary">THÁNG:</label>
-                    <select wire:model.live="viewMonth" class="form-select border-light-subtle rounded-8px shadow-sm" style="width:auto; font-size: 0.85rem; padding: 0.4rem 1.8rem 0.4rem 0.8rem;">
+                    <select wire:model.live="viewMonth" class="form-select border-light-subtle rounded-8px shadow-sm" style="min-width: 135px; font-size: 0.85rem; padding: 0.45rem 2.25rem 0.45rem 0.85rem;">
                         @for($mi = 1; $mi <= $maxMonth; $mi++)
                             <option value="{{ $mi }}">Tháng {{ str_pad($mi, 2, '0', STR_PAD_LEFT) }}</option>
                         @endfor
@@ -340,32 +340,32 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 table-xs">
                         <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
-                            <tr class="fw-bold text-secondary text-center text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">
-                                <th class="ps-3 text-start py-3">TÊN CÔNG TY</th>
-                                <th class="text-start py-3">DỊCH VỤ</th>
+                            <tr class="fw-bold text-secondary text-center" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                                <th class="ps-3 text-start py-3 text-nowrap" style="min-width: 200px;">TÊN CÔNG TY</th>
+                                <th class="text-start py-3 text-nowrap" style="min-width: 140px;">DỊCH VỤ</th>
                                 @if($filter_staff === '')
-                                    <th class="py-3">NHÂN VIÊN KD</th>
+                                    <th class="py-3 text-nowrap" style="min-width: 140px;">NHÂN VIÊN KD</th>
                                 @endif
-                                <th class="py-3">GIÁ TRỊ HỢP ĐỒNG</th>
-                                <th class="py-3">PTTT</th>
-                                <th class="py-3">CHẮC CHẮN (ĐÃ VỀ)</th>
-                                <th class="pe-3 py-3">TÌNH HÌNH</th>
+                                <th class="py-3 text-nowrap" style="min-width: 150px;">GIÁ TRỊ HỢP ĐỒNG</th>
+                                <th class="py-3 text-nowrap" style="min-width: 120px;">PTTT</th>
+                                <th class="py-3 text-nowrap" style="min-width: 160px;">CHẮC CHẮN (ĐÃ VỀ)</th>
+                                <th class="pe-3 py-3 text-nowrap" style="min-width: 240px;">TÌNH HÌNH</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($detail as $row)
-                                <tr class="text-center text-nowrap">
-                                    <td class="ps-3 fw-bold text-start text-dark py-3">{{ $row['customer'] }}</td>
-                                    <td class="text-start py-3">
+                                <tr class="text-center">
+                                    <td class="ps-3 fw-bold text-start text-dark py-3" style="min-width: 200px; white-space: normal;">{{ $row['customer'] }}</td>
+                                    <td class="text-start py-3 text-nowrap">
                                         <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                     </td>
                                     @if($filter_staff === '')
-                                        <td class="py-3 text-secondary">{{ $row['staff'] }}</td>
+                                        <td class="py-3 text-secondary text-nowrap">{{ $row['staff'] }}</td>
                                     @endif
-                                    <td class="text-success fw-bold py-3">
+                                    <td class="text-success fw-bold py-3 text-nowrap">
                                         {{ $row['contract_value'] > 0 ? number_format($row['contract_value'], 0, ',', '.') : '—' }}
                                     </td>
-                                    <td class="py-3">
+                                    <td class="py-3 text-nowrap">
                                         @if(!empty($row['payment_methods']))
                                             <div class="d-flex flex-wrap gap-1 justify-content-center">
                                                 @foreach($row['payment_methods'] as $method)
@@ -378,10 +378,10 @@
                                             <span class="text-muted">—</span>
                                         @endif
                                     </td>
-                                    <td class="text-success fw-bold py-3">
+                                    <td class="text-success fw-bold py-3 text-nowrap">
                                         {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') : '—' }}
                                     </td>
-                                    <td class="pe-3 small text-muted text-start py-3" style="max-width: 250px; white-space: normal; word-break: break-word;">{{ $row['notes'] ?: '—' }}</td>
+                                    <td class="pe-3 small text-muted text-start py-3" style="min-width: 240px; max-width: 320px; white-space: normal; word-break: break-word;">{{ $row['notes'] ?: '—' }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -416,32 +416,32 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 table-xs">
                         <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
-                            <tr class="fw-bold text-secondary text-center text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">
-                                <th class="ps-3 text-start py-3" style="width: 60px;">STT</th>
-                                <th class="text-start py-3">TÊN CÔNG TY</th>
-                                <th class="text-start py-3">DỊCH VỤ</th>
-                                <th class="py-3">NHÂN VIÊN KD</th>
-                                <th class="py-3">NGUỒN</th>
-                                <th class="text-end py-3">GIÁ TRỊ BÁO GIÁ CHƯA VAT (Đ)</th>
-                                <th class="py-3">NGÀY DỰ KIẾN KÝ</th>
-                                <th class="pe-3 py-3">TÌNH HÌNH / GHI CHÚ</th>
+                            <tr class="fw-bold text-secondary text-center" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                                <th class="ps-3 text-start py-3 text-nowrap" style="width: 60px;">STT</th>
+                                <th class="text-start py-3 text-nowrap" style="min-width: 200px;">TÊN CÔNG TY</th>
+                                <th class="text-start py-3 text-nowrap" style="min-width: 140px;">DỊCH VỤ</th>
+                                <th class="py-3 text-nowrap" style="min-width: 140px;">NHÂN VIÊN KD</th>
+                                <th class="py-3 text-nowrap" style="min-width: 120px;">NGUỒN</th>
+                                <th class="text-end py-3 text-nowrap" style="min-width: 180px;">GIÁ TRỊ BÁO GIÁ CHƯA VAT (Đ)</th>
+                                <th class="py-3 text-nowrap" style="min-width: 140px;">NGÀY DỰ KIẾN KÝ</th>
+                                <th class="pe-3 py-3 text-nowrap" style="min-width: 240px;">TÌNH HÌNH / GHI CHÚ</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($potentialDetail as $index => $row)
-                                <tr class="text-center text-nowrap">
-                                    <td class="ps-3 text-start text-muted py-3">{{ $index + 1 }}</td>
-                                    <td class="fw-bold text-dark text-start py-3">{{ $row['company'] }}</td>
-                                    <td class="text-start py-3">
+                                <tr class="text-center">
+                                    <td class="ps-3 text-start text-muted py-3 text-nowrap">{{ $index + 1 }}</td>
+                                    <td class="fw-bold text-dark text-start py-3" style="min-width: 200px; white-space: normal;">{{ $row['company'] }}</td>
+                                    <td class="text-start py-3 text-nowrap">
                                         <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                     </td>
-                                    <td class="py-3 text-secondary">{{ $row['staff'] }}</td>
-                                    <td class="py-3 text-secondary">{{ $row['source'] ?: '—' }}</td>
-                                    <td class="text-end text-warning fw-bold py-3">
+                                    <td class="py-3 text-secondary text-nowrap">{{ $row['staff'] }}</td>
+                                    <td class="py-3 text-secondary text-nowrap">{{ $row['source'] ?: '—' }}</td>
+                                    <td class="text-end text-warning fw-bold py-3 text-nowrap">
                                         {{ $row['value'] > 0 ? number_format($row['value'], 0, ',', '.') : '—' }} đ
                                     </td>
-                                    <td class="py-3 text-secondary">{{ $row['date'] }}</td>
-                                    <td class="pe-3 small text-muted text-start py-3" style="max-width: 250px; white-space: normal; word-break: break-word;">{{ $row['notes'] ?: '—' }}</td>
+                                    <td class="py-3 text-secondary text-nowrap">{{ $row['date'] }}</td>
+                                    <td class="pe-3 small text-muted text-start py-3" style="min-width: 240px; max-width: 320px; white-space: normal; word-break: break-word;">{{ $row['notes'] ?: '—' }}</td>
                                 </tr>
                             @empty
                                 <tr>

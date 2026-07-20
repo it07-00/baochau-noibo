@@ -143,6 +143,8 @@
 .h-220px { height: 220px !important; }
 
 /* Min widths */
+.min-w-0     { min-width:  0px  !important; }
+.min-h-0     { min-height: 0px  !important; }
 .min-w-40px  { min-width:  40px !important; }
 .mnw-40px    { min-width:  40px; }
 .mnw-45px    { min-width:  45px; }

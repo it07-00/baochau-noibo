@@ -162,29 +162,29 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
                             <tr>
-                                <th class="text-center w-60px fw-bold text-secondary py-3" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-left: 1.25rem;">STT</th>
-                                <th class="fw-bold text-secondary py-3" style="font-size: 0.8rem; letter-spacing: 0.05em;">TÊN KHÁCH HÀNG</th>
-                                <th class="fw-bold text-secondary py-3" style="font-size: 0.8rem; letter-spacing: 0.05em;">LOẠI HỢP ĐỒNG</th>
-                                <th class="text-end fw-bold text-secondary py-3" style="font-size: 0.8rem; letter-spacing: 0.05em;">DOANH SỐ (Đ)</th>
-                                <th class="text-center w-120px fw-bold text-secondary py-3" style="font-size: 0.8rem; letter-spacing: 0.05em;">PHÂN LOẠI</th>
-                                <th class="text-center w-140px fw-bold text-secondary py-3" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-right: 1.25rem;">NGÀY XUẤT HĐ</th>
+                                <th class="text-center w-60px fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-left: 1.25rem;">STT</th>
+                                <th class="fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">TÊN KHÁCH HÀNG</th>
+                                <th class="fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">LOẠI HỢP ĐỒNG</th>
+                                <th class="text-end fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">DOANH SỐ (Đ)</th>
+                                <th class="text-center w-120px fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">PHÂN LOẠI</th>
+                                <th class="text-center w-140px fw-bold text-secondary py-3 text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em; padding-right: 1.25rem;">NGÀY XUẤT HĐ</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($detail as $index => $row)
                                 <tr>
-                                    <td class="text-center text-muted py-3" style="padding-left: 1.25rem;">{{ $index + 1 }}</td>
+                                    <td class="text-center text-muted py-3 text-nowrap" style="padding-left: 1.25rem;">{{ $index + 1 }}</td>
                                     <td class="fw-bold text-dark py-3">{{ $row['customer'] }}</td>
                                     <td class="text-secondary py-3" style="font-size: 0.88rem;">{{ $row['type'] }}</td>
-                                    <td class="text-end fw-bold text-primary py-3">{{ number_format($row['value'], 0, ',', '.') }}</td>
-                                    <td class="text-center py-3">
+                                    <td class="text-end fw-bold text-primary py-3 text-nowrap">{{ number_format($row['value'], 0, ',', '.') }}</td>
+                                    <td class="text-center py-3 text-nowrap">
                                         @if($row['is_renewal'])
                                             <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle rounded-pill px-2.5 py-1.5 fw-semibold" style="font-size: 0.72rem;">Tái ký</span>
                                         @else
                                             <span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle rounded-pill px-2.5 py-1.5 fw-semibold" style="font-size: 0.72rem;">HĐ mới</span>
                                         @endif
                                     </td>
-                                    <td class="text-center text-muted py-3" style="padding-right: 1.25rem;">
+                                    <td class="text-center text-muted py-3 text-nowrap" style="padding-right: 1.25rem;">
                                         {{ $row['date'] ? \Carbon\Carbon::parse($row['date'])->format('d/m/Y') : '—' }}
                                     </td>
                                 </tr>
@@ -192,9 +192,9 @@
                         </tbody>
                         <tfoot class="fw-bold border-top border-light-subtle" style="background-color: rgba(37, 99, 235, 0.06) !important;">
                             <tr>
-                                <td colspan="3" class="text-end py-3" style="padding-left: 1.25rem; font-size: 0.9rem;">Tổng tháng {{ $filter_month }}</td>
-                                <td class="text-end text-primary py-3" style="font-size: 0.95rem;">{{ number_format($detail->sum('value'), 0, ',', '.') }} đ</td>
-                                <td colspan="2" class="text-center text-muted py-3" style="padding-right: 1.25rem; font-size: 0.85rem;">{{ $detail->count() }} hợp đồng</td>
+                                <td colspan="3" class="text-end py-3 text-nowrap" style="padding-left: 1.25rem; font-size: 0.9rem;">Tổng tháng {{ $filter_month }}</td>
+                                <td class="text-end text-primary py-3 text-nowrap" style="font-size: 0.95rem;">{{ number_format($detail->sum('value'), 0, ',', '.') }} đ</td>
+                                <td colspan="2" class="text-center text-muted py-3 text-nowrap" style="padding-right: 1.25rem; font-size: 0.85rem;">{{ $detail->count() }} hợp đồng</td>
                             </tr>
                         </tfoot>
                     </table>

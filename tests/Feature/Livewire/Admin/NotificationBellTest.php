@@ -68,4 +68,26 @@ class NotificationBellTest extends TestCase
             ->assertSeeHtml('fa-solid fa-triangle-exclamation ')
             ->assertDontSeeHtml('fa-triangle-exclamation-fill');
     }
+
+    public function test_contract_notification_uses_available_font_awesome_icon(): void
+    {
+        $user = User::factory()->create();
+        $user->notifications()->create([
+            'id' => (string) Str::uuid(),
+            'type' => 'Tests\\Fixtures\\ContractNotification',
+            'data' => [
+                'contract_type' => 'consulting',
+                'contract_label' => 'HĐ Pháp lý và hồ sơ MT',
+                'message' => 'Tiến độ hợp đồng vừa được cập nhật.',
+                'url' => '/hop-dong',
+                'icon' => 'bi-diagram-3-fill',
+                'color' => 'info',
+            ],
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(NotificationBell::class)
+            ->assertSeeHtml('fa-solid fa-diagram-project')
+            ->assertDontSeeHtml('bi-diagram-3-fill');
+    }
 }

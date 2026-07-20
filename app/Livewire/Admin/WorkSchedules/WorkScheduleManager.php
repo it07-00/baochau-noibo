@@ -368,7 +368,7 @@ class WorkScheduleManager extends Component
      * Fire a POST to Greeco's /api/notify so Greeco users receive a notification
      * in their own system when added to a Bảo Châu work schedule.
      *
-     * @param array<int, array{id: int, name: string}> $greecoParticipants
+     * @param  array<int, array{id: int, name: string}>  $greecoParticipants
      */
     private function notifyGreecoParticipants(WorkSchedule $event, array $greecoParticipants, string $action = 'added'): void
     {
@@ -377,7 +377,7 @@ class WorkScheduleManager extends Component
         }
 
         $baseUrl = config('services.greeco.base_url');
-        $token   = config('services.greeco.api_token');
+        $token = config('services.greeco.api_token');
 
         if (! $baseUrl || ! $token) {
             return;
@@ -387,12 +387,12 @@ class WorkScheduleManager extends Component
 
         try {
             Http::timeout(5)->post(rtrim($baseUrl, '/').'/api/notify', [
-                'token'        => $token,
-                'user_ids'     => $userIds,
-                'event_title'  => $event->title,
+                'token' => $token,
+                'user_ids' => $userIds,
+                'event_title' => $event->title,
                 'creator_name' => auth()->user()->name,
-                'action'       => $action,
-                'event_date'   => $event->start_date->format('Y-m-d'),
+                'action' => $action,
+                'event_date' => $event->start_date->format('Y-m-d'),
             ]);
         } catch (\Throwable $e) {
             Log::warning('WorkScheduleManager: không thể gửi thông báo sang Greeco.', [
@@ -497,44 +497,51 @@ class WorkScheduleManager extends Component
         }
 
         if ($this->showGreecoSchedules) {
+            $monthStart = Carbon::create($this->yearFilter, $this->monthFilter, 1);
+            $greecoStart = $monthStart->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
+            $greecoEnd = $monthStart->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY)->toDateString();
+
             $greecoRepo = app(GreecoWorkScheduleRepository::class);
-            $greecoItems = $greecoRepo->getEventsInRange($date, $date);
+            $greecoItems = $greecoRepo->getEventsInRange($greecoStart, $greecoEnd);
+
             foreach ($greecoItems as $item) {
-                $startTime = ! empty($item['start_time']) ? substr((string) $item['start_time'], 0, 5) : null;
-                $endTime = ! empty($item['end_time']) ? substr((string) $item['end_time'], 0, 5) : null;
-                if ($startTime && $endTime) {
-                    $timeLabel = $startTime.' - '.$endTime;
-                } elseif ($startTime) {
-                    $timeLabel = $startTime;
-                } else {
-                    $timeLabel = 'Cả ngày';
-                }
+                $itemStart = $item['start_date'] ?? null;
+                $itemEnd = $item['end_date'] ?? $itemStart;
+                if ($itemStart && $parsed->between(Carbon::parse($itemStart), Carbon::parse($itemEnd))) {
+                    $startTime = ! empty($item['start_time']) ? substr((string) $item['start_time'], 0, 5) : null;
+                    $endTime = ! empty($item['end_time']) ? substr((string) $item['end_time'], 0, 5) : null;
+                    if ($startTime && $endTime) {
+                        $timeLabel = $startTime.' - '.$endTime;
+                    } elseif ($startTime) {
+                        $timeLabel = $startTime;
+                    } else {
+                        $timeLabel = 'Cả ngày';
+                    }
 
-                $startDate = $date;
-                $endDate = $date;
-                $endsAt = Carbon::parse($date);
-                if ($endTime) {
-                    $endsAt = Carbon::parse($date.' '.$endTime);
-                } else {
-                    $endsAt = $endsAt->endOfDay();
-                }
+                    $endsAt = Carbon::parse($date);
+                    if ($endTime) {
+                        $endsAt = Carbon::parse($date.' '.$endTime);
+                    } else {
+                        $endsAt = $endsAt->endOfDay();
+                    }
 
-                $detailEvents[] = [
-                    'id' => 'greeco_'.($item['id'] ?? md5(json_encode($item))),
-                    'title' => 'Greeco: '.($item['title'] ?? 'Work schedule'),
-                    'description' => $item['description'] ?? '',
-                    'start_date' => Carbon::parse($startDate)->format('d/m/Y'),
-                    'end_date' => Carbon::parse($endDate)->format('d/m/Y'),
-                    'time_label' => $timeLabel,
-                    'color' => $item['color'] ?? 'primary',
-                    'user_name' => $item['creator_name'] ?? 'N/A',
-                    'department' => 'Greeco',
-                    'is_owner' => false,
-                    'is_past' => $endsAt->lt(now()),
-                    'is_multi_day' => false,
-                    'is_private' => false,
-                    'participants' => collect($item['participants'] ?? [])->pluck('name')->join(', '),
-                ];
+                    $detailEvents[] = [
+                        'id' => 'greeco_'.($item['id'] ?? md5(json_encode($item))),
+                        'title' => 'Greeco: '.($item['title'] ?? 'Work schedule'),
+                        'description' => $item['description'] ?? '',
+                        'start_date' => Carbon::parse($date)->format('d/m/Y'),
+                        'end_date' => Carbon::parse($date)->format('d/m/Y'),
+                        'time_label' => $timeLabel,
+                        'color' => $item['color'] ?? 'primary',
+                        'user_name' => $item['creator_name'] ?? 'N/A',
+                        'department' => 'Greeco',
+                        'is_owner' => false,
+                        'is_past' => $endsAt->lt(now()),
+                        'is_multi_day' => false,
+                        'is_private' => false,
+                        'participants' => collect($item['participants'] ?? [])->pluck('name')->join(', '),
+                    ];
+                }
             }
         }
 

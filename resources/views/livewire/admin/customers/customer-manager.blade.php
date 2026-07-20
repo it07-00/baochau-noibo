@@ -116,11 +116,17 @@
         </div>
     </div>
 
-    <div class="card border border-secondary-subtle bg-body shadow-sm rounded-12px mb-4">
-        <div class="card-body p-4">
-            <div class="row g-3 align-items-end">
-                <div class="col-12 col-lg-4">
-                    <label for="customer-search" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tìm kiếm</label>
+    @php
+        $hasAdvancedFilters = !empty($wardFilter) || !empty($staffFilter) || !empty($serviceQuotationFilter) || !empty($serviceContractFilter) || ($groupBy && $groupBy !== 'province');
+    @endphp
+
+    <div class="card border border-secondary-subtle bg-body shadow-sm rounded-12px mb-4"
+         x-data="{ showAdvanced: @json($hasAdvancedFilters) }">
+        <div class="card-body p-3 p-md-4">
+            {{-- Primary Filter Row --}}
+            <div class="row g-2.5 g-md-3 align-items-end">
+                <div class="col-12 col-md-5 col-lg-5">
+                    <label for="customer-search" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-body-tertiary border-end-0 text-body-secondary border-secondary-subtle">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -131,8 +137,9 @@
                                placeholder="Tên, MST, người đại diện, địa chỉ...">
                     </div>
                 </div>
-                <div class="col-6 col-md-4 col-lg-2">
-                    <label for="province-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Tỉnh / thành mới</label>
+
+                <div class="col-6 col-md-3 col-lg-3">
+                    <label for="province-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Tỉnh / thành</label>
                     <select id="province-filter" class="form-select border-secondary-subtle" wire:model.live="provinceFilter">
                         <option value="">Tất cả tỉnh/thành</option>
                         @foreach($filterProvinces as $province)
@@ -140,86 +147,105 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-6 col-md-4 col-lg-2">
-                    <label for="ward-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Phường / xã</label>
-                    <select id="ward-filter" class="form-select border-secondary-subtle" wire:model.live="wardFilter">
-                        <option value="">Tất cả phường/xã</option>
-                        @foreach($wards as $ward)
-                            <option value="{{ $ward }}">{{ $ward }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-6 col-md-4 col-lg-2">
-                    <label for="industrial-park-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Khu công nghiệp</label>
-                    <select id="industrial-park-filter" class="form-select border-secondary-subtle" wire:model.live="industrialParkFilter">
-                        <option value="">Tất cả KCN</option>
-                        @foreach($industrialParks as $industrialPark)
-                            <option value="{{ $industrialPark }}">{{ $industrialPark }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-6 col-md-5 col-lg-2">
-                    <label for="group-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Nhóm danh sách theo</label>
-                    <select id="group-filter" class="form-select border-secondary-subtle" wire:model.live="groupBy">
-                        <option value="province">Tỉnh / thành</option>
-                        <option value="ward">Phường / xã</option>
-                        <option value="industrial_park">Khu công nghiệp</option>
-                        <option value="none">Không nhóm</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <label for="staff-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Nhân viên phụ trách</label>
-                    <select id="staff-filter" class="form-select border-secondary-subtle" wire:model.live="staffFilter">
-                        <option value="">Tất cả nhân viên</option>
-                        @foreach($staffOptions as $staff)
-                            <option value="{{ $staff->id }}">{{ $staff->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <label class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Dịch vụ báo giá</label>
-                    <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
-                        <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle border-secondary-subtle" type="button" @click="open = !open">
-                            <span class="text-truncate me-2">
-                                @php
-                                    $selectedQuotationList = is_array($serviceQuotationFilter)
-                                        ? $serviceQuotationFilter
-                                        : (empty($serviceQuotationFilter) ? [] : [$serviceQuotationFilter]);
-                                @endphp
-                                @if(empty($selectedQuotationList))
-                                    Tất cả dịch vụ báo giá
-                                @elseif(count($selectedQuotationList) === 1)
-                                    {{ $selectedQuotationList[0] }}
-                                @else
-                                    {{ count($selectedQuotationList) }} dịch vụ được chọn
-                                @endif
-                            </span>
-                        </button>
-                        <div class="dropdown-menu w-100 p-2 shadow-sm border border-secondary-subtle" :class="{ 'show': open }" style="max-height: 250px; overflow-y: auto; margin-top: 2px; z-index: 1050;">
-                            @foreach($serviceQuotationOptions as $index => $service)
-                                <div class="form-check py-1">
-                                    <input class="form-check-input" type="checkbox" value="{{ $service }}" id="service-quote-{{ $index }}" wire:model.live="serviceQuotationFilter">
-                                    <label class="form-check-label text-body w-100 cursor-pointer" for="service-quote-{{ $index }}">
-                                        {{ $service }}
-                                    </label>
-                                </div>
+
+                <div class="col-6 col-md-4 col-lg-4">
+                    <label for="industrial-park-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Khu công nghiệp</label>
+                    <div class="d-flex gap-2">
+                        <select id="industrial-park-filter" class="form-select border-secondary-subtle flex-grow-1" wire:model.live="industrialParkFilter">
+                            <option value="">Tất cả KCN</option>
+                            @foreach($industrialParks as $industrialPark)
+                                <option value="{{ $industrialPark }}">{{ $industrialPark }}</option>
                             @endforeach
-                        </div>
+                        </select>
+                        <button type="button"
+                                class="btn btn-outline-secondary border-secondary-subtle d-inline-flex align-items-center gap-1 text-nowrap"
+                                :class="{ 'active bg-secondary bg-opacity-10 text-primary': showAdvanced }"
+                                @click="showAdvanced = !showAdvanced"
+                                title="Bộ lọc nâng cao">
+                            <i class="fa-solid fa-filter"></i>
+                            <span class="d-none d-sm-inline">Lọc</span>
+                            @if($hasAdvancedFilters)
+                                <span class="badge bg-primary rounded-circle p-1 ms-1"></span>
+                            @endif
+                        </button>
+                        <button type="button" class="btn btn-outline-primary border-secondary-subtle text-nowrap px-2.5"
+                                wire:click="resetFilters" title="Xóa bộ lọc">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <label for="service-contract-filter" class="form-label text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Dịch vụ hợp đồng</label>
-                    <select id="service-contract-filter" class="form-select border-secondary-subtle" wire:model.live="serviceContractFilter">
-                        <option value="">Tất cả dịch vụ hợp đồng</option>
-                        @foreach($serviceContractOptions as $service)
-                            <option value="{{ $service }}">{{ $service }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-12 col-lg-2 d-grid">
-                    <button type="button" class="btn btn-outline-primary fw-semibold btn-mobile-touch" wire:click="resetFilters">
-                        <i class="fa-solid fa-rotate-left me-1"></i>Xóa bộ lọc
-                    </button>
+            </div>
+
+            {{-- Collapsible Advanced Filters Section --}}
+            <div x-show="showAdvanced" x-collapse x-cloak class="pt-3 mt-3 border-top border-light-subtle">
+                <div class="row g-3">
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <label for="ward-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Phường / xã</label>
+                        <select id="ward-filter" class="form-select border-secondary-subtle" wire:model.live="wardFilter">
+                            <option value="">Tất cả phường/xã</option>
+                            @foreach($wards as $ward)
+                                <option value="{{ $ward }}">{{ $ward }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <label for="group-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Nhóm danh sách theo</label>
+                        <select id="group-filter" class="form-select border-secondary-subtle" wire:model.live="groupBy">
+                            <option value="province">Tỉnh / thành</option>
+                            <option value="ward">Phường / xã</option>
+                            <option value="industrial_park">Khu công nghiệp</option>
+                            <option value="none">Không nhóm</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <label for="staff-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Nhân viên phụ trách</label>
+                        <select id="staff-filter" class="form-select border-secondary-subtle" wire:model.live="staffFilter">
+                            <option value="">Tất cả nhân viên</option>
+                            @foreach($staffOptions as $staff)
+                                <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Dịch vụ báo giá</label>
+                        <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
+                            <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle border-secondary-subtle" type="button" @click="open = !open">
+                                <span class="text-truncate me-2">
+                                    @php
+                                        $selectedQuotationList = is_array($serviceQuotationFilter)
+                                            ? $serviceQuotationFilter
+                                            : (empty($serviceQuotationFilter) ? [] : [$serviceQuotationFilter]);
+                                    @endphp
+                                    @if(empty($selectedQuotationList))
+                                        Tất cả dịch vụ báo giá
+                                    @elseif(count($selectedQuotationList) === 1)
+                                        {{ $selectedQuotationList[0] }}
+                                    @else
+                                        {{ count($selectedQuotationList) }} dịch vụ được chọn
+                                    @endif
+                                </span>
+                            </button>
+                            <div class="dropdown-menu w-100 p-2 shadow-sm border border-secondary-subtle" :class="{ 'show': open }" style="max-height: 250px; overflow-y: auto; margin-top: 2px; z-index: 1050;">
+                                @foreach($serviceQuotationOptions as $index => $service)
+                                    <div class="form-check py-1">
+                                        <input class="form-check-input" type="checkbox" value="{{ $service }}" id="service-quote-{{ $index }}" wire:model.live="serviceQuotationFilter">
+                                        <label class="form-check-label text-body w-100 cursor-pointer" for="service-quote-{{ $index }}">
+                                            {{ $service }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label for="service-contract-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Dịch vụ hợp đồng</label>
+                        <select id="service-contract-filter" class="form-select border-secondary-subtle" wire:model.live="serviceContractFilter">
+                            <option value="">Tất cả dịch vụ hợp đồng</option>
+                            @foreach($serviceContractOptions as $service)
+                                <option value="{{ $service }}">{{ $service }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>

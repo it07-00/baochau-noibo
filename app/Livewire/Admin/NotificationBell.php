@@ -282,6 +282,25 @@ class NotificationBell extends Component
         return (array) ($notification->data ?? []);
     }
 
+    public function notificationIcon($notification): string
+    {
+        return match ($this->notificationData($notification)['icon'] ?? null) {
+            'bi-calendar-event-fill' => 'fa-solid fa-calendar-days',
+            'bi-check-circle-fill', 'bi-patch-check-fill' => 'fa-solid fa-circle-check',
+            'bi-life-preserver' => 'fa-solid fa-life-ring',
+            'bi-person-check-fill' => 'fa-solid fa-user-check',
+            'bi-megaphone-fill' => 'fa-solid fa-bullhorn',
+            'bi-clock-fill' => 'fa-solid fa-clock',
+            'bi-file-earmark-text-fill' => 'fa-solid fa-file-lines',
+            'bi-x-octagon-fill' => 'fa-solid fa-circle-xmark',
+            'bi-info-circle-fill' => 'fa-solid fa-circle-info',
+            'bi-cash-stack' => 'fa-solid fa-money-bill-wave',
+            'bi-diagram-3-fill' => 'fa-solid fa-diagram-project',
+            'bi-journal-text' => 'fa-solid fa-book-open',
+            default => 'fa-solid fa-bell',
+        };
+    }
+
     public function render()
     {
         $user = auth()->user();

@@ -33,7 +33,7 @@
                 :disabled="!canRequest"
                 @click.stop="requestPermission()"
             >
-                <i class="bi bi-bell-fill me-1"></i>
+                <i class="fa-solid fa-bell me-1"></i>
                 <span x-text="permissionLabel"></span>
             </button>
             <div x-show="permission === 'denied'" class="small text-danger mt-1">
@@ -76,7 +76,7 @@
                         <span class="notification-section-title fw-semibold text-uppercase text-start">{{ $section['label'] }}</span>
                         <div class="notification-section-meta d-flex align-items-center gap-2">
                             <span class="badge {{ $this->sectionUnreadCount($section) > 0 ? 'bg-danger' : 'bg-secondary' }} rounded-pill">{{ $section['items']->count() }}</span>
-                            <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                            <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                         </div>
                     </button>
 
@@ -89,7 +89,7 @@
                                      wire:click="openNotification('{{ $notif->id }}')"
                                  @endif>
                                 <div class="notification-icon bg-{{ $this->notificationData($notif)['color'] ?? 'primary' }}-subtle text-{{ $this->notificationData($notif)['color'] ?? 'primary' }} rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                                    <i class="bi {{ $this->notificationData($notif)['icon'] ?? 'bi-bell-fill' }} "></i>
+                                    <i class="{{ $this->notificationIcon($notif) }}"></i>
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="notification-item-top d-flex justify-content-between align-items-start gap-2 mb-1">

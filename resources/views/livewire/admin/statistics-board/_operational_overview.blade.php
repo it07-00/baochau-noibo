@@ -81,7 +81,7 @@
 
                 <!-- Columns: Lịch công tác & Báo cáo mới nhất -->
                 <div class="row g-4">
-                    <div class="col-md-6">
+                    <div class="col-xl-6 col-12">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <h6 class="fw-bold text-body mb-0">Lịch công tác sắp tới</h6>
                             <a href="{{ route('app.work-schedules.index') }}" class="text-decoration-none small fw-bold text-primary">Xem tất cả</a>
@@ -107,7 +107,7 @@
                             @endforelse
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-xl-6 col-12">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <h6 class="fw-bold text-body mb-0">Báo cáo mới nhất</h6>
                             @can('daily-reports.view')
@@ -186,9 +186,9 @@
         <!-- Phân bổ vai trò -->
         <div class="card border border-light-subtle shadow-sm flex-grow-1 bg-secondary bg-opacity-05">
             <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                     <h6 class="fw-bold text-body mb-0">Phân bổ vai trò</h6>
-                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 d-inline-flex align-items-center" style="font-size: 11px;">{{ $totalActiveUsersCount }} users</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 d-inline-flex align-items-center flex-shrink-0" style="font-size: 11px;">{{ $totalActiveUsersCount }} users</span>
                 </div>
                 <div class="d-flex flex-column gap-3">
                     @foreach($dashboardRoleDistribution as $r)
