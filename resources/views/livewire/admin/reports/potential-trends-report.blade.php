@@ -264,7 +264,7 @@
                 <div class="card-body">
                     <div id="potentialStaffConfig" class="d-none" data-chart='@json($report['staff_performance'])'></div>
                     @if(count($report['staff_performance']) > 0)
-                        <div class="report-chart report-chart-ranking"><canvas id="potentialStaffChart" wire:ignore></canvas></div>
+                        <div class="ratio ratio-21x9"><canvas id="potentialStaffChart" wire:ignore></canvas></div>
                     @else
                         <div class="report-empty-state">Chưa có dữ liệu hiệu suất.</div>
                     @endif
@@ -281,7 +281,11 @@
                 </div>
                 <div class="card-body">
                     <div id="potentialRecommendationsConfig" class="d-none" data-chart='@json($report['recommendations'])'></div>
-                    <div class="report-chart report-chart-ranking"><canvas id="potentialRecommendationsChart" wire:ignore></canvas></div>
+                    @if(count($report['recommendations']) > 0)
+                        <div class="ratio ratio-21x9"><canvas id="potentialRecommendationsChart" wire:ignore></canvas></div>
+                    @else
+                        <div class="report-empty-state">Chưa có đề xuất phù hợp với dữ liệu hiện tại.</div>
+                    @endif
                 </div>
             </div>
         </div>
