@@ -14,28 +14,47 @@ class AttendanceEmployeeManager extends Component
     use WithFileUploads, WithPagination;
 
     public string $search = '';
+
     public string $filterDepartment = '';
+
     public bool $showInactive = false;
 
     public ?int $editingId = null;
+
     public string $editName = '';
+
     public string $editDepartment = '';
+
     public int $editDeviceUid = 0;
 
     public bool $showModal = false;
+
     public bool $isCreating = false;
 
     public bool $confirmingBlock = false;
+
     public ?int $blockingId = null;
 
     public $syncFile;
+
     public bool $showSyncModal = false;
 
     protected $queryString = ['search', 'filterDepartment', 'showInactive'];
 
-    public function updatingSearch(): void { $this->resetPage(); }
-    public function updatingFilterDepartment(): void { $this->resetPage(); }
-    public function updatingShowInactive(): void { $this->resetPage(); }
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterDepartment(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingShowInactive(): void
+    {
+        $this->resetPage();
+    }
 
     public function openCreate(): void
     {
@@ -58,7 +77,7 @@ class AttendanceEmployeeManager extends Component
     public function save(): void
     {
         $rules = [
-            'editName'       => 'required|string|max:255',
+            'editName' => 'required|string|max:255',
             'editDepartment' => 'nullable|string|max:255',
         ];
 
@@ -67,9 +86,9 @@ class AttendanceEmployeeManager extends Component
         }
 
         $this->validate($rules, [
-            'editName.required'      => 'Tên nhân viên không được để trống.',
+            'editName.required' => 'Tên nhân viên không được để trống.',
             'editDeviceUid.required' => 'Mã máy chấm công không được để trống.',
-            'editDeviceUid.unique'   => 'Mã máy chấm công đã tồn tại.',
+            'editDeviceUid.unique' => 'Mã máy chấm công đã tồn tại.',
         ]);
 
         $department = $this->editDepartment ?: null;
@@ -77,15 +96,15 @@ class AttendanceEmployeeManager extends Component
         if ($this->isCreating) {
             AttendanceEmployee::create([
                 'device_uid' => $this->editDeviceUid,
-                'name'       => $this->editName,
+                'name' => $this->editName,
                 'department' => $department,
-                'is_active'  => true,
+                'is_active' => true,
                 'is_blocked' => false,
             ]);
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thêm nhân viên thành công.']);
         } else {
             AttendanceEmployee::findOrFail($this->editingId)->update([
-                'name'       => $this->editName,
+                'name' => $this->editName,
                 'department' => $department,
             ]);
             $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã cập nhật thành công.']);
@@ -111,7 +130,7 @@ class AttendanceEmployeeManager extends Component
         if ($this->blockingId) {
             $emp = AttendanceEmployee::findOrFail($this->blockingId);
             $emp->update([
-                'is_active'  => false,
+                'is_active' => false,
                 'is_blocked' => true,
             ]);
             AttendanceLog::where('employee_id', $emp->id)->delete();
@@ -143,7 +162,7 @@ class AttendanceEmployeeManager extends Component
 
         $rawEmployees = $this->parseUserDat(file_get_contents($this->syncFile->getRealPath()));
 
-        $blockedUids    = AttendanceEmployee::where('is_blocked', true)->pluck('device_uid')->toArray();
+        $blockedUids = AttendanceEmployee::where('is_blocked', true)->pluck('device_uid')->toArray();
         $activeFileUids = array_diff(array_keys($rawEmployees), $blockedUids);
 
         AttendanceEmployee::where('is_blocked', false)
@@ -152,7 +171,9 @@ class AttendanceEmployeeManager extends Component
 
         $upserted = 0;
         foreach ($rawEmployees as $uid => $name) {
-            if (in_array($uid, $blockedUids)) continue;
+            if (in_array($uid, $blockedUids)) {
+                continue;
+            }
             $existing = AttendanceEmployee::where('device_uid', $uid)->first();
             AttendanceEmployee::updateOrCreate(
                 ['device_uid' => $uid],
@@ -172,10 +193,10 @@ class AttendanceEmployeeManager extends Component
         $offset = 0;
 
         while ($offset + $recordSize <= strlen($binary)) {
-            $record  = substr($binary, $offset, $recordSize);
-            $uid     = unpack('v', substr($record, 0, 2))[1];
+            $record = substr($binary, $offset, $recordSize);
+            $uid = unpack('v', substr($record, 0, 2))[1];
             $nameRaw = substr($record, 11, 24);
-            $name    = rtrim(explode("\x00", $nameRaw)[0]);
+            $name = rtrim(explode("\x00", $nameRaw)[0]);
 
             if ($uid > 0 && $name !== '') {
                 $employees[$uid] = $name;
@@ -191,14 +212,14 @@ class AttendanceEmployeeManager extends Component
     {
         $query = AttendanceEmployee::query()->orderBy('device_uid');
 
-        if (!$this->showInactive) {
+        if (! $this->showInactive) {
             $query->where('is_active', true)->where('is_blocked', false);
         }
 
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('name', 'like', "%{$this->search}%")
-                  ->orWhere('device_uid', 'like', "%{$this->search}%");
+                    ->orWhere('device_uid', 'like', "%{$this->search}%");
             });
         }
 
@@ -213,8 +234,11 @@ class AttendanceEmployeeManager extends Component
             ->pluck('name');
 
         return view('livewire.admin.attendance.attendance-employee-manager', [
-            'employees'   => $employees,
+            'employees' => $employees,
             'departments' => $departments,
+            'totalEmployees' => AttendanceEmployee::count(),
+            'activeEmployees' => AttendanceEmployee::where('is_active', true)->where('is_blocked', false)->count(),
+            'blockedEmployees' => AttendanceEmployee::where('is_blocked', true)->count(),
         ])->layout('admin.layouts.app');
     }
 }

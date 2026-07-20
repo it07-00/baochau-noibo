@@ -2,43 +2,46 @@
     @section('title', 'Quản lý nhân viên chấm công')
     @section('page_title', 'Nhân viên chấm công')
 
-    <div class="row g-3 mt-1">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="card-header bg-transparent border-bottom p-3 p-md-4 d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary flex-shrink-0 wh-44">
-                            <i class="fa-solid fa-users-gear fs-5"></i>
-                        </span>
-                        <div>
-                            <h4 class="mb-1 fw-bold">Nhân viên chấm công</h4>
-                            <p class="text-muted small mb-0">Quản lý mã máy, phòng ban và trạng thái đồng bộ</p>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <a href="{{ route('app.attendance.index') }}" class="btn btn-outline-secondary min-h-42px d-inline-flex align-items-center gap-2">
-                            <i class="fa-solid fa-arrow-left"></i>Bảng chấm công
-                        </a>
-                        <button class="btn btn-outline-primary min-h-42px" wire:click="openSyncModal">
-                            <i class="fa-solid fa-arrows-rotate me-1"></i>Đồng bộ
-                        </button>
-                        <button class="btn btn-primary min-h-42px" wire:click="openCreate">
-                            <i class="fa-solid fa-user-plus me-1"></i>Thêm nhân viên
-                        </button>
-                    </div>
-                </div>
+    <header class="mb-4">
+        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+            <div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2"><i class="fa-solid fa-fingerprint me-1"></i>Máy chấm công</span>
+                <h4 class="fw-bold text-body mb-1">Nhân viên chấm công</h4>
+                <p class="text-secondary mb-0">Đối chiếu mã máy, phòng ban và trạng thái đồng bộ nhân viên.</p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ route('app.attendance.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"><i class="fa-solid fa-arrow-left"></i>Bảng chấm công</a>
+                <button type="button" class="btn btn-outline-primary d-inline-flex align-items-center gap-2" wire:click="openSyncModal"><i class="fa-solid fa-rotate"></i>Đồng bộ file</button>
+                <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" wire:click="openCreate"><i class="fa-solid fa-user-plus"></i>Thêm nhân viên</button>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-4 mt-4 flex-wrap">
+            <div><div class="h4 fw-bold text-body mb-0">{{ number_format($totalEmployees) }}</div><div class="small text-secondary">Tổng nhân viên</div></div>
+            <div class="vr"></div>
+            <div><div class="h4 fw-bold text-success mb-0">{{ number_format($activeEmployees) }}</div><div class="small text-secondary">Đang hoạt động</div></div>
+            <div class="vr"></div>
+            <div><div class="h4 fw-bold text-danger mb-0">{{ number_format($blockedEmployees) }}</div><div class="small text-secondary">Đã chặn</div></div>
+        </div>
+    </header>
 
-                <div class="card-body border-bottom p-3 p-md-4">
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card border shadow-none overflow-hidden">
+                <div class="card-header bg-body border-bottom p-3">
+                    <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
+                        <div><h6 class="fw-bold text-body mb-1">Danh sách nhân viên</h6><p class="text-secondary small mb-0">{{ number_format($employees->total()) }} kết quả phù hợp</p></div>
+                        <span wire:loading wire:target="search,filterDepartment,showInactive" class="text-primary small fw-semibold" role="status"><span class="spinner-border spinner-border-sm me-1"></span>Đang lọc</span>
+                    </div>
                     <div class="row g-3 align-items-end">
                         {{-- Search --}}
-                        <div class="col-lg-6">
+                        <div class="col-12 col-lg-6">
                             <label for="attendance-employee-search" class="form-label small fw-semibold">Tìm kiếm</label>
                             <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0 pe-1">
-                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            <span class="input-group-text bg-body-tertiary border-end-0">
+                                <i class="fa-solid fa-magnifying-glass text-secondary"></i>
                             </span>
                             <input id="attendance-employee-search" wire:model.live.debounce.300ms="search" type="search"
-                                   class="form-control border-start-0 ps-1"
+                                   class="form-control bg-body-tertiary border-start-0 ps-0"
                                    placeholder="Tên hoặc mã máy chấm công">
                             </div>
                         </div>
@@ -56,7 +59,7 @@
 
                         {{-- Toggle đã nghỉ --}}
                         <div class="col-md-6 col-lg-3">
-                        <div class="border rounded-3 min-h-42px px-3 d-flex align-items-center gap-2">
+                        <div class="border rounded-3 px-3 py-2 d-flex align-items-center gap-2 bg-body-tertiary">
                             <div class="form-check form-switch mb-0">
                                 <input class="form-check-input" type="checkbox" role="switch"
                                        wire:model.live="showInactive" id="toggleInactive">
@@ -69,45 +72,34 @@
 
                 {{-- Table --}}
                 <div class="card-body p-0">
-                    <div class="px-3 px-md-4 py-3 d-flex align-items-center justify-content-between gap-2 border-bottom">
-                        <div>
-                            <h6 class="fw-bold mb-0">Danh sách nhân viên</h6>
-                            <small class="text-muted">{{ number_format($employees->total()) }} kết quả phù hợp</small>
-                        </div>
-                        <span wire:loading wire:target="search,filterDepartment,showInactive" class="text-primary small" role="status">
-                            <span class="spinner-border spinner-border-sm me-1"></span>Đang lọc
-                        </span>
-                    </div>
                     <div class="table-responsive">
-                        <table class="table align-middle table-hover mb-0 fs-92" >
-                            <thead>
-                                <tr class="bg-light border-bottom border-2">
-                                    <th class="px-4 py-3 text-muted fw-semibold w-80px fs-80 letter-003" >MÃ MÁY</th>
-                                    <th class="py-3 text-muted fw-semibold fs-80 letter-003" >HỌ VÀ TÊN</th>
-                                    <th class="py-3 text-muted fw-semibold d-none d-sm-table-cell w-180px fs-80 letter-003" >PHÒNG BAN</th>
-                                    <th class="py-3 text-muted fw-semibold text-center d-none d-md-table-cell w-120px fs-80 letter-003" >NGÀY TẠO</th>
-                                    <th class="pe-4 py-3 text-end w-110px" ></th>
+                        <table class="table align-middle table-hover mb-0 text-nowrap">
+                            <thead class="table-light text-secondary small">
+                                <tr>
+                                    <th class="ps-3 py-3">Mã máy</th>
+                                    <th class="py-3">Nhân viên</th>
+                                    <th class="py-3">Phòng ban</th>
+                                    <th class="py-3">Ngày tạo</th>
+                                    <th class="pe-3 py-3 text-end">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($employees as $emp)
                                     <tr wire:key="emp-{{ $emp->id }}"
-                                        class="{{ !$emp->is_active ? 'opacity-50' : '' }} border-bottom-light"
+                                        class="{{ !$emp->is_active ? 'opacity-75' : '' }}"
                                         >
-                                        <td class="px-4 py-3">
-                                            <span class="fw-semibold text-muted" style="font-family:monospace; font-size:0.95rem; letter-spacing:.05em;">
-                                                {{ $emp->device_uid }}
-                                            </span>
+                                        <td class="ps-3 py-3">
+                                            <code class="bg-body-tertiary text-body border rounded px-2 py-1">#{{ $emp->device_uid }}</code>
                                         </td>
                                         <td class="py-3">
                                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                <span class="fw-semibold">{{ $emp->name }}</span>
+                                                <span class="fw-semibold text-body">{{ $emp->name }}</span>
                                                 @if($emp->is_blocked)
-                                                    <span class="badge rounded-pill text-bg-warning fs-68 fw-semibold" >
-                                                        <i class="fa-solid fa-ban me-1 fs-60" ></i>Bị chặn
+                                                    <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle">
+                                                        <i class="fa-solid fa-ban me-1"></i>Bị chặn
                                                     </span>
                                                 @elseif(!$emp->is_active)
-                                                    <span class="badge rounded-pill text-bg-secondary fs-68 fw-semibold" >Đã nghỉ</span>
+                                                    <span class="badge rounded-pill bg-secondary-subtle text-secondary border">Đã nghỉ</span>
                                                 @endif
                                             </div>
                                             @if($emp->department)
@@ -116,45 +108,45 @@
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="py-3 d-none d-sm-table-cell">
+                                        <td class="py-3">
                                             @if($emp->department)
-                                                <span class="badge bg-label-primary px-2 py-1 fs-78" >{{ $emp->department }}</span>
+                                                <span class="text-body">{{ $emp->department }}</span>
                                             @else
                                                 <span class="text-muted">—</span>
                                             @endif
                                         </td>
-                                        <td class="py-3 text-center text-muted d-none d-md-table-cell fs-85" >
+                                        <td class="py-3 text-secondary">
                                             {{ $emp->created_at?->format('d/m/Y') }}
                                         </td>
-                                        <td class="pe-4 py-3 text-end">
-                                            <div class="d-flex justify-content-end gap-1">
+                                        <td class="pe-3 py-3 text-end">
+                                            <div class="d-flex justify-content-end gap-2">
                                                 @if($emp->is_blocked)
-                                                    <button class="btn btn-sm btn-icon btn-light text-warning rounded-circle"
+                                                    <button class="btn btn-sm btn-outline-warning"
                                                             wire:click="unblock({{ $emp->id }})"
                                                             title="Bỏ chặn" aria-label="Bỏ chặn {{ $emp->name }}">
-                                                        <i class="fa-solid fa-unlock fs-85" ></i>
+                                                        <i class="fa-solid fa-unlock me-1"></i>Bỏ chặn
                                                     </button>
                                                 @elseif(!$emp->is_active)
-                                                    <button class="btn btn-sm btn-icon btn-light text-success rounded-circle"
+                                                    <button class="btn btn-sm btn-outline-success"
                                                             wire:click="reactivate({{ $emp->id }})"
                                                             title="Kích hoạt lại" aria-label="Kích hoạt lại {{ $emp->name }}">
-                                                        <i class="fa-solid fa-arrows-rotate fs-85" ></i>
+                                                        <i class="fa-solid fa-arrows-rotate me-1"></i>Kích hoạt
                                                     </button>
-                                                    <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
+                                                    <button class="btn btn-sm btn-outline-danger"
                                                             wire:click="confirmBlock({{ $emp->id }})"
                                                             title="Chặn" aria-label="Chặn {{ $emp->name }}">
-                                                        <i class="fa-solid fa-ban fs-85" ></i>
+                                                        <i class="fa-solid fa-ban"></i><span class="visually-hidden">Chặn</span>
                                                     </button>
                                                 @else
-                                                    <button class="btn btn-sm btn-icon btn-light text-primary rounded-circle"
+                                                    <button class="btn btn-sm btn-outline-primary"
                                                             wire:click="openEdit({{ $emp->id }})"
                                                             title="Sửa" aria-label="Sửa {{ $emp->name }}">
-                                                        <i class="fa-solid fa-pen fs-85" ></i>
+                                                        <i class="fa-solid fa-pen me-1"></i>Sửa
                                                     </button>
-                                                    <button class="btn btn-sm btn-icon btn-light text-danger rounded-circle"
+                                                    <button class="btn btn-sm btn-outline-danger"
                                                             wire:click="confirmBlock({{ $emp->id }})"
                                                             title="Chặn" aria-label="Chặn {{ $emp->name }}">
-                                                        <i class="fa-solid fa-ban fs-85" ></i>
+                                                        <i class="fa-solid fa-ban"></i><span class="visually-hidden">Chặn</span>
                                                     </button>
                                                 @endif
                                             </div>
@@ -175,7 +167,7 @@
                 </div>
 
                 @if($employees->hasPages())
-                    <div class="pure-card-footer border-top px-4 py-3">
+                    <div class="card-footer bg-body border-top px-3 py-3">
                         {{ $employees->links() }}
                     </div>
                 @endif
