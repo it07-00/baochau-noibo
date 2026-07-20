@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" dir="ltr">
+<html lang="vi" dir="ltr" data-bs-theme="light" data-color-theme="blue">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/libs/fontawesome/css/all.min.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" href="{{ asset('assets/libs/node-waves/waves.css') }}?v={{ config('app.version') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ config('app.version') }}">
 </head>
 <body>
@@ -93,7 +92,7 @@
                                 <input type="password" class="form-control border-start-0 border-end-0 ps-3 text-dark @error('password') is-invalid @enderror"
                                        id="loginPassword" name="password" placeholder="Nhập mật khẩu"
                                        autocomplete="current-password" required>
-                                <button type="button" class="btn btn-outline-primary border-start-0 waves-effect" id="toggleLoginPassword"
+                                <button type="button" class="btn btn-light border border-start-0 text-primary" id="toggleLoginPassword"
                                         aria-label="Hiện mật khẩu" aria-pressed="false">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
@@ -107,7 +106,7 @@
                             <label class="form-check-label text-dark opacity-75" for="loginRemember">Ghi nhớ đăng nhập trên thiết bị này</label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary waves-effect waves-light w-100 py-3 fw-semibold">
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold">
                             Đăng nhập <i class="fa-solid fa-arrow-right ms-2"></i>
                         </button>
                     </form>
@@ -120,7 +119,6 @@
         </div>
     </main>
 
-    <script src="{{ asset('assets/libs/global/global.min.js') }}?v={{ config('app.version') }}"></script>
     <script>
         document.getElementById('toggleLoginPassword')?.addEventListener('click', function () {
             const input = document.getElementById('loginPassword');
