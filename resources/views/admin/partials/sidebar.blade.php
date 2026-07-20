@@ -235,30 +235,44 @@
 
                         @foreach ($sectionMenus as $menu)
                             @can($menu['permission'])
+                                @php
+                                    $isActiveGroup = \App\Support\SidebarMenu::activeGroup(auth()->user()) === $menu['title'];
+                                @endphp
                                 @if (isset($menu['href']))
                                     <li class="menu-item">
-                                        <a href="{{ $menu['href'] }}" class="menu-link">
+                                        <a href="{{ $menu['href'] }}"
+                                            class="menu-link d-flex align-items-center gap-2 rounded-3 {{ $isActiveGroup ? 'active bg-primary text-white shadow-sm fw-semibold' : '' }}">
                                             {!! \App\Support\SidebarMenu::icon($menu['icon']) !!}
                                             <span class="menu-label">{{ $menu['title'] }}</span>
                                         </a>
                                     </li>
                                 @else
-                                    <li class="menu-item menu-arrow">
-                                        <a href="javascript:void(0)" class="menu-link" role="button">
+                                    <li class="menu-item menu-arrow {{ $isActiveGroup ? 'open' : '' }}">
+                                        <a href="javascript:void(0)"
+                                            class="menu-link d-flex align-items-center gap-2 rounded-3 fw-semibold {{ $isActiveGroup ? 'open bg-primary text-white shadow-sm' : '' }}"
+                                            role="button" aria-expanded="{{ $isActiveGroup ? 'true' : 'false' }}">
                                             {!! \App\Support\SidebarMenu::icon($menu['icon']) !!}
                                             <span class="menu-label">{{ $menu['title'] }}</span>
                                         </a>
 
-                                        <ul class="menu-inner">
+                                        <ul class="menu-inner ps-2 ms-3 mt-2">
                                             @foreach ($menu['children'] as $child)
                                                 @continue($child === 'Bảng theo dõi báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles(), \App\Enums\Role::GIAM_DOC->value]))
                                                 @continue($child === 'Tạo báo giá' && !auth()->user()->hasAnyRole([...\App\Enums\Role::salesRoles()]))
                                                 @continue($child === 'Đăng ký mục tiêu doanh số' && !auth()->user()->hasAnyRole(\App\Enums\Role::salesRoles()))
 
+                                                @php
+                                                    $isActiveChild = \App\Support\SidebarMenu::activeChild(auth()->user()) === $child;
+                                                @endphp
+
                                                 <li class="menu-item">
-                                                    <a href="{{ \App\Support\SidebarMenu::childHref($menu['title'], $child) }}" class="menu-link">
-                                                        {!! \App\Support\SidebarMenu::childIcon($menu['title'], $section, $child) !!}
-                                                        <span class="menu-label">{{ \App\Support\SidebarMenu::childLabel($menu['title'], $child) }}</span>
+                                                    <a href="{{ \App\Support\SidebarMenu::childHref($menu['title'], $child) }}"
+                                                        class="menu-link d-flex align-items-center gap-2 rounded-3 px-2 py-2 mb-1 {{ $isActiveChild ? 'active bg-primary-subtle text-primary fw-semibold' : 'text-body' }}"
+                                                        @if ($isActiveChild) aria-current="page" @endif>
+                                                        <span class="d-inline-flex align-items-center justify-content-center flex-shrink-0 rounded-2 bg-body-tertiary text-secondary p-2">
+                                                            {!! \App\Support\SidebarMenu::childIcon($menu['title'], $section, $child) !!}
+                                                        </span>
+                                                        <span class="menu-label flex-grow-1 text-wrap lh-sm">{{ \App\Support\SidebarMenu::childLabel($menu['title'], $child) }}</span>
                                                     </a>
                                                 </li>
                                             @endforeach

@@ -403,9 +403,9 @@
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                             <th class="text-center col-ct-finance">Tài chính</th>
                         @endunless
-                        <th class="text-center">Tình trạng tái ký</th>
+                        <th class="text-center text-wrap small px-2">Tình trạng<br>tái ký</th>
                         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                        <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
+                        <th class="text-center text-wrap small px-2">Tình trạng<br>chứng từ</th>
                         @endunless
                         @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
                             <th class="text-center col-ct-assigned">Được giao</th>
@@ -476,13 +476,13 @@
                                     </div>
                                 </td>
                             @endunless
-                            <td class="text-center">
+                            <td class="text-center px-2">
                                 <span
-                                    class="badge {{ $this->renewalBadgeClassForDoc($doc) }}">{{ $doc->renewal_status ?: 'Chưa chọn' }}</span>
+                                    class="badge small text-wrap lh-sm px-2 py-1 {{ $this->renewalBadgeClassForDoc($doc) }}">{{ $doc->renewal_status ?: 'Chưa chọn' }}</span>
                             </td>
                             @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                            <td class="text-center voucher-status-cell">
-                                <span class="badge voucher-status-badge {{ $this->voucherBadgeInfoForDoc($doc)['class'] }}"
+                            <td class="text-center px-2">
+                                <span class="badge small text-wrap lh-sm px-2 py-1 {{ $this->voucherBadgeInfoForDoc($doc)['class'] }}"
                                     title="{{ $this->voucherBadgeInfoForDoc($doc)['full_value'] }}">
                                     {{ $this->voucherBadgeInfoForDoc($doc)['label'] }}
                                 </span>

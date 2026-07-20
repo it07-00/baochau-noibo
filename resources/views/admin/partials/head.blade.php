@@ -12,6 +12,34 @@
             document.documentElement.setAttribute('data-bs-theme', resolvedTheme);
             document.documentElement.setAttribute('data-app-sidebar', 'full');
             document.documentElement.setAttribute('data-color-theme', 'blue');
+
+            const desktopDensity = window.matchMedia('(min-width: 992px)');
+            const resetDensity = () => {
+                document.documentElement.style.zoom = '100%';
+                document.documentElement.style.removeProperty('width');
+                document.documentElement.style.minHeight = '100%';
+                document.body?.style.removeProperty('min-height');
+                document.querySelector('.page-layout')?.style.removeProperty('min-height');
+                document.querySelector('.app-menubar')?.style.removeProperty('height');
+            };
+            const applyDensity = () => {
+                if (!desktopDensity.matches) {
+                    resetDensity();
+                    return;
+                }
+
+                document.documentElement.style.zoom = '80%';
+                document.documentElement.style.removeProperty('width');
+                document.documentElement.style.minHeight = '125vh';
+                document.body?.style.setProperty('min-height', '125vh');
+                document.querySelector('.page-layout')?.style.setProperty('min-height', '125vh');
+                document.querySelector('.app-menubar')?.style.setProperty('height', '125vh');
+            };
+
+            document.addEventListener('DOMContentLoaded', applyDensity);
+            desktopDensity.addEventListener('change', applyDensity);
+            window.addEventListener('beforeprint', resetDensity);
+            window.addEventListener('afterprint', applyDensity);
         })();
     </script>
     <meta charset="UTF-8">

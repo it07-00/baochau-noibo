@@ -253,7 +253,7 @@
                         @endunless
                         <th class="text-center col-ct-status">Tình trạng</th>
                         @unless ($this->isRestrictedRole)
-                        <th class="text-center voucher-status-cell">Tình trạng chứng từ</th>
+                        <th class="text-center text-wrap small px-2">Tình trạng<br>chứng từ</th>
                         @endunless
                         <th class="text-center col-ct-actions pe-2">Thao tác</th>
                     </tr>
@@ -437,8 +437,8 @@
                                 </div>
                             </td>
                             @unless ($this->isRestrictedRole)
-                            <td class="text-center voucher-status-cell">
-                                <span class="badge voucher-status-badge {{ $doc->voucher_badge_info['class'] }}"
+                            <td class="text-center px-2">
+                                <span class="badge small text-wrap lh-sm px-2 py-1 {{ $doc->voucher_badge_info['class'] }}"
                                     title="{{ $doc->voucher_badge_info['full_value'] }}">
                                     {{ $doc->voucher_badge_info['label'] }}
                                 </span>
