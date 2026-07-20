@@ -10,6 +10,82 @@
 <script>
     // ── Bootstrap Modal Singleton & Backdrop Cleanup for Livewire ──
     (function() {
+        const pendingModalActions = new Set();
+
+        function makeModalInstant(modal) {
+            if (!modal || !modal.classList) return;
+            modal.classList.remove('fade');
+            modal.dataset.instantModal = 'true';
+        }
+
+        function prepareModals(root = document) {
+            if (root.matches?.('.modal')) makeModalInstant(root);
+            root.querySelectorAll?.('.modal').forEach(makeModalInstant);
+        }
+
+        function wireClickAction(element) {
+            if (!element) return '';
+            const attribute = Array.from(element.attributes).find(item => item.name.startsWith('wire:click'));
+            return attribute?.value?.trim() ?? '';
+        }
+
+        function hideServerModalImmediately(trigger) {
+            const action = wireClickAction(trigger);
+            const closesModal = /(^|\W)(close|cancel|hide|dismiss)|\$set\([^,]+,\s*false/i.test(action);
+            if (!closesModal) return;
+
+            const modal = trigger.closest('.modal, .fixed-overlay-9999, .fixed-overlay-10000, .overlay-bg');
+            if (!modal) return;
+
+            if (modal.classList.contains('modal') && window.bootstrap?.Modal) {
+                const instance = window.bootstrap.Modal.getInstance(modal);
+                if (instance) {
+                    makeModalInstant(modal);
+                    instance.hide();
+                    return;
+                }
+            }
+
+            modal.classList.remove('show', 'd-block');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            cleanupModalBackdrops();
+        }
+
+        function showPendingFeedback(trigger) {
+            const action = wireClickAction(trigger);
+            const opensModal = /^(open|show|create|edit|view|confirm)/i.test(action)
+                || /\$set\([^,]+,\s*true/i.test(action);
+            if (!opensModal || trigger.disabled) return;
+
+            const timer = window.setTimeout(() => {
+                if (!document.contains(trigger)) return;
+                trigger.setAttribute('aria-busy', 'true');
+                trigger.disabled = true;
+
+                if (!trigger.querySelector('.instant-modal-spinner')) {
+                    const spinner = document.createElement('span');
+                    spinner.className = 'instant-modal-spinner spinner-border spinner-border-sm me-1';
+                    spinner.setAttribute('aria-hidden', 'true');
+                    trigger.prepend(spinner);
+                }
+            }, 120);
+
+            pendingModalActions.add({ trigger, timer });
+        }
+
+        function clearPendingFeedback() {
+            pendingModalActions.forEach(item => {
+                window.clearTimeout(item.timer);
+                if (document.contains(item.trigger)) {
+                    item.trigger.removeAttribute('aria-busy');
+                    item.trigger.disabled = false;
+                    item.trigger.querySelector('.instant-modal-spinner')?.remove();
+                }
+            });
+            pendingModalActions.clear();
+        }
+
         if (window.bootstrap && window.bootstrap.Modal) {
             const OriginalModal = window.bootstrap.Modal;
             const ModalWrapper = function(element, config) {
@@ -34,20 +110,44 @@
 
         document.addEventListener('hidden.bs.modal', cleanupModalBackdrops);
         document.addEventListener('hide.bs.modal', cleanupModalBackdrops);
+        document.addEventListener('show.bs.modal', event => makeModalInstant(event.target), true);
+
+        document.addEventListener('click', event => {
+            const trigger = event.target.closest('[wire\\:click], [wire\\:click\\.stop], [wire\\:click\\.prevent]');
+            if (!trigger) return;
+            hideServerModalImmediately(trigger);
+            showPendingFeedback(trigger);
+        }, true);
 
         document.addEventListener('DOMContentLoaded', () => {
+            prepareModals();
+
+            if (!window.__instantModalObserver) {
+                window.__instantModalObserver = new MutationObserver(mutations => {
+                    mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === Node.ELEMENT_NODE) prepareModals(node);
+                    }));
+                });
+                window.__instantModalObserver.observe(document.body, { childList: true, subtree: true });
+            }
+
             if (typeof Livewire !== 'undefined') {
                 Livewire.hook('request', ({ fail, respond }) => {
                     respond(() => {
-                        setTimeout(cleanupModalBackdrops, 300);
+                        clearPendingFeedback();
+                        prepareModals();
+                        cleanupModalBackdrops();
                     });
+                    fail(clearPendingFeedback);
                 });
                 document.addEventListener('livewire:navigating', () => {
+                    clearPendingFeedback();
                     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
                     document.body.classList.remove('modal-open');
                     document.body.style.overflow = '';
                     document.body.style.paddingRight = '';
                 });
+                document.addEventListener('livewire:navigated', () => prepareModals());
             }
         });
     })();

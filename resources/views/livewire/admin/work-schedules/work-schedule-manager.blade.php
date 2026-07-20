@@ -45,7 +45,7 @@
                 <button class="btn btn-primary btn-sm px-3 rounded-3 fw-semibold pe-none">
                     Tháng
                 </button>
-                <button wire:click="openCreateModal"
+                <button wire:click="openCreateModal" @click="showForm = true"
                     class="btn btn-outline-primary btn-sm px-3 rounded-3 fw-semibold d-inline-flex align-items-center gap-2">
                     <i class="fa-solid fa-plus"></i> Thêm sự kiện
                 </button>
@@ -57,7 +57,7 @@
     <div class="ws-mobile-agenda d-md-none">
         @forelse($mobileEventDays as $currentDate)
             <section class="ws-agenda-day bg-body shadow-sm">
-                <button type="button" class="ws-agenda-day-header"
+                <button type="button" class="ws-agenda-day-header" @click="showDetail = true"
                     wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                     <span class="ws-agenda-date {{ $currentDate->isToday() ? 'is-today' : '' }}">
                         <span class="ws-agenda-date-number">{{ $currentDate->format('d') }}</span>
@@ -71,7 +71,7 @@
 
                 <div class="ws-agenda-events">
                     @foreach($this->eventsForDate($calendarData, $currentDate) as $evt)
-                        <button type="button" class="ws-agenda-event ws-chip-{{ $evt->color }}"
+                        <button type="button" class="ws-agenda-event ws-chip-{{ $evt->color }}" @click="showDetail = true"
                             wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                             <span class="ws-agenda-event-title">{{ $evt->title }}</span>
                             <span class="ws-agenda-event-people">{{ $evt->time_range_label }}</span>
@@ -81,7 +81,7 @@
                 </div>
 
                 @if(!$currentDate->lt(today()))
-                    <button type="button" class="ws-agenda-add btn btn-sm btn-outline-primary"
+                    <button type="button" class="ws-agenda-add btn btn-sm btn-outline-primary" @click="showForm = true"
                         wire:click="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')">
                         <i class="fa-solid fa-plus me-1"></i> Thêm vào ngày này
                     </button>
@@ -91,7 +91,7 @@
             <div class="ws-agenda-empty bg-body shadow-sm">
                 <i class="fa-solid fa-calendar-week"></i>
                 <div class="fw-semibold">Chưa có sự kiện trong tháng này</div>
-                <button wire:click="openCreateModal" class="btn btn-primary btn-sm mt-2">
+                <button wire:click="openCreateModal" @click="showForm = true" class="btn btn-primary btn-sm mt-2">
                     <i class="fa-solid fa-plus me-1"></i> Thêm sự kiện
                 </button>
             </div>
@@ -129,7 +129,7 @@
                         @endif
 
                         @if($this->canAddInCalendarDate($currentDate))
-                            <button wire:click.stop="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')"
+                            <button wire:click.stop="openCreateModal('{{ $this->calendarDayKey($currentDate) }}')" @click.stop="showForm = true"
                                 class="ws-add-btn btn btn-sm p-0 d-flex align-items-center justify-content-center"
                                 title="Thêm sự kiện">
                                 <i class="fa-solid fa-plus"></i>
@@ -139,10 +139,10 @@
                 </div>
 
                 <div class="calendar-day-content flex-grow-1" @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0) style="cursor: pointer;"
-                wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')" @endif>
+                wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')" @click="showDetail = true" @endif>
                     @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
                         @foreach($eventsForDay as $evt)
-                            <div class="ws-event-chip ws-chip-{{ $evt->color }}"
+                            <div class="ws-event-chip ws-chip-{{ $evt->color }}" @click.stop="showDetail = true"
                                 wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                                 <div class="d-flex flex-column mb-1">
                                     <span class="ws-event-author text-truncate fw-semibold">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 15, '...') }}</span>
@@ -176,11 +176,14 @@
     </div>
 
     {{-- Day Detail Modal --}}
-    <div x-show="showDetail" x-cloak class="fixed-overlay-9999"
-        @keydown.escape.window="showDetail && $wire.closeDayDetail()">
-        <div class="modal-overlay-dark" wire:click="closeDayDetail"></div>
+    <div x-show="showDetail" x-cloak x-transition.opacity.duration.150ms class="fixed-overlay-9999"
+        @keydown.escape.window="if (showDetail) { showDetail = false; $wire.closeDayDetail() }">
+        <div class="modal-overlay-dark" @click="showDetail = false; $wire.closeDayDetail()"></div>
         <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 92%; max-width: 660px; max-height: 85vh; overflow-y: auto; background: var(--ws-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);"
             @click.stop>
+            <div wire:loading.flex wire:target="openDayDetail" class="position-absolute top-0 start-0 w-100 h-100 bg-body align-items-center justify-content-center z-3">
+                <div class="text-center text-primary"><span class="spinner-border mb-2" aria-hidden="true"></span><div class="small fw-semibold">Đang tải lịch</div></div>
+            </div>
             <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-body-tertiary">
                 <div class="d-flex align-items-center gap-3">
                     <div class="wh-40 rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fs-5 flex-shrink-0">
@@ -199,7 +202,7 @@
                             {{ count($detailEvents) }} sự kiện
                         </span>
                     @endif
-                    <button wire:click="closeDayDetail" class="btn-close ms-2"></button>
+                    <button type="button" @click="showDetail = false; $wire.closeDayDetail()" class="btn-close ms-2" aria-label="Đóng"></button>
                 </div>
             </div>
             <div class="p-4">
@@ -277,7 +280,7 @@
 
                 @if($this->canAddForDetailDate($detailDate))
                     <div class="text-center mt-4 pt-3 border-top border-light-subtle">
-                        <button wire:click="openCreateModal('{{ $detailDate }}')"
+                        <button wire:click="openCreateModal('{{ $detailDate }}')" @click="showForm = true"
                             class="btn btn-primary px-4 py-2 rounded-3 fw-bold shadow-sm d-inline-flex align-items-center gap-2">
                             <i class="fa-solid fa-plus me-1"></i> Thêm sự kiện vào ngày này
                         </button>
@@ -288,11 +291,14 @@
     </div>
 
     {{-- Create/Edit Form Modal --}}
-    <div x-show="showForm" x-cloak class="fixed-overlay-10000"
-        @keydown.escape.window="showForm && $wire.closeFormModal()">
-        <div class="modal-overlay-dark" wire:click="closeFormModal"></div>
+    <div x-show="showForm" x-cloak x-transition.opacity.duration.150ms class="fixed-overlay-10000"
+        @keydown.escape.window="if (showForm) { showForm = false; $wire.closeFormModal() }">
+        <div class="modal-overlay-dark" @click="showForm = false; $wire.closeFormModal()"></div>
         <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 92%; max-width: 580px; max-height: 90vh; overflow-y: auto; background: var(--ws-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.18);"
             @click.stop>
+            <div wire:loading.flex wire:target="openCreateModal" class="position-absolute top-0 start-0 w-100 h-100 bg-body align-items-center justify-content-center z-3">
+                <div class="text-center text-primary"><span class="spinner-border mb-2" aria-hidden="true"></span><div class="small fw-semibold">Đang chuẩn bị biểu mẫu</div></div>
+            </div>
             <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-body-tertiary">
                 <div class="d-flex align-items-center gap-3">
                     <div class="wh-40 rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fs-5 flex-shrink-0">
@@ -303,7 +309,7 @@
                         <div class="text-muted small">Nhập thông tin chi tiết lịch công tác</div>
                     </div>
                 </div>
-                <button wire:click="closeFormModal" class="btn-close"></button>
+                <button type="button" @click="showForm = false; $wire.closeFormModal()" class="btn-close" aria-label="Đóng"></button>
             </div>
             <form wire:submit.prevent="save" class="p-4">
                 <div class="mb-3">
@@ -407,7 +413,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 pt-2 border-top border-light-subtle">
-                    <button type="button" wire:click="closeFormModal"
+                    <button type="button" @click="showForm = false; $wire.closeFormModal()"
                         class="btn btn-light border border-light-subtle px-4 py-2 rounded-3 fw-semibold">Hủy</button>
                     <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-bold shadow-sm d-inline-flex align-items-center gap-2">
                         <i class="fa-solid fa-{{ $editingId ? 'check' : 'plus' }}"></i>
