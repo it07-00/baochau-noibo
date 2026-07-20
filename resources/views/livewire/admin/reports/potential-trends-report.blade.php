@@ -16,7 +16,7 @@
         </button>
     </div>
 
-    <div class="card border-0 shadow-sm mb-4 report-filter-card rounded-12px overflow-hidden">
+    <div class="card border border-light-subtle shadow-sm mb-4 report-filter-card rounded-3 overflow-hidden bg-body">
         <div class="card-body">
             <div class="row g-3 align-items-end">
                 <div class="col-xl-2 col-md-4">
@@ -176,11 +176,11 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-8">
-            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
-                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-chart-line text-primary fs-5"></i>
-                        <h6 class="mb-0 fw-bold text-dark">Xu hướng báo giá và doanh số</h6>
+                        <h6 class="mb-0 fw-bold text-body">Xu hướng báo giá và doanh số</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -194,11 +194,11 @@
             </div>
         </div>
         <div class="col-xl-4">
-            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
-                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-chart-pie text-indigo fs-5"></i>
-                        <h6 class="mb-0 fw-bold text-dark">Cơ cấu trạng thái báo giá</h6>
+                        <h6 class="mb-0 fw-bold text-body">Cơ cấu trạng thái báo giá</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -215,11 +215,11 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-6">
-            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
-                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-cube text-primary fs-5"></i>
-                        <h6 class="mb-0 fw-bold text-dark">Dịch vụ tiềm năng</h6>
+                        <h6 class="mb-0 fw-bold text-body">Dịch vụ tiềm năng</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -233,11 +233,11 @@
             </div>
         </div>
         <div class="col-xl-6">
-            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
-                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-location-dot text-success fs-5"></i>
-                        <h6 class="mb-0 fw-bold text-dark">Khu vực tiềm năng</h6>
+                        <h6 class="mb-0 fw-bold text-body">Khu vực tiềm năng</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -254,11 +254,11 @@
 
     <div class="row g-4 mb-4">
         <div class="col-xl-7">
-            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
-                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-user-gear text-primary fs-5"></i>
-                        <h6 class="mb-0 fw-bold text-dark">Hiệu suất nhân sự</h6>
+                        <h6 class="mb-0 fw-bold text-body">Hiệu suất nhân sự</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -272,11 +272,11 @@
             </div>
         </div>
         <div class="col-xl-5">
-            <div class="card border-0 shadow-sm h-100 rounded-12px overflow-hidden">
-                <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-lightbulb text-warning fs-5"></i>
-                        <h6 class="mb-0 fw-bold text-dark">Định hướng đề xuất</h6>
+                        <h6 class="mb-0 fw-bold text-body">Định hướng đề xuất</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -291,11 +291,11 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
-        <div class="card-header bg-transparent py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left text-secondary fs-5"></i>
-                <h6 class="mb-0 fw-bold text-dark">Báo giá gần nhất</h6>
+                <h6 class="mb-0 fw-bold text-body">Báo giá gần nhất</h6>
             </div>
             <span class="badge bg-body-secondary text-secondary border border-light-subtle rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">Cập nhật {{ \Carbon\Carbon::parse($report['generated_at'])->format('H:i d/m/Y') }}</span>
         </div>

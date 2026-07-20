@@ -15,7 +15,7 @@
     @if($summary)
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
@@ -57,12 +57,12 @@
     @endif
 
     {{-- Bộ lọc --}}
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 bg-body">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 ">Năm</label>
-                    <select wire:model.live="year" class="form-select form-select-sm">
+                    <select wire:model.live="year" class="form-select form-select-sm border-light-subtle">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold mb-1 ">Loại dịch vụ</label>
-                    <select wire:model.live="filter_service" class="form-select form-select-sm">
+                    <select wire:model.live="filter_service" class="form-select form-select-sm border-light-subtle">
                         <option value="">Tất cả</option>
                         @foreach($serviceTypes as $type)
                             <option value="{{ $type }}">{{ $type }}</option>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 ">Trạng thái</label>
-                    <select wire:model.live="filter_status" class="form-select form-select-sm">
+                    <select wire:model.live="filter_status" class="form-select form-select-sm border-light-subtle">
                         <option value="">Tất cả</option>
                         <option value="ĐANG THỰC HIỆN">Đang thực hiện</option>
                         <option value="HOÀN THÀNH">Hoàn thành</option>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold mb-1 ">Nhân viên / Tư vấn</label>
-                    <select wire:model.live="filter_staff" class="form-select form-select-sm">
+                    <select wire:model.live="filter_staff" class="form-select form-select-sm border-light-subtle">
                         <option value="">Tất cả</option>
                         @foreach($staffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
@@ -100,11 +100,11 @@
     </div>
 
     {{-- Danh sách HĐ --}}
-    <div class="card border-0 shadow-sm">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                    <thead class="bg-body-tertiary border-bottom border-light-subtle">
                         <tr>
                             <th class="text-center w-45px" >STT</th>
                             <th>Số HĐ</th>
@@ -142,7 +142,7 @@
                 </table>
             </div>
             @if($items->hasPages())
-            <div class="px-4 py-3 border-top">
+            <div class="px-4 py-3 border-top border-light-subtle bg-body">
                 {{ $items->links() }}
             </div>
             @endif

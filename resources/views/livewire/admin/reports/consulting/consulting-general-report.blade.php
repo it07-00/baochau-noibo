@@ -12,12 +12,12 @@
     </div>
 
     {{-- Bộ lọc --}}
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 bg-body">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 ">Năm</label>
-                    <select wire:model.live="year" class="form-select form-select-sm">
+                    <select wire:model.live="year" class="form-select form-select-sm border-light-subtle">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold mb-1 ">Loại dịch vụ</label>
-                    <select wire:model.live="filter_service" class="form-select form-select-sm">
+                    <select wire:model.live="filter_service" class="form-select form-select-sm border-light-subtle">
                         <option value="">Tất cả</option>
                         @foreach($serviceTypes as $type)
                             <option value="{{ $type }}">{{ $type }}</option>
@@ -40,7 +40,7 @@
     <div class="row g-3 mb-4">
         @foreach($byService as $svc)
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 bg-body">
                 <div class="card-body">
                     <div class=" text-muted mb-1">{{ $svc->loai_dich_vu ?: 'Chưa phân loại' }}</div>
                     <div class="d-flex justify-content-between align-items-center mt-2">
@@ -60,8 +60,8 @@
     </div>
 
     {{-- Bảng theo tháng --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-header border-bottom py-3">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3">
             <h6 class="mb-0 fw-bold">
                 Theo dõi theo tháng — Năm {{ $year }}
                 @if($filter_service) <span class="text-muted  fw-normal">/ {{ $filter_service }}</span> @endif
@@ -70,7 +70,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                    <thead class="bg-body-tertiary border-bottom border-light-subtle">
                         <tr>
                             <th>Tháng</th>
                             <th class="text-center">Số HĐ</th>

@@ -22,7 +22,7 @@
 
     <div class="row g-3 mb-4" aria-label="Tổng quan yêu cầu hoa hồng">
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary flex-shrink-0">
                         <i class="fa-solid fa-layer-group"></i>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-secondary bg-opacity-10 text-secondary flex-shrink-0">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-warning bg-opacity-10 text-warning flex-shrink-0">
                         <i class="fa-solid fa-clock"></i>
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 text-success flex-shrink-0">
                         <i class="fa-solid fa-circle-check"></i>
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 text-danger flex-shrink-0">
                         <i class="fa-solid fa-money-bill-transfer"></i>
@@ -87,7 +87,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-center gap-3 p-3">
                     <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 bg-info bg-opacity-10 text-info flex-shrink-0">
                         <i class="fa-solid fa-filter-circle-dollar"></i>
@@ -101,8 +101,8 @@
         </div>
     </div>
 
-    <div class="card mb-4 border-0 shadow-sm rounded-12px overflow-hidden">
-        <div class="card-header bg-body border-bottom p-3 p-lg-4 d-flex align-items-center justify-content-between gap-3">
+    <div class="card mb-4 border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-3 p-lg-4 d-flex align-items-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-2">
                 <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
                     <i class="fa-solid fa-filter"></i>
@@ -121,7 +121,7 @@
             <div class="row g-3">
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                     <label class="form-label small fw-semibold text-body mb-1">Loại hợp đồng</label>
-                    <select wire:model.live="contractTypeFilter" class="form-select">
+                    <select wire:model.live="contractTypeFilter" class="form-select border-light-subtle">
                         <option value="">Tất cả loại hợp đồng</option>
                         @foreach($contractTypes as $class => $label)
                             <option value="{{ $class }}">{{ $label }}</option>
@@ -130,7 +130,7 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-4 col-xl-2">
                     <label class="form-label small fw-semibold text-body mb-1">Tình trạng</label>
-                    <select wire:model.live="statusFilter" class="form-select">
+                    <select wire:model.live="statusFilter" class="form-select border-light-subtle">
                         <option value="">Tất cả tình trạng</option>
                         <option value="Dự chi">Dự chi</option>
                         <option value="Đã duyệt">Đã duyệt (Chờ chi)</option>
@@ -140,12 +140,12 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-4 col-xl-2">
                     <label class="form-label small fw-semibold text-body mb-1">Tháng yêu cầu</label>
-                    <input type="month" wire:model.live="requestMonthFilter" class="form-control">
+                    <input type="month" wire:model.live="requestMonthFilter" class="form-control border-light-subtle">
                 </div>
                 @if($canFilterByRequester)
                     <div class="col-12 col-md-6 col-lg-4 col-xl-2">
                         <label class="form-label small fw-semibold text-body mb-1">Người yêu cầu</label>
-                        <select wire:model.live="requesterFilter" class="form-select">
+                        <select wire:model.live="requesterFilter" class="form-select border-light-subtle">
                             <option value="">Tất cả người yêu cầu</option>
                             @foreach($requesters as $requester)
                                 <option value="{{ $requester->id }}">{{ $requester->name }}</option>
@@ -156,10 +156,10 @@
                 <div class="col-12 @if($canFilterByRequester) col-lg-8 col-xl-3 @else col-lg-8 col-xl-5 @endif">
                     <label class="form-label small fw-semibold text-body mb-1">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-body-tertiary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <span class="input-group-text bg-body-tertiary border-light-subtle"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input type="search"
                                wire:model.live.debounce.300ms="search"
-                               class="form-control"
+                               class="form-control border-light-subtle"
                                placeholder="Tìm theo số HĐ BC, khách hàng, người nhận...">
                     </div>
                 </div>
@@ -167,8 +167,8 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
-        <div class="card-header bg-body border-bottom p-3 p-lg-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-3 p-lg-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
                     <i class="fa-solid fa-list-check"></i>

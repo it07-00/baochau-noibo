@@ -74,21 +74,21 @@
 
     <!-- Filters & Search -->
     <div class="px-3 mb-3">
-        <div class="card border-0 shadow-sm rounded-12px">
+        <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
             <div class="card-body py-3">
                 <div class="row g-2 align-items-center">
                     <div class="col-md-4">
                         <div class="input-group input-group-sm">
-                            <span class="input-group-text border-light-subtle"><i
+                            <span class="input-group-text border-light-subtle bg-body-tertiary"><i
                                     class="fa-solid fa-magnifying-glass"></i></span>
                             <input type="text" wire:model.live.debounce.400ms="search"
-                                class="form-control border-light-subtle rounded-end-2"
+                                class="form-control border-light-subtle rounded-end-2 bg-body-tertiary"
                                 placeholder="Tìm theo tên, mã NV, email, SĐT...">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <select wire:model.live="departmentFilter"
-                            class="form-select form-select-sm border-light-subtle rounded-8px">
+                            class="form-select form-select-sm border-light-subtle rounded-3 bg-body-tertiary">
                             <option value="">Tất cả phòng ban</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}">{{ $dept->name }}</option>
@@ -97,7 +97,7 @@
                     </div>
                     <div class="col-md-2">
                         <select wire:model.live="statusFilter"
-                            class="form-select form-select-sm border-light-subtle rounded-8px">
+                            class="form-select form-select-sm border-light-subtle rounded-3 bg-body-tertiary">
                             <option value="">Tất cả trạng thái</option>
                             @foreach(\App\Models\User::EMPLOYMENT_STATUSES as $val => $label)
                                 <option value="{{ $val }}">{{ $label }}</option>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="col-md-2">
                         <select wire:model.live="workTypeFilter"
-                            class="form-select form-select-sm border-light-subtle rounded-8px">
+                            class="form-select form-select-sm border-light-subtle rounded-3 bg-body-tertiary">
                             <option value="">Tất cả loại</option>
                             @foreach(\App\Models\User::WORK_TYPES as $val => $label)
                                 <option value="{{ $val }}">{{ $label }}</option>
@@ -120,10 +120,10 @@
 
     <!-- Employee Table -->
     <div class="px-3">
-        <div class="card border-0 shadow-sm hr-table rounded-12px overflow-hidden">
+        <div class="card border border-light-subtle shadow-sm hr-table rounded-3 overflow-hidden bg-body">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead>
+                    <thead class="bg-body-tertiary border-bottom border-light-subtle">
                         <tr>
                             <th class="ps-3 w-50px">#</th>
                             <th>Nhân viên</th>

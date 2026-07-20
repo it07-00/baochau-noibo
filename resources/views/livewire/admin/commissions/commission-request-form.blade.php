@@ -20,8 +20,8 @@
             <div class="d-flex flex-column gap-4">
                 
                 <!-- Card 1: Recipient and Payment Details -->
-                <section class="card border-0 shadow-sm rounded-12px overflow-hidden">
-                    <div class="card-header bg-body border-bottom p-3 d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+                <section class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+                    <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-3 d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
                         <h3 class="h6 card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2 small">01</span>
                             Thông tin người nhận và tài khoản
@@ -97,8 +97,8 @@
                 </section>
 
                 <!-- Card 2: Contract, Amount, Notes -->
-                <section class="card border-0 shadow-sm rounded-12px overflow-hidden">
-                    <div class="card-header bg-body border-bottom p-3">
+                <section class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+                    <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-3">
                         <h3 class="h6 card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2 small">02</span>
                             Thông tin Yêu cầu chi hoa hồng
@@ -202,8 +202,8 @@
 
         <!-- Right Side: Sticky VietQR Preview Summary (col-lg-4) -->
         <div class="col-lg-4">
-            <aside class="card border-0 shadow-sm position-sticky top-100px rounded-12px overflow-hidden">
-                <div class="card-header bg-body border-bottom p-3">
+            <aside class="card border border-light-subtle shadow-sm position-sticky top-100px rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-3">
                     <h3 class="h6 card-title mb-0 d-flex align-items-center gap-2 text-body fw-bold">
                         <i class="fa-solid fa-qrcode-scan"></i> Thanh toán & QR Code
                     </h3>

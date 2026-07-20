@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="{{ asset('assets/css/sales-project-progress-report.css') }}?v={{ config('app.version') }}">
     @endpush
 
-    <div class="card border-0 shadow-sm rounded-12px mb-3">
+    <div class="card border border-light-subtle shadow-sm rounded-3 mb-3 bg-body">
         <div class="card-body p-3">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <i class="fa-solid fa-layer-group text-primary"></i>
@@ -43,7 +43,7 @@
     </div>
 
     {{-- Bộ lọc --}}
-    <div class="card border-0 shadow-sm rounded-12px mb-4 overflow-hidden">
+    <div class="card border border-light-subtle shadow-sm rounded-3 mb-4 overflow-hidden bg-body">
         <div class="card-body p-3 p-lg-4">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
@@ -57,7 +57,7 @@
             <div class="row g-3 align-items-end">
                 <div class="col-6 col-md-3 col-xl-2">
                     <label for="project-progress-month" class="form-label small fw-semibold text-body mb-1">Tháng</label>
-                    <select id="project-progress-month" wire:model.live="month" class="form-select">
+                    <select id="project-progress-month" wire:model.live="month" class="form-select border-light-subtle">
                         @foreach(range(1, 12) as $monthNumber)
                             <option value="{{ $monthNumber }}">Tháng {{ $monthNumber }}</option>
                         @endforeach
@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-6 col-md-3 col-xl-2">
                     <label for="project-progress-year" class="form-label small fw-semibold text-body mb-1">Năm</label>
-                    <select id="project-progress-year" wire:model.live="year" class="form-select">
+                    <select id="project-progress-year" wire:model.live="year" class="form-select border-light-subtle">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -73,7 +73,7 @@
                 </div>
                 <div class="col-12 col-md-6 col-xl-2">
                     <label for="project-progress-staff" class="form-label small fw-semibold text-body mb-1">Nhân sự thực hiện</label>
-                    <select id="project-progress-staff" wire:model.live="filter_staff_id" class="form-select">
+                    <select id="project-progress-staff" wire:model.live="filter_staff_id" class="form-select border-light-subtle">
                         <option value="all">Tất cả nhân sự TV/KT</option>
                         @foreach($assignedStaffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
@@ -82,7 +82,7 @@
                 </div>
                 <div class="col-12 col-md-7 col-xl-3">
                     <label for="project-progress-service" class="form-label small fw-semibold text-body mb-1">Loại dịch vụ</label>
-                    <select id="project-progress-service" wire:model.live="filter_service" class="form-select">
+                    <select id="project-progress-service" wire:model.live="filter_service" class="form-select border-light-subtle">
                         <option value="all">Tất cả loại dịch vụ</option>
                         @foreach($serviceOptions as $serviceOption)
                             <option value="{{ $serviceOption }}">{{ $serviceOption }}</option>
@@ -90,7 +90,7 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-5 col-xl-3">
-                    <div class="bg-body-tertiary rounded-3 px-3 py-2">
+                    <div class="bg-body-tertiary rounded-3 px-3 py-2 border border-light-subtle">
                         <div class="small text-muted">Đang hiển thị</div>
                         <div class="fw-semibold text-body">{{ number_format($items->total()) }} hợp đồng · Tháng {{ $month }}/{{ $year }}</div>
                     </div>
@@ -111,7 +111,7 @@
         @endphp
         @foreach($statistics as $statistic)
             <div class="col-6 col-lg-4 col-xl">
-                <div class="card border-0 shadow-sm rounded-12px h-100">
+                <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                     <div class="card-body d-flex align-items-center gap-3 p-3">
                         <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 flex-shrink-0 {{ $statistic['accent'] }}">
                             <i class="fa-solid {{ $statistic['icon'] }}"></i>
@@ -138,7 +138,7 @@
     <div class="d-flex align-items-start gap-3 overflow-x-auto pb-3 mb-4">
         @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
             <section class="mnw-260px flex-shrink-0">
-                <div class="card border-0 shadow-sm rounded-12px bg-body-tertiary">
+                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary">
                     <div class="card-header border-0 bg-transparent p-3 d-flex justify-content-between align-items-start gap-2">
                         <div class="d-flex align-items-start gap-2">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2 small fw-bold">{{ $loop->iteration }}</span>
@@ -148,7 +148,7 @@
                     </div>
                     <div class="card-body px-3 pt-0 pb-3">
                         @forelse($pipeline[$stepKey] as $contract)
-                            <article class="card border-0 shadow-sm rounded-3 mb-3" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
+                            <article class="card border border-light-subtle shadow-sm rounded-3 mb-3 bg-body" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
                                 <div class="card-body p-3">
                                     <div class="d-flex justify-content-between gap-2 align-items-start">
                                         <div class="min-w-0">

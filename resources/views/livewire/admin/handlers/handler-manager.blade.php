@@ -4,8 +4,8 @@
 
     <div class="row g-3 mt-2 px-2 px-md-0">
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden rounded-12px">
-                <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3 p-3 p-md-4 border-bottom">
+            <div class="card border border-light-subtle shadow-sm overflow-hidden rounded-3 bg-body">
+                <div class="card-header bg-body-tertiary d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3 p-3 p-md-4 border-bottom border-light-subtle">
                     <div>
                         <h2 class="h4 fw-bold text-body mb-1">Danh sách nhà thầu phụ</h2>
                         <p class="small text-muted mb-0">{{ number_format($totalHandlers) }} nhà thầu phụ đang được quản lý</p>

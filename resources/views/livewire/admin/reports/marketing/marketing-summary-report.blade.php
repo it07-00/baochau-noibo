@@ -14,7 +14,7 @@
     {{-- Tóm tắt --}}
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-primary d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-warning d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center icon-42" >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
@@ -55,12 +55,12 @@
     </div>
 
     {{-- Bộ lọc --}}
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 bg-body">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 ">Năm</label>
-                    <select wire:model.live="year" class="form-select form-select-sm">
+                    <select wire:model.live="year" class="form-select form-select-sm border-light-subtle">
                         @foreach($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -68,7 +68,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-semibold mb-1 ">Tháng</label>
-                    <select wire:model.live="filter_month" class="form-select form-select-sm">
+                    <select wire:model.live="filter_month" class="form-select form-select-sm border-light-subtle">
                         <option value="">Cả năm</option>
                         @for($m=1; $m<=12; $m++)
                             <option value="{{ $m }}">Tháng {{ $m }}</option>
@@ -82,14 +82,14 @@
     <div class="row g-4">
         {{-- Bảng theo tháng --}}
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header border-bottom py-3">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom py-3">
                     <h6 class="mb-0 fw-bold">Tổng kết theo tháng — Năm {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-body-tertiary border-bottom border-light-subtle">
                                 <tr>
                                     <th>Tháng</th>
                                     <th class="text-center">Số BG</th>
@@ -123,14 +123,14 @@
 
         {{-- Bảng theo dịch vụ --}}
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header border-bottom py-3">
+            <div class="card border border-light-subtle shadow-sm h-100 rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom py-3">
                     <h6 class="mb-0 fw-bold">Theo loại dịch vụ</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-body-tertiary border-bottom border-light-subtle">
                                 <tr>
                                     <th>Dịch vụ</th>
                                     <th class="text-center">Số BG</th>

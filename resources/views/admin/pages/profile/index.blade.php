@@ -43,8 +43,8 @@
 
     <div class="row justify-content-center">
         <div class="col-xxl-10 col-xl-11">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent border-bottom p-4">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-4">
                     <div class="d-flex align-items-center gap-3">
                         <x-user-avatar :user="auth()->user()" :size="64" />
                         <div class="min-w-0">
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent border-top p-4 d-flex justify-content-end">
+                    <div class="card-footer bg-body-tertiary border-top border-light-subtle p-4 d-flex justify-content-end">
                         <button class="btn btn-primary min-h-42px px-4" type="submit">
                             <i class="fa-solid fa-floppy-disk me-1"></i>Lưu thay đổi
                         </button>

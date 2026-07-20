@@ -5,7 +5,7 @@
     <div class="row g-4 mt-2 px-2 px-md-0">
         {{-- Thông tin nhà thầu phụ --}}
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-12px">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body d-flex flex-column flex-lg-row align-items-lg-center gap-4 p-3 p-md-4">
                     <div class="d-flex align-items-center gap-3 flex-grow-1">
                         <div class="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 icon-48">
@@ -48,8 +48,8 @@
 
         {{-- Bảng hợp đồng --}}
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden rounded-12px">
-                <div class="card-body border-bottom p-3 p-md-4">
+            <div class="card border border-light-subtle shadow-sm overflow-hidden rounded-3 bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-3 p-md-4">
                     <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
                         <div>
                             <h3 class="h5 fw-bold text-body mb-1">Chi phí theo hợp đồng</h3>

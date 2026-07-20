@@ -18,8 +18,8 @@
         @if($canSeeSales)
         {{-- Xếp hạng nhân viên kinh doanh --}}
         <div class="{{ $canSeeConsulting ? 'col-lg-7' : 'col-12' }}">
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden h-100 bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 d-flex align-items-center gap-2">
                     <span class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-2 p-2"><i class="fa-solid fa-trophy"></i></span>
                     <h6 class="mb-0 fw-bold">Doanh số nhân viên Kinh doanh — {{ $year }}</h6>
                 </div>
@@ -53,15 +53,15 @@
         @if($canSeeConsulting)
         {{-- Xếp hạng nhân viên tư vấn --}}
         <div class="{{ $canSeeSales ? 'col-lg-5' : 'col-12' }}">
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden h-100 bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 d-flex align-items-center gap-2">
                     <span class="d-inline-flex align-items-center justify-content-center bg-info-subtle text-info rounded-2 p-2"><i class="fa-solid fa-user-tie"></i></span>
                     <h6 class="mb-0 fw-bold">Nhân viên Tư vấn — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small text-uppercase">
+                        <thead class="bg-body-tertiary border-bottom border-light-subtle small text-uppercase">
                             <tr>
                                 <th class="text-center w-42px" >Hạng</th>
                                 <th>Nhân viên</th>
@@ -102,15 +102,15 @@
     <div class="row g-4 mb-4">
         {{-- Xếp hạng nhân viên kỹ thuật --}}
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 d-flex align-items-center gap-2">
                     <span class="d-inline-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded-2 p-2"><i class="fa-solid fa-screwdriver-wrench"></i></span>
                     <h6 class="mb-0 fw-bold">Nhân viên Kỹ thuật — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small text-uppercase">
+                        <thead class="bg-body-tertiary border-bottom border-light-subtle small text-uppercase">
                             <tr>
                                 <th class="text-center w-42px" >Hạng</th>
                                 <th>Nhân viên</th>
@@ -152,15 +152,15 @@
     <div class="row g-4">
         {{-- Top khách hàng --}}
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 d-flex align-items-center gap-2">
                     <span class="d-inline-flex align-items-center justify-content-center bg-success-subtle text-success rounded-2 p-2"><i class="fa-solid fa-building"></i></span>
                     <h6 class="mb-0 fw-bold">Top khách hàng theo giá trị HĐ — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light small text-uppercase">
+                            <thead class="bg-body-tertiary border-bottom border-light-subtle small text-uppercase">
                                 <tr>
                                     <th class="text-center w-42px" >#</th>
                                     <th>Khách hàng</th>
@@ -194,15 +194,15 @@
 
         {{-- Top dịch vụ --}}
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-                <div class="card-header bg-transparent border-bottom py-3 d-flex align-items-center gap-2">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 d-flex align-items-center gap-2">
                     <span class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-2 p-2"><i class="fa-solid fa-chart-line"></i></span>
                     <h6 class="mb-0 fw-bold">Top dịch vụ báo giá — {{ $year }}</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small text-uppercase">
+                        <thead class="bg-body-tertiary border-bottom border-light-subtle small text-uppercase">
                             <tr>
                                 <th class="text-center w-42px" >#</th>
                                 <th>Dịch vụ</th>

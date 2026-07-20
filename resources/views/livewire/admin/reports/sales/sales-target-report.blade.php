@@ -12,8 +12,8 @@
     </div>
 
     {{-- Controls bar --}}
-    <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden">
-        <div class="card-body py-3.5 bg-white">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 overflow-hidden bg-body">
+        <div class="card-body py-3.5 bg-body">
             <div class="d-flex align-items-end flex-wrap gap-3">
                 <div>
                     <label class="form-label fw-bold mb-1 small text-secondary">NĂM</label>
@@ -149,9 +149,9 @@
     </div>
 
     {{-- Bảng mục tiêu --}}
-    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2 py-3.5 border-bottom border-light-subtle">
-            <h6 class="mb-0 fw-bold text-dark">Chi tiết cam kết theo tháng — {{ $year }}</h6>
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center flex-wrap gap-2 py-3.5 border-bottom border-light-subtle">
+            <h6 class="mb-0 fw-bold text-body">Chi tiết cam kết theo tháng — {{ $year }}</h6>
             <div class="d-flex align-items-center gap-2">
                 <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle rounded-pill px-2.5 py-1 fw-semibold" style="font-size: 0.72rem;">Đạt</span>
                 <span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle rounded-pill px-2.5 py-1 fw-semibold" style="font-size: 0.72rem;">Gần đạt</span>
@@ -161,7 +161,7 @@
         <div class="card-body p-0">
             <div class="table-responsive" style="overflow-x: auto;">
                 <table class="table align-middle mb-0 sales-target-table table-hover">
-                    <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
+                    <thead class="bg-body-tertiary border-bottom border-light-subtle">
                         <tr class="fw-bold text-secondary text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">
                             <th class="ps-3 text-start py-3" style="min-width: 110px;">THÁNG</th>
                             <th class="text-end py-3" style="min-width: 140px;">MỤC TIÊU (Đ)</th>
@@ -183,7 +183,7 @@
                                 <td class="ps-3 text-nowrap py-3">
                                     <div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <span class="fw-bold text-dark">Tháng {{ $m }}</span>
+                                            <span class="fw-bold text-body">Tháng {{ $m }}</span>
                                             @if($isCurrentMonth)
                                                 <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill border border-primary-subtle" style="font-size: 9px; font-weight: 600; padding: 2px 6px; line-height: 1.2;">Hiện tại</span>
                                             @endif
@@ -191,7 +191,7 @@
                                         <small class="text-muted">Quý {{ (int) ceil($m / 3) }}</small>
                                     </div>
                                 </td>
-                                <td class="text-end fw-bold py-3 {{ $this->monthMetrics($data)['target'] > 0 ? 'text-dark' : 'text-muted' }}">
+                                <td class="text-end fw-bold py-3 {{ $this->monthMetrics($data)['target'] > 0 ? 'text-body' : 'text-muted' }}">
                                     {{ $this->monthMetrics($data)['target'] > 0 ? number_format($this->monthMetrics($data)['target'], 0, ',', '.') : '—' }}
                                 </td>
                                 <td class="text-end fw-bold py-3 {{ $this->monthMetrics($data)['actual'] > 0 ? 'text-success' : 'text-muted' }}">
@@ -283,12 +283,12 @@
     @endif
 
     @if($viewMode === 'month')
-        <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
-            <div class="card-header bg-white py-3.5 border-bottom border-light-subtle d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <h6 class="mb-0 fw-bold text-dark">CAM KẾT DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
+        <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+            <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h6 class="mb-0 fw-bold text-body">CAM KẾT DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
                 <div class="d-flex align-items-center gap-2">
                     <label class="form-label mb-0 fw-bold small text-secondary">THÁNG:</label>
-                    <select wire:model.live="viewMonth" class="form-select border-light-subtle rounded-8px shadow-sm" style="min-width: 135px; font-size: 0.85rem; padding: 0.45rem 2.25rem 0.45rem 0.85rem;">
+                    <select wire:model.live="viewMonth" class="form-select border-light-subtle rounded-3 shadow-sm" style="min-width: 135px; font-size: 0.85rem; padding: 0.45rem 2.25rem 0.45rem 0.85rem;">
                         @for($mi = 1; $mi <= $maxMonth; $mi++)
                             <option value="{{ $mi }}">Tháng {{ str_pad($mi, 2, '0', STR_PAD_LEFT) }}</option>
                         @endfor
@@ -298,7 +298,7 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table align-middle mb-0 table-hover">
-                        <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
+                        <thead class="bg-body-tertiary border-bottom border-light-subtle">
                             <tr class="text-center fw-bold text-secondary text-nowrap" style="font-size: 0.8rem; letter-spacing: 0.05em;">
                                 <th class="py-3">TÊN NHÂN VIÊN</th>
                                 <th class="py-3">DOANH SỐ MỤC TIÊU</th>
@@ -310,7 +310,7 @@
                         </thead>
                         <tbody>
                             <tr class="text-center text-nowrap">
-                                <td class="fw-bold text-dark py-3">{{ $selectedStaffName }}</td>
+                                <td class="fw-bold text-body py-3">{{ $selectedStaffName }}</td>
                                 <td class="py-3 fw-bold">{{ number_format($monthTarget, 0, ',', '.') }} đ</td>
                                 <td class="text-success fw-bold py-3">{{ number_format($monthActual, 0, ',', '.') }} đ</td>
                                 <td class="text-warning fw-bold py-3">{{ number_format($monthPotential, 0, ',', '.') }} đ</td>
@@ -329,17 +329,17 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mt-4 rounded-12px overflow-hidden">
-            <div class="card-header bg-white py-3.5 border-bottom border-light-subtle">
+        <div class="card border border-light-subtle shadow-sm mt-4 rounded-3 overflow-hidden bg-body">
+            <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle">
                 <div class="d-flex align-items-center gap-2">
                     <i class="fa-solid fa-list-check text-primary fs-5"></i>
-                    <h6 class="mb-0 fw-bold text-dark">CỤ THỂ DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
+                    <h6 class="mb-0 fw-bold text-body">CỤ THỂ DOANH SỐ THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
                 </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 table-xs">
-                        <thead class="bg-light bg-opacity-70 border-bottom border-light-subtle">
+                        <thead class="bg-body-tertiary border-bottom border-light-subtle">
                             <tr class="fw-bold text-secondary text-center" style="font-size: 0.8rem; letter-spacing: 0.05em;">
                                 <th class="ps-3 text-start py-3 text-nowrap" style="min-width: 200px;">TÊN CÔNG TY</th>
                                 <th class="text-start py-3 text-nowrap" style="min-width: 140px;">DỊCH VỤ</th>
@@ -355,7 +355,7 @@
                         <tbody>
                             @forelse($detail as $row)
                                 <tr class="text-center">
-                                    <td class="ps-3 fw-bold text-start text-dark py-3" style="min-width: 200px; white-space: normal;">{{ $row['customer'] }}</td>
+                                    <td class="ps-3 fw-bold text-start text-body py-3" style="min-width: 200px; white-space: normal;">{{ $row['customer'] }}</td>
                                     <td class="text-start py-3 text-nowrap">
                                         <span class="badge {{ $this->getServiceBadgeClass($row['service']) }}">{{ $row['service'] }}</span>
                                     </td>
@@ -405,11 +405,11 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mt-4 rounded-12px overflow-hidden">
-            <div class="card-header bg-white py-3.5 border-bottom border-light-subtle d-flex align-items-center justify-content-between">
+        <div class="card border border-light-subtle shadow-sm mt-4 rounded-3 overflow-hidden bg-body">
+            <div class="card-header bg-body-tertiary py-3.5 border-bottom border-light-subtle d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
                     <i class="fa-solid fa-star text-warning fs-5"></i>
-                    <h6 class="mb-0 fw-bold text-dark">CỤ THỂ BÁO GIÁ TIỀM NĂNG THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
+                    <h6 class="mb-0 fw-bold text-body">CỤ THỂ BÁO GIÁ TIỀM NĂNG THÁNG {{ str_pad($viewMonth, 2, '0', STR_PAD_LEFT) }}/{{ $year }}</h6>
                 </div>
             </div>
             <div class="card-body p-0">

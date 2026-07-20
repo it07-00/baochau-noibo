@@ -124,7 +124,7 @@
     {{-- 4 summary cards --}}
     <div class="row g-3 mb-4">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-start gap-3 p-3 p-lg-4">
                     <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-3 flex-shrink-0">
                         <i class="fa-solid fa-coins fs-5"></i>
@@ -138,7 +138,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-start gap-3 p-3 p-lg-4">
                     <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-warning bg-opacity-10 text-warning p-3 flex-shrink-0">
                         <i class="fa-solid fa-hand-holding-dollar fs-5"></i>
@@ -152,7 +152,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-start gap-3 p-3 p-lg-4">
                     <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 text-danger p-3 flex-shrink-0">
                         <i class="fa-solid fa-building-circle-arrow-right fs-5"></i>
@@ -166,7 +166,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-12px h-100">
+            <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                 <div class="card-body d-flex align-items-start gap-3 p-3 p-lg-4">
                     <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 text-success p-3 flex-shrink-0">
                         <i class="fa-solid fa-wallet fs-5"></i>
@@ -184,8 +184,8 @@
     </div>
 
     {{-- Bảng chi tiết --}}
-    <div class="card border-0 shadow-sm rounded-12px overflow-hidden">
-        <div class="card-header bg-body p-3 p-lg-4 border-bottom border-secondary-subtle d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary p-3 p-lg-4 border-bottom border-light-subtle d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
             <div class="d-flex align-items-center gap-2">
                 <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
                     <i class="fa-solid fa-table-list"></i>

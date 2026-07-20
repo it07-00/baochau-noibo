@@ -5,7 +5,7 @@
     <div class="row g-3 mt-1">
         {{-- Header --}}
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
                 <div class="card-body p-3 p-md-4">
                     <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-xl-between gap-3">
                         <div class="d-flex align-items-start gap-3">
@@ -13,7 +13,7 @@
                                 <i class="fa-solid fa-calendar-check fs-5"></i>
                             </span>
                             <div>
-                                <h4 class="mb-1 fw-bold">Bảng chấm công</h4>
+                                <h4 class="mb-1 fw-bold text-body">Bảng chấm công</h4>
                                 <div class="text-muted small">
                             @if($lastImport)
                                 Cập nhật lần cuối: {{ $lastImport->created_at->format('d/m/Y H:i') }}
@@ -26,8 +26,8 @@
                         </div>
                         <div class="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center gap-2">
                             <div>
-                                <label for="attendance-month" class="form-label small fw-semibold mb-1">Tháng chấm công</label>
-                                <input id="attendance-month" type="month" wire:model.live="selectedMonth" class="form-control min-h-42px">
+                                <label for="attendance-month" class="form-label small fw-semibold text-body mb-1">Tháng chấm công</label>
+                                <input id="attendance-month" type="month" wire:model.live="selectedMonth" class="form-control border-light-subtle min-h-42px">
                             </div>
                             <div class="d-grid d-sm-flex gap-2 align-self-sm-end">
                             @can(\App\Enums\Permission::CHAM_CONG_EXPORT->value)
@@ -72,14 +72,14 @@
             ['label' => 'Lượt về sớm', 'value' => $attendanceTotals['early_days'], 'decimals' => 0, 'icon' => 'fa-person-walking-arrow-right', 'class' => 'warning'],
         ] as $metric)
             <div class="col-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
                     <div class="card-body p-3 d-flex align-items-center gap-3">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-{{ $metric['class'] }}-subtle text-{{ $metric['class'] }} flex-shrink-0 wh-44">
                             <i class="fa-solid {{ $metric['icon'] }}"></i>
                         </span>
                         <div class="min-w-0">
                             <div class="text-muted small text-truncate">{{ $metric['label'] }}</div>
-                            <div class="fs-4 fw-bold lh-sm">{{ number_format($metric['value'], $metric['decimals'], ',', '.') }}</div>
+                            <div class="fs-4 fw-bold text-body lh-sm">{{ number_format($metric['value'], $metric['decimals'], ',', '.') }}</div>
                         </div>
                     </div>
                 </div>
@@ -97,8 +97,8 @@
 
         {{-- Bảng chấm công --}}
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="card-header bg-transparent border-bottom py-3 px-3 px-md-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">
+            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 px-3 px-md-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">
                     <div>
                         <h6 class="mb-0 fw-bold">Chi tiết theo ngày</h6>
                         <small class="text-muted">Giờ vào và giờ ra của từng nhân viên trong tháng đã chọn</small>

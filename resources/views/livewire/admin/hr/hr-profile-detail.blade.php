@@ -12,7 +12,7 @@
         <div class="row g-4">
             <!-- LEFT: Profile Sidebar -->
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm hr-profile-sidebar">
+                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body hr-profile-sidebar">
                     <div class="card-body text-center p-4">
                         <div class="hr-profile-avatar-wrapper mb-3">
                             @if($user->avatar_url)
@@ -28,7 +28,7 @@
                         <span class="hr-badge hr-badge-{{ $user->employment_status }}">{{ $user->employment_status_label }}</span>
                         <span class="hr-badge hr-badge-{{ $user->work_type }} ms-1">{{ $user->work_type_label }}</span>
                     </div>
-                    <div class="border-top px-4 py-3 fs-85" >
+                    <div class="border-top border-light-subtle px-4 py-3 fs-85" >
                         <div class="mb-2"><i class="fa-solid fa-hashtag me-2 text-muted"></i><strong>Mã NV:</strong> {{ $user->employee_code ?: '—' }}</div>
                         <div class="mb-2"><i class="fa-solid fa-building me-2 text-muted"></i><strong>Phòng ban:</strong> {{ $user->department->name ?? '—' }}</div>
                         <div class="mb-2"><i class="fa-solid fa-phone me-2 text-muted"></i><strong>SĐT:</strong> {{ $user->phone ?: '—' }}</div>
@@ -40,9 +40,9 @@
 
             <!-- RIGHT: Tabs Content -->
             <div class="col-md-9">
-                <div class="card border-0 shadow-sm rounded-16px" >
+                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                     <!-- Tabs -->
-                    <div class="card-header border-bottom p-0">
+                    <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-0">
                         <ul class="nav hr-tabs">
                             <li class="nav-item">
                                 <button wire:click="$set('activeTab', 'info')" class="nav-link {{ $activeTab === 'info' ? 'active' : '' }}">

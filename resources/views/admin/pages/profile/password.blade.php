@@ -36,8 +36,8 @@
 
     <div class="row justify-content-center">
         <div class="col-xl-7 col-lg-8">
-            <div class="card border-0 shadow-sm" x-data="{ currentVisible: false, newVisible: false, confirmVisible: false }">
-                <div class="card-header bg-transparent border-bottom p-4">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body" x-data="{ currentVisible: false, newVisible: false, confirmVisible: false }">
+                <div class="card-header bg-body-tertiary border-bottom border-light-subtle p-4">
                     <h5 class="fw-bold mb-1">Đổi mật khẩu</h5>
                     <p class="text-muted small mb-0">Bạn sẽ dùng mật khẩu mới cho lần đăng nhập tiếp theo.</p>
                 </div>
@@ -89,7 +89,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent border-top p-4 d-flex flex-column-reverse flex-sm-row justify-content-end gap-2">
+                    <div class="card-footer bg-body-tertiary border-top border-light-subtle p-4 d-flex flex-column-reverse flex-sm-row justify-content-end gap-2">
                         <a href="{{ route('app.profile.index') }}" class="btn btn-outline-secondary min-h-42px">Quay lại hồ sơ</a>
                         <button class="btn btn-primary min-h-42px px-4" type="submit">
                             <i class="fa-solid fa-shield-check me-1"></i>Cập nhật mật khẩu

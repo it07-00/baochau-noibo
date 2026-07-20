@@ -18,8 +18,8 @@
     </div>
 
     <!-- Filters Section -->
-    <div class="card border-0 shadow-sm mb-4 rounded-15px" >
-        <div class="card-header pt-4 px-4 pb-0">
+    <div class="card border border-light-subtle shadow-sm mb-4 rounded-3 bg-body">
+        <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 px-4">
             <h6 class="fw-bold mb-0"><i class="fa-solid fa-filter me-2 text-primary"></i>Bộ lọc Chuyển phát thư</h6>
         </div>
         <div class="card-body p-4">
@@ -27,13 +27,13 @@
                 <div class="col-md-4">
                     <label class="form-label fw-bold  text-muted mb-2">Tìm kiếm</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="text" class="form-control bg-light border-0" placeholder="Khách hàng, số bill, người gửi..." wire:model.live.debounce.300ms="search">
+                        <span class="input-group-text bg-body-tertiary border-end-0"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" class="form-control bg-body-tertiary border-start-0" placeholder="Khách hàng, số bill, người gửi..." wire:model.live.debounce.300ms="search">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold  text-muted mb-2">Phòng ban</label>
-                    <select class="form-select bg-light border-0 shadow-none" wire:model.live="departmentIdFilter">
+                    <select class="form-select bg-body-tertiary border-light-subtle shadow-none" wire:model.live="departmentIdFilter">
                         <option value="">Tất cả phòng ban</option>
                         @foreach($departments as $dept)
                             <option value="{{ $dept->id }}">{{ $dept->name }}</option>
@@ -41,10 +41,10 @@
                     </select>
                 </div>
                 <div class="col-md-5 d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
-                    <button class="btn btn-primary px-4 shadow-sm rounded-10px" wire:click="$refresh" >
+                    <button class="btn btn-primary px-4 shadow-sm rounded-3" wire:click="$refresh" >
                         <i class="fa-solid fa-magnifying-glass me-2"></i>Lọc
                     </button>
-                    <button class="btn btn-outline-primary px-4 shadow-sm fw-bold d-flex align-items-center gap-2 rounded-10px" >
+                    <button class="btn btn-outline-primary px-4 shadow-sm fw-bold d-flex align-items-center gap-2 rounded-3" >
                         <i class="fa-solid fa-file-text"></i> Quy trình
                     </button>
                 </div>
@@ -53,13 +53,13 @@
     </div>
 
     <!-- List Table -->
-    <div class="card border-0 shadow-sm rounded-15px overflow-hidden" >
-        <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between">
+    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+        <div class="card-header bg-body-tertiary border-bottom border-light-subtle py-3 px-4 d-flex align-items-center justify-content-between">
             <h6 class="fw-bold mb-0">Danh sách Chuyển phát thư</h6>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
+                <thead class="bg-body-tertiary border-bottom border-light-subtle">
                     <tr>
                         <th class="text-center w-45px" >STT</th>
                         <th class="ps-4 w-28pct" >Khách hàng</th>
