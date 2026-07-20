@@ -1,43 +1,42 @@
-<div class="software-manager w-100 px-2 px-md-3 pb-5">
+<div class="software-manager pb-4">
     {{-- Header --}}
-    <div class="card border-0 shadow-sm mb-4 rounded-12px overflow-hidden" >
-        <div class="card-header border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <h5 class="mb-0 fw-bold">
-                <i class="fa-solid fa-laptop me-2 text-primary"></i>Phần mềm nội bộ
-            </h5>
+    <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3 shadow-sm"><i class="fa-solid fa-laptop-code fs-4"></i></span>
+            <div><h1 class="h4 fw-bold text-body mb-1">Phần mềm nội bộ</h1><p class="text-secondary-emphasis mb-0">Danh mục công cụ và đường dẫn phục vụ công việc nội bộ.</p></div>
+        </div>
+        @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
+            <button wire:click="openCreateModal" wire:loading.attr="disabled" wire:target="openCreateModal" class="btn btn-primary text-nowrap"><i class="fa-solid fa-plus me-1"></i> Thêm phần mềm</button>
+        @endif
+    </header>
 
-            <div class="d-flex align-items-center gap-3">
-                <div class="input-group w-250px" >
-                    <span class="input-group-text bg-light border-end-0 rounded-start-2" >
-                        <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                    </span>
-                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control border-start-0 ps-0 bg-light rounded-end-2 border"
-                        placeholder="Tìm kiếm phần mềm..." >
+    <section class="card border shadow-sm mb-4">
+        <div class="card-body p-3 p-lg-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-lg-7">
+                    <label for="software-search" class="form-label fw-semibold small">Tìm kiếm</label>
+                    <div class="input-group"><span class="input-group-text bg-body"><i class="fa-solid fa-magnifying-glass"></i></span><input id="software-search" type="search" wire:model.live.debounce.300ms="search" class="form-control" placeholder="Tên, phiên bản hoặc mô tả phần mềm..."></div>
                 </div>
-
-                <select class="form-select form-select-sm w-auto" wire:model.live="departmentFilter">
+                <div class="col-lg-5">
+                    <label for="software-department" class="form-label fw-semibold small">Phòng ban</label>
+                    <select id="software-department" class="form-select" wire:model.live="departmentFilter">
                     <option value="">Tất cả phòng ban</option>
                     <option value="company">Toàn công ty</option>
                     @foreach($departments as $department)
                         <option value="{{ $department->id }}">{{ $department->name }}</option>
                     @endforeach
-                </select>
-
-                @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
-                    <button wire:click="openCreateModal" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2 rounded-8px" >
-                        <i class="fa-solid fa-plus-lg"></i> Thêm mới
-                    </button>
-                @endif
+                    </select>
+                </div>
             </div>
+            <div wire:loading.flex wire:target="search,departmentFilter" class="align-items-center gap-2 mt-3 small text-primary" role="status"><span class="spinner-border spinner-border-sm"></span>Đang cập nhật...</div>
         </div>
-    </div>
+    </section>
 
     {{-- Content --}}
     <div class="row g-4">
         @forelse($softwares as $sw)
-            <div class="col-md-4 col-sm-6">
-                <div class="card border-0 shadow-sm h-100 rounded-3 hover-lift cursor-pointer" 
-                     onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div class="col-xl-4 col-md-6">
+                <article class="card border shadow-sm h-100 rounded-3">
                      <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center gap-3">
@@ -50,43 +49,43 @@
                                         <small class="text-muted">Phiên bản: {{ $sw->version }}</small>
                                     @endif
                                     <div class="mt-1">
-                                        <span class="badge bg-label-info">{{ $sw->department?->name ?? 'Toàn công ty' }}</span>
+                                    <span class="badge text-bg-info">{{ $sw->department?->name ?? 'Toàn công ty' }}</span>
                                     </div>
                                 </div>
                             </div>
 
                             @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-label="Thao tác {{ $sw->name }}">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-8px" >
-                                        <li><button wire:click="edit({{ $sw->id }})" class="dropdown-item py-2 fs-85" ><i class="fa-solid fa-pen me-2 text-primary"></i>Chỉnh sửa</button></li>
-                                        <li><button wire:click="delete({{ $sw->id }})" wire:confirm="Bạn có chắc muốn xóa phần mềm này?" class="dropdown-item py-2 text-danger fs-85" ><i class="fa-solid fa-trash me-2"></i>Xóa</button></li>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                        <li><button wire:click="edit({{ $sw->id }})" class="dropdown-item py-2"><i class="fa-solid fa-pen me-2 text-primary"></i>Chỉnh sửa</button></li>
+                                        <li><button wire:click="delete({{ $sw->id }})" wire:confirm="Bạn có chắc muốn xóa phần mềm này?" class="dropdown-item py-2 text-danger"><i class="fa-solid fa-trash me-2"></i>Xóa</button></li>
                                     </ul>
                                 </div>
                             @endif
                         </div>
 
-                        <p class="card-text text-muted flex-grow-1 fs-90 line-clamp-3" >
+                        <p class="card-text text-secondary flex-grow-1 small">
                             {{ $sw->description ?: 'Không có mô tả.' }}
                         </p>
 
                         <div class="mt-3">
-                            <a href="{{ $sw->url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 fw-medium rounded-8px" >
+                            <a href="{{ $sw->url }}" target="_blank" rel="noopener" class="btn btn-primary w-100 fw-semibold">
                                 <i class="fa-solid fa-link me-1"></i> Truy cập / Tải xuống
                             </a>
                         </div>
 
                         @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
                             <div class="mt-2 text-center">
-                                <span class="badge {{ $sw->is_active ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 text-{{ $sw->is_active ? 'success' : 'secondary' }} rounded-pill fs-70" >
+                                <span class="badge {{ $sw->is_active ? 'text-bg-success' : 'text-bg-secondary' }} rounded-pill">
                                     {{ $sw->is_active ? 'Hoạt động' : 'Đã ẩn' }}
                                 </span>
                             </div>
                         @endif
                     </div>
-                </div>
+                </article>
             </div>
         @empty
             <div class="col-12 text-center py-5">

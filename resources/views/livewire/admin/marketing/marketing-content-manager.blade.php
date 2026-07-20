@@ -5,22 +5,26 @@
 @endonce
 
 <div class="marketing-content-page pb-4">
-    <div class="page-header d-flex align-items-start align-items-lg-center justify-content-between flex-wrap gap-3 mb-4">
-        <div>
-            <h4 class="mb-1">Kế hoạch content Marketing</h4>
-            <p class="text-muted mb-0">Lịch nội dung theo tháng, gom bài viết theo ngày đăng và trạng thái duyệt.</p>
+    <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3 shadow-sm" aria-hidden="true"><i class="fa-solid fa-calendar-check fs-4"></i></span>
+            <div>
+            <h1 class="h4 fw-bold text-body mb-1">Kế hoạch content Marketing</h1>
+            <p class="text-secondary-emphasis mb-2">Lập lịch nội dung, theo dõi trạng thái duyệt và quản lý media theo tháng.</p>
+            <nav aria-label="breadcrumb"><ol class="breadcrumb small mb-0"><li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li><li class="breadcrumb-item active" aria-current="page">Kế hoạch content</li></ol></nav>
+            </div>
         </div>
         <div class="d-flex gap-2 ms-auto flex-wrap justify-content-end align-items-center">
             @if($isMarketing)
-                <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1" wire:click="openCreate">
-                    <i class="fa-solid fa-plus-lg"></i> Tạo bài mới
+                <button type="button" class="btn btn-primary text-nowrap" wire:click="openCreate" wire:loading.attr="disabled" wire:target="openCreate">
+                    <span wire:loading.remove wire:target="openCreate"><i class="fa-solid fa-plus me-1"></i> Tạo bài mới</span><span wire:loading wire:target="openCreate"><span class="spinner-border spinner-border-sm me-1"></span>Đang mở</span>
                 </button>
             @endif
         </div>
-    </div>
+    </header>
 
-    <div class="card border-0 shadow-sm overflow-hidden mc-marketing-panel mc-calendar-card" wire:loading.class="opacity-75" wire:target="calendarMonth,previousCalendarMonth,nextCalendarMonth,goToCurrentCalendarMonth">
-        <div class="card-header bg-body d-flex align-items-center justify-content-between flex-wrap gap-3 p-3">
+    <section class="card border shadow-sm overflow-hidden mc-marketing-panel mc-calendar-card" wire:loading.class="opacity-75" wire:target="calendarMonth,previousCalendarMonth,nextCalendarMonth,goToCurrentCalendarMonth">
+        <div class="card-header bg-body d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 p-lg-4">
             <div>
                 <div class="text-muted small fw-bold text-uppercase">Lịch đăng</div>
                 <h5 class="mb-1 fw-bold">{{ $calendarMonthLabel }}</h5>
@@ -28,15 +32,15 @@
             </div>
 
             <div class="d-flex align-items-center justify-content-end flex-wrap gap-2">
-                <button type="button" class="btn btn-outline-secondary btn-sm mc-icon-btn" wire:click="previousCalendarMonth" title="Tháng trước">
+                <button type="button" class="btn btn-outline-secondary btn-sm mc-icon-btn" wire:click="previousCalendarMonth" wire:loading.attr="disabled" title="Tháng trước" aria-label="Tháng trước">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <label class="visually-hidden" for="marketing-content-month">Chọn tháng</label>
                 <input id="marketing-content-month" type="month" class="form-control form-control-sm w-auto" wire:model.live="calendarMonth">
-                <button type="button" class="btn btn-outline-secondary btn-sm mc-icon-btn" wire:click="nextCalendarMonth" title="Tháng sau">
+                <button type="button" class="btn btn-outline-secondary btn-sm mc-icon-btn" wire:click="nextCalendarMonth" wire:loading.attr="disabled" title="Tháng sau" aria-label="Tháng sau">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
-                <button type="button" class="btn btn-outline-primary btn-sm" wire:click="goToCurrentCalendarMonth">
+                <button type="button" class="btn btn-outline-primary btn-sm" wire:click="goToCurrentCalendarMonth" wire:loading.attr="disabled">
                     Hôm nay
                 </button>
             </div>
@@ -159,10 +163,10 @@
                 @endforeach
             </div>
         </div>
-    </div>
+    </section>
 
     @if($unscheduledContents->isNotEmpty())
-        <div class="card border-0 shadow-sm mt-3 mc-marketing-panel mc-unscheduled-card">
+        <section class="card border shadow-sm mt-3 mc-marketing-panel mc-unscheduled-card">
             <div class="card-header bg-body d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
                     <div class="text-muted small fw-bold text-uppercase">Chưa chốt lịch</div>
@@ -211,7 +215,7 @@
                     </div>
                 @endforeach
             </div>
-        </div>
+        </section>
     @endif
 
     <div wire:ignore.self class="modal fade" id="contentFormModal" tabindex="-1">

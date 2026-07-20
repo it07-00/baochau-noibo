@@ -1,41 +1,39 @@
 <div class="internal-doc-manager">
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="mb-0">Danh sách Quy định</h4>
+    <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3 shadow-sm" aria-hidden="true"><i class="fa-solid fa-file-shield fs-4"></i></span>
+            <div>
+            <h1 class="h4 fw-bold text-body mb-1">Công văn nội bộ</h1>
+            <p class="text-secondary-emphasis mb-2">Tra cứu quy định và tài liệu dùng chung theo phòng ban.</p>
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
+                <ol class="breadcrumb small mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('app.dashboard') }}">Bảng điều khiển</a></li>
-                    <li class="breadcrumb-item active">Quy định</li>
+                    <li class="breadcrumb-item active" aria-current="page">Công văn nội bộ</li>
                 </ol>
             </nav>
+            </div>
         </div>
         @can('internal-docs.create')
-        <button type="button" class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#docModal" wire:click="resetFields">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Thêm Quy định
+        <button type="button" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#docModal" wire:click="resetFields" wire:loading.attr="disabled" wire:target="resetFields">
+            <i class="fa-solid fa-plus me-1"></i> Thêm công văn
         </button>
         @endcan
-    </div>
+    </header>
 
-    <div class="card border-0 shadow-sm internal-doc-card">
+    <section class="card border shadow-sm overflow-hidden">
         <div class="card-body p-0">
-            <div class="p-4 border-bottom">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="input-group internal-doc-search">
-                            <span class="input-group-text border-end-0">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </span>
-                            <input type="text" class="form-control border-start-0 ps-0 internal-doc-search-input" placeholder="Tìm kiếm quy định..." wire:model.live.debounce.300ms="search">
+            <div class="card-header bg-body p-3 p-lg-4 border-bottom">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-7">
+                        <label for="internal-doc-search" class="form-label fw-semibold small">Tìm kiếm</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-body"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input id="internal-doc-search" type="search" class="form-control" placeholder="Tên công văn hoặc quy định..." wire:model.live.debounce.300ms="search">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <select class="form-select" wire:model.live="departmentFilter">
+                    <div class="col-lg-5">
+                        <label for="internal-doc-department" class="form-label fw-semibold small">Phòng ban</label>
+                        <select id="internal-doc-department" class="form-select" wire:model.live="departmentFilter">
                             <option value="">Tất cả phòng ban</option>
                             <option value="company">Toàn công ty</option>
                             @foreach($departments as $department)
@@ -46,9 +44,10 @@
                 </div>
             </div>
 
+            <div wire:loading.flex wire:target="search,departmentFilter" class="align-items-center gap-2 px-4 py-2 border-bottom small text-primary" role="status"><span class="spinner-border spinner-border-sm"></span>Đang cập nhật...</div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 internal-doc-table">
-                    <thead class="internal-doc-table-head">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
                         <tr>
                             <th class="text-center w-45px" >STT</th>
                             <th class="ps-4 w-50" >Thông tin quy định</th>
@@ -67,35 +66,33 @@
                                 <span class="fw-bold">{{ $doc->title }}</span>
                             </td>
                             <td>
-                                <span class="badge bg-label-info">{{ $doc->department?->name ?? 'Toàn công ty' }}</span>
+                                <span class="badge text-bg-info">{{ $doc->department?->name ?? 'Toàn công ty' }}</span>
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
                                     @if($doc->files)
                                         @foreach($doc->files as $file)
-                                        <a href="{{ $file['resolved_url'] ?? ($file['url'] ?? '#') }}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 text-primary internal-doc-file-link">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M12 15V3M12 15L8 11M12 15L16 11M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <a href="{{ $file['resolved_url'] ?? ($file['url'] ?? '#') }}" target="_blank" rel="noopener" class="text-decoration-none d-flex align-items-center gap-2 text-primary">
+                                            <i class="fa-solid fa-download"></i>
                                             <small>{{ $file['name'] }}</small>
                                         </a>
                                         @endforeach
                                     @else
-                                        <span class="text-muted  internal-doc-empty-file">Không có tập tin</span>
+                                        <span class="text-secondary small">Không có tập tin</span>
                                     @endif
                                 </div>
                             </td>
                             @canany(['internal-docs.edit', 'internal-docs.delete'])
                             <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Thao tác công văn">
                                     @can('internal-docs.edit')
-                                    <button class="btn btn-sm btn-primary" wire:click="edit({{ $doc->id }})">
-                                        Sửa
+                                    <button class="btn btn-outline-primary" wire:click="edit({{ $doc->id }})">
+                                        <i class="fa-solid fa-pen me-1"></i>Sửa
                                     </button>
                                     @endcan
                                     @can('internal-docs.delete')
-                                    <button class="btn btn-sm btn-danger" onclick="confirmDelete({{ $doc->id }})">
-                                        Xóa
+                                    <button class="btn btn-outline-danger" onclick="confirmDelete({{ $doc->id }})">
+                                        <i class="fa-solid fa-trash me-1"></i>Xóa
                                     </button>
                                     @endcan
                                 </div>
@@ -104,7 +101,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5 text-muted internal-doc-empty-row">Không tìm thấy quy định nào</td>
+                            <td colspan="5" class="text-center py-5 text-secondary"><i class="fa-solid fa-folder-open d-block fs-2 mb-2"></i>Không tìm thấy công văn phù hợp</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -115,7 +112,7 @@
                 {{ $docs->links('livewire.admin.users.pagination') }}
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Modal -->
     <div wire:ignore.self class="modal fade" id="docModal" tabindex="-1" aria-labelledby="docModalLabel" aria-hidden="true">

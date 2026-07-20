@@ -17,10 +17,9 @@
             const resetDensity = () => {
                 document.documentElement.style.zoom = '100%';
                 document.documentElement.style.removeProperty('width');
-                document.documentElement.style.minHeight = '100%';
-                document.body?.style.removeProperty('min-height');
-                document.querySelector('.page-layout')?.style.removeProperty('min-height');
+                document.documentElement.style.removeProperty('min-height');
                 document.querySelector('.app-menubar')?.style.removeProperty('height');
+                document.querySelector('.app-wrapper')?.style.removeProperty('min-height');
             };
             const applyDensity = () => {
                 if (!desktopDensity.matches) {
@@ -30,10 +29,9 @@
 
                 document.documentElement.style.zoom = '80%';
                 document.documentElement.style.removeProperty('width');
-                document.documentElement.style.minHeight = '125vh';
-                document.body?.style.setProperty('min-height', '125vh');
-                document.querySelector('.page-layout')?.style.setProperty('min-height', '125vh');
-                document.querySelector('.app-menubar')?.style.setProperty('height', '125vh');
+                document.documentElement.style.removeProperty('min-height');
+                document.querySelector('.app-menubar')?.style.setProperty('height', 'calc(125vh - 1px)');
+                document.querySelector('.app-wrapper')?.style.setProperty('min-height', 'calc(125vh - var(--app-header-height) - var(--footer-height, 50px) - 1px)');
             };
 
             const syncModalViewport = (modal = document.querySelector('.modal.show')) => {
