@@ -41,63 +41,25 @@
         </div>
     @endif
 
-    <div class="row g-4">
-        <div class="col-xl-3 col-lg-4">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4 text-center">
-                    <div class="d-inline-block mb-3">
-                        <x-user-avatar :user="auth()->user()" :size="88" />
-                    </div>
-                    <h5 class="fw-bold mb-1">{{ auth()->user()->name }}</h5>
-                    <div class="text-muted small mb-3">{{ '@'.auth()->user()->username }}</div>
-                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                        <i class="fa-solid fa-building me-1"></i>
-                        {{ auth()->user()->department?->name ?? 'Chưa có phòng ban' }}
-                    </span>
-                </div>
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item px-4 py-3 d-flex justify-content-between gap-3">
-                        <span class="text-muted">Email</span>
-                        <span class="fw-semibold text-end text-break">{{ auth()->user()->email ?: 'Chưa cập nhật' }}</span>
-                    </div>
-                    <div class="list-group-item px-4 py-3 d-flex justify-content-between gap-3">
-                        <span class="text-muted">Điện thoại</span>
-                        <span class="fw-semibold text-end">{{ auth()->user()->phone ?: 'Chưa cập nhật' }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card border border-primary-subtle bg-primary-subtle shadow-sm">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center gap-2 mb-2 text-primary">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <h6 class="fw-bold mb-0">Bảo mật tài khoản</h6>
-                    </div>
-                    <p class="small text-body-secondary mb-3">Nên thay đổi mật khẩu định kỳ và không sử dụng chung với dịch vụ khác.</p>
-                    <a href="{{ route('app.password.index') }}" class="btn btn-outline-primary w-100 min-h-42px">Đổi mật khẩu</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-9 col-lg-8">
+    <div class="row justify-content-center">
+        <div class="col-xxl-10 col-xl-11">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom p-4">
-                    <h5 class="fw-bold mb-1">Thông tin cá nhân</h5>
-                    <p class="text-muted small mb-0">Thông tin này được sử dụng trong hồ sơ và các nghiệp vụ nội bộ.</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <x-user-avatar :user="auth()->user()" :size="64" />
+                        <div class="min-w-0">
+                            <h5 class="fw-bold mb-1">{{ auth()->user()->name }}</h5>
+                            <div class="d-flex align-items-center flex-wrap gap-2 small text-muted">
+                                <span>{{ '@'.auth()->user()->username }}</span>
+                                <span>·</span>
+                                <span>{{ auth()->user()->department?->name ?? 'Chưa có phòng ban' }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <form method="POST" action="{{ route('app.profile.update') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body p-4">
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold" for="avatar">Ảnh đại diện</label>
-                            <input type="file" id="avatar" name="avatar"
-                                   class="form-control @error('avatar') is-invalid @enderror"
-                                   accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                                   aria-describedby="avatar-help">
-                            <div id="avatar-help" class="form-text">Định dạng JPG, PNG hoặc WEBP; dung lượng tối đa 2MB.</div>
-                            @error('avatar') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
-                        </div>
-
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold" for="username">Tài khoản <span class="text-danger">*</span></label>
@@ -145,6 +107,15 @@
                                        class="form-control @error('date_of_birth') is-invalid @enderror"
                                        value="{{ old('date_of_birth', auth()->user()->date_of_birth?->format('Y-m-d')) }}">
                                 @error('date_of_birth') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" for="avatar">Ảnh đại diện</label>
+                                <input type="file" id="avatar" name="avatar"
+                                       class="form-control @error('avatar') is-invalid @enderror"
+                                       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                       aria-describedby="avatar-help">
+                                <div id="avatar-help" class="form-text">JPG, PNG hoặc WEBP; tối đa 2MB.</div>
+                                @error('avatar') <div class="invalid-feedback" role="alert">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-semibold" for="address">Địa chỉ</label>

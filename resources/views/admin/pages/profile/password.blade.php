@@ -34,25 +34,8 @@
         </div>
     @endif
 
-    <div class="row g-4 justify-content-center">
-        <div class="col-xl-4 col-lg-5">
-            <div class="card border border-primary-subtle bg-primary-subtle shadow-sm h-100">
-                <div class="card-body p-4">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white wh-44 mb-3">
-                        <i class="fa-solid fa-key fs-5"></i>
-                    </div>
-                    <h5 class="fw-bold">Mật khẩu an toàn</h5>
-                    <p class="text-body-secondary">Mật khẩu mới cần có tối thiểu 8 ký tự và phải khác mật khẩu hiện tại.</p>
-                    <ul class="list-unstyled mb-0 d-grid gap-3 small">
-                        <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-success mt-1"></i><span>Không sử dụng lại mật khẩu của dịch vụ khác.</span></li>
-                        <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-success mt-1"></i><span>Kết hợp chữ, số và ký tự đặc biệt.</span></li>
-                        <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-success mt-1"></i><span>Không chia sẻ mật khẩu qua tin nhắn hoặc email.</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-6 col-lg-7">
+    <div class="row justify-content-center">
+        <div class="col-xl-7 col-lg-8">
             <div class="card border-0 shadow-sm" x-data="{ currentVisible: false, newVisible: false, confirmVisible: false }">
                 <div class="card-header bg-transparent border-bottom p-4">
                     <h5 class="fw-bold mb-1">Đổi mật khẩu</h5>
@@ -61,6 +44,10 @@
                 <form method="POST" action="{{ route('app.password.update') }}">
                     @csrf
                     <div class="card-body p-4">
+                        <div class="alert alert-primary d-flex gap-3 align-items-start mb-4">
+                            <i class="fa-solid fa-circle-info mt-1"></i>
+                            <div class="small">Mật khẩu mới cần có ít nhất 8 ký tự, khác mật khẩu hiện tại và không nên dùng chung với dịch vụ khác.</div>
+                        </div>
                         <div class="mb-4">
                             <label class="form-label fw-semibold" for="current_password">Mật khẩu hiện tại <span class="text-danger">*</span></label>
                             <div class="input-group">
