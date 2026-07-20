@@ -215,7 +215,7 @@
         <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách Hợp đồng thương mại</h6>
         </div>
-        <div class="table-responsive mh-350">
+        <div class="table-responsive">
             <table class="table table-striped table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr class=" text-muted fw-bold">
@@ -261,8 +261,10 @@
                                         class="fw-bold text-primary text-decoration-none lh-sm">
                                         {{ $doc->customer?->name }}
                                     </a>
-                                    <span class="text-muted fs-85">{{ $doc->customer?->representative }} -
-                                        {{ $doc->customer?->phone }}</span>
+                                    @php $contactInfo = array_filter([$doc->customer?->representative, $doc->customer?->phone]); @endphp
+                                    @if($contactInfo)
+                                        <span class="text-muted fs-85">{{ implode(' - ', $contactInfo) }}</span>
+                                    @endif
                                     <span
                                         class="text-muted fs-85">{{ Str::limit($doc->customer?->address, 50) }}</span>
                                     <div

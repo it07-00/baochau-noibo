@@ -206,7 +206,7 @@
         <div class="card-header py-3 border-bottom">
             <h6 class="mb-0 fw-bold">Danh sách HĐ {{ $contractTypeName }}</h6>
         </div>
-        <div class="table-responsive mh-350" >
+        <div class="table-responsive">
             <table class="table table-striped table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr class=" text-muted fw-bold">
@@ -249,7 +249,10 @@
                                     <a href="{{ $doc->customer ? route('app.customers.contracts', $doc->customer->slug) : '#' }}" class="fw-bold text-primary text-decoration-none lh-sm">
                                         {{ $doc->customer?->name }}
                                     </a>
-                                    <span class="text-muted fs-85">{{ $doc->customer?->representative }} - {{ $doc->customer?->phone }}</span>
+                                    @php $contactInfo = array_filter([$doc->customer?->representative, $doc->customer?->phone]); @endphp
+                                    @if($contactInfo)
+                                        <span class="text-muted fs-85">{{ implode(' - ', $contactInfo) }}</span>
+                                    @endif
                                     <span class="text-muted fs-85">{{ Str::limit($doc->customer?->address, 50) }}</span>
                                     <div class="d-flex gap-2 flex-wrap contract-text-08 border-top mt-1 pt-1 text-secondary">
                                         <span>NTP: <span class="fw-semibold text-dark">{{ $doc->shd_cxl ?: '-' }}</span></span>
