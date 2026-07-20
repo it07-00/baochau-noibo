@@ -16,9 +16,14 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class DailyReportManager extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap';
+
     // Form fields
     public $reportDate;
 
@@ -61,6 +66,11 @@ class DailyReportManager extends Component
     public $supportStatusFilter = 'open';
 
     public $supportSearch = '';
+
+    public function updatingSupportStatusFilter(): void { $this->resetPage('supportPage'); }
+    public function updatingSupportSearch(): void { $this->resetPage('supportPage'); }
+    public function updatingDeptIdFilter(): void { $this->resetPage('supportPage'); }
+    public function updatingUserIdFilter(): void { $this->resetPage('supportPage'); }
 
     public $selectedSupportReportId;
 
@@ -141,7 +151,11 @@ class DailyReportManager extends Component
     {
         $report = $this->findManageableSupportReport($reportId);
 
-        if ($report->support_status === DailyReportSupportStatus::RESOLVED->value) {
+        $statusVal = $report->support_status instanceof DailyReportSupportStatus
+            ? $report->support_status->value
+            : (string) ($report->support_status ?? '');
+
+        if ($statusVal === DailyReportSupportStatus::RESOLVED->value) {
             $this->dispatch('swal:error', ['message' => 'Yêu cầu này đã được xử lý.']);
 
             return;
@@ -688,7 +702,7 @@ class DailyReportManager extends Component
             $supportReports = $supportQuery
                 ->orderByRaw("CASE support_status WHEN 'pending' THEN 0 WHEN 'in_progress' THEN 1 ELSE 2 END")
                 ->orderByDesc('date')
-                ->get();
+                ->paginate(15, ['*'], 'supportPage');
         } elseif ($this->activeTab === 'history') {
             $monthReports = DailyReport::with('user')->whereIn('user_id', $userIds)
                 ->whereYear('date', $this->yearFilter)

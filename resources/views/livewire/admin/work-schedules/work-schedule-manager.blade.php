@@ -179,7 +179,7 @@
     <div x-show="showDetail" x-cloak x-transition.opacity.duration.150ms class="fixed-overlay-9999"
         @keydown.escape.window="if (showDetail) { showDetail = false; $wire.closeDayDetail() }">
         <div class="modal-overlay-dark" @click="showDetail = false; $wire.closeDayDetail()"></div>
-        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 92%; max-width: 660px; max-height: 85vh; overflow-y: auto; background: var(--ws-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);"
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 94%; max-width: 900px; max-height: 90vh; overflow-y: auto; background: var(--ws-modal-bg, #fff); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);"
             @click.stop>
             <div wire:loading.flex wire:target="openDayDetail" class="position-absolute top-0 start-0 w-100 h-100 bg-body align-items-center justify-content-center z-3">
                 <div class="text-center text-primary"><span class="spinner-border mb-2" aria-hidden="true"></span><div class="small fw-semibold">Đang tải lịch</div></div>

@@ -29,6 +29,7 @@ class DailyReport extends Model
 
     protected $casts = [
         'date' => 'date',
+        'support_status' => \App\Enums\DailyReportSupportStatus::class,
         'support_started_at' => 'datetime',
         'support_resolved_at' => 'datetime',
     ];

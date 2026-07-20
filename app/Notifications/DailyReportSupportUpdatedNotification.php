@@ -24,7 +24,10 @@ class DailyReportSupportUpdatedNotification extends Notification
 
     public function toArray(object $notifiable): array
     {
-        $status = DailyReportSupportStatus::tryFrom((string) $this->report->support_status);
+        $rawStatus = $this->report->support_status;
+        $status = $rawStatus instanceof DailyReportSupportStatus
+            ? $rawStatus
+            : (is_string($rawStatus) ? DailyReportSupportStatus::tryFrom($rawStatus) : null);
 
         return [
             'icon' => $status === DailyReportSupportStatus::RESOLVED ? 'bi-check-circle-fill' : 'bi-life-preserver',

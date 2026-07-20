@@ -418,60 +418,71 @@
                         <div class="d-flex flex-column gap-3">
                             @forelse ($supportReports as $supportReport)
                                 @php
-                                    $supportStatus = \App\Enums\DailyReportSupportStatus::tryFrom((string) $supportReport->support_status);
+                                    $rawStatus = $supportReport->support_status;
+                                    $supportStatus = $rawStatus instanceof \App\Enums\DailyReportSupportStatus
+                                        ? $rawStatus
+                                        : (is_string($rawStatus) ? \App\Enums\DailyReportSupportStatus::tryFrom($rawStatus) : null);
                                     $supportColor = $supportStatus?->color() ?? 'secondary';
+                                    $statusValue = $supportStatus?->value ?? (is_string($rawStatus) ? $rawStatus : '');
                                 @endphp
                                 <div class="card border border-light-subtle shadow-sm rounded-3 p-3 p-lg-4 bg-body">
-                                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-                                        <div class="flex-grow-1 min-w-0">
-                                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                                                <strong class="text-body fs-6">{{ $supportReport->user->name }}</strong>
-                                                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill fw-normal">{{ $supportReport->user->department?->name ?? 'Chưa có phòng ban' }}</span>
-                                                <span class="text-muted small">Báo cáo ngày {{ $supportReport->date->format('d/m/Y') }}</span>
-                                                <span class="badge bg-{{ $supportColor }} bg-opacity-10 text-{{ $supportColor }} border border-{{ $supportColor }}-subtle rounded-pill">{{ $supportStatus?->label() }}</span>
-                                            </div>
-                                            <div class="alert alert-danger border-0 shadow-sm p-3 rounded-3 mb-2">
-                                                <div class="small fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation me-1"></i>Nội dung cần hỗ trợ</div>
-                                                <div class="text-break">{{ $supportReport->issues ?: strip_tags($supportReport->content) }}</div>
-                                            </div>
+                                    {{-- Header Row --}}
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <strong class="text-body fs-6">{{ $supportReport->user->name }}</strong>
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill fw-normal">{{ $supportReport->user->department?->name ?? 'Chưa có phòng ban' }}</span>
+                                            <span class="text-muted small ms-1"><i class="fa-regular fa-calendar me-1"></i>Báo cáo ngày {{ $supportReport->date->format('d/m/Y') }}</span>
+                                        </div>
+                                        <span class="badge bg-{{ $supportColor }} bg-opacity-10 text-{{ $supportColor }} border border-{{ $supportColor }}-subtle rounded-pill px-2.5 py-1">{{ $supportStatus?->label() }}</span>
+                                    </div>
 
-                                            @if ($supportReport->support_handler_id)
-                                                <div class="small text-muted mt-2">
-                                                    <i class="fa-solid fa-user-check me-1"></i>Người xử lý: <strong>{{ $supportReport->supportHandler?->name ?? 'Tài khoản đã xóa' }}</strong>
-                                                    @if ($supportReport->support_started_at)
-                                                        · tiếp nhận {{ $supportReport->support_started_at->format('d/m/Y H:i') }}
-                                                    @endif
-                                                </div>
-                                            @endif
-
-                                            @if ($supportReport->support_response)
-                                                <div class="alert alert-success border-0 shadow-sm p-3 rounded-3 mt-3">
-                                                    <div class="small fw-bold mb-1"><i class="fa-solid fa-circle-check me-1"></i>Kết quả hỗ trợ</div>
-                                                    <div class="text-break">{!! nl2br(e($supportReport->support_response)) !!}</div>
-                                                    @if ($supportReport->support_resolved_at)
-                                                        <div class="small text-muted mt-1">Hoàn tất {{ $supportReport->support_resolved_at->format('d/m/Y H:i') }}</div>
-                                                    @endif
-                                                </div>
-                                            @endif
+                                    {{-- Content Row: Nội dung hỗ trợ + 2 Nút thao tác cùng hàng --}}
+                                    <div class="d-flex flex-column flex-md-row align-items-stretch gap-3">
+                                        <div class="alert alert-danger border border-danger-subtle bg-danger-subtle text-danger-emphasis shadow-sm p-3 rounded-3 mb-0 flex-grow-1 min-w-0">
+                                            <div class="small fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation me-1 text-danger"></i>Nội dung cần hỗ trợ</div>
+                                            <div class="text-break">{{ $supportReport->issues ?: strip_tags($supportReport->content) }}</div>
                                         </div>
 
-                                        <div class="d-flex flex-row flex-lg-column align-items-start gap-2 flex-shrink-0">
-                                            @if ($supportReport->support_status === \App\Enums\DailyReportSupportStatus::PENDING->value)
-                                                <button wire:click="startSupport({{ $supportReport->id }})" wire:loading.attr="disabled" class="btn btn-warning fw-semibold text-nowrap shadow-sm">
-                                                    <i class="fa-solid fa-hand me-1"></i> Tiếp nhận
+                                        <div class="d-flex flex-row flex-md-column gap-2 align-items-stretch justify-content-center flex-shrink-0 min-w-140px">
+                                            @if ($statusValue === \App\Enums\DailyReportSupportStatus::PENDING->value)
+                                                <button wire:click="startSupport({{ $supportReport->id }})" wire:loading.attr="disabled" wire:target="startSupport({{ $supportReport->id }})" class="btn btn-warning fw-semibold text-dark text-nowrap shadow-sm rounded-2">
+                                                    <span wire:loading.remove wire:target="startSupport({{ $supportReport->id }})"><i class="fa-solid fa-hand me-1"></i> Tiếp nhận</span>
+                                                    <span wire:loading wire:target="startSupport({{ $supportReport->id }})"><span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...</span>
                                                 </button>
                                             @endif
-                                            @if ($supportReport->support_status !== \App\Enums\DailyReportSupportStatus::RESOLVED->value)
-                                                <button wire:click="openSupportModal({{ $supportReport->id }})" class="btn btn-success fw-semibold text-nowrap shadow-sm">
-                                                    <i class="fa-solid fa-check me-1"></i> Hoàn tất
+                                            @if ($statusValue !== \App\Enums\DailyReportSupportStatus::RESOLVED->value)
+                                                <button wire:click="openSupportModal({{ $supportReport->id }})" wire:loading.attr="disabled" wire:target="openSupportModal({{ $supportReport->id }})" class="btn btn-success fw-semibold text-nowrap shadow-sm rounded-2">
+                                                    <span wire:loading.remove wire:target="openSupportModal({{ $supportReport->id }})"><i class="fa-solid fa-check me-1"></i> Hoàn tất</span>
+                                                    <span wire:loading wire:target="openSupportModal({{ $supportReport->id }})"><span class="spinner-border spinner-border-sm me-1"></span> Đang tải...</span>
                                                 </button>
                                             @else
-                                                <button wire:click="reopenSupport({{ $supportReport->id }})" class="btn btn-outline-secondary fw-semibold text-nowrap">
-                                                    <i class="fa-solid fa-rotate-left me-1"></i> Mở lại
+                                                <button wire:click="reopenSupport({{ $supportReport->id }})" wire:loading.attr="disabled" wire:target="reopenSupport({{ $supportReport->id }})" class="btn btn-outline-secondary fw-semibold text-nowrap rounded-2">
+                                                    <span wire:loading.remove wire:target="reopenSupport({{ $supportReport->id }})"><i class="fa-solid fa-rotate-left me-1"></i> Mở lại</span>
+                                                    <span wire:loading wire:target="reopenSupport({{ $supportReport->id }})"><span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...</span>
                                                 </button>
                                             @endif
                                         </div>
                                     </div>
+
+                                    {{-- Handler Info & Response --}}
+                                    @if ($supportReport->support_handler_id)
+                                        <div class="small text-muted mt-3 pt-2 border-top border-light-subtle">
+                                            <i class="fa-solid fa-user-check me-1 text-success"></i>Người xử lý: <strong class="text-body">{{ $supportReport->supportHandler?->name ?? 'Tài khoản đã xóa' }}</strong>
+                                            @if ($supportReport->support_started_at)
+                                                · tiếp nhận {{ $supportReport->support_started_at->format('d/m/Y H:i') }}
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    @if ($supportReport->support_response)
+                                        <div class="alert alert-success border border-success-subtle bg-success-subtle text-success-emphasis shadow-sm p-3 rounded-3 mt-3 mb-0">
+                                            <div class="small fw-bold mb-1"><i class="fa-solid fa-circle-check me-1 text-success"></i>Kết quả hỗ trợ</div>
+                                            <div class="text-break">{!! nl2br(e($supportReport->support_response)) !!}</div>
+                                            @if ($supportReport->support_resolved_at)
+                                                <div class="small text-muted mt-1">Hoàn tất {{ $supportReport->support_resolved_at->format('d/m/Y H:i') }}</div>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             @empty
                                 <div class="text-center py-5 text-muted bg-body rounded-3 border">
@@ -480,6 +491,12 @@
                                 </div>
                             @endforelse
                         </div>
+
+                        @if ($supportReports instanceof \Illuminate\Pagination\LengthAwarePaginator && $supportReports->hasPages())
+                            <div class="mt-4 d-flex justify-content-center">
+                                {{ $supportReports->links('livewire.admin.users.pagination') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -496,7 +513,7 @@
         @open-day-detail.window="open = true; date = $event.detail.date; reports = $event.detail.reports"
         x-show="open" class="fixed-overlay-9999" style="display: none;" @keydown.escape.window="open = false">
         <div class="modal-overlay-dark" @click="open = false"></div>
-        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; background: var(--bs-body-bg); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 94%; max-width: 920px; max-height: 90vh; overflow-y: auto; background: var(--bs-body-bg); border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"
             @click.stop>
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
                 <h5 class="mb-0 fw-bold"><i class="fa-solid fa-calendar-day me-2"></i> Báo cáo ngày <span x-text="date"></span></h5>
@@ -559,7 +576,7 @@
     <div x-data="{ open: @entangle('showReportModal') }" x-init="$watch('open', value => { if (value) { setTimeout(initModalEditor, 100); } })" x-show="open" class="fixed-overlay-10000"
         style="display: none;" @keydown.escape.window="open = false">
         <div class="modal-overlay-blur" @click="open = false"></div>
-        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 600px; background: var(--bs-body-bg); border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); overflow: hidden;"
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 800px; background: var(--bs-body-bg); border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); overflow: hidden;"
             @click.stop>
             <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">
@@ -661,11 +678,29 @@
             window.__dailyReportContentBuffer = @js($content);
         }
 
+        let isSettingData = false;
+
+        function safeSetData(editor, content) {
+            if (!editor || isSettingData) return;
+            try {
+                if (typeof editor.getData === 'function' && editor.getData() !== content) {
+                    isSettingData = true;
+                    editor.setData(content || '');
+                }
+            } catch (e) {
+                console.warn('CKEditor setData exception caught safely:', e);
+            } finally {
+                setTimeout(() => { isSettingData = false; }, 50);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             initAllEditors();
         });
 
         function initAllEditors() {
+            if (typeof ClassicEditor === 'undefined') return;
+
             // Content Editor
             const contentEl = document.querySelector('#content-editor');
             const contentContainer = contentEl?.closest('.editor-container');
@@ -679,19 +714,20 @@
                     placeholder: 'Chi tiết công việc đã làm...',
                     toolbar: ['bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo']
                 }).then(editor => {
+                    window.contentEditor = editor;
+
                     // Sync to Livewire and global buffer
                     editor.model.document.on('change:data', () => {
+                        if (isSettingData) return;
                         const data = editor.getData();
                         @this.set('content', data);
                         window.__dailyReportContentBuffer = data;
                     });
 
-                    // Apply buffered content when editor is initialized.
+                    // Apply buffered content when editor is initialized safely.
                     if (window.__dailyReportContentBuffer !== undefined) {
-                        editor.setData(window.__dailyReportContentBuffer || '');
+                        safeSetData(editor, window.__dailyReportContentBuffer || '');
                     }
-
-                    window.contentEditor = editor;
                 }).catch(err => {
                     contentEl.classList.remove('ck-editor-initialized');
                     console.error(err);
@@ -700,6 +736,8 @@
         }
 
         function initModalEditor() {
+            if (typeof ClassicEditor === 'undefined') return;
+
             // Modal Content Editor
             const modalContentEl = document.querySelector('#modal-content-editor');
             if (modalContentEl && !modalContentEl.classList.contains('ck-editor-initialized')) {
@@ -720,19 +758,20 @@
                     placeholder: 'Hôm nay bạn đã hoàn thành những việc gì?',
                     toolbar: ['bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo']
                 }).then(editor => {
+                    window.modalContentEditor = editor;
+
                     // Sync to Livewire and global buffer
                     editor.model.document.on('change:data', () => {
+                        if (isSettingData) return;
                         const data = editor.getData();
                         @this.set('content', data);
                         window.__dailyReportContentBuffer = data;
                     });
 
-                    // Apply buffered content when editor is initialized.
+                    // Apply buffered content when editor is initialized safely.
                     if (window.__dailyReportContentBuffer !== undefined) {
-                        editor.setData(window.__dailyReportContentBuffer || '');
+                        safeSetData(editor, window.__dailyReportContentBuffer || '');
                     }
-
-                    window.modalContentEditor = editor;
                 }).catch(err => {
                     modalContentEl.classList.remove('ck-editor-initialized');
                     console.error(err);
@@ -753,11 +792,11 @@
                 const nextContent = event.detail?.content ?? '';
                 window.__dailyReportContentBuffer = nextContent;
 
-                if (window.contentEditor && window.contentEditor.getData() !== nextContent) {
-                    window.contentEditor.setData(nextContent);
+                if (window.contentEditor) {
+                    safeSetData(window.contentEditor, nextContent);
                 }
-                if (window.modalContentEditor && window.modalContentEditor.getData() !== nextContent) {
-                    window.modalContentEditor.setData(nextContent);
+                if (window.modalContentEditor) {
+                    safeSetData(window.modalContentEditor, nextContent);
                 }
             });
             window.__dailyReportContentSyncRegistered = true;
@@ -766,6 +805,8 @@
         // Polling-style check for tab changes (robust)
         if (!window.__dailyReportEditorInterval) {
             window.__dailyReportEditorInterval = setInterval(() => {
+                if (typeof ClassicEditor === 'undefined') return;
+
                 const contentEl = document.querySelector('#content-editor');
                 const contentContainer = contentEl?.closest('.editor-container');
 
