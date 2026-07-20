@@ -104,32 +104,35 @@
 .dept-pedestal {
     width: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: flex-start;
-    padding-top: 28px; border-radius: 12px 12px 4px 4px;
+    padding-top: 32px; border-radius: 12px 12px 4px 4px;
+    box-sizing: border-box;
 }
 .dept-pedestal-1 {
-    height: 150px;
+    height: 155px;
     background: linear-gradient(180deg, #2d5fa8 0%, #1a3d7a 40%, #0f2650 100%);
     box-shadow: 0 4px 30px rgba(30,80,180,.4), inset 0 1px 0 rgba(255,255,255,.15);
 }
 .dept-pedestal-2 {
-    height: 118px;
+    height: 125px;
     background: linear-gradient(180deg, #264d8e 0%, #17336a 40%, #0d2245 100%);
     box-shadow: 0 4px 24px rgba(23,60,140,.3), inset 0 1px 0 rgba(255,255,255,.1);
 }
 .dept-pedestal-3 {
-    height: 95px;
+    height: 105px;
     background: linear-gradient(180deg, #264d8e 0%, #17336a 40%, #0d2245 100%);
     box-shadow: 0 4px 24px rgba(23,60,140,.3), inset 0 1px 0 rgba(255,255,255,.1);
 }
 .dept-podium-name {
-    font-weight: 800; font-size: 1rem; text-align: center;
-    max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    text-transform: uppercase; letter-spacing: .5px;
+    font-weight: 800; font-size: 0.88rem; text-align: center;
+    width: 100%; max-width: 100%; padding: 0 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-transform: uppercase; letter-spacing: .3px;
+    margin-top: 2px;
 }
-.dept-podium-value { font-weight: 700; font-size: 1.1rem; color: var(--dept-gold); margin-top: 4px; }
-.dept-podium-sub { font-size: .82rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
-.dept-name-gold { color: var(--dept-gold-light); font-size: 1.1rem; }
-.dept-value-gold { color: var(--dept-gold); font-size: 1.18rem; }
+.dept-podium-value { font-weight: 700; font-size: 1.05rem; color: var(--dept-gold); margin-top: 2px; white-space: nowrap; }
+.dept-podium-sub { font-size: .8rem; color: rgba(255,255,255,0.45); margin-top: 1px; white-space: nowrap; }
+.dept-name-gold { color: var(--dept-gold-light); font-size: 0.95rem; }
+.dept-value-gold { color: var(--dept-gold); font-size: 1.12rem; }
 /* CROWN */
 .dept-crown {
     font-size: 1.8rem; margin-bottom: 2px;
@@ -144,17 +147,17 @@
     overflow: hidden; flex-shrink: 0;
 }
 .dept-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.dept-avatar-lg { width: 130px; height: 130px; font-size: 2.2rem; }
-.dept-avatar-md { width: 100px; height: 100px; font-size: 1.6rem; }
-.dept-avatar-sm { width: 48px; height: 48px; font-size: 1rem; }
+.dept-avatar-lg { width: 120px; height: 120px; font-size: 2rem; }
+.dept-avatar-md { width: 90px; height: 90px; font-size: 1.4rem; }
+.dept-avatar-sm { width: 44px; height: 44px; font-size: 0.95rem; }
 .dept-border-gold   { border: 4px solid var(--dept-gold); box-shadow: 0 0 24px rgba(245,200,66,.5); }
 .dept-border-silver { border: 3px solid #b8b8b8; box-shadow: 0 0 16px rgba(200,200,200,.3); }
 .dept-border-bronze { border: 3px solid #c06a2a; box-shadow: 0 0 16px rgba(192,106,42,.3); }
 /* MEDAL */
 .dept-medal {
-    width: 38px; height: 38px; border-radius: 50%;
+    width: 34px; height: 34px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 1rem; z-index: 3;
+    font-weight: 900; font-size: 0.9rem; z-index: 3;
 }
 .dept-medal-gold {
     background: radial-gradient(circle at 35% 35%, #ffe88a, #c9a227);
@@ -166,7 +169,7 @@
 /* RANK CARDS (4+) */
 .dept-rank-card {
     display: flex; align-items: center; gap: 14px;
-    padding: 14px 22px; border-radius: 12px; margin-bottom: 10px;
+    padding: 12px 18px; border-radius: 12px; margin-bottom: 10px;
     background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
     transition: transform .25s, border-color .25s, background .25s;
     animation: deptFadeUp .5s ease both;
@@ -176,10 +179,10 @@
     border-color: rgba(245,200,66,0.2);
     background: rgba(255,255,255,0.07);
 }
-.dept-rank-num { font-weight: 800; font-size: 1.1rem; color: rgba(255,255,255,0.45); flex-shrink: 0; width: 32px; text-align: center; }
-.dept-card-name { flex: 1; font-weight: 700; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; letter-spacing: .3px; }
-.dept-card-value { font-weight: 700; font-size: 1.05rem; color: var(--dept-gold); flex-shrink: 0; text-align: right; }
-.dept-card-sub { font-weight: 400; font-size: .88rem; color: rgba(255,255,255,0.4); }
+.dept-rank-num { font-weight: 800; font-size: 1.05rem; color: rgba(255,255,255,0.45); flex-shrink: 0; width: 28px; text-align: center; }
+.dept-card-name { flex: 1; font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; letter-spacing: .3px; }
+.dept-card-value { font-weight: 700; font-size: 0.98rem; color: var(--dept-gold); flex-shrink: 0; text-align: right; white-space: nowrap; }
+.dept-card-sub { font-weight: 400; font-size: .85rem; color: rgba(255,255,255,0.4); }
 .dept-empty { text-align: center; color: rgba(255,255,255,0.3); padding: 40px 0; font-style: italic; }
 .dept-footer-quote { text-align: center; margin-top: 56px; font-size: 1rem; color: rgba(255,255,255,0.25); font-style: italic; }
 /* REMINDER */
@@ -212,86 +215,66 @@
     50%      { box-shadow: 0 0 24px rgba(245,200,66,.9), 0 0 40px rgba(245,200,66,.3); }
 }
 /* RESPONSIVE */
-@media (max-width: 1600px) {
-    .dept-wrapper { padding: 40px 40px 90px; }
-    .dept-avatar-lg { width: 100px; height: 100px; font-size: 1.8rem; }
-    .dept-avatar-md { width: 78px; height: 78px; font-size: 1.3rem; }
-    .dept-pedestal-1 { height: 130px; }
-    .dept-pedestal-2 { height: 100px; }
-    .dept-pedestal-3 { height: 82px; }
-}
 @media (max-width: 1400px) {
-    .dept-wrapper { padding: 32px 28px 80px; }
-    .dept-section { padding: 0 16px; }
-    .dept-podium-slot { max-width: 150px; }
-    .dept-avatar-lg { width: 86px; height: 86px; font-size: 1.5rem; }
-    .dept-avatar-md { width: 68px; height: 68px; font-size: 1.15rem; }
-    .dept-pedestal-1 { height: 112px; }
-    .dept-pedestal-2 { height: 88px; }
-    .dept-pedestal-3 { height: 72px; }
-    .dept-podium-name { font-size: 0.78rem; }
-    .dept-podium-value { font-size: 0.88rem; }
+    .dept-wrapper { padding: 36px 32px 80px; }
+    .dept-avatar-lg { width: 100px; height: 100px; font-size: 1.7rem; }
+    .dept-avatar-md { width: 76px; height: 76px; font-size: 1.25rem; }
+    .dept-pedestal-1 { height: 140px; padding-top: 30px; }
+    .dept-pedestal-2 { height: 112px; padding-top: 28px; }
+    .dept-pedestal-3 { height: 95px; padding-top: 26px; }
+    .dept-podium-name { font-size: 0.82rem; }
+    .dept-name-gold { font-size: 0.88rem; }
+    .dept-podium-value { font-size: 0.95rem; }
 }
 @media (max-width: 1200px) {
-    .dept-wrapper { padding: 24px 16px 70px; }
-    .dept-section { padding: 0 8px; }
-    .dept-podium-slot { max-width: 120px; }
-    .dept-avatar-lg { width: 70px; height: 70px; font-size: 1.2rem; }
-    .dept-avatar-md { width: 56px; height: 56px; font-size: 0.98rem; }
-    .dept-pedestal-1 { height: 92px; }
-    .dept-pedestal-2 { height: 74px; }
-    .dept-pedestal-3 { height: 60px; }
-    .dept-podium-name { font-size: 0.68rem; max-width: 100%; }
-    .dept-podium-value { font-size: 0.78rem; }
-}
-@media (max-width: 900px) {
     .dept-columns { grid-template-columns: 1fr; gap: 40px 0; }
     .dept-col-divider { display: none; }
     .dept-section { padding: 0; }
     .dept-section:last-of-type { padding-right: 0; }
-    .dept-podium { gap: 4px; }
-    .dept-podium-slot { max-width: 140px; }
-    .dept-avatar-lg { width: 90px; height: 90px; font-size: 1.6rem; }
-    .dept-avatar-md { width: 70px; height: 70px; font-size: 1.2rem; }
-    .dept-pedestal-1 { height: 118px; }
-    .dept-pedestal-2 { height: 92px; }
-    .dept-pedestal-3 { height: 75px; }
+    .dept-podium { gap: 8px; }
+    .dept-podium-slot { max-width: 170px; }
+    .dept-avatar-lg { width: 110px; height: 110px; font-size: 1.8rem; }
+    .dept-avatar-md { width: 84px; height: 84px; font-size: 1.3rem; }
+    .dept-pedestal-1 { height: 145px; padding-top: 30px; }
+    .dept-pedestal-2 { height: 118px; padding-top: 28px; }
+    .dept-pedestal-3 { height: 100px; padding-top: 26px; }
+    .dept-podium-name { font-size: 0.88rem; }
     .dept-race-board { margin: -1rem; }
-    .dept-wrapper { padding: 20px 32px 60px; }
+    .dept-wrapper { padding: 24px 24px 60px; }
 }
 @media (max-width: 520px) {
-    .dept-podium { gap: 2px; justify-content: center; }
+    .dept-podium { gap: 4px; justify-content: center; }
     .dept-podium-slot { max-width: 110px; }
-    .dept-avatar-lg { width: 68px; height: 68px; font-size: 1.2rem; }
-    .dept-avatar-md { width: 54px; height: 54px; font-size: 0.95rem; }
-    .dept-pedestal-1 { height: 95px; padding-top: 18px; }
-    .dept-pedestal-2 { height: 76px; padding-top: 14px; }
-    .dept-pedestal-3 { height: 62px; padding-top: 12px; }
-    .dept-podium-name { font-size: 0.72rem; max-width: 100px; }
-    .dept-name-gold { font-size: 0.78rem; }
-    .dept-podium-value { font-size: 0.85rem; }
+    .dept-avatar-lg { width: 72px; height: 72px; font-size: 1.25rem; }
+    .dept-avatar-md { width: 56px; height: 56px; font-size: 0.95rem; }
+    .dept-pedestal-1 { height: 105px; padding-top: 24px; }
+    .dept-pedestal-2 { height: 85px; padding-top: 22px; }
+    .dept-pedestal-3 { height: 72px; padding-top: 20px; }
+    .dept-podium-name { font-size: 0.72rem; padding: 0 2px; }
+    .dept-name-gold { font-size: 0.76rem; }
+    .dept-podium-value { font-size: 0.82rem; }
     .dept-podium-sub { font-size: 0.68rem; }
-    .dept-value-gold { font-size: 0.9rem; }
+    .dept-value-gold { font-size: 0.88rem; }
     .dept-medal { width: 28px; height: 28px; font-size: 0.8rem; }
     .dept-crown { font-size: 1.3rem; }
-    .dept-col-title { font-size: 0.85rem; letter-spacing: 1.5px; margin-bottom: 20px; }
+    .dept-col-title { font-size: 0.88rem; letter-spacing: 1.5px; margin-bottom: 20px; }
     .dept-rank-card { padding: 10px 14px; gap: 10px; }
-    .dept-card-name { font-size: 0.88rem; }
-    .dept-card-value { font-size: 0.88rem; }
+    .dept-card-name { font-size: 0.85rem; }
+    .dept-card-value { font-size: 0.85rem; }
     .dept-reminder { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
     .dept-reminder-btn { width: 100%; text-align: center; }
-    .dept-wrapper { padding: 16px 10px 50px; }
+    .dept-wrapper { padding: 16px 12px 50px; }
     .dept-header-badge { font-size: 1.1rem; }
     .dept-header-sub { font-size: 0.82rem; }
     .dept-gold-divider { margin-bottom: 28px; }
 }
 @media (max-width: 360px) {
     .dept-podium-slot { max-width: 96px; }
-    .dept-avatar-lg { width: 58px; height: 58px; font-size: 1rem; }
-    .dept-avatar-md { width: 46px; height: 46px; font-size: 0.82rem; }
-    .dept-pedestal-1 { height: 80px; }
-    .dept-pedestal-2 { height: 64px; }
-    .dept-pedestal-3 { height: 52px; }
-    .dept-podium-name { font-size: 0.65rem; max-width: 88px; }
+    .dept-avatar-lg { width: 60px; height: 60px; font-size: 1rem; }
+    .dept-avatar-md { width: 48px; height: 48px; font-size: 0.82rem; }
+    .dept-pedestal-1 { height: 90px; padding-top: 22px; }
+    .dept-pedestal-2 { height: 72px; padding-top: 20px; }
+    .dept-pedestal-3 { height: 60px; padding-top: 18px; }
+    .dept-podium-name { font-size: 0.65rem; }
     .dept-medal { width: 24px; height: 24px; font-size: 0.7rem; }
 }
