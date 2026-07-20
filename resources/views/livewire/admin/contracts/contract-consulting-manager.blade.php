@@ -510,10 +510,10 @@
 
     <!-- Detail Modal -->
     <div wire:ignore.self class="modal fade" id="detailModalConsulting" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">
+                    <h5 class="modal-title fw-bold text-white">
                         Chi tiết {{ $contractTypeName }}
                         @if ($selectedDoc?->customer?->name)
                             — {{ $selectedDoc->customer->name }}

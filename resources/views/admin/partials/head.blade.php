@@ -36,8 +36,25 @@
                 document.querySelector('.app-menubar')?.style.setProperty('height', '125vh');
             };
 
+            const syncModalViewport = (modal = document.querySelector('.modal.show')) => {
+                const compactHeight = desktopDensity.matches ? '125vh' : '100vh';
+
+                modal?.style.setProperty('height', compactHeight);
+                document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
+                    backdrop.style.setProperty('height', compactHeight);
+                    backdrop.style.setProperty('min-height', compactHeight);
+                });
+            };
+
             document.addEventListener('DOMContentLoaded', applyDensity);
-            desktopDensity.addEventListener('change', applyDensity);
+            document.addEventListener('show.bs.modal', (event) => {
+                window.requestAnimationFrame(() => syncModalViewport(event.target));
+            });
+            document.addEventListener('shown.bs.modal', (event) => syncModalViewport(event.target));
+            desktopDensity.addEventListener('change', () => {
+                applyDensity();
+                syncModalViewport();
+            });
             window.addEventListener('beforeprint', resetDensity);
             window.addEventListener('afterprint', applyDensity);
         })();
