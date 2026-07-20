@@ -100,9 +100,9 @@
 
     {{-- Calendar Grid --}}
     <div class="calendar-container ws-desktop-calendar shadow-sm bg-body d-none d-md-block mb-4">
-        <div class="calendar-header-grid bg-body-secondary border-bottom border-light-subtle">
+        <div class="calendar-header-grid bg-body-tertiary border-bottom border-secondary-subtle" data-bs-theme="light">
             @foreach($this->weekdayShortNames() as $dow)
-                <div class="calendar-header-cell fw-bold text-muted text-center py-2 fs-7 border-start border-light-subtle">
+                <div class="calendar-header-cell fw-semibold text-body text-center py-2 border-start border-secondary-subtle">
                     {{ $dow }}
                 </div>
             @endforeach
