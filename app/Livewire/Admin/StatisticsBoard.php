@@ -51,7 +51,7 @@ class StatisticsBoard extends Component
         }
 
         $this->year = now()->year;
-        $this->month = (string) now()->month;
+        $this->month = '';
         $this->years = range(now()->year, now()->year - 4);
 
         $user = auth()->user();

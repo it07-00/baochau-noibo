@@ -145,6 +145,50 @@
             <div class="card-body p-4">
                 <h6 class="fw-bold text-body mb-3">Thao tác nhanh</h6>
                 <div class="row g-2">
+                    @if(auth()->user()->can(\App\Enums\Permission::QUOTATION_TRACKING_VIEW->value)
+                        && auth()->user()->hasAnyRole([\App\Enums\Role::KINH_DOANH->value, \App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
+                    <div class="col-6">
+                        <a href="{{ route('app.quotation-tracking.index') }}" class="btn btn-outline-primary w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Báo giá
+                        </a>
+                    </div>
+                    @endif
+                    @if(auth()->user()->can(\App\Enums\Permission::QUOTATION_TRACKING_CREATE->value)
+                        && auth()->user()->hasAnyRole([\App\Enums\Role::KINH_DOANH->value, \App\Enums\Role::TP_KINH_DOANH->value]))
+                    <div class="col-6">
+                        <a href="{{ route('app.quotation-docs.index') }}" class="btn btn-primary w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7 text-white">
+                            <i class="fa-solid fa-file-circle-plus"></i> Tạo báo giá
+                        </a>
+                    </div>
+                    @endif
+                    @can(\App\Enums\Permission::CUSTOMERS_VIEW->value)
+                    <div class="col-6">
+                        <a href="{{ route('app.customers.index') }}" class="btn btn-outline-primary w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
+                            <i class="fa-solid fa-building-user"></i> Khách hàng
+                        </a>
+                    </div>
+                    @endcan
+                    @can(\App\Enums\Permission::REPORTS_SALES_VIEW->value)
+                    <div class="col-6">
+                        <a href="{{ route('app.reports.index') }}" class="btn btn-outline-success w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
+                            <i class="fa-solid fa-chart-line"></i> Kinh doanh
+                        </a>
+                    </div>
+                    @endcan
+                    @can(\App\Enums\Permission::CASH_FLOW_VIEW->value)
+                    <div class="col-6">
+                        <a href="{{ route('app.finance.cash-flow') }}" class="btn btn-outline-success w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
+                            <i class="fa-solid fa-money-bill-trend-up"></i> Dòng tiền
+                        </a>
+                    </div>
+                    @endcan
+                    @can(\App\Enums\Permission::INTERNAL_DOCS_VIEW->value)
+                    <div class="col-6">
+                        <a href="{{ route('app.internal-docs.index') }}" class="btn btn-outline-secondary w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7">
+                            <i class="fa-solid fa-folder-open"></i> Công văn
+                        </a>
+                    </div>
+                    @endcan
                     @can('hr-profiles.view')
                     <div class="col-6">
                         <a href="{{ route('app.hr.index') }}" class="btn btn-primary w-100 py-3 px-2 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 hover-lift fs-7 text-white">

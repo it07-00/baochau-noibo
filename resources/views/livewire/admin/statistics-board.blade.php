@@ -423,9 +423,15 @@
 
             const monthly = JSON.parse(configEl.dataset.monthly || '{}');
             const canSeeFinance = String(configEl.dataset.canSeeFinance) === '1';
-            const labels = Object.keys(monthly).map(m => 'Tháng ' + m);
-            const contractData = Object.values(monthly).map(item => Number(item.contracts || 0));
-            const salesData = Object.values(monthly).map(item => Number(item.sales || 0));
+            const year = configEl.dataset.year;
+            const selectedMonth = configEl.dataset.selectedMonth;
+            const entries = Object.entries(monthly)
+                .map(([month, values]) => [Number(month), values])
+                .filter(([month]) => !selectedMonth || month === Number(selectedMonth))
+                .sort(([monthA], [monthB]) => monthA - monthB);
+            const labels = entries.map(([month]) => `T${String(month).padStart(2, '0')}/${year}`);
+            const contractData = entries.map(([, item]) => Number(item.contracts || 0));
+            const salesData = entries.map(([, item]) => Number(item.sales || 0));
 
             const cfg = getThemeConfig();
 

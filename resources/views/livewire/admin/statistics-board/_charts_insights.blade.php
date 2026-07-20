@@ -8,17 +8,21 @@
         <div class="card border border-light-subtle shadow-sm h-100 bg-secondary bg-opacity-05">
             <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div class="min-w-0">
-                    <h6 class="mb-0 fw-bold">Tổng quan vận hành theo tháng</h6>
+                    <h6 class="mb-0 fw-bold">
+                        {{ $month !== '' ? 'Tổng quan tháng ' . str_pad($month, 2, '0', STR_PAD_LEFT) . '/' . $year : 'Diễn biến 12 tháng năm ' . $year }}
+                    </h6>
                     <small class="text-muted">
                         {{ $canSeeFinance
                             ? 'Biến động hợp đồng, doanh số và thực thu trong năm ' . $year
                             : 'Biến động số lượng hợp đồng theo tháng trong năm ' . $year }}
                     </small>
                 </div>
-                <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center flex-shrink-0">Năm {{ $year }}</span>
+                <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center flex-shrink-0">
+                    {{ $month !== '' ? 'Tháng ' . str_pad($month, 2, '0', STR_PAD_LEFT) . '/' . $year : 'Cả năm ' . $year }}
+                </span>
             </div>
             <div class="card-body p-3" x-data="{ render() { if(window.renderStatisticsBoardCharts) window.renderStatisticsBoardCharts(); } }" x-init="setTimeout(() => render(), 100)" @chart-updated.window="render()">
-                <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
+                <div id="monthlyOverviewConfig" class="d-none" data-monthly='@json($monthly)' data-year="{{ $year }}" data-selected-month="{{ $month }}" data-can-see-finance="{{ $canSeeFinance ? 1 : 0 }}"></div>
                 <div style="position: relative; height: 220px; width: 100%;">
                     <canvas id="monthlyOverviewChart" wire:ignore></canvas>
                 </div>
