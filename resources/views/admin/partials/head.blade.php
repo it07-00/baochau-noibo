@@ -38,11 +38,15 @@
 
             const syncModalViewport = (modal = document.querySelector('.modal.show')) => {
                 const compactHeight = desktopDensity.matches ? '125vh' : '100vh';
+                const compactWidth = desktopDensity.matches ? '125vw' : '100vw';
 
                 modal?.style.setProperty('height', compactHeight);
+                modal?.style.setProperty('width', compactWidth);
                 document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
                     backdrop.style.setProperty('height', compactHeight);
                     backdrop.style.setProperty('min-height', compactHeight);
+                    backdrop.style.setProperty('width', compactWidth);
+                    backdrop.style.setProperty('min-width', compactWidth);
                 });
             };
 
