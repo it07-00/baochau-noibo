@@ -333,11 +333,12 @@
 
 .dept-podium-name {
     font-weight: 800;
-    font-size: 0.88rem;
+    font-size: clamp(0.68rem, 0.95vw, 0.82rem);
     text-align: center;
     width: 100%;
     max-width: 100%;
     padding: 0 6px;
+    box-sizing: border-box;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

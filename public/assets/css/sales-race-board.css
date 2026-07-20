@@ -72,10 +72,11 @@
 .race-company-progress { margin-bottom: 44px; }
 .race-progress-track {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 14px;
     font-size: 1rem;
     padding: 0 8px;
+    margin-top: 32px;
 }
 .race-progress-bar-wrap {
     flex: 1;
@@ -84,7 +85,7 @@
     border-radius: 99px;
     position: relative;
     overflow: visible;
-    margin-top: 32px;
+    margin-top: 0;
 }
 .race-progress-fill {
     height: 100%;
@@ -108,9 +109,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: .9rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: .88rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
     white-space: nowrap;
+    padding-bottom: 1px;
 }
 
 /* ── HEADER ── */
@@ -251,15 +254,18 @@
 /* ── PEDESTAL TEXT ── */
 .race-podium-name {
     font-weight: 800;
-    font-size: 0.82rem;
+    font-size: clamp(0.68rem, 0.95vw, 0.8rem);
     text-align: center;
-    max-width: 180px;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 6px;
+    box-sizing: border-box;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-transform: uppercase;
-    letter-spacing: .5px;
-    color: rgba(0, 0, 0, 0.72);
+    letter-spacing: .3px;
+    color: rgba(0, 0, 0, 0.75);
     text-shadow: 0 1px 0 rgba(255, 255, 255, .25);
 }
 .race-podium-value { font-weight: 700; font-size: 0.86rem; color: rgba(0, 0, 0, 0.6); margin-top: 3px; }
