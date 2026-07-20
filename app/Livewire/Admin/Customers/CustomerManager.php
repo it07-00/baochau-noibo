@@ -632,6 +632,7 @@ class CustomerManager extends Component
             'pllđ' => 'Phân loại lao động',
             'plld' => 'Phân loại lao động',
             'qtmtld' => 'Quan trắc môi trường lao động',
+            'qtmt và bcctbvmt' => 'BCCTBVMT',
         ];
 
         if (array_key_exists($lower, $aliases)) {

@@ -2215,7 +2215,7 @@ POWERSHELL;
         }
 
         return match ($serviceType) {
-            'QTMT và BCCTBVMT' => 'Quan trắc môi trường và Báo cáo công tác bảo vệ môi trường',
+            'QTMT và BCCTBVMT', 'BCCTBVMT' => 'Báo cáo công tác bảo vệ môi trường',
             '', 'Khác' => 'Quan trắc môi trường lao động',
             default => $serviceType,
         };

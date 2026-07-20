@@ -425,7 +425,7 @@
                                     $supportColor = $supportStatus?->color() ?? 'secondary';
                                     $statusValue = $supportStatus?->value ?? (is_string($rawStatus) ? $rawStatus : '');
                                 @endphp
-                                <div class="card border border-light-subtle shadow-sm rounded-3 p-3 p-lg-4 bg-body">
+                                <div wire:key="support-report-{{ $supportReport->id }}" class="card border border-light-subtle shadow-sm rounded-3 p-3 p-lg-4 bg-body">
                                     {{-- Header Row --}}
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                                         <div class="d-flex flex-wrap align-items-center gap-2">

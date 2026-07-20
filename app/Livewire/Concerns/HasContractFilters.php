@@ -23,7 +23,13 @@ trait HasContractFilters
         if ($f['is_offset'] ?? false)     $query->where('is_offset', true);
         if ($f['has_room_fund'] ?? false) $query->where('has_room_fund', true);
         if ($f['is_overdue'] ?? false)    $query->where('is_overdue', true);
-        if ($f['loai_dich_vu'] ?? null)   $query->where('loai_dich_vu', $f['loai_dich_vu']);
+        if ($f['loai_dich_vu'] ?? null) {
+            if ($f['loai_dich_vu'] === 'BCCTBVMT') {
+                $query->whereIn('loai_dich_vu', ['BCCTBVMT', 'QTMT và BCCTBVMT']);
+            } else {
+                $query->where('loai_dich_vu', $f['loai_dich_vu']);
+            }
+        }
         if ($f['handler_id'] ?? null)     $query->where('handler_id', $f['handler_id']);
         if ($f['hide_completed_workflow'] ?? false) {
             $query->whereDoesntHave('workflowSteps', fn($stepQuery) => $stepQuery->where('step_name', 'finished'));

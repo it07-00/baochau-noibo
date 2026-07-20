@@ -15,7 +15,7 @@ class ContractLegal extends Model
 
     const SERVICE_TYPES = [
         'Quan trắc môi trường',
-        'QTMT và BCCTBVMT',
+        'BCCTBVMT',
         'Hồ sơ môi trường',
         'Quan trắc môi trường lao động',
         'Phân loại lao động',
