@@ -360,7 +360,7 @@
                             animation: { duration: 500, easing: 'easeOutQuart' },
                             interaction: { mode: 'index', intersect: false },
                             plugins: {
-                                legend: { labels: { color: colors.text, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+                                legend: { labels: { color: colors.text, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8, font: { size: 12 } } },
                                 tooltip: {
                                     backgroundColor: colors.tooltipBg,
                                     titleColor: colors.tooltipText,
@@ -404,7 +404,7 @@
                             cutout: '70%',
                             animation: { duration: 500, easing: 'easeOutQuart' },
                             plugins: {
-                                legend: { position: 'bottom', labels: { color: colors.text, usePointStyle: true, pointStyleWidth: 10, padding: 16, font: { size: 12 } } },
+                                legend: { position: 'bottom', labels: { color: colors.text, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8, padding: 16, font: { size: 12 } } },
                                 tooltip: {
                                     backgroundColor: colors.tooltipBg,
                                     titleColor: colors.tooltipText,
@@ -438,7 +438,7 @@
                             animation: { duration: 500, easing: 'easeOutQuart' },
                             interaction: { mode: 'index', intersect: false },
                             plugins: {
-                                legend: { labels: { color: colors.text, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } } },
+                                legend: { labels: { color: colors.text, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8, font: { size: 12 } } },
                                 tooltip: {
                                     backgroundColor: colors.tooltipBg,
                                     titleColor: colors.tooltipText,
