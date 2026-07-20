@@ -12,19 +12,23 @@ use Livewire\Component;
 class InternalNotificationManager extends Component
 {
     public string $title = '';
+
     public string $body = '';
+
     public string $recipientType = 'all';
+
     public array $selectedRoles = [];
+
     public array $selectedUsers = [];
 
     protected function rules(): array
     {
         return [
-            'title'          => 'required|string|max:200',
-            'body'           => 'required|string|max:5000',
-            'recipientType'  => 'required|in:all,roles,users',
-            'selectedRoles'  => 'array',
-            'selectedUsers'  => 'array',
+            'title' => 'required|string|max:200',
+            'body' => 'required|string|max:5000',
+            'recipientType' => 'required|in:all,roles,users',
+            'selectedRoles' => 'array',
+            'selectedUsers' => 'array',
         ];
     }
 
@@ -32,7 +36,7 @@ class InternalNotificationManager extends Component
     {
         return [
             'title.required' => 'Tiêu đề không được để trống.',
-            'body.required'  => 'Nội dung không được để trống.',
+            'body.required' => 'Nội dung không được để trống.',
         ];
     }
 
@@ -42,11 +46,13 @@ class InternalNotificationManager extends Component
 
         if ($this->recipientType === 'roles' && empty($this->selectedRoles)) {
             $this->addError('selectedRoles', 'Vui lòng chọn ít nhất một vai trò.');
+
             return;
         }
 
         if ($this->recipientType === 'users' && empty($this->selectedUsers)) {
             $this->addError('selectedUsers', 'Vui lòng chọn ít nhất một người nhận.');
+
             return;
         }
 
@@ -56,6 +62,7 @@ class InternalNotificationManager extends Component
 
         if ($recipients->isEmpty()) {
             $this->dispatch('swal:toast', ['type' => 'warning', 'message' => 'Không có người nhận phù hợp.']);
+
             return;
         }
 
@@ -77,8 +84,8 @@ class InternalNotificationManager extends Component
 
         $this->dispatch('closeComposeModal');
         $this->dispatch('swal:toast', [
-            'type'    => 'success',
-            'message' => 'Đã gửi thông báo đến ' . $recipients->count() . ' người.',
+            'type' => 'success',
+            'message' => 'Đã gửi thông báo đến '.$recipients->count().' người.',
         ]);
     }
 
@@ -86,9 +93,9 @@ class InternalNotificationManager extends Component
     {
         $query = User::where('is_active', true)->where('id', '!=', auth()->id());
 
-        if ($this->recipientType === 'roles' && !empty($this->selectedRoles)) {
+        if ($this->recipientType === 'roles' && ! empty($this->selectedRoles)) {
             $query->whereHas('roles', fn ($q) => $q->whereIn('name', $this->selectedRoles));
-        } elseif ($this->recipientType === 'users' && !empty($this->selectedUsers)) {
+        } elseif ($this->recipientType === 'users' && ! empty($this->selectedUsers)) {
             $query->whereIn('id', $this->selectedUsers);
         }
 
@@ -102,12 +109,12 @@ class InternalNotificationManager extends Component
         }
 
         if ($this->recipientType === 'roles') {
-            return 'Vai trò: ' . collect($this->selectedRoles)
+            return 'Vai trò: '.collect($this->selectedRoles)
                 ->map(fn ($r) => Role::tryFrom($r)?->label() ?? $r)
                 ->join(', ');
         }
 
-        return count($this->selectedUsers) . ' người dùng được chọn';
+        return count($this->selectedUsers).' người dùng được chọn';
     }
 
     public function render()
@@ -160,8 +167,8 @@ class InternalNotificationManager extends Component
 
         return view('livewire.admin.internal-notifications.manager', [
             'sentNotifications' => $sentNotifications,
-            'allRoles'          => $allRoles,
-            'allUsers'          => $allUsers,
+            'allRoles' => $allRoles,
+            'allUsers' => $allUsers,
         ])->layout('admin.layouts.app');
     }
 }
