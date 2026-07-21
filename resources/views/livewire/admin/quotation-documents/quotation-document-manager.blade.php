@@ -141,13 +141,13 @@
 
     <!-- Detail Modal -->
     <div wire:ignore.self class="modal fade" id="qdocDetailModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
                     <h5 class="modal-title fw-bold text-white">Chi tiết Báo giá</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-0">
+                <div class="modal-body p-0 overflow-auto">
                     @if($selectedDoc)
                     <div class="p-4">
                         <!-- Header Info -->
@@ -304,7 +304,7 @@
     <!-- Form Modal -->
     <div wire:ignore.self class="modal fade" id="qdocFormModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content overflow-hidden border-0 shadow-lg">
+            <form wire:submit.prevent="save" class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-primary py-3">
                     <h5 class="modal-title fw-bold text-white">
                         @if($isEditing) Cập nhật Báo giá
@@ -313,8 +313,7 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form wire:submit.prevent="save">
-                    <div class="modal-body p-4 overflow-auto">
+                <div class="modal-body p-4 overflow-auto">
                         <!-- Datalist for autocomplete group names -->
                         <datalist id="group-names">
                             @foreach($groupOptions as $g)
@@ -740,8 +739,7 @@
                             Lưu báo giá
                         </button>
                     </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 

@@ -241,13 +241,13 @@
 
     <!-- Detail Modal -->
     <div wire:ignore.self class="modal fade" id="detailModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
                 <div class="modal-header bg-dark py-3">
                     <h5 class="modal-title fw-bold text-white">Thông tin Báo giá Chi tiết</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
-                <div class="modal-body p-0">
+                <div class="modal-body p-0 overflow-auto">
                     @if($selectedQuotation)
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0">
@@ -416,8 +416,8 @@
               $watch('commission_tax_rate', () => recalculate());
               recalculate();
          ">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content overflow-hidden border-0 shadow-lg rounded-4">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <form wire:submit.prevent="save" class="modal-content overflow-hidden border-0 shadow-lg rounded-4">
                 <div class="modal-header bg-primary text-white py-3 px-4">
                     <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
                         <i class="fa-solid fa-file-invoice fs-5"></i>
@@ -430,9 +430,7 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
-                <form wire:submit.prevent="save">
-                    <div class="modal-body p-4 bg-body-tertiary">
+                <div class="modal-body p-4 bg-body-tertiary overflow-auto">
 
                         <div class="d-flex flex-column gap-4">
 
@@ -721,8 +719,7 @@
                             <span>Lưu báo giá</span>
                         </button>
                     </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 
