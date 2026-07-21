@@ -550,18 +550,85 @@
     </div>
 
     {{-- Assignment Modal --}}
-    <div wire:ignore.self class="modal fade" id="assignModalReport" tabindex="-1" aria-labelledby="assignModalReportLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="assignModalReport" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-12px overflow-hidden">
-                <div class="modal-header bg-body border-bottom p-3">
-                    <h5 class="h6 modal-title fw-bold text-body d-flex align-items-center gap-2" id="assignModalReportLabel">
-                        <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-success bg-opacity-10 text-success p-2">
-                            <i class="fa-solid fa-user-check"></i>
-                        </span>
-                        Giao việc hợp đồng
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            <div class="modal-content border-0 shadow-lg" x-data="{ searchQuery: '' }">
+                <div class="modal-header bg-success py-3">
+                    <h5 class="modal-title fw-bold modal-title-custom text-white"><i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-3 fs-90">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
+
+                    <!-- Search Box -->
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-body border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm nhanh nhân viên..." x-model="searchQuery">
+                        </div>
+                    </div>
+
+                    <!-- User Grouping -->
+                    <div class="mh-320-scroll pe-1" style="max-height: 280px; overflow-y: auto;">
+                        @php
+                            $groupedUsers = $assignable_users->groupBy(function($user) {
+                                $roleName = $user->roles->first()?->name ?? '';
+                                return \App\Enums\Role::tryFrom($roleName)?->label() ?? 'Khác';
+                            });
+                        @endphp
+
+                        @foreach ($groupedUsers as $roleLabel => $users)
+                            <div class="mb-3 role-group-section"
+                                 x-show="searchQuery === '' || {{ json_encode($users->pluck('name')->map(fn($n) => mb_strtolower($n))->toArray()) }}.some(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')))">
+                                <div class="fw-bold text-success border-bottom pb-1 mb-2 fs-80 d-flex align-items-center justify-content-between">
+                                    <span>{{ $roleLabel }}</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success fs-75 rounded-pill">{{ count($users) }}</span>
+                                </div>
+                                <div class="list-group list-group-flush rounded-3 border mb-2">
+                                    @foreach ($users as $u)
+                                        @php
+                                            $uRole = \App\Enums\Role::tryFrom($u->roles->first()?->name ?? '')?->label() ?? '';
+                                        @endphp
+                                        <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 px-3 user-item"
+                                               x-show="searchQuery === '' || {{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))">
+                                            <input class="form-check-input flex-shrink-0" type="checkbox"
+                                                value="{{ $u->id }}" wire:model="assignUserIds">
+                                            <div class="d-flex flex-column lh-sm">
+                                                <span class="fw-semibold text-body fs-90">{{ $u->name }}</span>
+                                                @if($uRole)
+                                                    <span class="text-muted fs-75 mt-0.5">{{ $uRole }}</span>
+                                                @endif
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="form-label fw-semibold fs-90">Người ngoài công ty</label>
+                        <input type="text" class="form-control" wire:model="assignExternal"
+                            placeholder="Tên người ngoài (nếu có)">
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label fw-semibold fs-90">Hạn chót</label>
+                        <input type="date" class="form-control" wire:model="assignDeadline">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-success" wire:click="saveAssign"
+                        wire:loading.attr="disabled" wire:target="saveAssign">
+                        <span wire:loading wire:target="saveAssign"
+                            class="spinner-border spinner-border-sm me-1"></span>
+                        Lưu giao việc
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
                 <div class="modal-body p-4">
                     <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
                     <div class="list-group mh-320-scroll overflow-y-auto" style="max-height: 250px;">

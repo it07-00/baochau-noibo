@@ -1004,18 +1004,78 @@
                         </div>
                         @if ($formData['is_renewal'])
                             <div class="col-md-6">
-                                <label class="form-label small fw-semibold">HĐ gốc (tái ký từ)</label>
-                                <select class="form-select" wire:model="formData.parent_contract_id">
-                                    <option value="">-- Chọn HĐ gốc --</option>
-                                    @foreach ($parentContracts as $pc)
-                                        <option value="{{ $pc->id }}">{{ $pc->so_hop_dong }} -
-                                            {{ $pc->customer->name ?? '' }}</option>
-                                    @endforeach
-                                </select>
+                                <label class="form-label small fw-semibold">H�""                           </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Người ngoài công ty</label>
+                                <input type="text" class="form-control" wire:model="createAssignExternal"
+                                    placeholder="Tên người ngoài (nếu có)">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Hạn chót giao việc</label>
+                                <input type="date" class="form-control" wire:model="createAssignDeadline">
                             </div>
                         @endif
-                        @include('livewire.admin.contracts.partials.service-submission-fields')
-                        <div class="col-12">
+
+                        @if (!$isEditing)
+                            <div class="col-12 mt-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-user-check me-1"></i>Giao việc thực hiện</span>
+                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" x-data="{ searchQuery: '' }">
+                                <label class="form-label small fw-semibold">Chọn nhân viên thực hiện (có thể chọn nhiều)</label>
+                                <!-- Search Box -->
+                                <div class="mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-body border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm nhanh nhân viên..." x-model="searchQuery">
+                                    </div>
+                                </div>
+                                <div class="border rounded p-2 bg-light-subtle mh-200-scroll overflow-y-auto" style="max-height: 200px;">
+                                    @php
+                                        $groupedAssignableUsers = $assignable_users->groupBy(function($user) {
+                                            $roleName = $user->roles->first()?->name ?? '';
+                                            return \App\Enums\Role::tryFrom($roleName)?->label() ?? 'Khác';
+                                        });
+                                    @endphp
+
+                                    @foreach ($groupedAssignableUsers as $roleLabel => $users)
+                                        <div class="mb-2 role-group-section"
+                                             x-show="searchQuery === '' || {{ json_encode($users->pluck('name')->map(fn($n) => mb_strtolower($n))->toArray()) }}.some(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')))">
+                                            <div class="fw-bold text-success fs-75 border-bottom pb-0.5 mb-1">{{ $roleLabel }}</div>
+                                            <div class="d-flex flex-column gap-1 ms-1 mb-2">
+                                                @foreach ($users as $u)
+                                                    <label class="d-flex align-items-center gap-2 py-0.5 user-item cursor-pointer"
+                                                           x-show="searchQuery === '' || {{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))">
+                                                        <input class="form-check-input flex-shrink-0" type="checkbox"
+                                                            value="{{ $u->id }}" wire:model="createAssignUserIds">
+                                                        <span class="fs-85 text-body">{{ $u->name }}</span>
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Người ngoài công ty</label>
+                                <input type="text" class="form-control" wire:model="createAssignExternal"
+                                    placeholder="Tên người ngoài (nếu có)">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Hạn chót giao việc</label>
+                                <input type="date" class="form-control" wire:model="createAssignDeadline">
+                            </div>
+                        @endif
+
+<div class="col-12">
                             <label class="form-label small fw-semibold">Ghi chú</label>
                             <textarea class="form-control" rows="3" wire:model="formData.notes"></textarea>
                         </div>
@@ -1034,32 +1094,68 @@
 
     {{-- Assignment Modal --}}
     <div wire:ignore.self class="modal fade" id="assignModalEnergy" tabindex="-1">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content border-0 shadow-lg">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" x-data="{ searchQuery: '' }">
                 <div class="modal-header bg-success py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom"><i class="fa-solid fa-user-check me-1"></i> Giao
-                        việc hợp đồng</h5>
+                    <h5 class="modal-title fw-bold modal-title-custom text-white"><i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="text-muted  mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
-                    <div class="list-group mh-320-scroll" >
-                        @foreach ($assignable_users as $u)
-                            <label class="list-group-item list-group-item-action d-flex gap-2">
-                                <input class="form-check-input flex-shrink-0 mt-1" type="checkbox"
-                                    value="{{ $u->id }}" wire:model="assignUserIds">
-                                <span>{{ $u->name }}<small
-                                        class="text-muted d-block">{{ $u->roles->first()?->name }}</small></span>
-                            </label>
+                    <p class="text-muted mb-3 fs-90">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
+
+                    <!-- Search Box -->
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-body border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm nhanh nhân viên..." x-model="searchQuery">
+                        </div>
+                    </div>
+
+                    <!-- User Grouping -->
+                    <div class="mh-320-scroll pe-1" style="max-height: 280px; overflow-y: auto;">
+                        @php
+                            $groupedUsers = $assignable_users->groupBy(function($user) {
+                                $roleName = $user->roles->first()?->name ?? '';
+                                return \App\Enums\Role::tryFrom($roleName)?->label() ?? 'Khác';
+                            });
+                        @endphp
+
+                        @foreach ($groupedUsers as $roleLabel => $users)
+                            <div class="mb-3 role-group-section"
+                                 x-show="searchQuery === '' || {{ json_encode($users->pluck('name')->map(fn($n) => mb_strtolower($n))->toArray()) }}.some(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')))">
+                                <div class="fw-bold text-success border-bottom pb-1 mb-2 fs-80 d-flex align-items-center justify-content-between">
+                                    <span>{{ $roleLabel }}</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success fs-75 rounded-pill">{{ count($users) }}</span>
+                                </div>
+                                <div class="list-group list-group-flush rounded-3 border mb-2">
+                                    @foreach ($users as $u)
+                                        @php
+                                            $uRole = \App\Enums\Role::tryFrom($u->roles->first()?->name ?? '')?->label() ?? '';
+                                        @endphp
+                                        <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 px-3 user-item"
+                                               x-show="searchQuery === '' || {{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))">
+                                            <input class="form-check-input flex-shrink-0" type="checkbox"
+                                                value="{{ $u->id }}" wire:model="assignUserIds">
+                                            <div class="d-flex flex-column lh-sm">
+                                                <span class="fw-semibold text-body fs-90">{{ $u->name }}</span>
+                                                @if($uRole)
+                                                    <span class="text-muted fs-75 mt-0.5">{{ $uRole }}</span>
+                                                @endif
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
                         @endforeach
                     </div>
+
                     <div class="mt-3">
-                        <label class="form-label fw-semibold">Người ngoài công ty</label>
+                        <label class="form-label fw-semibold fs-90">Người ngoài công ty</label>
                         <input type="text" class="form-control" wire:model="assignExternal"
                             placeholder="Tên người ngoài (nếu có)">
                     </div>
                     <div class="mt-3">
-                        <label class="form-label fw-semibold">Hạn chót</label>
+                        <label class="form-label fw-semibold fs-90">Hạn chót</label>
                         <input type="date" class="form-control" wire:model="assignDeadline">
                     </div>
                 </div>
@@ -1075,7 +1171,6 @@
             </div>
         </div>
     </div>
-
     {{-- Workflow Modal --}}
     <div wire:ignore.self class="modal fade" id="workflowModalEnergy" tabindex="-1">
         <div class="modal-dialog modal-xl">

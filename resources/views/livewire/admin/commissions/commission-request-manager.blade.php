@@ -410,7 +410,7 @@
 
     <!-- View QR & Details Modal -->
     <div wire:ignore.self class="modal fade" id="viewRequestModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg rounded-12px overflow-hidden">
                 <div class="modal-header bg-body border-bottom px-3 py-2">
                     <h5 class="h6 modal-title d-flex align-items-center gap-2 text-body fw-bold">
@@ -502,7 +502,7 @@
                                             </h6>
                                         </div>
                                         <div class="card-body p-2 d-flex flex-column align-items-center justify-content-center">
-                                            <img src="{{ $viewingRequest->qr_url }}" class="img-fluid rounded w-100 h-auto object-fit-contain mxw-220px" alt="Mã QR thanh toán hoa hồng">
+                                            <img src="{{ $viewingRequest->qr_url }}" class="img-fluid rounded w-100 h-auto object-fit-contain mxw-320px" alt="Mã QR thanh toán hoa hồng">
                                         </div>
                                     </div>
                                 @else
