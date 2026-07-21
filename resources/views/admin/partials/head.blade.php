@@ -82,11 +82,11 @@
     <!-- Theme CSS Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/libs/flatpickr/flatpickr.min.css') }}?v={{ config('app.version') }}">
     <link rel="stylesheet" href="{{ asset('assets/libs/datatables/datatables.min.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/dept-race-board.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/sales-race-board.css') }}?v={{ config('app.version') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.css') }}?v={{ config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ file_exists(public_path('assets/css/styles.css')) ? filemtime(public_path('assets/css/styles.css')) : config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ file_exists(public_path('assets/css/custom.css')) ? filemtime(public_path('assets/css/custom.css')) : config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dept-race-board.css') }}?v={{ file_exists(public_path('assets/css/dept-race-board.css')) ? filemtime(public_path('assets/css/dept-race-board.css')) : config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/sales-race-board.css') }}?v={{ file_exists(public_path('assets/css/sales-race-board.css')) ? filemtime(public_path('assets/css/sales-race-board.css')) : config('app.version') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.css') }}?v={{ file_exists(public_path('assets/css/sweetalert2.css')) ? filemtime(public_path('assets/css/sweetalert2.css')) : config('app.version') }}">
 
     @stack('styles')
     @livewireStyles
