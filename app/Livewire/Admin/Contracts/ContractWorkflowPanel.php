@@ -8,6 +8,7 @@ use App\Models\ContractMilestoneFile;
 use App\Models\ContractAssignment;
 use App\Models\User;
 use App\Notifications\ContractWorkflowUpdatedNotification;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -61,10 +62,8 @@ class ContractWorkflowPanel extends Component
             return;
         }
 
-        // Bộ phận kỹ thuật: survey, waiting_client, client_confirmed không bắt buộc upload file
-        $isKyThuat = auth()->user()->hasRole(Role::KY_THUAT->value);
-        $kyThuatOptionalSteps = ['survey', 'waiting_client', 'client_confirmed'];
-        $fileRequired = !($this->activeStep === 'receiving' || ($isKyThuat && in_array($this->activeStep, $kyThuatOptionalSteps)));
+        // Chỉ bắt buộc upload file ở bước cuối (finished)
+        $fileRequired = ($this->activeStep === 'finished');
 
         $rules = [
             'uploadFiles'   => ($fileRequired ? 'required|array|max:10|min:1' : 'nullable|array|max:10'),
@@ -173,6 +172,40 @@ class ContractWorkflowPanel extends Component
         $this->activeStep  = null;
         $this->uploadFiles = [];
         $this->comment     = '';
+    }
+
+    public function deleteFile(int $fileId): void
+    {
+        $user = auth()->user();
+        if (!$user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value, Role::GIAM_DOC->value, Role::IT->value])) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa file đính kèm.']);
+            return;
+        }
+
+        $file = ContractMilestoneFile::where('contract_type', $this->getModelClass())
+            ->where('contract_id', $this->contractId)
+            ->find($fileId);
+
+        if (!$file) {
+            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'File không tồn tại hoặc đã bị xóa.']);
+            return;
+        }
+
+        $uploadDisk = config('filesystems.upload_disk', 'public');
+        if ($file->file_path) {
+            if (Storage::disk($uploadDisk)->exists($file->file_path)) {
+                Storage::disk($uploadDisk)->delete($file->file_path);
+            } elseif (Storage::disk('public')->exists($file->file_path)) {
+                Storage::disk('public')->delete($file->file_path);
+            }
+        }
+
+        $file->delete();
+
+        $this->dispatch('swal:toast', [
+            'type'    => 'success',
+            'message' => 'Đã xóa file đính kèm thành công.',
+        ]);
     }
 
     private function getModelClass(): string

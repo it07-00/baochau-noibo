@@ -140,7 +140,7 @@ Tư vấn và kỹ thuật dùng cùng key nhưng label bước 2-3 khác nhau. 
 
 Khi hoàn thành bước:
 
-- validate và lưu file vào `contract-files/{type}/{step}` nếu bước yêu cầu;
+- validate và lưu file vào `contract-files/{type}/{step}` (đối với quy trình 6 bước, đính kèm file là tùy chọn ở bước 1-5 và bắt buộc ở bước cuối `finished`);
 - tạo `ContractMilestoneFile` và `ContractWorkflowStep`;
 - cập nhật `workflow_status` trên hợp đồng;
 - gửi `ContractWorkflowUpdatedNotification`.

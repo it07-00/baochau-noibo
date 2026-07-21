@@ -130,17 +130,25 @@ class ContractWorkflowPanelTest extends TestCase
         ]);
     }
 
-    public function test_validation_rules_require_file_for_optional_roles_or_non_optional_steps(): void
+    public function test_validation_rules_require_file_only_for_finished_step(): void
     {
         $this->actingAs($this->techUser);
 
-        // Complete step that requires file upload (e.g. signing / outline / etc.)
+        // Intermediate step (e.g. processing) does NOT require file upload
         Livewire::test(\App\Livewire\Admin\Contracts\ContractWorkflowPanel::class, [
             'contractType' => 'commercial',
             'contractId' => $this->contract->id,
         ])
         ->call('openStep', 'processing')
-        // No uploadFiles set
+        ->call('completeStep')
+        ->assertHasNoErrors();
+
+        // Final step (finished) requires file upload
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWorkflowPanel::class, [
+            'contractType' => 'commercial',
+            'contractId' => $this->contract->id,
+        ])
+        ->call('openStep', 'finished')
         ->call('completeStep')
         ->assertHasErrors(['uploadFiles']);
     }
@@ -195,5 +203,37 @@ class ContractWorkflowPanelTest extends TestCase
             ->assertHasNoErrors();
 
         Notification::assertNotSentTo($accountant, ContractWorkflowUpdatedNotification::class);
+    }
+
+    public function test_authorized_user_can_delete_attached_milestone_file(): void
+    {
+        Storage::fake('public');
+
+        $this->actingAs($this->techUser);
+
+        $file = UploadedFile::fake()->create('tailieu_xoa.pdf', 500, 'application/pdf');
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWorkflowPanel::class, [
+            'contractType' => 'commercial',
+            'contractId' => $this->contract->id,
+        ])
+            ->call('openStep', 'finished')
+            ->set('uploadFiles', [$file])
+            ->call('completeStep')
+            ->assertHasNoErrors();
+
+        $milestoneFile = \App\Models\ContractMilestoneFile::where('contract_id', $this->contract->id)->first();
+        $this->assertNotNull($milestoneFile);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWorkflowPanel::class, [
+            'contractType' => 'commercial',
+            'contractId' => $this->contract->id,
+        ])
+            ->call('deleteFile', $milestoneFile->id)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseMissing('contract_milestone_files', [
+            'id' => $milestoneFile->id,
+        ]);
     }
 }

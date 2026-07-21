@@ -127,7 +127,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold mb-1">
                             File đính kèm
-                            @if ($activeStep === 'receiving' || (auth()->user()->hasRole('ky-thuat') && in_array($activeStep, ['survey', 'waiting_client', 'client_confirmed'])))
+                            @if ($activeStep !== 'finished')
                                 <small class="text-muted fw-normal">(Tùy chọn)</small>
                             @else
                                 <span class="text-danger">*</span>
@@ -196,13 +196,24 @@
                             </span>
                             @foreach ($filesByStep[$key] as $f)
                                 <div class="ps-2 mb-2">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="fa-solid fa-file-arrow-down text-success flex-shrink-0"></i>
-                                        <a href="{{ $f->file_url }}" target="_blank"
-                                            class="fw-semibold text-decoration-none text-primary text-truncate fs-83"
-                                            >
-                                            {{ $f->original_name ?: 'Xem tệp đính kèm' }}
-                                        </a>
+                                    <div class="d-flex align-items-center justify-content-between gap-2">
+                                        <div class="d-flex align-items-center gap-2 min-w-0">
+                                            <i class="fa-solid fa-file-arrow-down text-success flex-shrink-0"></i>
+                                            <a href="{{ $f->file_url }}" target="_blank"
+                                                class="fw-semibold text-decoration-none text-primary text-truncate fs-83"
+                                                >
+                                                {{ $f->original_name ?: 'Xem tệp đính kèm' }}
+                                            </a>
+                                        </div>
+                                        @if (auth()->user()->hasAnyRole(['tu-van', 'ky-thuat', 'giam-doc', 'it']) || $f->uploader_id === auth()->id())
+                                            <button type="button"
+                                                class="btn btn-sm btn-link text-danger p-0 border-0 flex-shrink-0"
+                                                wire:click="deleteFile({{ $f->id }})"
+                                                wire:confirm="Bạn có chắc chắn muốn xóa file đính kèm này?"
+                                                title="Xóa file">
+                                                <i class="fa-solid fa-trash-can fs-85"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                     <div class="text-muted ps-4 fs-75" >
                                         {{ $f->uploader?->name }} &mdash; {{ $f->created_at?->format('d/m/Y H:i') }}
