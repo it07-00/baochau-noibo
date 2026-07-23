@@ -111,7 +111,7 @@ class QuotationDocumentManager extends Component
     {
         $user = auth()->user();
 
-        abort_unless($user, 403);
+        abort_unless($user !== null, 403);
 
         if ($user->hasRole(Role::IT->value)) {
             return;

@@ -143,9 +143,9 @@
     <div wire:ignore.self class="modal fade" id="qdocDetailModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold text-white">Chi tiết Báo giá</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">Chi tiết Báo giá</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-0 overflow-auto">
                     @if($selectedDoc)
@@ -311,13 +311,13 @@
     <div wire:ignore.self class="modal fade" id="qdocFormModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <form wire:submit.prevent="save" class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">
                         @if($isEditing) Cập nhật Báo giá
                         @else Tạo Báo giá mới
                         @endif
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-4 overflow-auto">
                         <!-- Datalist for autocomplete group names -->

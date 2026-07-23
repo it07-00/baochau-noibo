@@ -515,8 +515,8 @@
     <div wire:ignore.self class="modal fade" id="detailModalConsulting" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold text-white">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">
                         Chi tiết {{ $contractTypeName }}
                         @if ($selectedDoc?->customer?->name)
                             — {{ $selectedDoc->customer->name }}
@@ -524,7 +524,7 @@
                             #{{ $selectedDoc->shd_cxl }}
                         @endif
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
                     @if ($selectedDoc)
@@ -773,8 +773,8 @@
     <div wire:ignore.self class="modal fade" id="formModalConsulting" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">
                         @if ($isEditing)
                             Chỉnh sửa
                         @elseif ($isDuplicating)
@@ -784,7 +784,7 @@
                         @endif
                         {{ $contractTypeName }}
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
@@ -1194,9 +1194,9 @@
     <div wire:ignore.self class="modal fade" id="assignModalConsulting" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" x-data="{ searchQuery: '' }">
-                <div class="modal-header bg-success py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom text-white"><i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body"><i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <p class="text-muted mb-3 fs-90">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>

@@ -203,7 +203,7 @@
                                     <li><a class="dropdown-item" href="{{ route('app.quotation-docs.export-word', $item->quotationDocuments->first()->id) }}" target="_blank"><i class="fa-regular fa-file-word me-2 text-primary" aria-hidden="true"></i>Xuất Word báo giá</a></li>
                                     @endif
                                     @if($item->pdf_path)
-                                    <li><a class="dropdown-item" href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank"><i class="fa-regular fa-file-pdf me-2 text-danger" aria-hidden="true"></i>Mở file PDF</a></li>
+                                    <li><a class="dropdown-item" href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::url($item->pdf_path) }}" target="_blank"><i class="fa-regular fa-file-pdf me-2 text-danger" aria-hidden="true"></i>Mở file PDF</a></li>
                                     @endif
                                     <li><button type="button" class="dropdown-item" wire:click="openFiles({{ $item->id }})"><i class="fa-solid fa-paperclip me-2 text-body-secondary" aria-hidden="true"></i>File đính kèm @if($item->files_count)({{ $item->files_count }})@endif</button></li>
                                     @can('quotation-tracking.create')
@@ -244,9 +244,9 @@
     <div wire:ignore.self class="modal fade" id="detailModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold text-white">Thông tin Báo giá Chi tiết</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">Thông tin Báo giá Chi tiết</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-0 overflow-auto">
                     @if($selectedQuotation)
@@ -341,7 +341,7 @@
                                         @if($selectedQuotation->files->isNotEmpty())
                                             <div class="d-flex flex-column gap-1">
                                                 @foreach($selectedQuotation->files as $f)
-                                                <a href="{{ Storage::disk(config('filesystems.upload_disk', 'public'))->url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
+                                                <a href="{{ Storage::url($f->path) }}" target="_blank" class="d-flex align-items-center gap-2 text-danger text-decoration-none small">
                                                     <i class="fa-solid fa-file-pdf"></i>
                                                     <span class="text-truncate">{{ $f->original_name }}</span>
                                                 </a>
@@ -425,9 +425,9 @@
          ">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <form wire:submit.prevent="save" class="modal-content overflow-hidden border-0 shadow-lg rounded-4">
-                <div class="modal-header bg-primary text-white py-3 px-4">
-                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-file-invoice fs-5"></i>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-file-invoice fs-5 text-primary"></i>
                         <span>
                             @if($isEditing) Cập nhật Báo giá
                             @elseif($isDuplicating) Sao chép Báo giá
@@ -435,7 +435,7 @@
                             @endif
                         </span>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-4 bg-body-tertiary overflow-auto">
 
@@ -796,9 +796,9 @@
     <div wire:ignore.self class="modal fade" id="convertModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-success py-3">
-                    <h5 class="modal-title fw-bold text-white">Chọn loại Hợp đồng muốn tạo</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">Chọn loại Hợp đồng muốn tạo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-4 text-center">
                     <p class="mb-4">Hệ thống sẽ chuyển dữ liệu từ báo giá này sang trang tạo hợp đồng mới.</p>
@@ -831,9 +831,9 @@
     <div wire:ignore.self class="modal fade" id="importModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg overflow-hidden">
-                <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white"><i class="fa-solid fa-file-arrow-up me-2"></i>Import Báo giá từ Excel</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" wire:click="resetImport" aria-label="Đóng"></button>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body"><i class="fa-solid fa-file-arrow-up me-2 text-primary"></i>Import Báo giá từ Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" wire:click="resetImport" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-4">
                     {{-- Errors --}}
