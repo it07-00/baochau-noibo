@@ -12,7 +12,7 @@
                 <p class="text-secondary mb-0">Kiểm soát danh mục vai trò và phạm vi phân quyền truy cập người dùng trong hệ thống.</p>
             </div>
             @can('roles.create')
-                <a href="{{ route('app.roles.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm" wire:navigate>
+                <a href="{{ route('app.roles.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
                     <i class="fa-solid fa-plus"></i>Tạo vai trò mới
                 </a>
             @endcan
@@ -132,7 +132,7 @@
                                 <td class="text-end pe-3">
                                     <div class="d-inline-flex align-items-center gap-1.5">
                                         @can('roles.edit')
-                                            <a href="{{ route('app.roles.edit', $role) }}" class="btn btn-outline-primary btn-sm rounded-2 d-inline-flex align-items-center gap-1" wire:navigate>
+                                            <a href="{{ route('app.roles.edit', $role) }}" class="btn btn-outline-primary btn-sm rounded-2 d-inline-flex align-items-center gap-1">
                                                 <i class="fa-solid fa-pen-to-square"></i> Sửa
                                             </a>
                                         @endcan
