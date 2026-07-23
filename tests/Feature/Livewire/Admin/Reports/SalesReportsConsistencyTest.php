@@ -28,10 +28,13 @@ class SalesReportsConsistencyTest extends TestCase
         parent::setUp();
 
         if (DB::getDriverName() === 'sqlite') {
-            DB::connection()->getPdo()->sqliteCreateFunction(
-                'MONTH',
-                static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
-            );
+            $pdo = DB::connection()->getPdo();
+            if (method_exists($pdo, 'sqliteCreateFunction')) {
+                $pdo->sqliteCreateFunction(
+                    'MONTH',
+                    static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
+                );
+            }
         }
     }
 

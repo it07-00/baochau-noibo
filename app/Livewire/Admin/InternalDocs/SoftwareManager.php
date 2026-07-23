@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\InternalDocs;
 
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\Department;
 use App\Models\InternalSoftware;

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Enums\Role as RoleEnum;
 use App\Models\User;
 use App\Services\StatisticsService;
+use App\Support\DataScope;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;

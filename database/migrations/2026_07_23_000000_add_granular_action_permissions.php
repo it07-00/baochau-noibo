@@ -57,6 +57,7 @@ return new class extends Migration
         }
 
         foreach ($this->roleAssignments as $roleName => $perms) {
+            /** @var Role|null $role */
             $role = Role::where('name', $roleName)->first();
             if ($role) {
                 $role->givePermissionTo($perms);
