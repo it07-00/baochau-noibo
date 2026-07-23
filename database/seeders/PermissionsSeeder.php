@@ -66,7 +66,6 @@ class PermissionsSeeder extends Seeder
                 // GĐ không truy cập bộ phận kinh doanh/tư vấn và postal admin
                 PermissionEnum::CONSULTING_REQUESTS_VIEW->value,
                 PermissionEnum::TECHNICAL_REQUESTS_VIEW->value,
-                PermissionEnum::MARKETING_REPORTS_VIEW->value,
                 PermissionEnum::MAIL_DELIVERY_ADMIN_VIEW->value,
                 // Phòng ban
                 PermissionEnum::DEPARTMENTS_VIEW->value, PermissionEnum::DEPARTMENTS_CREATE->value, PermissionEnum::DEPARTMENTS_EDIT->value, PermissionEnum::DEPARTMENTS_DELETE->value,

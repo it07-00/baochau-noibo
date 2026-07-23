@@ -78,6 +78,23 @@ class MarketingContentManagerTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_director_user_can_access_marketing_content_page(): void
+    {
+        $giamDocRole = Role::findByName(RoleEnum::GIAM_DOC->value);
+        $giamDocRole->givePermissionTo(PermissionEnum::MARKETING_REPORTS_VIEW->value);
+
+        $giamDocUser = User::factory()->create([
+            'is_active' => true,
+        ]);
+        $giamDocUser->assignRole($giamDocRole);
+
+        $this->actingAs($giamDocUser);
+
+        $response = $this->get(route('app.marketing.content.index'));
+
+        $response->assertStatus(200);
+    }
+
     public function test_unauthorized_user_cannot_access_marketing_content_page(): void
     {
         $this->actingAs($this->accountantUser);
