@@ -101,7 +101,7 @@ class RoleManagerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Tạo mới vai trò');
-        $response->assertSee('Phân quyền chi tiết');
+        $response->assertSee('Ma trận phân quyền chi tiết');
     }
 
     public function test_it_renders_role_edit_view(): void
@@ -114,6 +114,6 @@ class RoleManagerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Chỉnh sửa');
-        $response->assertSee('Phân quyền chi tiết');
+        $response->assertSee('Ma trận phân quyền chi tiết');
     }
 }

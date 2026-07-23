@@ -4,7 +4,7 @@
 @section('page_title', 'Chỉnh sửa Vai trò: ' . $role->name)
 
 @section('content')
-    <form action="{{ route('app.roles.update', $role) }}" method="POST">
+    <form action="{{ route('app.roles.update', $role) }}" method="POST" id="roleEditForm">
         @csrf
         @method('PUT')
 
@@ -13,88 +13,104 @@
             <div class="col-12 col-lg-4">
                 <div class="card border rounded-3 shadow-sm bg-body position-sticky" style="top: 80px;">
                     <div class="card-header bg-body border-bottom p-3">
-                        <h6 class="fw-bold text-body mb-0">
-                            <i class="fa-solid fa-id-card text-primary me-2"></i>Thông tin vai trò
-                        </h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-primary-subtle text-primary p-2">
+                                <i class="fa-solid fa-user-shield fs-5"></i>
+                            </span>
+                            <div>
+                                <h6 class="fw-bold text-body mb-0">Thông tin vai trò</h6>
+                                <span class="small text-muted">ID vai trò: #{{ $role->id }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body p-3">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-body">Tên định danh (Mã hệ thống) <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control bg-body-tertiary @error('name') is-invalid @enderror" value="{{ old('name', $role->name) }}" required placeholder="Ví dụ: kinh-doanh, ke-toan-vien">
+                    <div class="card-body p-3.5">
+                        <div class="mb-3.5">
+                            <label class="form-label fw-bold text-body small mb-1.5">Tên định danh (Mã hệ thống) <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control form-control-lg bg-body-tertiary fw-medium fs-6 @error('name') is-invalid @enderror" value="{{ old('name', $role->name) }}" required placeholder="Ví dụ: kinh-doanh, ke-toan-vien">
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div class="form-text small text-secondary mt-2">
-                                <i class="fa-solid fa-circle-info me-1"></i>Thay đổi mã vai trò có thể ảnh hưởng tới cấu hình phân quyền hệ thống.
+                            <div class="form-text text-muted small mt-2">
+                                <i class="fa-solid fa-circle-info me-1 text-primary"></i>Tên mã dùng trong phân quyền ứng dụng. Nền tảng tự động chuyển về chữ thường không dấu.
                             </div>
                         </div>
 
-                        <!-- Selected Counter Summary -->
-                        <div class="p-3 bg-body-tertiary border rounded-3 mb-3">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <span class="small fw-semibold text-secondary">Quyền đã gán:</span>
-                                <span class="badge bg-primary text-white rounded-pill px-2.5 py-1 fw-bold fs-6" id="selectedPermCount">0</span>
+                        <!-- Selected Counter Progress Card -->
+                        <div class="p-3 bg-primary-subtle border border-primary-subtle rounded-3 mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="small fw-bold text-primary">
+                                    <i class="fa-solid fa-key me-1"></i>Số quyền đã gán:
+                                </span>
+                                <span class="badge bg-primary text-white rounded-pill px-3 py-1.5 fw-bold fs-6" id="selectedPermCount">0</span>
+                            </div>
+                            <div class="progress bg-white" style="height: 6px;">
+                                <div class="progress-bar bg-primary" id="selectedPermProgress" role="progressbar" style="width: 0%;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2 small text-primary opacity-75">
+                                <span>Tiến độ phân quyền</span>
+                                <span id="selectedPermPercent">0%</span>
                             </div>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary py-2 fw-semibold rounded-3 shadow-sm">
-                                <i class="fa-solid fa-floppy-disk me-1"></i>Lưu thay đổi
+                            <button type="submit" class="btn btn-primary py-2.5 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i>Lưu thay đổi vai trò
                             </button>
-                            <a href="{{ route('app.roles.index') }}" class="btn btn-outline-secondary py-2 rounded-3">
-                                <i class="fa-solid fa-arrow-left me-1"></i>Hủy bỏ
+                            <a href="{{ route('app.roles.index') }}" class="btn btn-outline-secondary py-2.5 rounded-3 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-solid fa-arrow-left"></i>Quay lại danh sách
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Permission Matrix in One Card -->
+            <!-- Right Column: Permission Matrix -->
             <div class="col-12 col-lg-8">
-                <div class="card border rounded-3 shadow-sm bg-body">
-                    <!-- Card Header with Search Box -->
-                    <div class="card-header bg-body border-bottom p-3">
-                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                <!-- Search Box & Master Controls Header -->
+                <div class="card border rounded-3 shadow-sm bg-body mb-3.5">
+                    <div class="card-body p-3.5">
+                        <div class="d-flex align-items-center justify-content-between gap-3 mb-3 flex-wrap">
                             <div>
-                                <h6 class="fw-bold text-body mb-1">
-                                    <i class="fa-solid fa-key text-primary me-2"></i>Phân quyền chi tiết
-                                </h6>
-                                <span class="small text-secondary">Tích chọn hoặc bỏ chọn các quyền của vai trò này</span>
+                                <h5 class="fw-bold text-body mb-1">
+                                    <i class="fa-solid fa-sliders text-primary me-2"></i>Ma trận phân quyền chi tiết
+                                </h5>
+                                <p class="text-muted small mb-0">Bật/tắt các quyền truy cập để thiết lập phạm vi thao tác cho nhóm vai trò này.</p>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="form-check form-switch m-0">
-                                    <input class="form-check-input cursor-pointer" type="checkbox" id="checkAllMaster">
-                                    <label class="form-check-label fw-semibold text-body small cursor-pointer" for="checkAllMaster">Chọn tất cả</label>
-                                </div>
+                            <div class="form-check form-switch m-0 bg-body-tertiary border rounded-pill px-3 py-2">
+                                <input class="form-check-input cursor-pointer me-2 ms-0" type="checkbox" id="checkAllMaster">
+                                <label class="form-check-label fw-bold text-body small cursor-pointer" for="checkAllMaster">Chọn tất cả quyền</label>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <div class="input-group">
-                                <span class="input-group-text bg-body-tertiary border-end-0 text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                <input type="search" id="permissionSearchInput" class="form-control bg-body-tertiary border-start-0 ps-0" placeholder="Lọc nhanh danh mục hoặc tên quyền hạn (VD: người dùng, báo giá, xem, sửa)...">
-                            </div>
+
+                        <div class="input-group">
+                            <span class="input-group-text bg-body-tertiary border-end-0 text-muted ps-3"><i class="fa-solid fa-magnifying-glass fs-6"></i></span>
+                            <input type="search" id="permissionSearchInput" class="form-control bg-body-tertiary border-start-0 ps-1" placeholder="Tìm nhanh quyền hạn (gõ: người dùng, báo giá, xem, sửa, xóa)...">
+                            <span class="input-group-text bg-body-tertiary border-start-0 text-muted small pe-3" id="visiblePermCountText">Đang xem tất cả</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Card Body: Permission Modules List -->
-                    <div class="card-body p-0" id="permissionModulesContainer">
-                        @foreach($permissions as $module => $modulePermissions)
-                            <div class="module-group border-bottom p-3.5" data-module="{{ \Illuminate\Support\Str::lower($module) }} {{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::moduleName($module)) }}">
-                                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-light-subtle">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-2 px-2 py-1">
-                                            <i class="fa-solid fa-folder me-1"></i>{{ count($modulePermissions) }} quyền
-                                        </span>
-                                        <h6 class="fw-bold text-body mb-0 module-title">
-                                            {{ \App\Support\RolePermissionViewData::moduleName($module) }}
-                                        </h6>
-                                    </div>
-                                    <div class="form-check form-switch m-0">
-                                        <input class="form-check-input module-check-all cursor-pointer" type="checkbox" id="mod_all_{{ $module }}">
-                                        <label class="form-check-label small text-secondary fw-medium cursor-pointer" for="mod_all_{{ $module }}">Chọn phân hệ</label>
-                                    </div>
+                <!-- Module Bento Cards -->
+                <div id="permissionModulesContainer">
+                    @foreach($permissions as $module => $modulePermissions)
+                        <div class="card border rounded-3 shadow-sm bg-body mb-3.5 module-group overflow-hidden" data-module="{{ \Illuminate\Support\Str::lower($module) }} {{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::moduleName($module)) }}">
+                            <div class="card-header bg-body-tertiary border-bottom p-3 d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-primary-subtle text-primary px-2.5 py-1.5">
+                                        <i class="{{ \App\Support\RolePermissionViewData::moduleIcon($module) }} me-1.5"></i>
+                                        <span class="fw-bold small">{{ count($modulePermissions) }}</span>
+                                    </span>
+                                    <h6 class="fw-bold text-body mb-0 fs-6">
+                                        {{ \App\Support\RolePermissionViewData::moduleName($module) }}
+                                    </h6>
                                 </div>
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input module-check-all cursor-pointer me-1.5" type="checkbox" id="mod_all_{{ $module }}">
+                                    <label class="form-check-label small text-muted fw-semibold cursor-pointer" for="mod_all_{{ $module }}">Chọn phân hệ</label>
+                                </div>
+                            </div>
 
+                            <div class="card-body p-3">
                                 <div class="row g-2.5">
                                     @foreach($modulePermissions as $permission)
                                         @php
@@ -102,25 +118,29 @@
                                                 || (!old('permissions') && in_array($permission->name, $rolePermissions));
                                         @endphp
                                         <div class="col-12 col-sm-6 col-md-4 perm-item" data-perm-name="{{ \Illuminate\Support\Str::lower($permission->name) }}" data-perm-label="{{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::actionLabel($permission->name)) }}">
-                                            <div class="form-check p-2.5 border rounded-2 bg-body-tertiary hover-bg-light position-relative h-100 d-flex align-items-start gap-2">
-                                                <input class="form-check-input perm-check mt-1 ms-0 flex-shrink-0 cursor-pointer" type="checkbox"
-                                                    name="permissions[]"
-                                                    value="{{ $permission->name }}"
-                                                    id="perm_{{ $permission->id }}"
-                                                    {{ $isChecked ? 'checked' : '' }}>
-                                                <label class="form-check-label w-100 cursor-pointer" for="perm_{{ $permission->id }}">
-                                                    <div class="fw-semibold text-body small lh-sm">
-                                                        {{ \App\Support\RolePermissionViewData::actionLabel($permission->name) }}
+                                            <label for="perm_{{ $permission->id }}" class="perm-card-label w-100 h-100 cursor-pointer user-select-none">
+                                                <div class="perm-card-inner p-2.5 border rounded-3 transition-all h-100 d-flex align-items-start gap-2.5 {{ $isChecked ? 'bg-primary-subtle border-primary text-primary shadow-sm' : 'bg-body border-light-subtle text-body' }}">
+                                                    <input class="form-check-input perm-check mt-1 ms-0 flex-shrink-0 cursor-pointer" type="checkbox"
+                                                        name="permissions[]"
+                                                        value="{{ $permission->name }}"
+                                                        id="perm_{{ $permission->id }}"
+                                                        {{ $isChecked ? 'checked' : '' }}>
+                                                    <div class="flex-grow-1 min-w-0">
+                                                        <div class="fw-semibold small lh-sm text-truncate-2">
+                                                            {{ \App\Support\RolePermissionViewData::actionLabel($permission->name) }}
+                                                        </div>
+                                                        <span class="d-block text-muted font-monospace opacity-75 mt-1" style="font-size: 0.7rem; font-family: var(--bs-font-monospace);">
+                                                            {{ $permission->name }}
+                                                        </span>
                                                     </div>
-                                                    <code class="d-block text-secondary opacity-75 small mt-1" style="font-size: 0.725rem;">{{ $permission->name }}</code>
-                                                </label>
-                                            </div>
+                                                </div>
+                                            </label>
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -134,11 +154,36 @@
             const moduleChecks = document.querySelectorAll('.module-check-all');
             const searchInput = document.getElementById('permissionSearchInput');
             const selectedCountBadge = document.getElementById('selectedPermCount');
+            const selectedPermProgress = document.getElementById('selectedPermProgress');
+            const selectedPermPercent = document.getElementById('selectedPermPercent');
+            const visiblePermCountText = document.getElementById('visiblePermCountText');
+            const totalPermsInSystem = permChecks.length;
+
+            function updateCardStyle(checkbox) {
+                const cardInner = checkbox.closest('.perm-card-inner');
+                if (cardInner) {
+                    if (checkbox.checked) {
+                        cardInner.classList.remove('bg-body', 'border-light-subtle', 'text-body');
+                        cardInner.classList.add('bg-primary-subtle', 'border-primary', 'text-primary', 'shadow-sm');
+                    } else {
+                        cardInner.classList.remove('bg-primary-subtle', 'border-primary', 'text-primary', 'shadow-sm');
+                        cardInner.classList.add('bg-body', 'border-light-subtle', 'text-body');
+                    }
+                }
+            }
 
             function updateCount() {
                 const checkedCount = document.querySelectorAll('.perm-check:checked').length;
                 if (selectedCountBadge) {
                     selectedCountBadge.textContent = checkedCount;
+                }
+
+                const percent = totalPermsInSystem > 0 ? Math.round((checkedCount / totalPermsInSystem) * 100) : 0;
+                if (selectedPermProgress) {
+                    selectedPermProgress.style.width = percent + '%';
+                }
+                if (selectedPermPercent) {
+                    selectedPermPercent.textContent = percent + '%';
                 }
 
                 // Update module checks status
@@ -160,7 +205,10 @@
             // Master Check All
             if (masterCheck) {
                 masterCheck.addEventListener('change', function () {
-                    permChecks.forEach(cb => { cb.checked = this.checked; });
+                    permChecks.forEach(cb => {
+                        cb.checked = this.checked;
+                        updateCardStyle(cb);
+                    });
                     moduleChecks.forEach(cb => { cb.checked = this.checked; });
                     updateCount();
                 });
@@ -172,7 +220,10 @@
                     const group = this.closest('.module-group');
                     if (group) {
                         const groupPerms = group.querySelectorAll('.perm-check');
-                        groupPerms.forEach(cb => { cb.checked = this.checked; });
+                        groupPerms.forEach(cb => {
+                            cb.checked = this.checked;
+                            updateCardStyle(cb);
+                        });
                         updateCount();
                     }
                 });
@@ -180,13 +231,18 @@
 
             // Individual Check Item
             permChecks.forEach(cb => {
-                cb.addEventListener('change', updateCount);
+                cb.addEventListener('change', function() {
+                    updateCardStyle(this);
+                    updateCount();
+                });
             });
 
             // Search filter
             if (searchInput) {
                 searchInput.addEventListener('input', function () {
                     const q = this.value.toLowerCase().trim();
+                    let visibleCount = 0;
+
                     document.querySelectorAll('.module-group').forEach(group => {
                         const moduleData = group.getAttribute('data-module') || '';
                         let hasVisiblePerm = false;
@@ -198,6 +254,7 @@
                             if (q === '' || pName.includes(q) || pLabel.includes(q) || moduleData.includes(q)) {
                                 item.style.display = '';
                                 hasVisiblePerm = true;
+                                visibleCount++;
                             } else {
                                 item.style.display = 'none';
                             }
@@ -205,10 +262,17 @@
 
                         group.style.display = hasVisiblePerm ? '' : 'none';
                     });
+
+                    if (visiblePermCountText) {
+                        visiblePermCountText.textContent = q === ''
+                            ? 'Đang xem tất cả (' + totalPermsInSystem + ' quyền)'
+                            : 'Khớp ' + visibleCount + ' / ' + totalPermsInSystem + ' quyền';
+                    }
                 });
             }
 
-            // Initial counter sync
+            // Initial counter & card styles sync
+            permChecks.forEach(cb => updateCardStyle(cb));
             updateCount();
         });
     </script>

@@ -61,9 +61,46 @@ final class RolePermissionViewData
         'report' => 'Xem báo cáo',
     ];
 
+    private const MODULE_ICONS = [
+        'users' => 'fa-solid fa-users',
+        'roles' => 'fa-solid fa-user-shield',
+        'departments' => 'fa-solid fa-sitemap',
+        'settings' => 'fa-solid fa-gear',
+        'master-data' => 'fa-solid fa-database',
+        'handlers' => 'fa-solid fa-truck-field',
+        'customers' => 'fa-solid fa-building-user',
+        'invoices' => 'fa-solid fa-file-invoice-dollar',
+        'handler-invoices' => 'fa-solid fa-file-invoice-dollar',
+        'quotations' => 'fa-solid fa-file-signature',
+        'quotation-tracking' => 'fa-solid fa-list-check',
+        'commissions' => 'fa-solid fa-hand-holding-dollar',
+        'advance-requests' => 'fa-solid fa-wallet',
+        'cash-flow' => 'fa-solid fa-money-bill-transfer',
+        'cham-cong' => 'fa-solid fa-calendar-check',
+        'hr-profiles' => 'fa-solid fa-id-card',
+        'activity-log' => 'fa-solid fa-clock-rotate-left',
+        'internal-docs' => 'fa-solid fa-book-bookmark',
+        'articles' => 'fa-solid fa-newspaper',
+    ];
+
     public static function moduleName(string $module): string
     {
         return self::MODULE_NAMES[$module] ?? strtoupper($module);
+    }
+
+    public static function moduleIcon(string $module): string
+    {
+        if (str_contains($module, 'contract')) {
+            return 'fa-solid fa-file-contract';
+        }
+        if (str_contains($module, 'report')) {
+            return 'fa-solid fa-chart-column';
+        }
+        if (str_contains($module, 'request')) {
+            return 'fa-solid fa-clipboard-list';
+        }
+
+        return self::MODULE_ICONS[$module] ?? 'fa-solid fa-folder-open';
     }
 
     public static function actionLabel(string $permissionName): string
