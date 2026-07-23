@@ -109,10 +109,18 @@ class RoleManagerTest extends TestCase
         $this->actingAs($this->admin);
 
         $role = Role::findOrCreate(RoleEnum::KE_TOAN->value);
+        $viewPermission = Permission::findOrCreate(PermissionEnum::USERS_VIEW->value);
+        Permission::findOrCreate(PermissionEnum::USERS_EDIT->value);
+        $role->givePermissionTo($viewPermission);
 
         $response = $this->get(route('app.roles.edit', $role));
 
         $response->assertStatus(200);
+        $response->assertSee(PermissionEnum::USERS_VIEW->value);
+        $response->assertSee(PermissionEnum::USERS_EDIT->value);
+        $response->assertSee('module-group', false);
+        $response->assertSee('value="'.PermissionEnum::USERS_VIEW->value.'"', false);
+        $response->assertSee('checked', false);
         $response->assertSee('Chỉnh sửa');
         $response->assertSee('Ma trận phân quyền chi tiết');
     }

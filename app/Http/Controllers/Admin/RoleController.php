@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Permission as PermissionEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Enums\Permission as PermissionEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -31,14 +31,14 @@ class RoleController extends Controller
         abort_unless(auth()->user()->can(PermissionEnum::ROLES_CREATE->value), 403);
 
         $validated = $request->validate([
-            'name'        => ['required', 'string', 'max:255', 'unique:roles,name'],
+            'name' => ['required', 'string', 'max:255', 'unique:roles,name'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['exists:permissions,name'],
         ]);
 
         $role = Role::create(['name' => $validated['name'], 'guard_name' => 'web']);
 
-        if (!empty($validated['permissions'])) {
+        if (! empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
         }
 
@@ -49,11 +49,16 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
-            return explode('.', $perm->name)[0];
-        });
+        $permissions = Permission::query()
+            ->where('guard_name', $role->guard_name)
+            ->orderBy('name')
+            ->get()
+            ->groupBy(fn (Permission $permission) => str($permission->name)->before('.')->toString());
 
-        $rolePermissions = $role->permissions->pluck('name')->toArray();
+        $rolePermissions = $role->permissions()
+            ->where('guard_name', $role->guard_name)
+            ->pluck('name')
+            ->all();
 
         return view('admin.pages.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
@@ -63,7 +68,7 @@ class RoleController extends Controller
         abort_unless(auth()->user()->can(PermissionEnum::ROLES_EDIT->value), 403);
 
         $validated = $request->validate([
-            'name'        => ['required', 'string', 'max:255', 'unique:roles,name,' . $role->id],
+            'name' => ['required', 'string', 'max:255', 'unique:roles,name,'.$role->id],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['exists:permissions,name'],
         ]);
