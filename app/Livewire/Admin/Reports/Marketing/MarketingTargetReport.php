@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Reports\Marketing;
 
-use App\Enums\Role;
+use App\Enums\Permission;
 use App\Models\Quotation;
 use App\Models\SalesTarget;
 use Livewire\Component;
@@ -10,15 +10,18 @@ use Livewire\Component;
 class MarketingTargetReport extends Component
 {
     public int $year;
+
     public array $years = [];
+
     public array $targets = [];
+
     public bool $canEdit = false;
 
     public function mount(): void
     {
         $this->year = now()->year;
         $this->years = range(now()->year, now()->year - 4);
-        $this->canEdit = auth()->user()->hasAnyRole([Role::IT->value, Role::GIAM_DOC->value]);
+        $this->canEdit = auth()->user()->can(Permission::MARKETING_TARGETS_EDIT->value);
         $this->loadTargets();
     }
 
@@ -43,7 +46,7 @@ class MarketingTargetReport extends Component
 
     public function saveTargets(): void
     {
-        if (!$this->canEdit) {
+        if (! $this->canEdit) {
             abort(403);
         }
 
@@ -97,15 +100,15 @@ class MarketingTargetReport extends Component
             $actual = $actualRows->has($m) ? (int) $actualRows[$m]->count : 0;
             $actualSales = $actualRows->has($m) ? (float) $actualRows[$m]->total_sales : 0;
             $months[$m] = [
-                'target'       => $target,
-                'actual'       => $actual,
+                'target' => $target,
+                'actual' => $actual,
                 'actual_sales' => $actualSales,
             ];
         }
 
         $totals = [
-            'target'       => array_sum(array_column($months, 'target')),
-            'actual'       => array_sum(array_column($months, 'actual')),
+            'target' => array_sum(array_column($months, 'target')),
+            'actual' => array_sum(array_column($months, 'actual')),
             'actual_sales' => array_sum(array_column($months, 'actual_sales')),
         ];
 

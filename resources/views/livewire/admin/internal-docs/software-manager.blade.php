@@ -5,7 +5,7 @@
             <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white p-3 shadow-sm"><i class="fa-solid fa-laptop-code fs-4"></i></span>
             <div><h1 class="h4 fw-bold text-body mb-1">Phần mềm nội bộ</h1><p class="text-secondary-emphasis mb-0">Danh mục công cụ và đường dẫn phục vụ công việc nội bộ.</p></div>
         </div>
-        @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
+        @if($canManage)
             <button wire:click="openCreateModal" wire:loading.attr="disabled" wire:target="openCreateModal" class="btn btn-primary text-nowrap"><i class="fa-solid fa-plus me-1"></i> Thêm phần mềm</button>
         @endif
     </header>
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
 
-                            @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
+                            @if($canManage)
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-label="Thao tác {{ $sw->name }}">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -77,7 +77,7 @@
                             </a>
                         </div>
 
-                        @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
+                        @if($canManage)
                             <div class="mt-2 text-center">
                                 <span class="badge {{ $sw->is_active ? 'text-bg-success' : 'text-bg-secondary' }} rounded-pill">
                                     {{ $sw->is_active ? 'Hoạt động' : 'Đã ẩn' }}
@@ -100,7 +100,7 @@
     </div>
 
     {{-- Create/Edit Modal --}}
-    @if(auth()->user()->hasRole(\App\Enums\Role::IT->value))
+    @if($canManage)
         <div class="modal fade {{ $showModal ? 'show d-block' : '' }} bg-dark-50" tabindex="-1" >
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow rounded-16px" >

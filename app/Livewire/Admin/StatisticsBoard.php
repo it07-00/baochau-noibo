@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Enums\Role as RoleEnum;
+use App\Models\User;
 use App\Services\StatisticsService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -21,7 +22,7 @@ class StatisticsBoard extends Component
 
     public string $contractDateTo = '';
 
-    public string $chartMode = 'quarter'; // 'quarter' | 'year'
+    public string $chartMode = 'monthly'; // 'quarter' | 'year' | 'monthly'
 
     public array $itStats = [];
 
@@ -43,7 +44,7 @@ class StatisticsBoard extends Component
     public function mount(): void
     {
         if (auth()->user()->hasRole(RoleEnum::THUC_TAP->value)) {
-            abort(403, 'Bạn không có quyền truy cập trang này.');
+            $this->redirect(route('app.daily-reports.index'), navigate: true);
         }
 
         if (auth()->user()->hasRole(RoleEnum::MARKETING->value)) {
@@ -55,8 +56,7 @@ class StatisticsBoard extends Component
         $this->years = range(now()->year, now()->year - 4);
 
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole(RoleEnum::KINH_DOANH->value)
-            && ! $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
+        $isRestrictedSales = ! DataScope::canViewAllSalesData($user);
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
         } else {
@@ -216,13 +216,12 @@ class StatisticsBoard extends Component
     public function render(StatisticsService $statisticsService)
     {
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole(RoleEnum::KINH_DOANH->value)
-            && ! $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
+        $isRestrictedSales = ! DataScope::canViewAllSalesData($user);
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
         }
 
-        $canFilterStaff = $user->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value, RoleEnum::IT->value]);
+        $canFilterStaff = DataScope::canFilterByStaff($user);
 
         $data = $statisticsService->getDashboardData(
             $user,
@@ -244,8 +243,8 @@ class StatisticsBoard extends Component
 
         $staffs = collect();
         if ($canFilterStaff) {
-            $salesStaffIds = \App\Models\User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
-            $staffs = \App\Models\User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
+            $salesStaffIds = User::role(['kinh-doanh', 'tp-kinh-doanh'])->pluck('id')->all();
+            $staffs = User::where('is_active', true)->whereIn('id', $salesStaffIds)->orderBy('name')->get();
         }
 
         $data['staffs'] = $staffs;

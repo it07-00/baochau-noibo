@@ -3,14 +3,15 @@
 namespace App\Livewire\Admin\Reports\Technical;
 
 use App\Enums\Role;
-use App\Models\ContractResearch;
-use App\Models\ContractLegal;
 use App\Models\ContractEmission;
-use App\Models\ContractTechnical;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
+use App\Support\DataScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
@@ -93,10 +94,7 @@ class TechnicalContractReport extends Component
 
     private function isRestrictedTechnical(): bool
     {
-        $user = auth()->user();
-
-        return $user->hasRole(Role::KY_THUAT->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        return DataScope::isRestrictedTechnical(auth()->user());
     }
 
     private function getModelClass(): string

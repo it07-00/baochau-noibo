@@ -145,7 +145,7 @@ Route::middleware(['auth', 'active', 'intern.daily-report'])->name('app.')->grou
     // Thông báo nội bộ
     Route::get('thong-bao-noi-bo', InternalNotificationManager::class)
         ->name('internal-notifications.index')
-        ->middleware(Role::toMiddleware(Role::IT));
+        ->middleware(Permission::toMiddleware(Permission::INTERNAL_NOTIFICATIONS_MANAGE));
 
     // Nhật ký công việc
     Route::get('nhat-ky-cong-viec', DailyReportManager::class)->name('daily-reports.index')->middleware(Permission::toMiddleware(Permission::DAILY_REPORTS_VIEW));

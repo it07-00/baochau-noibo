@@ -5,7 +5,6 @@ namespace App\Livewire\Admin\Commissions;
 use App\Enums\CommissionRequestStatus;
 use App\Enums\ContractType;
 use App\Enums\Permission;
-use App\Enums\Role;
 use App\Models\CommissionRequest;
 use App\Models\User;
 use App\Services\CommissionService;
@@ -101,25 +100,17 @@ class CommissionRequestManager extends Component
 
     private function ensureAccountantApprovalAccess(): void
     {
-        abort_unless(auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value), 403);
+        abort_unless(auth()->check() && auth()->user()->can(Permission::COMMISSIONS_APPROVE->value), 403);
     }
 
     private function ensureAccountantOrDirectorAccess(): void
     {
-        abort_unless(auth()->check() && (
-            auth()->user()->hasRole(Role::KE_TOAN->value) ||
-            auth()->user()->hasRole(Role::GIAM_DOC->value)
-        ), 403);
+        abort_unless(auth()->check() && auth()->user()->can(Permission::COMMISSIONS_CONFIRM_PAYMENT->value), 403);
     }
 
     private function canViewAllRequests(?User $user): bool
     {
-        return $user && $user->hasAnyRole([
-            Role::GIAM_DOC->value,
-            Role::TP_KINH_DOANH->value,
-            Role::KE_TOAN->value,
-            Role::IT->value,
-        ]);
+        return $user && $user->can(Permission::COMMISSIONS_VIEW_ALL->value);
     }
 
     private function resetRejectState(): void
@@ -156,11 +147,11 @@ class CommissionRequestManager extends Component
         $isOwner = auth()->check() && $request->user_id === auth()->id();
         $hasDeletePermission = auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value);
         abort_unless($isOwner || $hasDeletePermission, 403);
-        $isAccountant = auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value);
+        $canApprove = auth()->check() && auth()->user()->can(Permission::COMMISSIONS_APPROVE->value);
         if (in_array($request->status, [
             CommissionRequestStatus::DA_DUYET->value,
             CommissionRequestStatus::DA_CHI->value,
-        ], true) && ! $isAccountant) {
+        ], true) && ! $canApprove) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Không thể xóa yêu cầu đã được duyệt hoặc đã chi.']);
 
             return;
@@ -406,10 +397,11 @@ class CommissionRequestManager extends Component
             'requesters' => $requesters,
             'canFilterByRequester' => $isSpecialRole,
             'viewingRequest' => $viewingRequest,
-            'canApprove' => auth()->check() && auth()->user()->hasRole(Role::KE_TOAN->value),
+            'canApprove' => auth()->check() && auth()->user()->can(Permission::COMMISSIONS_APPROVE->value),
+            'canConfirmPayment' => auth()->check() && auth()->user()->can(Permission::COMMISSIONS_CONFIRM_PAYMENT->value),
             'canEdit' => auth()->check()
                 && auth()->user()->can(Permission::COMMISSIONS_EDIT->value)
-                && ! auth()->user()->hasRole(Role::KE_TOAN->value),
+                && ! auth()->user()->can(Permission::COMMISSIONS_APPROVE->value),
             'canDelete' => auth()->check() && auth()->user()->can(Permission::COMMISSIONS_DELETE->value),
         ])->layout('admin.layouts.app', ['title' => 'Quản lý Yêu cầu chi hoa hồng']);
     }

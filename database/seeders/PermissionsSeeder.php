@@ -49,6 +49,10 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::ACTIVITY_LOG_VIEW->value,
             // Chấm công
             PermissionEnum::CHAM_CONG_VIEW->value, PermissionEnum::CHAM_CONG_EDIT->value, PermissionEnum::CHAM_CONG_EXPORT->value,
+            // Granular actions
+            PermissionEnum::COMMISSIONS_APPROVE->value, PermissionEnum::COMMISSIONS_CONFIRM_PAYMENT->value, PermissionEnum::COMMISSIONS_VIEW_ALL->value,
+            PermissionEnum::INTERNAL_SOFTWARE_MANAGE->value, PermissionEnum::WORK_SCHEDULES_MANAGE_ALL->value, PermissionEnum::CONTRACTS_EDIT_FINANCE->value,
+            PermissionEnum::INTERNAL_NOTIFICATIONS_MANAGE->value, PermissionEnum::MARKETING_TARGETS_EDIT->value,
         ]);
 
         // ------------------------------------------------
@@ -116,6 +120,8 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::MARKETING_REPORTS_VIEW->value, PermissionEnum::MARKETING_REPORTS_VIEW_ALL->value,
             // Bài viết / nội dung content: CRUD
             PermissionEnum::ARTICLES_VIEW->value, PermissionEnum::ARTICLES_CREATE->value, PermissionEnum::ARTICLES_EDIT->value, PermissionEnum::ARTICLES_DELETE->value,
+            // Action permissions
+            PermissionEnum::COMMISSIONS_VIEW_ALL->value,
         ]);
 
         // ------------------------------------------------
@@ -249,6 +255,9 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::INTERNAL_DOCS_VIEW->value,
             // Báo cáo ngày
             PermissionEnum::DAILY_REPORTS_VIEW->value, PermissionEnum::DAILY_REPORTS_CREATE->value, PermissionEnum::DAILY_REPORTS_EDIT->value,
+            // Action permissions
+            PermissionEnum::COMMISSIONS_APPROVE->value, PermissionEnum::COMMISSIONS_CONFIRM_PAYMENT->value, PermissionEnum::COMMISSIONS_VIEW_ALL->value,
+            PermissionEnum::CONTRACTS_EDIT_FINANCE->value,
         ]);
 
         // ------------------------------------------------

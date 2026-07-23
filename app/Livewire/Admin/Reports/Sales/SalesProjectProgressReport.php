@@ -13,6 +13,7 @@ use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
+use App\Support\DataScope;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Livewire\Component;
@@ -214,8 +215,7 @@ class SalesProjectProgressReport extends Component
 
             // Role-based salesperson visibility limit
             $user = auth()->user();
-            $isKinhDoanhOnly = $user && $user->hasRole(Role::KINH_DOANH->value) &&
-                               ! $user->hasAnyRole([Role::TP_KINH_DOANH->value, Role::GIAM_DOC->value, Role::IT->value]);
+            $isKinhDoanhOnly = $user && ! DataScope::canViewAllSalesData($user);
             if ($isKinhDoanhOnly) {
                 $query->where('staff_id', $user->id);
             }

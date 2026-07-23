@@ -3,14 +3,15 @@
 namespace App\Livewire\Admin\Reports\Consulting;
 
 use App\Enums\Role;
-use App\Models\ContractResearch;
-use App\Models\ContractLegal;
 use App\Models\ContractEmission;
-use App\Models\ContractTechnical;
+use App\Models\ContractLegal;
+use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
+use App\Support\DataScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
@@ -97,10 +98,7 @@ class ConsultingContractReport extends Component
 
     private function isRestrictedConsultant(?User $user = null): bool
     {
-        $user ??= auth()->user();
-
-        return $user->hasRole(Role::TU_VAN->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        return DataScope::isRestrictedConsultant($user ?? auth()->user());
     }
 
     private function baseQuery()

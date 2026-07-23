@@ -4,31 +4,33 @@ namespace App\Livewire\Admin;
 
 use App\Enums\Role;
 use App\Models\ContractAssignment;
+use App\Models\ContractEmission;
 use App\Models\ContractLegal;
-use App\Models\ContractWaste;
-use App\Models\ContractTechnical;
 use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
-use App\Models\ContractEmission;
+use App\Models\ContractTechnical;
+use App\Models\ContractWaste;
+use App\Models\ContractWorkflowStep;
+use App\Models\Quotation;
 use App\Models\User;
+use App\Support\DataScope;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class RankingsBoard extends Component
 {
     public int $year;
+
     public array $years = [];
 
     public function mount(): void
     {
-        $this->year = now()->year;
+        $this->year = (int) now()->format('Y');
         $this->years = range(now()->year, now()->year - 4);
     }
 
-    public function rankMedal(int $index): string
+    public function rankBadge(int $rank): string
     {
-        $rank = $index + 1;
-
         return match ($rank) {
             1 => '🥇',
             2 => '🥈',
@@ -40,16 +42,16 @@ class RankingsBoard extends Component
     public function render()
     {
         $currentUser = auth()->user();
-        $canSeeFinance    = $currentUser->hasAnyRole([Role::KE_TOAN->value, Role::GIAM_DOC->value]);
-        $canSeeSales      = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::KINH_DOANH->value, Role::KE_TOAN->value]);
+        $canSeeFinance = DataScope::canSeeFinanceSection($currentUser);
+        $canSeeSales = DataScope::canViewAllSalesData($currentUser) || $currentUser->hasRole(Role::KINH_DOANH->value);
         $canSeeConsulting = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::TU_VAN->value]);
-        $canSeeTechnical  = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::KY_THUAT->value]);
+        $canSeeTechnical = $currentUser->hasAnyRole([Role::GIAM_DOC->value, Role::KY_THUAT->value]);
 
-        $salesRankings      = collect();
+        $salesRankings = collect();
         $consultingRankings = collect();
-        $technicalRankings  = collect();
-        $topCustomers       = collect();
-        $topServices        = collect();
+        $technicalRankings = collect();
+        $topCustomers = collect();
+        $topServices = collect();
 
         if ($canSeeSales) {
             // ── Xếp hạng nhân viên kinh doanh theo tổng tiền của 6 loại HĐ ──
@@ -82,7 +84,7 @@ class RankingsBoard extends Component
                 ->get()
                 ->map(function ($user) use ($totalsByStaff) {
                     return [
-                        'name'  => $user->name,
+                        'name' => $user->name,
                         'total' => (float) ($totalsByStaff[$user->id] ?? 0),
                     ];
                 })
@@ -96,11 +98,11 @@ class RankingsBoard extends Component
             $topCustomers = DB::table('customers')
                 ->leftJoin('contract_wastes as cw', function ($j) {
                     $j->on('customers.id', '=', 'cw.customer_id')
-                      ->whereYear('cw.signed_at', $this->year);
+                        ->whereYear('cw.signed_at', $this->year);
                 })
                 ->leftJoin('contract_consultings as cc', function ($j) {
                     $j->on('customers.id', '=', 'cc.customer_id')
-                      ->whereYear('cc.signed_at', $this->year);
+                        ->whereYear('cc.signed_at', $this->year);
                 })
                 ->selectRaw('customers.id, customers.name,
                     COUNT(DISTINCT cw.id) as waste_count,
@@ -115,7 +117,7 @@ class RankingsBoard extends Component
                 ->get();
 
             // ── Top dịch vụ theo báo giá ───────────
-            $topServices = \App\Models\Quotation::whereYear('date', $this->year)
+            $topServices = Quotation::whereYear('date', $this->year)
                 ->whereNotNull('service')
                 ->where('service', '!=', '')
                 ->selectRaw('service, COUNT(*) as cnt, SUM(total_value) as total')
@@ -149,8 +151,8 @@ class RankingsBoard extends Component
 
                     if ($assignments->isEmpty()) {
                         return [
-                            'name'      => $user->name,
-                            'count'     => 0,
+                            'name' => $user->name,
+                            'count' => 0,
                             'completed' => 0,
                         ];
                     }
@@ -168,8 +170,8 @@ class RankingsBoard extends Component
                     }
 
                     return [
-                        'name'      => $user->name,
-                        'count'     => $totalCount,
+                        'name' => $user->name,
+                        'count' => $totalCount,
                         'completed' => $totalCompleted,
                     ];
                 })
@@ -193,9 +195,9 @@ class RankingsBoard extends Component
 
                     if ($assignments->isEmpty()) {
                         return [
-                            'name'      => $user->name,
-                            'count'     => 0,
-                            'value'     => 0,
+                            'name' => $user->name,
+                            'count' => 0,
+                            'value' => 0,
                             'completed' => 0,
                         ];
                     }
@@ -205,16 +207,16 @@ class RankingsBoard extends Component
                         ->get();
 
                     $contractIds = $contracts->pluck('id');
-                    $finishedIds = \App\Models\ContractWorkflowStep::where('contract_type', ContractLegal::class)
+                    $finishedIds = ContractWorkflowStep::where('contract_type', ContractLegal::class)
                         ->whereIn('contract_id', $contractIds)
                         ->where('step_name', 'finished')
                         ->pluck('contract_id')
                         ->unique();
 
                     return [
-                        'name'      => $user->name,
-                        'count'     => $contracts->count(),
-                        'value'     => (float) $contracts->sum('value'),
+                        'name' => $user->name,
+                        'count' => $contracts->count(),
+                        'value' => (float) $contracts->sum('value'),
                         'completed' => $finishedIds->count(),
                     ];
                 })

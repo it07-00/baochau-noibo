@@ -628,42 +628,6 @@
             </div>
         </div>
     </div>
-    </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted small mb-3">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
-                    <div class="list-group mh-320-scroll overflow-y-auto" style="max-height: 250px;">
-                        @foreach ($assignable_users as $u)
-                            <label class="list-group-item list-group-item-action d-flex gap-2 align-items-center py-2 px-3">
-                                <input class="form-check-input flex-shrink-0" type="checkbox"
-                                    value="{{ $u->id }}" wire:model="assignUserIds">
-                                <div class="min-w-0">
-                                    <div class="fw-semibold text-sm">{{ $u->name }}</div>
-                                    <small class="text-muted text-xs">{{ $this->roleDisplayFromSlug($u->roles->first()?->name ?? '') }}</small>
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                    <div class="mt-3">
-                        <label class="form-label small fw-semibold">Người ngoài công ty</label>
-                        <input type="text" class="form-control form-control-sm" wire:model="assignExternal"
-                            placeholder="Tên người ngoài (nếu có)">
-                    </div>
-                    <div class="mt-3">
-                        <label class="form-label small fw-semibold">Hạn chót</label>
-                        <input type="date" class="form-control form-control-sm" wire:model="assignDeadline">
-                    </div>
-                </div>
-                <div class="modal-footer bg-body py-2">
-                    <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-success btn-sm px-3" wire:click="saveAssign"
-                        wire:loading.attr="disabled" wire:target="saveAssign">
-                        <span wire:loading wire:target="saveAssign" class="spinner-border spinner-border-sm me-1"></span>
-                        Lưu giao việc
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     @push('scripts')
         <script>

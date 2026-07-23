@@ -127,8 +127,8 @@ class WorkScheduleManager extends Component
     {
         $event = WorkSchedule::findOrFail($id);
 
-        // Only owner or GIAM_DOC / IT can edit
-        if ((int) $event->user_id !== (int) auth()->id() && ! auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::IT->value])) {
+        // Only owner or WORK_SCHEDULES_MANAGE_ALL can edit
+        if ((int) $event->user_id !== (int) auth()->id() && ! auth()->user()->can(Permission::WORK_SCHEDULES_MANAGE_ALL->value)) {
             $this->dispatch('swal:error', ['message' => 'Bạn chỉ có thể chỉnh sửa sự kiện của mình.']);
 
             return;
@@ -229,7 +229,7 @@ class WorkScheduleManager extends Component
                 }
             }
 
-            if ((int) $event->user_id !== (int) auth()->id() && ! auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::IT->value])) {
+            if ((int) $event->user_id !== (int) auth()->id() && ! auth()->user()->can(Permission::WORK_SCHEDULES_MANAGE_ALL->value)) {
                 abort(403, 'Bạn chỉ có thể chỉnh sửa sự kiện của mình.');
             }
 
@@ -405,7 +405,7 @@ class WorkScheduleManager extends Component
     {
         $event = WorkSchedule::findOrFail($id);
 
-        if ((int) $event->user_id !== (int) auth()->id() && ! auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::IT->value])) {
+        if ((int) $event->user_id !== (int) auth()->id() && ! auth()->user()->can(Permission::WORK_SCHEDULES_MANAGE_ALL->value)) {
             $this->dispatch('swal:error', ['message' => 'Bạn chỉ có thể xóa sự kiện của mình.']);
 
             return;
@@ -439,7 +439,7 @@ class WorkScheduleManager extends Component
         $parsed = Carbon::parse($date);
 
         $user = auth()->user();
-        $isGdOrIt = $user->hasAnyRole([Role::GIAM_DOC->value, Role::IT->value]);
+        $isGdOrIt = $user->can(Permission::WORK_SCHEDULES_MANAGE_ALL->value);
 
         $query = WorkSchedule::with('user', 'user.department', 'participants')
             ->where('start_date', '<=', $parsed)
@@ -488,7 +488,7 @@ class WorkScheduleManager extends Component
                 'color' => $clone->color,
                 'user_name' => $clone->user->name ?? '',
                 'department' => $clone->user->department->name ?? '',
-                'is_owner' => (int) $clone->user_id === (int) auth()->id() || auth()->user()->hasAnyRole([Role::GIAM_DOC->value, Role::IT->value]),
+                'is_owner' => (int) $clone->user_id === (int) auth()->id() || auth()->user()->can(Permission::WORK_SCHEDULES_MANAGE_ALL->value),
                 'is_past' => $clone->ends_at->lt(now()),
                 'is_multi_day' => false,
                 'is_private' => (bool) $clone->is_private,

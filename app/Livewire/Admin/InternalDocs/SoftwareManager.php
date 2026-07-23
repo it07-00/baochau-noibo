@@ -63,7 +63,7 @@ class SoftwareManager extends Component
 
     public function openCreateModal()
     {
-        if (! auth()->user()->hasRole(Role::IT->value)) {
+        if (! auth()->user()->can(Permission::INTERNAL_SOFTWARE_MANAGE->value)) {
             return;
         }
         $this->resetValidation();
@@ -73,7 +73,7 @@ class SoftwareManager extends Component
 
     public function edit($id)
     {
-        if (! auth()->user()->hasRole(Role::IT->value)) {
+        if (! auth()->user()->can(Permission::INTERNAL_SOFTWARE_MANAGE->value)) {
             return;
         }
         $software = InternalSoftware::findOrFail($id);
@@ -89,7 +89,7 @@ class SoftwareManager extends Component
 
     public function save()
     {
-        if (! auth()->user()->hasRole(Role::IT->value)) {
+        if (! auth()->user()->can(Permission::INTERNAL_SOFTWARE_MANAGE->value)) {
             return;
         }
         $this->validate();
@@ -116,7 +116,7 @@ class SoftwareManager extends Component
 
     public function delete($id)
     {
-        if (! auth()->user()->hasRole(Role::IT->value)) {
+        if (! auth()->user()->can(Permission::INTERNAL_SOFTWARE_MANAGE->value)) {
             return;
         }
         InternalSoftware::findOrFail($id)->delete();
@@ -125,6 +125,8 @@ class SoftwareManager extends Component
 
     public function render()
     {
+        $canManage = auth()->user()->can(Permission::INTERNAL_SOFTWARE_MANAGE->value);
+
         $softwares = InternalSoftware::query()
             ->with('department')
             ->when($this->search, function ($q) {
@@ -138,7 +140,7 @@ class SoftwareManager extends Component
                     $q->where('department_id', $this->departmentFilter);
                 }
             })
-            ->when(! auth()->user()->hasRole(Role::IT->value), function ($q) {
+            ->when(! $canManage, function ($q) {
                 $q->where('is_active', true);
             })
             ->orderBy('name')
@@ -146,6 +148,7 @@ class SoftwareManager extends Component
 
         return view('livewire.admin.internal-docs.software-manager', [
             'softwares' => $softwares,
+            'canManage' => $canManage,
             'departments' => Department::query()
                 ->where('is_active', true)
                 ->orderBy('name')

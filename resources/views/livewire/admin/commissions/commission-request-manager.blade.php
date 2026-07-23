@@ -284,7 +284,7 @@
                                             <a href="{{ $request->payment_bill_url }}" target="_blank" class="btn btn-sm btn-outline-success">
                                                 <i class="fa-solid fa-file-text me-1"></i> Xem hóa đơn
                                             </a>
-                                        @elseif($request->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
+                                        @elseif($request->status === 'Đã duyệt' && $canConfirmPayment)
                                             <button type="button" class="btn btn-sm btn-outline-primary" wire:click="openUploadBillModal({{ $request->id }})">
                                                 <i class="fa-solid fa-upload me-1"></i> Up hóa đơn
                                             </button>
@@ -307,7 +307,7 @@
 
                                         @php
                                             $isOwner = auth()->check() && $request->user_id === auth()->id();
-                                            $rowCanEdit = $canEdit || ($isOwner && !auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value));
+                                            $rowCanEdit = $canEdit || ($isOwner && !$canApprove);
                                             $rowCanDelete = $canDelete || $isOwner;
                                         @endphp
 
@@ -318,7 +318,7 @@
                                             </a>
                                         @endif
 
-                                        @if($rowCanDelete && (!in_array($request->status, ['Đã duyệt', 'Đã chi'], true) || auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value)))
+                                        @if($rowCanDelete && (!in_array($request->status, ['Đã duyệt', 'Đã chi'], true) || $canApprove))
                                             <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     wire:click="delete({{ $request->id }})"
@@ -558,7 +558,7 @@
                                                     </div>
                                                 @endif
 
-                                                @if(auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
+                                                @if($canConfirmPayment)
                                                     <button type="button" 
                                                             class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 mt-2" 
                                                             wire:click="deleteBill" 
@@ -571,7 +571,7 @@
                                             <div class="text-center py-2">
                                                 <p class="text-muted small mb-2">Chưa có hóa đơn/minh chứng thanh toán nào được cập nhật.</p>
 
-                                                @if($viewingRequest->status === 'Đã duyệt' && auth()->check() && (auth()->user()->hasRole(App\Enums\Role::KE_TOAN->value) || auth()->user()->hasRole(App\Enums\Role::GIAM_DOC->value)))
+                                                @if($viewingRequest->status === 'Đã duyệt' && $canConfirmPayment)
                                                     <div class="d-flex flex-column align-items-center justify-content-center border border-dashed rounded-3 p-4 bg-body-secondary position-relative">
                                                         <i class="fa-solid fa-cloud-arrow-up text-primary fs-2 mb-2"></i>
                                                         <h6 class="fw-semibold text-secondary mb-2">Tải lên hóa đơn (Minh chứng)</h6>

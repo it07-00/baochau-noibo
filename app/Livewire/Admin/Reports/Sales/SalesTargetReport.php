@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\Reports\Sales;
 
 use App\Enums\QuotationStatus;
-use App\Enums\Role;
 use App\Models\ContractEmission;
 use App\Models\ContractLegal;
 use App\Models\ContractResearch;
@@ -13,6 +12,7 @@ use App\Models\ContractWaste;
 use App\Models\Quotation;
 use App\Models\SalesTarget;
 use App\Models\User;
+use App\Support\DataScope;
 use Livewire\Component;
 
 class SalesTargetReport extends Component
@@ -54,8 +54,7 @@ class SalesTargetReport extends Component
         $this->year = (int) now()->format('Y');
         $this->viewMonth = (int) now()->format('n');
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        $isRestrictedSales = ! DataScope::canViewAllSalesData($user);
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
         } else {
@@ -100,8 +99,7 @@ class SalesTargetReport extends Component
         $month = $this->viewMonth;
         $this->filter_month = $month;
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        $isRestrictedSales = ! DataScope::canViewAllSalesData($user);
 
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
@@ -198,12 +196,14 @@ class SalesTargetReport extends Component
         if ($normalized === null || trim($normalized) === '') {
             return [];
         }
+
         return array_map('trim', explode('|', $normalized));
     }
 
     public function getPaymentMethodBadgeClass(string $method): string
     {
         $method = trim($method);
+
         return match ($method) {
             'Sau khi ký HĐ' => 'bg-soft-primary text-primary',
             'Sau khi có kết quả/báo cáo' => 'bg-soft-success text-success',
@@ -246,6 +246,7 @@ class SalesTargetReport extends Component
             'bg-soft-secondary text-secondary',
         ];
         $hash = crc32($service);
+
         return $colors[abs($hash) % count($colors)];
     }
 
@@ -253,8 +254,7 @@ class SalesTargetReport extends Component
     {
         $this->filter_month = $month;
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        $isRestrictedSales = ! DataScope::canViewAllSalesData($user);
 
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;
@@ -362,8 +362,7 @@ class SalesTargetReport extends Component
         }
 
         $user = auth()->user();
-        $isRestrictedSales = $user->hasRole(Role::KINH_DOANH->value)
-            && ! $user->hasAnyRole([Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]);
+        $isRestrictedSales = ! DataScope::canViewAllSalesData($user);
 
         if ($isRestrictedSales) {
             $this->filter_staff = (string) $user->id;

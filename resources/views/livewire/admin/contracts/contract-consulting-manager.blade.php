@@ -247,7 +247,7 @@
                         @unless ($this->isRestrictedRole)
                             <th class="text-center col-ct-finance">Tài chính</th>
                         @endunless
-                        @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                        @unless (auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                             <th class="text-center col-ct-assigned">Được giao</th>
                             <th class="text-center col-ct-deadline">Hạn chót</th>
                         @endunless
@@ -357,7 +357,7 @@
                                     </div>
                                 </td>
                             @endunless
-                            @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                            @unless (auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                                 <td class="text-center min-w-140px" >
                                     @if ($doc->assignments->count() > 0)
                                         <div class="d-flex flex-column gap-1 align-items-center">
@@ -471,7 +471,7 @@
                                     @endif
                                     @can('contracts-consulting.edit')
                                         @if ($this->canManageOwnedDoc($doc))
-                                            @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                                            @if (!auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                                                 <button class="btn btn-sm p-0 text-secondary"
                                                     wire:click="duplicate({{ $doc->id }})" title="Nhân bản">
                                                     <i class="fa-solid fa-copy fs-5"></i>
@@ -794,7 +794,7 @@
                                 <hr class="flex-fill my-0 border-primary border-opacity-25">
                             </div>
                         </div>
-                        @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                        @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                             <div class="col-md-6">
                                 <label class="form-label small fw-semibold">Số HĐ NTP</label>
                                 <input type="text" class="form-control" wire:model="formData.shd_cxl">
@@ -975,7 +975,7 @@
                                 <span class="input-group-text">đ</span>
                             </div>
                         </div>
-                        @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                        @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                         <div class="col-md-3"
                              x-data="{
                                  ncc: {{ (int)($formData['ncc_payment'] ?? 0) }},

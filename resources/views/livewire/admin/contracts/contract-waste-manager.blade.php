@@ -407,7 +407,7 @@
                         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <th class="text-center text-wrap small px-2">Tình trạng<br>chứng từ</th>
                         @endunless
-                        @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                        @unless (auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                             <th class="text-center col-ct-assigned">Được giao</th>
                             <th class="text-center col-ct-deadline">Hạn chót</th>
                         @endunless
@@ -488,7 +488,7 @@
                                 </span>
                             </td>
                             @endunless
-                            @unless (auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                            @unless (auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                                 <td class="text-center">
                                     @if ($doc->assignments->count() > 0)
                                         <div class="d-flex flex-column gap-1 align-items-center">
@@ -555,7 +555,7 @@
                                     @endif
                                     @can('contracts-waste.edit')
                                         @if ($this->canManageOwnedDoc($doc))
-                                            @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                                            @if (!auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                                     <li><button type="button" class="dropdown-item" wire:click="duplicate({{ $doc->id }})"><i class="fa-regular fa-copy me-2 text-secondary" aria-hidden="true"></i>Nhân bản</button></li>
                                             @endif
                                     <li><button type="button" class="dropdown-item" wire:click="edit({{ $doc->id }})"><i class="fa-regular fa-pen-to-square me-2 text-warning" aria-hidden="true"></i>Chỉnh sửa</button></li>
@@ -841,7 +841,7 @@
                                     <hr class="flex-fill my-0 border-primary border-opacity-25">
                                 </div>
                             </div>
-                            @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                            @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                                 <div class="col-md-4">
                                     <label class="form-label small fw-semibold">Số HĐ NTP</label>
                                     <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
@@ -851,7 +851,7 @@
                                     <input type="text" class="form-control" wire:model.defer="formData.shd_bc">
                                 </div>
                             @endif
-                            <div class="{{ ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value)) ? 'col-md-4' : 'col-md-6' }}">
+                            <div class="{{ ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value)) ? 'col-md-4' : 'col-md-6' }}">
                                 <label class="form-label small fw-semibold">Khách hàng <span
                                         class="text-danger">*</span></label>
                                 <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
@@ -1034,7 +1034,7 @@
                             @enderror
                             </div>
 
-                            @if ($isEditing && auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))
+                            @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                             <div class="col-md-3"
                                  x-data="{
                                      ncc: {{ (int)($formData['ncc_payment'] ?? 0) }},

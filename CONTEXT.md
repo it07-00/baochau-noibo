@@ -52,7 +52,15 @@ Role chuẩn nằm tại `app/Enums/Role.php`:
 | `hcns` | Hành chính nhân sự |
 | `thuc-tap` | Thực tập |
 
-Quyền chi tiết nằm tại `app/Enums/Permission.php`. Route thường kiểm tra permission; một số route còn giới hạn role. Action nhạy cảm phải kiểm tra lại quyền ở server, không chỉ ẩn nút.
+Quyền chi tiết nằm tại `app/Enums/Permission.php`. Route và Livewire action kiểm tra permission thay vì hardcode role. Các quyền hành động chi tiết mới bao gồm:
+- `commissions.approve`, `commissions.confirm-payment`, `commissions.view-all`: Quy trình duyệt, xác nhận chi và xem tất cả yêu cầu hoa hồng.
+- `internal-software.manage`: Quản lý danh mục phần mềm nội bộ.
+- `work-schedules.manage-all`: Quản lý lịch công tác toàn công ty.
+- `contracts.edit-finance`: Cập nhật các thông tin tài chính kế toán trên hợp đồng.
+- `internal-notifications.manage`: Quản lý và gửi thông báo nội bộ.
+- `marketing-targets.edit`: Cập nhật chỉ tiêu marketing.
+
+Phạm vi truy vấn dữ liệu báo cáo/thống kê được tập trung tại `App\Support\DataScope` thay vì kiểm tra role rải rác.
 
 Middleware tùy chỉnh:
 
