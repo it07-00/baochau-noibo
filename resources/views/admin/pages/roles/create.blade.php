@@ -10,9 +10,9 @@
         <div class="row g-4">
             <!-- Left Sticky Sidebar: Role Basic Info -->
             <div class="col-12 col-lg-4">
-                <div class="card border rounded-3 shadow-sm bg-body position-sticky" style="top: 80px;">
-                    <div class="card-header bg-body border-bottom p-3">
-                        <div class="d-flex align-items-center gap-2">
+                <div class="card border border-secondary-subtle rounded-3 shadow-sm bg-body position-sticky" style="top: 80px;">
+                    <div class="card-header bg-body-tertiary border-bottom p-3">
+                        <div class="d-flex align-items-center gap-2.5">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-primary-subtle text-primary p-2">
                                 <i class="fa-solid fa-plus-circle fs-5"></i>
                             </span>
@@ -23,18 +23,18 @@
                         </div>
                     </div>
                     <div class="card-body p-3.5">
-                        <div class="mb-3.5">
+                        <div class="mb-4">
                             <label class="form-label fw-bold text-body small mb-1.5">Tên định danh (Mã hệ thống) <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="role_name_input" class="form-control form-control-lg bg-body-tertiary fw-medium fs-6 @error('name') is-invalid @enderror" value="{{ old('name') }}" required placeholder="Ví dụ: kinh-doanh, ke-toan-vien">
+                            <input type="text" name="name" id="role_name_input" class="form-control form-control-lg bg-body-tertiary border-secondary-subtle fw-bold fs-6 text-primary @error('name') is-invalid @enderror" value="{{ old('name') }}" required placeholder="Ví dụ: kinh-doanh, ke-toan-vien">
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <div class="form-text text-muted small mt-2">
-                                <i class="fa-solid fa-circle-info me-1 text-primary"></i>Viết chữ thường không dấu, phân cách bằng dấu gạch ngang (VD: <code>tp-ky-thuat</code>).
+                                <i class="fa-solid fa-circle-info me-1 text-primary"></i>Tên mã dùng trong phân quyền ứng dụng (VD: <code>tp-ky-thuat</code>).
                             </div>
                         </div>
 
-                        <!-- Selected Counter Progress Card -->
+                        <!-- Selected Counter Progress Box -->
                         <div class="p-3 bg-primary-subtle border border-primary-subtle rounded-3 mb-4">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="small fw-bold text-primary">
@@ -45,7 +45,7 @@
                             <div class="progress bg-white" style="height: 6px;">
                                 <div class="progress-bar bg-primary" id="selectedPermProgress" role="progressbar" style="width: 0%;"></div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mt-2 small text-primary opacity-75">
+                            <div class="d-flex justify-content-between align-items-center mt-2 small text-primary fw-medium opacity-75">
                                 <span>Tiến độ phân quyền</span>
                                 <span id="selectedPermPercent">0%</span>
                             </div>
@@ -66,25 +66,25 @@
             <!-- Right Column: Permission Matrix -->
             <div class="col-12 col-lg-8">
                 <!-- Search Box & Master Controls Header -->
-                <div class="card border rounded-3 shadow-sm bg-body mb-3.5">
+                <div class="card border border-secondary-subtle rounded-3 shadow-sm bg-body mb-4">
                     <div class="card-body p-3.5">
                         <div class="d-flex align-items-center justify-content-between gap-3 mb-3 flex-wrap">
                             <div>
                                 <h5 class="fw-bold text-body mb-1">
                                     <i class="fa-solid fa-sliders text-primary me-2"></i>Ma trận phân quyền chi tiết
                                 </h5>
-                                <p class="text-muted small mb-0">Bật/tắt các quyền truy cập để thiết lập phạm vi thao tác cho nhóm vai trò mới.</p>
+                                <p class="text-muted small mb-0">Bật/tắt các quyền truy cập để thiết lập phạm vi thao tác cho vai trò mới.</p>
                             </div>
-                            <div class="form-check form-switch m-0 bg-body-tertiary border rounded-pill px-3 py-2">
+                            <div class="form-check form-switch m-0 bg-body-tertiary border border-secondary-subtle rounded-pill px-3 py-2">
                                 <input class="form-check-input cursor-pointer me-2 ms-0" type="checkbox" id="checkAllMaster">
                                 <label class="form-check-label fw-bold text-body small cursor-pointer" for="checkAllMaster">Chọn tất cả quyền</label>
                             </div>
                         </div>
 
-                        <div class="input-group">
-                            <span class="input-group-text bg-body-tertiary border-end-0 text-muted ps-3"><i class="fa-solid fa-magnifying-glass fs-6"></i></span>
-                            <input type="search" id="permissionSearchInput" class="form-control bg-body-tertiary border-start-0 ps-1" placeholder="Tìm nhanh quyền hạn (gõ: người dùng, báo giá, xem, sửa, xóa)...">
-                            <span class="input-group-text bg-body-tertiary border-start-0 text-muted small pe-3" id="visiblePermCountText">Đang xem tất cả</span>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-body-tertiary border-secondary-subtle text-muted ps-3"><i class="fa-solid fa-magnifying-glass fs-6"></i></span>
+                            <input type="search" id="permissionSearchInput" class="form-control bg-body-tertiary border-secondary-subtle border-start-0 ps-1 fs-6" placeholder="Lọc nhanh quyền hạn (gõ: người dùng, báo giá, xem, sửa, xóa)...">
+                            <span class="input-group-text bg-body-tertiary border-secondary-subtle text-muted small pe-3" id="visiblePermCountText">Đang xem tất cả</span>
                         </div>
                     </div>
                 </div>
@@ -92,12 +92,12 @@
                 <!-- Module Bento Cards -->
                 <div id="permissionModulesContainer">
                     @foreach($permissions as $module => $modulePermissions)
-                        <div class="card border rounded-3 shadow-sm bg-body mb-3.5 module-group overflow-hidden" data-module="{{ \Illuminate\Support\Str::lower($module) }} {{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::moduleName($module)) }}">
-                            <div class="card-header bg-body-tertiary border-bottom p-3 d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center gap-2">
+                        <div class="card border border-secondary-subtle rounded-3 shadow-sm bg-body mb-4 module-group overflow-hidden" data-module="{{ \Illuminate\Support\Str::lower($module) }} {{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::moduleName($module)) }}">
+                            <div class="card-header bg-body-tertiary border-bottom border-secondary-subtle p-3 d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2.5">
                                     <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-primary-subtle text-primary px-2.5 py-1.5">
                                         <i class="{{ \App\Support\RolePermissionViewData::moduleIcon($module) }} me-1.5"></i>
-                                        <span class="fw-bold small">{{ count($modulePermissions) }}</span>
+                                        <span class="fw-bold small">{{ count($modulePermissions) }} quyền</span>
                                     </span>
                                     <h6 class="fw-bold text-body mb-0 fs-6">
                                         {{ \App\Support\RolePermissionViewData::moduleName($module) }}
@@ -105,29 +105,29 @@
                                 </div>
                                 <div class="form-check form-switch m-0">
                                     <input class="form-check-input module-check-all cursor-pointer me-1.5" type="checkbox" id="mod_all_{{ $module }}">
-                                    <label class="form-check-label small text-muted fw-semibold cursor-pointer" for="mod_all_{{ $module }}">Chọn phân hệ</label>
+                                    <label class="form-check-label small text-muted fw-bold cursor-pointer" for="mod_all_{{ $module }}">Chọn phân hệ</label>
                                 </div>
                             </div>
 
-                            <div class="card-body p-3">
-                                <div class="row g-2.5">
+                            <div class="card-body p-3.5 bg-body">
+                                <div class="row g-3">
                                     @foreach($modulePermissions as $permission)
                                         @php
                                             $isChecked = is_array(old('permissions')) && in_array($permission->name, old('permissions'));
                                         @endphp
                                         <div class="col-12 col-sm-6 col-md-4 perm-item" data-perm-name="{{ \Illuminate\Support\Str::lower($permission->name) }}" data-perm-label="{{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::actionLabel($permission->name)) }}">
                                             <label for="perm_{{ $permission->id }}" class="perm-card-label w-100 h-100 cursor-pointer user-select-none">
-                                                <div class="perm-card-inner p-2.5 border rounded-3 transition-all h-100 d-flex align-items-start gap-2.5 {{ $isChecked ? 'bg-primary-subtle border-primary text-primary shadow-sm' : 'bg-body border-light-subtle text-body' }}">
+                                                <div class="perm-card-inner p-3 rounded-3 border transition-all h-100 d-flex align-items-start gap-2.5 {{ $isChecked ? 'bg-primary-subtle border-primary text-primary shadow-sm' : 'bg-body-tertiary border-secondary-subtle text-body' }}">
                                                     <input class="form-check-input perm-check mt-1 ms-0 flex-shrink-0 cursor-pointer" type="checkbox"
                                                         name="permissions[]"
                                                         value="{{ $permission->name }}"
                                                         id="perm_{{ $permission->id }}"
                                                         {{ $isChecked ? 'checked' : '' }}>
                                                     <div class="flex-grow-1 min-w-0">
-                                                        <div class="fw-semibold small lh-sm text-truncate-2">
+                                                        <div class="fw-bold small lh-sm text-truncate-2">
                                                             {{ \App\Support\RolePermissionViewData::actionLabel($permission->name) }}
                                                         </div>
-                                                        <span class="d-block text-muted font-monospace opacity-75 mt-1" style="font-size: 0.7rem; font-family: var(--bs-font-monospace);">
+                                                        <span class="d-block text-muted font-monospace opacity-75 mt-1" style="font-size: 0.72rem; font-family: var(--bs-font-monospace);">
                                                             {{ $permission->name }}
                                                         </span>
                                                     </div>
@@ -161,11 +161,11 @@
                 const cardInner = checkbox.closest('.perm-card-inner');
                 if (cardInner) {
                     if (checkbox.checked) {
-                        cardInner.classList.remove('bg-body', 'border-light-subtle', 'text-body');
+                        cardInner.classList.remove('bg-body-tertiary', 'border-secondary-subtle', 'text-body');
                         cardInner.classList.add('bg-primary-subtle', 'border-primary', 'text-primary', 'shadow-sm');
                     } else {
                         cardInner.classList.remove('bg-primary-subtle', 'border-primary', 'text-primary', 'shadow-sm');
-                        cardInner.classList.add('bg-body', 'border-light-subtle', 'text-body');
+                        cardInner.classList.add('bg-body-tertiary', 'border-secondary-subtle', 'text-body');
                     }
                 }
             }
