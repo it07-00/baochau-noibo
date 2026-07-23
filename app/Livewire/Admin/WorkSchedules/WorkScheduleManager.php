@@ -9,8 +9,8 @@ use App\Models\WorkSchedule;
 use App\Notifications\WorkScheduleNotification;
 use App\Services\GreecoWorkScheduleRepository;
 use Carbon\Carbon;
-use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
+use Carbon\Constants\UnitValue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -501,8 +501,8 @@ class WorkScheduleManager extends Component
 
         if ($this->showGreecoSchedules) {
             $monthStart = Carbon::create($this->yearFilter, $this->monthFilter, 1);
-            $greecoStart = $monthStart->copy()->startOfWeek(CarbonInterface::MONDAY)->toDateString();
-            $greecoEnd = $monthStart->copy()->endOfMonth()->endOfWeek(CarbonInterface::SUNDAY)->toDateString();
+            $greecoStart = $monthStart->copy()->startOfWeek(UnitValue::MONDAY)->toDateString();
+            $greecoEnd = $monthStart->copy()->endOfMonth()->endOfWeek(UnitValue::SUNDAY)->toDateString();
 
             $greecoRepo = app(GreecoWorkScheduleRepository::class);
             $greecoItems = $greecoRepo->getEventsInRange($greecoStart, $greecoEnd);
@@ -638,8 +638,8 @@ class WorkScheduleManager extends Component
 
         if ($this->showGreecoSchedules) {
             $greecoRepo = app(GreecoWorkScheduleRepository::class);
-            $greecoStart = $monthStart->copy()->startOfWeek(CarbonInterface::MONDAY)->toDateString();
-            $greecoEnd = $monthEnd->copy()->endOfWeek(CarbonInterface::SUNDAY)->toDateString();
+            $greecoStart = $monthStart->copy()->startOfWeek(UnitValue::MONDAY)->toDateString();
+            $greecoEnd = $monthEnd->copy()->endOfWeek(UnitValue::SUNDAY)->toDateString();
             $greecoItems = $greecoRepo->getEventsInRange($greecoStart, $greecoEnd);
             foreach ($greecoItems as $item) {
                 $events->push($greecoRepo->toWorkScheduleModel($item));
@@ -672,8 +672,8 @@ class WorkScheduleManager extends Component
         }
         $events = $splitEvents;
 
-        $startOfCalendar = $monthStart->copy()->startOfWeek(CarbonInterface::MONDAY);
-        $endOfCalendar = $monthEnd->copy()->endOfWeek(CarbonInterface::SUNDAY);
+        $startOfCalendar = $monthStart->copy()->startOfWeek(UnitValue::MONDAY);
+        $endOfCalendar = $monthEnd->copy()->endOfWeek(UnitValue::SUNDAY);
         $period = CarbonPeriod::create($startOfCalendar, $endOfCalendar);
 
         foreach ($period as $date) {
@@ -692,11 +692,11 @@ class WorkScheduleManager extends Component
 
         $weeksLayout = $this->buildWeeksLayout($events, $monthStart);
 
-        $allUsers = User::where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $allUsers = User::query()->where('is_active', '=', true, 'and')->orderBy('name')->get(['id', 'name']);
 
         $calendarDates = collect(CarbonPeriod::create(
-            $monthStart->copy()->startOfWeek(CarbonInterface::MONDAY),
-            $monthStart->copy()->endOfMonth()->endOfWeek(CarbonInterface::SUNDAY)
+            $monthStart->copy()->startOfWeek(UnitValue::MONDAY),
+            $monthStart->copy()->endOfMonth()->endOfWeek(UnitValue::SUNDAY)
         ));
 
         $mobileEventDays = $calendarDates->filter(function ($date) use ($calendarData) {
@@ -718,8 +718,8 @@ class WorkScheduleManager extends Component
 
     private function buildWeeksLayout($events, Carbon $monthStart): array
     {
-        $startOfCal = $monthStart->copy()->startOfWeek(CarbonInterface::MONDAY);
-        $endOfCal = $monthStart->copy()->endOfMonth()->endOfWeek(CarbonInterface::SUNDAY);
+        $startOfCal = $monthStart->copy()->startOfWeek(UnitValue::MONDAY);
+        $endOfCal = $monthStart->copy()->endOfMonth()->endOfWeek(UnitValue::SUNDAY);
         $weeksLayout = [];
         $currentWeekStart = $startOfCal->copy();
 

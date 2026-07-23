@@ -34,6 +34,11 @@ class SalesReportsConsistencyTest extends TestCase
                     'MONTH',
                     static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
                 );
+            } elseif (method_exists($pdo, 'createFunction')) {
+                $pdo->createFunction(
+                    'MONTH',
+                    static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
+                );
             }
         }
     }

@@ -24,10 +24,19 @@ class StatisticsBoardFilterTest extends TestCase
         parent::setUp();
 
         if (DB::getDriverName() === 'sqlite') {
-            DB::connection()->getPdo()->sqliteCreateFunction(
-                'MONTH',
-                static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
-            );
+            /** @var \PDO $pdo */
+            $pdo = DB::connection()->getPdo();
+            if (method_exists($pdo, 'sqliteCreateFunction')) {
+                $pdo->sqliteCreateFunction(
+                    'MONTH',
+                    static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
+                );
+            } elseif (method_exists($pdo, 'createFunction')) {
+                $pdo->createFunction(
+                    'MONTH',
+                    static fn (?string $date): ?int => $date ? (int) date('n', strtotime($date)) : null
+                );
+            }
         }
 
         foreach (RoleEnum::cases() as $role) {
