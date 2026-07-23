@@ -240,7 +240,14 @@ final class QuotationTemplateCatalog
             return self::monitoringTerms('Quan trắc môi trường', 'QTMT');
         }
 
-        return "Kết quả thực hiện: {$serviceType}\nThời gian thực hiện: theo thỏa thuận giữa hai bên.\nChi phí trên đã bao gồm VAT tại thời điểm xuất hóa đơn.\nPhương thức thanh toán:\n• 50% sau khi ký hợp đồng\n• 50% sau khi hoàn thành công việc\nHình thức: chuyển khoản\nChúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!";
+        return '<p><strong>Kết quả thực hiện:</strong> '.$serviceType.'</p>'
+            .'<p><strong>Thời gian thực hiện:</strong> theo thỏa thuận giữa hai bên.</p>'
+            .'<p><strong>Chi phí trên đã bao gồm VAT</strong> tại thời điểm xuất hóa đơn.</p>'
+            .'<p><strong>Phương thức thanh toán:</strong></p>'
+            .'<p>50% sau khi ký hợp đồng</p>'
+            .'<p>50% sau khi hoàn thành công việc</p>'
+            .'<p><strong>Hình thức:</strong> chuyển khoản</p>'
+            .'<p><strong>Chúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!</strong></p>';
     }
 
     public static function defaultSummaryItem(?string $key): array
@@ -279,6 +286,13 @@ final class QuotationTemplateCatalog
 
     private static function monitoringTerms(string $serviceName, string $shortName): string
     {
-        return "Kết quả thực hiện: Báo cáo {$serviceName}\nThời gian có cuốn báo cáo {$shortName}: 10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);\nChi phí trên đã bao gồm VAT tại thời điểm xuất hóa đơn.\nPhương thức thanh toán:\n• 50% sau khi ký hợp đồng\n• 50% sau khi hoàn thành báo cáo {$serviceName}\nHình thức: chuyển khoản\nChúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!";
+        return '<p><strong>Kết quả thực hiện:</strong> Báo cáo '.$serviceName.'</p>'
+            .'<p><strong>Thời gian có cuốn báo cáo '.$shortName.':</strong> 10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);</p>'
+            .'<p><strong>Chi phí trên đã bao gồm VAT</strong> tại thời điểm xuất hóa đơn.</p>'
+            .'<p><strong>Phương thức thanh toán:</strong></p>'
+            .'<p>50% sau khi ký hợp đồng</p>'
+            .'<p>50% sau khi hoàn thành báo cáo '.$serviceName.'</p>'
+            .'<p><strong>Hình thức:</strong> chuyển khoản</p>'
+            .'<p><strong>Chúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!</strong></p>';
     }
 }

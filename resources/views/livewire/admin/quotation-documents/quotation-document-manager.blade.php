@@ -276,7 +276,13 @@
                         @if($selectedDoc->notes)
                         <div class="mt-3">
                             <strong>Ghi chú:</strong>
-                            <p class="mb-0 text-muted">{!! nl2br(e($selectedDoc->notes)) !!}</p>
+                            <div class="mb-0 text-muted">{!! strip_tags($selectedDoc->notes, '<b><strong><i><em><u><span><p><br><ul><ol><li>') !!}</div>
+                        </div>
+                        @endif
+                        @if($selectedDoc->terms)
+                        <div class="mt-3">
+                            <strong>Điều khoản:</strong>
+                            <div class="mb-0 text-muted">{!! strip_tags($selectedDoc->terms, '<b><strong><i><em><u><span><p><br><ul><ol><li>') !!}</div>
                         </div>
                         @endif
                     </div>
@@ -724,11 +730,15 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Ghi chú</label>
-                                <textarea class="form-control" rows="4" wire:model="formData.notes" placeholder="Ghi chú thêm cho báo giá..."></textarea>
+                                <div wire:ignore class="editor-container rounded-2 border">
+                                    <div id="qdoc-notes-editor"></div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Điều khoản</label>
-                                <textarea class="form-control" rows="4" wire:model="formData.terms" placeholder="Điều khoản thanh toán, thời gian thực hiện..."></textarea>
+                                <div wire:ignore class="editor-container rounded-2 border">
+                                    <div id="qdoc-terms-editor"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -745,6 +755,56 @@
 
     @push('scripts')
     <script>
+        let qdocNotesEditor = null;
+        let qdocTermsEditor = null;
+        let isSettingQdocData = false;
+
+        function initQdocEditors() {
+            if (typeof ClassicEditor === 'undefined') return;
+
+            const notesEl = document.querySelector('#qdoc-notes-editor');
+            if (notesEl && !notesEl.classList.contains('ck-initialized')) {
+                notesEl.classList.add('ck-initialized');
+                ClassicEditor.create(notesEl, {
+                    placeholder: 'Ghi chú thêm cho báo giá (bôi đậm, in nghiêng tùy ý)...',
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo']
+                }).then(editor => {
+                    qdocNotesEditor = editor;
+                    editor.model.document.on('change:data', () => {
+                        if (isSettingQdocData) return;
+                        @this.set('formData.notes', editor.getData());
+                    });
+                    if (@this.get('formData.notes')) {
+                        editor.setData(@this.get('formData.notes'));
+                    }
+                }).catch(err => {
+                    notesEl.classList.remove('ck-initialized');
+                    console.error(err);
+                });
+            }
+
+            const termsEl = document.querySelector('#qdoc-terms-editor');
+            if (termsEl && !termsEl.classList.contains('ck-initialized')) {
+                termsEl.classList.add('ck-initialized');
+                ClassicEditor.create(termsEl, {
+                    placeholder: 'Điều khoản thanh toán, thời gian thực hiện...',
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo']
+                }).then(editor => {
+                    qdocTermsEditor = editor;
+                    editor.model.document.on('change:data', () => {
+                        if (isSettingQdocData) return;
+                        @this.set('formData.terms', editor.getData());
+                    });
+                    if (@this.get('formData.terms')) {
+                        editor.setData(@this.get('formData.terms'));
+                    }
+                }).catch(err => {
+                    termsEl.classList.remove('ck-initialized');
+                    console.error(err);
+                });
+            }
+        }
+
         document.addEventListener('livewire:init', () => {
             let formModal = new bootstrap.Modal(document.getElementById('qdocFormModal'));
             let detailModal = new bootstrap.Modal(document.getElementById('qdocDetailModal'));
@@ -753,6 +813,42 @@
             Livewire.on('close-qdoc-modal', () => formModal.hide());
             Livewire.on('open-qdoc-detail-modal', () => { formModal.hide(); detailModal.show(); });
             Livewire.on('close-qdoc-detail-modal', () => detailModal.hide());
+
+            initQdocEditors();
+        });
+
+        document.addEventListener('livewire:navigated', initQdocEditors);
+
+        const qdocModalEl = document.getElementById('qdocFormModal');
+        if (qdocModalEl) {
+            qdocModalEl.addEventListener('shown.bs.modal', () => {
+                initQdocEditors();
+                if (qdocNotesEditor && typeof qdocNotesEditor.setData === 'function') {
+                    isSettingQdocData = true;
+                    qdocNotesEditor.setData(@this.get('formData.notes') || '');
+                    isSettingQdocData = false;
+                }
+                if (qdocTermsEditor && typeof qdocTermsEditor.setData === 'function') {
+                    isSettingQdocData = true;
+                    qdocTermsEditor.setData(@this.get('formData.terms') || '');
+                    isSettingQdocData = false;
+                }
+            });
+        }
+
+        window.addEventListener('qdoc-editors-update', (event) => {
+            isSettingQdocData = true;
+            const payload = Array.isArray(event.detail) ? event.detail[0] : event.detail;
+            const notesVal = payload?.notes ?? '';
+            const termsVal = payload?.terms ?? '';
+
+            if (qdocNotesEditor && typeof qdocNotesEditor.setData === 'function') {
+                qdocNotesEditor.setData(notesVal);
+            }
+            if (qdocTermsEditor && typeof qdocTermsEditor.setData === 'function') {
+                qdocTermsEditor.setData(termsVal);
+            }
+            setTimeout(() => { isSettingQdocData = false; }, 100);
         });
     </script>
     @endpush

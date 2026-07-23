@@ -131,23 +131,35 @@ class QuotationPdfViewData
 
     public function highlightNote(string $line): string
     {
-        $escaped = e($line);
+        $line = trim($line);
+
+        // If line contains HTML formatting tags, sanitize safe tags
+        if (preg_match('/<[a-z\/][^>]*>/i', $line)) {
+            $sanitized = strip_tags($line, '<b><strong><i><em><u><span><sub><sup>');
+            // If already formatted with <strong> or <b>, return sanitized string
+            if (preg_match('/<(strong|b)[^>]*>/i', $sanitized)) {
+                return $sanitized;
+            }
+            $line = $sanitized;
+        }
+
         $labels = [
             'Kết quả thực hiện:',
             'Thời gian hoàn thành phiếu kết quả:',
             'Thời gian hoàn thành Báo cáo:',
             'Thời gian có cuốn báo cáo QTMTLĐ:',
+            'Thời gian có cuốn báo cáo QTMT:',
             'Chi phí trên đã bao gồm VAT',
             'Hình thức:',
         ];
 
         foreach ($labels as $label) {
             if (str_starts_with($line, $label)) {
-                return '<span class="note-label">'.e($label).'</span>'.e(mb_substr($line, mb_strlen($label, 'UTF-8'), null, 'UTF-8'));
+                return '<strong class="note-label">'.e($label).'</strong>'.e(mb_substr($line, mb_strlen($label, 'UTF-8'), null, 'UTF-8'));
             }
         }
 
-        return $escaped;
+        return preg_match('/<[a-z\/][^>]*>/i', $line) ? $line : e($line);
     }
 
     public function isPaymentHeading(string $line): bool

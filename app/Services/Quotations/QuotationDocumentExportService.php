@@ -4,6 +4,7 @@ namespace App\Services\Quotations;
 
 use App\Enums\Role;
 use App\Models\QuotationDocument;
+use App\Support\QuotationPdfViewData;
 use App\Support\Quotations\QuotationTemplateCatalog;
 use Barryvdh\DomPDF\Facade\Pdf;
 use DOMDocument;
@@ -67,7 +68,7 @@ class QuotationDocumentExportService
         try {
             $this->buildDocxWithFinalPageCount($doc, $docxPath);
 
-            $pdfViewData = new \App\Support\QuotationPdfViewData();
+            $pdfViewData = new QuotationPdfViewData;
             $useFallback = $pdfViewData->hasFrequency($doc) && ! $this->templateSupportsFrequency($doc->template_key);
 
             $content = (! $useFallback && $this->convertDocxToPdf($docxPath, $pdfPath))
@@ -98,7 +99,7 @@ class QuotationDocumentExportService
         try {
             $this->buildDocxWithFinalPageCount($doc, $docxPath);
 
-            $pdfViewData = new \App\Support\QuotationPdfViewData();
+            $pdfViewData = new QuotationPdfViewData;
             $useFallback = $pdfViewData->hasFrequency($doc) && ! $this->templateSupportsFrequency($doc->template_key);
 
             return (! $useFallback && $this->convertDocxToPdf($docxPath, $pdfPath))
@@ -760,10 +761,12 @@ class QuotationDocumentExportService
             $row = $template->cloneNode(true);
             $this->setCellText($row, $xpath, 0, (string) ($lastGroupIndex + $offset + 1));
             $this->setCellText($row, $xpath, 1, $label);
+            $this->setCellAlignment($row, 1, 'center');
             for ($cellIndex = 2; $cellIndex < 5; $cellIndex++) {
                 $this->setCellText($row, $xpath, $cellIndex, '');
             }
             $this->setCellText($row, $xpath, 5, $this->formatMoney($amount));
+            $this->setCellAlignment($row, 5, 'right');
             $table->appendChild($row);
         }
     }
@@ -1772,6 +1775,36 @@ POWERSHELL;
         $this->setCellParagraphTexts($row, $xpath, $cellIndex, [$text]);
     }
 
+    private function setCellAlignment(DOMElement $row, int $cellIndex, string $align = 'center'): void
+    {
+        $cells = $this->rowCells($row);
+        if (! isset($cells[$cellIndex])) {
+            return;
+        }
+
+        foreach ($this->directChildElements($cells[$cellIndex], 'p') as $paragraph) {
+            $this->setParagraphAlignment($paragraph, $align);
+        }
+    }
+
+    private function setParagraphAlignment(DOMElement $paragraph, string $align = 'center'): void
+    {
+        $dom = $paragraph->ownerDocument;
+        $pPr = $this->directChildElements($paragraph, 'pPr')[0] ?? null;
+        if (! $pPr instanceof DOMElement) {
+            $pPr = $dom->createElementNS(self::WORD_NS, 'w:pPr');
+            $paragraph->insertBefore($pPr, $paragraph->firstChild);
+        }
+
+        $jc = $this->directChildElements($pPr, 'jc')[0] ?? null;
+        if (! $jc instanceof DOMElement) {
+            $jc = $dom->createElementNS(self::WORD_NS, 'w:jc');
+            $pPr->appendChild($jc);
+        }
+
+        $jc->setAttributeNS(self::WORD_NS, 'w:val', $align);
+    }
+
     private function setCellParagraphTexts(DOMElement $row, DOMXPath $xpath, int $cellIndex, array $texts): void
     {
         $cells = $this->rowCells($row);
@@ -2112,14 +2145,14 @@ POWERSHELL;
     private function noteLines(QuotationDocument $doc, string $year): array
     {
         $defaultLines = [
-            'Kết quả thực hiện: Báo cáo Quan trắc môi trường lao động '.$year,
-            'Thời gian có cuốn báo cáo QTMTLĐ:10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);',
-            'Chi phí trên đã bao gồm VAT '.$doc->vat_rate.'% tại thời điểm xuất hóa đơn.',
-            'Phương thức thanh toán:',
+            '<strong>Kết quả thực hiện:</strong> Báo cáo Quan trắc môi trường lao động '.$year,
+            '<strong>Thời gian có cuốn báo cáo QTMTLĐ:</strong> 10-15 ngày kể từ ngày quan trắc và có đầy đủ thông tin khách hàng cung cấp (không tính ngày lễ, thứ 7, chủ nhật);',
+            '<strong>Chi phí trên đã bao gồm VAT '.$doc->vat_rate.'%</strong> tại thời điểm xuất hóa đơn.',
+            '<strong>Phương thức thanh toán:</strong>',
             '50% sau khi ký hợp đồng',
             '50% sau khi hoàn thành báo cáo Quan trắc môi trường lao động',
-            'Hình thức: chuyển khoản',
-            'Chúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!',
+            '<strong>Hình thức:</strong> chuyển khoản',
+            '<strong>Chúng tôi xin cam kết sẽ tiến hành và hoàn thành công việc theo đúng nội dung được nêu trong báo giá!</strong>',
             'Trân trọng cảm ơn và mong nhận được sự hợp tác từ Quý Khách hàng!',
         ];
 
@@ -2185,6 +2218,15 @@ POWERSHELL;
         if (! $value) {
             return [];
         }
+
+        // Insert newlines before known label titles/bullet points if text was merged into 1 paragraph
+        $value = preg_replace('/(?<!^)(?<!\n)\s*(Kết quả thực hiện:|Thời gian (?:có cuốn báo cáo|hoàn thành|thực hiện)[^:]*:|Chi phí trên đã bao gồm VAT|Phương thức thanh toán:|Hình thức:|Chúng tôi xin cam kết|•|\b\d+%\s*sau khi)/u', "\n$1", $value) ?? $value;
+
+        // Convert HTML block endings and breaks to newlines
+        $value = preg_replace('/<\/(p|div|li|h[1-6])>/i', "\n", $value) ?? $value;
+        $value = preg_replace('/<br\s*\/?>/i', "\n", $value) ?? $value;
+        // Strip block containers while preserving safe inline HTML tags
+        $value = strip_tags($value, '<b><strong><i><em><u><span><sub><sup>');
 
         $lines = preg_split('/\R/u', $value) ?: [];
 
@@ -2443,6 +2485,7 @@ POWERSHELL;
     private function templateSupportsFrequency(?string $templateKey): bool
     {
         $template = QuotationTemplateCatalog::find($templateKey);
+
         return in_array('frequency', $template['requires'] ?? []);
     }
 }

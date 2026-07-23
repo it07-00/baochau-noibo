@@ -199,7 +199,8 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow">
                                     @if($item->quotationDocuments->first())
-                                    <li><a class="dropdown-item" href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank"><i class="fa-regular fa-file-lines me-2 text-primary" aria-hidden="true"></i>Mở tài liệu báo giá</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('app.quotation-docs.export-pdf', $item->quotationDocuments->first()->id) }}" target="_blank"><i class="fa-regular fa-file-pdf me-2 text-danger" aria-hidden="true"></i>Xuất PDF báo giá</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('app.quotation-docs.export-word', $item->quotationDocuments->first()->id) }}" target="_blank"><i class="fa-regular fa-file-word me-2 text-primary" aria-hidden="true"></i>Xuất Word báo giá</a></li>
                                     @endif
                                     @if($item->pdf_path)
                                     <li><a class="dropdown-item" href="{{ \Illuminate\Support\Str::startsWith($item->pdf_path, ['http://', 'https://']) ? $item->pdf_path : Storage::disk(config('filesystems.upload_disk', 'public'))->url($item->pdf_path) }}" target="_blank"><i class="fa-regular fa-file-pdf me-2 text-danger" aria-hidden="true"></i>Mở file PDF</a></li>
@@ -323,13 +324,19 @@
                                     <td class="px-4 py-3 fw-bold text-danger fs-5">{{ number_format($selectedQuotation->total_value, 0, ',', '.') }}đ</td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-body-tertiary fw-bold px-4 py-3"><i class="fa-solid fa-file-pdf text-danger me-1"></i>FILE PDF BÁO GIÁ</th>
+                                    <th class="bg-body-tertiary fw-bold px-4 py-3"><i class="fa-solid fa-file-pdf text-danger me-1"></i>FILE BÁO GIÁ</th>
                                     <td class="px-4 py-3">
                                         @if($selectedQuotation->quotationDocuments->first())
-                                            <a href="{{ route('app.quotation-docs.export-pdf', $selectedQuotation->quotationDocuments->first()->id) }}" target="_blank" class="d-inline-flex align-items-center gap-2 text-success text-decoration-none small mb-2">
-                                                <i class="fa-solid fa-file-word"></i>
-                                                <span>Báo giá Word/PDF gốc: {{ $selectedQuotation->quotationDocuments->first()->document_number }}</span>
-                                            </a>
+                                             <div class="d-flex flex-wrap gap-2 mb-2">
+                                                 <a href="{{ route('app.quotation-docs.export-pdf', $selectedQuotation->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
+                                                     <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                                                     <span>Xuất PDF: {{ $selectedQuotation->quotationDocuments->first()->document_number }}</span>
+                                                 </a>
+                                                 <a href="{{ route('app.quotation-docs.export-word', $selectedQuotation->quotationDocuments->first()->id) }}" target="_blank" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                                                     <i class="fa-solid fa-file-word" aria-hidden="true"></i>
+                                                     <span>Xuất Word</span>
+                                                 </a>
+                                             </div>
                                         @endif
                                         @if($selectedQuotation->files->isNotEmpty())
                                             <div class="d-flex flex-column gap-1">

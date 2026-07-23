@@ -352,7 +352,9 @@ class QuotationDocumentManager extends Component
 
     public function updatedFormDataTemplateKey(): void
     {
-        $this->applyTemplatePreset(false);
+        $this->applyTemplatePreset(true);
+        $this->syncServiceTextFromTemplate();
+        $this->dispatchQdocEditorsUpdate();
     }
 
     public function updatedFormDataServiceType(): void
@@ -382,6 +384,7 @@ class QuotationDocumentManager extends Component
     public function applySelectedTemplatePreset(): void
     {
         $this->applyTemplatePreset(true);
+        $this->dispatchQdocEditorsUpdate();
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã áp dụng mẫu báo giá.']);
     }
 
@@ -846,12 +849,47 @@ class QuotationDocumentManager extends Component
             : $value;
     }
 
+    private function normalizeTextToHtmlParagraphs(?string $value): string
+    {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return '';
+        }
+
+        if (str_contains($value, '<p>') || str_contains($value, '<p ')) {
+            return $value;
+        }
+
+        $value = preg_replace('/(?<!^)(?<!\n)\s*(Kết quả thực hiện:|Thời gian (?:có cuốn báo cáo|hoàn thành|thực hiện)[^:]*:|Chi phí trên đã bao gồm VAT|Phương thức thanh toán:|Hình thức:|Chúng tôi xin cam kết|•|\b\d+%\s*sau khi)/u', "\n$1", $value) ?? $value;
+
+        $lines = preg_split('/\R/u', $value) ?: [];
+        $paragraphs = array_map(function ($line) {
+            $line = trim($line);
+            if ($line === '') {
+                return '';
+            }
+
+            return '<p>'.e($line).'</p>';
+        }, $lines);
+
+        return implode('', array_filter($paragraphs));
+    }
+
+    private function dispatchQdocEditorsUpdate(): void
+    {
+        $this->dispatch('qdoc-editors-update', [
+            'notes' => $this->normalizeTextToHtmlParagraphs($this->formData['notes'] ?? ''),
+            'terms' => $this->normalizeTextToHtmlParagraphs($this->formData['terms'] ?? ''),
+        ]);
+    }
+
     public function create(): void
     {
         $this->authorizePermission(Permission::QUOTATION_TRACKING_CREATE);
 
         $this->resetForm();
         $this->isEditing = false;
+        $this->dispatchQdocEditorsUpdate();
         $this->dispatch('open-qdoc-modal');
     }
 
@@ -903,6 +941,7 @@ class QuotationDocumentManager extends Component
         $this->matrixRows = $this->matrixRowsFromDocument($doc);
 
         $this->recalculate();
+        $this->dispatchQdocEditorsUpdate();
         $this->dispatch('open-qdoc-modal');
     }
 
@@ -953,6 +992,7 @@ class QuotationDocumentManager extends Component
         $this->matrixRows = $this->matrixRowsFromDocument($doc);
 
         $this->recalculate();
+        $this->dispatchQdocEditorsUpdate();
         $this->dispatch('open-qdoc-modal');
     }
 
