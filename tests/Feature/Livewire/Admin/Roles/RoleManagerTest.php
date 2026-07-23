@@ -100,6 +100,7 @@ class RoleManagerTest extends TestCase
         $response = $this->get(route('app.roles.create'));
 
         $response->assertStatus(200);
+        $response->assertSee('card h-auto', false);
         $response->assertSee('Tạo mới vai trò');
         $response->assertSee('Ma trận phân quyền chi tiết');
     }
@@ -116,6 +117,7 @@ class RoleManagerTest extends TestCase
         $response = $this->get(route('app.roles.edit', $role));
 
         $response->assertStatus(200);
+        $response->assertSee('card h-auto', false);
         $response->assertSee(PermissionEnum::USERS_VIEW->value);
         $response->assertSee(PermissionEnum::USERS_EDIT->value);
         $response->assertSee('module-group', false);

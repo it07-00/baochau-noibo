@@ -11,7 +11,7 @@
         <div class="row g-4">
             <!-- Left Sticky Sidebar: Role Basic Info -->
             <div class="col-12 col-lg-4">
-                <div class="card border border-secondary-subtle rounded-3 shadow-sm bg-body position-sticky"
+                <div class="card h-auto border border-secondary-subtle rounded-3 shadow-sm bg-body position-sticky"
                     style="top: 80px;">
                     <div class="card-header bg-body-tertiary border-bottom p-3">
                         <div class="d-flex align-items-center gap-2.5">
@@ -79,7 +79,7 @@
             <!-- Right Column: Permission Matrix -->
             <div class="col-12 col-lg-8">
                 <!-- Search Box & Master Controls Header -->
-                <div class="card border border-secondary-subtle rounded-3 shadow-sm bg-body mb-4">
+                <div class="card h-auto border border-secondary-subtle rounded-3 shadow-sm bg-body mb-4">
                     <div class="card-body p-3.5">
                         <div class="d-flex align-items-center justify-content-between gap-3 mb-3 flex-wrap">
                             <div>
@@ -113,7 +113,7 @@
                 <!-- Module Bento Cards -->
                 <div id="permissionModulesContainer">
                     @foreach($permissions as $module => $modulePermissions)
-                        <div class="card border border-secondary-subtle rounded-3 shadow-sm bg-body mb-4 module-group overflow-hidden"
+                        <div class="card h-auto border border-secondary-subtle rounded-3 shadow-sm bg-body mb-4 module-group overflow-hidden"
                             data-module="{{ \Illuminate\Support\Str::lower($module) }} {{ \Illuminate\Support\Str::lower(\App\Support\RolePermissionViewData::moduleName($module)) }}">
                             <div
                                 class="card-header bg-body-tertiary border-bottom border-secondary-subtle p-3 d-flex align-items-center justify-content-between">
