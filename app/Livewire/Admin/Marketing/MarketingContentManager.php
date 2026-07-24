@@ -249,6 +249,22 @@ class MarketingContentManager extends Component
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã gửi duyệt thành công.']);
     }
 
+    public function revokeSubmission(int $id): void
+    {
+        $this->authorizeMarketingPermission(Permission::ARTICLES_EDIT);
+
+        $record = $this->authorizeOwn($id);
+        if (! $record || ! $record->isPending()) {
+            return;
+        }
+
+        $record->update(['status' => 'draft']);
+
+        $this->detailId = null;
+        $this->dispatch('closeDetailModal');
+        $this->dispatch('swal:toast', ['type' => 'success', 'message' => 'Đã thu hồi yêu cầu duyệt bài content.']);
+    }
+
     public function openReview(int $id): void
     {
         $this->authorizeReviewerAction();

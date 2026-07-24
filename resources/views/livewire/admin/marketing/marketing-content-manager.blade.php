@@ -122,7 +122,7 @@
                                         @endif
                                     </div>
 
-                                    @if(($isMarketing && ($item->isEditable() || $item->isDraft())) || ($isReviewer && $item->isPending()))
+                                    @if(($isMarketing && ($item->isEditable() || $item->isDraft() || $item->isPending())) || ($isReviewer && $item->isPending()))
                                         <div class="d-flex align-items-center justify-content-end gap-1 mt-2">
                                         <div class="d-inline-flex align-items-center gap-1">
                                             @if($isMarketing && $item->isEditable())
@@ -137,6 +137,12 @@
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger mc-icon-btn" wire:click.stop="deleteContent({{ $item->id }})" wire:confirm="Xóa bài content này?" title="Xóa">
                                                     <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            @endif
+
+                                            @if($isMarketing && $item->isPending())
+                                                <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-semibold d-inline-flex align-items-center gap-1" wire:click.stop="revokeSubmission({{ $item->id }})" wire:confirm="Thu hồi yêu cầu duyệt bài này về nháp?" title="Thu hồi gửi duyệt">
+                                                    <i class="fa-solid fa-rotate-left"></i><span class="d-none d-md-inline">Thu hồi</span>
                                                 </button>
                                             @endif
 
@@ -203,6 +209,12 @@
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-danger mc-icon-btn" wire:click.stop="deleteContent({{ $item->id }})" wire:confirm="Xóa bài content này?" title="Xóa">
                                     <i class="fa-solid fa-trash"></i>
+                                </button>
+                            @endif
+
+                            @if($isMarketing && $item->isPending())
+                                <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-semibold d-inline-flex align-items-center gap-1" wire:click.stop="revokeSubmission({{ $item->id }})" wire:confirm="Thu hồi yêu cầu duyệt bài này về nháp?" title="Thu hồi gửi duyệt">
+                                    <i class="fa-solid fa-rotate-left"></i><span>Thu hồi</span>
                                 </button>
                             @endif
 
@@ -664,6 +676,14 @@
                                     wire:click="submitForReview({{ $detailRecord->id }})"
                                     wire:confirm="Gửi bài này để duyệt?">
                                     <i class="fa-solid fa-paper-plane me-1"></i>Gửi duyệt
+                                </button>
+                            @endif
+                            @if($isMarketing && $detailRecord->isPending())
+                                <button type="button"
+                                    class="btn btn-outline-warning text-dark fw-semibold"
+                                    wire:click="revokeSubmission({{ $detailRecord->id }})"
+                                    wire:confirm="Thu hồi yêu cầu duyệt bài này về nháp?">
+                                    <i class="fa-solid fa-rotate-left me-1"></i>Thu hồi gửi duyệt
                                 </button>
                             @endif
                             @if($isReviewer && $detailRecord->isPending())

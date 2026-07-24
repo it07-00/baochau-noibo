@@ -517,4 +517,48 @@ class MarketingContentManagerTest extends TestCase
 
         Storage::disk('public')->assertExists($savedPath);
     }
+
+    public function test_marketing_user_can_revoke_pending_submission(): void
+    {
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Pending campaign to recall',
+            'content' => 'Caption for pending campaign',
+            'scheduled_at' => '2026-07-15',
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(MarketingContentManager::class)
+            ->call('revokeSubmission', $record->id)
+            ->assertDispatched('closeDetailModal')
+            ->assertDispatched('swal:toast', ['type' => 'success', 'message' => 'Đã thu hồi yêu cầu duyệt bài content.']);
+
+        $this->assertDatabaseHas('marketing_contents', [
+            'id' => $record->id,
+            'status' => 'draft',
+        ]);
+    }
+
+    public function test_detail_modal_shows_revoke_button_for_pending_content(): void
+    {
+        $this->salesUser->givePermissionTo(PermissionEnum::ARTICLES_EDIT->value);
+
+        $record = MarketingContent::create([
+            'user_id' => $this->salesUser->id,
+            'title' => 'Pending campaign in detail',
+            'content' => 'Caption for pending campaign',
+            'scheduled_at' => '2026-07-15',
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        Livewire::test(MarketingContentManager::class)
+            ->call('openDetail', $record->id)
+            ->assertSee('Thu hồi gửi duyệt');
+    }
 }
