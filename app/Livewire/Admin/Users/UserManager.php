@@ -84,7 +84,7 @@ class UserManager extends Component
                         ->orWhere('phone', 'like', '%' . $this->search . '%');
                 });
             })
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->paginate($this->perPage);
 
         $totalUsers = User::count();

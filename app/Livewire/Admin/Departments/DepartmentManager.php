@@ -59,7 +59,7 @@ class DepartmentManager extends Component
                 $query->where('name', 'like', '%' . $this->search . '%')
                       ->orWhere('slug', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->paginate($this->perPage);
 
         return view('livewire.admin.departments.department-manager', [

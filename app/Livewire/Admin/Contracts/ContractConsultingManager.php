@@ -51,7 +51,7 @@ class ContractConsultingManager extends Component
 
     public string $sortBy = 'id';
 
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
 
     public bool $showModal = false;
 

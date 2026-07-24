@@ -53,7 +53,7 @@ class RoleManager extends Component
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', '%'.$this->search.'%');
             })
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->paginate($this->perPage);
 
         // Map names for display if needed
