@@ -222,15 +222,15 @@
         }
 
         .summary .col-index {
-            width: 5%;
+            width: 6%;
         }
 
         .summary .col-item {
-            width: 60%;
+            width: 56%;
         }
 
         .summary .col-unit {
-            width: 11%;
+            width: 10%;
         }
 
         .summary .col-quantity {
@@ -238,7 +238,7 @@
         }
 
         .summary .col-amount {
-            width: 18%;
+            width: 22%;
         }
 
         .money-red {
@@ -304,7 +304,7 @@
         }
 
         .details .col-item {
-            width: 34%;
+            width: 30%;
         }
 
         .details .col-unit {
@@ -312,7 +312,7 @@
         }
 
         .details .col-cost {
-            width: 14%;
+            width: 18%;
         }
 
         .details .col-quantity {
@@ -549,10 +549,10 @@
     <table class="summary">
         <colgroup>
             <col style="width: 6%" />
-            <col style="width: 60%" />
+            <col style="width: 56%" />
             <col style="width: 10%" />
             <col style="width: 6%" />
-            <col style="width: 18%" />
+            <col style="width: 22%" />
         </colgroup>
         <thead>
             <tr>
@@ -619,9 +619,9 @@
     <table class="details">
         <colgroup>
             <col style="width: 5%" />
-            <col style="width: 34%" />
+            <col style="width: 30%" />
             <col style="width: 11%" />
-            <col style="width: 14%" />
+            <col style="width: 18%" />
             <col style="width: 6%" />
             <col style="width: 7%" />
             <col style="width: 23%" />

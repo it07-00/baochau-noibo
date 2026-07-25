@@ -78,6 +78,15 @@ class QuotationDocumentExportServicePageCountTest extends TestCase
             'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
             'w:r'
         );
+        $runProperties = $dom->createElementNS(
+            'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+            'w:rPr'
+        );
+        $runProperties->appendChild($dom->createElementNS(
+            'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+            'w:u'
+        ));
+        $run->appendChild($runProperties);
         $run->appendChild($dom->createElementNS(
             'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
             'w:t',
@@ -96,6 +105,7 @@ class QuotationDocumentExportServicePageCountTest extends TestCase
 
         $this->assertSame('Kết quả thực hiện: Báo cáo thử nghiệm', $paragraph->textContent);
         $this->assertSame(0, $xpath->query('.//w:t[contains(., "<strong>")]', $paragraph)->length);
+        $this->assertSame(0, $xpath->query('.//w:t[contains(., "**")]', $paragraph)->length);
         $this->assertSame(1, $xpath->query('./w:r[1]/w:rPr/w:b', $paragraph)->length);
         $this->assertSame('Kết quả thực hiện:', $xpath->evaluate('string(./w:r[1]/w:t)', $paragraph));
     }
@@ -315,6 +325,16 @@ class QuotationDocumentExportServicePageCountTest extends TestCase
         $this->assertStringContainsString('class="col-frequency"', $html);
         $this->assertStringContainsString('TẦN<br />SUẤT', $html);
         $this->assertStringContainsString('<td class="center">83</td>', $html);
+        $this->assertMatchesRegularExpression(
+            '/\.summary\s+\.col-amount\s*\{\s*width:\s*22%;/u',
+            $html
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.details\s+\.col-cost\s*\{\s*width:\s*18%;/u',
+            $html
+        );
+        $this->assertStringContainsString('<col style="width: 22%" />', $html);
+        $this->assertStringContainsString('<col style="width: 18%" />', $html);
     }
 
     private function resolveStaffDetails(QuotationDocument $doc): array

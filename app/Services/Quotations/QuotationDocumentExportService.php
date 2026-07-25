@@ -1855,7 +1855,7 @@ POWERSHELL;
         // If the paragraph has underline or contains bold markers, we rebuild its runs
         if (($hasUnderline && count($parts) === 2) || $hasBoldMarker) {
             $segments = [];
-            if ($hasUnderline && count($parts) === 2) {
+            if (! $hasBoldMarker && $hasUnderline && count($parts) === 2) {
                 $labelText = $parts[0].':';
                 $valueText = $parts[1];
 

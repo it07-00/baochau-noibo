@@ -136,6 +136,11 @@ class QuotationPdfViewData
         // If line contains HTML formatting tags, sanitize safe tags
         if (preg_match('/<[a-z\/][^>]*>/i', $line)) {
             $sanitized = strip_tags($line, '<b><strong><i><em><u><span><sub><sup>');
+            $sanitized = preg_replace(
+                '/<(b|strong|i|em|u|span|sub|sup)\b[^>]*>/i',
+                '<$1>',
+                $sanitized
+            ) ?? $sanitized;
             // If already formatted with <strong> or <b>, return sanitized string
             if (preg_match('/<(strong|b)[^>]*>/i', $sanitized)) {
                 return $sanitized;
