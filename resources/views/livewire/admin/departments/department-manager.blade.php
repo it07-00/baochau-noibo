@@ -54,7 +54,7 @@
                                     </td>
                                     <td><code>{{ $dept->slug }}</code></td>
                                     <td>
-                                        <span class="badge bg-label-primary px-2 py-1"><i class="fs-7 me-1 fas fa-users"></i> {{ $dept->users_count }} nhân viên</span>
+                                        <span class="badge bg-secondary-subtle text-body border border-secondary-subtle rounded-pill px-2 py-1"><i class="fa-solid fa-users me-1 text-primary"></i> {{ $dept->users_count }} nhân viên</span>
                                     </td>
                                     <td>
                                         <div class="form-check form-switch m-0 border-0">

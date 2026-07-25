@@ -91,7 +91,7 @@ class HrProfileDetailTest extends TestCase
         Livewire::actingAs($admin)
             ->test(HrProfileDetail::class, ['user' => $employee])
             ->call('openContractModal')
-            ->set('contract_type', 'xac_dinh_thoi_han')
+            ->set('contract_type', 'co_thoi_han')
             ->set('contract_number', 'HĐLĐ-2026/01')
             ->set('contract_signed_date', '2026-01-15')
             ->set('contract_start_date', '2026-02-01')
@@ -129,15 +129,15 @@ class HrProfileDetailTest extends TestCase
         Livewire::actingAs($admin)
             ->test(HrProfileDetail::class, ['user' => $employee])
             ->call('openDocumentModal')
-            ->set('document_type', 'cccd')
-            ->set('document_title', 'CCCD Của Nhân Viên')
+            ->set('document_type', 'cccd_truoc')
+            ->set('document_title', 'CCCD Mặt Trước Của Nhân Viên')
             ->set('document_files', [$file])
             ->call('saveDocuments')
             ->assertDispatched('swal:success');
 
         $doc = EmployeeDocument::where('user_id', $employee->id)->first();
         $this->assertNotNull($doc);
-        $this->assertEquals('CCCD Của Nhân Viên', $doc->title);
+        $this->assertEquals('CCCD Mặt Trước Của Nhân Viên', $doc->title);
 
         Livewire::actingAs($admin)
             ->test(HrProfileDetail::class, ['user' => $employee])

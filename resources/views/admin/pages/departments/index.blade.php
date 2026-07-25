@@ -52,13 +52,13 @@
                                     </td>
                                     <td>
                                         @if($department->is_active)
-                                            <span class="badge bg-label-success">Đang hoạt động</span>
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1">Đang hoạt động</span>
                                         @else
-                                            <span class="badge bg-label-danger">Đã đóng</span>
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1">Đã đóng</span>
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-label-info px-2 py-1"><i class="fs-7 me-1 text-info fas fa-users"></i> {{ $department->users_count }} nhân sự</span>
+                                        <span class="badge bg-secondary-subtle text-body border border-secondary-subtle rounded-pill px-2 py-1"><i class="fa-solid fa-users me-1 text-primary"></i> {{ $department->users_count }} nhân sự</span>
                                     </td>
                                     <td class="text-end">
                                         <a href="{{ route('app.departments.edit', $department) }}" class="btn btn-sm btn-icon btn-light text-primary rounded-pill me-1" title="Sửa">

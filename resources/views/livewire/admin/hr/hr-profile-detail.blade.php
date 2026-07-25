@@ -6,24 +6,26 @@
         </a>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 align-items-start">
         <!-- CỘT TRÁI: Thẻ thông tin nhanh nhân sự -->
-        <div class="col-lg-3 col-md-4">
+        <div class="col-lg-3 col-md-4 align-self-start">
             <div class="card bg-body border border-light-subtle shadow-sm rounded-3 sticky-top" style="top: 1rem; z-index: 10;">
                 <div class="card-body text-center p-4">
                     <div class="mb-3">
                         @if($user->avatar_url)
-                            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="rounded-circle img-thumbnail mx-auto d-block" style="width: 100px; height: 100px; object-fit: cover;">
+                            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="rounded-circle img-thumbnail shadow-sm mx-auto d-block" style="width: 100px; height: 100px; object-fit: cover;">
                         @else
-                            <div class="rounded-circle bg-secondary-subtle text-secondary d-flex align-items-center justify-content-center mx-auto fw-bold fs-2" style="width: 100px; height: 100px;">
+                            <div class="rounded-circle bg-primary-subtle text-primary border border-primary-subtle d-flex align-items-center justify-content-center mx-auto fw-bold fs-2 shadow-sm" style="width: 100px; height: 100px;">
                                 {{ mb_substr($user->name, 0, 1) }}
                             </div>
                         @endif
                     </div>
                     <h5 class="fw-bold text-body mb-1">{{ $user->name }}</h5>
-                    <p class="text-muted small mb-3">{{ $user->email }}</p>
+                    <p class="text-muted small mb-3">
+                        <i class="fa-regular fa-envelope me-1"></i>{{ $user->email }}
+                    </p>
 
-                    <div class="d-flex flex-wrap justify-content-center gap-1 mb-2">
+                    <div class="d-flex flex-wrap justify-content-center gap-1">
                         @php
                             $statusBadgeClass = match($user->employment_status) {
                                 'chinh_thuc' => 'bg-success-subtle text-success border-success-subtle',
