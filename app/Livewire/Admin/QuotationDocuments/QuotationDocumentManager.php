@@ -87,17 +87,83 @@ class QuotationDocumentManager extends Component
             'formData.terms' => 'nullable|string|max:5000',
             'formData.discount' => 'nullable|numeric|min:0',
             'vatRate' => 'required|integer|min:0|max:100',
+            'summaryItems' => 'required|array|min:1',
+            'summaryItems.*.description' => 'required|string|max:16000',
+            'summaryItems.*.unit' => 'nullable|string|max:50',
+            'summaryItems.*.quantity' => 'required|numeric|min:0|max:99999999.99',
+            'summaryItems.*.note' => 'nullable|string|max:16000',
+            'detailItems' => $this->usesLaborMonitoringTemplate()
+                ? 'required|array|min:1'
+                : 'array',
+            'detailItems.*.group_name' => 'required|string|max:255',
+            'detailItems.*.description' => 'required|string|max:16000',
+            'detailItems.*.unit' => 'nullable|string|max:50',
+            'detailItems.*.quantity' => 'required|integer|min:0|max:1000000',
+            'detailItems.*.frequency' => 'required|integer|min:1|max:1000000',
+            'detailItems.*.note' => 'nullable|string|max:16000',
         ];
     }
 
     protected function messages(): array
     {
         return [
+            'required' => ':attribute là bắt buộc.',
+            'string' => ':attribute phải là nội dung văn bản.',
+            'date' => ':attribute không đúng định dạng ngày.',
+            'email' => ':attribute không đúng định dạng email.',
+            'integer' => ':attribute phải là số nguyên.',
+            'numeric' => ':attribute phải là số.',
+            'min.array' => ':attribute phải có ít nhất :min dòng.',
+            'min.numeric' => ':attribute phải từ :min trở lên.',
+            'max.string' => ':attribute không được vượt quá :max ký tự.',
+            'max.numeric' => ':attribute không được lớn hơn :max.',
             'formData.document_number.required' => 'Vui lòng nhập số báo giá.',
             'formData.date.required' => 'Vui lòng chọn ngày báo giá.',
             'formData.customer_name.required' => 'Vui lòng nhập tên khách hàng/công ty.',
             'formData.customer_email.email' => 'Email không hợp lệ.',
-            'formData.valid_until.after_or_equal' => 'Ngày hiệu lực phải sau ngày báo giá.',
+            'formData.valid_until.after_or_equal' => 'Ngày hiệu lực phải sau hoặc bằng ngày báo giá.',
+            'summaryItems.required' => 'Bảng 01 phải có ít nhất 1 dòng dịch vụ.',
+            'summaryItems.min' => 'Bảng 01 phải có ít nhất 1 dòng dịch vụ.',
+            'summaryItems.*.description.required' => 'Bảng 01 - Dòng :position: Vui lòng nhập nội dung dịch vụ.',
+            'detailItems.required' => 'Bảng 02 phải có ít nhất 1 chỉ tiêu.',
+            'detailItems.min' => 'Bảng 02 phải có ít nhất 1 chỉ tiêu.',
+            'detailItems.*.group_name.required' => 'Bảng 02 - Dòng :position: Vui lòng nhập/chọn nhóm.',
+            'detailItems.*.description.required' => 'Bảng 02 - Dòng :position: Vui lòng nhập chỉ tiêu/nội dung.',
+        ];
+    }
+
+    protected function validationAttributes(): array
+    {
+        return [
+            'formData.document_number' => 'Số báo giá',
+            'formData.date' => 'Ngày báo giá',
+            'formData.valid_until' => 'Ngày hiệu lực',
+            'formData.customer_name' => 'Tên khách hàng/công ty',
+            'formData.customer_address' => 'Địa chỉ',
+            'formData.customer_phone' => 'Điện thoại',
+            'formData.customer_contact' => 'Người liên hệ',
+            'formData.customer_email' => 'Email',
+            'formData.customer_tax_code' => 'Mã số thuế',
+            'formData.service_type' => 'Tên dịch vụ',
+            'formData.template_key' => 'Mẫu báo giá',
+            'formData.price_subcontractor' => 'Nhà thầu phụ',
+            'formData.work_location' => 'Địa điểm thực hiện',
+            'formData.notes' => 'Ghi chú',
+            'formData.terms' => 'Điều khoản',
+            'formData.discount' => 'Chiết khấu',
+            'vatRate' => 'Thuế VAT',
+            'summaryItems' => 'Bảng 01',
+            'summaryItems.*.description' => 'Nội dung dịch vụ tại Bảng 01',
+            'summaryItems.*.unit' => 'Đơn vị tính tại Bảng 01',
+            'summaryItems.*.quantity' => 'Số lượng tại Bảng 01',
+            'summaryItems.*.note' => 'Ghi chú tại Bảng 01',
+            'detailItems' => 'Bảng 02',
+            'detailItems.*.group_name' => 'Nhóm tại Bảng 02',
+            'detailItems.*.description' => 'Chỉ tiêu tại Bảng 02',
+            'detailItems.*.unit' => 'Đơn vị tính tại Bảng 02',
+            'detailItems.*.quantity' => 'Số lượng tại Bảng 02',
+            'detailItems.*.frequency' => 'Tần suất tại Bảng 02',
+            'detailItems.*.note' => 'Ghi chú tại Bảng 02',
         ];
     }
 
@@ -1116,46 +1182,11 @@ class QuotationDocumentManager extends Component
         $this->cleanMoneyFields($this->formData, $this->moneyFields);
         $this->recalculate();
 
-        if ($this->usesLaborMonitoringTemplate()) {
-            if (empty($this->detailItems)) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 Quan trắc môi trường lao động phải có ít nhất 1 chỉ tiêu.']);
-
-                return;
-            }
-
+        if ($this->usesLaborMonitoringTemplate() && ! empty($this->detailItems)) {
             $this->syncLaborMonitoringSummaryFromDetail();
         }
 
         $this->validate();
-
-        if (empty($this->summaryItems)) {
-            $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 01 (Tổng hợp) phải có ít nhất 1 dòng dịch vụ.']);
-
-            return;
-        }
-
-        // Validate summary items
-        foreach ($this->summaryItems as $i => $item) {
-            if (empty(trim($item['description'] ?? ''))) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 01 - Dòng '.($i + 1).': Vui lòng nhập nội dung dịch vụ.']);
-
-                return;
-            }
-        }
-
-        // Validate detail items if present
-        foreach ($this->detailItems as $i => $item) {
-            if (empty(trim($item['description'] ?? ''))) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 - Dòng '.($i + 1).': Vui lòng nhập chỉ tiêu/nội dung.']);
-
-                return;
-            }
-            if (empty(trim($item['group_name'] ?? ''))) {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bảng 02 - Dòng '.($i + 1).': Vui lòng nhập/chọn nhóm.']);
-
-                return;
-            }
-        }
 
         foreach ($this->matrixRows as $i => $row) {
             $hasData = trim((string) ($row['job_title'] ?? '')) !== ''
@@ -1164,7 +1195,10 @@ class QuotationDocumentManager extends Component
                 || (int) ($row['total'] ?? 0) > 0;
 
             if ($hasData && trim((string) ($row['job_title'] ?? '')) === '') {
-                $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Ma trận PLLĐ - Dòng '.($i + 1).': Vui lòng nhập chức danh công việc.']);
+                $this->addError(
+                    'matrixRows.'.$i.'.job_title',
+                    'Ma trận PLLĐ - Dòng '.($i + 1).': Vui lòng nhập chức danh công việc.'
+                );
 
                 return;
             }
@@ -1451,30 +1485,30 @@ class QuotationDocumentManager extends Component
     private function generateNextNumber(): string
     {
         $year = now()->format('Y');
-        $suffix = '/' . $year . '/BG – **BC';
+        $suffix = '/'.$year.'/BG – **BC';
 
         // Find the last document with this year in the document number
         // This matches both the new format and legacy 'BG-[Year]-' format
         $lastDoc = QuotationDocument::where(function ($q) use ($year) {
-            $q->where('document_number', 'like', 'BG-' . $year . '-%')
-              ->orWhere('document_number', 'like', '%/' . $year . '/BG%');
+            $q->where('document_number', 'like', 'BG-'.$year.'-%')
+                ->orWhere('document_number', 'like', '%/'.$year.'/BG%');
         })
-        ->orderByDesc('id')
-        ->first();
+            ->orderByDesc('id')
+            ->first();
 
         if ($lastDoc) {
             $numStr = $lastDoc->document_number;
             if (str_contains($numStr, '/')) {
                 $lastNum = (int) strstr($numStr, '/', true);
             } else {
-                $lastNum = (int) str_replace('BG-' . $year . '-', '', $numStr);
+                $lastNum = (int) str_replace('BG-'.$year.'-', '', $numStr);
             }
             $nextNum = $lastNum + 1;
         } else {
             $nextNum = 1;
         }
 
-        return str_pad($nextNum, 3, '0', STR_PAD_LEFT) . $suffix;
+        return str_pad($nextNum, 3, '0', STR_PAD_LEFT).$suffix;
     }
 
     public function render()

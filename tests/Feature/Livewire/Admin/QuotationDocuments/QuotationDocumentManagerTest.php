@@ -70,4 +70,62 @@ class QuotationDocumentManagerTest extends TestCase
             'description' => $longDescription,
         ]);
     }
+
+    public function test_save_reports_all_invalid_rows_with_field_specific_errors(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        Livewire::test(QuotationDocumentManager::class)
+            ->call('create')
+            ->set('formData.customer_name', 'Công ty Bảo Châu')
+            ->set('formData.template_key', 'qtmt_periodic')
+            ->set('summaryItems', [
+                [
+                    'description' => '',
+                    'unit' => 'Hồ sơ',
+                    'quantity' => 1,
+                    'unit_price' => 0,
+                    'amount' => 0,
+                    'note' => '',
+                ],
+            ])
+            ->set('detailItems', [
+                [
+                    'group_name' => '',
+                    'description' => '',
+                    'unit' => 'Mẫu',
+                    'quantity' => 1,
+                    'frequency' => 1,
+                    'unit_price' => 0,
+                    'amount' => 0,
+                    'note' => '',
+                ],
+            ])
+            ->call('save')
+            ->assertHasErrors([
+                'summaryItems.0.description' => 'required',
+                'detailItems.0.group_name' => 'required',
+                'detailItems.0.description' => 'required',
+            ])
+            ->assertSee('Bảng 01 - Dòng 1: Vui lòng nhập nội dung dịch vụ.')
+            ->assertSee('Bảng 02 - Dòng 1: Vui lòng nhập/chọn nhóm.')
+            ->assertSee('Bảng 02 - Dòng 1: Vui lòng nhập chỉ tiêu/nội dung.');
+    }
+
+    public function test_labor_monitoring_form_reports_general_and_missing_detail_errors_together(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        Livewire::test(QuotationDocumentManager::class)
+            ->call('create')
+            ->set('formData.customer_name', '')
+            ->set('detailItems', [])
+            ->call('save')
+            ->assertHasErrors([
+                'formData.customer_name' => 'required',
+                'detailItems' => 'required',
+            ])
+            ->assertSee('Vui lòng nhập tên khách hàng/công ty.')
+            ->assertSee('Bảng 02 phải có ít nhất 1 chỉ tiêu.');
+    }
 }

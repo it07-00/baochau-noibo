@@ -6,6 +6,7 @@
 <script src="{{ asset('assets/js/main.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 <script src="{{ asset('assets/js/sweetalert2.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 <script src="{{ asset('assets/js/ckeditor.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
+<script src="{{ asset('assets/js/livewire-validation-feedback.js') }}?v={{ config('app.version') }}" data-navigate-once></script>
 
 <script>
     // ── Bootstrap Modal Singleton & Backdrop Cleanup for Livewire ──

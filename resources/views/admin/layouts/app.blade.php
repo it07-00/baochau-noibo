@@ -10,6 +10,7 @@
         <main class="app-wrapper">
             <div class="{{ $fullWidth ?? false ? 'w-100 p-0' : 'container-fluid py-4' }}">
                 <div class="page-content">
+                    @include('admin.partials.validation-summary')
                     @yield('content')
                     {{ $slot ?? '' }}
                 </div>

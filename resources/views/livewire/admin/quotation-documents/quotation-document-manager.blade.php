@@ -320,6 +320,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body p-4 overflow-auto">
+                        @if($errors->any())
+                        <div class="alert alert-danger border shadow-sm" role="alert" data-validation-summary>
+                            <div class="fw-bold mb-2">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                Chưa thể lưu báo giá. Vui lòng kiểm tra các nội dung sau:
+                            </div>
+                            <ul class="mb-0 ps-3">
+                                @foreach($errors->all() as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
                         <!-- Datalist for autocomplete group names -->
                         <datalist id="group-names">
                             @foreach($groupOptions as $g)
@@ -337,16 +351,18 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Ngày BG <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" wire:model="formData.date">
+                                <input type="date" class="form-control @error('formData.date') is-invalid @enderror" wire:model="formData.date">
+                                @error('formData.date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Hiệu lực đến</label>
-                                <input type="date" class="form-control" wire:model="formData.valid_until">
+                                <input type="date" class="form-control @error('formData.valid_until') is-invalid @enderror" wire:model="formData.valid_until">
+                                @error('formData.valid_until') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Mẫu báo giá & dịch vụ <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select class="form-select" wire:model.live="formData.template_key">
+                                    <select class="form-select @error('formData.template_key') is-invalid @enderror" wire:model.live="formData.template_key">
                                         @foreach($templatePresets as $preset)
                                             <option value="{{ $preset['key'] }}">{{ $preset['label'] }}</option>
                                         @endforeach
@@ -359,10 +375,12 @@
                                         <i class="fa-solid fa-wand-magic-sparkles"></i> Áp dụng mẫu
                                     </button>
                                 </div>
+                                @error('formData.template_key') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Tên dịch vụ hiển thị</label>
-                                <input type="text" class="form-control" wire:model.live.debounce.500ms="formData.service_type" placeholder="Tên dịch vụ hiển thị trên báo giá...">
+                                <input type="text" class="form-control @error('formData.service_type') is-invalid @enderror" wire:model.live.debounce.500ms="formData.service_type" placeholder="Tên dịch vụ hiển thị trên báo giá...">
+                                @error('formData.service_type') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             @if($priceSubcontractorOptions !== [])
                             <div class="col-md-3">
@@ -395,27 +413,33 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Địa chỉ</label>
-                                <input type="text" class="form-control" wire:model="formData.customer_address">
+                                <input type="text" class="form-control @error('formData.customer_address') is-invalid @enderror" wire:model="formData.customer_address">
+                                @error('formData.customer_address') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Người nhận / Liên hệ</label>
-                                <input type="text" class="form-control" wire:model="formData.customer_contact" placeholder="VD: Anh Phi">
+                                <input type="text" class="form-control @error('formData.customer_contact') is-invalid @enderror" wire:model="formData.customer_contact" placeholder="VD: Anh Phi">
+                                @error('formData.customer_contact') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Điện thoại</label>
-                                <input type="text" class="form-control" wire:model="formData.customer_phone">
+                                <input type="text" class="form-control @error('formData.customer_phone') is-invalid @enderror" wire:model="formData.customer_phone">
+                                @error('formData.customer_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control" wire:model="formData.customer_email">
+                                <input type="email" class="form-control @error('formData.customer_email') is-invalid @enderror" wire:model="formData.customer_email">
+                                @error('formData.customer_email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">MST</label>
-                                <input type="text" class="form-control" wire:model="formData.customer_tax_code">
+                                <input type="text" class="form-control @error('formData.customer_tax_code') is-invalid @enderror" wire:model="formData.customer_tax_code">
+                                @error('formData.customer_tax_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Địa điểm TH</label>
-                                <input type="text" class="form-control" wire:model="formData.work_location" placeholder="Nơi thực hiện">
+                                <input type="text" class="form-control @error('formData.work_location') is-invalid @enderror" wire:model="formData.work_location" placeholder="Nơi thực hiện">
+                                @error('formData.work_location') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
 
@@ -446,16 +470,19 @@
                                     <tr>
                                         <td class="text-center text-muted">{{ $i + 1 }}</td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1"
+                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1 @error('summaryItems.'.$i.'.description') is-invalid @enderror"
                                                    wire:model.blur="summaryItems.{{ $i }}.description" placeholder="Nhập nội dung dịch vụ tổng hợp...">
+                                            @error('summaryItems.'.$i.'.description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent text-center px-1 @error('summaryItems.'.$i.'.unit') is-invalid @enderror"
                                                    wire:model.blur="summaryItems.{{ $i }}.unit" placeholder="Hồ sơ">
+                                            @error('summaryItems.'.$i.'.unit') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
-                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm border-0 bg-transparent text-center px-1 @error('summaryItems.'.$i.'.quantity') is-invalid @enderror"
                                                    wire:model.live.debounce.500ms="summaryItems.{{ $i }}.quantity">
+                                            @error('summaryItems.'.$i.'.quantity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent text-end money-input px-1"
@@ -533,19 +560,20 @@
                                     <tr wire:key="detail-row-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}">
                                         <td class="text-center text-muted">{{ $i + 1 }}</td>
                                         <td>
-                                            <select class="form-select form-select-sm border-0 bg-transparent px-1 fw-bold"
+                                            <select class="form-select form-select-sm border-0 bg-transparent px-1 fw-bold @error('detailItems.'.$i.'.group_name') is-invalid @enderror"
                                                     wire:key="detail-group-{{ $i }}-{{ $groupOptionsKey }}"
                                                     wire:model.live="detailItems.{{ $i }}.group_name">
                                                 @foreach($groupOptions as $groupOption)
                                                     <option value="{{ $groupOption }}">{{ $groupOption }}</option>
                                                 @endforeach
                                             </select>
+                                            @error('detailItems.'.$i.'.group_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
                                             @if($rowDetailPriceCatalog !== [])
                                             <input type="text"
                                                    list="detail-indicators-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}"
-                                                   class="form-control form-control-sm border-0 bg-transparent px-1"
+                                                   class="form-control form-control-sm border-0 bg-transparent px-1 @error('detailItems.'.$i.'.description') is-invalid @enderror"
                                                    wire:key="detail-description-{{ $i }}-{{ md5($rowGroupName.'|'.($formData['price_subcontractor'] ?? '')) }}"
                                                    wire:model.live.debounce.250ms="detailItems.{{ $i }}.description"
                                                    placeholder="Chọn hoặc nhập chỉ tiêu...">
@@ -556,22 +584,26 @@
                                                 @endforeach
                                             </datalist>
                                             @else
-                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1"
+                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1 @error('detailItems.'.$i.'.description') is-invalid @enderror"
                                                    wire:model.live.debounce.250ms="detailItems.{{ $i }}.description"
                                                    placeholder="Nhập chỉ tiêu...">
                                             @endif
+                                            @error('detailItems.'.$i.'.description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent text-center px-1 @error('detailItems.'.$i.'.unit') is-invalid @enderror"
                                                    wire:model.blur="detailItems.{{ $i }}.unit" placeholder="Mẫu">
+                                            @error('detailItems.'.$i.'.unit') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
-                                            <input type="number" step="1" min="0" inputmode="numeric" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                            <input type="number" step="1" min="0" inputmode="numeric" class="form-control form-control-sm border-0 bg-transparent text-center px-1 @error('detailItems.'.$i.'.quantity') is-invalid @enderror"
                                                    wire:model.live.debounce.500ms="detailItems.{{ $i }}.quantity">
+                                            @error('detailItems.'.$i.'.quantity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
-                                            <input type="number" step="1" min="1" inputmode="numeric" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
+                                            <input type="number" step="1" min="1" inputmode="numeric" class="form-control form-control-sm border-0 bg-transparent text-center px-1 @error('detailItems.'.$i.'.frequency') is-invalid @enderror"
                                                    wire:model.live.debounce.500ms="detailItems.{{ $i }}.frequency">
+                                            @error('detailItems.'.$i.'.frequency') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm border-0 bg-transparent text-end money-input px-1"
@@ -639,8 +671,9 @@
                                     <tr>
                                         <td class="text-center text-muted">{{ $i + 1 }}</td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1"
+                                            <input type="text" class="form-control form-control-sm border-0 bg-transparent px-1 @error('matrixRows.'.$i.'.job_title') is-invalid @enderror"
                                                    wire:model.blur="matrixRows.{{ $i }}.job_title" placeholder="VD: CN vận hành máy">
+                                            @error('matrixRows.'.$i.'.job_title') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </td>
                                         <td>
                                             <input type="number" min="0" class="form-control form-control-sm border-0 bg-transparent text-center px-1"
