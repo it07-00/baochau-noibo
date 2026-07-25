@@ -415,5 +415,3 @@
         </div>
     @endif
 </div>
-    @endif
-</div>
