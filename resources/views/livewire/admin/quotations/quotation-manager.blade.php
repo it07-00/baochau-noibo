@@ -569,14 +569,15 @@
                                         <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center p-2">
                                             <i class="fa-solid fa-calculator"></i>
                                         </div>
-                                        <h6 class="mb-0 fw-bold text-success-emphasis">4. Giá trị tài chính &amp; Hoa hồng (Tự động tính toán)</h6>
+                                        <h6 class="mb-0 fw-bold text-success-emphasis">4. Giá trị tài chính &amp; Hoa hồng</h6>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-2 py-1 rounded-pill">Tự động tính</span>
                                 </div>
                                 <div class="card-body p-3">
-                                    <div class="row g-3 align-items-end">
+                                    <div class="row g-3 align-items-start">
                                         <div class="col-md-2">
-                                            <label class="form-label fw-bold text-dark small mb-1">Giá trị gốc</label>
+                                            <div class="d-flex align-items-center justify-content-between mb-1" style="min-height: 21px;">
+                                                <label class="form-label fw-bold text-dark small mb-0">Giá trị gốc</label>
+                                            </div>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-end fw-semibold"
                                                        x-model="original_value"
@@ -586,7 +587,9 @@
                                         </div>
 
                                         <div class="col-md-2">
-                                            <label class="form-label fw-bold text-dark small mb-1">Hoa hồng KH</label>
+                                            <div class="d-flex align-items-center justify-content-between mb-1" style="min-height: 21px;">
+                                                <label class="form-label fw-bold text-dark small mb-0">Hoa hồng KH</label>
+                                            </div>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-end fw-semibold"
                                                        x-model="commission_value"
@@ -596,7 +599,7 @@
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
+                                            <div class="d-flex align-items-center justify-content-between gap-1 mb-1" style="min-height: 21px;">
                                                 <label class="form-label fw-bold text-dark small mb-0">Thuế HH</label>
                                                 <div class="form-check form-check-inline me-0 mb-0">
                                                     <input
@@ -618,7 +621,6 @@
                                                        readonly>
                                                 <span class="input-group-text bg-body-tertiary text-body-secondary px-2">đ</span>
                                             </div>
-                                            <small class="text-body-secondary d-block mt-1" x-show="!isCommissionTaxManual()">Tự tính 20%–30%</small>
 
                                             {{-- Tự nhập % --}}
                                             <div class="input-group" x-show="isCommissionTaxManual()">
@@ -636,7 +638,9 @@
                                         </div>
 
                                         <div class="col-md-2">
-                                            <label class="form-label fw-bold text-dark small mb-1">Giá trị chưa VAT</label>
+                                            <div class="d-flex align-items-center justify-content-between mb-1" style="min-height: 21px;">
+                                                <label class="form-label fw-bold text-dark small mb-0">Giá trị chưa VAT</label>
+                                            </div>
                                             <div class="input-group">
                                                 <input
                                                     type="text"
@@ -648,7 +652,9 @@
                                         </div>
 
                                         <div class="col-md-3">
-                                            <label class="form-label fw-bold text-danger small mb-1">Giá trị HĐ (có VAT)</label>
+                                            <div class="d-flex align-items-center justify-content-between mb-1" style="min-height: 21px;">
+                                                <label class="form-label fw-bold text-danger small mb-0">Giá trị HĐ (có VAT)</label>
+                                            </div>
                                             <div class="input-group shadow-sm">
                                                 <input
                                                     type="text"

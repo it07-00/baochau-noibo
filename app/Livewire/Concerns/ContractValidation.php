@@ -84,6 +84,7 @@ trait ContractValidation
             'formData.info_source' => 'nullable|string|max:255',
             'formData.payment_method' => 'nullable|string|max:100',
             'formData.loai_dich_vu' => 'nullable|string|max:255',
+            'formData.collection_time' => 'nullable|string|max:255',
             'formData.status' => 'nullable|in:PTH đang kiểm tra,Đang trình BGĐ ký,Đã gửi khách hàng,Đã hoàn thành,Hợp đồng hủy,ĐANG THỰC HIỆN,HOÀN THÀNH,ĐÃ HỦY',
             'formData.renewal_status' => 'nullable|in:'.implode(',', ContractRenewalStatus::values()),
             'formData.voucher_status' => 'nullable|in:'.implode(',', ContractVoucherStatus::values()),
@@ -126,6 +127,7 @@ trait ContractValidation
             'formData.voucher_status' => 'nullable|in:'.implode(',', ContractVoucherStatus::values()),
             'formData.province' => 'nullable|string|max:100',
             'formData.loai_dich_vu' => 'nullable|string|max:255',
+            'formData.collection_time' => 'nullable|string|max:255',
             'formData.notes' => 'nullable|string|max:2000',
         ];
     }

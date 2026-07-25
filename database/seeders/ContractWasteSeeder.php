@@ -55,7 +55,7 @@ class ContractWasteSeeder extends Seeder
             'commission' => 833000,
             'revenue' => 6500400,
             'payment_method' => 'Sau ký',
-            'source' => 'TÁI KÝ',
+            'info_source' => 'TÁI KÝ',
             'is_renewal' => true,
             'signed_at' => '2026-03-19',
             'effective_at' => '2026-03-19',
@@ -69,7 +69,7 @@ class ContractWasteSeeder extends Seeder
             'waste_type' => 'CTNH & CTCN',
             'service_type' => 'Chất thải',
             'voucher_status' => 'Chưa chọn',
-            'note' => 'Đồng ý gom kết hợp',
+            'notes' => 'Đồng ý gom kết hợp',
         ]);
 
         // 2. DUY KHA

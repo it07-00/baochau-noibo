@@ -141,13 +141,13 @@ class ContractMasterCsvImportSeeder extends Seeder
                         'service_type' => $this->detectWasteServiceType($data['service_content']),
                         'waste_type' => $this->detectWasteType($data['service_content']),
                         'content' => $this->nullIfEmpty($data['note']),
-                        'source' => $this->nullIfEmpty($data['info_source']),
+                        'info_source' => $this->nullIfEmpty($data['info_source']),
                         'effective_at' => $this->parseDate($data['effective_date']),
                         'end_at' => $this->parseDate($data['end_date']),
                         'billing_address' => $this->nullIfEmpty($data['billing_address']),
                         'execution_address' => $this->nullIfEmpty($data['execution_address']),
                         'mailing_address' => $this->nullIfEmpty($data['mailing_address']),
-                        'note' => $this->buildNote($data),
+                        'notes' => $this->buildNote($data),
                     ]));
                     $counts['waste']++;
                     continue;

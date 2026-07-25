@@ -17,6 +17,7 @@ class ContractWaste extends Model
         'staff_id',
         'department_id',
         'content',
+        'collection_time',
         'loai_dich_vu',
         'value',
         'commission',

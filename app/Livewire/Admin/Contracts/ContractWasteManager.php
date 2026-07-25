@@ -97,6 +97,7 @@ class ContractWasteManager extends Component
         'staff_id' => '',
         'department_id' => '',
         'content' => '',
+        'collection_time' => '',
         'value' => 0,
         'commission' => 0,
         'revenue' => 0,
@@ -471,6 +472,7 @@ class ContractWasteManager extends Component
             'staff_id' => auth()->id(),
             'department_id' => 3, // Phòng Kinh doanh
             'content' => '',
+            'collection_time' => '',
             'value' => 0,
             'commission' => 0,
             'revenue' => 0,

@@ -212,4 +212,47 @@ class ContractWasteManagerTest extends TestCase
             ->call('save')
             ->assertHasErrors(['formData.end_at']);
     }
+
+    public function test_can_save_and_display_collection_time_in_waste_contract(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+            ->call('create')
+            ->set('formData.customer_id', $this->customer->id)
+            ->set('formData.department_id', $this->dept->id)
+            ->set('formData.value', '15.000.000')
+            ->set('formData.collection_time', '2026-08-15')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $contract = ContractWaste::first();
+        $this->assertEquals('2026-08-15', $contract->collection_time);
+
+        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+            ->assertSee('15/08/2026');
+    }
+
+    public function test_converts_quotation_to_waste_contract_and_allows_setting_collection_time(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $quotation = \App\Models\Quotation::create([
+            'company_name' => 'Công ty Cổ Phần Thu Gom',
+            'staff_id' => $this->adminUser->id,
+            'total_value' => 50000000,
+            'status' => \App\Enums\QuotationStatus::DANG_THEO_DOI->value,
+            'date' => '2026-07-25',
+        ]);
+
+        Livewire::withQueryParams(['quotation_id' => $quotation->id])
+            ->test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+            ->set('formData.collection_time', '2026-08-15')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('contract_wastes', [
+            'collection_time' => '2026-08-15',
+        ]);
+    }
 }

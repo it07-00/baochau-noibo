@@ -128,7 +128,7 @@ Quan hệ đa hình dùng **FQCN model** trong `contract_type`/`assignable_type`
 
 Hai manager có nhiều logic riêng:
 
-- `ContractWasteManager` cho chất thải.
+- `ContractWasteManager` cho chất thải. Model `ContractWaste` có thuộc tính `collection_time` (thời gian thu gom) lưu chuỗi lịch thu gom thực hiện.
 - `ContractConsultingManager` cho hồ sơ môi trường.
 
 Các nhóm còn lại chủ yếu dùng `AbstractContractGenericManager` qua manager con. Khi sửa hành vi chung, kiểm tra xem hai manager riêng có cần cập nhật tương ứng hay không.

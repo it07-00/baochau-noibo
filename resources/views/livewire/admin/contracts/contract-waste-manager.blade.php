@@ -404,6 +404,7 @@
                             <th class="text-center col-ct-finance">Tài chính</th>
                         @endunless
                         <th class="text-center text-wrap small px-2">Tình trạng<br>tái ký</th>
+                        <th class="text-center text-wrap small px-2">Thời gian<br>thu gom</th>
                         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                         <th class="text-center text-wrap small px-2">Tình trạng<br>chứng từ</th>
                         @endunless
@@ -479,6 +480,9 @@
                             <td class="text-center px-2">
                                 <span
                                     class="badge small text-wrap lh-sm px-2 py-1 {{ $this->renewalBadgeClassForDoc($doc) }}">{{ $doc->renewal_status ?: 'Chưa chọn' }}</span>
+                            </td>
+                            <td class="text-center px-2">
+                                <span class="small text-wrap lh-sm fw-medium">{{ $doc->collection_time ? (strtotime($doc->collection_time) ? date('d/m/Y', strtotime($doc->collection_time)) : $doc->collection_time) : '—' }}</span>
                             </td>
                             @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
                             <td class="text-center px-2">
@@ -573,7 +577,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ ($this->isRestrictedRole ? 6 : 9) + ($this->canBulkDelete ? 1 : 0) }}"
+                            <td colspan="{{ ($this->isRestrictedRole ? 7 : 10) + ($this->canBulkDelete ? 1 : 0) }}"
                                 class="text-center py-5 text-muted">Không tìm thấy hợp đồng nào</td>
                         </tr>
                     @endforelse
@@ -818,567 +822,481 @@
 
     <!-- Form Modal -->
     <div wire:ignore.self class="modal fade" id="formModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold text-white">
-                        @if ($isEditing)
-                            Cập nhật Hợp đồng
-                        @elseif ($isDuplicating)
-                            Nhân bản Hợp đồng
-                        @else
-                            Thêm Hợp đồng mới
-                        @endif
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <form wire:submit.prevent="save" class="modal-content overflow-hidden border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-body border-bottom px-4 py-3 align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-inline-flex align-items-center justify-content-center p-2.5">
+                            <i class="fa-solid fa-file-contract fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-body mb-0">
+                                @if ($isEditing)
+                                    Cập nhật Hợp đồng chất thải
+                                @elseif ($isDuplicating)
+                                    Nhân bản Hợp đồng chất thải
+                                @else
+                                    Thêm Hợp đồng chất thải mới
+                                @endif
+                            </h5>
+                            <p class="text-muted small mb-0">Điền thông tin chi tiết hợp đồng chất thải &amp; tiếng ồn</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form wire:submit.prevent="save">
-                    <div class="modal-body p-4">
-                        <div class="row g-3">
-                            <div class="col-12">
+                <div class="modal-body p-4 bg-body-tertiary overflow-auto">
+                        <!-- Card 1: Thông tin Hợp đồng & Khách hàng -->
+                        <div class="card border-0 shadow-sm rounded-3 bg-body mb-3">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-file-text me-1"></i>Thông tin hợp đồng</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                    <i class="fa-solid fa-circle-info text-primary"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">1. Thông tin hợp đồng &amp; Khách hàng</h6>
                                 </div>
                             </div>
-                            @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-semibold">Số HĐ NTP</label>
-                                    <input type="text" class="form-control" wire:model.defer="formData.shd_cxl">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-semibold">Số HĐ BC</label>
-                                    <input type="text" class="form-control" wire:model.defer="formData.shd_bc">
-                                </div>
-                            @endif
-                            <div class="{{ ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value)) ? 'col-md-4' : 'col-md-6' }}">
-                                <label class="form-label small fw-semibold">Khách hàng <span
-                                        class="text-danger">*</span></label>
-                                <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                    <button
-                                        class="form-select text-start text-wrap @error('formData.customer_id') is-invalid @enderror select-full"
-                                        type="button" @click.prevent="open = !open"
-                                        >
-                                        {{ $customers->find($formData['customer_id'] ?? '')?->name ?? 'Chọn khách hàng' }}
-                                    </button>
-                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
-                                        @click.away="open = false" x-cloak
-                                        >
-                                        <input type="text" x-model="search"
-                                            class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
-                                            @click.stop>
-                                        <button class="dropdown-item @if (empty($formData['customer_id'])) active @endif"
-                                            type="button" x-show="!search.length"
-                                            wire:click="$set('formData.customer_id', '')" @click="open = false">Chọn
-                                            khách hàng</button>
-                                        @foreach ($customers as $customer)
-                                            <button
-                                                class="dropdown-item text-wrap @if (($formData['customer_id'] ?? '') == $customer->id) active @endif"
-                                                type="button"
-                                                x-show="{{ json_encode(mb_strtolower($customer->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                class="text-wrap"
-                                                wire:click="$set('formData.customer_id', {{ $customer->id }})"
-                                                @click="open = false">
-                                                {{ $customer->name }}
-                                            </button>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <input type="text" wire:model="newCustomerName" class="form-control mt-2"
-                                    placeholder="Hoặc nhập tên khách hàng mới">
-                                @error('newCustomerName')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                @enderror
-                                @error('formData.customer_id')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            <div class="card-body p-3">
+                                <div class="row g-3">
+                                    @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-semibold">Số HĐ NTP</label>
+                                            <input type="text" class="form-control" wire:model.defer="formData.shd_cxl" placeholder="Nhập số HĐ NTP">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-semibold">Số HĐ BC</label>
+                                            <input type="text" class="form-control" wire:model.defer="formData.shd_bc" placeholder="Nhập số HĐ BC">
+                                        </div>
+                                    @endif
 
-                            <div class="col-md-4">
-                                <label class="form-label small fw-semibold">Nhà thầu phụ</label>
-                                <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                    <button
-                                        class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror select-full"
-                                        type="button" @click.prevent="open = !open"
-                                        >
-                                        {{ $handlers->find($formData['handler_id'] ?? '')?->name ?? 'Chọn nhà thầu phụ' }}
-                                    </button>
-                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
-                                        @click.away="open = false" x-cloak
-                                        >
-                                        <input type="text" x-model="search"
-                                            class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
-                                            @click.stop>
-                                        <button class="dropdown-item @if (empty($formData['handler_id'])) active @endif"
-                                            type="button" x-show="!search.length"
-                                            wire:click="$set('formData.handler_id', '')" @click="open = false">Chọn
-                                            nhà thầu phụ</button>
-                                        @foreach ($handlers as $h)
-                                            <button
-                                                class="dropdown-item text-wrap @if (($formData['handler_id'] ?? '') == $h->id) active @endif"
-                                                type="button"
-                                                x-show="{{ json_encode(mb_strtolower($h->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                class="text-wrap"
-                                                wire:click="$set('formData.handler_id', {{ $h->id }})"
-                                                @click="open = false">
-                                                {{ $h->name }}
+                                    <div class="{{ ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value)) ? 'col-md-6' : 'col-md-6' }}">
+                                        <label class="form-label small fw-semibold">Khách hàng <span class="text-danger">*</span></label>
+                                        <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                            <button class="form-select text-start text-wrap @error('formData.customer_id') is-invalid @enderror select-full" type="button" @click.prevent="open = !open">
+                                                {{ $customers->find($formData['customer_id'] ?? '')?->name ?? 'Chọn khách hàng' }}
                                             </button>
-                                        @endforeach
+                                            <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false" x-cloak>
+                                                <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
+                                                <button class="dropdown-item @if (empty($formData['customer_id'])) active @endif" type="button" x-show="!search.length" wire:click="$set('formData.customer_id', '')" @click="open = false">Chọn khách hàng</button>
+                                                @foreach ($customers as $customer)
+                                                    <button class="dropdown-item text-wrap @if (($formData['customer_id'] ?? '') == $customer->id) active @endif" type="button" x-show="{{ json_encode(mb_strtolower($customer->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))" wire:click="$set('formData.customer_id', {{ $customer->id }})" @click="open = false">
+                                                        {{ $customer->name }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <input type="text" wire:model="newCustomerName" class="form-control form-control-sm mt-1.5" placeholder="Hoặc nhập tên khách hàng mới...">
+                                        @error('newCustomerName')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                        @error('formData.customer_id')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Nhà thầu phụ</label>
+                                        <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                            <button class="form-select text-start text-wrap @error('formData.handler_id') is-invalid @enderror select-full" type="button" @click.prevent="open = !open">
+                                                {{ $handlers->find($formData['handler_id'] ?? '')?->name ?? 'Chọn nhà thầu phụ' }}
+                                            </button>
+                                            <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false" x-cloak>
+                                                <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
+                                                <button class="dropdown-item @if (empty($formData['handler_id'])) active @endif" type="button" x-show="!search.length" wire:click="$set('formData.handler_id', '')" @click="open = false">Chọn nhà thầu phụ</button>
+                                                @foreach ($handlers as $h)
+                                                    <button class="dropdown-item text-wrap @if (($formData['handler_id'] ?? '') == $h->id) active @endif" type="button" x-show="{{ json_encode(mb_strtolower($h->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))" wire:click="$set('formData.handler_id', {{ $h->id }})" @click="open = false">
+                                                        {{ $h->name }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        @error('formData.handler_id')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    @if (auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-semibold">Nhân viên kinh doanh <span class="text-danger">*</span></label>
+                                            <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                                <button class="form-select text-start text-wrap @error('formData.staff_id') is-invalid @enderror select-full" type="button" @click.prevent="open = !open">
+                                                    {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? 'Chọn nhân viên' }}
+                                                </button>
+                                                <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false" x-cloak>
+                                                    <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..." @click.stop>
+                                                    <button class="dropdown-item @if (empty($formData['staff_id'])) active @endif" type="button" x-show="!search.length" wire:click="$set('formData.staff_id', '')" @click="open = false">Chọn nhân viên</button>
+                                                    @foreach ($staffs as $s)
+                                                        <button class="dropdown-item text-wrap @if (($formData['staff_id'] ?? '') == $s->id) active @endif" type="button" x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))" wire:click="$set('formData.staff_id', {{ $s->id }})" @click="open = false">
+                                                            {{ $s->name }}
+                                                        </button>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            @error('formData.staff_id')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    @endif
+
+                                    <div class="col-12">
+                                        <label class="form-label small fw-semibold">Nội dung hợp đồng</label>
+                                        <input type="text" class="form-control @error('formData.content') is-invalid @enderror" wire:model.defer="formData.content" placeholder="Mô tả tóm tắt nội dung công việc thực hiện...">
+                                        @error('formData.content')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-                                @error('formData.handler_id')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
                             </div>
-                            @if (auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]))
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-semibold">Nhân viên <span
-                                            class="text-danger">*</span></label>
-                                    <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                        <button
-                                            class="form-select text-start text-wrap @error('formData.staff_id') is-invalid @enderror select-full"
-                                            type="button" @click.prevent="open = !open"
-                                            >
-                                            {{ $staffs->find($formData['staff_id'] ?? '')?->name ?? 'Chọn nhân viên' }}
-                                        </button>
-                                        <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
-                                            @click.away="open = false" x-cloak
-                                            >
-                                            <input type="text" x-model="search"
-                                                class="form-control form-control-sm mb-2" placeholder="Tìm kiếm..."
-                                                @click.stop>
-                                            <button
-                                                class="dropdown-item @if (empty($formData['staff_id'])) active @endif"
-                                                type="button" x-show="!search.length"
-                                                wire:click="$set('formData.staff_id', '')" @click="open = false">Chọn
-                                                nhân
-                                                viên</button>
-                                            @foreach ($staffs as $s)
-                                                <button
-                                                    class="dropdown-item text-wrap @if (($formData['staff_id'] ?? '') == $s->id) active @endif"
-                                                    type="button"
-                                                    x-show="{{ json_encode(mb_strtolower($s->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                    class="text-wrap"
-                                                    wire:click="$set('formData.staff_id', {{ $s->id }})"
-                                                    @click="open = false">
-                                                    {{ $s->name }}
-                                                </button>
+                        </div>
+
+                        <!-- Card 2: Giá trị & Tài chính -->
+                        <div class="card border-0 shadow-sm rounded-3 bg-body mb-3">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-coins text-success"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">2. Giá trị &amp; Tài chính</h6>
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row g-3">
+                                    @include('livewire.admin.contracts.partials.payment-percentage-field')
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Giá trị hợp đồng <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control money-input @error('formData.value') is-invalid @enderror" wire:model.defer="formData.value">
+                                            <span class="input-group-text bg-body-tertiary">đ</span>
+                                        </div>
+                                        @error('formData.value')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Hoa hồng</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control money-input @error('formData.commission') is-invalid @enderror" wire:model.defer="formData.commission">
+                                            <span class="input-group-text bg-body-tertiary">đ</span>
+                                        </div>
+                                        @error('formData.commission')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Doanh số thực</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control money-input @error('formData.revenue') is-invalid @enderror" wire:model.defer="formData.revenue">
+                                            <span class="input-group-text bg-body-tertiary">đ</span>
+                                        </div>
+                                        @error('formData.revenue')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
+                                    <div class="col-md-3"
+                                         x-data="{
+                                             ncc: {{ (int)($formData['ncc_payment'] ?? 0) }},
+                                             revenue: {{ (int)($formData['revenue'] ?? 0) }},
+                                             commission: {{ (int)($formData['commission'] ?? 0) }},
+                                             get net() { return Math.max(0, this.revenue - this.commission - this.ncc); },
+                                             fmt(n) { return new Intl.NumberFormat('vi-VN').format(n); }
+                                         }">
+                                        <label class="form-label small fw-semibold">Chi Nhà Cung Cấp</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control money-input"
+                                                   wire:model.defer="formData.ncc_payment"
+                                                   x-on:input="ncc = parseInt($event.target.value.replace(/\D/g, '')) || 0"
+                                                   placeholder="0">
+                                            <span class="input-group-text bg-body-tertiary">đ</span>
+                                        </div>
+                                        <small class="text-muted mt-1 d-block">Thực nhận: <strong class="text-success" x-text="fmt(net) + 'đ'"></strong></small>
+                                    </div>
+                                    @elseif($selectedDoc && $selectedDoc->ncc_payment > 0)
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Chi Nhà Cung Cấp</label>
+                                        <p class="mb-0 text-danger fw-bold">{{ number_format($selectedDoc->ncc_payment) }}đ</p>
+                                        <small class="text-muted">Thực nhận: <strong class="text-success">{{ number_format($selectedDoc->revenue - $selectedDoc->commission - $selectedDoc->ncc_payment) }}đ</strong></small>
+                                    </div>
+                                    @endif
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold">Phương thức thanh toán</label>
+                                        @include('livewire.admin.contracts.partials.payment-method-checkboxes')
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold">Nguồn thông tin</label>
+                                        <select class="form-select" wire:model.defer="formData.info_source">
+                                            <option value="">-- Chọn nguồn thông tin --</option>
+                                            @foreach ($info_sources as $src)
+                                                <option value="{{ $src }}">{{ $src }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Thời gian -->
+                        <div class="card border-0 shadow-sm rounded-3 bg-body mb-3">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-calendar-days text-info"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">3. Thời gian thực hiện</h6>
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Ngày ký</label>
+                                        <input type="date" class="form-control" wire:model.defer="formData.signed_at">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Ngày hiệu lực</label>
+                                        <input type="date" class="form-control @error('formData.effective_at') is-invalid @enderror" wire:model.defer="formData.effective_at">
+                                        @error('formData.effective_at')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Ngày kết thúc</label>
+                                        <input type="date" class="form-control @error('formData.end_at') is-invalid @enderror" wire:model.defer="formData.end_at">
+                                        @error('formData.end_at')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Ngày xuất HĐ</label>
+                                        <input type="date" class="form-control" wire:model.defer="formData.submitted_at">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Thời gian thu gom</label>
+                                        <input type="date" class="form-control @error('formData.collection_time') is-invalid @enderror" wire:model.defer="formData.collection_time">
+                                        @error('formData.collection_time')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Địa chỉ & Tỉnh thành -->
+                        <div class="card border-0 shadow-sm rounded-3 bg-body mb-3">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-location-dot text-danger"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">4. Địa chỉ &amp; Tỉnh thành</h6>
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Địa chỉ thực hiện</label>
+                                        <input type="text" class="form-control @error('formData.execution_address') is-invalid @enderror" wire:model.defer="formData.execution_address" placeholder="Nhập địa chỉ thực hiện...">
+                                        @error('formData.execution_address')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Địa chỉ gửi thư</label>
+                                        <input type="text" class="form-control @error('formData.mailing_address') is-invalid @enderror" wire:model.defer="formData.mailing_address" placeholder="Nhập địa chỉ gửi thư...">
+                                        @error('formData.mailing_address')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Địa chỉ xuất HĐ</label>
+                                        <input type="text" class="form-control @error('formData.billing_address') is-invalid @enderror" wire:model.defer="formData.billing_address" placeholder="Nhập địa chỉ xuất hóa đơn...">
+                                        @error('formData.billing_address')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold">Tỉnh thành</label>
+                                        <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
+                                            <button class="form-select text-start select-full" type="button" @click.prevent="open = !open">
+                                                {{ $formData['province'] ?? 'Chọn tỉnh thành' }}
+                                            </button>
+                                            <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open" @click.away="open = false" x-cloak>
+                                                <input type="text" x-model="search" class="form-control form-control-sm mb-2" placeholder="Tìm tỉnh thành..." @click.stop>
+                                                <button class="dropdown-item @if(empty($formData['province'])) active @endif" type="button" x-show="!search.length" wire:click="$set('formData.province', '')" @click="open = false">-- Chọn tỉnh thành --</button>
+                                                @foreach ($provinces as $p)
+                                                    <button class="dropdown-item @if(($formData['province'] ?? '') == $p) active @endif" type="button" x-show="{{ json_encode(mb_strtolower($p)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))" wire:click="$set('formData.province', '{{ $p }}')" @click="open = false">
+                                                        {{ $p }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Trạng thái & Phân loại -->
+                        <div class="card border-0 shadow-sm rounded-3 bg-body mb-3">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-tags text-warning"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">5. Trạng thái &amp; Phân loại</h6>
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Tình trạng</label>
+                                        <select class="form-select" wire:model.defer="formData.status">
+                                            <option value="">Chọn tình trạng</option>
+                                            @foreach ($all_statuses as $status)
+                                                <option value="{{ $status }}">{{ $status }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Tình trạng tái ký</label>
+                                        <select class="form-select" wire:model.defer="formData.renewal_status">
+                                            <option value="">Chọn tình trạng</option>
+                                            @foreach ($renewal_status_options as $value => $label)
+                                                <option value="{{ $value }}">{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Tình trạng chứng từ</label>
+                                        <select class="form-select" wire:model.defer="formData.voucher_status">
+                                            <option value="">Chọn tình trạng</option>
+                                            @foreach ($voucher_status_options as $voucherStatus)
+                                                <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Hạng mục dịch vụ</label>
+                                        <select class="form-select" wire:model.defer="formData.loai_dich_vu">
+                                            <option value="">Chọn hạng mục</option>
+                                            @foreach ($loai_dich_vu_options as $opt)
+                                                <option value="{{ $opt }}">{{ $opt }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="d-flex flex-wrap align-items-center gap-4 bg-body-tertiary border rounded-3 px-3 py-2">
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox" id="form_offset" wire:model.defer="formData.is_offset">
+                                                <label class="form-check-label fw-medium small" for="form_offset">Có bù trừ</label>
+                                            </div>
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox" id="form_overdue" wire:model.defer="formData.is_overdue">
+                                                <label class="form-check-label fw-medium small" for="form_overdue">Trễ hạn</label>
+                                            </div>
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox" id="form_wt_renewal" wire:model="formData.is_renewal">
+                                                <label class="form-check-label fw-medium small" for="form_wt_renewal">Tái ký</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if ($formData['is_renewal'])
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-semibold">HĐ gốc (tái ký từ)</label>
+                                            <select class="form-select" wire:model.defer="formData.parent_contract_id">
+                                                <option value="">-- Chọn HĐ gốc --</option>
+                                                @foreach ($parentContracts as $pc)
+                                                    <option value="{{ $pc->id }}">{{ $pc->so_hop_dong }} - {{ $pc->customer->name ?? '' }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+
+                                    @include('livewire.admin.contracts.partials.service-submission-fields')
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 6: Giao việc thực hiện -->
+                        @if (!$isEditing)
+                        <div class="card border-0 shadow-sm rounded-3 bg-body mb-3">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-user-check text-success"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">6. Giao việc thực hiện</h6>
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6" x-data="{ searchQuery: '' }">
+                                        <label class="form-label small fw-semibold">Chọn nhân viên thực hiện (có thể chọn nhiều)</label>
+                                        <div class="mb-2">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-body border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                                                <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm nhanh nhân viên..." x-model="searchQuery">
+                                            </div>
+                                        </div>
+                                        <div class="border rounded-3 p-2 bg-body-tertiary overflow-y-auto" style="max-height: 200px;">
+                                            @php
+                                                $groupedAssignableUsers = $assignable_users->groupBy(function($user) {
+                                                    $roleName = $user->roles->first()?->name ?? '';
+                                                    return \App\Enums\Role::tryFrom($roleName)?->label() ?? 'Khác';
+                                                });
+                                            @endphp
+
+                                            @foreach ($groupedAssignableUsers as $roleLabel => $users)
+                                                <div class="mb-2 role-group-section"
+                                                     x-show="searchQuery === '' || {{ json_encode($users->pluck('name')->map(fn($n) => mb_strtolower($n))->toArray()) }}.some(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')))">
+                                                    <div class="fw-bold text-primary fs-75 border-bottom pb-1 mb-1">{{ $roleLabel }}</div>
+                                                    <div class="d-flex flex-column gap-1 ms-1 mb-2">
+                                                        @foreach ($users as $u)
+                                                            <label class="d-flex align-items-center gap-2 py-0.5 user-item cursor-pointer"
+                                                                   x-show="searchQuery === '' || {{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))">
+                                                                <input class="form-check-input flex-shrink-0" type="checkbox"
+                                                                    value="{{ $u->id }}" wire:model="createAssignUserIds">
+                                                                <span class="fs-85 text-body">{{ $u->name }}</span>
+                                                            </label>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
                                             @endforeach
                                         </div>
                                     </div>
-                                    @error('formData.staff_id')
-                                        <div class="text-danger  mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            @endif
-                            <div class="{{ auth()->user()->hasAnyRole([\App\Enums\Role::TP_KINH_DOANH->value, \App\Enums\Role::GIAM_DOC->value]) ? 'col-md-4' : 'col-md-8' }}">
-                                <label class="form-label small fw-semibold">Nội dung</label>
-                                <textarea class="form-control @error('formData.content') is-invalid @enderror" rows="2"
-                                    wire:model.defer="formData.content"></textarea>
-                                @error('formData.content')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3 d-none">
-                                <label class="form-label small fw-semibold">Phòng ban</label>
-                                <select class="form-select" wire:model.defer="formData.department_id">
-                                    <option value="">Chọn phòng ban</option>
-                                    @foreach ($departments as $d)
-                                        <option value="{{ $d->id }}">{{ $d->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
 
-                            <div class="col-12 mt-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-coins me-1"></i>Giá trị & Tài chính</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
-                                </div>
-                            </div>
-                            @include('livewire.admin.contracts.partials.payment-percentage-field')
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Giá trị hợp đồng <span
-                                        class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="text"
-                                        class="form-control money-input @error('formData.value') is-invalid @enderror"
-                                        wire:model.defer="formData.value">
-                                    <span class="input-group-text">đ</span>
-                                </div>
-                                @error('formData.value')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Hoa hồng</label>
-                                <div class="input-group">
-                                    <input type="text"
-                                        class="form-control money-input @error('formData.commission') is-invalid @enderror"
-                                        wire:model.defer="formData.commission">
-                                    <span class="input-group-text">đ</span>
-                                </div>
-                                @error('formData.commission')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Doanh số thực</label>
-                                <div class="input-group">
-                                    <input type="text"
-                                        class="form-control money-input @error('formData.revenue') is-invalid @enderror"
-                                        wire:model.defer="formData.revenue">
-                                    <span class="input-group-text">đ</span>
-                                </div>
-                            @error('formData.revenue')
-                                <div class="text-danger  mt-1">{{ $message }}</div>
-                            @enderror
-                            </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Người ngoài công ty</label>
+                                        <input type="text" class="form-control" wire:model="createAssignExternal" placeholder="Tên người ngoài (nếu có)">
+                                    </div>
 
-                            @if ($isEditing && auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
-                            <div class="col-md-3"
-                                 x-data="{
-                                     ncc: {{ (int)($formData['ncc_payment'] ?? 0) }},
-                                     revenue: {{ (int)($formData['revenue'] ?? 0) }},
-                                     commission: {{ (int)($formData['commission'] ?? 0) }},
-                                     get net() { return Math.max(0, this.revenue - this.commission - this.ncc); },
-                                     fmt(n) { return new Intl.NumberFormat('vi-VN').format(n); }
-                                 }">
-                                <label class="form-label small fw-semibold">Chi Nhà Cung Cấp</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control money-input"
-                                           wire:model.defer="formData.ncc_payment"
-                                           x-on:input="ncc = parseInt($event.target.value.replace(/\D/g, '')) || 0"
-                                           placeholder="0">
-                                    <span class="input-group-text">đ</span>
-                                </div>
-                                <small class="text-muted">Thực nhận: <strong class="text-success" x-text="fmt(net) + 'đ'"></strong></small>
-                            </div>
-                            @elseif($selectedDoc && $selectedDoc->ncc_payment > 0)
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Chi Nhà Cung Cấp</label>
-                                <p class="mb-0 text-danger fw-bold">{{ number_format($selectedDoc->ncc_payment) }}đ</p>
-                                <small class="text-muted">Thực nhận: <strong class="text-success">{{ number_format($selectedDoc->revenue - $selectedDoc->commission - $selectedDoc->ncc_payment) }}đ</strong></small>
-                            </div>
-                            @endif
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">PT thanh toán</label>
-                                @include('livewire.admin.contracts.partials.payment-method-checkboxes')
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Nguồn thông tin</label>
-                                <select class="form-select" wire:model.defer="formData.info_source">
-                                    <option value="">-- Chọn nguồn thông tin --</option>
-                                    @foreach ($info_sources as $src)
-                                        <option value="{{ $src }}">{{ $src }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-12 mt-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-calendar-days me-1"></i>Thời gian</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Ngày ký</label>
-                                <input type="date" class="form-control" wire:model.defer="formData.signed_at">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Ngày hiệu lực</label>
-                                <input type="date"
-                                    class="form-control @error('formData.effective_at') is-invalid @enderror"
-                                    wire:model.defer="formData.effective_at">
-                                @error('formData.effective_at')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Ngày kết thúc</label>
-                                <input type="date"
-                                    class="form-control @error('formData.end_at') is-invalid @enderror"
-                                    wire:model.defer="formData.end_at">
-                                @error('formData.end_at')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Ngày xuất hóa đơn</label>
-                                <input type="date" class="form-control" wire:model.defer="formData.submitted_at">
-                            </div>
-
-                            <div class="col-12 mt-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-location-dot me-1"></i>Địa chỉ</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Địa chỉ thực hiện</label>
-                                <textarea class="form-control @error('formData.execution_address') is-invalid @enderror" rows="3"
-                                    wire:model.defer="formData.execution_address"></textarea>
-                                @error('formData.execution_address')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Địa chỉ gửi thư</label>
-                                <textarea class="form-control @error('formData.mailing_address') is-invalid @enderror" rows="3"
-                                    wire:model.defer="formData.mailing_address"></textarea>
-                                @error('formData.mailing_address')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Địa chỉ xuất HĐ</label>
-                                <textarea class="form-control @error('formData.billing_address') is-invalid @enderror" rows="3"
-                                    wire:model.defer="formData.billing_address"></textarea>
-                                @error('formData.billing_address')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Tỉnh thành</label>
-                                <div class="dropdown-custom w-100" x-data="{ open: false, search: '' }">
-                                    <button class="form-select text-start select-full" type="button"
-                                        @click.prevent="open = !open">
-                                        {{ $formData['province'] ?? 'Chọn tỉnh thành' }}
-                                    </button>
-                                    <div class="dropdown-menu-custom w-100 p-2 mh-300-scroll" x-show="open"
-                                        @click.away="open = false" x-cloak>
-                                        <input type="text" x-model="search" class="form-control form-control-sm mb-2"
-                                            placeholder="Tìm tỉnh thành..." @click.stop>
-                                        <button class="dropdown-item @if(empty($formData['province'])) active @endif"
-                                            type="button" x-show="!search.length"
-                                            wire:click="$set('formData.province', '')" @click="open = false">-- Chọn tỉnh thành --</button>
-                                        @foreach ($provinces as $p)
-                                            <button
-                                                class="dropdown-item @if(($formData['province'] ?? '') == $p) active @endif"
-                                                type="button"
-                                                x-show="{{ json_encode(mb_strtolower($p)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))"
-                                                wire:click="$set('formData.province', '{{ $p }}')"
-                                                @click="open = false">
-                                                {{ $p }}
-                                            </button>
-                                        @endforeach
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">Hạn chót giao việc</label>
+                                        <input type="date" class="form-control" wire:model="createAssignDeadline">
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-12 mt-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-tags me-1"></i>Trạng thái & Phân loại</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Tình trạng</label>
-                                <select class="form-select" wire:model.defer="formData.status">
-                                    <option value="">Chọn tình trạng</option>
-                                    @foreach ($all_statuses as $status)
-                                        <option value="{{ $status }}">{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Tình trạng tái ký</label>
-                                <select class="form-select" wire:model.defer="formData.renewal_status">
-                                    <option value="">Chọn tình trạng</option>
-                                    @foreach ($renewal_status_options as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Tình trạng chứng từ</label>
-                                <select class="form-select" wire:model.defer="formData.voucher_status">
-                                    <option value="">Chọn tình trạng</option>
-                                    @foreach ($voucher_status_options as $voucherStatus)
-                                        <option value="{{ $voucherStatus }}">{{ $voucherStatus }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Hạng mục dịch vụ</label>
-                                <select class="form-select" wire:model.defer="formData.loai_dich_vu">
-                                    <option value="">Chọn hạng mục</option>
-                                    @foreach ($loai_dich_vu_options as $opt)
-                                        <option value="{{ $opt }}">{{ $opt }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="d-flex flex-wrap align-items-center gap-3 bg-light rounded-2 px-3 py-2">
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input" type="checkbox" id="form_offset"
-                                            wire:model.defer="formData.is_offset">
-                                        <label class="form-check-label" for="form_offset">Có bù trừ</label>
-                                    </div>
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input" type="checkbox" id="form_overdue"
-                                            wire:model.defer="formData.is_overdue">
-                                        <label class="form-check-label" for="form_overdue">Trễ hạn</label>
-                                    </div>
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input" type="checkbox" id="form_wt_renewal"
-                                            wire:model="formData.is_renewal">
-                                        <label class="form-check-label" for="form_wt_renewal">Tái ký</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            @if ($formData['is_renewal'])
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-semibold">HĐ gốc (tái ký từ)</label>
-                                    <select class="form-select" wire:model.defer="formData.parent_contract_id">
-                                        <option value="">-- Chọn HĐ gốc --</option>
-                                        @foreach ($parentContracts as $pc)
-                                            <option value="{{ $pc->id }}">{{ $pc->so_hop_dong }} -
-                                                {{ $pc->customer->name ?? '' }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endif
-
-                            @include('livewire.admin.contracts.partials.service-submission-fields')
-                                                    @if (!$isEditing)
-                            <div class="col-12 mt-3">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-user-check me-1"></i>Giao việc thực hiện</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
-                                </div>
-                            </div>
-
-                            <div class="col-md-6" x-data="{ searchQuery: '' }">
-                                <label class="form-label small fw-semibold">Chọn nhân viên thực hiện (có thể chọn nhiều)</label>
-                                <!-- Search Box -->
-                                <div class="mb-2">
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text bg-body border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                                        <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm nhanh nhân viên..." x-model="searchQuery">
-                                    </div>
-                                </div>
-                                <div class="border rounded p-2 bg-light-subtle mh-200-scroll overflow-y-auto" style="max-height: 200px;">
-                                    @php
-                                        $groupedAssignableUsers = $assignable_users->groupBy(function($user) {
-                                            $roleName = $user->roles->first()?->name ?? '';
-                                            return \App\Enums\Role::tryFrom($roleName)?->label() ?? 'Khác';
-                                        });
-                                    @endphp
-
-                                    @foreach ($groupedAssignableUsers as $roleLabel => $users)
-                                        <div class="mb-2 role-group-section"
-                                             x-show="searchQuery === '' || {{ json_encode($users->pluck('name')->map(fn($n) => mb_strtolower($n))->toArray()) }}.some(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')))">
-                                            <div class="fw-bold text-success fs-75 border-bottom pb-0.5 mb-1">{{ $roleLabel }}</div>
-                                            <div class="d-flex flex-column gap-1 ms-1 mb-2">
-                                                @foreach ($users as $u)
-                                                    <label class="d-flex align-items-center gap-2 py-0.5 user-item cursor-pointer"
-                                                           x-show="searchQuery === '' || {{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))">
-                                                        <input class="form-check-input flex-shrink-0" type="checkbox"
-                                                            value="{{ $u->id }}" wire:model="createAssignUserIds">
-                                                        <span class="fs-85 text-body">{{ $u->name }}</span>
-                                                    </label>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Người ngoài công ty</label>
-                                <input type="text" class="form-control" wire:model="createAssignExternal"
-                                    placeholder="Tên người ngoài (nếu có)">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Hạn chót giao việc</label>
-                                <input type="date" class="form-control" wire:model="createAssignDeadline">
-                            </div>
+                        </div>
                         @endif
 
-                        @if (!$isEditing)
-                            <div class="col-12 mt-3">
+                        <!-- Card Ghi chú -->
+                        <div class="card border-0 shadow-sm rounded-3 bg-body">
+                            <div class="card-header bg-body border-bottom py-2.5 px-3">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-user-check me-1"></i>Giao việc thực hiện</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
+                                    <i class="fa-solid fa-pen-to-square text-secondary"></i>
+                                    <h6 class="mb-0 fw-bold text-body-emphasis">Ghi chú bổ sung</h6>
                                 </div>
                             </div>
-
-                            <div class="col-md-6" x-data="{ searchQuery: '' }">
-                                <label class="form-label small fw-semibold">Chọn nhân viên thực hiện (có thể chọn nhiều)</label>
-                                <!-- Search Box -->
-                                <div class="mb-2">
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text bg-body border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                                        <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm nhanh nhân viên..." x-model="searchQuery">
-                                    </div>
-                                </div>
-                                <div class="border rounded p-2 bg-light-subtle mh-200-scroll overflow-y-auto" style="max-height: 200px;">
-                                    @php
-                                        $groupedAssignableUsers = $assignable_users->groupBy(function($user) {
-                                            $roleName = $user->roles->first()?->name ?? '';
-                                            return \App\Enums\Role::tryFrom($roleName)?->label() ?? 'Khác';
-                                        });
-                                    @endphp
-
-                                    @foreach ($groupedAssignableUsers as $roleLabel => $users)
-                                        <div class="mb-2 role-group-section"
-                                             x-show="searchQuery === '' || {{ json_encode($users->pluck('name')->map(fn($n) => mb_strtolower($n))->toArray()) }}.some(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')))">
-                                            <div class="fw-bold text-success fs-75 border-bottom pb-0.5 mb-1">{{ $roleLabel }}</div>
-                                            <div class="d-flex flex-column gap-1 ms-1 mb-2">
-                                                @foreach ($users as $u)
-                                                    <label class="d-flex align-items-center gap-2 py-0.5 user-item cursor-pointer"
-                                                           x-show="searchQuery === '' || {{ json_encode(mb_strtolower($u->name)) }}.normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))">
-                                                        <input class="form-check-input flex-shrink-0" type="checkbox"
-                                                            value="{{ $u->id }}" wire:model="createAssignUserIds">
-                                                        <span class="fs-85 text-body">{{ $u->name }}</span>
-                                                    </label>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Người ngoài công ty</label>
-                                <input type="text" class="form-control" wire:model="createAssignExternal"
-                                    placeholder="Tên người ngoài (nếu có)">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-semibold">Hạn chót giao việc</label>
-                                <input type="date" class="form-control" wire:model="createAssignDeadline">
-                            </div>
-                        @endif
-
-<div class="col-12 mt-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-semibold text-primary small text-uppercase" style="white-space:nowrap"><i class="fa-solid fa-pen me-1"></i>Ghi chú</span>
-                                    <hr class="flex-fill my-0 border-primary border-opacity-25">
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <textarea class="form-control @error('formData.notes') is-invalid @enderror" rows="3"
-                                    wire:model.defer="formData.notes" placeholder="Nhập ghi chú..."></textarea>
+                            <div class="card-body p-3">
+                                <textarea class="form-control @error('formData.notes') is-invalid @enderror" rows="2" wire:model.defer="formData.notes" placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt..."></textarea>
                                 @error('formData.notes')
-                                    <div class="text-danger  mt-1">{{ $message }}</div>
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                    <div class="modal-footer bg-body border-top px-4 py-3 d-flex align-items-center justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Hủy bỏ</button>
+                        <button type="submit" class="btn btn-primary px-4 d-inline-flex align-items-center gap-2 fw-semibold" wire:loading.attr="disabled" wire:target="save">
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm"></span>
-                            <i class="fa-solid fa-floppy-disk me-1"></i>Lưu
+                            <i class="fa-solid fa-floppy-disk me-1" wire:loading.remove wire:target="save"></i>
+                            <span>Lưu hợp đồng</span>
                         </button>
                     </div>
                 </form>
-            </div>
         </div>
     </div>
 
