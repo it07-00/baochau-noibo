@@ -403,10 +403,10 @@
                         @unless (auth()->user()->hasAnyRole([\App\Enums\Role::TU_VAN->value, \App\Enums\Role::KY_THUAT->value]))
                             <th class="text-center col-ct-finance">Tài chính</th>
                         @endunless
-                        <th class="text-center text-wrap small px-2">Tình trạng<br>tái ký</th>
-                        <th class="text-center text-wrap small px-2">Thời gian<br>thu gom</th>
+                        <th class="text-center text-nowrap px-3">Tình trạng tái ký</th>
+                        <th class="text-center text-nowrap px-3">Thời gian thu gom</th>
                         @unless(auth()->user()->hasAnyRole(['tu-van', 'ky-thuat']))
-                        <th class="text-center text-wrap small px-2">Tình trạng<br>chứng từ</th>
+                        <th class="text-center text-nowrap px-3">Tình trạng chứng từ</th>
                         @endunless
                         @unless (auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))
                             <th class="text-center col-ct-assigned">Được giao</th>
