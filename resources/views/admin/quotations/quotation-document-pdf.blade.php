@@ -692,7 +692,7 @@
                     <tr>
                         <td class="mark-cell">-</td>
                         <td class="text-cell">
-                            <span class="b i u">{{ trim($line) }}</span>
+                            <span class="b i u">{!! $pdfViewData->highlightNote(trim((string) $line)) !!}</span>
                         </td>
                     </tr>
                 </table>

@@ -6,6 +6,7 @@ use App\Models\QuotationDocument;
 use App\Models\QuotationDocumentItem;
 use App\Models\User;
 use App\Services\Quotations\QuotationDocumentExportService;
+use App\Support\Quotations\QuotationTemplateCatalog;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -43,6 +44,60 @@ class QuotationDocumentExportServicePageCountTest extends TestCase
             ['Nguyễn Văn A', '0909 000 111', 'sales@example.test'],
             $this->resolveStaffDetails($doc)
         );
+    }
+
+    public function test_html_terms_keep_inline_strong_tags_attached_to_their_text(): void
+    {
+        $service = app(QuotationDocumentExportService::class);
+        $method = (new ReflectionClass($service))->getMethod('splitUserLines');
+        $method->setAccessible(true);
+
+        $lines = $method->invoke(
+            $service,
+            QuotationTemplateCatalog::defaultTerms(QuotationTemplateCatalog::DEFAULT_KEY)
+        );
+
+        $this->assertCount(8, $lines);
+        $this->assertSame(
+            '<strong>Kết quả thực hiện:</strong> Báo cáo Quan trắc môi trường lao động',
+            $lines[0]
+        );
+        $this->assertSame('<strong>Phương thức thanh toán:</strong>', $lines[3]);
+        $this->assertNotContains('<strong>', $lines);
+        $this->assertNotContains('</strong>', $lines);
+    }
+
+    public function test_word_paragraph_converts_html_strong_tags_to_bold_runs(): void
+    {
+        $dom = new DOMDocument;
+        $paragraph = $dom->createElementNS(
+            'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+            'w:p'
+        );
+        $run = $dom->createElementNS(
+            'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+            'w:r'
+        );
+        $run->appendChild($dom->createElementNS(
+            'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+            'w:t',
+            'Mẫu'
+        ));
+        $paragraph->appendChild($run);
+        $dom->appendChild($paragraph);
+
+        $xpath = new DOMXPath($dom);
+        $xpath->registerNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+
+        $service = app(QuotationDocumentExportService::class);
+        $method = (new ReflectionClass($service))->getMethod('setParagraphText');
+        $method->setAccessible(true);
+        $method->invoke($service, $paragraph, $xpath, '<strong>Kết quả thực hiện:</strong> Báo cáo thử nghiệm');
+
+        $this->assertSame('Kết quả thực hiện: Báo cáo thử nghiệm', $paragraph->textContent);
+        $this->assertSame(0, $xpath->query('.//w:t[contains(., "<strong>")]', $paragraph)->length);
+        $this->assertSame(1, $xpath->query('./w:r[1]/w:rPr/w:b', $paragraph)->length);
+        $this->assertSame('Kết quả thực hiện:', $xpath->evaluate('string(./w:r[1]/w:t)', $paragraph));
     }
 
     public function test_replace_docx_page_count_updates_page_count_text(): void

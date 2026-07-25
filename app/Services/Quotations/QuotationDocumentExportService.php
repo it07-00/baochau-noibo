@@ -1837,6 +1837,13 @@ POWERSHELL;
 
     private function setParagraphText(DOMElement $paragraph, DOMXPath $xpath, string $text): void
     {
+        if (str_contains($text, '<')) {
+            $text = preg_replace('/<(?:strong|b)\b[^>]*>/i', '**', $text) ?? $text;
+            $text = preg_replace('/<\/(?:strong|b)>/i', '**', $text) ?? $text;
+            $text = strip_tags($text);
+            $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
         // 1. Detect if the original paragraph has any underlined runs
         $hasUnderline = $xpath->query('.//w:r[w:rPr/w:u]', $paragraph)->length > 0;
 
@@ -2219,14 +2226,20 @@ POWERSHELL;
             return [];
         }
 
-        // Insert newlines before known label titles/bullet points if text was merged into 1 paragraph
-        $value = preg_replace('/(?<!^)(?<!\n)\s*(Kết quả thực hiện:|Thời gian (?:có cuốn báo cáo|hoàn thành|thực hiện)[^:]*:|Chi phí trên đã bao gồm VAT|Phương thức thanh toán:|Hình thức:|Chúng tôi xin cam kết|•|\b\d+%\s*sau khi)/u', "\n$1", $value) ?? $value;
-
         // Convert HTML block endings and breaks to newlines
         $value = preg_replace('/<\/(p|div|li|h[1-6])>/i', "\n", $value) ?? $value;
         $value = preg_replace('/<br\s*\/?>/i', "\n", $value) ?? $value;
         // Strip block containers while preserving safe inline HTML tags
         $value = strip_tags($value, '<b><strong><i><em><u><span><sub><sup>');
+
+        // Insert newlines before known labels if plain text was merged into one
+        // paragraph. Include opening inline tags in the match so a tag is never
+        // detached from the text that it formats.
+        $value = preg_replace(
+            '/(?<!^)(?<!\n)(?<!>)\s*((?:<(?:b|strong|i|em|u|span|sub|sup)\b[^>]*>\s*)*(?:Kết quả thực hiện:|Thời gian (?:có cuốn báo cáo|hoàn thành|thực hiện)[^:]*:|Chi phí trên đã bao gồm VAT|Phương thức thanh toán:|Hình thức:|Chúng tôi xin cam kết|•|\b\d+%\s*sau khi))/iu',
+            "\n$1",
+            $value
+        ) ?? $value;
 
         $lines = preg_split('/\R/u', $value) ?: [];
 

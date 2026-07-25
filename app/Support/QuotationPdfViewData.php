@@ -164,21 +164,26 @@ class QuotationPdfViewData
 
     public function isPaymentHeading(string $line): bool
     {
-        return str_starts_with(trim($line), 'Phương thức thanh toán');
+        return str_starts_with($this->plainNoteText($line), 'Phương thức thanh toán');
     }
 
     public function isPaymentChild(string $line): bool
     {
-        return (bool) preg_match('/^(?:[0-9]+%|Hình thức:)/u', trim($line));
+        return (bool) preg_match('/^(?:[0-9]+%|Hình thức:)/u', $this->plainNoteText($line));
     }
 
     public function isCommit(string $line): bool
     {
-        return str_starts_with(trim($line), 'Chúng tôi xin cam kết');
+        return str_starts_with($this->plainNoteText($line), 'Chúng tôi xin cam kết');
     }
 
     public function isThanks(string $line): bool
     {
-        return str_starts_with(trim($line), 'Trân trọng cảm ơn');
+        return str_starts_with($this->plainNoteText($line), 'Trân trọng cảm ơn');
+    }
+
+    private function plainNoteText(string $line): string
+    {
+        return trim(html_entity_decode(strip_tags($line), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 }
