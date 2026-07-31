@@ -530,7 +530,7 @@
                     @if ($selectedDoc)
                         <div x-data="{ tab: @js($detailActiveTab ?? 'info') }">
                         {{-- Tabs --}}
-                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+                        <ul class="nav nav-tabs px-4 pt-2 bg-body-tertiary border-bottom" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'info' }"
                                     @click="tab = 'info'" type="button">
@@ -1273,9 +1273,9 @@
     <div wire:ignore.self class="modal fade" id="workflowModalConsulting" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-info text-white py-3">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-sitemap me-2"></i>Cập nhật tiến độ hợp đồng</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body"><i class="fa-solid fa-sitemap me-2"></i>Cập nhật tiến độ hợp đồng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
                         wire:click="closeWorkflow"></button>
                 </div>
                 <div class="modal-body p-0">

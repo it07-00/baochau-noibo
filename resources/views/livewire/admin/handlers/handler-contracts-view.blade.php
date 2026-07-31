@@ -200,18 +200,18 @@
     <div wire:ignore.self class="modal fade" id="handlerContractDetailModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold text-white">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">
                         Thông tin Hợp Đồng
                         @if($selectedContractLabel)
                             <span class="badge bg-secondary ms-2 fw-normal fs-6">{{ $selectedContractLabel }}</span>
                         @endif
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
                     @if ($selectedContract)
-                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+                        <ul class="nav nav-tabs px-4 pt-2 bg-body-tertiary border-bottom" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link active fw-semibold" data-bs-toggle="tab"
                                     data-bs-target="#htab-info-{{ $selectedContractType }}-{{ $selectedContract->id }}" type="button">

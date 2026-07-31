@@ -193,7 +193,7 @@
     <div wire:ignore.self class="modal fade" id="contractDetailModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content overflow-hidden border-0 shadow-lg rounded-3">
-                <div class="modal-header bg-body border-bottom border-light-subtle p-3">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
                     <h5 class="modal-title fw-bold text-body">
                         Thông tin Hợp Đồng
                         @if($selectedContractLabel)
@@ -205,7 +205,7 @@
                 <div class="modal-body p-0">
                     @if ($selectedContract)
                         {{-- Tabs Navigation --}}
-                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+                        <ul class="nav nav-tabs px-4 pt-2 bg-body-tertiary border-bottom" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link active fw-semibold" data-bs-toggle="tab"
                                     data-bs-target="#tab-info-{{ $selectedContractType }}-{{ $selectedContract->id }}" type="button">

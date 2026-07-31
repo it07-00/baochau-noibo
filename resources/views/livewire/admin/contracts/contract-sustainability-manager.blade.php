@@ -436,8 +436,8 @@
     <div wire:ignore.self class="modal fade" id="detailModalSustainability" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content overflow-hidden border-0 shadow-lg">
-                <div class="modal-header bg-dark py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">
                         Chi tiết HĐ {{ $contractTypeName }}
                         @if ($selectedDoc?->customer?->name)
                             — {{ $selectedDoc->customer->name }}
@@ -445,13 +445,13 @@
                             #{{ $selectedDoc->shd_cxl }}
                         @endif
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
                     @if ($selectedDoc)
                         <div x-data="{ tab: @js($detailActiveTab ?? 'info') }">
                         {{-- Tabs --}}
-                        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+                        <ul class="nav nav-tabs px-4 pt-2 bg-body-tertiary border-bottom" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link fw-semibold" :class="{ active: tab === 'info' }"
                                     @click="tab = 'info'" type="button">
@@ -680,8 +680,8 @@
     <div wire:ignore.self class="modal fade" id="formModalSustainability" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-primary py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom text-white">
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body">
                         @if ($isEditing)
                             Chỉnh sửa
                         @elseif ($isDuplicating)
@@ -691,7 +691,7 @@
                         @endif
                         HĐ {{ $contractTypeName }}
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
@@ -1146,9 +1146,9 @@
     <div wire:ignore.self class="modal fade" id="assignModalSustainability" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" x-data="{ searchQuery: '' }">
-                <div class="modal-header bg-success py-3">
-                    <h5 class="modal-title fw-bold modal-title-custom text-white"><i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body"><i class="fa-solid fa-user-check me-1"></i> Giao việc hợp đồng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <p class="text-muted mb-3 fs-90">Chọn nhân viên để giao việc (có thể chọn nhiều):</p>
@@ -1225,9 +1225,9 @@
     <div wire:ignore.self class="modal fade" id="workflowModalSustainability" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-info text-white py-3">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-sitemap me-2"></i>Cập nhật tiến độ hợp đồng</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                <div class="modal-header bg-body border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold text-body"><i class="fa-solid fa-sitemap me-2"></i>Cập nhật tiến độ hợp đồng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
                         wire:click="closeWorkflow"></button>
                 </div>
                 <div class="modal-body p-0">
