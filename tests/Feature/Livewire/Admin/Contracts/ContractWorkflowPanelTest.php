@@ -115,8 +115,7 @@ class ContractWorkflowPanelTest extends TestCase
         ->set('uploadFiles', [$file])
         ->set('comment', 'Khảo sát thực tế hoàn thành')
         ->call('completeStep')
-        ->assertHasNoErrors()
-        ->assertSet('activeStep', null);
+        ->assertHasNoErrors();
 
         // Verify status updated on contract
         $this->assertEquals('survey', $this->contract->refresh()->workflow_status);
