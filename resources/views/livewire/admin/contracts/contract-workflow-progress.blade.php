@@ -3,7 +3,7 @@
         <span class="fw-bold text-muted">
             <i class="fa-solid fa-sitemap me-1 text-primary"></i> Tiến độ xử lý
         </span>
-        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle fs-75 text-nowrap">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-75 text-nowrap">
             {{ count($completedSteps) }}/{{ count($stepKeys) }} bước
         </span>
     </div>

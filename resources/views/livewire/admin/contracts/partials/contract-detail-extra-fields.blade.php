@@ -3,9 +3,9 @@
     <td>
         <div class="d-flex flex-wrap gap-1">
             @forelse(preg_split('/\s*\|\s*/', (string) $selectedDoc->payment_method, -1, PREG_SPLIT_NO_EMPTY) as $method)
-                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">{{ $method }}</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ $method }}</span>
             @empty
-                <span class="text-body-secondary">—</span>
+                <span class="text-muted">—</span>
             @endforelse
         </div>
     </td>

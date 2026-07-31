@@ -4,7 +4,7 @@
             <h5 class="fw-bold mb-0 fs-6">
                 <i class="fa-solid fa-sitemap me-1 text-primary"></i> Tiến độ xử lý hợp đồng
             </h5>
-            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle fs-82 px-2 py-1 text-nowrap">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-82 px-2 py-1 text-nowrap">
                 {{ count($completedSteps) }}/{{ count($stepKeys) }} bước
             </span>
         </div>
