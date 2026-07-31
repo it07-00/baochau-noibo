@@ -1309,7 +1309,10 @@
 :root[data-bs-theme=dark] .role-kpi-card.role-technical-rate .role-kpi-icon       { color: #5eead4; background: rgba(15,118,110,0.28); }
 
 /* Dark mode readability fixes */
-:root[data-bs-theme="dark"] .text-muted {
+:root[data-bs-theme="dark"] .text-muted,
+:root[data-bs-theme="dark"] .text-secondary,
+:root[data-bs-theme="dark"] .text-secondary-emphasis,
+:root[data-bs-theme="dark"] .text-body-secondary {
     --bs-text-opacity: 1;
     color: rgba(203, 213, 225, 0.9) !important;
 }
@@ -1324,7 +1327,8 @@
 }
 
 :root[data-bs-theme="dark"] .table th.bg-light,
-:root[data-bs-theme="dark"] .table td.bg-light {
+:root[data-bs-theme="dark"] .table td.bg-light,
+:root[data-bs-theme="dark"] .table thead th {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: rgba(226, 232, 240, 0.95) !important;
 }
@@ -1516,3 +1520,20 @@
     color: var(--bs-secondary-color) !important;
     opacity: 0.75;
 }
+
+/* Global Dark Mode Breadcrumb & Subtitle Contrast */
+:root[data-bs-theme="dark"] .breadcrumb-item,
+:root[data-bs-theme="dark"] .breadcrumb-item a {
+    color: #93c5fd !important;
+}
+:root[data-bs-theme="dark"] .breadcrumb-item.active {
+    color: #cbd5e1 !important;
+}
+:root[data-bs-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
+    color: #64748b !important;
+}
+:root[data-bs-theme="dark"] .form-control::placeholder {
+    color: #94a3b8 !important;
+    opacity: 0.85;
+}
+
