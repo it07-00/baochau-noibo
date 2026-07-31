@@ -3,9 +3,15 @@
 namespace App\Livewire\Admin\Contracts;
 
 use App\Enums\Role;
-use App\Models\ContractWorkflowStep;
-use App\Models\ContractMilestoneFile;
 use App\Models\ContractAssignment;
+use App\Models\ContractEmission;
+use App\Models\ContractLegal;
+use App\Models\ContractMilestoneFile;
+use App\Models\ContractResearch;
+use App\Models\ContractSustainability;
+use App\Models\ContractTechnical;
+use App\Models\ContractWaste;
+use App\Models\ContractWorkflowStep;
 use App\Models\User;
 use App\Notifications\ContractWorkflowUpdatedNotification;
 use Illuminate\Support\Facades\Storage;
@@ -17,26 +23,45 @@ class ContractWorkflowPanel extends Component
     use WithFileUploads;
 
     public string $contractType;
+
     public int $contractId;
 
     // model class map
     protected array $modelMap = [
-        'waste'          => \App\Models\ContractWaste::class,
-        'consulting'     => \App\Models\ContractLegal::class,
-        'project'        => \App\Models\ContractTechnical::class,
-        'commercial'     => \App\Models\ContractResearch::class,
-        'sustainability' => \App\Models\ContractSustainability::class,
-        'energy'         => \App\Models\ContractEmission::class,
+        'waste' => ContractWaste::class,
+        'consulting' => ContractLegal::class,
+        'project' => ContractTechnical::class,
+        'commercial' => ContractResearch::class,
+        'sustainability' => ContractSustainability::class,
+        'energy' => ContractEmission::class,
     ];
 
     public array $uploadFiles = [];
+
     public string $comment = '';
+
     public ?string $activeStep = null; // step đang mở để confirm
 
     public function mount(string $contractType, int $contractId): void
     {
         $this->contractType = $contractType;
-        $this->contractId   = $contractId;
+        $this->contractId = $contractId;
+    }
+
+    /**
+     * Kiểm tra quyền cập nhật tiến độ hợp đồng — chỉ tu-van và ky-thuat
+     */
+    public function canUserEdit(): bool
+    {
+        $user = auth()->user();
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasAnyRole([
+            Role::TU_VAN->value,
+            Role::KY_THUAT->value,
+        ]);
     }
 
     /**
@@ -44,12 +69,12 @@ class ContractWorkflowPanel extends Component
      */
     public function openStep(string $step): void
     {
-        if (!auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+        if (! $this->canUserEdit()) {
             return;
         }
-        $this->activeStep  = $step;
+        $this->activeStep = $step;
         $this->uploadFiles = [];
-        $this->comment     = '';
+        $this->comment = '';
     }
 
     /**
@@ -57,8 +82,9 @@ class ContractWorkflowPanel extends Component
      */
     public function completeStep(): void
     {
-        if (!auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+        if (! $this->canUserEdit()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
+
             return;
         }
 
@@ -66,15 +92,15 @@ class ContractWorkflowPanel extends Component
         $fileRequired = ($this->activeStep === 'finished');
 
         $rules = [
-            'uploadFiles'   => ($fileRequired ? 'required|array|max:10|min:1' : 'nullable|array|max:10'),
+            'uploadFiles' => ($fileRequired ? 'required|array|max:10|min:1' : 'nullable|array|max:10'),
             'uploadFiles.*' => 'file|max:204800|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
-            'comment'       => 'nullable|string|max:1000',
+            'comment' => 'nullable|string|max:1000',
         ];
 
         $messages = [
             'uploadFiles.required' => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
-            'uploadFiles.min'      => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
-            'uploadFiles.*.max'        => 'Mỗi file không được vượt quá 200MB.',
+            'uploadFiles.min' => 'Vui lòng đính kèm ít nhất 1 file trước khi xác nhận bước này.',
+            'uploadFiles.*.max' => 'Mỗi file không được vượt quá 200MB.',
             'uploadFiles.*.extensions' => 'Chỉ chấp nhận file PDF, Word, Excel, JPG, PNG.',
         ];
 
@@ -82,20 +108,20 @@ class ContractWorkflowPanel extends Component
 
         $uploadDisk = config('filesystems.upload_disk', 'public');
 
-        if (!empty($this->uploadFiles)) {
+        if (! empty($this->uploadFiles)) {
             foreach ($this->uploadFiles as $file) {
                 $path = $file->storePublicly(
-                    'contract-files/' . $this->contractType . '/' . $this->activeStep,
+                    'contract-files/'.$this->contractType.'/'.$this->activeStep,
                     $uploadDisk
                 );
 
                 ContractMilestoneFile::create([
                     'contract_type' => $this->getModelClass(),
-                    'contract_id'   => $this->contractId,
-                    'milestone'     => $this->activeStep,
-                    'file_path'     => $path,
+                    'contract_id' => $this->contractId,
+                    'milestone' => $this->activeStep,
+                    'file_path' => $path,
                     'original_name' => $file->getClientOriginalName(),
-                    'uploader_id'   => auth()->id(),
+                    'uploader_id' => auth()->id(),
                 ]);
             }
         }
@@ -103,11 +129,11 @@ class ContractWorkflowPanel extends Component
         // Lưu workflow step record
         ContractWorkflowStep::create([
             'contract_type' => $this->getModelClass(),
-            'contract_id'   => $this->contractId,
-            'user_id'       => auth()->id(),
-            'step_name'     => $this->activeStep,
-            'action'        => 'complete',
-            'comment'       => $this->comment ?: null,
+            'contract_id' => $this->contractId,
+            'user_id' => auth()->id(),
+            'step_name' => $this->activeStep,
+            'action' => 'complete',
+            'comment' => $this->comment ?: null,
         ]);
 
         // Cập nhật workflow_status trên contract
@@ -119,13 +145,13 @@ class ContractWorkflowPanel extends Component
         $stepLabel = $this->getStepLabel($this->activeStep);
         $completedStep = $this->activeStep;
 
-        $this->activeStep  = null;
+        $this->activeStep = null;
         $this->uploadFiles = [];
-        $this->comment     = '';
+        $this->comment = '';
 
         $this->dispatch('swal:toast', [
-            'type'    => 'success',
-            'message' => 'Đã hoàn thành bước: ' . $stepLabel,
+            'type' => 'success',
+            'message' => 'Đã hoàn thành bước: '.$stepLabel,
         ]);
 
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
@@ -141,13 +167,13 @@ class ContractWorkflowPanel extends Component
             $recipientRoles[] = Role::KE_TOAN->value;
         }
 
-        $recipients = User::whereHas('roles', fn($q) => $q->whereIn('name', $recipientRoles))->get();
+        $recipients = User::whereHas('roles', fn ($q) => $q->whereIn('name', $recipientRoles))->get();
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', $modelClass)
             ->where('assignable_id', $this->contractId)
             ->whereNotNull('user_id')
             ->get(['user_id', 'assigned_by'])
-            ->flatMap(fn($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
+            ->flatMap(fn ($assignment) => [(int) $assignment->user_id, (int) $assignment->assigned_by])
             ->filter()
             ->unique()
             ->values();
@@ -158,7 +184,9 @@ class ContractWorkflowPanel extends Component
 
         if ($contract?->staff_id && $contract->staff_id !== auth()->id()) {
             $staff = User::find($contract->staff_id);
-            if ($staff) $recipients->push($staff);
+            if ($staff) {
+                $recipients->push($staff);
+            }
         }
         foreach ($recipients->unique('id') as $recipient) {
             if ($recipient->id !== auth()->id()) {
@@ -169,16 +197,16 @@ class ContractWorkflowPanel extends Component
 
     public function cancelStep(): void
     {
-        $this->activeStep  = null;
+        $this->activeStep = null;
         $this->uploadFiles = [];
-        $this->comment     = '';
+        $this->comment = '';
     }
 
     public function deleteFile(int $fileId): void
     {
-        $user = auth()->user();
-        if (!$user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value, Role::GIAM_DOC->value, Role::IT->value])) {
+        if (! $this->canUserEdit()) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'Bạn không có quyền xóa file đính kèm.']);
+
             return;
         }
 
@@ -186,8 +214,9 @@ class ContractWorkflowPanel extends Component
             ->where('contract_id', $this->contractId)
             ->find($fileId);
 
-        if (!$file) {
+        if (! $file) {
             $this->dispatch('swal:toast', ['type' => 'error', 'message' => 'File không tồn tại hoặc đã bị xóa.']);
+
             return;
         }
 
@@ -203,7 +232,7 @@ class ContractWorkflowPanel extends Component
         $file->delete();
 
         $this->dispatch('swal:toast', [
-            'type'    => 'success',
+            'type' => 'success',
             'message' => 'Đã xóa file đính kèm thành công.',
         ]);
     }
@@ -215,7 +244,7 @@ class ContractWorkflowPanel extends Component
 
     private function getStepLabel(?string $stepName): string
     {
-        if (!$stepName) {
+        if (! $stepName) {
             return $stepName ?? '';
         }
 
@@ -239,8 +268,8 @@ class ContractWorkflowPanel extends Component
 
     public function render()
     {
-        $modelClass    = $this->getModelClass();
-        $contract      = $modelClass ? $modelClass::find($this->contractId) : null;
+        $modelClass = $this->getModelClass();
+        $contract = $modelClass ? $modelClass::find($this->contractId) : null;
         $currentStatus = $contract?->workflow_status;
 
         // Steps đã hoàn thành (lấy distinct step_name từ db)
@@ -270,12 +299,12 @@ class ContractWorkflowPanel extends Component
         $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
 
         return view('livewire.admin.contracts.contract-workflow-panel', [
-            'steps'          => $stepsData['steps'],
-            'stepKeys'       => $stepsData['stepKeys'],
+            'steps' => $stepsData['steps'],
+            'stepKeys' => $stepsData['stepKeys'],
             'completedSteps' => $completedSteps,
-            'currentStatus'  => $currentStatus,
-            'filesByStep'    => $filesByStep,
-            'canEdit'        => auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]),
+            'currentStatus' => $currentStatus,
+            'filesByStep' => $filesByStep,
+            'canEdit' => $this->canUserEdit(),
         ]);
     }
 }
