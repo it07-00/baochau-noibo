@@ -4,6 +4,8 @@ namespace Tests\Feature\Livewire\Admin\Contracts;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Contracts\ContractCommercialManager;
+use App\Models\ContractAssignment;
 use App\Models\ContractResearch;
 use App\Models\Customer;
 use App\Models\Department;
@@ -13,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class ContractCommercialManagerTest extends TestCase
@@ -20,8 +23,11 @@ class ContractCommercialManagerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private Department $dept;
+
     private Customer $customer;
+
     private Handler $handler;
 
     protected function setUp(): void
@@ -35,7 +41,7 @@ class ContractCommercialManagerTest extends TestCase
         );
 
         // Clear Spatie permission cache
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         // Seed roles & permissions
         foreach (RoleEnum::cases() as $roleEnum) {
@@ -73,16 +79,45 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->assertStatus(200)
             ->assertSee($this->customer->name)
             ->assertSee('50,000,000');
     }
 
+    public function test_assigned_consultant_can_open_commercial_workflow_from_contract_list(): void
+    {
+        $consultingRole = Role::findByName(RoleEnum::TU_VAN->value);
+        $consultingRole->syncPermissions([PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value]);
+
+        $consultant = User::factory()->create(['is_active' => true]);
+        $consultant->assignRole($consultingRole);
+
+        $contract = ContractResearch::create([
+            'customer_id' => $this->customer->id,
+            'handler_id' => $this->handler->id,
+            'staff_id' => $this->adminUser->id,
+            'department_id' => $this->dept->id,
+            'value' => 50000000,
+        ]);
+
+        ContractAssignment::create([
+            'assignable_type' => ContractResearch::class,
+            'assignable_id' => $contract->id,
+            'user_id' => $consultant->id,
+            'assigned_by' => $this->adminUser->id,
+        ]);
+
+        $this->actingAs($consultant);
+
+        Livewire::test(ContractCommercialManager::class)
+            ->assertSeeHtml('wire:click="openWorkflow('.$contract->id.')"');
+    }
+
     public function test_can_search_contracts(): void
     {
         $customerB = Customer::create(['name' => 'Khách hàng B']);
-        
+
         $contractA = ContractResearch::create([
             'customer_id' => $this->customer->id,
             'handler_id' => $this->handler->id,
@@ -105,10 +140,10 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->set('search', 'Khách hàng B')
-            ->assertViewHas('docs', function($docs) use ($contractB, $contractA) {
-                return $docs->contains($contractB) && !$docs->contains($contractA);
+            ->assertViewHas('docs', function ($docs) use ($contractB, $contractA) {
+                return $docs->contains($contractB) && ! $docs->contains($contractA);
             });
     }
 
@@ -116,7 +151,7 @@ class ContractCommercialManagerTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->call('create')
             ->assertSet('showModal', true)
             ->assertSet('isEditing', false)
@@ -151,7 +186,7 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->call('edit', $contract->id)
             ->assertSet('isEditing', true)
             ->assertSet('showModal', true)
@@ -175,7 +210,7 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->call('updateStatus', $contract->id, 'Đã hoàn thành')
             ->assertDispatched('swal:toast');
 
@@ -196,7 +231,7 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->call('delete', $contract->id)
             ->assertDispatched('swal:toast');
 
@@ -216,7 +251,7 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->call('duplicate', $contract->id)
             ->assertSet('isDuplicating', true)
             ->assertSet('showModal', true)
@@ -243,7 +278,7 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->call('openAssign', $contract->id)
             ->set('assignUserIds', [$assignee->id])
             ->set('assignExternal', 'Đối tác liên kết B')
@@ -280,7 +315,7 @@ class ContractCommercialManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractCommercialManager::class)
+        Livewire::test(ContractCommercialManager::class)
             ->set('progressNote', 'Hợp đồng tiến triển tốt.')
             ->call('addProgressNote', $contract->id)
             ->assertHasNoErrors();

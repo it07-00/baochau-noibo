@@ -339,6 +339,12 @@
                                             <i class="fa-solid fa-user-check fs-5"></i>
                                         </button>
                                     @endif
+                                    @if ($this->isRestrictedRole)
+                                        <button class="btn btn-sm p-0 text-info"
+                                            wire:click="openWorkflow({{ $doc->id }})" title="Cập nhật tiến độ">
+                                            <i class="fa-solid fa-sitemap fs-5"></i>
+                                        </button>
+                                    @endif
                                     @can('contracts-project.edit')
                                         @if ($this->canManageOwnedDoc($doc))
                                             @if (!auth()->user()->can(\App\Enums\Permission::CONTRACTS_EDIT_FINANCE->value))

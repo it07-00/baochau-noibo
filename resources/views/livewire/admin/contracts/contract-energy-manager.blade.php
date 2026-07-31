@@ -392,6 +392,12 @@
                                             <i class="fa-solid fa-user-check fs-5"></i>
                                         </button>
                                     @endif
+                                    @if ($this->isRestrictedRole)
+                                        <button class="btn btn-sm p-0 text-info"
+                                            wire:click="openWorkflow({{ $doc->id }})" title="Cập nhật tiến độ">
+                                            <i class="fa-solid fa-sitemap fs-5"></i>
+                                        </button>
+                                    @endif
                                     @can('contracts-energy.edit')
                                         @if ($this->canManageOwnedDoc($doc))
                                             @if (!auth()->user()->hasRole(\App\Enums\Role::KE_TOAN->value))

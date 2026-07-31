@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire\Admin\Contracts;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Contracts\ContractProjectManager;
 use App\Models\ContractAssignment;
 use App\Models\ContractTechnical;
 use App\Models\ContractWorkflowStep;
@@ -15,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class ContractProjectManagerTest extends TestCase
@@ -22,8 +24,11 @@ class ContractProjectManagerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private Department $dept;
+
     private Customer $customer;
+
     private Handler $handler;
 
     protected function setUp(): void
@@ -37,7 +42,7 @@ class ContractProjectManagerTest extends TestCase
         );
 
         // Clear Spatie permission cache
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         // Seed roles & permissions
         foreach (RoleEnum::cases() as $roleEnum) {
@@ -75,7 +80,7 @@ class ContractProjectManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->assertStatus(200)
             ->assertSee($this->customer->name)
             ->assertSee('50,000,000');
@@ -115,17 +120,46 @@ class ContractProjectManagerTest extends TestCase
 
         $this->actingAs($consultant);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->assertSet('filter.hide_completed_workflow', true)
             ->assertViewHas('docs', fn ($docs) => ! $docs->contains('id', $completedContract->id))
             ->set('filter.hide_completed_workflow', false)
             ->assertViewHas('docs', fn ($docs) => $docs->contains('id', $completedContract->id));
     }
 
+    public function test_assigned_consultant_can_open_project_workflow_from_contract_list(): void
+    {
+        $consultingRole = Role::findByName(RoleEnum::TU_VAN->value);
+        $consultingRole->syncPermissions([PermissionEnum::CONTRACTS_PROJECT_VIEW->value]);
+
+        $consultant = User::factory()->create(['is_active' => true]);
+        $consultant->assignRole($consultingRole);
+
+        $contract = ContractTechnical::create([
+            'customer_id' => $this->customer->id,
+            'handler_id' => $this->handler->id,
+            'staff_id' => $this->adminUser->id,
+            'department_id' => $this->dept->id,
+            'value' => 50000000,
+        ]);
+
+        ContractAssignment::create([
+            'assignable_type' => ContractTechnical::class,
+            'assignable_id' => $contract->id,
+            'user_id' => $consultant->id,
+            'assigned_by' => $this->adminUser->id,
+        ]);
+
+        $this->actingAs($consultant);
+
+        Livewire::test(ContractProjectManager::class)
+            ->assertSeeHtml('wire:click="openWorkflow('.$contract->id.')"');
+    }
+
     public function test_can_search_contracts(): void
     {
         $customerB = Customer::create(['name' => 'Khách hàng Dự án B']);
-        
+
         $contractA = ContractTechnical::create([
             'customer_id' => $this->customer->id,
             'handler_id' => $this->handler->id,
@@ -148,10 +182,10 @@ class ContractProjectManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->set('search', 'Khách hàng Dự án B')
-            ->assertViewHas('docs', function($docs) use ($contractB, $contractA) {
-                return $docs->contains($contractB) && !$docs->contains($contractA);
+            ->assertViewHas('docs', function ($docs) use ($contractB, $contractA) {
+                return $docs->contains($contractB) && ! $docs->contains($contractA);
             });
     }
 
@@ -159,7 +193,7 @@ class ContractProjectManagerTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->call('create')
             ->assertSet('showModal', true)
             ->assertSet('isEditing', false)
@@ -193,7 +227,7 @@ class ContractProjectManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->call('edit', $contract->id)
             ->assertSet('showModal', true)
             ->assertSet('isEditing', true)
@@ -218,7 +252,7 @@ class ContractProjectManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->call('updateStatus', $contract->id, 'Đang trình BGĐ ký')
             ->assertDispatched('swal:toast', [
                 'type' => 'success',
@@ -241,7 +275,7 @@ class ContractProjectManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractProjectManager::class)
+        Livewire::test(ContractProjectManager::class)
             ->call('delete', $contract->id)
             ->assertDispatched('swal:toast', [
                 'type' => 'success',
