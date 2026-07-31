@@ -155,7 +155,7 @@
             <div class="card-header border-0 bg-primary-subtle py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
                     <h5 class="mb-0 fw-bold text-body">Bộ phận Tư vấn</h5>
-                    <p class="text-body-secondary small mb-0">Theo dõi hồ sơ theo nhóm dịch vụ và tiến độ xử lý</p>
+                    <p class="text-muted small mb-0">Theo dõi hồ sơ theo nhóm dịch vụ và tiến độ xử lý</p>
                 </div>
                 <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle px-3 py-2 rounded-pill fs-7 d-inline-flex align-items-center">Năm {{ $year }}</span>
             </div>
@@ -169,9 +169,9 @@
                                     <i class="fa-solid fa-copy"></i>
                                 </div>
                                 <div>
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Tổng hồ sơ</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Tổng hồ sơ</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ number_format($consultingSummary['total'] ?? 0) }}</h3>
-                                    <p class="text-body-secondary small mb-0">Tổng hợp hồ sơ tư vấn trong kỳ</p>
+                                    <p class="text-muted small mb-0">Tổng hợp hồ sơ tư vấn trong kỳ</p>
                                 </div>
                             </div>
                         </div>
@@ -184,9 +184,9 @@
                                     <i class="fa-solid fa-check-circle"></i>
                                 </div>
                                 <div>
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Đã hoàn thành</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Đã hoàn thành</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ number_format($consultingSummary['completed'] ?? 0) }}</h3>
-                                    <p class="text-body-secondary small mb-0">Đã kết thúc quy trình công việc</p>
+                                    <p class="text-muted small mb-0">Đã kết thúc quy trình công việc</p>
                                 </div>
                             </div>
                         </div>
@@ -199,9 +199,9 @@
                                     <i class="fa-solid fa-hourglass-half"></i>
                                 </div>
                                 <div>
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Đang xử lý</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Đang xử lý</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ number_format($consultingSummary['processing'] ?? 0) }}</h3>
-                                    <p class="text-body-secondary small mb-0">Cần tiếp tục giám sát tiến độ</p>
+                                    <p class="text-muted small mb-0">Cần tiếp tục giám sát tiến độ</p>
                                 </div>
                             </div>
                         </div>
@@ -214,10 +214,10 @@
                                     <i class="fa-solid fa-arrow-trend-up"></i>
                                 </div>
                                 <div class="w-100">
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Tỷ lệ hoàn thành</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Tỷ lệ hoàn thành</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ $consultingRate }}%</h3>
                                     @if($canSeeFinance)
-                                        <p class="text-body-secondary small mb-0">Giá trị hồ sơ: {{ number_format($consultingSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
+                                        <p class="text-muted small mb-0">Giá trị hồ sơ: {{ number_format($consultingSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
                                     @endif
                                     <div class="progress mt-2" style="height: 6px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
                                         <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $consultingRate }}%; border-radius: 99px;"></div>
@@ -232,7 +232,7 @@
                     <div class="card-header border-bottom py-3 px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2 bg-body-secondary">
                         <div>
                             <h6 class="mb-0 fw-bold">Chi tiết tiến độ hồ sơ tư vấn</h6>
-                            <p class="text-body-secondary small mb-0">Thống kê theo từng loại hợp đồng</p>
+                            <p class="text-muted small mb-0">Thống kê theo từng loại hợp đồng</p>
                         </div>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle d-inline-flex align-items-center">{{ number_format($consultingSummary['total'] ?? 0) }} hồ sơ</span>
                     </div>
@@ -260,12 +260,12 @@
                                         <div class="progress mx-auto mb-1" style="height: 5px; width: 90px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
                                             <div class="progress-bar bg-success" role="progressbar" style="width: {{ $pct }}%; border-radius: 99px;"></div>
                                         </div>
-                                        <small class="text-body-secondary fw-semibold">{{ $pct }}%</small>
+                                        <small class="text-muted fw-semibold">{{ $pct }}%</small>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-body-secondary py-4">Chưa có dữ liệu trong kỳ lọc hiện tại</td>
+                                    <td colspan="5" class="text-center text-muted py-4">Chưa có dữ liệu trong kỳ lọc hiện tại</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -281,7 +281,7 @@
             <div class="card-header border-0 bg-warning-subtle py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
                     <h5 class="mb-0 fw-bold text-body">Bộ phận Kỹ thuật</h5>
-                    <p class="text-body-secondary small mb-0">Tổng hợp khối lượng được giao và chất lượng hoàn tất</p>
+                    <p class="text-muted small mb-0">Tổng hợp khối lượng được giao và chất lượng hoàn tất</p>
                 </div>
                 <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fs-7 d-inline-flex align-items-center">Năm {{ $year }}</span>
             </div>
@@ -295,9 +295,9 @@
                                     <i class="fa-solid fa-book"></i>
                                 </div>
                                 <div>
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Hồ sơ được giao</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Hồ sơ được giao</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ number_format($technicalSummary['total'] ?? 0) }}</h3>
-                                    <p class="text-body-secondary small mb-0">Tổng số đầu việc kỹ thuật đã tiếp nhận</p>
+                                    <p class="text-muted small mb-0">Tổng số đầu việc kỹ thuật đã tiếp nhận</p>
                                 </div>
                             </div>
                         </div>
@@ -310,9 +310,9 @@
                                     <i class="fa-solid fa-certificate"></i>
                                 </div>
                                 <div>
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Đã hoàn thành</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Đã hoàn thành</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ number_format($technicalSummary['completed'] ?? 0) }}</h3>
-                                    <p class="text-body-secondary small mb-0">Đã đạt trạng thái hoàn tất quy trình</p>
+                                    <p class="text-muted small mb-0">Đã đạt trạng thái hoàn tất quy trình</p>
                                 </div>
                             </div>
                         </div>
@@ -325,9 +325,9 @@
                                     <i class="fa-solid fa-screwdriver-wrench"></i>
                                 </div>
                                 <div>
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Đang xử lý</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Đang xử lý</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ number_format($technicalSummary['processing'] ?? 0) }}</h3>
-                                    <p class="text-body-secondary small mb-0">Đang theo dõi để đảm bảo tiến độ</p>
+                                    <p class="text-muted small mb-0">Đang theo dõi để đảm bảo tiến độ</p>
                                 </div>
                             </div>
                         </div>
@@ -340,10 +340,10 @@
                                     <i class="fa-solid fa-chart-column"></i>
                                 </div>
                                 <div class="w-100">
-                                    <div class="text-body-secondary small fw-bold text-uppercase">Tỷ lệ hoàn thành</div>
+                                    <div class="text-muted small fw-bold text-uppercase">Tỷ lệ hoàn thành</div>
                                     <h3 class="mb-1 fw-bold text-body">{{ $technicalRate }}%</h3>
                                     @if($canSeeFinance)
-                                        <p class="text-body-secondary small mb-0">Giá trị hồ sơ: {{ number_format($technicalSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
+                                        <p class="text-muted small mb-0">Giá trị hồ sơ: {{ number_format($technicalSummary['value'] ?? 0, 0, ',', '.') }} đ</p>
                                     @endif
                                     <div class="progress mt-2" style="height: 6px; background-color: var(--bs-secondary-bg, #e2e8f0); border-radius: 99px; overflow: hidden;">
                                         <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $technicalRate }}%; border-radius: 99px;"></div>

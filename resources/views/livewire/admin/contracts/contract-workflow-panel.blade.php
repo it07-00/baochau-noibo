@@ -23,7 +23,7 @@
                                 </button>
                             @else
                                 <div class="rounded-circle d-flex align-items-center justify-content-center mb-2
-                                    {{ in_array($key, $completedSteps) ? 'bg-success text-white' : 'bg-body-tertiary text-body-secondary border border-secondary-subtle' }} wh-48 fs-6"
+                                    {{ in_array($key, $completedSteps) ? 'bg-success text-white' : 'bg-body-tertiary text-muted border border-secondary-subtle' }} wh-48 fs-6"
                                     title="{{ $steps[$key] }}{{ in_array($key, $completedSteps) ? ' ✓' : '' }}">
                                     @if (in_array($key, $completedSteps))
                                         <i class="fa-solid fa-check fs-5"></i>
@@ -32,7 +32,7 @@
                                     @endif
                                 </div>
                             @endif
-                            <span class="text-center {{ in_array($key, $completedSteps) ? 'text-success' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? 'text-primary' : 'text-body-secondary') }}"
+                            <span class="text-center {{ in_array($key, $completedSteps) ? 'text-success' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? 'text-primary' : 'text-muted') }}"
                                 style="font-size: 0.7rem; line-height: 1.2; width: 80px; word-break: break-word; font-weight: 600;">
                                 {{ $steps[$key] }}
                             </span>
@@ -60,7 +60,7 @@
                             </button>
                         @else
                             <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0
-                                {{ in_array($key, $completedSteps) ? 'bg-success text-white' : 'bg-body-tertiary text-body-secondary border border-secondary-subtle' }} wh-44 fs-90">
+                                {{ in_array($key, $completedSteps) ? 'bg-success text-white' : 'bg-body-tertiary text-muted border border-secondary-subtle' }} wh-44 fs-90">
                                 @if (in_array($key, $completedSteps))
                                     <i class="fa-solid fa-check"></i>
                                 @else
@@ -76,7 +76,7 @@
                     {{-- Cột phải: tên bước + badge trạng thái --}}
                     <div class="pb-3 pt-2 flex-grow-1">
                         <div class="d-flex align-items-center flex-wrap gap-1">
-                            <span class="{{ in_array($key, $completedSteps) ? 'text-success' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? 'text-primary' : 'text-body-secondary') }}"
+                            <span class="{{ in_array($key, $completedSteps) ? 'text-success' : (($canEdit && ($i === 0 || in_array($stepKeys[$i - 1], $completedSteps))) ? 'text-primary' : 'text-muted') }}"
                                 style="font-size: 0.875rem; font-weight: 600;">
                                 {{ $steps[$key] }}
                             </span>
@@ -93,8 +93,8 @@
 
         {{-- Thông báo nếu không có quyền edit --}}
         @if (!$canEdit)
-            <div class="alert alert-secondary bg-body-tertiary border text-body-secondary d-flex align-items-start gap-2 py-2 px-3 mb-3 fs-85">
-                <i class="fa-solid fa-circle-info text-body-secondary mt-1 flex-shrink-0"></i>
+            <div class="alert alert-secondary bg-body-tertiary border text-muted d-flex align-items-start gap-2 py-2 px-3 mb-3 fs-85">
+                <i class="fa-solid fa-circle-info text-muted mt-1 flex-shrink-0"></i>
                 <span>Chỉ nhân viên tư vấn và kỹ thuật được cập nhật tiến độ.</span>
             </div>
         @endif
@@ -114,12 +114,12 @@
                         <label class="form-label fw-semibold mb-1">
                             File đính kèm
                             @if ($activeStep !== 'finished')
-                                <small class="text-body-secondary fw-normal">(Tùy chọn)</small>
+                                <small class="text-muted fw-normal">(Tùy chọn)</small>
                             @else
                                 <span class="text-danger">*</span>
                             @endif
                         </label>
-                        <small class="d-block text-body-secondary mb-2 fs-78">PDF, Word, Excel, JPG, PNG — tối đa 200MB/file</small>
+                        <small class="d-block text-muted mb-2 fs-78">PDF, Word, Excel, JPG, PNG — tối đa 200MB/file</small>
                         <input wire:model="uploadFiles" type="file" class="form-control form-control-sm" multiple
                             accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                         @error('uploadFiles')
@@ -128,16 +128,16 @@
                         @error('uploadFiles.*')
                             <div class="text-danger mt-1 fs-82"><i class="fa-solid fa-triangle-exclamation me-1"></i>{{ $message }}</div>
                         @enderror
-                        <div wire:loading wire:target="uploadFiles" class="text-body-secondary mt-1 fs-82">
+                        <div wire:loading wire:target="uploadFiles" class="text-muted mt-1 fs-82">
                             <div class="spinner-border spinner-border-sm me-1"></div> Đang tải lên...
                         </div>
                         @if (!empty($uploadFiles))
                             <div class="mt-2">
                                 @foreach ($uploadFiles as $f)
-                                    <div class="d-flex align-items-center gap-1 text-body-secondary fs-78">
+                                    <div class="d-flex align-items-center gap-1 text-muted fs-78">
                                         <i class="fa-solid fa-file text-primary flex-shrink-0"></i>
                                         <span class="text-truncate">{{ $f->getClientOriginalName() }}</span>
-                                        <span class="text-body-secondary flex-shrink-0">({{ round($f->getSize() / 1024) }} KB)</span>
+                                        <span class="text-muted flex-shrink-0">({{ round($f->getSize() / 1024) }} KB)</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -146,7 +146,7 @@
 
                     {{-- Comment --}}
                     <div class="mb-3">
-                        <label class="form-label fw-semibold mb-1">Ghi chú <small class="text-body-secondary fw-normal">(tùy chọn)</small></label>
+                        <label class="form-label fw-semibold mb-1">Ghi chú <small class="text-muted fw-normal">(tùy chọn)</small></label>
                         <textarea wire:model="comment" class="form-control form-control-sm" rows="2"
                             placeholder="Nhập ghi chú cho bước này..."></textarea>
                     </div>
@@ -170,7 +170,7 @@
         {{-- Danh sách file đã đính kèm --}}
         @if ($filesByStep->count() > 0)
             <div class="mt-4">
-                <h6 class="fw-semibold text-body-secondary mb-3 fs-85">
+                <h6 class="fw-semibold text-muted mb-3 fs-85">
                     <i class="fa-solid fa-paperclip me-1"></i> File đã đính kèm theo bước
                 </h6>
                 @foreach ($stepKeys as $key)
@@ -199,7 +199,7 @@
                                             </button>
                                         @endif
                                     </div>
-                                    <div class="text-body-secondary ps-4 fs-75">
+                                    <div class="text-muted ps-4 fs-75">
                                         {{ $f->uploader?->name }} &mdash; {{ $f->created_at?->format('d/m/Y H:i') }}
                                     </div>
                                 </div>

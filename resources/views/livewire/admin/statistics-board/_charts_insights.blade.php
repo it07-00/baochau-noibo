@@ -35,7 +35,7 @@
             <div class="card-header border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div class="min-w-0">
                     <h6 class="mb-0 fw-bold">Cơ cấu hợp đồng theo dịch vụ</h6>
-                    <small class="text-body-secondary">Phân bổ theo 6 nhóm hợp đồng của công ty</small>
+                    <small class="text-muted">Phân bổ theo 6 nhóm hợp đồng của công ty</small>
                 </div>
                 <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle px-3 py-2 rounded-pill d-inline-flex align-items-center flex-shrink-0">Năm {{ $year }}</span>
             </div>

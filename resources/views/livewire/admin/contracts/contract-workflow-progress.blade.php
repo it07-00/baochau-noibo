@@ -1,6 +1,6 @@
 <div class="px-3 px-md-4 py-3 border-top bg-body-tertiary">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <span class="fw-bold text-body-secondary">
+        <span class="fw-bold text-muted">
             <i class="fa-solid fa-sitemap me-1 text-primary"></i> Tiến độ xử lý
         </span>
         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle fs-75 text-nowrap">
@@ -14,14 +14,14 @@
             <div class="d-flex align-items-center flex-grow-1">
                 <div class="d-flex flex-column align-items-center flex-shrink-0 w-62px">
                     <div class="rounded-circle d-flex align-items-center justify-content-center mb-1
-                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-body-tertiary text-body-secondary border border-secondary-subtle') }} wh-34 fs-85">
+                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-body-tertiary text-muted border border-secondary-subtle') }} wh-34 fs-85">
                         @if (in_array($key, $completedSteps))
                             <i class="fa-solid fa-check"></i>
                         @else
                             <span class="fw-bold">{{ $i + 1 }}</span>
                         @endif
                     </div>
-                    <span class="text-center {{ in_array($key, $completedSteps) ? 'text-success' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'text-primary' : 'text-body-secondary') }}"
+                    <span class="text-center {{ in_array($key, $completedSteps) ? 'text-success' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'text-primary' : 'text-muted') }}"
                         style="font-size: 0.62rem; line-height: 1.2; width: 62px; word-break: break-word; font-weight: 600;">
                         {{ $steps[$key] }}
                     </span>
@@ -40,7 +40,7 @@
             <div class="d-flex align-items-stretch gap-3">
                 <div class="d-flex flex-column align-items-center flex-shrink-0 w-36px">
                     <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0
-                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-body-tertiary text-body-secondary border border-secondary-subtle') }} wh-36 fs-82">
+                        {{ in_array($key, $completedSteps) ? 'bg-success text-white' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'bg-primary text-white' : 'bg-body-tertiary text-muted border border-secondary-subtle') }} wh-36 fs-82">
                         @if (in_array($key, $completedSteps))
                             <i class="fa-solid fa-check"></i>
                         @else
@@ -54,7 +54,7 @@
                 </div>
                 <div class="pb-3 pt-1 flex-grow-1">
                     <div class="d-flex align-items-center flex-wrap gap-1">
-                        <span class="{{ in_array($key, $completedSteps) ? 'text-success' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'text-primary' : 'text-body-secondary') }}"
+                        <span class="{{ in_array($key, $completedSteps) ? 'text-success' : (($i === 0 || in_array($stepKeys[$i - 1], $completedSteps)) ? 'text-primary' : 'text-muted') }}"
                             style="font-size: 0.85rem; font-weight: 600;">
                             {{ $steps[$key] }}
                         </span>
@@ -72,7 +72,7 @@
     {{-- File đính kèm theo bước --}}
     @if ($filesByStep->count() > 0)
         <div class="mt-3 pt-3 border-top">
-            <div class="fw-bold text-body-secondary mb-2 fs-85">
+            <div class="fw-bold text-muted mb-2 fs-85">
                 <i class="fa-solid fa-paperclip me-1"></i> File đính kèm theo bước
             </div>
             @foreach ($stepKeys as $key)
@@ -90,7 +90,7 @@
                                         {{ $f->original_name ?: 'Xem tệp đính kèm' }}
                                     </a>
                                 </div>
-                                <div class="text-body-secondary ps-4 fs-75">
+                                <div class="text-muted ps-4 fs-75">
                                     {{ $f->uploader?->name }} &mdash; {{ $f->created_at?->format('d/m/Y H:i') }}
                                 </div>
                             </div>
