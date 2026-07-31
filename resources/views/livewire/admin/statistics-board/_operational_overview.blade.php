@@ -8,7 +8,7 @@
                         <h5 class="fw-bold text-body mb-1">Tổng quan vận hành</h5>
                         <div class="text-muted small">Theo dõi lịch công tác và báo cáo nội bộ trong ngày.</div>
                     </div>
-                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 d-inline-flex align-items-center">Bảo Châu Office</span>
+                    <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle rounded-pill px-3 py-2 fs-7 d-inline-flex align-items-center">Bảo Châu Office</span>
                 </div>
 
                 <!-- KPI Boxes -->

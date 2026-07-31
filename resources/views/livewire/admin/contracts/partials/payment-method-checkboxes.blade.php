@@ -1,4 +1,4 @@
-<div class="border rounded-2 p-2 bg-light">
+<div class="border rounded-2 p-2 bg-body-tertiary">
     <div class="row g-2">
         @foreach ($payment_methods as $index => $pm)
             <div class="col-12 col-lg-6">

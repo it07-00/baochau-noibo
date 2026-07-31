@@ -152,7 +152,7 @@
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
-                                <thead class="text-nowrap table-light">
+                        <thead class="text-nowrap bg-body-secondary text-body border-bottom">
                                     <tr>
                                         <th class="ps-3">Người dùng</th>
                                         <th>Hành động</th>
@@ -242,7 +242,7 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="text-nowrap table-light">
+                        <thead class="text-nowrap bg-body-secondary text-body border-bottom">
                             <tr>
                                 <th class="ps-3">Thời gian</th>
                                 <th>Người dùng</th>

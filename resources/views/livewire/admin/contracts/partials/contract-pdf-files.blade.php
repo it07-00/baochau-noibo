@@ -22,7 +22,7 @@
         <div class="d-flex flex-column gap-1 mb-3">
             <p class="small fw-semibold text-secondary mb-1">Sắp lưu ({{ count($newContractFiles) }} file):</p>
             @foreach($newContractFiles as $file)
-                <div class="d-flex align-items-center gap-2 border border-primary rounded px-3 py-1 bg-light">
+                <div class="d-flex align-items-center gap-2 border border-primary rounded px-3 py-1 bg-body-tertiary">
                     <i class="fa-solid fa-file-pdf text-primary"></i>
                     <span class="small text-truncate flex-grow-1">{{ $file->getClientOriginalName() }}</span>
                 </div>
