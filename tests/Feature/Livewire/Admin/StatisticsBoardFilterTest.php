@@ -4,6 +4,8 @@ namespace Tests\Feature\Livewire\Admin;
 
 use App\Enums\Role as RoleEnum;
 use App\Livewire\Admin\StatisticsBoard;
+use App\Models\ContractAssignment;
+use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\Customer;
 use App\Models\Department;
@@ -12,6 +14,7 @@ use App\Models\User;
 use App\Services\StatisticsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -80,6 +83,52 @@ class StatisticsBoardFilterTest extends TestCase
         $component->year = (int) now()->year;
 
         $this->assertSame(12, $component->maximumVisibleMonth());
+    }
+
+    public function test_consultant_progress_counts_assigned_contracts_owned_by_sales_staff(): void
+    {
+        $department = Department::create([
+            'name' => 'Tư vấn',
+            'slug' => 'tu-van',
+            'is_active' => true,
+        ]);
+        $salesStaff = User::factory()->create([
+            'department_id' => $department->id,
+            'is_active' => true,
+        ]);
+        $consultant = User::factory()->create([
+            'department_id' => $department->id,
+            'is_active' => true,
+        ]);
+        $consultant->assignRole(Role::findByName(RoleEnum::TU_VAN->value));
+
+        $contract = ContractTechnical::create([
+            'customer_id' => Customer::create(['name' => 'Khách hàng tư vấn dashboard'])->id,
+            'handler_id' => Handler::create(['name' => 'Nhà thầu tư vấn dashboard'])->id,
+            'staff_id' => $salesStaff->id,
+            'department_id' => $department->id,
+            'value' => 100_000_000,
+            'signed_at' => now()->startOfYear()->addMonth(),
+        ]);
+
+        ContractAssignment::create([
+            'assignable_type' => ContractTechnical::class,
+            'assignable_id' => $contract->id,
+            'user_id' => $consultant->id,
+            'assigned_by' => $salesStaff->id,
+        ]);
+
+        $this->actingAs($consultant);
+
+        Livewire::test(StatisticsBoard::class)
+            ->assertSet('filter_staff', (string) $consultant->id)
+            ->assertViewHas('consultingSummary', fn (array $summary) => $summary['total'] === 1
+                && $summary['processing'] === 1)
+            ->assertViewHas('consultingStats', fn ($stats) => $stats->contains(
+                fn (array $row) => $row['label'] === 'Ứng phó sự cố'
+                    && $row['count'] === 1
+                    && $row['processing'] === 1
+            ));
     }
 
     private function createDashboardFixtures(): User

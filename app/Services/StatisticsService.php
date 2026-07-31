@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\WorkSchedule;
 use App\Support\ContractRenewalRadar;
 use App\Support\DailyReportVisibility;
+use App\Support\DataScope;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -123,7 +124,7 @@ class StatisticsService
         foreach ($contractTypes as $label => $model) {
             $dateColumn = $getDateColumn();
 
-            $yearOrDateQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $yearOrDateQuery = $model::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyContractDateFilter($yearOrDateQuery, $selectedMonth, $dateColumn);
             $row = $yearOrDateQuery
                 ->selectRaw('COUNT(*) as cnt, COALESCE(SUM(value),0) as val')
@@ -135,7 +136,7 @@ class StatisticsService
             ];
 
             if ($selectedMonth !== null) {
-                $kpiQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+                $kpiQuery = $model::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
                 $applyContractDateFilter($kpiQuery, $selectedMonth, $dateColumn);
                 $kpiRow = $kpiQuery->selectRaw('COUNT(*) as cnt, COALESCE(SUM(value),0) as val')->first();
                 $totalContracts += (int) ($kpiRow->cnt ?? 0);
@@ -149,7 +150,7 @@ class StatisticsService
         // ── Doanh số ghi nhận từ cột doanh số (revenue) trong hợp đồng ──────
         $totalSales = 0;
         foreach ($contractTypes as $modelClass) {
-            $modelQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $modelQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyRevenueDateFilter($modelQuery, $selectedMonth);
             $totalSales += (float) $modelQuery->sum('revenue');
         }
@@ -162,7 +163,7 @@ class StatisticsService
             $dateColumn = $getDateColumn();
 
             // Số lượng HĐ và giá trị: theo ngày ký (signed_at)
-            $monthlyQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $monthlyQuery = $model::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyContractDateFilter($monthlyQuery, $selectedMonth, $dateColumn);
             $rows = $monthlyQuery
                 ->selectRaw("MONTH({$dateColumn}) as m, COUNT(*) as cnt, SUM(value) as val")
@@ -175,7 +176,7 @@ class StatisticsService
             }
 
             // Doanh số: theo ngày xuất hóa đơn COALESCE(submitted_at, signed_at)
-            $revQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $revQuery = $model::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyRevenueDateFilter($revQuery, $selectedMonth);
             $revQuery = $revQuery
                 ->selectRaw('MONTH(COALESCE(submitted_at, signed_at)) as m, SUM(revenue) as rev')
@@ -389,14 +390,14 @@ class StatisticsService
             $dateColumn = $getDateColumn();
 
             // All contract tables have these columns. Querying directly avoids dynamic schema checking!
-            $missingBaoChauQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+            $missingBaoChauQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
                 ->where(function ($query) {
                     $query->whereNull('shd_bc')->orWhere('shd_bc', '');
                 });
             $applyContractDateFilter($missingBaoChauQuery, $selectedMonth, $dateColumn);
             $needsAction['missing_bao_chau_invoice'] += (int) $missingBaoChauQuery->count();
 
-            $missingSubcontractorQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+            $missingSubcontractorQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
                 ->whereNotNull('handler_id')
                 ->where('handler_id', '!=', 0)
                 ->where(function ($query) {
@@ -405,7 +406,7 @@ class StatisticsService
             $applyContractDateFilter($missingSubcontractorQuery, $selectedMonth, $dateColumn);
             $needsAction['missing_subcontractor_invoice'] += (int) $missingSubcontractorQuery->count();
 
-            $unpaidSubcontractorQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+            $unpaidSubcontractorQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
                 ->where('ncc_payment', '>', 0)
                 ->where(function ($query) {
                     $query->whereNull('ncc_payment_status')
@@ -415,7 +416,7 @@ class StatisticsService
             $needsAction['unpaid_subcontractor_payment'] += (int) $unpaidSubcontractorQuery->count();
         }
 
-        $pendingQuotationQuery = Quotation::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+        $pendingQuotationQuery = Quotation::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
             ->whereIn('status', [
                 QuotationStatus::DANG_THEO_DOI->value,
                 QuotationStatus::HEN_BAO_GIA->value,
@@ -442,7 +443,7 @@ class StatisticsService
             $completionDeadlineTo = now()->addDays(15)->endOfDay();
 
             foreach (array_values($contractTypes) as $modelClass) {
-                $incompleteQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+                $incompleteQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
                     ->whereHas('assignments', fn ($query) => $query
                         ->where('user_id', $currentUser->id)
                         ->whereNotNull('deadline')
@@ -463,7 +464,7 @@ class StatisticsService
                 && ! $currentUser->hasAnyRole([RoleEnum::GIAM_DOC->value, RoleEnum::TP_KINH_DOANH->value]);
 
             foreach (array_values($contractTypes) as $modelClass) {
-                $renewalQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+                $renewalQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
                     ->whereBetween('signed_at', [$renewalReminderFrom, $renewalReminderTo])
                     ->where(function ($query) {
                         $query->whereNull('is_renewal')->orWhere('is_renewal', false);
@@ -504,7 +505,7 @@ class StatisticsService
 
         $quotedByService = Quotation::whereYear('date', $year)
             ->whereMonth('date', $insightMonth)
-            ->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+            ->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
             ->selectRaw("COALESCE(NULLIF(TRIM(service), ''), 'Khác') as label, COUNT(*) as cnt")
             ->groupBy('label')
             ->pluck('cnt', 'label')
@@ -512,7 +513,7 @@ class StatisticsService
 
         $quotedByProvince = Quotation::whereYear('date', $year)
             ->whereMonth('date', $insightMonth)
-            ->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))
+            ->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId))
             ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt")
             ->groupBy('label')
             ->pluck('cnt', 'label')
@@ -525,7 +526,7 @@ class StatisticsService
         foreach (array_values($contractTypes) as $modelClass) {
             $dateColumn = $getDateColumn();
 
-            $serviceQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $serviceQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyContractDateFilter($serviceQuery, $insightMonth, $dateColumn);
             $serviceRows = $serviceQuery
                 ->selectRaw("COALESCE(NULLIF(TRIM(loai_dich_vu), ''), 'Khác') as label, COUNT(*) as cnt")
@@ -537,7 +538,7 @@ class StatisticsService
                 $signedContractByService[$label] = ($signedContractByService[$label] ?? 0) + (int) $row->cnt;
             }
 
-            $provinceQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $provinceQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyContractDateFilter($provinceQuery, $insightMonth, $dateColumn);
             $provinceRows = $provinceQuery
                 ->selectRaw("COALESCE(NULLIF(TRIM(province), ''), 'Không rõ') as label, COUNT(*) as cnt, COALESCE(SUM(revenue), 0) as rev")
@@ -587,6 +588,20 @@ class StatisticsService
             'value' => 0,
         ];
         if ($canSeeConsulting) {
+            $applyConsultingScope = function ($query) use ($currentUser, $filterStaffId) {
+                if (DataScope::isRestrictedConsultant($currentUser)) {
+                    return $query->whereHas(
+                        'assignments',
+                        fn ($assignmentQuery) => $assignmentQuery->where('user_id', $currentUser->id)
+                    );
+                }
+
+                return $query->when(
+                    $filterStaffId,
+                    fn ($staffQuery) => $staffQuery->where('staff_id', $filterStaffId)
+                );
+            };
+
             $yearsList = range(now()->year, now()->year - 4);
             if ($chartMode === 'quarter') {
                 foreach ($contractTypes as $label => $model) {
@@ -596,7 +611,7 @@ class StatisticsService
                     for ($q = 1; $q <= 4; $q++) {
                         $startMonth = ($q - 1) * 3 + 1;
                         $endMonth = $startMonth + 2;
-                        $quarterQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+                        $quarterQuery = $applyConsultingScope($model::query());
                         $applyContractDateFilter($quarterQuery, null, $dateColumn);
                         $quarterQuery->whereMonth($dateColumn, '>=', $startMonth)
                             ->whereMonth($dateColumn, '<=', $endMonth);
@@ -611,12 +626,13 @@ class StatisticsService
                     $yData = [];
                     foreach (array_reverse($yearsList) as $y) {
                         if ($contractDateFromParsed !== null || $contractDateToParsed !== null) {
-                            $yearModeQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+                            $yearModeQuery = $applyConsultingScope($model::query());
                             $applyContractDateFilter($yearModeQuery, null, $dateColumn);
                             $yearModeQuery->whereYear($dateColumn, $y);
                             $yData[] = (int) $yearModeQuery->count();
                         } else {
-                            $yData[] = (int) $model::whereYear($dateColumn, $y)->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId))->count();
+                            $yearModeQuery = $applyConsultingScope($model::whereYear($dateColumn, $y));
+                            $yData[] = (int) $yearModeQuery->count();
                         }
                     }
                     $consultingChartData[$label] = $yData;
@@ -625,10 +641,7 @@ class StatisticsService
 
             foreach ($contractTypes as $label => $model) {
                 $dateColumn = $getDateColumn();
-                $statsQuery = $model::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
-                if ($currentUser->hasRole(RoleEnum::TU_VAN->value)) {
-                    $statsQuery->whereHas('assignments', fn ($query) => $query->where('user_id', $currentUser->id));
-                }
+                $statsQuery = $applyConsultingScope($model::query());
                 $applyContractDateFilter($statsQuery, $selectedMonth, $dateColumn);
                 $rows = $statsQuery->get(['id', 'value', 'workflow_status']);
 
@@ -670,7 +683,7 @@ class StatisticsService
 
                 $assignments = ContractAssignment::where('assignable_type', $modelClass)
                     ->when($currentUser->hasRole(RoleEnum::KY_THUAT->value), fn ($query) => $query->where('user_id', $currentUser->id))
-                    ->whereHas('assignable', fn ($q) => $applyContractDateFilter($q, null, $dateColumn)->when($filterStaffId, fn($innerQ) => $innerQ->where('staff_id', $filterStaffId)))
+                    ->whereHas('assignable', fn ($q) => $applyContractDateFilter($q, null, $dateColumn)->when($filterStaffId, fn ($innerQ) => $innerQ->where('staff_id', $filterStaffId)))
                     ->with('assignable')
                     ->get();
 
@@ -794,7 +807,7 @@ class StatisticsService
             $sourceField = 'info_source';
             $dateColumn = $getDateColumn();
 
-            $modelQuery = $modelClass::query()->when($filterStaffId, fn($q) => $q->where('staff_id', $filterStaffId));
+            $modelQuery = $modelClass::query()->when($filterStaffId, fn ($q) => $q->where('staff_id', $filterStaffId));
             $applyContractDateFilter($modelQuery, $selectedMonth, $dateColumn);
 
             $rows = $modelQuery
