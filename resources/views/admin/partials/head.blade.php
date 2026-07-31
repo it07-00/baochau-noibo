@@ -12,53 +12,6 @@
             document.documentElement.setAttribute('data-bs-theme', resolvedTheme);
             document.documentElement.setAttribute('data-app-sidebar', 'full');
             document.documentElement.setAttribute('data-color-theme', 'blue');
-
-            const desktopDensity = window.matchMedia('(min-width: 992px)');
-            const resetDensity = () => {
-                document.documentElement.style.zoom = '100%';
-                document.documentElement.style.removeProperty('width');
-                document.documentElement.style.removeProperty('min-height');
-                document.querySelector('.app-menubar')?.style.removeProperty('height');
-                document.querySelector('.app-wrapper')?.style.removeProperty('min-height');
-            };
-            const applyDensity = () => {
-                if (!desktopDensity.matches) {
-                    resetDensity();
-                    return;
-                }
-
-                document.documentElement.style.zoom = '80%';
-                document.documentElement.style.removeProperty('width');
-                document.documentElement.style.removeProperty('min-height');
-                document.querySelector('.app-menubar')?.style.setProperty('height', 'calc(125vh - 1px)');
-                document.querySelector('.app-wrapper')?.style.setProperty('min-height', 'calc(125vh - var(--app-header-height) - var(--footer-height, 50px) - 1px)');
-            };
-
-            const syncModalViewport = (modal = document.querySelector('.modal.show')) => {
-                const compactHeight = desktopDensity.matches ? '125vh' : '100vh';
-                const compactWidth = desktopDensity.matches ? '125vw' : '100vw';
-
-                modal?.style.setProperty('height', compactHeight);
-                modal?.style.setProperty('width', compactWidth);
-                document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
-                    backdrop.style.setProperty('height', compactHeight);
-                    backdrop.style.setProperty('min-height', compactHeight);
-                    backdrop.style.setProperty('width', compactWidth);
-                    backdrop.style.setProperty('min-width', compactWidth);
-                });
-            };
-
-            document.addEventListener('DOMContentLoaded', applyDensity);
-            document.addEventListener('show.bs.modal', (event) => {
-                window.requestAnimationFrame(() => syncModalViewport(event.target));
-            });
-            document.addEventListener('shown.bs.modal', (event) => syncModalViewport(event.target));
-            desktopDensity.addEventListener('change', () => {
-                applyDensity();
-                syncModalViewport();
-            });
-            window.addEventListener('beforeprint', resetDensity);
-            window.addEventListener('afterprint', applyDensity);
         })();
     </script>
     <meta charset="UTF-8">
