@@ -298,6 +298,16 @@ class ContractWorkflowPanel extends Component
         // Lấy danh sách bước workflow phù hợp với role
         $stepsData = ContractWorkflowStep::getStepsByRole($userRole);
 
+        // Mặc định tự động mở khung xác nhận cho bước chưa hoàn thành đầu tiên
+        if ($this->activeStep === null && $this->canUserEdit()) {
+            foreach ($stepsData['stepKeys'] as $key) {
+                if (! in_array($key, $completedSteps, true)) {
+                    $this->activeStep = $key;
+                    break;
+                }
+            }
+        }
+
         return view('livewire.admin.contracts.contract-workflow-panel', [
             'steps' => $stepsData['steps'],
             'stepKeys' => $stepsData['stepKeys'],
