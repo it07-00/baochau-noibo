@@ -10,6 +10,7 @@ use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Livewire\Concerns\HasContractFilters;
+use App\Livewire\Concerns\HasMultiServiceSelection;
 use App\Models\ContractAssignment;
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractProgressNote;
@@ -32,7 +33,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContractWasteManager extends Component
 {
-    use CleanMoneyInput, ContractValidation, HasContractFilters, WithFileUploads, WithPagination;
+    use CleanMoneyInput, ContractValidation, HasContractFilters, HasMultiServiceSelection, WithFileUploads, WithPagination;
 
     private const ALLOWED_STATUSES = [
         'Đã trình ký nhà thầu phụ',
@@ -199,6 +200,7 @@ class ContractWasteManager extends Component
                 $this->formData['revenue'] = $quotation->original_value;
                 $this->formData['payment_percentage'] = 100;
                 $this->formData['service_content'] = $quotation->service ?? '';
+                $this->populateServiceFields($quotation->service ?? null);
                 $this->formData['staff_id'] = $quotation->staff_id;
                 $this->formData['billing_address'] = $quotation->address;
                 $this->formData['province'] = $quotation->province ?? '';
@@ -253,6 +255,7 @@ class ContractWasteManager extends Component
     public function create()
     {
         $this->resetForm();
+        $this->populateServiceFields(null);
         $this->isEditing = false;
         $this->isDuplicating = false;
         $this->showModal = true;
@@ -279,6 +282,7 @@ class ContractWasteManager extends Component
         $this->captureFinancialBase();
         $paymentMethod = trim((string) ($this->formData['payment_method'] ?? ''));
         $this->paymentMethods = $paymentMethod === '' ? [] : preg_split('/\s*\|\s*/', $paymentMethod);
+        $this->populateServiceFields($doc->service_content);
 
         $this->isEditing = true;
         $this->showModal = true;
@@ -304,6 +308,7 @@ class ContractWasteManager extends Component
         $this->formData['shd_bc'] = '';
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
         $this->normalizeContractEnumFields();
+        $this->populateServiceFields($doc->service_content);
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedDoc = null;
@@ -334,6 +339,7 @@ class ContractWasteManager extends Component
                 : $user->id;
         }
 
+        $this->prepareServiceData('service_content');
         $this->formData['payment_method'] = implode(' | ', $this->paymentMethods);
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment'], true);
         $this->ensureDepartmentId();
@@ -502,6 +508,7 @@ class ContractWasteManager extends Component
             'is_renewal' => false,
             'parent_contract_id' => '',
         ];
+        $this->populateServiceFields(null);
         $this->selectedDoc = null;
         $this->createAssignUserIds = [];
         $this->createAssignDeadline = null;

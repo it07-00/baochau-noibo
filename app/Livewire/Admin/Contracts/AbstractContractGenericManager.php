@@ -9,6 +9,7 @@ use App\Enums\Role;
 use App\Livewire\Concerns\CleanMoneyInput;
 use App\Livewire\Concerns\ContractValidation;
 use App\Livewire\Concerns\HasContractFilters;
+use App\Livewire\Concerns\HasMultiServiceSelection;
 use App\Models\ContractAssignment;
 use App\Models\ContractMilestoneFile;
 use App\Models\ContractProgressNote;
@@ -31,7 +32,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 abstract class AbstractContractGenericManager extends Component
 {
-    use CleanMoneyInput, ContractValidation, HasContractFilters, WithFileUploads, WithPagination;
+    use CleanMoneyInput, ContractValidation, HasContractFilters, HasMultiServiceSelection, WithFileUploads, WithPagination;
 
     private const ALLOWED_STATUSES = [
         'PTH đang kiểm tra',
@@ -206,6 +207,7 @@ abstract class AbstractContractGenericManager extends Component
                 $this->formData['revenue'] = $quotation->original_value ?? 0;
                 $this->formData['payment_percentage'] = 100;
                 $this->formData['service_content'] = $quotation->service ?? '';
+                $this->populateServiceFields($quotation->service ?? null);
                 $this->formData['staff_id'] = $quotation->staff_id ?? auth()->id();
                 $this->formData['province'] = $quotation->province ?? '';
                 $this->formData['notes'] = $quotation->notes ?? '';
@@ -265,6 +267,7 @@ abstract class AbstractContractGenericManager extends Component
     public function create(): void
     {
         $this->resetForm();
+        $this->populateServiceFields(null);
         $this->isEditing = false;
         $this->isDuplicating = false;
         $this->showModal = true;
@@ -302,6 +305,7 @@ abstract class AbstractContractGenericManager extends Component
         $this->captureFinancialBase();
         $paymentMethod = trim((string) ($this->formData['payment_method'] ?? ''));
         $this->paymentMethods = $paymentMethod === '' ? [] : preg_split('/\s*\|\s*/', $paymentMethod);
+        $this->populateServiceFields($this->selectedDoc->service_content);
         $this->isEditing = true;
         $this->showModal = true;
         $this->dispatch('openFormModal');
@@ -334,6 +338,7 @@ abstract class AbstractContractGenericManager extends Component
         }
 
         $this->formData['payment_method'] = implode(' | ', $this->paymentMethods);
+        $this->prepareServiceData('service_content');
         $this->cleanMoneyFields($this->formData, ['value', 'commission', 'revenue', 'ncc_payment'], true);
         $this->ensureDepartmentId();
         $this->normalizeContractEnumFields();
@@ -521,6 +526,7 @@ abstract class AbstractContractGenericManager extends Component
         $this->formData['shd_bc'] = '';
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at']);
         $this->normalizeContractEnumFields();
+        $this->populateServiceFields($doc->service_content);
         $this->isEditing = false;
         $this->isDuplicating = true;
         $this->selectedDoc = null;
@@ -1088,6 +1094,7 @@ abstract class AbstractContractGenericManager extends Component
             'is_renewal' => false,
             'parent_contract_id' => '',
         ];
+        $this->populateServiceFields(null);
         $this->isDuplicating = false;
         $this->selectedDoc = null;
         $this->createAssignUserIds = [];

@@ -546,7 +546,7 @@
                                             <label class="form-label fw-semibold small mb-2">Dịch vụ cung cấp</label>
                                             <div class="p-3 bg-body-tertiary border rounded-3">
                                                 <div class="row g-2">
-                                                    @foreach(App\Livewire\Admin\Quotations\QuotationManager::PRESET_SERVICES as $presetService)
+                                                    @foreach($this::PRESET_SERVICES as $presetService)
                                                         <div class="col-md-4 col-sm-6">
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="checkbox"
