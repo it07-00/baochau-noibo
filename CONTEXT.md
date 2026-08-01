@@ -165,6 +165,8 @@ Danh sách khách hàng tổng hợp số báo giá/hợp đồng từ cả sáu
 
 Tên dịch vụ lịch sử có alias và khác biệt dấu/case. `CustomerManager::canonicalizeService()` và `getServiceVariants()` đang chịu trách nhiệm tương thích dữ liệu cũ.
 
+Trong form tạo/chỉnh sửa báo giá (`QuotationManager`), trường "Dịch vụ cung cấp" cho phép tích chọn nhiều dịch vụ từ danh sách 9 dịch vụ chuẩn (Quan trắc môi trường lao động, Quan trắc môi trường, Báo cáo công tác bảo vệ môi trường, Đăng ký môi trường, Giấy phép môi trường, Ứng phó sự cố, Phân loại lao động, Kiểm kê khí nhà kính, Giảm phát thải) và/hoặc chọn mục "Tự nhập" để nhập thêm dịch vụ tùy chỉnh. Dữ liệu được tổng hợp lưu dưới dạng chuỗi `service` trong bảng `quotations` (ghép các dịch vụ bằng dấu phẩy) để duy trì tương thích 100% với báo cáo, xuất file và luồng chuyển đổi hợp đồng.
+
 Trong form tạo tài liệu báo giá, ô “Chỉ tiêu / Nội dung chi tiết” là input có danh sách gợi ý. Người dùng có thể chọn chỉ tiêu trong catalog để tự áp giá hoặc nhập tay chỉ tiêu mới rồi tự nhập đơn vị, số lượng và đơn giá. Giá trị cuối cùng luôn được lưu dưới dạng chuỗi `description` và được dùng trực tiếp khi xuất Word/PDF.
 
 ## 8. Hoa hồng và VietQR

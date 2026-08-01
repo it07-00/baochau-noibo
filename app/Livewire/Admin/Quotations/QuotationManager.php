@@ -23,6 +23,84 @@ class QuotationManager extends Component
 
     public const SOURCES = ['Sale', 'Tái ký', 'Thông tin chuyển', 'Thông tin chuyển MKT'];
 
+    public const PRESET_SERVICES = [
+        'Quan trắc môi trường lao động',
+        'Quan trắc môi trường',
+        'Báo cáo công tác bảo vệ môi trường',
+        'Đăng ký môi trường',
+        'Giấy phép môi trường',
+        'Ứng phó sự cố',
+        'Phân loại lao động',
+        'Kiểm kê khí nhà kính',
+        'Giảm phát thải',
+    ];
+
+    public array $selectedServices = [];
+
+    public bool $hasCustomService = false;
+
+    public string $customServiceText = '';
+
+    public function updatedHasCustomService($value): void
+    {
+        if (! $value) {
+            $this->customServiceText = '';
+        }
+    }
+
+    private function populateServiceFields(?string $serviceString): void
+    {
+        $this->selectedServices = [];
+        $this->hasCustomService = false;
+        $this->customServiceText = '';
+
+        if (blank($serviceString)) {
+            return;
+        }
+
+        $parts = array_filter(array_map('trim', explode(',', $serviceString)));
+
+        $remainingParts = [];
+        foreach ($parts as $part) {
+            $matchedPreset = null;
+            foreach (self::PRESET_SERVICES as $preset) {
+                if (mb_strtolower($part) === mb_strtolower($preset)) {
+                    $matchedPreset = $preset;
+                    break;
+                }
+            }
+
+            if ($matchedPreset !== null) {
+                if (! in_array($matchedPreset, $this->selectedServices, true)) {
+                    $this->selectedServices[] = $matchedPreset;
+                }
+            } else {
+                $remainingParts[] = $part;
+            }
+        }
+
+        if (! empty($remainingParts)) {
+            $this->hasCustomService = true;
+            $this->customServiceText = implode(', ', $remainingParts);
+        }
+    }
+
+    private function prepareServiceData(): void
+    {
+        $services = is_array($this->selectedServices) ? $this->selectedServices : [];
+
+        if ($this->hasCustomService && filled($this->customServiceText)) {
+            $customs = array_filter(array_map('trim', explode(',', $this->customServiceText)));
+            foreach ($customs as $custom) {
+                if (! in_array($custom, $services, true)) {
+                    $services[] = $custom;
+                }
+            }
+        }
+
+        $this->formData['service'] = implode(', ', $services);
+    }
+
     public $search = '';
 
     public $filter_staff = '';
@@ -459,6 +537,7 @@ class QuotationManager extends Component
         ])->values()->toArray();
         $this->formData['date'] = $quotation->date ? $quotation->date->format('Y-m-d') : '';
         $this->formData['expected_signing_date'] = $quotation->expected_signing_date ? $quotation->expected_signing_date->format('Y-m-d') : '';
+        $this->populateServiceFields($quotation->service);
         $this->recalculateTotals();
         $this->isEditing = true;
         $this->isDuplicating = false;
@@ -490,6 +569,7 @@ class QuotationManager extends Component
         $this->isDuplicating = true;
         $this->selectedId = null;
         unset($this->formData['id'], $this->formData['created_at'], $this->formData['updated_at'], $this->formData['deleted_at']);
+        $this->populateServiceFields($quotation->service);
         $this->recalculateTotals();
         $this->dispatch('open-quotation-modal');
     }
@@ -575,6 +655,7 @@ class QuotationManager extends Component
             }
         }
 
+        $this->prepareServiceData();
         $this->cleanMoneyFields($this->formData, $this->moneyFields, blankAsZero: true);
         $this->recalculateTotals();
 
@@ -702,6 +783,7 @@ class QuotationManager extends Component
         $this->commissionTaxRate = 0.0;
         $this->pdfFiles = [];
         $this->editingFiles = [];
+        $this->populateServiceFields(null);
     }
 
     // ── IMPORT ────────────────────────────────────────────────────────────────────
