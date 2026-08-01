@@ -57,13 +57,10 @@ class WorkScheduleManager extends Component
 
     public bool $showGreecoSchedules = true;
 
-    public string $colorFilter = '';
-
     protected $queryString = [
         'monthFilter' => ['except' => ''],
         'yearFilter' => ['except' => ''],
         'showGreecoSchedules' => ['except' => true],
-        'colorFilter' => ['except' => ''],
     ];
 
     public function mount(): void
@@ -647,12 +644,6 @@ class WorkScheduleManager extends Component
             foreach ($greecoItems as $item) {
                 $events->push($greecoRepo->toWorkScheduleModel($item));
             }
-        }
-
-        if ($this->colorFilter !== '') {
-            $events = $events->filter(function ($e) {
-                return $e->color === $this->colorFilter || (str_starts_with($this->colorFilter, '#') && strtolower((string) $e->color) === strtolower($this->colorFilter));
-            });
         }
 
         $splitEvents = collect();

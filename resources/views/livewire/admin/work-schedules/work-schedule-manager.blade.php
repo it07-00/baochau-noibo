@@ -30,19 +30,6 @@
                         Hiện lịch Greeco
                     </label>
                 </div>
-                <div class="vr mx-2 opacity-25"></div>
-                <div class="d-flex align-items-center gap-2 ms-1">
-                    <label class="text-muted small fw-semibold text-nowrap" for="colorFilterSelect">
-                        <i class="fa-solid fa-palette me-1 text-primary"></i>Màu nhãn:
-                    </label>
-                    <select id="colorFilterSelect" wire:model.live="colorFilter"
-                        class="form-select form-select-sm border-light-subtle rounded-3 py-1 px-2 fw-semibold small bg-body" style="min-width: 120px;">
-                        <option value="">Tất cả</option>
-                        @foreach(\App\Models\WorkSchedule::COLORS as $key => $c)
-                            <option value="{{ $key }}">● {{ $c['label'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
 
             <div class="text-center">

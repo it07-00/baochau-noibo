@@ -79,7 +79,7 @@ final class WorkScheduleManagerTest extends TestCase
         $this->assertStringNotContainsString('22/07 - 23/07', $html);
     }
 
-    public function test_it_can_create_event_with_custom_hex_color_and_filter_by_color(): void
+    public function test_it_can_create_event_with_custom_hex_color(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
@@ -104,9 +104,5 @@ final class WorkScheduleManagerTest extends TestCase
             'title' => 'Sự kiện màu đặc biệt',
             'color' => '#ff0055',
         ]);
-
-        Livewire::test(WorkScheduleManager::class)
-            ->set('colorFilter', '#ff0055')
-            ->assertSee('Sự kiện màu đặc biệt');
     }
 }
