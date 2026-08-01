@@ -356,8 +356,11 @@
                 <div class="mb-3">
                     <div class="d-flex align-items-center justify-content-between mb-1">
                         <label class="form-label fw-bold text-body small mb-0">Màu nhãn phân loại</label>
-                        <span class="badge bg-secondary-subtle text-secondary-emphasis border rounded-pill px-2.5 py-1 fs-85">
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis border rounded-pill px-2.5 py-1 fs-85 text-nowrap">
                             {{ \App\Models\WorkSchedule::getColorLabel($color) }}
+                            @if(str_starts_with($color, '#'))
+                                <span class="font-monospace ms-1">({{ strtoupper($color) }})</span>
+                            @endif
                         </span>
                     </div>
                     <div class="d-flex gap-2 flex-wrap p-3 rounded-3 bg-body-tertiary border border-light-subtle align-items-center">

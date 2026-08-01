@@ -55,7 +55,7 @@ class WorkSchedule extends Model
         }
 
         if (str_starts_with($colorKey, '#')) {
-            return 'Tùy chỉnh ('.strtoupper($colorKey).')';
+            return 'Tùy chỉnh';
         }
 
         return $colorKey;
@@ -63,8 +63,11 @@ class WorkSchedule extends Model
 
     public static function getChipInlineStyle(?string $colorKey): string
     {
-        $hex = self::getColorHex($colorKey);
-        $cleanHex = ltrim($hex, '#');
+        if (blank($colorKey) || ! str_starts_with($colorKey, '#')) {
+            return '';
+        }
+
+        $cleanHex = ltrim($colorKey, '#');
         if (strlen($cleanHex) === 3) {
             $cleanHex = $cleanHex[0].$cleanHex[0].$cleanHex[1].$cleanHex[1].$cleanHex[2].$cleanHex[2];
         }
@@ -72,17 +75,19 @@ class WorkSchedule extends Model
         $g = hexdec(substr($cleanHex, 2, 2));
         $b = hexdec(substr($cleanHex, 4, 2));
 
-        $darkR = (int) ($r * 0.5);
-        $darkG = (int) ($g * 0.5);
-        $darkB = (int) ($b * 0.5);
+        $luminance = ($r * 0.299 + $g * 0.587 + $b * 0.114);
+        $textColor = $luminance > 165 ? '#0f172a' : '#ffffff';
 
-        return "background-color: rgba({$r}, {$g}, {$b}, 0.16) !important; color: rgb({$darkR}, {$darkG}, {$darkB}) !important; border: 1px solid rgba({$r}, {$g}, {$b}, 0.35) !important;";
+        return "background-color: {$colorKey} !important; color: {$textColor} !important; border: 1px solid rgba(0, 0, 0, 0.15) !important;";
     }
 
     public static function getDetailInlineStyle(?string $colorKey): string
     {
-        $hex = self::getColorHex($colorKey);
-        $cleanHex = ltrim($hex, '#');
+        if (blank($colorKey) || ! str_starts_with($colorKey, '#')) {
+            return '';
+        }
+
+        $cleanHex = ltrim($colorKey, '#');
         if (strlen($cleanHex) === 3) {
             $cleanHex = $cleanHex[0].$cleanHex[0].$cleanHex[1].$cleanHex[1].$cleanHex[2].$cleanHex[2];
         }
@@ -90,11 +95,10 @@ class WorkSchedule extends Model
         $g = hexdec(substr($cleanHex, 2, 2));
         $b = hexdec(substr($cleanHex, 4, 2));
 
-        $darkR = (int) ($r * 0.5);
-        $darkG = (int) ($g * 0.5);
-        $darkB = (int) ($b * 0.5);
+        $luminance = ($r * 0.299 + $g * 0.587 + $b * 0.114);
+        $textColor = $luminance > 165 ? '#0f172a' : '#ffffff';
 
-        return "background-color: rgba({$r}, {$g}, {$b}, 0.12) !important; color: rgb({$darkR}, {$darkG}, {$darkB}) !important; border: 1px solid rgba({$r}, {$g}, {$b}, 0.25) !important; border-left: 4px solid {$hex} !important;";
+        return "background-color: {$colorKey} !important; color: {$textColor} !important; border: 1px solid rgba(0, 0, 0, 0.15) !important;";
     }
 
     public function getChipInlineStyleAttribute(): string
