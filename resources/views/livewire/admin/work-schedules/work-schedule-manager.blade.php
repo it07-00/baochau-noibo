@@ -220,10 +220,10 @@
                                     <div class="d-flex align-items-center flex-wrap gap-2">
                                         <h6 class="fw-bold mb-0 fs-6" style="color: inherit !important;">{{ $evt['title'] }}</h6>
                                         @if(!empty($evt['department']))
-                                            <span class="badge bg-white bg-opacity-25 text-white border border-white-subtle rounded-pill px-2 py-1 fs-8">{{ $evt['department'] }}</span>
+                                            <span class="badge bg-dark bg-opacity-10 text-body-emphasis border border-dark border-opacity-10 rounded-pill px-2.5 py-1 fs-8 fw-semibold">{{ $evt['department'] }}</span>
                                         @endif
                                         @if(!empty($evt['is_private']))
-                                            <span class="badge bg-white bg-opacity-25 text-white border border-white-subtle rounded-pill px-2 py-1 fs-8">
+                                            <span class="badge bg-warning bg-opacity-20 text-warning-emphasis border border-warning border-opacity-25 rounded-pill px-2.5 py-1 fs-8 fw-semibold">
                                                 <i class="fa-solid fa-lock me-1"></i>Riêng tư
                                             </span>
                                         @endif
@@ -232,7 +232,7 @@
                                 <div class="d-flex align-items-center gap-1 flex-shrink-0 ms-2">
                                     @if($evt['is_owner'] && !$evt['is_past'])
                                         <button wire:click="edit({{ $evt['id'] }})"
-                                            class="btn btn-sm btn-light bg-white bg-opacity-25 border-0 p-1 rounded-2"
+                                            class="btn btn-sm btn-light border border-light-subtle p-1 rounded-2 shadow-2xs"
                                             style="color: inherit !important;"
                                             title="Chỉnh sửa">
                                             <i class="fa-solid fa-pen"></i>
@@ -241,7 +241,7 @@
                                     @if($evt['is_owner'])
                                         <button wire:click="delete({{ $evt['id'] }})"
                                             wire:confirm="Bạn chắc chắn muốn xóa sự kiện này?"
-                                            class="btn btn-sm btn-light bg-white bg-opacity-25 border-0 p-1 rounded-2 text-danger"
+                                            class="btn btn-sm btn-light border border-light-subtle p-1 rounded-2 text-danger shadow-2xs"
                                             title="Xóa sự kiện">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
