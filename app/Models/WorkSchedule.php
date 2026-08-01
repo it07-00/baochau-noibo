@@ -63,36 +63,24 @@ class WorkSchedule extends Model
 
     public static function getChipInlineStyle(?string $colorKey): string
     {
-        if (blank($colorKey) || ! str_starts_with($colorKey, '#')) {
-            return '';
+        $hex = self::getColorHex($colorKey);
+        $cleanHex = ltrim($hex, '#');
+        if (strlen($cleanHex) === 3) {
+            $cleanHex = $cleanHex[0].$cleanHex[0].$cleanHex[1].$cleanHex[1].$cleanHex[2].$cleanHex[2];
         }
+        $r = hexdec(substr($cleanHex, 0, 2));
+        $g = hexdec(substr($cleanHex, 2, 2));
+        $b = hexdec(substr($cleanHex, 4, 2));
 
-        $hex = ltrim($colorKey, '#');
-        if (strlen($hex) === 3) {
-            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
-        }
-        $r = hexdec(substr($hex, 0, 2));
-        $g = hexdec(substr($hex, 2, 2));
-        $b = hexdec(substr($hex, 4, 2));
+        $luminance = ($r * 0.299 + $g * 0.587 + $b * 0.114);
+        $textColor = $luminance > 175 ? '#0f172a' : '#ffffff';
 
-        return "--theme-color: {$colorKey} !important; background-color: rgba({$r}, {$g}, {$b}, 0.15) !important; color: {$colorKey} !important; border-left: 3px solid {$colorKey} !important;";
+        return "background-color: {$hex} !important; color: {$textColor} !important; border: 1px solid rgba(0, 0, 0, 0.15) !important; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;";
     }
 
     public static function getDetailInlineStyle(?string $colorKey): string
     {
-        if (blank($colorKey) || ! str_starts_with($colorKey, '#')) {
-            return '';
-        }
-
-        $hex = ltrim($colorKey, '#');
-        if (strlen($hex) === 3) {
-            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
-        }
-        $r = hexdec(substr($hex, 0, 2));
-        $g = hexdec(substr($hex, 2, 2));
-        $b = hexdec(substr($hex, 4, 2));
-
-        return "border-left: 4px solid {$colorKey} !important; background-color: rgba({$r}, {$g}, {$b}, 0.08) !important;";
+        return self::getChipInlineStyle($colorKey);
     }
 
     public function getChipInlineStyleAttribute(): string

@@ -231,12 +231,12 @@
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                 <div class="min-w-0 flex-grow-1">
                                     <div class="d-flex align-items-center flex-wrap gap-2">
-                                        <h6 class="fw-bold text-body mb-0 fs-6">{{ $evt['title'] }}</h6>
+                                        <h6 class="fw-bold mb-0 fs-6" style="color: inherit !important;">{{ $evt['title'] }}</h6>
                                         @if(!empty($evt['department']))
-                                            <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle rounded-pill px-2 py-1 fs-8">{{ $evt['department'] }}</span>
+                                            <span class="badge bg-white bg-opacity-25 text-white border border-white-subtle rounded-pill px-2 py-1 fs-8">{{ $evt['department'] }}</span>
                                         @endif
                                         @if(!empty($evt['is_private']))
-                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-2 py-1 fs-8">
+                                            <span class="badge bg-white bg-opacity-25 text-white border border-white-subtle rounded-pill px-2 py-1 fs-8">
                                                 <i class="fa-solid fa-lock me-1"></i>Riêng tư
                                             </span>
                                         @endif
@@ -245,7 +245,8 @@
                                 <div class="d-flex align-items-center gap-1 flex-shrink-0 ms-2">
                                     @if($evt['is_owner'] && !$evt['is_past'])
                                         <button wire:click="edit({{ $evt['id'] }})"
-                                            class="btn btn-sm btn-outline-primary border-0 p-1 rounded-2"
+                                            class="btn btn-sm btn-light bg-white bg-opacity-25 border-0 p-1 rounded-2"
+                                            style="color: inherit !important;"
                                             title="Chỉnh sửa">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
@@ -253,7 +254,7 @@
                                     @if($evt['is_owner'])
                                         <button wire:click="delete({{ $evt['id'] }})"
                                             wire:confirm="Bạn chắc chắn muốn xóa sự kiện này?"
-                                            class="btn btn-sm btn-outline-danger border-0 p-1 rounded-2"
+                                            class="btn btn-sm btn-light bg-white bg-opacity-25 border-0 p-1 rounded-2 text-danger"
                                             title="Xóa sự kiện">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -261,29 +262,29 @@
                                 </div>
                             </div>
 
-                            <!-- Metadata Row using standard Bootstrap 5 utilities -->
-                            <div class="d-flex align-items-center flex-wrap gap-3 my-2 text-muted small">
-                                <span><i class="fa-solid fa-user text-primary me-2"></i><strong class="text-body">{{ $evt['user_name'] }}</strong></span>
-                                <span><i class="fa-regular fa-clock text-warning me-2"></i><span class="text-body fw-semibold">{{ $evt['time_label'] }}</span></span>
+                            <!-- Metadata Row -->
+                            <div class="d-flex align-items-center flex-wrap gap-3 my-2 small" style="color: inherit !important; opacity: 0.95;">
+                                <span><i class="fa-solid fa-user me-2" style="color: inherit !important;"></i><strong style="color: inherit !important;">{{ $evt['user_name'] }}</strong></span>
+                                <span><i class="fa-regular fa-clock me-2" style="color: inherit !important;"></i><span class="fw-semibold" style="color: inherit !important;">{{ $evt['time_label'] }}</span></span>
                                 @if($evt['is_multi_day'])
-                                    <span><i class="fa-regular fa-calendar text-info me-2"></i><span class="text-body">{{ $evt['start_date'] }} → {{ $evt['end_date'] }}</span></span>
+                                    <span><i class="fa-regular fa-calendar me-2" style="color: inherit !important;"></i><span style="color: inherit !important;">{{ $evt['start_date'] }} → {{ $evt['end_date'] }}</span></span>
                                 @endif
                             </div>
 
                             @if(!empty($evt['participants']))
-                                <div class="mt-2 text-muted small d-flex align-items-start gap-2 pt-2 border-top border-light-subtle">
-                                    <i class="fa-solid fa-users text-primary opacity-75 mt-1 flex-shrink-0"></i>
+                                <div class="mt-2 small d-flex align-items-start gap-2 pt-2 border-top border-white border-opacity-25" style="color: inherit !important;">
+                                    <i class="fa-solid fa-users opacity-75 mt-1 flex-shrink-0" style="color: inherit !important;"></i>
                                     <div class="min-w-0 flex-grow-1">
-                                        <span class="text-muted me-1">Người tham gia:</span>
-                                        <strong class="text-body">{{ $evt['participants'] }}</strong>
+                                        <span class="me-1" style="opacity: 0.85;">Người tham gia:</span>
+                                        <strong style="color: inherit !important;">{{ $evt['participants'] }}</strong>
                                     </div>
                                 </div>
                             @endif
 
                             @if($evt['description'])
-                                <div class="mt-2 text-body small text-preline d-flex align-items-start gap-2 pt-2 border-top border-light-subtle">
-                                    <i class="fa-solid fa-align-left text-muted opacity-50 mt-1 flex-shrink-0"></i>
-                                    <div class="flex-grow-1">{{ $evt['description'] }}</div>
+                                <div class="mt-2 small text-preline d-flex align-items-start gap-2 pt-2 border-top border-white border-opacity-25" style="color: inherit !important;">
+                                    <i class="fa-solid fa-align-left opacity-75 mt-1 flex-shrink-0" style="color: inherit !important;"></i>
+                                    <div class="flex-grow-1" style="color: inherit !important;">{{ $evt['description'] }}</div>
                                 </div>
                             @endif
                         </div>
