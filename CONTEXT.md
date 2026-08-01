@@ -109,6 +109,11 @@ Middleware tùy chỉnh:
 - Báo cáo cache 5 phút theo người xem và bộ lọc. Bộ lọc, CSV export và dữ liệu biểu đồ dùng cùng một service để không lệch số liệu.
 - Dữ liệu lịch sử có thể còn trạng thái `Mất đơn`; báo cáo xem đây là trạng thái rớt cùng với enum chuẩn `Rớt báo giá` và hiển thị cảnh báo chất lượng khi thiếu dịch vụ/khu vực.
 
+### Lịch công tác và Bộ lọc màu nhãn
+
+- `WorkScheduleManager` hỗ trợ 12 màu nhãn phân loại chuẩn (`WorkSchedule::COLORS`) cùng nút chọn màu tùy chỉnh (`<input type="color">` bảng màu chi tiết / mã HEX).
+- Thanh công cụ của Lịch công tác tích hợp Bộ lọc theo màu nhãn (`colorFilter`), cho phép người dùng lọc hiển thị các sự kiện theo màu sắc nhãn phân loại.
+
 ## 5. Mô hình hợp đồng
 
 Hệ thống có sáu loại nghiệp vụ, mỗi loại dùng một model/bảng riêng. Mapping chuẩn nằm tại `App\Enums\ContractType`:

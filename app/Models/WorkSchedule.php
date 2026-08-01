@@ -31,6 +31,19 @@ class WorkSchedule extends Model
         'lime' => ['label' => 'Xanh nõn',   'hex' => '#84cc16'],
     ];
 
+    public static function getColorHex(?string $colorKey): string
+    {
+        if (blank($colorKey)) {
+            return '#3b82f6';
+        }
+
+        if (str_starts_with($colorKey, '#')) {
+            return $colorKey;
+        }
+
+        return self::COLORS[$colorKey]['hex'] ?? '#3b82f6';
+    }
+
     protected $casts = [
         'user_id' => 'integer',
         'start_date' => 'date',

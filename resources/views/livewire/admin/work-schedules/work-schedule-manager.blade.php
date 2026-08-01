@@ -30,6 +30,19 @@
                         Hiện lịch Greeco
                     </label>
                 </div>
+                <div class="vr mx-2 opacity-25"></div>
+                <div class="d-flex align-items-center gap-2 ms-1">
+                    <label class="text-muted small fw-semibold text-nowrap" for="colorFilterSelect">
+                        <i class="fa-solid fa-palette me-1 text-primary"></i>Màu nhãn:
+                    </label>
+                    <select id="colorFilterSelect" wire:model.live="colorFilter"
+                        class="form-select form-select-sm border-light-subtle rounded-3 py-1 px-2 fw-semibold small bg-body" style="min-width: 120px;">
+                        <option value="">Tất cả</option>
+                        @foreach(\App\Models\WorkSchedule::COLORS as $key => $c)
+                            <option value="{{ $key }}">● {{ $c['label'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <div class="text-center">
@@ -349,7 +362,7 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold text-body small">Màu nhãn phân loại</label>
-                    <div class="d-flex gap-2 flex-wrap p-3 rounded-3 bg-body-tertiary border border-light-subtle">
+                    <div class="d-flex gap-2 flex-wrap p-3 rounded-3 bg-body-tertiary border border-light-subtle align-items-center">
                         @foreach(\App\Models\WorkSchedule::COLORS as $key => $c)
                             <label class="ws-color-picker {{ $color === $key ? 'active' : '' }} cursor-pointer p-1 rounded-circle">
                                 <input type="radio" wire:model.live="color" value="{{ $key }}" class="d-none">
@@ -358,6 +371,18 @@
                                     title="{{ $c['label'] }}"></span>
                             </label>
                         @endforeach
+
+                        {{-- Custom Color Picker (Image 2 style) --}}
+                        <div class="vr mx-1 opacity-25" style="height: 28px;"></div>
+                        <label class="ws-color-picker cursor-pointer p-1 rounded-circle position-relative" style="line-height:1;" title="Chọn màu tùy chỉnh (Bảng màu chi tiết / Mã HEX)">
+                            <input type="color" wire:model.live="color"
+                                value="{{ str_starts_with($color, '#') ? $color : (\App\Models\WorkSchedule::COLORS[$color]['hex'] ?? '#3b82f6') }}"
+                                class="position-absolute opacity-0 start-0 top-0 w-100 h-100 cursor-pointer">
+                            <span class="d-flex align-items-center justify-content-center rounded-circle border border-2 border-secondary-subtle"
+                                style="width: 28px; height: 28px; background: {{ str_starts_with($color, '#') ? $color : 'linear-gradient(135deg, #f43f5e 0%, #3b82f6 50%, #10b981 100%)' }}; box-shadow: {{ str_starts_with($color, '#') ? '0 0 0 2px var(--bs-body-bg), 0 0 0 4px ' . $color : 'none' }};">
+                                <i class="fa-solid fa-eye-dropper text-white" style="font-size: 11px;"></i>
+                            </span>
+                        </label>
                     </div>
                 </div>
 

@@ -78,4 +78,35 @@ final class WorkScheduleManagerTest extends TestCase
         );
         $this->assertStringNotContainsString('22/07 - 23/07', $html);
     }
+
+    public function test_it_can_create_event_with_custom_hex_color_and_filter_by_color(): void
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $role = Role::findOrCreate(RoleEnum::IT->value);
+        $user = User::factory()->create(['is_active' => true]);
+        $user->assignRole($role);
+
+        Http::fake([
+            '*' => Http::response(['success' => true, 'data' => []]),
+        ]);
+
+        $this->actingAs($user);
+
+        Livewire::test(WorkScheduleManager::class)
+            ->set('title', 'Sự kiện màu đặc biệt')
+            ->set('startDate', today()->format('Y-m-d'))
+            ->set('color', '#ff0055')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('work_schedules', [
+            'title' => 'Sự kiện màu đặc biệt',
+            'color' => '#ff0055',
+        ]);
+
+        Livewire::test(WorkScheduleManager::class)
+            ->set('colorFilter', '#ff0055')
+            ->assertSee('Sự kiện màu đặc biệt');
+    }
 }

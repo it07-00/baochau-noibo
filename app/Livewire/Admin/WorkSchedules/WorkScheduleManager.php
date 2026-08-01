@@ -57,10 +57,13 @@ class WorkScheduleManager extends Component
 
     public bool $showGreecoSchedules = true;
 
+    public string $colorFilter = '';
+
     protected $queryString = [
         'monthFilter' => ['except' => ''],
         'yearFilter' => ['except' => ''],
         'showGreecoSchedules' => ['except' => true],
+        'colorFilter' => ['except' => ''],
     ];
 
     public function mount(): void
@@ -176,7 +179,7 @@ class WorkScheduleManager extends Component
             'startTime' => 'nullable|date_format:H:i|required_with:endTime',
             'endDate' => 'nullable|date|after_or_equal:startDate',
             'endTime' => 'nullable|date_format:H:i',
-            'color' => 'required|in:'.implode(',', array_keys(WorkSchedule::COLORS)),
+            'color' => 'required|string|max:30',
             'isPrivate' => 'boolean',
         ], [
             'title.required' => 'Vui lòng nhập tiêu đề sự kiện.',
@@ -644,6 +647,12 @@ class WorkScheduleManager extends Component
             foreach ($greecoItems as $item) {
                 $events->push($greecoRepo->toWorkScheduleModel($item));
             }
+        }
+
+        if ($this->colorFilter !== '') {
+            $events = $events->filter(function ($e) {
+                return $e->color === $this->colorFilter || (str_starts_with($this->colorFilter, '#') && strtolower((string) $e->color) === strtolower($this->colorFilter));
+            });
         }
 
         $splitEvents = collect();
