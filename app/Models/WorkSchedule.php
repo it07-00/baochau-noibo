@@ -72,15 +72,29 @@ class WorkSchedule extends Model
         $g = hexdec(substr($cleanHex, 2, 2));
         $b = hexdec(substr($cleanHex, 4, 2));
 
-        $luminance = ($r * 0.299 + $g * 0.587 + $b * 0.114);
-        $textColor = $luminance > 175 ? '#0f172a' : '#ffffff';
+        $darkR = (int) ($r * 0.5);
+        $darkG = (int) ($g * 0.5);
+        $darkB = (int) ($b * 0.5);
 
-        return "background-color: {$hex} !important; color: {$textColor} !important; border: 1px solid rgba(0, 0, 0, 0.15) !important; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;";
+        return "background-color: rgba({$r}, {$g}, {$b}, 0.16) !important; color: rgb({$darkR}, {$darkG}, {$darkB}) !important; border: 1px solid rgba({$r}, {$g}, {$b}, 0.35) !important;";
     }
 
     public static function getDetailInlineStyle(?string $colorKey): string
     {
-        return self::getChipInlineStyle($colorKey);
+        $hex = self::getColorHex($colorKey);
+        $cleanHex = ltrim($hex, '#');
+        if (strlen($cleanHex) === 3) {
+            $cleanHex = $cleanHex[0].$cleanHex[0].$cleanHex[1].$cleanHex[1].$cleanHex[2].$cleanHex[2];
+        }
+        $r = hexdec(substr($cleanHex, 0, 2));
+        $g = hexdec(substr($cleanHex, 2, 2));
+        $b = hexdec(substr($cleanHex, 4, 2));
+
+        $darkR = (int) ($r * 0.5);
+        $darkG = (int) ($g * 0.5);
+        $darkB = (int) ($b * 0.5);
+
+        return "background-color: rgba({$r}, {$g}, {$b}, 0.12) !important; color: rgb({$darkR}, {$darkG}, {$darkB}) !important; border: 1px solid rgba({$r}, {$g}, {$b}, 0.25) !important; border-left: 4px solid {$hex} !important;";
     }
 
     public function getChipInlineStyleAttribute(): string

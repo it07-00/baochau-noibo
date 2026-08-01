@@ -173,18 +173,18 @@
 }
 
 /* Spanning chip color variants (higher specificity than .ws-chip-*) */
-.ws-evt-chip.ws-chip-primary   { background: #dbeafe;  color: #1e3a5f; }
-.ws-evt-chip.ws-chip-success   { background: #dcfce7;  color: #14532d; }
-.ws-evt-chip.ws-chip-warning   { background: #fef3c7;  color: #78350f; }
-.ws-evt-chip.ws-chip-danger    { background: #fee2e2;  color: #7f1d1d; }
-.ws-evt-chip.ws-chip-info      { background: #cffafe;  color: #164e63; }
-.ws-evt-chip.ws-chip-secondary { background: #f3f4f6;  color: #374151; }
-.ws-evt-chip.ws-chip-pink      { background: #fce7f3;  color: #831843; }
-.ws-evt-chip.ws-chip-purple    { background: #ede9fe;  color: #4c1d95; }
-.ws-evt-chip.ws-chip-indigo    { background: #e0e7ff;  color: #312e81; }
-.ws-evt-chip.ws-chip-teal      { background: #ccfbf1;  color: #134e4a; }
-.ws-evt-chip.ws-chip-orange    { background: #ffedd5;  color: #7c2d12; }
-.ws-evt-chip.ws-chip-lime      { background: #ecfccb;  color: #365314; }
+.ws-evt-chip.ws-chip-primary   { background: rgba(59, 130, 246, 0.16) !important;  color: #1e40af !important; border: 1px solid rgba(59, 130, 246, 0.35) !important; }
+.ws-evt-chip.ws-chip-success   { background: rgba(16, 185, 129, 0.16) !important;  color: #166534 !important; border: 1px solid rgba(16, 185, 129, 0.35) !important; }
+.ws-evt-chip.ws-chip-warning   { background: rgba(245, 158, 11, 0.16) !important;  color: #92400e !important; border: 1px solid rgba(245, 158, 11, 0.35) !important; }
+.ws-evt-chip.ws-chip-danger    { background: rgba(239, 68, 68, 0.16) !important;  color: #991b1b !important; border: 1px solid rgba(239, 68, 68, 0.35) !important; }
+.ws-evt-chip.ws-chip-info      { background: rgba(6, 182, 212, 0.16) !important;  color: #075985 !important; border: 1px solid rgba(6, 182, 212, 0.35) !important; }
+.ws-evt-chip.ws-chip-secondary { background: rgba(107, 114, 128, 0.16) !important;  color: #334155 !important; border: 1px solid rgba(107, 114, 128, 0.35) !important; }
+.ws-evt-chip.ws-chip-pink      { background: rgba(236, 72, 153, 0.16) !important;  color: #9d174d !important; border: 1px solid rgba(236, 72, 153, 0.35) !important; }
+.ws-evt-chip.ws-chip-purple    { background: rgba(139, 92, 246, 0.16) !important;  color: #5b21b6 !important; border: 1px solid rgba(139, 92, 246, 0.35) !important; }
+.ws-evt-chip.ws-chip-indigo    { background: rgba(99, 102, 241, 0.16) !important;  color: #3730a3 !important; border: 1px solid rgba(99, 102, 241, 0.35) !important; }
+.ws-evt-chip.ws-chip-teal      { background: rgba(20, 184, 166, 0.16) !important;  color: #115e59 !important; border: 1px solid rgba(20, 184, 166, 0.35) !important; }
+.ws-evt-chip.ws-chip-orange    { background: rgba(249, 115, 22, 0.16) !important;  color: #9a3412 !important; border: 1px solid rgba(249, 115, 22, 0.35) !important; }
+.ws-evt-chip.ws-chip-lime      { background: rgba(132, 204, 22, 0.16) !important;  color: #3f6212 !important; border: 1px solid rgba(132, 204, 22, 0.35) !important; }
 
 /* ── Dark Mode ───────────────────────────────────────────── */
 [data-bs-theme="dark"] .ws-cal-wrapper {
@@ -543,32 +543,32 @@
     font-size: 0.76rem;
     padding: 5px 6px;
 }
-.ws-event-chip.ws-chip-primary   { --theme-color: #2563eb; background: #eff6ff;  color: #1e3a5f; }
-.ws-event-chip.ws-chip-success   { --theme-color: #16a34a; background: #f0fdf4;  color: #14532d; }
-.ws-event-chip.ws-chip-warning   { --theme-color: #ca8a04; background: #fffbeb;  color: #78350f; }
-.ws-event-chip.ws-chip-danger    { --theme-color: #dc2626; background: #fef2f2;  color: #7f1d1d; }
-.ws-event-chip.ws-chip-info      { --theme-color: #0891b2; background: #ecfeff;  color: #164e63; }
-.ws-event-chip.ws-chip-secondary { --theme-color: #4b5563; background: #f9fafb;  color: #374151; }
-.ws-event-chip.ws-chip-pink      { --theme-color: #db2777; background: #fdf2f8;  color: #831843; }
-.ws-event-chip.ws-chip-purple    { --theme-color: #7c3aed; background: #f5f3ff;  color: #4c1d95; }
-.ws-event-chip.ws-chip-indigo    { --theme-color: #4f46e5; background: #eef2ff;  color: #312e81; }
-.ws-event-chip.ws-chip-teal      { --theme-color: #0d9488; background: #f0fdfa;  color: #134e4a; }
-.ws-event-chip.ws-chip-orange    { --theme-color: #ea580c; background: #fff7ed;  color: #7c2d12; }
-.ws-event-chip.ws-chip-lime      { --theme-color: #65a30d; background: #f7fee7;  color: #365314; }
+.ws-event-chip.ws-chip-primary   { --theme-color: #2563eb; background: rgba(59, 130, 246, 0.16) !important;  color: #1e40af !important; border: 1px solid rgba(59, 130, 246, 0.35) !important; }
+.ws-event-chip.ws-chip-success   { --theme-color: #16a34a; background: rgba(16, 185, 129, 0.16) !important;  color: #166534 !important; border: 1px solid rgba(16, 185, 129, 0.35) !important; }
+.ws-event-chip.ws-chip-warning   { --theme-color: #ca8a04; background: rgba(245, 158, 11, 0.16) !important;  color: #92400e !important; border: 1px solid rgba(245, 158, 11, 0.35) !important; }
+.ws-event-chip.ws-chip-danger    { --theme-color: #dc2626; background: rgba(239, 68, 68, 0.16) !important;  color: #991b1b !important; border: 1px solid rgba(239, 68, 68, 0.35) !important; }
+.ws-event-chip.ws-chip-info      { --theme-color: #0891b2; background: rgba(6, 182, 212, 0.16) !important;  color: #075985 !important; border: 1px solid rgba(6, 182, 212, 0.35) !important; }
+.ws-event-chip.ws-chip-secondary { --theme-color: #4b5563; background: rgba(107, 114, 128, 0.16) !important;  color: #334155 !important; border: 1px solid rgba(107, 114, 128, 0.35) !important; }
+.ws-event-chip.ws-chip-pink      { --theme-color: #db2777; background: rgba(236, 72, 153, 0.16) !important;  color: #9d174d !important; border: 1px solid rgba(236, 72, 153, 0.35) !important; }
+.ws-event-chip.ws-chip-purple    { --theme-color: #7c3aed; background: rgba(139, 92, 246, 0.16) !important;  color: #5b21b6 !important; border: 1px solid rgba(139, 92, 246, 0.35) !important; }
+.ws-event-chip.ws-chip-indigo    { --theme-color: #4f46e5; background: rgba(99, 102, 241, 0.16) !important;  color: #3730a3 !important; border: 1px solid rgba(99, 102, 241, 0.35) !important; }
+.ws-event-chip.ws-chip-teal      { --theme-color: #0d9488; background: rgba(20, 184, 166, 0.16) !important;  color: #115e59 !important; border: 1px solid rgba(20, 184, 166, 0.35) !important; }
+.ws-event-chip.ws-chip-orange    { --theme-color: #ea580c; background: rgba(249, 115, 22, 0.16) !important;  color: #9a3412 !important; border: 1px solid rgba(249, 115, 22, 0.35) !important; }
+.ws-event-chip.ws-chip-lime      { --theme-color: #65a30d; background: rgba(132, 204, 22, 0.16) !important;  color: #3f6212 !important; border: 1px solid rgba(132, 204, 22, 0.35) !important; }
 
 /* Keep old simple classes too for fallback */
-.ws-chip-primary   { background: #dbeafe;  color: #1e3a5f; }
-.ws-chip-success   { background: #dcfce7;  color: #14532d; }
-.ws-chip-warning   { background: #fef3c7;  color: #78350f; }
-.ws-chip-danger    { background: #fee2e2;  color: #7f1d1d; }
-.ws-chip-info      { background: #cffafe;  color: #164e63; }
-.ws-chip-secondary { background: #f3f4f6;  color: #374151; }
-.ws-chip-pink      { background: #fce7f3;  color: #831843; }
-.ws-chip-purple    { background: #ede9fe;  color: #4c1d95; }
-.ws-chip-indigo    { background: #e0e7ff;  color: #312e81; }
-.ws-chip-teal      { background: #ccfbf1;  color: #134e4a; }
-.ws-chip-orange    { background: #ffedd5;  color: #7c2d12; }
-.ws-chip-lime      { background: #ecfccb;  color: #365314; }
+.ws-chip-primary   { background: rgba(59, 130, 246, 0.16) !important;  color: #1e40af !important; border: 1px solid rgba(59, 130, 246, 0.35) !important; }
+.ws-chip-success   { background: rgba(16, 185, 129, 0.16) !important;  color: #166534 !important; border: 1px solid rgba(16, 185, 129, 0.35) !important; }
+.ws-chip-warning   { background: rgba(245, 158, 11, 0.16) !important;  color: #92400e !important; border: 1px solid rgba(245, 158, 11, 0.35) !important; }
+.ws-chip-danger    { background: rgba(239, 68, 68, 0.16) !important;  color: #991b1b !important; border: 1px solid rgba(239, 68, 68, 0.35) !important; }
+.ws-chip-info      { background: rgba(6, 182, 212, 0.16) !important;  color: #075985 !important; border: 1px solid rgba(6, 182, 212, 0.35) !important; }
+.ws-chip-secondary { background: rgba(107, 114, 128, 0.16) !important;  color: #334155 !important; border: 1px solid rgba(107, 114, 128, 0.35) !important; }
+.ws-chip-pink      { background: rgba(236, 72, 153, 0.16) !important;  color: #9d174d !important; border: 1px solid rgba(236, 72, 153, 0.35) !important; }
+.ws-chip-purple    { background: rgba(139, 92, 246, 0.16) !important;  color: #5b21b6 !important; border: 1px solid rgba(139, 92, 246, 0.35) !important; }
+.ws-chip-indigo    { background: rgba(99, 102, 241, 0.16) !important;  color: #3730a3 !important; border: 1px solid rgba(99, 102, 241, 0.35) !important; }
+.ws-chip-teal      { background: rgba(20, 184, 166, 0.16) !important;  color: #115e59 !important; border: 1px solid rgba(20, 184, 166, 0.35) !important; }
+.ws-chip-orange    { background: rgba(249, 115, 22, 0.16) !important;  color: #9a3412 !important; border: 1px solid rgba(249, 115, 22, 0.35) !important; }
+.ws-chip-lime      { background: rgba(132, 204, 22, 0.16) !important;  color: #3f6212 !important; border: 1px solid rgba(132, 204, 22, 0.35) !important; }
 
 /* Detail items */
 .ws-detail-item {
@@ -830,27 +830,37 @@
 }
 
 /* Event chip inner elements theme compliance */
-.ws-event-author {
-    font-size: 0.65rem;
-    color: #64748b;
+.ws-event-author,
+.ws-event-chip .ws-event-author,
+.ws-evt-chip .ws-event-author {
+    font-size: 0.68rem;
+    color: inherit !important;
+    opacity: 0.9 !important;
 }
 [data-bs-theme="dark"] .ws-event-author {
-    color: #a3b3c9;
+    color: inherit !important;
+    opacity: 0.9 !important;
 }
-.ws-event-time {
-    font-size: 0.65rem;
-    color: var(--theme-color);
+.ws-event-time,
+.ws-event-chip .ws-event-time,
+.ws-evt-chip .ws-event-time {
+    font-size: 0.68rem;
+    color: inherit !important;
+    opacity: 0.9 !important;
 }
 [data-bs-theme="dark"] .ws-event-time {
-    color: inherit;
-    opacity: 0.88;
+    color: inherit !important;
+    opacity: 0.9 !important;
 }
-.ws-event-title {
+.ws-event-title,
+.ws-event-chip .ws-event-title,
+.ws-evt-chip .ws-event-title {
     max-width: 100%;
-    font-size: 0.72rem;
-    color: #1e293b;
+    font-size: 0.75rem;
+    color: inherit !important;
     line-height: 1.4;
+    font-weight: 700;
 }
 [data-bs-theme="dark"] .ws-event-title {
-    color: inherit;
+    color: inherit !important;
 }
