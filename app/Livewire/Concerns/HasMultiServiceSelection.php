@@ -14,6 +14,8 @@ trait HasMultiServiceSelection
         'Phân loại lao động',
         'Kiểm kê khí nhà kính',
         'Giảm phát thải',
+        'Thu gom Chất thải',
+        'Hủy hàng',
     ];
 
     public array $selectedServices = [];
