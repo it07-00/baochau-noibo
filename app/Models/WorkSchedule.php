@@ -44,6 +44,62 @@ class WorkSchedule extends Model
         return self::COLORS[$colorKey]['hex'] ?? '#3b82f6';
     }
 
+    public static function getColorLabel(?string $colorKey): string
+    {
+        if (blank($colorKey)) {
+            return 'Mặc định';
+        }
+
+        if (isset(self::COLORS[$colorKey])) {
+            return self::COLORS[$colorKey]['label'];
+        }
+
+        if (str_starts_with($colorKey, '#')) {
+            return 'Tùy chỉnh ('.strtoupper($colorKey).')';
+        }
+
+        return $colorKey;
+    }
+
+    public static function getChipInlineStyle(?string $colorKey): string
+    {
+        if (blank($colorKey) || ! str_starts_with($colorKey, '#')) {
+            return '';
+        }
+
+        $hex = ltrim($colorKey, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        return "--theme-color: {$colorKey} !important; background-color: rgba({$r}, {$g}, {$b}, 0.15) !important; color: {$colorKey} !important; border-left: 3px solid {$colorKey} !important;";
+    }
+
+    public static function getDetailInlineStyle(?string $colorKey): string
+    {
+        if (blank($colorKey) || ! str_starts_with($colorKey, '#')) {
+            return '';
+        }
+
+        $hex = ltrim($colorKey, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        return "border-left: 4px solid {$colorKey} !important; background-color: rgba({$r}, {$g}, {$b}, 0.08) !important;";
+    }
+
+    public function getChipInlineStyleAttribute(): string
+    {
+        return self::getChipInlineStyle($this->color);
+    }
+
     protected $casts = [
         'user_id' => 'integer',
         'start_date' => 'date',

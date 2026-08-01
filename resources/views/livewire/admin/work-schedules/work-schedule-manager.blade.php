@@ -83,8 +83,10 @@
                 </button>
 
                 <div class="ws-agenda-events">
-                    @foreach($this->eventsForDate($calendarData, $currentDate) as $evt)
-                        <button type="button" class="ws-agenda-event ws-chip-{{ $evt->color }}" @click="showDetail = true"
+                    @foreach($this::eventsForDate($calendarData, $currentDate) as $evt)
+                        <button type="button" class="ws-agenda-event ws-chip-{{ $evt->color }}"
+                            style="{{ $evt->chip_inline_style }}"
+                            @click="showDetail = true"
                             wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                             <span class="ws-agenda-event-title">{{ $evt->title }}</span>
                             <span class="ws-agenda-event-people">{{ $evt->time_range_label }}</span>
@@ -155,7 +157,9 @@
                 wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')" @click="showDetail = true" @endif>
                     @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
                         @foreach($eventsForDay as $evt)
-                            <div class="ws-event-chip ws-chip-{{ $evt->color }}" @click.stop="showDetail = true"
+                            <div class="ws-event-chip ws-chip-{{ $evt->color }}"
+                                style="{{ $evt->chip_inline_style }}"
+                                @click.stop="showDetail = true"
                                 wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
                                 <div class="d-flex flex-column mb-1">
                                     <span class="ws-event-author text-truncate fw-semibold">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 15, '...') }}</span>
@@ -222,7 +226,8 @@
                 @if(count($detailEvents) > 0)
                     <div class="d-flex flex-column gap-3">
                     @foreach($detailEvents as $evt)
-                        <div class="p-3 rounded-3 border ws-detail-item ws-detail-{{ $evt['color'] }}">
+                        <div class="p-3 rounded-3 border ws-detail-item ws-detail-{{ $evt['color'] }}"
+                            style="{{ \App\Models\WorkSchedule::getDetailInlineStyle($evt['color']) }}">
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                 <div class="min-w-0 flex-grow-1">
                                     <div class="d-flex align-items-center flex-wrap gap-2">
@@ -361,26 +366,40 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold text-body small">Màu nhãn phân loại</label>
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <label class="form-label fw-bold text-body small mb-0">Màu nhãn phân loại</label>
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis border rounded-pill px-2.5 py-1 fs-85">
+                            {{ \App\Models\WorkSchedule::getColorLabel($color) }}
+                        </span>
+                    </div>
                     <div class="d-flex gap-2 flex-wrap p-3 rounded-3 bg-body-tertiary border border-light-subtle align-items-center">
                         @foreach(\App\Models\WorkSchedule::COLORS as $key => $c)
-                            <label class="ws-color-picker {{ $color === $key ? 'active' : '' }} cursor-pointer p-1 rounded-circle">
+                            <label class="ws-color-picker {{ $color === $key ? 'active' : '' }} cursor-pointer p-1 rounded-circle position-relative" style="line-height:1;">
                                 <input type="radio" wire:model.live="color" value="{{ $key }}" class="d-none">
-                                <span class="d-block rounded-circle border-2"
-                                    style="width: 28px; height: 28px; background: {{ $c['hex'] }}; border: 3px solid {{ $color === $key ? $c['hex'] : 'transparent' }}; box-shadow: {{ $color === $key ? '0 0 0 2px var(--bs-body-bg), 0 0 0 4px ' . $c['hex'] : 'none' }};"
-                                    title="{{ $c['label'] }}"></span>
+                                <span class="d-flex align-items-center justify-content-center rounded-circle border-2"
+                                    style="width: 30px; height: 30px; background: {{ $c['hex'] }}; border: 3px solid {{ $color === $key ? $c['hex'] : 'transparent' }}; box-shadow: {{ $color === $key ? '0 0 0 2px var(--bs-body-bg), 0 0 0 4px ' . $c['hex'] : 'none' }};"
+                                    title="{{ $c['label'] }}">
+                                    @if($color === $key)
+                                        <i class="fa-solid fa-check text-white fs-8"></i>
+                                    @endif
+                                </span>
                             </label>
                         @endforeach
 
                         {{-- Custom Color Picker (Image 2 style) --}}
-                        <div class="vr mx-1 opacity-25" style="height: 28px;"></div>
+                        <div class="vr mx-1 opacity-25" style="height: 30px;"></div>
                         <label class="ws-color-picker cursor-pointer p-1 rounded-circle position-relative" style="line-height:1;" title="Chọn màu tùy chỉnh (Bảng màu chi tiết / Mã HEX)">
                             <input type="color" wire:model.live="color"
                                 value="{{ str_starts_with($color, '#') ? $color : (\App\Models\WorkSchedule::COLORS[$color]['hex'] ?? '#3b82f6') }}"
-                                class="position-absolute opacity-0 start-0 top-0 w-100 h-100 cursor-pointer">
+                                class="position-absolute opacity-0 start-0 top-0 w-100 h-100 cursor-pointer"
+                                style="z-index: 5;">
                             <span class="d-flex align-items-center justify-content-center rounded-circle border border-2 border-secondary-subtle"
-                                style="width: 28px; height: 28px; background: {{ str_starts_with($color, '#') ? $color : 'linear-gradient(135deg, #f43f5e 0%, #3b82f6 50%, #10b981 100%)' }}; box-shadow: {{ str_starts_with($color, '#') ? '0 0 0 2px var(--bs-body-bg), 0 0 0 4px ' . $color : 'none' }};">
-                                <i class="fa-solid fa-eye-dropper text-white" style="font-size: 11px;"></i>
+                                style="width: 30px; height: 30px; background: {{ str_starts_with($color, '#') ? $color : 'linear-gradient(135deg, #f43f5e 0%, #3b82f6 50%, #10b981 100%)' }}; box-shadow: {{ str_starts_with($color, '#') ? '0 0 0 2px var(--bs-body-bg), 0 0 0 4px ' . $color : 'none' }};">
+                                @if(str_starts_with($color, '#'))
+                                    <i class="fa-solid fa-check text-white fs-8"></i>
+                                @else
+                                    <i class="fa-solid fa-eye-dropper text-white" style="font-size: 11px;"></i>
+                                @endif
                             </span>
                         </label>
                     </div>
