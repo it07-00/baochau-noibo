@@ -184,7 +184,7 @@
                     </label>
                     <select id="staff-filter" class="form-select border-secondary-subtle" wire:model.live="staffFilter">
                         <option value="">Tất cả {{ $customerList !== 'all' ? 'người chăm sóc' : 'nhân viên' }}</option>
-                        @foreach($staffOptions as $staff)
+                        @foreach(($customerList !== 'all' ? $caretakerOptions : $staffOptions) as $staff)
                             <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                         @endforeach
                     </select>
