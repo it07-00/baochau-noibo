@@ -712,7 +712,7 @@ class ContractConsultingManager extends Component
         // Gửi thông báo đến quản lý + NV kinh doanh phụ trách
         $contract = ContractLegal::with('customer')->find($contractId);
         $contractLabel = $contract?->shd_bc ?: ($contract?->customer?->name ?: 'HĐ #'.$contractId);
-        $recipients = User::whereHas('roles', fn ($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get();
+        $recipients = collect(User::whereHas('roles', fn ($q) => $q->whereIn('name', [Role::GIAM_DOC->value, Role::TP_KINH_DOANH->value, Role::IT->value]))->get());
 
         $assignmentUserIds = ContractAssignment::where('assignable_type', ContractLegal::class)
             ->where('assignable_id', $contractId)
@@ -865,7 +865,7 @@ class ContractConsultingManager extends Component
         $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
         return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
-            echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
+            echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'))->render();
         }, 'HopDong_TuVan_'.now()->format('d_m_Y').'.xls', [
             'Content-Type' => 'application/vnd.ms-excel',
         ]);

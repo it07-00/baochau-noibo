@@ -975,7 +975,7 @@ class ContractWasteManager extends Component
         $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
         return response()->streamDownload(function () use ($docs, $title, $showFinancials) {
-            echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'));
+            echo view('admin.contracts.export-excel', compact('docs', 'title', 'showFinancials'))->render();
         }, 'HopDong_ChatThai_'.now()->format('d_m_Y').'.xls', [
             'Content-Type' => 'application/vnd.ms-excel',
         ]);
