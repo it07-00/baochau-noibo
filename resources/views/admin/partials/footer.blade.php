@@ -1,7 +1,7 @@
 <footer class="footer-wrapper bg-body mt-auto">
     <div class="row align-items-center justify-content-between g-2">
         <div class="col-auto">
-            <p class="mb-0 text-muted fs-7">
+            <p class="mb-0 text-body-emphasis fs-7">
                 © <span class="currentYear">2026</span> - <strong>Công ty TNHH Dịch vụ và Kỹ thuật Môi trường Bảo Châu</strong>. Đã đăng ký mọi quyền.
             </p>
         </div>
