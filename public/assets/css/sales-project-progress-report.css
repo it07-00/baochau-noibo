@@ -14,15 +14,28 @@
 }
 
 .workflow-pipeline {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    display: flex;
     gap: .5rem;
-    overflow-x: hidden;
-    padding: 0 0 .5rem;
+    overflow-x: auto;
+    padding-bottom: .5rem;
 }
 
-.workflow-pipeline-column {
-    min-width: 0;
+.workflow-pipeline::-webkit-scrollbar {
+    height: 6px;
+}
+
+.workflow-pipeline::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.workflow-pipeline::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+}
+
+.workflow-pipeline > .col {
+    flex: 1 1 0;
+    min-width: 210px;
 }
 
 .pipeline-step-body {

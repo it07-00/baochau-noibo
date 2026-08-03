@@ -118,8 +118,8 @@
         @endforeach
     </div>
 
-    {{-- Pipeline 6 bước (Gọn gàng dàn 6 cột 100% màn hình, không cuộn ngang) --}}
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-6 g-2 mb-3">
+    {{-- Pipeline 6 bước (Hỗ trợ cuộn ngang mượt mà khi màn hình nhỏ) --}}
+    <div class="workflow-pipeline mb-3">
         @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
             <div class="col">
                 <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary h-auto">
@@ -132,10 +132,10 @@
                         </div>
                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.7rem;">{{ count($pipeline[$stepKey]) }}</span>
                     </div>
-                    <div class="card-body p-2 pt-0 pipeline-step-body" style="max-height: 440px; overflow-y: auto;">
+                    <div class="card-body p-2 pt-0">
                         @forelse($pipeline[$stepKey] as $contract)
-                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-2 bg-body pipeline-contract-card flex-grow-0" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
-                                <div class="card-body p-2.5 flex-grow-0">
+                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-2 bg-body" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
+                                <div class="card-body p-2.5">
                                     <div class="d-flex justify-content-between gap-1 align-items-start mb-1.5">
                                         <div class="min-w-0 me-1">
                                             <div class="fw-bold text-body text-truncate" style="font-size: 0.78rem;" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</div>
