@@ -205,10 +205,6 @@
                                     </td>
                                 </tr>
                             @empty
-                                        {{ $row['early_days'] }}
-                                    </td>
-                                </tr>
-                            @empty
                                 <tr>
                                     <td colspan="{{ $daysInMonth + 5 }}" class="text-center text-muted py-5">
                                         Chưa có dữ liệu chấm công. Hãy import file từ máy chấm công.
