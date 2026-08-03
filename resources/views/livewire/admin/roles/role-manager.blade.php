@@ -5,8 +5,8 @@
     <header class="mb-4">
         <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
             <div>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2">
-                    <i class="fa-solid fa-shield-halved me-1"></i>Phân quyền hệ thống
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2 d-inline-flex align-items-center justify-content-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved"></i><span>Phân quyền hệ thống</span>
                 </span>
                 <h4 class="fw-bold text-body mb-1">Quản lý Vai trò và Quyền hạn</h4>
                 <p class="text-secondary mb-0">Kiểm soát danh mục vai trò và phạm vi phân quyền truy cập người dùng trong hệ thống.</p>

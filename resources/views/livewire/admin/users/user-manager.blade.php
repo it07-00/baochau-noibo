@@ -6,8 +6,8 @@
         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
             <div>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
-                        <i class="fa-solid fa-user-shield me-1"></i>Quản trị truy cập
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 d-inline-flex align-items-center justify-content-center gap-1.5">
+                        <i class="fa-solid fa-user-shield"></i><span>Quản trị truy cập</span>
                     </span>
                 </div>
                 <h4 class="fw-bold text-body mb-1">Người dùng</h4>

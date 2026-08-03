@@ -5,7 +5,7 @@
     <header class="mb-4">
         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
             <div>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2"><i class="fa-solid fa-bullhorn me-1"></i>Truyền thông nội bộ</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2 d-inline-flex align-items-center justify-content-center gap-1.5"><i class="fa-solid fa-bullhorn"></i><span>Truyền thông nội bộ</span></span>
                 <h4 class="fw-bold text-body mb-1">Thông báo nội bộ</h4>
                 <p class="text-secondary mb-0">Gửi thông tin đến toàn công ty, theo vai trò hoặc từng nhân viên.</p>
             </div>

@@ -5,7 +5,7 @@
     <header class="mb-4">
         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
             <div>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2"><i class="fa-solid fa-fingerprint me-1"></i>Máy chấm công</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-2 d-inline-flex align-items-center justify-content-center gap-1.5"><i class="fa-solid fa-fingerprint"></i><span>Máy chấm công</span></span>
                 <h4 class="fw-bold text-body mb-1">Nhân viên chấm công</h4>
                 <p class="text-secondary mb-0">Đối chiếu mã máy, phòng ban và trạng thái đồng bộ nhân viên.</p>
             </div>

@@ -12,7 +12,7 @@
                 <p class="text-secondary mb-0">Tra cứu lịch sử thay đổi và người thực hiện trong hệ thống.</p>
             </div>
         </div>
-        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 d-inline-flex align-items-center justify-content-center">
             {{ number_format($activities->total()) }} kết quả
         </span>
     </div>
