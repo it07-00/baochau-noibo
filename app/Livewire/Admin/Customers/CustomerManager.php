@@ -397,7 +397,7 @@ class CustomerManager extends Component
 
         if ($careStatus === null) {
             $this->dispatch('swal:toast', [
-                'type'    => 'error',
+                'type' => 'error',
                 'message' => 'Trạng thái chăm sóc không hợp lệ.',
             ]);
 
@@ -408,7 +408,7 @@ class CustomerManager extends Component
         $customer->update(['care_status' => $careStatus->value]);
 
         $this->dispatch('swal:toast', [
-            'type'    => 'success',
+            'type' => 'success',
             'message' => "Đã cập nhật trạng thái chăm sóc: {$careStatus->label()} — {$customer->name}.",
         ]);
     }
@@ -578,14 +578,18 @@ class CustomerManager extends Component
             ->when($this->staffFilter, function (Builder $query): void {
                 $staffId = (int) $this->staffFilter;
 
-                $query->where(function (Builder $q) use ($staffId): void {
-                    $q->where('caretaker_id', $staffId)
-                        ->orWhereHas('quotations', fn (Builder $quotationQuery) => $quotationQuery->where('staff_id', $staffId));
+                if ($this->customerList !== 'all') {
+                    $query->where('caretaker_id', $staffId);
+                } else {
+                    $query->where(function (Builder $q) use ($staffId): void {
+                        $q->where('caretaker_id', $staffId)
+                            ->orWhereHas('quotations', fn (Builder $quotationQuery) => $quotationQuery->where('staff_id', $staffId));
 
-                    foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
-                        $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->where('staff_id', $staffId));
-                    }
-                });
+                        foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                            $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->where('staff_id', $staffId));
+                        }
+                    });
+                }
             })
             ->when(! empty($this->serviceQuotationFilter), function (Builder $query): void {
                 $selectedServices = is_array($this->serviceQuotationFilter)
@@ -920,18 +924,18 @@ class CustomerManager extends Component
             || filled($this->groupBy) && $this->groupBy !== 'province';
 
         return view('livewire.admin.customers.customer-manager', [
-            'customers'              => $query->paginate(15),
-            'provinces'              => VietnamProvinces::list(),
-            'filterProvinces'        => $this->provincesForCurrentList(),
-            'wards'                  => $this->distinctValues('ward', $wardQuery),
-            'industrialParks'        => $this->distinctValues('industrial_park', $industrialParkQuery),
+            'customers' => $query->paginate(15),
+            'provinces' => VietnamProvinces::list(),
+            'filterProvinces' => $this->provincesForCurrentList(),
+            'wards' => $this->distinctValues('ward', $wardQuery),
+            'industrialParks' => $this->distinctValues('industrial_park', $industrialParkQuery),
             'serviceQuotationOptions' => $this->serviceQuotationOptions(),
-            'serviceContractOptions'  => $this->serviceContractOptions(),
-            'staffOptions'           => $this->staffOptions(),
-            'caretakerOptions'       => $this->caretakerOptions(),
-            'careStatusOptions'      => CustomerCareStatus::options(),
-            'summary'                => $this->summary($customerIds),
-            'hasAdvancedFilters'     => $hasAdvancedFilters,
+            'serviceContractOptions' => $this->serviceContractOptions(),
+            'staffOptions' => $this->staffOptions(),
+            'caretakerOptions' => $this->caretakerOptions(),
+            'careStatusOptions' => CustomerCareStatus::options(),
+            'summary' => $this->summary($customerIds),
+            'hasAdvancedFilters' => $hasAdvancedFilters,
         ])->layout('admin.layouts.app');
     }
 

@@ -46,6 +46,8 @@ class WorkScheduleManager extends Component
 
     public bool $isPrivate = false;
 
+    public bool $isBirthday = false;
+
     // Modal state
     public bool $showFormModal = false;
 
@@ -152,6 +154,7 @@ class WorkScheduleManager extends Component
         $this->endTime = $event->formatted_end_time ?? '';
         $this->color = $event->color;
         $this->isPrivate = (bool) $event->is_private;
+        $this->isBirthday = (bool) $event->is_birthday;
 
         $greecoParticipants = DB::table('work_schedule_participants')
             ->where('work_schedule_id', $event->id)
@@ -178,6 +181,7 @@ class WorkScheduleManager extends Component
             'endTime' => 'nullable|date_format:H:i',
             'color' => 'required|string|max:30',
             'isPrivate' => 'boolean',
+            'isBirthday' => 'boolean',
         ], [
             'title.required' => 'Vui lòng nhập tiêu đề sự kiện.',
             'title.max' => 'Tiêu đề không được vượt quá 255 ký tự.',
@@ -241,6 +245,10 @@ class WorkScheduleManager extends Component
                 return;
             }
 
+            if ($this->isBirthday && $this->color === 'primary') {
+                $this->color = 'pink';
+            }
+
             $event->update([
                 'title' => $this->title,
                 'description' => $this->description ?: null,
@@ -250,6 +258,7 @@ class WorkScheduleManager extends Component
                 'end_time' => $endTime,
                 'color' => $this->color,
                 'is_private' => $this->isPrivate,
+                'is_birthday' => $this->isBirthday,
             ]);
 
             $event->participants()->sync($localParticipantIds);
@@ -299,6 +308,10 @@ class WorkScheduleManager extends Component
                 return;
             }
 
+            if ($this->isBirthday && $this->color === 'primary') {
+                $this->color = 'pink';
+            }
+
             $event = WorkSchedule::create([
                 'user_id' => auth()->id(),
                 'title' => $this->title,
@@ -309,6 +322,7 @@ class WorkScheduleManager extends Component
                 'end_time' => $endTime,
                 'color' => $this->color,
                 'is_private' => $this->isPrivate,
+                'is_birthday' => $this->isBirthday,
             ]);
 
             $localParticipantIds = [];
@@ -495,6 +509,7 @@ class WorkScheduleManager extends Component
                 'is_past' => $clone->ends_at->lt(now()),
                 'is_multi_day' => false,
                 'is_private' => (bool) $clone->is_private,
+                'is_birthday' => (bool) $clone->is_birthday,
                 'participants' => collect($clone->combined_participants)->pluck('name')->join(', '),
             ];
         }
@@ -577,6 +592,7 @@ class WorkScheduleManager extends Component
         $this->endTime = '';
         $this->color = 'primary';
         $this->isPrivate = false;
+        $this->isBirthday = false;
         $this->selectedParticipants = [(string) auth()->id()];
         $this->resetValidation();
     }

@@ -105,4 +105,31 @@ final class WorkScheduleManagerTest extends TestCase
             'color' => '#ff0055',
         ]);
     }
+
+    public function test_it_can_create_birthday_event_and_displays_birthday_icon(): void
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $role = Role::findOrCreate(RoleEnum::IT->value);
+        $user = User::factory()->create(['is_active' => true]);
+        $user->assignRole($role);
+
+        Http::fake([
+            '*' => Http::response(['success' => true, 'data' => []]),
+        ]);
+
+        $this->actingAs($user);
+
+        Livewire::test(WorkScheduleManager::class)
+            ->set('title', 'Sinh nhật Đăng Thi')
+            ->set('startDate', today()->format('Y-m-d'))
+            ->set('isBirthday', true)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('work_schedules', [
+            'title' => 'Sinh nhật Đăng Thi',
+            'is_birthday' => true,
+        ]);
+    }
 }

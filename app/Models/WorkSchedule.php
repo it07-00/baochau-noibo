@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
-#[Fillable(['user_id', 'title', 'description', 'start_date', 'start_time', 'end_date', 'end_time', 'color', 'is_private'])]
+#[Fillable(['user_id', 'title', 'description', 'start_date', 'start_time', 'end_date', 'end_time', 'color', 'is_private', 'is_birthday'])]
 class WorkSchedule extends Model
 {
     /** @use HasFactory */
@@ -111,6 +111,7 @@ class WorkSchedule extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'is_private' => 'boolean',
+        'is_birthday' => 'boolean',
     ];
 
     public function user(): BelongsTo

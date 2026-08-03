@@ -2,124 +2,115 @@
     @section('title', 'Tiến độ dự án TV-KT')
     @section('page_title', 'Tiến độ dự án TV-KT')
 
-    <div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mt-2 mb-4">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
-                    <i class="fa-solid fa-diagram-project"></i>
-                </span>
-                <h2 class="h4 fw-bold text-body mb-0">Tiến độ dự án TV-KT</h2>
+    {{-- Header Page Title --}}
+    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-2.5">
+        <div class="d-flex align-items-center gap-2">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
+                <i class="fa-solid fa-diagram-project fs-5"></i>
+            </span>
+            <div>
+                <h2 class="h5 fw-bold text-body mb-0">Pipeline tiến độ hợp đồng</h2>
+                <small class="text-muted">Theo dõi 6 bước tiến độ thực hiện hợp đồng TV-KT</small>
             </div>
-            <p class="text-muted small mb-0">Theo dõi tiến độ 6 bước, nhân sự thực hiện và tài liệu của từng hợp đồng.</p>
         </div>
-        <span class="d-inline-flex align-items-center gap-2 rounded-3 bg-primary bg-opacity-10 text-primary px-3 py-2 small fw-semibold align-self-start">
-            <i class="fa-regular fa-calendar"></i>Tháng {{ $month }}/{{ $year }}
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 small fw-semibold align-self-start align-self-sm-center">
+            <i class="fa-regular fa-calendar me-1"></i>Tháng {{ $month }}/{{ $year }}
         </span>
     </div>
 
-    @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/css/sales-project-progress-report.css') }}?v={{ config('app.version') }}">
-    @endpush
-
-    <div class="card border border-light-subtle shadow-sm rounded-3 mb-3 bg-body">
-        <div class="card-body p-3">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <i class="fa-solid fa-layer-group text-primary"></i>
-                <h3 class="h6 fw-bold text-body mb-0">Nhóm hợp đồng</h3>
+    {{-- Nhóm hợp đồng (Nổi bật & Rõ ràng) --}}
+    <div class="card border border-light-subtle shadow-sm rounded-3 mb-2.5 bg-body">
+        <div class="card-body p-2.5 px-3">
+            <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
+                <div class="d-flex align-items-center gap-2 flex-shrink-0 me-md-2">
+                    <i class="fa-solid fa-layer-group text-primary fs-6"></i>
+                    <span class="fw-bold text-body small">Nhóm hợp đồng:</span>
+                </div>
+                <nav class="d-flex flex-wrap gap-2 flex-grow-1" aria-label="Nhóm hợp đồng">
+                    @foreach($contractTypes as $typeKey => $typeName)
+                        <button
+                            type="button"
+                            wire:click="selectContractType('{{ $typeKey }}')"
+                            class="btn btn-sm rounded-3 fw-semibold px-3 py-1 {{ $filter_contract_type === $typeKey ? 'btn-primary shadow-sm' : 'btn-light text-body border border-light-subtle' }}"
+                            style="font-size: 0.82rem;"
+                            aria-pressed="{{ $filter_contract_type === $typeKey ? 'true' : 'false' }}"
+                        >
+                            {{ $typeName }}
+                        </button>
+                    @endforeach
+                </nav>
             </div>
-            <nav class="d-flex flex-wrap gap-2" aria-label="Nhóm hợp đồng">
-                @foreach($contractTypes as $typeKey => $typeName)
-                    <button
-                        type="button"
-                        wire:click="selectContractType('{{ $typeKey }}')"
-                        class="btn btn-sm rounded-3 {{ $filter_contract_type === $typeKey ? 'btn-primary' : 'btn-light text-body' }}"
-                        aria-pressed="{{ $filter_contract_type === $typeKey ? 'true' : 'false' }}"
-                    >
-                        {{ $typeName }}
-                    </button>
-                @endforeach
-            </nav>
         </div>
     </div>
 
-    {{-- Bộ lọc --}}
-    <div class="card border border-light-subtle shadow-sm rounded-3 mb-4 overflow-hidden bg-body">
-        <div class="card-body p-3 p-lg-4">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2">
-                    <i class="fa-solid fa-filter"></i>
-                </span>
-                <div>
-                    <h3 class="h6 fw-bold text-body mb-0">Bộ lọc báo cáo</h3>
-                    <small class="text-muted">Chọn tháng, năm, nhân sự và loại dịch vụ cần theo dõi</small>
-                </div>
-            </div>
-            <div class="row g-3 align-items-end">
-                <div class="col-6 col-md-3 col-xl-2">
-                    <label for="project-progress-month" class="form-label small fw-semibold text-body mb-1">Tháng</label>
-                    <select id="project-progress-month" wire:model.live="month" class="form-select border-light-subtle">
+    {{-- Bộ lọc báo cáo --}}
+    <div class="card border border-light-subtle shadow-sm rounded-3 mb-2.5 bg-body">
+        <div class="card-body p-2.5 px-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-6 col-md-2">
+                    <label for="project-progress-month" class="form-label text-muted x-small fw-semibold mb-1 d-block" style="font-size: 0.72rem;">Tháng</label>
+                    <select id="project-progress-month" wire:model.live="month" class="form-select form-select-sm border-secondary-subtle">
                         @foreach(range(1, 12) as $monthNumber)
                             <option value="{{ $monthNumber }}">Tháng {{ $monthNumber }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-6 col-md-3 col-xl-2">
-                    <label for="project-progress-year" class="form-label small fw-semibold text-body mb-1">Năm</label>
-                    <select id="project-progress-year" wire:model.live="year" class="form-select border-light-subtle">
+                <div class="col-6 col-md-2">
+                    <label for="project-progress-year" class="form-label text-muted x-small fw-semibold mb-1 d-block" style="font-size: 0.72rem;">Năm</label>
+                    <select id="project-progress-year" wire:model.live="year" class="form-select form-select-sm border-secondary-subtle">
                         @foreach($years as $y)
-                            <option value="{{ $y }}">{{ $y }}</option>
+                            <option value="{{ $y }}">Năm {{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-12 col-md-6 col-xl-2">
-                    <label for="project-progress-staff" class="form-label small fw-semibold text-body mb-1">Nhân sự thực hiện</label>
-                    <select id="project-progress-staff" wire:model.live="filter_staff_id" class="form-select border-light-subtle">
+                <div class="col-6 col-md-3">
+                    <label for="project-progress-staff" class="form-label text-muted x-small fw-semibold mb-1 d-block" style="font-size: 0.72rem;">Nhân sự TV/KT</label>
+                    <select id="project-progress-staff" wire:model.live="filter_staff_id" class="form-select form-select-sm border-secondary-subtle">
                         <option value="all">Tất cả nhân sự TV/KT</option>
                         @foreach($assignedStaffs as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-12 col-md-7 col-xl-3">
-                    <label for="project-progress-service" class="form-label small fw-semibold text-body mb-1">Loại dịch vụ</label>
-                    <select id="project-progress-service" wire:model.live="filter_service" class="form-select border-light-subtle">
+                <div class="col-6 col-md-3">
+                    <label for="project-progress-service" class="form-label text-muted x-small fw-semibold mb-1 d-block" style="font-size: 0.72rem;">Loại dịch vụ</label>
+                    <select id="project-progress-service" wire:model.live="filter_service" class="form-select form-select-sm border-secondary-subtle">
                         <option value="all">Tất cả loại dịch vụ</option>
                         @foreach($serviceOptions as $serviceOption)
                             <option value="{{ $serviceOption }}">{{ $serviceOption }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-12 col-md-5 col-xl-3">
-                    <div class="bg-body-tertiary rounded-3 px-3 py-2 border border-light-subtle">
-                        <div class="small text-muted">Đang hiển thị</div>
-                        <div class="fw-semibold text-body">{{ number_format($items->total()) }} hợp đồng · Tháng {{ $month }}/{{ $year }}</div>
-                    </div>
+                <div class="col-12 col-md-2 text-md-end">
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1.5 rounded-2 d-inline-block w-100 text-center" style="font-size: 0.78rem;">
+                        <i class="fa-solid fa-file-contract me-1"></i><strong>{{ number_format($items->total()) }}</strong> HĐ
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
+    {{-- Compact Micro Stat Cards --}}
+    <div class="row g-2 mb-2.5">
         @php
             $statistics = [
-                ['label' => 'Tổng hợp đồng', 'value' => $summary->total, 'sub' => 'theo bộ lọc hiện tại', 'icon' => 'fa-file-contract', 'accent' => 'bg-primary-subtle text-primary'],
-                ['label' => 'Chưa bắt đầu', 'value' => $summary->not_started, 'sub' => 'đang chờ tiếp nhận', 'icon' => 'fa-hourglass-start', 'accent' => 'bg-secondary-subtle text-secondary'],
-                ['label' => 'Đang thực hiện', 'value' => $summary->active, 'sub' => 'đã phát sinh tiến độ', 'icon' => 'fa-list-check', 'accent' => 'bg-warning-subtle text-warning'],
-                ['label' => 'Đã hoàn thành', 'value' => $summary->completed, 'sub' => 'hoàn tất đủ 6 bước', 'icon' => 'fa-circle-check', 'accent' => 'bg-success-subtle text-success'],
-                ['label' => 'Tiến độ trung bình', 'value' => number_format($summary->progress, 1, ',', '.').'%', 'sub' => 'trên toàn bộ hợp đồng', 'icon' => 'fa-chart-line', 'accent' => 'bg-info-subtle text-info'],
+                ['label' => 'Tổng hợp đồng', 'value' => $summary->total, 'icon' => 'fa-file-contract', 'accent' => 'bg-primary-subtle text-primary'],
+                ['label' => 'Chưa bắt đầu', 'value' => $summary->not_started, 'icon' => 'fa-hourglass-start', 'accent' => 'bg-secondary-subtle text-secondary'],
+                ['label' => 'Đang thực hiện', 'value' => $summary->active, 'icon' => 'fa-list-check', 'accent' => 'bg-warning-subtle text-warning'],
+                ['label' => 'Đã hoàn thành', 'value' => $summary->completed, 'icon' => 'fa-circle-check', 'accent' => 'bg-success-subtle text-success'],
+                ['label' => 'Tiến độ TB', 'value' => number_format($summary->progress, 1, ',', '.').'%', 'icon' => 'fa-chart-line', 'accent' => 'bg-info-subtle text-info'],
             ];
         @endphp
         @foreach($statistics as $statistic)
-            <div class="col-6 col-lg-4 col-xl">
-                <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
-                    <div class="card-body d-flex align-items-center gap-3 p-3">
-                        <span class="icon-42 d-inline-flex align-items-center justify-content-center rounded-3 flex-shrink-0 {{ $statistic['accent'] }}">
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card border border-light-subtle shadow-sm rounded-2 bg-body">
+                    <div class="card-body d-flex align-items-center gap-2 p-2 px-2.5">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-2 flex-shrink-0 {{ $statistic['accent'] }}" style="width: 1.85rem; height: 1.85rem; font-size: 0.8rem;">
                             <i class="fa-solid {{ $statistic['icon'] }}"></i>
                         </span>
-                        <div class="min-w-0">
-                            <div class="small text-muted text-truncate">{{ $statistic['label'] }}</div>
-                            <div class="h5 fw-bold text-body mb-0 lh-sm">{{ $statistic['value'] }}</div>
-                            <small class="text-muted text-truncate d-block">{{ $statistic['sub'] }}</small>
+                        <div class="min-w-0 flex-grow-1">
+                            <div class="text-muted text-truncate" style="font-size: 0.68rem;">{{ $statistic['label'] }}</div>
+                            <div class="fw-bold text-body lh-1 mb-0" style="font-size: 0.9rem;">{{ $statistic['value'] }}</div>
                         </div>
                     </div>
                 </div>
@@ -127,64 +118,58 @@
         @endforeach
     </div>
 
-    {{-- Pipeline tiến độ hợp đồng --}}
-    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
-        <div>
-            <h3 class="h5 fw-bold text-body mb-1">Pipeline tiến độ hợp đồng</h3>
-            <span class="text-muted small">Mỗi hợp đồng được xếp theo bước đang thực hiện.</span>
-        </div>
-        <span class="d-inline-flex align-items-center gap-1 text-muted small"><i class="fa-solid fa-arrows-left-right"></i>Cuộn ngang để xem đủ 6 bước</span>
-    </div>
-    <div class="d-flex align-items-start gap-3 overflow-x-auto pb-3 mb-4">
+    {{-- Pipeline 6 bước (Gọn gàng dàn 6 cột 100% màn hình, không cuộn ngang) --}}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-6 g-2 mb-3">
         @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
-            <section class="mnw-260px flex-shrink-0">
-                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary">
-                    <div class="card-header border-0 bg-transparent p-3 d-flex justify-content-between align-items-start gap-2">
-                        <div class="d-flex align-items-start gap-2">
-                            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary p-2 small fw-bold">{{ $loop->iteration }}</span>
-                            <h4 class="h6 fw-bold text-body mb-0 pt-1">{{ \App\Models\ContractWorkflowStep::STEPS[$stepKey] }}</h4>
+            <div class="col">
+                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary h-100">
+                    <div class="card-header border-0 bg-transparent p-2 d-flex justify-content-between align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-2 min-w-0">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary fw-bold flex-shrink-0 me-1" style="width: 1.35rem; height: 1.35rem; font-size: 0.72rem;">{{ $loop->iteration }}</span>
+                            <h4 class="fw-bold text-body mb-0 text-truncate" style="font-size: 0.78rem;" title="{{ \App\Models\ContractWorkflowStep::STEPS[$stepKey] }}">
+                                {{ \App\Models\ContractWorkflowStep::STEPS[$stepKey] }}
+                            </h4>
                         </div>
-                        <span class="d-inline-flex rounded-3 bg-secondary bg-opacity-10 text-secondary px-2 py-1 small fw-semibold">{{ count($pipeline[$stepKey]) }}</span>
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.7rem;">{{ count($pipeline[$stepKey]) }}</span>
                     </div>
-                    <div class="card-body px-3 pt-0 pb-3">
+                    <div class="card-body p-1.5 pt-0">
                         @forelse($pipeline[$stepKey] as $contract)
-                            <article class="card border border-light-subtle shadow-sm rounded-3 mb-3 bg-body" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
-                                <div class="card-body p-3">
-                                    <div class="d-flex justify-content-between gap-2 align-items-start">
-                                        <div class="min-w-0">
-                                            <h6 class="fw-bold mb-1 text-truncate" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</h6>
-                                            <small class="text-muted">{{ $contract['shd'] }} · {{ $contract['signed_at']?->format('d/m/Y') ?? 'Chưa có ngày ký' }}</small>
+                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-1.5 bg-body" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
+                                <div class="card-body p-2">
+                                    <div class="d-flex justify-content-between gap-1 align-items-start mb-1">
+                                        <div class="min-w-0 me-1">
+                                            <div class="fw-bold text-body text-truncate" style="font-size: 0.78rem;" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</div>
+                                            <div class="text-muted text-truncate" style="font-size: 0.68rem;">{{ $contract['shd'] }}</div>
                                         </div>
-                                        <span class="d-inline-flex rounded-3 bg-primary bg-opacity-10 text-primary px-2 py-1 small fw-semibold text-nowrap">{{ $contract['workflow_progress']['completed_count'] }}/6</span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.68rem;">{{ $contract['workflow_progress']['completed_count'] }}/6</span>
                                     </div>
-                                    <div class="rounded-3 bg-body-tertiary p-2 small mt-3">{{ $contract['type'] }}</div>
-                                    <div class="d-flex justify-content-between gap-2 small mt-3">
-                                        <span class="text-muted text-truncate" title="{{ $contract['assigned_staff'] }}">{{ $contract['assigned_staff'] }}</span>
-                                        <span class="text-muted text-nowrap">{{ $contract['workflow_progress']['percent'] }}%</span>
+                                    <div class="d-flex justify-content-between align-items-center text-muted mb-1" style="font-size: 0.68rem;">
+                                        <span class="text-truncate me-1" title="{{ $contract['assigned_staff'] }}"><i class="fa-regular fa-user me-1"></i>{{ $contract['assigned_staff'] }}</span>
+                                        <span class="fw-semibold text-nowrap">{{ $contract['workflow_progress']['percent'] }}%</span>
                                     </div>
-                                    <div class="progress h-6px mt-2">
+                                    <div class="progress mb-1.5" style="height: 3px;">
                                         <div class="progress-bar {{ $contract['workflow_progress']['percent'] >= 100 ? 'bg-success' : 'bg-primary' }}" style="width: {{ $contract['workflow_progress']['percent'] }}%"></div>
                                     </div>
-                                    <div class="d-flex gap-2 mt-3">
-                                        <button type="button" class="btn btn-light btn-sm flex-grow-1" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
-                                            <i class="fa-solid fa-eye me-1"></i> Chi tiết
+                                    <div class="d-flex gap-1">
+                                        <button type="button" class="btn btn-light btn-xs flex-grow-1 py-1 px-1 text-truncate" style="font-size: 0.68rem;" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                            <i class="fa-solid fa-eye me-1"></i>Chi tiết
                                         </button>
                                         @if($this->canAssign())
-                                            <button type="button" class="btn btn-success btn-sm flex-grow-1" wire:click="openAssign('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
-                                                <i class="fa-solid fa-user-check me-1"></i> Giao việc
+                                            <button type="button" class="btn btn-outline-success btn-xs flex-grow-1 py-1 px-1 text-truncate" style="font-size: 0.68rem;" wire:click="openAssign('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                                <i class="fa-solid fa-user-check me-1"></i>Giao việc
                                             </button>
                                         @endif
                                     </div>
                                 </div>
                             </article>
                         @empty
-                            <div class="rounded-3 bg-body p-4 text-center text-muted small">
-                                <i class="fa-solid fa-inbox d-block fs-4 opacity-25 mb-2"></i>Chưa có hợp đồng
+                            <div class="rounded-2 bg-body p-2 text-center text-muted" style="font-size: 0.72rem;">
+                                Chưa có hợp đồng
                             </div>
                         @endforelse
                     </div>
                 </div>
-            </section>
+            </div>
         @endforeach
     </div>
 

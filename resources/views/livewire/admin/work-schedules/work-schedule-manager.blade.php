@@ -71,11 +71,21 @@
 
                 <div class="ws-agenda-events">
                     @foreach($this::eventsForDate($calendarData, $currentDate) as $evt)
-                        <button type="button" class="ws-agenda-event ws-chip-{{ $evt->color }}"
+                        <button type="button" class="ws-agenda-event ws-chip-{{ $evt->is_birthday ? 'pink' : $evt->color }}"
                             style="{{ $evt->chip_inline_style }}"
                             @click="showDetail = true"
                             wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
-                            <span class="ws-agenda-event-title">{{ $evt->title }}</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="ws-agenda-event-title fw-bold">
+                                    @if($evt->is_birthday)
+                                        <i class="fa-solid fa-cake-candles text-danger me-1"></i>
+                                    @endif
+                                    {{ $evt->title }}
+                                </span>
+                                @if($evt->is_birthday)
+                                    <span class="text-danger ms-2 flex-shrink-0" title="Sinh nhật"><i class="fa-solid fa-cake-candles"></i></span>
+                                @endif
+                            </div>
                             <span class="ws-agenda-event-people">{{ $evt->time_range_label }}</span>
                             <span class="ws-agenda-event-people">{{ collect($evt->combined_participants)->pluck('name')->join(', ') }}</span>
                         </button>
@@ -144,16 +154,23 @@
                 wire:click="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')" @click="showDetail = true" @endif>
                     @if($this->isInsideCurrentMonth($currentDate) && count($eventsForDay) > 0)
                         @foreach($eventsForDay as $evt)
-                            <div class="ws-event-chip ws-chip-{{ $evt->color }}"
+                            <div class="ws-event-chip ws-chip-{{ $evt->is_birthday ? 'pink' : $evt->color }}"
                                 style="{{ $evt->chip_inline_style }}"
                                 @click.stop="showDetail = true"
                                 wire:click.stop="openDayDetail('{{ $this->calendarDayKey($currentDate) }}')">
-                                <div class="d-flex flex-column mb-1">
-                                    <span class="ws-event-author text-truncate fw-semibold">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 15, '...') }}</span>
-                                    <span class="ws-event-time fw-medium">{{ $evt->time_range_label }}</span>
+                                <div class="d-flex justify-content-between align-items-start gap-1 mb-1">
+                                    <div class="d-flex flex-column min-w-0">
+                                        <span class="ws-event-author text-truncate fw-semibold">{{ Str::limit($evt->user?->name ?? 'Hệ thống', 15, '...') }}</span>
+                                        <span class="ws-event-time fw-medium">{{ $evt->time_range_label }}</span>
+                                    </div>
+                                    @if($evt->is_birthday)
+                                        <span class="text-danger flex-shrink-0 ms-1" title="Sinh nhật"><i class="fa-solid fa-cake-candles fs-7"></i></span>
+                                    @endif
                                 </div>
                                 <div class="ws-event-title fw-bold text-truncate mb-0">
-                                    @if($evt->is_private)
+                                    @if($evt->is_birthday)
+                                        <i class="fa-solid fa-cake-candles text-danger me-1"></i>
+                                    @elseif($evt->is_private)
                                         <i class="fa-solid fa-lock text-warning me-1"></i>
                                     @endif
                                     {{ $evt->title }}
@@ -219,6 +236,11 @@
                                 <div class="min-w-0 flex-grow-1">
                                     <div class="d-flex align-items-center flex-wrap gap-2">
                                         <h6 class="fw-bold mb-0 fs-6" style="color: inherit !important;">{{ $evt['title'] }}</h6>
+                                        @if(!empty($evt['is_birthday']))
+                                            <span class="badge bg-danger bg-opacity-20 text-danger-emphasis border border-danger border-opacity-25 rounded-pill px-2.5 py-1 fs-8 fw-bold">
+                                                <i class="fa-solid fa-cake-candles me-1"></i>Sinh nhật
+                                            </span>
+                                        @endif
                                         @if(!empty($evt['department']))
                                             <span class="badge bg-dark bg-opacity-10 text-body-emphasis border border-dark border-opacity-10 rounded-pill px-2.5 py-1 fs-8 fw-semibold">{{ $evt['department'] }}</span>
                                         @endif
@@ -403,7 +425,7 @@
                     @error('description') <span class="text-danger fs-85 mt-1 d-block">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="mb-3 p-3 rounded-3 bg-body-tertiary border border-light-subtle">
+                <div class="mb-3 p-3 rounded-3 bg-body-tertiary border border-light-subtle d-flex flex-column gap-2">
                     <div class="form-check form-switch mb-0">
                         <input class="form-check-input" type="checkbox" role="switch" id="isPrivateSwitch"
                             wire:model="isPrivate">
@@ -411,6 +433,18 @@
                             <i class="fa-solid fa-lock me-1 text-warning"></i> Sự kiện riêng tư (chỉ người tham gia mới xem được)
                         </label>
                     </div>
+
+                    @if(auth()->user()->hasRole(\App\Enums\Role::IT->value) || auth()->user()->can(\App\Enums\Permission::WORK_SCHEDULES_MANAGE_ALL->value))
+                        <div class="border-top border-light-subtle pt-2 mt-1">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch" id="isBirthdaySwitch"
+                                    wire:model="isBirthday">
+                                <label class="form-check-label fw-bold text-body small" for="isBirthdaySwitch">
+                                    <i class="fa-solid fa-cake-candles me-1 text-danger"></i> Đánh dấu là sự kiện Sinh nhật
+                                </label>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="mb-4">

@@ -219,4 +219,33 @@ class CustomerManagerRegulatoryListTest extends TestCase
             ->assertDontSee('Cơ sở chưa liên hệ')
             ->assertDontSee('Cơ sở đang đàm phán');
     }
+
+    public function test_it_filters_regulatory_facilities_strictly_by_caretaker(): void
+    {
+        $viewer = User::factory()->create();
+        $viewer->givePermissionTo(Permission::findOrCreate('customers.view'));
+
+        $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
+        $sanSan = User::factory()->create(['name' => 'San San', 'is_active' => true]);
+        $sanSan->assignRole($salesRole);
+
+        Customer::create([
+            'name' => 'Cơ sở được San San chăm sóc',
+            'is_ghg_inventory' => true,
+            'caretaker_id' => $sanSan->id,
+        ]);
+
+        Customer::create([
+            'name' => 'Cơ sở chưa được phân công',
+            'is_ghg_inventory' => true,
+            'caretaker_id' => null,
+        ]);
+
+        Livewire::actingAs($viewer)
+            ->test(CustomerManager::class)
+            ->call('selectCustomerList', 'ghg_inventory')
+            ->set('staffFilter', (string) $sanSan->id)
+            ->assertSee('Cơ sở được San San chăm sóc')
+            ->assertDontSee('Cơ sở chưa được phân công');
+    }
 }

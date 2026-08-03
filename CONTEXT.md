@@ -252,7 +252,7 @@ Các tích hợp đáng chú ý:
 - Google Sheets cho chi phí nhà cung cấp;
 - S3-compatible storage qua Flysystem;
 - Viettel Post trong module chuyển phát;
-- Tích hợp lịch công tác chéo Bảo Châu (`noibobaochau.me`) <-> Greeco (`noibo.greeco.vn`) qua HTTP API, cho phép thêm nhân sự chéo giữa 2 hệ thống;
+- Tích hợp lịch công tác chéo Bảo Châu (`noibobaochau.me`) <-> Greeco (`noibo.greeco.vn`) qua HTTP API, cho phép thêm nhân sự chéo giữa 2 hệ thống; hỗ trợ IT/Quản trị đánh dấu sự kiện Sinh nhật (`is_birthday`) hiển thị icon sinh nhật ở góc phải ô sự kiện;
 - xuất Word/PDF/Excel.
 
 ## 11. Quy ước phát triển
