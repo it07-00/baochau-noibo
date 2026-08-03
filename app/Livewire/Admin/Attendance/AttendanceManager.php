@@ -217,12 +217,12 @@ class AttendanceManager extends Component
 
     public function isLate(?array $day): bool
     {
-        return (bool) ($day && ($day['first'] ?? null) > '08:00');
+        return (bool) ($day && ($day['late_min'] ?? 0) > 0);
     }
 
     public function isEarly(?array $day): bool
     {
-        return (bool) ($day && !empty($day['last']) && $day['last'] < '17:00');
+        return (bool) ($day && ($day['early_min'] ?? 0) > 0);
     }
 
     public function isAbsent(?array $day, Carbon $date): bool

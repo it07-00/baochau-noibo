@@ -57,18 +57,33 @@ class AttendanceService
                 if ($dayLogs->isEmpty()) {
                     $dayData[$date->day] = null;
                 } else {
-                    $firstTime = $dayLogs->first()->checked_at;
-                    $lastTime  = $dayLogs->count() > 1 ? $dayLogs->last()->checked_at : null;
-                    $checkinM  = $firstTime->hour * 60 + $firstTime->minute;
+                    $logsCount = $dayLogs->count();
+                    if ($logsCount === 1) {
+                        $singleTime = $dayLogs->first()->checked_at;
+                        $singleM    = $singleTime->hour * 60 + $singleTime->minute;
+
+                        if ($singleM < 720) {
+                            $firstTime = $singleTime;
+                            $lastTime  = null;
+                        } else {
+                            $firstTime = null;
+                            $lastTime  = $singleTime;
+                        }
+                    } else {
+                        $firstTime = $dayLogs->first()->checked_at;
+                        $lastTime  = $dayLogs->last()->checked_at;
+                    }
+
+                    $checkinM  = $firstTime ? ($firstTime->hour * 60 + $firstTime->minute) : null;
                     $checkoutM = $lastTime ? ($lastTime->hour * 60 + $lastTime->minute) : null;
 
-                    $lateMin  = max(0, $checkinM - 480);
-                    $earlyMin = $checkoutM !== null ? max(0, 1020 - $checkoutM) : 0;
+                    $lateMin  = ($checkinM !== null && $checkinM <= 720) ? max(0, $checkinM - 480) : 0;
+                    $earlyMin = ($checkoutM !== null && $checkoutM >= 720) ? max(0, 1020 - $checkoutM) : 0;
 
                     $dayData[$date->day] = [
-                        'first'     => $firstTime->format('H:i'),
+                        'first'     => $firstTime ? $firstTime->format('H:i') : null,
                         'last'      => $lastTime ? $lastTime->format('H:i') : null,
-                        'count'     => $dayLogs->count(),
+                        'count'     => $logsCount,
                         'late_min'  => $lateMin,
                         'early_min' => $earlyMin,
                     ];

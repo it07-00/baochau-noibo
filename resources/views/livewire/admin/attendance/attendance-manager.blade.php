@@ -172,13 +172,16 @@
                                             <td class="text-center" style="vertical-align:middle;padding:2px 3px;background:{{ $this->attendanceCellStyle($this->dayData($row, $date), $date)['bg'] }};color:{{ $this->attendanceCellStyle($this->dayData($row, $date), $date)['color'] }};">
                                                 @php($dData = $this->dayData($row, $date))
                                                 @if($dData)
-                                                    <div class="fs-82 lh-sm fw-semibold" title="{{ $dData['first'] }}@if(($dData['late_min'] ?? 0) > 0) (Trễ {{ $dData['late_min'] }}p)@endif @if($dData['last']) - {{ $dData['last'] }}@if(($dData['early_min'] ?? 0) > 0) (Sớm {{ $dData['early_min'] }}p)@endif @endif">
-                                                        <span>{{ $dData['first'] }}</span>
-                                                        @if(($dData['late_min'] ?? 0) > 0)
-                                                            <span class="d-block fs-65 fw-normal text-nowrap" style="opacity: 0.95;">(+{{ $dData['late_min'] }}p)</span>
+                                                    <div class="fs-82 lh-sm fw-semibold" title="@if($dData['first']){{ $dData['first'] }}@endif @if(($dData['late_min'] ?? 0) > 0)(Trễ {{ $dData['late_min'] }}p)@endif @if($dData['last']) - {{ $dData['last'] }}@endif @if(($dData['early_min'] ?? 0) > 0)(Sớm {{ $dData['early_min'] }}p)@endif">
+                                                        @if($dData['first'])
+                                                            <span>{{ $dData['first'] }}</span>
+                                                            @if(($dData['late_min'] ?? 0) > 0)
+                                                                <span class="d-block fs-65 fw-normal text-nowrap" style="opacity: 0.95;">(+{{ $dData['late_min'] }}p)</span>
+                                                            @endif
                                                         @endif
                                                         @if($dData['last'])
-                                                            <br><span>{{ $dData['last'] }}</span>
+                                                            @if($dData['first'])<br>@endif
+                                                            <span>{{ $dData['last'] }}</span>
                                                             @if(($dData['early_min'] ?? 0) > 0)
                                                                 <span class="d-block fs-65 fw-normal text-nowrap" style="opacity: 0.95;">(-{{ $dData['early_min'] }}p)</span>
                                                             @endif
