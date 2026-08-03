@@ -6,6 +6,7 @@ use App\Enums\Role as RoleEnum;
 use App\Livewire\Admin\Customers\CustomerManager;
 use App\Models\Customer;
 use App\Models\User;
+use App\Services\CustomerRegulatoryListImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
@@ -92,10 +93,7 @@ class CustomerManagerRegulatoryListTest extends TestCase
         fclose($energy);
 
         try {
-            $this->artisan('customers:import-regulatory-lists', [
-                'ghg' => $ghgPath,
-                'energy' => $energyPath,
-            ])->assertSuccessful();
+            app(CustomerRegulatoryListImporter::class)->import($ghgPath, $energyPath);
         } finally {
             @unlink($ghgPath);
             @unlink($energyPath);
@@ -164,10 +162,7 @@ class CustomerManagerRegulatoryListTest extends TestCase
 
         try {
             foreach ([1, 2] as $run) {
-                $this->artisan('customers:import-regulatory-lists', [
-                    'ghg' => $ghgPath,
-                    'energy' => $energyPath,
-                ])->assertSuccessful();
+                app(CustomerRegulatoryListImporter::class)->import($ghgPath, $energyPath);
             }
         } finally {
             @unlink($ghgPath);
@@ -191,7 +186,7 @@ class CustomerManagerRegulatoryListTest extends TestCase
         $editor->givePermissionTo(Permission::findOrCreate('customers.edit'));
 
         $facility = Customer::create([
-            'name'             => 'Cơ sở KKKNK cần chăm sóc',
+            'name' => 'Cơ sở KKKNK cần chăm sóc',
             'is_ghg_inventory' => true,
         ]);
 
@@ -202,7 +197,7 @@ class CustomerManagerRegulatoryListTest extends TestCase
             ->assertDispatched('swal:toast');
 
         $this->assertDatabaseHas('customers', [
-            'id'          => $facility->id,
+            'id' => $facility->id,
             'care_status' => 'contacted',
         ]);
     }
