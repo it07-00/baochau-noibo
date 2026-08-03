@@ -122,7 +122,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-6 g-2 mb-3">
         @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
             <div class="col">
-                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary h-100">
+                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary">
                     <div class="card-header border-0 bg-transparent p-2 d-flex justify-content-between align-items-center gap-1">
                         <div class="d-flex align-items-center gap-2 min-w-0">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary fw-bold flex-shrink-0 me-1" style="width: 1.35rem; height: 1.35rem; font-size: 0.72rem;">{{ $loop->iteration }}</span>
@@ -132,10 +132,10 @@
                         </div>
                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.7rem;">{{ count($pipeline[$stepKey]) }}</span>
                     </div>
-                    <div class="card-body p-1.5 pt-0 pipeline-step-body">
+                    <div class="card-body p-1.5 pt-0 pipeline-step-body flex-grow-0">
                         @forelse($pipeline[$stepKey] as $contract)
-                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-1.5 bg-body" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
-                                <div class="card-body p-2">
+                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-1.5 bg-body pipeline-contract-card flex-grow-0" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
+                                <div class="card-body p-2 flex-grow-0">
                                     <div class="d-flex justify-content-between gap-1 align-items-start mb-1">
                                         <div class="min-w-0 me-1">
                                             <div class="fw-bold text-body text-truncate" style="font-size: 0.78rem;" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</div>
