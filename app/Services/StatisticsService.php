@@ -11,6 +11,7 @@ use App\Models\ContractResearch;
 use App\Models\ContractSustainability;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
+use App\Models\ContractWorkflowStep;
 use App\Models\Customer;
 use App\Models\DailyReport;
 use App\Models\Quotation;
@@ -654,10 +655,19 @@ class StatisticsService
                 $contractGroups = $rows->groupBy(
                     fn ($contract): string => ContractBusinessIdentity::key($contract)
                 );
+                $finishedContractIds = ContractWorkflowStep::query()
+                    ->where('contract_type', $model)
+                    ->where('step_name', 'finished')
+                    ->whereIn('contract_id', $rows->pluck('id'))
+                    ->pluck('contract_id')
+                    ->flip();
 
                 $count = $contractGroups->count();
                 $completed = $contractGroups
-                    ->filter(fn ($contracts): bool => $contracts->contains('workflow_status', 'finished'))
+                    ->filter(fn ($contracts): bool => $contracts->contains(
+                        fn ($contract): bool => $contract->workflow_status === 'finished'
+                            || $finishedContractIds->has($contract->id)
+                    ))
                     ->count();
                 $value = (float) $rows->sum('value');
 
@@ -702,6 +712,12 @@ class StatisticsService
                 $contractGroups = $assignments->groupBy(
                     fn ($assignment): string => ContractBusinessIdentity::key($assignment->assignable)
                 );
+                $finishedContractIds = ContractWorkflowStep::query()
+                    ->where('contract_type', $modelClass)
+                    ->where('step_name', 'finished')
+                    ->whereIn('contract_id', $assignments->pluck('assignable_id'))
+                    ->pluck('contract_id')
+                    ->flip();
                 $count = $contractGroups->count();
                 $value = $contractGroups->sum(fn ($contractAssignments): float => (float) $contractAssignments
                     ->unique(fn ($assignment): string => $assignment->assignable_type.':'.$assignment->assignable_id)
@@ -709,6 +725,7 @@ class StatisticsService
                 $completed = $contractGroups
                     ->filter(fn ($contractAssignments): bool => $contractAssignments->contains(
                         fn ($assignment): bool => ($assignment->assignable->workflow_status ?? '') === 'finished'
+                            || $finishedContractIds->has($assignment->assignable_id)
                     ))
                     ->count();
 

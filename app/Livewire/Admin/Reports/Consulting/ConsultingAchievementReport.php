@@ -2,16 +2,9 @@
 
 namespace App\Livewire\Admin\Reports\Consulting;
 
-use App\Models\ContractAssignment;
-use App\Models\ContractEmission;
-use App\Models\ContractLegal;
-use App\Models\ContractResearch;
-use App\Models\ContractSustainability;
-use App\Models\ContractTechnical;
-use App\Models\ContractWaste;
-use App\Models\ContractWorkflowStep;
+use App\Enums\Role;
 use App\Models\DailyReport;
-use App\Models\User;
+use App\Services\ContractProgressRankingService;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -21,18 +14,9 @@ class ConsultingAchievementReport extends Component
 
     public array $years = [];
 
-    private const CONTRACT_MODELS = [
-        ContractWaste::class,
-        ContractLegal::class,
-        ContractTechnical::class,
-        ContractResearch::class,
-        ContractSustainability::class,
-        ContractEmission::class,
-    ];
-
     public function mount(): void
     {
-        $this->year  = now()->year;
+        $this->year = now()->year;
         $this->years = range(now()->year, now()->year - 4);
     }
 
@@ -44,6 +28,7 @@ class ConsultingAchievementReport extends Component
         }
 
         $last = array_slice($parts, -2);
+
         return strtoupper(implode('', array_map(fn ($word) => mb_substr($word, 0, 1), $last)));
     }
 
@@ -54,66 +39,23 @@ class ConsultingAchievementReport extends Component
             ->exists();
     }
 
-    private function buildRankings(string $role): Collection
+    private function buildRankings(): Collection
     {
-        $staffs = User::role($role)->where('is_active', true)->orderBy('name')->get();
-
-        return $staffs->map(function (User $user) {
-            $total    = 0;
-            $finished = 0;
-
-            foreach (self::CONTRACT_MODELS as $model) {
-                // Get IDs of contracts for this year (avoid whereHas on morphTo)
-                $contractIds = $model::whereYear(
-                    \Illuminate\Support\Facades\DB::raw('COALESCE(submitted_at, signed_at)'),
-                    $this->year
-                )->pluck('id');
-
-                if ($contractIds->isEmpty()) {
-                    continue;
-                }
-
-                $cnt = ContractAssignment::where('user_id', $user->id)
-                    ->where('assignable_type', $model)
-                    ->whereIn('assignable_id', $contractIds)
-                    ->count();
-                $total += $cnt;
-
-                $finishedIds = ContractWorkflowStep::where('contract_type', $model)
-                    ->where('step_name', 'finished')
-                    ->pluck('contract_id');
-
-                $done = ContractAssignment::where('user_id', $user->id)
-                    ->where('assignable_type', $model)
-                    ->whereIn('assignable_id', $contractIds)
-                    ->whereIn('assignable_id', $finishedIds)
-                    ->count();
-                $finished += $done;
-            }
-
-            return [
-                'user_id'    => $user->id,
-                'name'       => $user->name,
-                'avatar_url' => $user->avatar_url ?? null,
-                'total'      => $total,
-                'finished'   => $finished,
-                'pct'        => $total > 0 ? round($finished / $total * 100) : 0,
-            ];
-        })->filter(fn ($r) => $r['total'] > 0);
+        return app(ContractProgressRankingService::class)->forRole(Role::TU_VAN, $this->year);
     }
 
     public function render()
     {
-        $all = $this->buildRankings('tu-van');
+        $all = $this->buildRankings();
 
         $completionRankings = $all->sortByDesc('finished')->values();
-        $rateRankings       = $all->sortByDesc('pct')->values();
+        $rateRankings = $all->sortByDesc('pct')->values();
 
         return view('livewire.admin.reports.consulting.consulting-achievement-report', [
             'completionRankings' => $completionRankings,
-            'rateRankings'       => $rateRankings,
-            'years'              => $this->years,
-            'year'               => $this->year,
+            'rateRankings' => $rateRankings,
+            'years' => $this->years,
+            'year' => $this->year,
         ])->layout('admin.layouts.app');
     }
 }

@@ -165,7 +165,7 @@ Khi hoàn thành bước:
 Người nhận tiến độ thông thường: Giám đốc, Trưởng phòng kinh doanh, người được phân công, người phân công và nhân viên kinh doanh phụ trách. **IT không nhận thông báo tiến độ.** Khi step là `finished`, toàn bộ role **kế toán** được thêm vào để tiếp nhận xử lý hồ sơ thanh toán. Kế toán không nhận các bước trung gian.
 
 - Báo cáo `Tiến độ dự án TV-KT` lọc theo tháng và năm của `signed_at`; tháng mặc định là tháng hiện tại. KPI, phân trang và sáu cột pipeline dùng chung phạm vi thời gian này.
-- Với danh sách xử lý và thống kê tiến độ của nhân viên tư vấn/kỹ thuật, các bản ghi có cùng `shd_bc` khác rỗng là một hợp đồng nghiệp vụ duy nhất. Các bản ghi chưa có `shd_bc` vẫn được tính riêng theo model và ID; các đợt thanh toán vật lý và tổng giá trị tiền không bị gộp mất.
+- Với danh sách xử lý, báo cáo công việc, thống kê tiến độ và bảng xếp hạng của nhân viên tư vấn/kỹ thuật, các bản ghi có cùng `shd_bc` khác rỗng là một hợp đồng nghiệp vụ duy nhất. Các bản ghi chưa có `shd_bc` vẫn được tính riêng theo model và ID; các đợt thanh toán vật lý và tổng giá trị tiền không bị gộp mất. KPI kinh doanh vẫn lọc theo `staff_id` của nhân viên kinh doanh và không dùng mẫu số phân công TV-KT.
 
 ## 7. Khách hàng, báo giá và nhân viên phụ trách
 

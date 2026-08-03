@@ -31,6 +31,37 @@ final class ContractBusinessIdentity
             ->values();
     }
 
+    public static function groups(Collection $contracts): Collection
+    {
+        return $contracts->groupBy(
+            fn (Model|array $contract): string => self::key($contract)
+        );
+    }
+
+    public static function statusSummary(Collection $contracts): array
+    {
+        $groups = self::groups($contracts);
+        $completed = $groups->filter(
+            fn (Collection $rows): bool => $rows->contains(
+                fn (Model|array $contract): bool => self::isCompleted($contract)
+            )
+        );
+        $active = $groups
+            ->reject(fn (Collection $rows, string $key): bool => $completed->has($key))
+            ->filter(
+                fn (Collection $rows): bool => $rows->contains(
+                    fn (Model|array $contract): bool => self::isActive($contract)
+                )
+            );
+
+        return [
+            'total' => $groups->count(),
+            'total_value' => (float) $contracts->sum('value'),
+            'completed' => $completed->count(),
+            'active' => $active->count(),
+        ];
+    }
+
     public static function paginate(Collection $contracts, int $perPage = 10): LengthAwarePaginator
     {
         $contracts = self::unique($contracts);
@@ -43,5 +74,26 @@ final class ContractBusinessIdentity
             $page,
             ['path' => Paginator::resolveCurrentPath(), 'query' => request()->query()],
         );
+    }
+
+    private static function isCompleted(Model|array $contract): bool
+    {
+        if (data_get($contract, 'workflow_status') === 'finished') {
+            return true;
+        }
+
+        return in_array(mb_strtolower(trim((string) data_get($contract, 'status')), 'UTF-8'), [
+            mb_strtolower('HOÀN THÀNH', 'UTF-8'),
+            mb_strtolower('Đã hoàn thành', 'UTF-8'),
+            'finished',
+        ], true);
+    }
+
+    private static function isActive(Model|array $contract): bool
+    {
+        return in_array(mb_strtolower(trim((string) data_get($contract, 'status')), 'UTF-8'), [
+            mb_strtolower('ĐANG THỰC HIỆN', 'UTF-8'),
+            mb_strtolower('PTH đang kiểm tra', 'UTF-8'),
+        ], true);
     }
 }

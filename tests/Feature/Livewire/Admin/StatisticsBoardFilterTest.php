@@ -8,6 +8,7 @@ use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
+use App\Models\ContractWorkflowStep;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Handler;
@@ -106,7 +107,7 @@ class StatisticsBoardFilterTest extends TestCase
         $customer = Customer::create(['name' => 'Khách hàng tư vấn dashboard']);
         $handler = Handler::create(['name' => 'Nhà thầu tư vấn dashboard']);
 
-        foreach ([40_000_000, 60_000_000] as $value) {
+        $contracts = collect([40_000_000, 60_000_000])->map(function (int $value) use ($customer, $handler, $salesStaff, $department, $consultant) {
             $contract = ContractTechnical::create([
                 'shd_bc' => '05/2026/HĐKT.BC-TIENDO',
                 'customer_id' => $customer->id,
@@ -123,18 +124,30 @@ class StatisticsBoardFilterTest extends TestCase
                 'user_id' => $consultant->id,
                 'assigned_by' => $salesStaff->id,
             ]);
-        }
+
+            return $contract;
+        });
+
+        ContractWorkflowStep::create([
+            'contract_type' => ContractTechnical::class,
+            'contract_id' => $contracts->last()->id,
+            'user_id' => $consultant->id,
+            'step_name' => 'finished',
+            'action' => 'complete',
+        ]);
 
         $this->actingAs($consultant);
 
         Livewire::test(StatisticsBoard::class)
             ->assertSet('filter_staff', (string) $consultant->id)
             ->assertViewHas('consultingSummary', fn (array $summary) => $summary['total'] === 1
-                && $summary['processing'] === 1)
+                && $summary['completed'] === 1
+                && $summary['processing'] === 0)
             ->assertViewHas('consultingStats', fn ($stats) => $stats->contains(
                 fn (array $row) => $row['label'] === 'Ứng phó sự cố'
                     && $row['count'] === 1
-                    && $row['processing'] === 1
+                    && $row['completed'] === 1
+                    && $row['processing'] === 0
             ));
     }
 

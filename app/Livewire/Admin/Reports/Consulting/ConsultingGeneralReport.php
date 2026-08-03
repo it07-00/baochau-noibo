@@ -3,12 +3,15 @@
 namespace App\Livewire\Admin\Reports\Consulting;
 
 use App\Models\ContractLegal;
+use App\Support\ContractBusinessIdentity;
 use Livewire\Component;
 
 class ConsultingGeneralReport extends Component
 {
     public int $year;
+
     public string $filter_service = '';
+
     public array $years = [];
 
     public function mount(): void
@@ -19,37 +22,48 @@ class ConsultingGeneralReport extends Component
 
     public function render()
     {
-        $byService = ContractLegal::whereYear('signed_at', $this->year)
-            ->selectRaw('loai_dich_vu, COUNT(*) as count, SUM(value) as total_value,
-                SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
-            ->groupBy('loai_dich_vu')
+        $yearContracts = ContractLegal::whereYear('signed_at', $this->year)
             ->get();
+        $byService = $yearContracts
+            ->groupBy('loai_dich_vu')
+            ->map(function ($contracts, $service) {
+                $summary = ContractBusinessIdentity::statusSummary($contracts);
 
-        $monthRows = ContractLegal::whereYear('signed_at', $this->year)
-            ->when($this->filter_service, fn($q) => $q->where('loai_dich_vu', $this->filter_service))
-            ->selectRaw('MONTH(signed_at) as m, COUNT(*) as count, SUM(value) as total_value,
-                SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
-            ->groupByRaw('MONTH(signed_at)')
-            ->get()->keyBy('m');
+                return (object) [
+                    'loai_dich_vu' => $service,
+                    'count' => $summary['total'],
+                    'total_value' => $summary['total_value'],
+                    'completed' => $summary['completed'],
+                    'active' => $summary['active'],
+                ];
+            })
+            ->values();
+
+        $filteredContracts = $yearContracts
+            ->when(
+                $this->filter_service,
+                fn ($contracts) => $contracts->where('loai_dich_vu', $this->filter_service)
+            )
+            ->values();
+        $monthRows = $filteredContracts->groupBy(fn ($contract): int => $contract->signed_at->month);
 
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
-            $row = $monthRows->get($m);
+            $summary = ContractBusinessIdentity::statusSummary($monthRows->get($m, collect()));
             $monthly[$m] = [
-                'count'     => $row ? (int) $row->count : 0,
-                'value'     => $row ? (float) $row->total_value : 0,
-                'completed' => $row ? (int) $row->completed : 0,
-                'active'    => $row ? (int) $row->active : 0,
+                'count' => $summary['total'],
+                'value' => $summary['total_value'],
+                'completed' => $summary['completed'],
+                'active' => $summary['active'],
             ];
         }
 
+        $totalSummary = ContractBusinessIdentity::statusSummary($filteredContracts);
         $totals = [
-            'count'     => array_sum(array_column($monthly, 'count')),
-            'value'     => array_sum(array_column($monthly, 'value')),
-            'completed' => array_sum(array_column($monthly, 'completed')),
-            'active'    => array_sum(array_column($monthly, 'active')),
+            'count' => $totalSummary['total'],
+            'value' => $totalSummary['total_value'],
+            'completed' => $totalSummary['completed'],
+            'active' => $totalSummary['active'],
         ];
 
         $serviceTypes = ContractLegal::SERVICE_TYPES;

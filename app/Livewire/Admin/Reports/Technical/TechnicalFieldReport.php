@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Reports\Technical;
 
 use App\Models\ContractLegal;
 use App\Models\User;
+use App\Support\ContractBusinessIdentity;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -60,16 +61,15 @@ class TechnicalFieldReport extends Component
 
     public function render()
     {
-        $items = $this->baseQuery()
+        $contracts = $this->baseQuery()
             ->with(['customer', 'consultant', 'staff'])
             ->orderByDesc('signed_at')
-            ->paginate(20);
+            ->orderByDesc('id')
+            ->get();
+        $items = ContractBusinessIdentity::paginate($contracts, 20);
 
-        $summary = $this->baseQuery()
-            ->selectRaw('COUNT(*) as total, SUM(value) as total_value,
-                SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
-            ->first();
+        $statusSummary = ContractBusinessIdentity::statusSummary($contracts);
+        $summary = (object) $statusSummary;
 
         $staffs = User::where('is_active', true)->orderBy('name')->get();
         $monitoringTypes = ['Quan trắc môi trường', 'Quan trắc môi trường lao động và phân loại lao động'];

@@ -11,6 +11,7 @@ use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
+use App\Support\ContractBusinessIdentity;
 use App\Support\DataScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -194,14 +195,17 @@ class TechnicalContractReport extends Component
 
     public function render()
     {
-        $items = $this->baseQuery()
+        $contracts = $this->baseQuery()
             ->with(['customer', 'staff', 'assignments.user'])
             ->orderByDesc('signed_at')
-            ->paginate(20);
+            ->orderByDesc('id')
+            ->get();
+        $items = ContractBusinessIdentity::paginate($contracts, 20);
 
         $modelClass = $this->getModelClass();
-        $allIds = $this->baseQuery()->pluck('id');
-        $total = $allIds->count();
+        $allIds = $contracts->pluck('id');
+        $contractGroups = ContractBusinessIdentity::groups($contracts);
+        $total = $contractGroups->count();
 
         // Lấy tất cả bước workflow của các hợp đồng này
         $stepsByContract = ContractWorkflowStep::where('contract_type', $modelClass)
@@ -211,12 +215,14 @@ class TechnicalContractReport extends Component
 
         $completed = 0;
         $active = 0;
-        foreach ($allIds as $id) {
-            $steps = $stepsByContract->get($id, collect());
-            $stepNames = $steps->pluck('step_name')->unique()->toArray();
-            if (in_array('finished', $stepNames)) {
+        foreach ($contractGroups as $contractRows) {
+            $stepNames = $contractRows
+                ->flatMap(fn ($contract) => $stepsByContract->get($contract->id, collect()))
+                ->pluck('step_name')
+                ->unique();
+            if ($contractRows->contains('workflow_status', 'finished') || $stepNames->contains('finished')) {
                 $completed++;
-            } elseif (count($stepNames) > 0) {
+            } elseif ($stepNames->isNotEmpty()) {
                 $active++;
             }
         }

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Reports\Consulting;
 
 use App\Models\ContractLegal;
 use App\Models\User;
+use App\Support\ContractBusinessIdentity;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -12,9 +13,13 @@ class ConsultingMonitoringReport extends Component
     use WithPagination;
 
     public int $year;
+
     public string $filter_service = '';
+
     public string $filter_status = '';
+
     public int|string $filter_staff = '';
+
     public array $years = [];
 
     public function mount(): void
@@ -23,36 +28,56 @@ class ConsultingMonitoringReport extends Component
         $this->years = range(now()->year, now()->year - 4);
     }
 
-    public function updatedYear(): void          { $this->resetPage(); }
-    public function updatedFilterService(): void { $this->resetPage(); }
-    public function updatedFilterStatus(): void  { $this->resetPage(); }
-    public function updatedFilterStaff(): void   { $this->resetPage(); }
+    public function updatedYear(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterService(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStaff(): void
+    {
+        $this->resetPage();
+    }
 
     private function baseQuery()
     {
         $types = ['Quan trắc môi trường', 'Quan trắc môi trường lao động và phân loại lao động'];
+
         return ContractLegal::whereIn('loai_dich_vu', $types)
             ->whereYear('signed_at', $this->year)
-            ->when($this->filter_service, fn($q) => $q->where('loai_dich_vu', $this->filter_service))
-            ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
-            ->when($this->filter_staff, fn($q) => $q->where(
-                fn($q2) => $q2->where('staff_id', $this->filter_staff)
-                              ->orWhere('consultant_id', $this->filter_staff)
+            ->when($this->filter_service, fn ($q) => $q->where('loai_dich_vu', $this->filter_service))
+            ->when($this->filter_status, fn ($q) => $q->where('status', $this->filter_status))
+            ->when($this->filter_staff, fn ($q) => $q->where(
+                fn ($q2) => $q2->where('staff_id', $this->filter_staff)
+                    ->orWhere('consultant_id', $this->filter_staff)
             ));
     }
 
     public function render()
     {
-        $items = $this->baseQuery()
+        $contracts = $this->baseQuery()
             ->with(['customer', 'staff', 'consultant'])
             ->orderByDesc('signed_at')
-            ->paginate(20);
+            ->orderByDesc('id')
+            ->get();
+        $items = ContractBusinessIdentity::paginate($contracts, 20);
 
-        $summary = $this->baseQuery()
-            ->selectRaw('COUNT(*) as count, SUM(value) as total_value,
-                SUM(CASE WHEN status = "HOÀN THÀNH" THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = "ĐANG THỰC HIỆN" THEN 1 ELSE 0 END) as active')
-            ->first();
+        $statusSummary = ContractBusinessIdentity::statusSummary($contracts);
+        $summary = (object) [
+            'count' => $statusSummary['total'],
+            'total_value' => $statusSummary['total_value'],
+            'completed' => $statusSummary['completed'],
+            'active' => $statusSummary['active'],
+        ];
 
         $staffs = User::where('is_active', true)->orderBy('name')->get();
         $monitoringTypes = ['Quan trắc môi trường', 'Quan trắc môi trường lao động và phân loại lao động'];
