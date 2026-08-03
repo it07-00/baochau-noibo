@@ -186,6 +186,13 @@ class AttendanceManager extends Component
         $service = app(AttendanceService::class);
         $monthData = $service->getMonthData($this->selectedMonth, onlyWithLogs: false);
 
+        $user = auth()->user();
+        if ($user && !$user->can(\App\Enums\Permission::CHAM_CONG_EDIT->value)) {
+            $monthData['employees'] = $monthData['employees']->filter(function ($emp) use ($user) {
+                return strcasecmp(trim((string) $emp->name), trim((string) $user->name)) === 0;
+            });
+        }
+
         $grid = [];
         foreach ($service->buildSummaryGrid($monthData['employees'], $monthData['logs'], $monthData['dates'], $monthData['startOfMonth']) as $row) {
             $grid[$row['employee']->id] = $row;

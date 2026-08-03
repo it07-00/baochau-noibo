@@ -196,6 +196,18 @@ class CustomerManager extends Component
         $this->resetPage();
     }
 
+    public function filterByService(string $serviceLabel): void
+    {
+        $serviceLabel = trim($serviceLabel);
+        if ($serviceLabel === '') {
+            return;
+        }
+
+        $this->serviceContractFilter = $serviceLabel;
+        $this->serviceQuotationFilter = [$serviceLabel];
+        $this->resetPage();
+    }
+
     public function previewLegacyNormalization(): void
     {
         abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);

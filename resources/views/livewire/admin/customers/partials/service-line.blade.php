@@ -1,7 +1,8 @@
 <div class="d-flex align-items-center justify-content-between gap-2 mb-1" title="{{ $service['label'] }}">
-    <span class="badge d-inline-block bg-warning bg-opacity-10 text-warning border border-warning-subtle px-2 py-1 text-truncate fw-semibold"
+    <span class="badge d-inline-block bg-warning bg-opacity-10 text-warning border border-warning-subtle px-2 py-1 text-truncate fw-semibold cursor-pointer"
           style="font-size: 0.75rem; max-width: 220px; text-align: left;"
-          title="Dịch vụ: {{ $service['label'] }}">
+          wire:click="filterByService('{{ addslashes($service['label']) }}')"
+          title="Lọc theo dịch vụ: {{ $service['label'] }}">
         <i class="fa-solid fa-gear me-1"></i>{{ $service['label'] }}
     </span>
     <div class="d-flex gap-1 align-items-center flex-shrink-0">
