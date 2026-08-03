@@ -249,7 +249,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($consultingStats as $row)
+                                @php($activeConsultingStats = collect($consultingStats)->filter(fn($r) => ($r['count'] ?? 0) > 0))
+                                @forelse($activeConsultingStats as $row)
                                 @php($pct = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0)
                                 <tr>
                                     <td class="fw-semibold ps-3">{{ $row['label'] }}</td>
@@ -375,7 +376,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($technicalStats as $row)
+                                @php($activeTechnicalStats = collect($technicalStats)->filter(fn($r) => ($r['count'] ?? 0) > 0))
+                                @forelse($activeTechnicalStats as $row)
                                 @php($pct = $row['count'] > 0 ? round(($row['completed'] / $row['count']) * 100) : 0)
                                 <tr>
                                     <td class="fw-semibold ps-3">{{ $row['label'] }}</td>
