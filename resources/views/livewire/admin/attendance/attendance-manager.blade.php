@@ -7,50 +7,66 @@
         <div class="col-12">
             <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
                 <div class="card-body p-3 p-md-4">
-                    <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-xl-between gap-3">
-                        <div class="d-flex align-items-start gap-3">
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
+                        <div class="d-flex align-items-center gap-3">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary flex-shrink-0 wh-44">
                                 <i class="fa-solid fa-calendar-check fs-5"></i>
                             </span>
                             <div>
-                                <h4 class="mb-1 fw-bold text-body">Bảng chấm công</h4>
+                                <h4 class="mb-0 fw-bold text-body">Bảng chấm công</h4>
                                 <div class="text-muted small">
-                            @if($lastImport)
-                                Cập nhật lần cuối: {{ $lastImport->created_at->format('d/m/Y H:i') }}
-                                · {{ $lastImport->total_records }} bản ghi
-                            @else
-                                Chưa có dữ liệu cho tháng này
-                            @endif
+                                    @if($lastImport)
+                                        Cập nhật: {{ $lastImport->created_at->format('d/m/Y H:i') }} · {{ number_format($lastImport->total_records) }} bản ghi
+                                    @else
+                                        Chưa có dữ liệu cho tháng này
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center gap-2">
-                            <div>
-                                <label for="attendance-month" class="form-label small fw-semibold text-body mb-1">Tháng chấm công</label>
-                                <input id="attendance-month" type="month" wire:model.live="selectedMonth" class="form-control border-light-subtle min-h-42px">
+
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2 me-lg-1">
+                                <label for="attendance-month" class="form-label small fw-semibold text-muted text-nowrap mb-0">Tháng:</label>
+                                <input id="attendance-month" type="month" wire:model.live="selectedMonth" class="form-control form-control-sm border-light-subtle min-h-36px">
                             </div>
-                            <div class="d-grid d-sm-flex gap-2 align-self-sm-end">
+
                             @can(\App\Enums\Permission::CHAM_CONG_EXPORT->value)
-                            <a href="{{ route('app.attendance.export', ['month' => $selectedMonth]) }}"
-                               class="btn btn-outline-success min-h-42px d-flex align-items-center justify-content-center gap-2">
-                                <i class="fa-solid fa-file-excel"></i><span>Xuất tổng hợp</span>
-                            </a>
-                            <a href="{{ route('app.attendance.export-detail', ['month' => $selectedMonth]) }}"
-                               class="btn btn-outline-success min-h-42px d-flex align-items-center justify-content-center gap-2">
-                                <i class="fa-solid fa-list-check"></i><span>Xuất chi tiết</span>
-                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-success btn-sm min-h-36px d-inline-flex align-items-center gap-1.5 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                    <span>Xuất Excel</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-light-subtle">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2"
+                                           href="{{ route('app.attendance.export', ['month' => $selectedMonth]) }}">
+                                            <i class="fa-solid fa-file-excel text-success"></i>
+                                            <span>Xuất tổng hợp</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2"
+                                           href="{{ route('app.attendance.export-detail', ['month' => $selectedMonth]) }}">
+                                            <i class="fa-solid fa-list-check text-success"></i>
+                                            <span>Xuất chi tiết</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             @endcan
+
                             @can(\App\Enums\Permission::CHAM_CONG_EDIT->value)
                             <button wire:click="openImportModal"
-                                    class="btn btn-primary min-h-42px d-flex align-items-center justify-content-center gap-2">
-                                <i class="fa-solid fa-file-arrow-up"></i><span>Import dữ liệu</span>
+                                    class="btn btn-primary btn-sm min-h-36px d-inline-flex align-items-center gap-1.5">
+                                <i class="fa-solid fa-file-arrow-up"></i>
+                                <span>Import dữ liệu</span>
                             </button>
                             <a href="{{ route('app.attendance.employees') }}"
-                               class="btn btn-outline-secondary min-h-42px d-flex align-items-center justify-content-center gap-2">
-                                <i class="fa-solid fa-users-gear"></i><span>Nhân viên</span>
+                               class="btn btn-outline-secondary btn-sm min-h-36px d-inline-flex align-items-center gap-1.5">
+                                <i class="fa-solid fa-users-gear"></i>
+                                <span>Nhân viên</span>
                             </a>
                             @endcan
-                            </div>
                         </div>
                     </div>
                 </div>

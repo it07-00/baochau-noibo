@@ -95,22 +95,20 @@
 
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table text-nowrap align-middle table-hover mb-0">
+                        <table class="table align-middle table-hover mb-0">
                             <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem;">
                                 <tr>
-                                    <th width="110">Loại HĐ</th>
+                                    <th width="120">Loại HĐ</th>
                                     <th>
                                         <button class="btn btn-link btn-sm p-0 text-body fw-bold text-decoration-none"
                                                 wire:click="sortBy('shd_cxl')">
-                                            Số HĐ NTP
+                                            Số HĐ & Khách hàng
                                             @if($sortField === 'shd_cxl')
                                                 <i class="bi bi-arrow-{{ $sortDir === 'asc' ? 'up' : 'down' }}-short ms-1"></i>
                                             @endif
                                         </button>
                                     </th>
-                                    <th class="d-none d-md-table-cell">Số HĐ BC</th>
-                                    <th class="d-none d-sm-table-cell">Khách hàng</th>
-                                    <th class="d-none d-md-table-cell">
+                                    <th class="d-none d-md-table-cell" width="130">
                                         <button class="btn btn-link btn-sm p-0 text-body fw-bold text-decoration-none"
                                                 wire:click="sortBy('signed_at')">
                                             Ngày ký
@@ -119,7 +117,7 @@
                                             @endif
                                         </button>
                                     </th>
-                                    <th class="text-end">
+                                    <th class="text-end" width="160">
                                         <button class="btn btn-link btn-sm p-0 text-body fw-bold text-decoration-none"
                                                 wire:click="sortBy('commission')">
                                             Chi NTP (VNĐ)
@@ -128,7 +126,7 @@
                                             @endif
                                         </button>
                                     </th>
-                                    <th class="d-none d-sm-table-cell">Trạng thái</th>
+                                    <th class="d-none d-sm-table-cell" width="130">Trạng thái</th>
                                     <th class="w-42px"></th>
                                 </tr>
                             </thead>
@@ -139,13 +137,20 @@
                                     <td>
                                         <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle px-2">{{ $contract->type_label }}</span>
                                     </td>
-                                    <td class="fw-semibold">
-                                        {{ $contract->shd_cxl ?: '—' }}
+                                    <td>
+                                        <div class="fw-bold text-body">
+                                            <span>{{ $contract->shd_cxl ?: '—' }}</span>
+                                            @if($contract->shd_bc)
+                                                <span class="small text-muted fw-normal ms-1">(BC: {{ $contract->shd_bc }})</span>
+                                            @endif
+                                        </div>
+                                        @if($contract->customer)
+                                            <div class="small text-muted mt-1">
+                                                <i class="fa-solid fa-building me-1 text-secondary opacity-75"></i>{{ $contract->customer }}
+                                            </div>
+                                        @endif
                                         {{-- Mobile extras --}}
                                         <div class="d-sm-none mt-1">
-                                            @if($contract->customer)
-                                                <div class="text-muted small text-wrap mxw-150px text-wrap" >{{ $contract->customer }}</div>
-                                            @endif
                                             @if($contract->status)
                                                 <span class="badge px-2 py-1 fw-semibold mt-1"
                                                       style="font-size:0.65rem;background:{{ $this->statusColor($contract->status)['bg'] }};color:{{ $this->statusColor($contract->status)['text'] }};white-space:normal;">
@@ -154,10 +159,8 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="d-none d-md-table-cell">{{ $contract->shd_bc ?: '—' }}</td>
-                                    <td class="text-wrap d-none d-sm-table-cell mxw-200px" >{{ $contract->customer }}</td>
-                                    <td class="d-none d-md-table-cell">{{ $contract->signed_at ? $contract->signed_at->format('d/m/Y') : '—' }}</td>
-                                    <td class="text-end fw-bold text-danger">{{ number_format((float) $contract->commission, 0, ',', '.') }}</td>
+                                    <td class="d-none d-md-table-cell text-muted small">{{ $contract->signed_at ? $contract->signed_at->format('d/m/Y') : '—' }}</td>
+                                    <td class="text-end fw-bold text-danger">{{ number_format((float) $contract->commission, 0, ',', '.') }}đ</td>
                                     <td class="d-none d-sm-table-cell">
                                         @if($contract->status)
                                             <span class="badge px-2 py-1 fw-semibold"
@@ -179,7 +182,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4 text-muted">Không có hợp đồng nào.</td>
+                                    <td colspan="6" class="text-center py-4 text-muted">Không có hợp đồng nào.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

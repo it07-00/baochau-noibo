@@ -28,18 +28,16 @@
                 </div>
 
                 <div class="card-body p-0">
-                {{-- Desktop: Table --}}
+                    {{-- Desktop: Table --}}
                     <div class="table-responsive d-none d-sm-block">
-                        <table class="table text-nowrap align-middle table-hover mb-0">
+                        <table class="table align-middle table-hover mb-0">
                             <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem;">
                                 <tr>
-                                    <th width="60">ID</th>
-                                    <th>Tên nhà thầu phụ</th>
-                                    <th class="d-none d-md-table-cell">Số điện thoại</th>
-                                    <th class="d-none d-lg-table-cell">Địa chỉ</th>
-                                    <th class="text-center">Hợp đồng</th>
+                                    <th width="60" class="text-center">ID</th>
+                                    <th>Nhà thầu phụ</th>
+                                    <th class="text-center" width="120">Hợp đồng</th>
                                     @canany(['handlers.edit', 'handlers.delete'])
-                                    <th class="text-end">Hành động</th>
+                                    <th class="text-end" width="120">Hành động</th>
                                     @endcanany
                                 </tr>
                             </thead>
@@ -47,17 +45,21 @@
                                 @forelse($handlers as $handler)
                                 <tr wire:key="handler-{{ $handler->id }}">
                                     <td class="text-center text-muted fw-semibold">{{ $handler->id }}</td>
-                                    <td class="fw-bold">
-                                        <a href="{{ route('app.handlers.contracts', $handler) }}" class="text-body text-decoration-none link-hover-primary">
-                                            {{ $handler->name }}
-                                        </a>
-                                    </td>
-                                    <td class="d-none d-md-table-cell">{{ $handler->phone ?: '—' }}</td>
-                                    <td class="d-none d-lg-table-cell mxw-220px" >
-                                        @if($handler->address)
-                                            <span class="d-block text-truncate" title="{{ $handler->address }}">{{ $handler->address }}</span>
-                                        @else
-                                            —
+                                    <td>
+                                        <div class="fw-bold">
+                                            <a href="{{ route('app.handlers.contracts', $handler) }}" class="text-body text-decoration-none link-hover-primary">
+                                                {{ $handler->name }}
+                                            </a>
+                                        </div>
+                                        @if($handler->phone || $handler->address)
+                                        <div class="small text-muted mt-1 d-flex flex-wrap align-items-center gap-3">
+                                            @if($handler->phone)
+                                                <span><i class="fa-solid fa-phone me-1 text-secondary opacity-75"></i>{{ $handler->phone }}</span>
+                                            @endif
+                                            @if($handler->address)
+                                                <span title="{{ $handler->address }}"><i class="fa-solid fa-location-dot me-1 text-secondary opacity-75"></i>{{ $handler->address }}</span>
+                                            @endif
+                                        </div>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -90,7 +92,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">Không có dữ liệu nhà thầu phụ.</td>
+                                    <td colspan="4" class="text-center py-4 text-muted">Không có dữ liệu nhà thầu phụ.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
