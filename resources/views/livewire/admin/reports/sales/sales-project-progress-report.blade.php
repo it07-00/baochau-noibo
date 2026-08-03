@@ -132,14 +132,16 @@
                         </div>
                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.7rem;">{{ count($pipeline[$stepKey]) }}</span>
                     </div>
-                    <div class="card-body p-1.5 pt-0">
+                    <div class="card-body p-1.5 pt-0 pipeline-step-body">
                         @forelse($pipeline[$stepKey] as $contract)
                             <article class="card border border-light-subtle shadow-sm rounded-2 mb-1.5 bg-body" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
                                 <div class="card-body p-2">
                                     <div class="d-flex justify-content-between gap-1 align-items-start mb-1">
                                         <div class="min-w-0 me-1">
                                             <div class="fw-bold text-body text-truncate" style="font-size: 0.78rem;" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</div>
-                                            <div class="text-muted text-truncate" style="font-size: 0.68rem;">{{ $contract['shd'] }}</div>
+                                            @if(!empty($contract['shd']) && $contract['shd'] !== '—' && $contract['shd'] !== '-')
+                                                <div class="text-muted text-truncate" style="font-size: 0.68rem;">{{ $contract['shd'] }}</div>
+                                            @endif
                                         </div>
                                         <span class="badge bg-primary bg-opacity-10 text-primary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.68rem;">{{ $contract['workflow_progress']['completed_count'] }}/6</span>
                                     </div>

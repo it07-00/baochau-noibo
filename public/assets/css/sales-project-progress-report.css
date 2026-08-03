@@ -25,6 +25,24 @@
     min-width: 0;
 }
 
+.pipeline-step-body {
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+.pipeline-step-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pipeline-step-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pipeline-step-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
 .operation-pipeline-column {
     min-height: 24rem;
     border-top-width: 4px !important;
