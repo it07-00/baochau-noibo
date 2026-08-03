@@ -57,17 +57,29 @@ class AttendanceService
                 if ($dayLogs->isEmpty()) {
                     $dayData[$date->day] = null;
                 } else {
+                    $firstTime = $dayLogs->first()->checked_at;
+                    $lastTime  = $dayLogs->count() > 1 ? $dayLogs->last()->checked_at : null;
+                    $checkinM  = $firstTime->hour * 60 + $firstTime->minute;
+                    $checkoutM = $lastTime ? ($lastTime->hour * 60 + $lastTime->minute) : null;
+
+                    $lateMin  = max(0, $checkinM - 480);
+                    $earlyMin = $checkoutM !== null ? max(0, 1020 - $checkoutM) : 0;
+
                     $dayData[$date->day] = [
-                        'first' => $dayLogs->first()->checked_at->format('H:i'),
-                        'last'  => $dayLogs->count() > 1 ? $dayLogs->last()->checked_at->format('H:i') : null,
-                        'count' => $dayLogs->count(),
+                        'first'     => $firstTime->format('H:i'),
+                        'last'      => $lastTime ? $lastTime->format('H:i') : null,
+                        'count'     => $dayLogs->count(),
+                        'late_min'  => $lateMin,
+                        'early_min' => $earlyMin,
                     ];
                 }
             }
 
-            $workDays  = 0;
-            $lateDays  = 0;
-            $earlyDays = 0;
+            $workDays     = 0;
+            $lateDays     = 0;
+            $earlyDays    = 0;
+            $lateMinutes  = 0;
+            $earlyMinutes = 0;
 
             foreach ($dayData as $day => $data) {
                 if (!$data) continue;
@@ -75,16 +87,24 @@ class AttendanceService
                 if ($dateObj->isSunday()) continue;
 
                 if ($data['last']) $workDays++;
-                if ($data['first'] > '08:00') $lateDays++;
-                if ($data['last'] && $data['last'] < '17:00') $earlyDays++;
+                if ($data['late_min'] > 0) {
+                    $lateDays++;
+                    $lateMinutes += $data['late_min'];
+                }
+                if ($data['early_min'] > 0) {
+                    $earlyDays++;
+                    $earlyMinutes += $data['early_min'];
+                }
             }
 
             $grid[] = [
-                'employee'   => $emp,
-                'days'       => $dayData,
-                'work_days'  => $workDays,
-                'late_days'  => $lateDays,
-                'early_days' => $earlyDays,
+                'employee'      => $emp,
+                'days'          => $dayData,
+                'work_days'     => $workDays,
+                'late_days'     => $lateDays,
+                'early_days'    => $earlyDays,
+                'late_minutes'  => $lateMinutes,
+                'early_minutes' => $earlyMinutes,
             ];
         }
 

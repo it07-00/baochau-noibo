@@ -32,22 +32,22 @@
 
                             @can(\App\Enums\Permission::CHAM_CONG_EXPORT->value)
                             <div class="dropdown">
-                                <button class="btn btn-outline-success btn-sm min-h-36px d-inline-flex align-items-center gap-1.5 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-file-excel"></i>
+                                <button class="btn btn-outline-success btn-sm min-h-36px d-inline-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-file-excel me-1"></i>
                                     <span>Xuất Excel</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-light-subtle" style="z-index: 1050;">
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2"
+                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2 px-3"
                                            href="{{ route('app.attendance.export', ['month' => $selectedMonth]) }}">
-                                            <i class="fa-solid fa-file-excel text-success"></i>
+                                            <i class="fa-solid fa-file-excel text-success me-1"></i>
                                             <span>Xuất tổng hợp</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2"
+                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2 px-3"
                                            href="{{ route('app.attendance.export-detail', ['month' => $selectedMonth]) }}">
-                                            <i class="fa-solid fa-list-check text-success"></i>
+                                            <i class="fa-solid fa-list-check text-success me-1"></i>
                                             <span>Xuất chi tiết</span>
                                         </a>
                                     </li>
@@ -57,13 +57,13 @@
 
                             @can(\App\Enums\Permission::CHAM_CONG_EDIT->value)
                             <button wire:click="openImportModal"
-                                    class="btn btn-primary btn-sm min-h-36px d-inline-flex align-items-center gap-1.5">
-                                <i class="fa-solid fa-file-arrow-up"></i>
+                                    class="btn btn-primary btn-sm min-h-36px d-inline-flex align-items-center gap-2">
+                                <i class="fa-solid fa-file-arrow-up me-1"></i>
                                 <span>Import dữ liệu</span>
                             </button>
                             <a href="{{ route('app.attendance.employees') }}"
-                               class="btn btn-outline-secondary btn-sm min-h-36px d-inline-flex align-items-center gap-1.5">
-                                <i class="fa-solid fa-users-gear"></i>
+                               class="btn btn-outline-secondary btn-sm min-h-36px d-inline-flex align-items-center gap-2">
+                                <i class="fa-solid fa-users-gear me-1"></i>
                                 <span>Nhân viên</span>
                             </a>
                             @endcan
@@ -75,17 +75,19 @@
 
         @php
             $attendanceTotals = [
-                'employees' => count($grid),
-                'work_days' => collect($grid)->sum('work_days'),
-                'late_days' => collect($grid)->sum('late_days'),
-                'early_days' => collect($grid)->sum('early_days'),
+                'employees'    => count($grid),
+                'work_days'    => collect($grid)->sum('work_days'),
+                'late_days'    => collect($grid)->sum('late_days'),
+                'late_minutes' => collect($grid)->sum('late_minutes'),
+                'early_days'   => collect($grid)->sum('early_days'),
+                'early_minutes'=> collect($grid)->sum('early_minutes'),
             ];
         @endphp
         @foreach([
-            ['label' => 'Nhân viên', 'value' => $attendanceTotals['employees'], 'decimals' => 0, 'icon' => 'fa-users', 'class' => 'primary'],
-            ['label' => 'Tổng ngày công', 'value' => $attendanceTotals['work_days'], 'decimals' => 1, 'icon' => 'fa-business-time', 'class' => 'success'],
-            ['label' => 'Lượt đi trễ', 'value' => $attendanceTotals['late_days'], 'decimals' => 0, 'icon' => 'fa-clock', 'class' => 'danger'],
-            ['label' => 'Lượt về sớm', 'value' => $attendanceTotals['early_days'], 'decimals' => 0, 'icon' => 'fa-person-walking-arrow-right', 'class' => 'warning'],
+            ['label' => 'Nhân viên', 'value' => $attendanceTotals['employees'], 'sub' => null, 'decimals' => 0, 'icon' => 'fa-users', 'class' => 'primary'],
+            ['label' => 'Tổng ngày công', 'value' => $attendanceTotals['work_days'], 'sub' => null, 'decimals' => 1, 'icon' => 'fa-business-time', 'class' => 'success'],
+            ['label' => 'Lượt đi trễ', 'value' => $attendanceTotals['late_days'], 'sub' => $attendanceTotals['late_minutes'] > 0 ? number_format($attendanceTotals['late_minutes']) . ' phút' : null, 'decimals' => 0, 'icon' => 'fa-clock', 'class' => 'danger'],
+            ['label' => 'Lượt về sớm', 'value' => $attendanceTotals['early_days'], 'sub' => $attendanceTotals['early_minutes'] > 0 ? number_format($attendanceTotals['early_minutes']) . ' phút' : null, 'decimals' => 0, 'icon' => 'fa-person-walking-arrow-right', 'class' => 'warning'],
         ] as $metric)
             <div class="col-6 col-xl-3">
                 <div class="card border border-light-subtle shadow-sm rounded-3 h-100 bg-body">
@@ -95,7 +97,12 @@
                         </span>
                         <div class="min-w-0">
                             <div class="text-muted small text-truncate">{{ $metric['label'] }}</div>
-                            <div class="fs-4 fw-bold text-body lh-sm">{{ number_format($metric['value'], $metric['decimals'], ',', '.') }}</div>
+                            <div class="fs-4 fw-bold text-body lh-sm">
+                                {{ number_format($metric['value'], $metric['decimals'], ',', '.') }}
+                                @if($metric['sub'])
+                                    <span class="fs-70 fw-normal text-muted ms-1">({{ $metric['sub'] }})</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,21 +160,31 @@
                                     @foreach($dates as $date)
                                         @if($date->isSunday())
                                             <td class="text-center bg-light align-middle px-1 py-0" >
-                                                @if($this->dayData($row, $date))
+                                                @php($dData = $this->dayData($row, $date))
+                                                @if($dData)
                                                     <div class="fs-82 lh-sm">
-                                                        <span>{{ $this->dayData($row, $date)['first'] }}</span>
-                                                        @if($this->dayData($row, $date)['last'])<br><span>{{ $this->dayData($row, $date)['last'] }}</span>@endif
+                                                        <span>{{ $dData['first'] }}</span>
+                                                        @if($dData['last'])<br><span>{{ $dData['last'] }}</span>@endif
                                                     </div>
                                                 @endif
                                             </td>
                                         @else
                                             <td class="text-center" style="vertical-align:middle;padding:2px 3px;background:{{ $this->attendanceCellStyle($this->dayData($row, $date), $date)['bg'] }};color:{{ $this->attendanceCellStyle($this->dayData($row, $date), $date)['color'] }};">
-                                                @if($this->dayData($row, $date))
-                                                    <div class="fs-82 lh-sm fw-semibold">
-                                                        <span>{{ $this->dayData($row, $date)['first'] }}</span>
-                                                        @if($this->dayData($row, $date)['last'])<br><span>{{ $this->dayData($row, $date)['last'] }}</span>@endif
+                                                @php($dData = $this->dayData($row, $date))
+                                                @if($dData)
+                                                    <div class="fs-82 lh-sm fw-semibold" title="{{ $dData['first'] }}@if(($dData['late_min'] ?? 0) > 0) (Trễ {{ $dData['late_min'] }}p)@endif @if($dData['last']) - {{ $dData['last'] }}@if(($dData['early_min'] ?? 0) > 0) (Sớm {{ $dData['early_min'] }}p)@endif @endif">
+                                                        <span>{{ $dData['first'] }}</span>
+                                                        @if(($dData['late_min'] ?? 0) > 0)
+                                                            <span class="d-block fs-65 fw-normal text-nowrap" style="opacity: 0.95;">(+{{ $dData['late_min'] }}p)</span>
+                                                        @endif
+                                                        @if($dData['last'])
+                                                            <br><span>{{ $dData['last'] }}</span>
+                                                            @if(($dData['early_min'] ?? 0) > 0)
+                                                                <span class="d-block fs-65 fw-normal text-nowrap" style="opacity: 0.95;">(-{{ $dData['early_min'] }}p)</span>
+                                                            @endif
+                                                        @endif
                                                     </div>
-                                                @elseif($this->isAbsent($this->dayData($row, $date), $date))
+                                                @elseif($this->isAbsent($dData, $date))
                                                     <span class="fs-82 fw-bold">✗</span>
                                                 @endif
                                             </td>
@@ -175,9 +192,19 @@
                                     @endforeach
                                     <td class="text-center fw-bold bg-secondary-subtle" >{{ $row['work_days'] }}</td>
                                     <td class="text-center {{ $row['late_days'] > 0 ? 'text-danger fw-bold' : '' }} bg-secondary-subtle" >
-                                        {{ $row['late_days'] }}
+                                        <div>{{ $row['late_days'] }}</div>
+                                        @if(($row['late_minutes'] ?? 0) > 0)
+                                            <div class="fs-70 text-danger opacity-85 fw-normal">({{ number_format($row['late_minutes']) }}p)</div>
+                                        @endif
                                     </td>
                                     <td class="text-center {{ $row['early_days'] > 0 ? 'text-warning fw-bold' : '' }} bg-secondary-subtle" >
+                                        <div>{{ $row['early_days'] }}</div>
+                                        @if(($row['early_minutes'] ?? 0) > 0)
+                                            <div class="fs-70 text-warning opacity-85 fw-normal">({{ number_format($row['early_minutes']) }}p)</div>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
                                         {{ $row['early_days'] }}
                                     </td>
                                 </tr>
