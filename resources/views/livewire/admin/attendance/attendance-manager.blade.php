@@ -36,16 +36,16 @@
                                     <i class="fa-solid fa-file-excel me-1"></i>
                                     <span>Xuất Excel</span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-light-subtle" style="z-index: 1050;">
+                                <ul class="dropdown-menu dropdown-menu-end bg-body-tertiary border border-light-subtle shadow-sm" style="z-index: 1050;">
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2 px-3"
+                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2 px-3 text-body"
                                            href="{{ route('app.attendance.export', ['month' => $selectedMonth]) }}">
                                             <i class="fa-solid fa-file-excel text-success me-1"></i>
                                             <span>Xuất tổng hợp</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2 px-3"
+                                        <a class="dropdown-item d-flex align-items-center gap-2 small py-2 px-3 text-body"
                                            href="{{ route('app.attendance.export-detail', ['month' => $selectedMonth]) }}">
                                             <i class="fa-solid fa-list-check text-success me-1"></i>
                                             <span>Xuất chi tiết</span>
