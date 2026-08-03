@@ -4,8 +4,10 @@ namespace Tests\Feature\Livewire\Admin\Contracts;
 
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Contracts\ContractConsultingManager;
 use App\Models\ContractAssignment;
 use App\Models\ContractLegal;
+use App\Models\ContractMilestoneFile;
 use App\Models\ContractWorkflowStep;
 use App\Models\Customer;
 use App\Models\Department;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class ContractConsultingManagerTest extends TestCase
@@ -24,9 +27,13 @@ class ContractConsultingManagerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private User $techUser;
+
     private Department $dept;
+
     private Customer $customer;
+
     private Handler $handler;
 
     protected function setUp(): void
@@ -40,7 +47,7 @@ class ContractConsultingManagerTest extends TestCase
         );
 
         // Clear Spatie permission cache
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         // Seed roles & permissions
         foreach (RoleEnum::cases() as $roleEnum) {
@@ -89,12 +96,38 @@ class ContractConsultingManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->assertStatus(200)
             ->assertSet('filter.hide_completed_workflow', false)
             ->assertDontSee('Chưa hoàn thành')
             ->assertSee($this->customer->name)
             ->assertSee('30,000,000');
+    }
+
+    public function test_assigned_technical_staff_sees_one_work_item_for_payment_rows_with_the_same_bao_chau_number(): void
+    {
+        foreach ([15_000_000, 25_000_000] as $value) {
+            $contract = ContractLegal::create([
+                'shd_bc' => '03/2026/HĐKT.BC-TIENDO',
+                'customer_id' => $this->customer->id,
+                'handler_id' => $this->handler->id,
+                'staff_id' => $this->adminUser->id,
+                'department_id' => $this->dept->id,
+                'value' => $value,
+            ]);
+
+            ContractAssignment::create([
+                'assignable_type' => ContractLegal::class,
+                'assignable_id' => $contract->id,
+                'user_id' => $this->techUser->id,
+                'assigned_by' => $this->adminUser->id,
+            ]);
+        }
+
+        $this->actingAs($this->techUser);
+
+        Livewire::test(ContractConsultingManager::class)
+            ->assertViewHas('docs', fn ($docs): bool => $docs->total() === 1 && $docs->count() === 1);
     }
 
     public function test_consultant_hides_six_step_completed_contracts_by_default(): void
@@ -139,7 +172,7 @@ class ContractConsultingManagerTest extends TestCase
 
         $this->actingAs($consultant);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->assertSet('filter.hide_completed_workflow', true)
             ->assertViewHas('docs', fn ($docs) => $docs->contains('id', $incompleteContract->id)
                 && ! $docs->contains('id', $completedContract->id))
@@ -177,7 +210,7 @@ class ContractConsultingManagerTest extends TestCase
 
         $this->actingAs($this->techUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->assertSet('filter.hide_completed_workflow', true)
             ->assertSee('Chưa hoàn thành')
             ->assertViewHas('docs', fn ($docs) => ! $docs->contains('id', $completedContract->id))
@@ -190,7 +223,7 @@ class ContractConsultingManagerTest extends TestCase
         $this->actingAs($this->adminUser);
 
         // Create
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->call('create')
             ->set('formData.customer_id', $this->customer->id)
             ->set('formData.handler_id', $this->handler->id)
@@ -204,7 +237,7 @@ class ContractConsultingManagerTest extends TestCase
         $this->assertEquals(40000000, $contract->value);
 
         // Update
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->call('edit', $contract->id)
             ->set('formData.value', '45.000.000')
             ->call('save')
@@ -213,7 +246,7 @@ class ContractConsultingManagerTest extends TestCase
         $this->assertEquals(45000000, $contract->refresh()->value);
 
         // Delete
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->call('delete', $contract->id);
 
         $this->assertSoftDeleted('contract_consultings', ['id' => $contract->id]);
@@ -232,7 +265,7 @@ class ContractConsultingManagerTest extends TestCase
 
         // Non-technical user cannot update report number
         $this->actingAs($this->adminUser);
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->call('viewDetail', $contract->id)
             ->set('reportNumber', 'BC-12345')
             ->call('saveReportNumber')
@@ -245,7 +278,7 @@ class ContractConsultingManagerTest extends TestCase
 
         // Technical user CAN update report number
         $this->actingAs($this->techUser);
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        Livewire::test(ContractConsultingManager::class)
             ->call('viewDetail', $contract->id)
             ->set('reportNumber', 'BC-12345')
             ->call('saveReportNumber')
@@ -274,7 +307,7 @@ class ContractConsultingManagerTest extends TestCase
 
         $file = UploadedFile::fake()->create('hopdong.pdf', 500, 'application/pdf');
 
-        $component = Livewire::test(\App\Livewire\Admin\Contracts\ContractConsultingManager::class)
+        $component = Livewire::test(ContractConsultingManager::class)
             ->call('viewDetail', $contract->id)
             ->set('newContractFiles', [$file])
             ->call('uploadContractFile')
@@ -291,7 +324,7 @@ class ContractConsultingManagerTest extends TestCase
             'original_name' => 'hopdong.pdf',
         ]);
 
-        $dbFile = \App\Models\ContractMilestoneFile::first();
+        $dbFile = ContractMilestoneFile::first();
         Storage::disk('public')->assertExists($dbFile->file_path);
 
         // Test delete

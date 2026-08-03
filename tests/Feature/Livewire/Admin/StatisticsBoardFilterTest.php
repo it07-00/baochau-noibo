@@ -5,6 +5,7 @@ namespace Tests\Feature\Livewire\Admin;
 use App\Enums\Role as RoleEnum;
 use App\Livewire\Admin\StatisticsBoard;
 use App\Models\ContractAssignment;
+use App\Models\ContractLegal;
 use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\Customer;
@@ -102,21 +103,27 @@ class StatisticsBoardFilterTest extends TestCase
         ]);
         $consultant->assignRole(Role::findByName(RoleEnum::TU_VAN->value));
 
-        $contract = ContractTechnical::create([
-            'customer_id' => Customer::create(['name' => 'Khách hàng tư vấn dashboard'])->id,
-            'handler_id' => Handler::create(['name' => 'Nhà thầu tư vấn dashboard'])->id,
-            'staff_id' => $salesStaff->id,
-            'department_id' => $department->id,
-            'value' => 100_000_000,
-            'signed_at' => now()->startOfYear()->addMonth(),
-        ]);
+        $customer = Customer::create(['name' => 'Khách hàng tư vấn dashboard']);
+        $handler = Handler::create(['name' => 'Nhà thầu tư vấn dashboard']);
 
-        ContractAssignment::create([
-            'assignable_type' => ContractTechnical::class,
-            'assignable_id' => $contract->id,
-            'user_id' => $consultant->id,
-            'assigned_by' => $salesStaff->id,
-        ]);
+        foreach ([40_000_000, 60_000_000] as $value) {
+            $contract = ContractTechnical::create([
+                'shd_bc' => '05/2026/HĐKT.BC-TIENDO',
+                'customer_id' => $customer->id,
+                'handler_id' => $handler->id,
+                'staff_id' => $salesStaff->id,
+                'department_id' => $department->id,
+                'value' => $value,
+                'signed_at' => now()->startOfYear()->addMonth(),
+            ]);
+
+            ContractAssignment::create([
+                'assignable_type' => ContractTechnical::class,
+                'assignable_id' => $contract->id,
+                'user_id' => $consultant->id,
+                'assigned_by' => $salesStaff->id,
+            ]);
+        }
 
         $this->actingAs($consultant);
 
@@ -128,6 +135,49 @@ class StatisticsBoardFilterTest extends TestCase
                 fn (array $row) => $row['label'] === 'Ứng phó sự cố'
                     && $row['count'] === 1
                     && $row['processing'] === 1
+            ));
+    }
+
+    public function test_technical_progress_counts_payment_rows_with_the_same_bao_chau_number_once(): void
+    {
+        $department = Department::create([
+            'name' => 'Kỹ thuật',
+            'slug' => 'ky-thuat',
+            'is_active' => true,
+        ]);
+        $technical = User::factory()->create([
+            'department_id' => $department->id,
+            'is_active' => true,
+        ]);
+        $technical->assignRole(Role::findByName(RoleEnum::KY_THUAT->value));
+
+        $customer = Customer::create(['name' => 'Khách hàng kỹ thuật dashboard']);
+
+        foreach ([45_000_000, 55_000_000] as $value) {
+            $contract = ContractLegal::create([
+                'shd_bc' => '06/2026/HĐKT.BC-TIENDO',
+                'customer_id' => $customer->id,
+                'staff_id' => $technical->id,
+                'department_id' => $department->id,
+                'value' => $value,
+                'signed_at' => now()->startOfYear()->addMonth(),
+            ]);
+
+            ContractAssignment::create([
+                'assignable_type' => ContractLegal::class,
+                'assignable_id' => $contract->id,
+                'user_id' => $technical->id,
+                'assigned_by' => $technical->id,
+            ]);
+        }
+
+        $this->actingAs($technical);
+
+        Livewire::test(StatisticsBoard::class)
+            ->assertViewHas('technicalSummary', fn (array $summary): bool => $summary['total'] === 1
+                && $summary['processing'] === 1)
+            ->assertViewHas('technicalStats', fn ($stats): bool => $stats->contains(
+                fn (array $row): bool => $row['count'] === 1 && $row['completed'] === 0
             ));
     }
 

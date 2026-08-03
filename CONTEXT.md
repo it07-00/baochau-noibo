@@ -109,6 +109,10 @@ Middleware tùy chỉnh:
 - Báo cáo cache 5 phút theo người xem và bộ lọc. Bộ lọc, CSV export và dữ liệu biểu đồ dùng cùng một service để không lệch số liệu.
 - Dữ liệu lịch sử có thể còn trạng thái `Mất đơn`; báo cáo xem đây là trạng thái rớt cùng với enum chuẩn `Rớt báo giá` và hiển thị cảnh báo chất lượng khi thiếu dịch vụ/khu vực.
 
+### Bảng tổng kết doanh số
+
+- Số lượng hợp đồng mới/tái ký được đếm theo `shd_bc` (Số HĐ Bảo Châu) duy nhất trong từng tháng. Các bản ghi được tách theo nhiều đợt thanh toán nhưng có cùng `shd_bc` chỉ tính là một hợp đồng; bản ghi chưa có `shd_bc` vẫn được tính riêng là một hợp đồng theo ID. Doanh số `revenue` vẫn cộng đầy đủ tất cả các đợt.
+
 ### Lịch công tác và Màu nhãn phân loại
 
 - `WorkScheduleManager` hỗ trợ 12 màu nhãn phân loại chuẩn (`WorkSchedule::COLORS`) cùng nút chọn màu tùy chỉnh (`<input type="color">` bảng màu chi tiết / mã HEX) trong form tạo/sửa sự kiện.
@@ -161,6 +165,7 @@ Khi hoàn thành bước:
 Người nhận tiến độ thông thường: Giám đốc, Trưởng phòng kinh doanh, người được phân công, người phân công và nhân viên kinh doanh phụ trách. **IT không nhận thông báo tiến độ.** Khi step là `finished`, toàn bộ role **kế toán** được thêm vào để tiếp nhận xử lý hồ sơ thanh toán. Kế toán không nhận các bước trung gian.
 
 - Báo cáo `Tiến độ dự án TV-KT` lọc theo tháng và năm của `signed_at`; tháng mặc định là tháng hiện tại. KPI, phân trang và sáu cột pipeline dùng chung phạm vi thời gian này.
+- Với danh sách xử lý và thống kê tiến độ của nhân viên tư vấn/kỹ thuật, các bản ghi có cùng `shd_bc` khác rỗng là một hợp đồng nghiệp vụ duy nhất. Các bản ghi chưa có `shd_bc` vẫn được tính riêng theo model và ID; các đợt thanh toán vật lý và tổng giá trị tiền không bị gộp mất.
 
 ## 7. Khách hàng, báo giá và nhân viên phụ trách
 

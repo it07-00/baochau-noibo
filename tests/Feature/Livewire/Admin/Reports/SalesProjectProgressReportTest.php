@@ -464,6 +464,51 @@ class SalesProjectProgressReportTest extends TestCase
             });
     }
 
+    public function test_progress_treats_payment_rows_with_the_same_bao_chau_number_as_one_assigned_contract(): void
+    {
+        $manager = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
+        $manager->assignRole(RoleEnum::TP_KINH_DOANH->value);
+
+        $consultant = User::factory()->create([
+            'department_id' => $this->department->id,
+            'is_active' => true,
+        ]);
+        $consultant->assignRole(RoleEnum::TU_VAN->value);
+
+        $customer = Customer::create(['name' => 'Khách hàng tách đợt tiến độ']);
+        $handler = Handler::create(['name' => 'Nhà thầu tách đợt tiến độ']);
+
+        foreach ([30_000_000, 70_000_000] as $value) {
+            $contract = ContractWaste::create([
+                'shd_bc' => '01/2026/HĐKT.BC-TIENDO',
+                'customer_id' => $customer->id,
+                'handler_id' => $handler->id,
+                'staff_id' => $manager->id,
+                'department_id' => $this->department->id,
+                'value' => $value,
+                'signed_at' => '2026-05-10',
+                'submitted_at' => '2026-05-10',
+            ]);
+            $contract->assignments()->create([
+                'user_id' => $consultant->id,
+                'assigned_by' => $manager->id,
+            ]);
+        }
+
+        $this->actingAs($manager);
+
+        Livewire::test(SalesProjectProgressReport::class)
+            ->set('year', 2026)
+            ->set('month', 5)
+            ->set('filter_staff_id', (string) $consultant->id)
+            ->assertViewHas('items', fn ($items): bool => $items->total() === 1)
+            ->assertViewHas('summary', fn ($summary): bool => $summary->total === 1)
+            ->assertViewHas('pipeline', fn (array $pipeline): bool => collect($pipeline)->flatten(1)->count() === 1);
+    }
+
     public function test_authorized_user_can_assign_contracts_directly(): void
     {
         $manager = User::factory()->create([

@@ -11,6 +11,7 @@ use App\Models\ContractTechnical;
 use App\Models\ContractWaste;
 use App\Models\User;
 use App\Support\DataScope;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SalesSummaryReport extends Component
@@ -86,6 +87,8 @@ class SalesSummaryReport extends Component
         }
 
         if (! empty($targetStaffIds)) {
+            $contractCountExpression = $this->uniqueContractCountExpression();
+
             foreach ($this->contractModelClasses as $modelClass) {
                 // Chỉ tính theo phần xuất hóa đơn.
                 foreach ($modelClass::query()
@@ -93,7 +96,7 @@ class SalesSummaryReport extends Component
                     ->whereYear('submitted_at', $this->year)
                     ->whereIn('staff_id', $targetStaffIds)
                     ->where('is_renewal', true)
-                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total, COUNT(*) as cnt')
+                    ->selectRaw("MONTH(submitted_at) as m, SUM(revenue) as total, {$contractCountExpression} as cnt")
                     ->groupBy('m')
                     ->get() as $r) {
                     $mIdx = (int) $r->m;
@@ -111,7 +114,7 @@ class SalesSummaryReport extends Component
                     ->where(function ($q) {
                         $q->where('is_renewal', false)->orWhereNull('is_renewal');
                     })
-                    ->selectRaw('MONTH(submitted_at) as m, SUM(revenue) as total, COUNT(*) as cnt')
+                    ->selectRaw("MONTH(submitted_at) as m, SUM(revenue) as total, {$contractCountExpression} as cnt")
                     ->groupBy('m')
                     ->get() as $r) {
                     $mIdx = (int) $r->m;
@@ -171,5 +174,17 @@ class SalesSummaryReport extends Component
             'detail' => $detail,
             'maxMonth' => $maxMonth,
         ])->layout('admin.layouts.app', ['title' => 'Bảng tổng kết doanh số']);
+    }
+
+    private function uniqueContractCountExpression(): string
+    {
+        $isSqlite = DB::getDriverName() === 'sqlite';
+        $recordKey = $isSqlite ? "'record:' || id" : "CONCAT('record:', id)";
+        $numberKey = $isSqlite ? "'number:' || TRIM(shd_bc)" : "CONCAT('number:', TRIM(shd_bc))";
+
+        return "COUNT(DISTINCT CASE
+            WHEN shd_bc IS NULL OR TRIM(shd_bc) = '' THEN {$recordKey}
+            ELSE {$numberKey}
+        END)";
     }
 }

@@ -16,6 +16,7 @@ use App\Models\DailyReport;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Models\WorkSchedule;
+use App\Support\ContractBusinessIdentity;
 use App\Support\ContractRenewalRadar;
 use App\Support\DailyReportVisibility;
 use App\Support\DataScope;
@@ -615,7 +616,9 @@ class StatisticsService
                         $applyContractDateFilter($quarterQuery, null, $dateColumn);
                         $quarterQuery->whereMonth($dateColumn, '>=', $startMonth)
                             ->whereMonth($dateColumn, '<=', $endMonth);
-                        $qData[] = (int) $quarterQuery->count();
+                        $qData[] = ContractBusinessIdentity::unique(
+                            $quarterQuery->get(['id', 'shd_bc'])
+                        )->count();
                     }
                     $consultingChartData[$label] = $qData;
                 }
@@ -629,10 +632,14 @@ class StatisticsService
                             $yearModeQuery = $applyConsultingScope($model::query());
                             $applyContractDateFilter($yearModeQuery, null, $dateColumn);
                             $yearModeQuery->whereYear($dateColumn, $y);
-                            $yData[] = (int) $yearModeQuery->count();
+                            $yData[] = ContractBusinessIdentity::unique(
+                                $yearModeQuery->get(['id', 'shd_bc'])
+                            )->count();
                         } else {
                             $yearModeQuery = $applyConsultingScope($model::whereYear($dateColumn, $y));
-                            $yData[] = (int) $yearModeQuery->count();
+                            $yData[] = ContractBusinessIdentity::unique(
+                                $yearModeQuery->get(['id', 'shd_bc'])
+                            )->count();
                         }
                     }
                     $consultingChartData[$label] = $yData;
@@ -643,10 +650,15 @@ class StatisticsService
                 $dateColumn = $getDateColumn();
                 $statsQuery = $applyConsultingScope($model::query());
                 $applyContractDateFilter($statsQuery, $selectedMonth, $dateColumn);
-                $rows = $statsQuery->get(['id', 'value', 'workflow_status']);
+                $rows = $statsQuery->get(['id', 'shd_bc', 'value', 'workflow_status']);
+                $contractGroups = $rows->groupBy(
+                    fn ($contract): string => ContractBusinessIdentity::key($contract)
+                );
 
-                $count = $rows->count();
-                $completed = $rows->where('workflow_status', 'finished')->count();
+                $count = $contractGroups->count();
+                $completed = $contractGroups
+                    ->filter(fn ($contracts): bool => $contracts->contains('workflow_status', 'finished'))
+                    ->count();
                 $value = (float) $rows->sum('value');
 
                 $consultingStats->push([
@@ -687,9 +699,18 @@ class StatisticsService
                     ->with('assignable')
                     ->get();
 
-                $count = $assignments->count();
-                $value = $assignments->sum(fn ($a) => (float) ($a->assignable->value ?? 0));
-                $completed = $assignments->filter(fn ($a) => ($a->assignable->workflow_status ?? '') === 'finished')->count();
+                $contractGroups = $assignments->groupBy(
+                    fn ($assignment): string => ContractBusinessIdentity::key($assignment->assignable)
+                );
+                $count = $contractGroups->count();
+                $value = $contractGroups->sum(fn ($contractAssignments): float => (float) $contractAssignments
+                    ->unique(fn ($assignment): string => $assignment->assignable_type.':'.$assignment->assignable_id)
+                    ->sum(fn ($assignment): float => (float) ($assignment->assignable->value ?? 0)));
+                $completed = $contractGroups
+                    ->filter(fn ($contractAssignments): bool => $contractAssignments->contains(
+                        fn ($assignment): bool => ($assignment->assignable->workflow_status ?? '') === 'finished'
+                    ))
+                    ->count();
 
                 $technicalStats->push([
                     'label' => $label,

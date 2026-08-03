@@ -22,6 +22,7 @@ use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use App\Support\ContractBusinessIdentity;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -857,6 +858,9 @@ class ContractConsultingManager extends Component
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $sortColumn = ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
         $docs = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->get();
+        if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+            $docs = ContractBusinessIdentity::unique($docs);
+        }
         $title = 'Hợp đồng tư vấn';
         $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
@@ -1010,7 +1014,10 @@ class ContractConsultingManager extends Component
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $sortColumn = ($this->sortBy === 'report_number' || $user->hasRole(Role::KY_THUAT->value)) ? 'report_number' : 'id';
-        $docs = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc')->paginate(10);
+        $orderedQuery = $query->orderBy($sortColumn, $orderDirection)->orderBy('id', 'desc');
+        $docs = $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
+            ? ContractBusinessIdentity::paginate($orderedQuery->get(), 10)
+            : $orderedQuery->paginate(10);
 
         $workflowProgress = $this->getWorkflowProgress($docs);
 

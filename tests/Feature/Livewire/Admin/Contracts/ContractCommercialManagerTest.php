@@ -114,6 +114,38 @@ class ContractCommercialManagerTest extends TestCase
             ->assertSeeHtml('wire:click="openWorkflow('.$contract->id.')"');
     }
 
+    public function test_assigned_consultant_sees_one_work_item_for_payment_rows_with_the_same_bao_chau_number(): void
+    {
+        $consultingRole = Role::findByName(RoleEnum::TU_VAN->value);
+        $consultingRole->syncPermissions([PermissionEnum::CONTRACTS_COMMERCIAL_VIEW->value]);
+
+        $consultant = User::factory()->create(['is_active' => true]);
+        $consultant->assignRole($consultingRole);
+
+        foreach ([20_000_000, 30_000_000] as $value) {
+            $contract = ContractResearch::create([
+                'shd_bc' => '02/2026/HĐKT.BC-TIENDO',
+                'customer_id' => $this->customer->id,
+                'handler_id' => $this->handler->id,
+                'staff_id' => $this->adminUser->id,
+                'department_id' => $this->dept->id,
+                'value' => $value,
+            ]);
+
+            ContractAssignment::create([
+                'assignable_type' => ContractResearch::class,
+                'assignable_id' => $contract->id,
+                'user_id' => $consultant->id,
+                'assigned_by' => $this->adminUser->id,
+            ]);
+        }
+
+        $this->actingAs($consultant);
+
+        Livewire::test(ContractCommercialManager::class)
+            ->assertViewHas('docs', fn ($docs): bool => $docs->total() === 1 && $docs->count() === 1);
+    }
+
     public function test_can_search_contracts(): void
     {
         $customerB = Customer::create(['name' => 'Khách hàng B']);

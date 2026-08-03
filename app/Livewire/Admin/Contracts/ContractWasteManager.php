@@ -22,6 +22,7 @@ use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
 use App\Notifications\ContractProgressNoteNotification;
+use App\Support\ContractBusinessIdentity;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -967,6 +968,9 @@ class ContractWasteManager extends Component
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
         $docs = $query->orderBy('id', $orderDirection)->get();
+        if ($user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])) {
+            $docs = ContractBusinessIdentity::unique($docs);
+        }
         $title = 'Hợp đồng chất thải';
         $showFinancials = ! auth()->user()->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value]);
 
@@ -1002,7 +1006,10 @@ class ContractWasteManager extends Component
         $this->applyFilters($query);
 
         $orderDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
-        $docs = $query->orderBy('id', $orderDirection)->paginate(10);
+        $orderedQuery = $query->orderBy('id', $orderDirection);
+        $docs = $user->hasAnyRole([Role::TU_VAN->value, Role::KY_THUAT->value])
+            ? ContractBusinessIdentity::paginate($orderedQuery->get(), 10)
+            : $orderedQuery->paginate(10);
         $voucherStatuses = collect(ContractVoucherStatus::values())
             ->merge(
                 ContractWaste::whereNotNull('voucher_status')

@@ -3,18 +3,22 @@
 namespace Tests\Feature\Livewire\Admin\Contracts;
 
 use App\Enums\Permission as PermissionEnum;
+use App\Enums\QuotationStatus;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Contracts\ContractWasteManager;
 use App\Models\ContractAssignment;
 use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Handler;
+use App\Models\Quotation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class ContractWasteManagerTest extends TestCase
@@ -22,8 +26,11 @@ class ContractWasteManagerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private Department $dept;
+
     private Customer $customer;
+
     private Handler $handler;
 
     protected function setUp(): void
@@ -37,7 +44,7 @@ class ContractWasteManagerTest extends TestCase
         );
 
         // Clear Spatie permission cache
-        $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         // Seed roles & permissions
         foreach (RoleEnum::cases() as $roleEnum) {
@@ -75,10 +82,42 @@ class ContractWasteManagerTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->assertStatus(200)
             ->assertSee($this->customer->name)
             ->assertSee('25,000,000');
+    }
+
+    public function test_assigned_consultant_sees_one_work_item_for_payment_rows_with_the_same_bao_chau_number(): void
+    {
+        $consultingRole = Role::findByName(RoleEnum::TU_VAN->value);
+        $consultingRole->syncPermissions([PermissionEnum::CONTRACTS_WASTE_VIEW->value]);
+
+        $consultant = User::factory()->create(['is_active' => true]);
+        $consultant->assignRole($consultingRole);
+
+        foreach ([10_000_000, 20_000_000] as $value) {
+            $contract = ContractWaste::create([
+                'shd_bc' => '04/2026/HĐKT.BC-TIENDO',
+                'customer_id' => $this->customer->id,
+                'handler_id' => $this->handler->id,
+                'staff_id' => $this->adminUser->id,
+                'department_id' => $this->dept->id,
+                'value' => $value,
+            ]);
+
+            ContractAssignment::create([
+                'assignable_type' => ContractWaste::class,
+                'assignable_id' => $contract->id,
+                'user_id' => $consultant->id,
+                'assigned_by' => $this->adminUser->id,
+            ]);
+        }
+
+        $this->actingAs($consultant);
+
+        Livewire::test(ContractWasteManager::class)
+            ->assertViewHas('docs', fn ($docs): bool => $docs->total() === 1 && $docs->count() === 1);
     }
 
     public function test_consultant_hides_completed_waste_contracts_by_default(): void
@@ -115,7 +154,7 @@ class ContractWasteManagerTest extends TestCase
 
         $this->actingAs($consultant);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->assertSet('filter.hide_completed_workflow', true)
             ->assertViewHas('docs', fn ($docs) => ! $docs->contains('id', $completedContract->id))
             ->set('filter.hide_completed_workflow', false)
@@ -127,7 +166,7 @@ class ContractWasteManagerTest extends TestCase
         $this->actingAs($this->adminUser);
 
         // Create
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('create')
             ->set('formData.customer_id', $this->customer->id)
             ->set('formData.handler_id', $this->handler->id)
@@ -144,7 +183,7 @@ class ContractWasteManagerTest extends TestCase
         $this->assertEquals(35000000, $contract->value);
 
         // Update
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('edit', $contract->id)
             ->set('formData.value', '37.000.000')
             ->call('save')
@@ -153,7 +192,7 @@ class ContractWasteManagerTest extends TestCase
         $this->assertEquals(37000000, $contract->refresh()->value);
 
         // Delete
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('delete', $contract->id);
 
         $this->assertSoftDeleted('contract_wastes', ['id' => $contract->id]);
@@ -163,7 +202,7 @@ class ContractWasteManagerTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('create')
             ->set('formData.customer_id', $this->customer->id)
             ->set('formData.department_id', $this->dept->id)
@@ -183,7 +222,7 @@ class ContractWasteManagerTest extends TestCase
         $this->actingAs($this->adminUser);
 
         // effective_at cannot be before signed_at
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('create')
             ->set('formData.customer_id', $this->customer->id)
             ->set('formData.handler_id', $this->handler->id)
@@ -200,7 +239,7 @@ class ContractWasteManagerTest extends TestCase
         $this->actingAs($this->adminUser);
 
         // end_at cannot be before effective_at
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('create')
             ->set('formData.customer_id', $this->customer->id)
             ->set('formData.handler_id', $this->handler->id)
@@ -217,7 +256,7 @@ class ContractWasteManagerTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->call('create')
             ->set('formData.customer_id', $this->customer->id)
             ->set('formData.department_id', $this->dept->id)
@@ -229,7 +268,7 @@ class ContractWasteManagerTest extends TestCase
         $contract = ContractWaste::first();
         $this->assertEquals('2026-08-15', $contract->collection_time);
 
-        Livewire::test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+        Livewire::test(ContractWasteManager::class)
             ->assertSee('15/08/2026');
     }
 
@@ -237,16 +276,16 @@ class ContractWasteManagerTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        $quotation = \App\Models\Quotation::create([
+        $quotation = Quotation::create([
             'company_name' => 'Công ty Cổ Phần Thu Gom',
             'staff_id' => $this->adminUser->id,
             'total_value' => 50000000,
-            'status' => \App\Enums\QuotationStatus::DANG_THEO_DOI->value,
+            'status' => QuotationStatus::DANG_THEO_DOI->value,
             'date' => '2026-07-25',
         ]);
 
         Livewire::withQueryParams(['quotation_id' => $quotation->id])
-            ->test(\App\Livewire\Admin\Contracts\ContractWasteManager::class)
+            ->test(ContractWasteManager::class)
             ->set('formData.collection_time', '2026-08-15')
             ->call('save')
             ->assertHasNoErrors();

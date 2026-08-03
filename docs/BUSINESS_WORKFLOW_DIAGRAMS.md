@@ -438,6 +438,8 @@ flowchart TD
     J -->|Không| L[Bắt đầu workflow]
 ```
 
+Nếu một hợp đồng được lưu thành nhiều bản ghi theo các đợt thanh toán, danh sách xử lý của tư vấn/kỹ thuật nhận diện chúng là một công việc theo `shd_bc`. Bản ghi chưa có `shd_bc` vẫn là một công việc riêng; dữ liệu các đợt thanh toán không bị xóa hoặc gộp vật lý.
+
 ---
 
 # 15. Workflow sáu bước hợp đồng

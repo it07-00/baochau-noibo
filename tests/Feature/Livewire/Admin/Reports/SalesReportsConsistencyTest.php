@@ -143,6 +143,57 @@ class SalesReportsConsistencyTest extends TestCase
             );
     }
 
+    public function test_sales_summary_counts_unique_bao_chau_contract_numbers_and_keeps_unnumbered_contracts(): void
+    {
+        $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
+        Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value);
+        $department = Department::create([
+            'name' => 'Phong Kinh Doanh',
+            'slug' => 'kinh-doanh',
+            'is_active' => true,
+        ]);
+        $salesperson = User::factory()->create([
+            'department_id' => $department->id,
+            'is_active' => true,
+        ]);
+        $salesperson->assignRole($salesRole);
+
+        $customer = Customer::create(['name' => 'Khach hang tach dot thanh toan']);
+        $handler = Handler::create(['name' => 'Nha thau phu tach dot thanh toan']);
+
+        foreach ([
+            ['shd_bc' => '01/2026/HĐKT.BC', 'revenue' => 30_000_000],
+            ['shd_bc' => '01/2026/HĐKT.BC', 'revenue' => 70_000_000],
+            ['shd_bc' => null, 'revenue' => 50_000_000],
+        ] as $contract) {
+            ContractWaste::create([
+                'shd_bc' => $contract['shd_bc'],
+                'customer_id' => $customer->id,
+                'handler_id' => $handler->id,
+                'staff_id' => $salesperson->id,
+                'department_id' => $department->id,
+                'value' => $contract['revenue'],
+                'revenue' => $contract['revenue'],
+                'signed_at' => '2026-07-10',
+                'submitted_at' => '2026-07-15',
+                'is_renewal' => false,
+            ]);
+        }
+
+        $this->actingAs($salesperson);
+
+        Livewire::test(SalesSummaryReport::class)
+            ->set('year', 2026)
+            ->assertViewHas('months', function (array $months): bool {
+                return $months[7]['progressive_count'] === 2
+                    && $months[7]['progressive'] === 150_000_000.0;
+            })
+            ->assertViewHas('totals', function (array $totals): bool {
+                return $totals['progressive_count'] === 2
+                    && $totals['progressive'] === 150_000_000.0;
+            });
+    }
+
     public function test_sales_target_registration_groups_pre_2026_contracts_into_january_2026(): void
     {
         $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);

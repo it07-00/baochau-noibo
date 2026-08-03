@@ -13,6 +13,7 @@ use App\Models\ContractWaste;
 use App\Models\ContractWorkflowStep;
 use App\Models\User;
 use App\Notifications\ContractAssignedNotification;
+use App\Support\ContractBusinessIdentity;
 use App\Support\DataScope;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -229,7 +230,7 @@ class SalesProjectProgressReport extends Component
             $query->whereYear('signed_at', $this->year)
                 ->whereMonth('signed_at', $this->month);
 
-            foreach ($query->get() as $contract) {
+            foreach (ContractBusinessIdentity::unique($query->orderByDesc('id')->get()) as $contract) {
                 // Determine departments & staffs assigned
                 $assignedDepts = [];
                 $assignedStaff = [];
