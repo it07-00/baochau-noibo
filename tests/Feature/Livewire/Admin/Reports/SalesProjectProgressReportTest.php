@@ -359,6 +359,7 @@ class SalesProjectProgressReportTest extends TestCase
             })
             ->assertSee('Nhóm hợp đồng')
             ->assertSee('Pipeline tiến độ hợp đồng')
+            ->assertSeeHtml('rounded-3 bg-body-tertiary h-auto')
             ->assertSee('Đang thực hiện');
     }
 

@@ -122,7 +122,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-6 g-2 mb-3">
         @foreach(\App\Models\ContractWorkflowStep::STEP_KEYS as $stepKey)
             <div class="col">
-                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary">
+                <div class="card border border-light-subtle shadow-sm rounded-3 bg-body-tertiary h-auto">
                     <div class="card-header border-0 bg-transparent p-2 d-flex justify-content-between align-items-center gap-1">
                         <div class="d-flex align-items-center gap-2 min-w-0">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary fw-bold flex-shrink-0 me-1" style="width: 1.35rem; height: 1.35rem; font-size: 0.72rem;">{{ $loop->iteration }}</span>
