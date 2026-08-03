@@ -159,10 +159,10 @@
                     </select>
                 </div>
 
-                <div class="col-6 col-md-3 col-xl-1">
+                <div class="col-6 col-md-3 col-xl-2">
                     <label for="appendix-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Phụ lục</label>
                     <select id="appendix-filter" class="form-select border-secondary-subtle" wire:model.live="appendixFilter">
-                        <option value="">Tất cả</option>
+                        <option value="">Tất cả phụ lục</option>
                         @foreach($appendixOptions as $appendix)
                             <option value="{{ $appendix }}">{{ $appendix }}</option>
                         @endforeach
@@ -192,7 +192,7 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-xl-2">
+                <div class="col-12 {{ $customerList !== 'all' ? 'col-xl-1' : 'col-xl-2' }} ms-auto">
                     <div class="d-flex gap-2">
                         <button type="button"
                                 class="btn btn-outline-secondary border-secondary-subtle d-inline-flex align-items-center justify-content-center gap-1 text-nowrap flex-grow-1"
@@ -239,24 +239,6 @@
                             <option value="">Tất cả trạng thái</option>
                             @foreach($careStatusOptions as $opt)
                                 <option value="{{ $opt['value'] }}">{{ $opt['label'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <label for="sector-filter" class="form-label text-muted small fw-bold text-uppercase mb-1">Ngành / Lĩnh vực</label>
-                        <select id="sector-filter" class="form-select border-secondary-subtle" wire:model.live="sectorFilter">
-                            <option value="">Tất cả ngành/lĩnh vực</option>
-                            @foreach($sectorOptions as $sector)
-                                <option value="{{ $sector }}">{{ $sector }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <label for="appendix-filter" class="form-label text-muted small fw-bold text-uppercase mb-1">Phụ lục</label>
-                        <select id="appendix-filter" class="form-select border-secondary-subtle" wire:model.live="appendixFilter">
-                            <option value="">Tất cả phụ lục</option>
-                            @foreach($appendixOptions as $appendix)
-                                <option value="{{ $appendix }}">{{ $appendix }}</option>
                             @endforeach
                         </select>
                     </div>
