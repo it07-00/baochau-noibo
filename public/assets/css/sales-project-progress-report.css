@@ -34,8 +34,10 @@
 }
 
 .workflow-pipeline > .col {
-    flex: 1 1 0;
-    min-width: 210px;
+    flex: 0 0 250px !important;
+    width: 250px !important;
+    max-width: 250px !important;
+    min-width: 250px !important;
 }
 
 .pipeline-step-body {
