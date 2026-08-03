@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\Customers;
 
+use App\Enums\CustomerCareStatus;
 use App\Enums\Permission;
+use App\Enums\Role;
 use App\Models\ContractEmission;
 use App\Models\ContractLegal;
 use App\Models\ContractResearch;
@@ -18,6 +20,7 @@ use App\Support\VietnamProvinces;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -28,6 +31,8 @@ class CustomerManager extends Component
     protected $paginationTheme = 'bootstrap';
 
     public string $search = '';
+
+    public string $customerList = 'all';
 
     public string $provinceFilter = '';
 
@@ -40,6 +45,10 @@ class CustomerManager extends Component
     public string $serviceContractFilter = '';
 
     public string $staffFilter = '';
+
+    public string $caretakerStatusFilter = '';
+
+    public string $careStatusFilter = '';
 
     public string $serviceFilter = ''; // Backward compatibility for older/cached sessions
 
@@ -57,10 +66,14 @@ class CustomerManager extends Component
         'name' => '',
         'tax_code' => '',
         'address' => '',
+        'phone' => '',
+        'email' => '',
         'province' => '',
         'ward' => '',
         'industrial_park' => '',
         'representative' => '',
+        'contact_person' => '',
+        'caretaker_id' => '',
     ];
 
     /**
@@ -75,6 +88,8 @@ class CustomerManager extends Component
         'contractsSustainability' => [ContractSustainability::class, 'Phát triển bền vững'],
     ];
 
+    private const CUSTOMER_LISTS = ['all', 'ghg_inventory', 'energy_audit'];
+
     public function paginationView(): string
     {
         return 'livewire.admin.users.pagination';
@@ -84,17 +99,30 @@ class CustomerManager extends Component
     {
         if (in_array($property, [
             'search',
+            'customerList',
             'provinceFilter',
             'wardFilter',
             'industrialParkFilter',
             'serviceQuotationFilter',
             'serviceContractFilter',
             'staffFilter',
+            'caretakerStatusFilter',
+            'careStatusFilter',
             'serviceFilter',
             'groupBy',
         ], true)) {
             $this->resetPage();
         }
+    }
+
+    public function selectCustomerList(string $list): void
+    {
+        abort_unless(in_array($list, self::CUSTOMER_LISTS, true), 404);
+
+        $this->customerList = $list;
+        $this->caretakerStatusFilter = '';
+        $this->careStatusFilter = '';
+        $this->resetPage();
     }
 
     public function updatedProvinceFilter(): void
@@ -143,6 +171,8 @@ class CustomerManager extends Component
             'serviceQuotationFilter',
             'serviceContractFilter',
             'staffFilter',
+            'caretakerStatusFilter',
+            'careStatusFilter',
             'serviceFilter',
         ]);
         $this->groupBy = 'province';
@@ -245,10 +275,14 @@ class CustomerManager extends Component
             'name' => (string) $customer->name,
             'tax_code' => (string) ($customer->tax_code ?? ''),
             'address' => (string) ($customer->address ?? ''),
+            'phone' => (string) ($customer->phone ?? ''),
+            'email' => (string) ($customer->email ?? ''),
             'province' => (string) ($customer->province ?? ''),
             'ward' => (string) ($customer->ward ?? ''),
             'industrial_park' => (string) ($customer->industrial_park ?? ''),
             'representative' => (string) ($customer->representative ?? ''),
+            'contact_person' => (string) ($customer->contact_person ?? ''),
+            'caretaker_id' => $customer->caretaker_id ? (string) $customer->caretaker_id : '',
         ];
 
         $this->isEditing = true;
@@ -273,18 +307,26 @@ class CustomerManager extends Component
             'formData.name' => 'required|string|max:255|unique:customers,name'.($this->editingId ? ','.$this->editingId : ''),
             'formData.tax_code' => 'nullable|string|max:50',
             'formData.address' => 'nullable|string|max:2000',
+            'formData.phone' => 'nullable|string|max:30',
+            'formData.email' => 'nullable|email|max:255',
             'formData.province' => 'nullable|string|max:255',
             'formData.ward' => 'nullable|string|max:255',
             'formData.industrial_park' => 'nullable|string|max:255',
             'formData.representative' => 'nullable|string|max:255',
+            'formData.contact_person' => 'nullable|string|max:255',
+            'formData.caretaker_id' => ['nullable', 'integer', Rule::in($this->caretakerOptions()->pluck('id')->all())],
         ], [], [
             'formData.name' => 'tên khách hàng',
             'formData.tax_code' => 'mã số thuế',
             'formData.address' => 'địa chỉ',
+            'formData.phone' => 'số điện thoại',
+            'formData.email' => 'email',
             'formData.province' => 'tỉnh thành',
             'formData.ward' => 'phường xã',
             'formData.industrial_park' => 'khu công nghiệp',
             'formData.representative' => 'người đại diện',
+            'formData.contact_person' => 'người liên hệ',
+            'formData.caretaker_id' => 'người chăm sóc',
         ]);
 
         $detected = VietnameseAddressParser::parse($this->formData['address'] ?? null);
@@ -292,10 +334,14 @@ class CustomerManager extends Component
             'name' => trim((string) $this->formData['name']),
             'tax_code' => $this->nullableFormValue('tax_code'),
             'address' => $this->nullableFormValue('address'),
+            'phone' => $this->nullableFormValue('phone'),
+            'email' => $this->nullableFormValue('email'),
             'province' => $this->nullableFormValue('province') ?? $detected['province'],
             'ward' => VietnameseAddressParser::canonicalizeWard($this->nullableFormValue('ward') ?? $detected['ward']),
             'industrial_park' => VietnameseAddressParser::canonicalizeIndustrialPark($this->nullableFormValue('industrial_park') ?? $detected['industrial_park']),
             'representative' => $this->nullableFormValue('representative'),
+            'contact_person' => $this->nullableFormValue('contact_person'),
+            'caretaker_id' => filled($this->formData['caretaker_id'] ?? null) ? (int) $this->formData['caretaker_id'] : null,
         ];
 
         if ($this->isEditing && $this->editingId) {
@@ -309,6 +355,62 @@ class CustomerManager extends Component
         $this->dispatch('closeCustomerFormModal');
         $this->dispatch('swal:toast', ['type' => 'success', 'message' => $message]);
         $this->resetForm();
+    }
+
+    public function updateCaretaker(int $customerId, mixed $caretakerId): void
+    {
+        abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
+
+        $caretakerId = filled($caretakerId) ? (int) $caretakerId : null;
+
+        if ($caretakerId !== null) {
+            $validCaretakerIds = $this->caretakerOptions()->pluck('id')->all();
+            if (! in_array($caretakerId, $validCaretakerIds, true)) {
+                $this->dispatch('swal:toast', [
+                    'type' => 'error',
+                    'message' => 'Nhân viên chăm sóc không hợp lệ.',
+                ]);
+
+                return;
+            }
+        }
+
+        $customer = Customer::findOrFail($customerId);
+        $customer->update(['caretaker_id' => $caretakerId]);
+
+        $caretakerName = $caretakerId ? User::find($caretakerId)?->name : null;
+        $message = $caretakerName
+            ? "Đã phân công {$caretakerName} chăm sóc khách hàng {$customer->name}."
+            : "Đã bỏ phân công người chăm sóc cho khách hàng {$customer->name}.";
+
+        $this->dispatch('swal:toast', [
+            'type' => 'success',
+            'message' => $message,
+        ]);
+    }
+
+    public function updateCareStatus(int $customerId, string $status): void
+    {
+        abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
+
+        $careStatus = CustomerCareStatus::tryFrom($status);
+
+        if ($careStatus === null) {
+            $this->dispatch('swal:toast', [
+                'type'    => 'error',
+                'message' => 'Trạng thái chăm sóc không hợp lệ.',
+            ]);
+
+            return;
+        }
+
+        $customer = Customer::findOrFail($customerId);
+        $customer->update(['care_status' => $careStatus->value]);
+
+        $this->dispatch('swal:toast', [
+            'type'    => 'success',
+            'message' => "Đã cập nhật trạng thái chăm sóc: {$careStatus->label()} — {$customer->name}.",
+        ]);
     }
 
     public function delete(int $id): void
@@ -392,10 +494,14 @@ class CustomerManager extends Component
             'name' => '',
             'tax_code' => '',
             'address' => '',
+            'phone' => '',
+            'email' => '',
             'province' => '',
             'ward' => '',
             'industrial_park' => '',
             'representative' => '',
+            'contact_person' => '',
+            'caretaker_id' => '',
         ];
         $this->resetErrorBag();
         $this->resetValidation();
@@ -404,7 +510,7 @@ class CustomerManager extends Component
     private function customerQuery(): Builder
     {
         $relations = array_keys(self::CONTRACT_RELATIONS);
-        $with = ['quotations:id,company_name,service'];
+        $with = ['quotations:id,company_name,service', 'caretaker:id,name'];
 
         foreach ($relations as $relation) {
             $with[$relation] = fn ($query) => $query->select('id', 'customer_id', 'loai_dich_vu');
@@ -412,34 +518,76 @@ class CustomerManager extends Component
 
         $query = Customer::query()
             ->withCount(array_merge(['quotations'], $relations))
-            ->with($with)
+            ->with($with);
+
+        $query = $this->applyCustomerList($query)
             ->when($this->search, function (Builder $query): void {
                 $search = trim($this->search);
                 $query->where(function (Builder $q) use ($search): void {
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhere('tax_code', 'like', "%{$search}%")
                         ->orWhere('representative', 'like', "%{$search}%")
+                        ->orWhere('contact_person', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
                         ->orWhere('address', 'like', "%{$search}%")
                         ->orWhere('province', 'like', "%{$search}%")
                         ->orWhere('ward', 'like', "%{$search}%")
-                        ->orWhere('industrial_park', 'like', "%{$search}%");
+                        ->orWhere('industrial_park', 'like', "%{$search}%")
+                        ->orWhereHas('caretaker', fn (Builder $caretakerQuery) => $caretakerQuery->where('name', 'like', "%{$search}%"));
                 });
             })
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter))
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
+            ->when($this->caretakerStatusFilter, function (Builder $query): void {
+                if ($this->caretakerStatusFilter === 'assigned') {
+                    $query->whereNotNull('caretaker_id');
+                } elseif ($this->caretakerStatusFilter === 'unassigned') {
+                    $query->whereNull('caretaker_id');
+                } elseif ($this->caretakerStatusFilter === 'has_contract') {
+                    $query->where(function (Builder $sub): void {
+                        foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                            $sub->orWhereHas($relation);
+                        }
+                    });
+                } elseif ($this->caretakerStatusFilter === 'has_quotation') {
+                    $query->whereHas('quotations');
+                } elseif ($this->caretakerStatusFilter === 'has_contact') {
+                    $query->where(function (Builder $q): void {
+                        $q->where(fn ($sub) => $sub->whereNotNull('phone')->where('phone', '!=', ''))
+                            ->orWhere(fn ($sub) => $sub->whereNotNull('email')->where('email', '!=', ''))
+                            ->orWhere(fn ($sub) => $sub->whereNotNull('contact_person')->where('contact_person', '!=', ''))
+                            ->orWhere(fn ($sub) => $sub->whereNotNull('representative')->where('representative', '!=', ''));
+                    });
+                } elseif ($this->caretakerStatusFilter === 'no_contact') {
+                    $query->where(function (Builder $q): void {
+                        $q->where(fn ($sub) => $sub->whereNull('phone')->orWhere('phone', ''))
+                            ->where(fn ($sub) => $sub->whereNull('email')->orWhere('email', ''))
+                            ->where(fn ($sub) => $sub->whereNull('contact_person')->orWhere('contact_person', ''))
+                            ->where(fn ($sub) => $sub->whereNull('representative')->orWhere('representative', ''));
+                    });
+                } elseif ($this->caretakerStatusFilter === 'no_service') {
+                    $query->whereDoesntHave('quotations');
+                    foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
+                        $query->whereDoesntHave($relation);
+                    }
+                }
+            })
+            ->when($this->careStatusFilter, fn (Builder $q) => $q->where('care_status', $this->careStatusFilter))
             ->when($this->staffFilter, function (Builder $query): void {
                 $staffId = (int) $this->staffFilter;
 
                 $query->where(function (Builder $q) use ($staffId): void {
-                    $q->whereHas('quotations', fn (Builder $quotationQuery) => $quotationQuery->where('staff_id', $staffId));
+                    $q->where('caretaker_id', $staffId)
+                        ->orWhereHas('quotations', fn (Builder $quotationQuery) => $quotationQuery->where('staff_id', $staffId));
 
                     foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
                         $q->orWhereHas($relation, fn (Builder $contractQuery) => $contractQuery->where('staff_id', $staffId));
                     }
                 });
             })
-            ->when(!empty($this->serviceQuotationFilter), function (Builder $query): void {
+            ->when(! empty($this->serviceQuotationFilter), function (Builder $query): void {
                 $selectedServices = is_array($this->serviceQuotationFilter)
                     ? $this->serviceQuotationFilter
                     : [$this->serviceQuotationFilter];
@@ -455,14 +603,14 @@ class CustomerManager extends Component
                     foreach (self::getServiceVariants($canonical) as $v) {
                         $allMatchingValues[] = Str::lower($v);
                     }
-                    
+
                     $aliases = [
                         'qtmt' => 'Quan trắc môi trường',
                         'pllđ' => 'Phân loại lao động',
                         'plld' => 'Phân loại lao động',
                         'qtmtld' => 'Quan trắc môi trường lao động',
                     ];
-                    
+
                     foreach ($aliases as $abbr => $full) {
                         if (strcasecmp($full, $canonical) === 0) {
                             foreach (self::getServiceVariants($abbr) as $v) {
@@ -474,7 +622,7 @@ class CustomerManager extends Component
 
                 $allMatchingValues = array_values(array_unique($allMatchingValues));
 
-                if (!empty($allMatchingValues)) {
+                if (! empty($allMatchingValues)) {
                     $placeholders = implode(',', array_fill(0, count($allMatchingValues), '?'));
                     $query->whereHas('quotations', fn (Builder $quoteQuery) => $quoteQuery->whereRaw("LOWER(service) IN ($placeholders)", $allMatchingValues));
                 }
@@ -485,14 +633,14 @@ class CustomerManager extends Component
                 foreach (self::getServiceVariants($canonical) as $v) {
                     $matchingValues[] = Str::lower($v);
                 }
-                
+
                 $aliases = [
                     'qtmt' => 'Quan trắc môi trường',
                     'pllđ' => 'Phân loại lao động',
                     'plld' => 'Phân loại lao động',
                     'qtmtld' => 'Quan trắc môi trường lao động',
                 ];
-                
+
                 foreach ($aliases as $abbr => $full) {
                     if (strcasecmp($full, $canonical) === 0) {
                         foreach (self::getServiceVariants($abbr) as $v) {
@@ -500,7 +648,7 @@ class CustomerManager extends Component
                         }
                     }
                 }
-                
+
                 $matchingValues = array_values(array_unique($matchingValues));
                 $placeholders = implode(',', array_fill(0, count($matchingValues), '?'));
 
@@ -530,6 +678,15 @@ class CustomerManager extends Component
         }
 
         return $query->orderBy('name');
+    }
+
+    private function applyCustomerList(Builder $query): Builder
+    {
+        return match ($this->customerList) {
+            'ghg_inventory' => $query->where('is_ghg_inventory', true),
+            'energy_audit' => $query->where('is_energy_audit', true),
+            default => $query->where('is_ghg_inventory', false)->where('is_energy_audit', false),
+        };
     }
 
     private function distinctValues(string $column, ?Builder $query = null): Collection
@@ -605,7 +762,16 @@ class CustomerManager extends Component
         }
 
         return User::query()
-            ->whereIn('id', $staffIds->unique()->values())
+            ->whereIn('id', $staffIds->merge(Customer::query()->whereNotNull('caretaker_id')->pluck('caretaker_id'))->unique()->values())
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    private function caretakerOptions(): Collection
+    {
+        return User::query()
+            ->where('is_active', true)
+            ->whereHas('roles', fn (Builder $query) => $query->whereIn('name', Role::salesRoles()))
             ->orderBy('name')
             ->get(['id', 'name']);
     }
@@ -616,19 +782,19 @@ class CustomerManager extends Component
             "\xc5\xa9y" => "u\xe1\xbb\xb9", // ũy -> uỹ
             "\xc5\xa8y" => "U\xe1\xbb\xb9", // Ũy -> Uỹ
             "\xc5\xa8Y" => "U\xe1\xbb\xb8", // ŨY -> UỸ
-            
+
             "\xc3\xbay" => "u\xc3\xbd",     // úy -> uý
             "\xc3\x9ay" => "U\xc3\xbd",     // Úy -> Uý
             "\xc3\x9aY" => "U\xc3\x9d",     // ÚY -> UÝ
-            
+
             "\xc3\xb9y" => "u\xe1\xbb\xb3", // ùy -> uỳ
             "\xc3\x99y" => "U\xe1\xbb\xb3", // Ùy -> Uỳ
             "\xc3\x99Y" => "U\xe1\xbb\xb2", // ÙY -> UỲ
-            
+
             "\xe1\xbb\xa7y" => "u\xe1\xbb\xb7", // ủy -> uỷ
             "\xe1\xbb\xa6y" => "U\xe1\xbb\xb7", // Ủy -> Uỷ
             "\xe1\xbb\xa6Y" => "U\xe1\xbb\xb6", // ỦY -> UỶ
-            
+
             "\xe1\xbb\xa5y" => "u\xe1\xbb\xb5", // cụy -> uỵ
             "\xe1\xbb\xa4y" => "U\xe1\xbb\xb5", // Ụy -> Uỵ
             "\xe1\xbb\xa4Y" => "U\xe1\xbb\xb4", // ỤY -> UỴ
@@ -640,24 +806,24 @@ class CustomerManager extends Component
     public static function getServiceVariants(string $service): array
     {
         $variants = [$service];
-        
+
         $reverseMap = [
             "u\xe1\xbb\xb9" => "\xc5\xa9y", // uỹ -> ũy
             "U\xe1\xbb\xb9" => "\xc5\xa8y", // Uỹ -> Ũy
             "U\xe1\xbb\xb8" => "\xc5\xa8Y", // UỸ -> ŨY
-            
-            "u\xc3\xbd"     => "\xc3\xbay", // uý -> úy
-            "U\xc3\xbd"     => "\xc3\x9ay", // Uý -> Úy
-            "U\xc3\x9d"     => "\xc3\x9aY", // UÝ -> ÚY
-            
+
+            "u\xc3\xbd" => "\xc3\xbay", // uý -> úy
+            "U\xc3\xbd" => "\xc3\x9ay", // Uý -> Úy
+            "U\xc3\x9d" => "\xc3\x9aY", // UÝ -> ÚY
+
             "u\xe1\xbb\xb3" => "\xc3\xb9y", // uỳ -> ùy
             "U\xe1\xbb\xb3" => "\xc3\x99y", // Uỳ -> Ùy
             "U\xe1\xbb\xb2" => "\xc3\x99Y", // UỲ -> ÙY
-            
+
             "u\xe1\xbb\xb7" => "\xe1\xbb\xa7y", // uỷ -> ủy
             "U\xe1\xbb\xb7" => "\xe1\xbb\xa6y", // Uỷ -> Ủy
             "U\xe1\xbb\xb6" => "\xe1\xbb\xa6Y", // UỶ -> ỦY
-            
+
             "u\xe1\xbb\xb5" => "\xe1\xbb\xa5y", // uỵ -> cụy
             "U\xe1\xbb\xb5" => "\xe1\xbb\xa4y", // Uỵ -> Ụy
             "U\xe1\xbb\xb4" => "\xe1\xbb\xa4Y", // UỴ -> ỤY
@@ -669,7 +835,7 @@ class CustomerManager extends Component
         }
 
         $norm = self::normalizeVietnameseAccents($service);
-        if ($norm !== $service && !in_array($norm, $variants, true)) {
+        if ($norm !== $service && ! in_array($norm, $variants, true)) {
             $variants[] = $norm;
         }
 
@@ -739,41 +905,39 @@ class CustomerManager extends Component
             ->reorder()
             ->pluck('customers.id');
 
-        $contractCondition = function (Builder $query) {
-            foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
-                $query->orWhereHas($relation);
-            }
-        };
-
-        $wardQuery = Customer::query()
-            ->where($contractCondition)
+        $wardQuery = $this->applyCustomerList(Customer::query())
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter));
-        $industrialParkQuery = Customer::query()
-            ->where($contractCondition)
+        $industrialParkQuery = $this->applyCustomerList(Customer::query())
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter));
 
+        $hasAdvancedFilters = filled($this->wardFilter)
+            || filled($this->staffFilter)
+            || filled($this->caretakerStatusFilter)
+            || filled($this->careStatusFilter)
+            || filled($this->serviceContractFilter)
+            || ! empty($this->serviceQuotationFilter)
+            || filled($this->groupBy) && $this->groupBy !== 'province';
+
         return view('livewire.admin.customers.customer-manager', [
-            'customers' => $query->paginate(15),
-            'provinces' => VietnamProvinces::list(),
-            'filterProvinces' => $this->provincesWithContracts(),
-            'wards' => $this->distinctValues('ward', $wardQuery),
-            'industrialParks' => $this->distinctValues('industrial_park', $industrialParkQuery),
+            'customers'              => $query->paginate(15),
+            'provinces'              => VietnamProvinces::list(),
+            'filterProvinces'        => $this->provincesForCurrentList(),
+            'wards'                  => $this->distinctValues('ward', $wardQuery),
+            'industrialParks'        => $this->distinctValues('industrial_park', $industrialParkQuery),
             'serviceQuotationOptions' => $this->serviceQuotationOptions(),
-            'serviceContractOptions' => $this->serviceContractOptions(),
-            'staffOptions' => $this->staffOptions(),
-            'summary' => $this->summary($customerIds),
+            'serviceContractOptions'  => $this->serviceContractOptions(),
+            'staffOptions'           => $this->staffOptions(),
+            'caretakerOptions'       => $this->caretakerOptions(),
+            'careStatusOptions'      => CustomerCareStatus::options(),
+            'summary'                => $this->summary($customerIds),
+            'hasAdvancedFilters'     => $hasAdvancedFilters,
         ])->layout('admin.layouts.app');
     }
 
-    private function provincesWithContracts(): Collection
+    private function provincesForCurrentList(): Collection
     {
-        return Customer::query()
-            ->where(function (Builder $query) {
-                foreach (array_keys(self::CONTRACT_RELATIONS) as $relation) {
-                    $query->orWhereHas($relation);
-                }
-            })
+        return $this->applyCustomerList(Customer::query())
             ->whereNotNull('province')
             ->where('province', '!=', '')
             ->distinct()

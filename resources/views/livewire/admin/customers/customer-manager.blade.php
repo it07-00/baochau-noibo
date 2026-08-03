@@ -42,6 +42,7 @@
                 Theo dõi khách hàng theo tỉnh/thành, phường/xã, khu công nghiệp và hiệu suất báo giá – hợp đồng.
             </p>
         </div>
+        @if($customerList === 'all')
         <div class="d-flex flex-wrap gap-2">
             @can('customers.edit')
             <button type="button" class="btn btn-outline-secondary rounded-8px btn-mobile-touch"
@@ -57,7 +58,28 @@
             </button>
             @endcan
         </div>
+        @endif
     </div>
+
+    <nav class="card border border-light-subtle shadow-sm rounded-3 bg-body mb-4" aria-label="Nhóm danh sách khách hàng">
+        <div class="nav nav-pills flex-nowrap gap-2 overflow-x-auto p-2">
+            <button type="button"
+                    class="nav-link text-nowrap {{ $customerList === 'all' ? 'active' : 'text-body' }}"
+                    wire:click="selectCustomerList('all')">
+                <i class="fa-solid fa-users me-1"></i>Khách hàng
+            </button>
+            <button type="button"
+                    class="nav-link text-nowrap {{ $customerList === 'ghg_inventory' ? 'active' : 'text-body' }}"
+                    wire:click="selectCustomerList('ghg_inventory')">
+                <i class="fa-solid fa-cloud me-1"></i>KH KKKNK
+            </button>
+            <button type="button"
+                    class="nav-link text-nowrap {{ $customerList === 'energy_audit' ? 'active' : 'text-body' }}"
+                    wire:click="selectCustomerList('energy_audit')">
+                <i class="fa-solid fa-bolt me-1"></i>KH KIỂM TOÁN NĂNG LƯỢNG
+            </button>
+        </div>
+    </nav>
 
     <div class="row g-3 mb-4">
         <div class="col-6 col-xl-3">
@@ -116,16 +138,14 @@
         </div>
     </div>
 
-    @php
-        $hasAdvancedFilters = !empty($wardFilter) || !empty($staffFilter) || !empty($serviceQuotationFilter) || !empty($serviceContractFilter) || ($groupBy && $groupBy !== 'province');
-    @endphp
+    {{-- $hasAdvancedFilters is computed server-side in render() --}}
 
     <div class="card border border-secondary-subtle bg-body shadow-sm rounded-3 mb-4"
          x-data="{ showAdvanced: @json($hasAdvancedFilters) }">
         <div class="card-body p-3 p-md-4">
             {{-- Primary Filter Row --}}
             <div class="row g-2.5 g-md-3 align-items-end">
-                <div class="col-12 col-md-5 col-lg-5">
+                <div class="col-12 col-md-4 col-xl-4">
                     <label for="customer-search" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-body-tertiary border-end-0 text-body-secondary border-secondary-subtle">
@@ -138,7 +158,7 @@
                     </div>
                 </div>
 
-                <div class="col-6 col-md-3 col-lg-3">
+                <div class="col-6 col-md-4 col-xl-3">
                     <label for="province-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Tỉnh / thành</label>
                     <select id="province-filter" class="form-select border-secondary-subtle" wire:model.live="provinceFilter">
                         <option value="">Tất cả tỉnh/thành</option>
@@ -148,27 +168,30 @@
                     </select>
                 </div>
 
-                <div class="col-6 col-md-4 col-lg-4">
+                <div class="col-6 col-md-4 col-xl-3">
                     <label for="industrial-park-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Khu công nghiệp</label>
+                    <select id="industrial-park-filter" class="form-select border-secondary-subtle" wire:model.live="industrialParkFilter">
+                        <option value="">Tất cả KCN</option>
+                        @foreach($industrialParks as $industrialPark)
+                            <option value="{{ $industrialPark }}">{{ $industrialPark }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-12 col-xl-2">
                     <div class="d-flex gap-2">
-                        <select id="industrial-park-filter" class="form-select border-secondary-subtle flex-grow-1" wire:model.live="industrialParkFilter">
-                            <option value="">Tất cả KCN</option>
-                            @foreach($industrialParks as $industrialPark)
-                                <option value="{{ $industrialPark }}">{{ $industrialPark }}</option>
-                            @endforeach
-                        </select>
                         <button type="button"
-                                class="btn btn-outline-secondary border-secondary-subtle d-inline-flex align-items-center gap-1 text-nowrap"
+                                class="btn btn-outline-secondary border-secondary-subtle d-inline-flex align-items-center justify-content-center gap-1 text-nowrap flex-grow-1"
                                 :class="{ 'active bg-secondary bg-opacity-10 text-primary': showAdvanced }"
                                 @click="showAdvanced = !showAdvanced"
                                 title="Bộ lọc nâng cao">
                             <i class="fa-solid fa-filter"></i>
-                            <span class="d-none d-sm-inline">Lọc</span>
+                            <span>Lọc</span>
                             @if($hasAdvancedFilters)
                                 <span class="badge bg-primary rounded-circle p-1 ms-1"></span>
                             @endif
                         </button>
-                        <button type="button" class="btn btn-outline-primary border-secondary-subtle text-nowrap px-2.5"
+                        <button type="button" class="btn btn-outline-primary border-secondary-subtle text-nowrap px-3"
                                 wire:click="resetFilters" title="Xóa bộ lọc">
                             <i class="fa-solid fa-rotate-left"></i>
                         </button>
@@ -179,6 +202,33 @@
             {{-- Collapsible Advanced Filters Section --}}
             <div x-show="showAdvanced" x-collapse x-cloak class="pt-3 mt-3 border-top border-light-subtle">
                 <div class="row g-3">
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <label for="caretaker-status-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Trạng thái phân công</label>
+                        <select id="caretaker-status-filter" class="form-select border-secondary-subtle" wire:model.live="caretakerStatusFilter">
+                            <option value="">Tất cả</option>
+                            <option value="assigned">Đã phân công NVKD</option>
+                            <option value="unassigned">Chưa phân công NVKD</option>
+                            @if($customerList === 'all')
+                                <option value="has_quotation">Đã có báo giá</option>
+                                <option value="has_contract">Đã có hợp đồng</option>
+                                <option value="no_service">Chưa phát sinh dịch vụ</option>
+                            @else
+                                <option value="has_contact">Đã có thông tin liên hệ</option>
+                                <option value="no_contact">Chưa có thông tin liên hệ</option>
+                            @endif
+                        </select>
+                    </div>
+                    @if($customerList !== 'all')
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <label for="care-status-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Trạng thái chăm sóc</label>
+                        <select id="care-status-filter" class="form-select border-secondary-subtle" wire:model.live="careStatusFilter">
+                            <option value="">Tất cả trạng thái</option>
+                            @foreach($careStatusOptions as $opt)
+                                <option value="{{ $opt['value'] }}">{{ $opt['label'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
                     <div class="col-6 col-md-4 col-lg-2">
                         <label for="ward-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Phường / xã</label>
                         <select id="ward-filter" class="form-select border-secondary-subtle" wire:model.live="wardFilter">
@@ -259,8 +309,16 @@
                     <tr>
                         <th class="text-center px-3 py-3 text-nowrap" style="width: 80px">STT</th>
                         <th class="px-4 py-3 text-nowrap">Khách hàng</th>
+                        <th class="px-4 py-3 text-nowrap">Số điện thoại</th>
+                        <th class="px-4 py-3 text-nowrap">Email</th>
+                        @if($customerList !== 'all')
+                        <th class="px-4 py-3 text-nowrap">Người chăm sóc</th>
+                        <th class="px-4 py-3 text-nowrap">Trạng thái CS</th>
+                        @endif
                         <th class="px-4 py-3 text-nowrap">Khu vực</th>
-                        <th class="px-4 py-3 text-nowrap">Dịch vụ & hiệu suất</th>
+                        @if($customerList === 'all')
+                        <th class="px-4 py-3 text-nowrap">Dịch vụ &amp; hiệu suất</th>
+                        @endif
                         @canany(['customers.edit', 'customers.delete'])
                         <th class="text-end pe-4 py-3 text-nowrap" style="width: 120px;">Thao tác</th>
                         @endcanany
@@ -269,7 +327,10 @@
                 <tbody class="border-0">
                     @php
                         $currentGroup = null;
-                        $columnCount = auth()->user()->canAny(['customers.edit', 'customers.delete']) ? 5 : 4;
+                        $hasActions = auth()->user()->canAny(['customers.edit', 'customers.delete']);
+                        // all: STT, KH, phone, email, khu vực, dịch vụ, [actions] = 6+1 = 7(6)
+                        // regulatory: STT, KH, phone, email, caretaker, care_status, khu vực, [actions] = 7+1 = 8(7)
+                        $columnCount = ($customerList !== 'all' ? 8 : 7) - ($hasActions ? 0 : 1);
                     @endphp
                     @forelse($customers as $customer)
                         @if($groupBy !== 'none' && $currentGroup !== $this->groupValue($customer))
@@ -285,7 +346,7 @@
                                 </td>
                             </tr>
                         @endif
-                        @php($breakdown = $this->serviceBreakdown($customer))
+                        @php($breakdown = $customerList === 'all' ? $this->serviceBreakdown($customer) : [])
                         <tr wire:key="customer-{{ $customer->id }}" style="border-bottom: 1px solid var(--bs-border-color-translucent);">
                             <td class="text-center text-muted fw-semibold ps-4">
                                 {{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}
@@ -310,8 +371,45 @@
                                             Đại diện: <span class="text-body">{{ $customer->representative }}</span>
                                         </div>
                                     @endif
+                                    @if($customer->contact_person && $customer->contact_person !== $customer->representative)
+                                        <div class="small text-muted mt-1 cursor-pointer"
+                                             wire:click="filterBySearch('{{ addslashes($customer->contact_person) }}')"
+                                             title="Lọc theo người liên hệ: {{ $customer->contact_person }}">
+                                            Liên hệ: <span class="text-body">{{ $customer->contact_person }}</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </td>
+                            <td class="px-4 text-nowrap">{{ $customer->phone ?: '—' }}</td>
+                            <td class="px-4">
+                                @if($customer->email)
+                                    <a href="mailto:{{ $customer->email }}" class="text-body text-decoration-none">{{ $customer->email }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                            @if($customerList !== 'all')
+                            <td class="px-3" style="min-width: 175px;">
+                                @if(auth()->user()->can('customers.edit'))
+                                    <select class="form-select form-select-sm border-secondary-subtle py-1 px-2 text-truncate"
+                                            wire:change="updateCaretaker({{ $customer->id }}, $event.target.value)"
+                                            style="font-size: 0.82rem; max-width: 190px;"
+                                            title="Phân công người chăm sóc">
+                                        <option value="">Chưa phân công</option>
+                                        @foreach($caretakerOptions as $caretaker)
+                                            <option value="{{ $caretaker->id }}" @selected((int) $customer->caretaker_id === (int) $caretaker->id)>
+                                                {{ $caretaker->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <span class="text-body">{{ $customer->caretaker?->name ?: '—' }}</span>
+                                @endif
+                            </td>
+                            <td class="px-3" style="min-width: 155px;">
+                                @include('livewire.admin.customers.partials.care-status-cell', ['customer' => $customer, 'careStatusOptions' => $careStatusOptions])
+                            </td>
+                            @endif
                             <td class="px-4">
                                 <div class="d-flex flex-wrap gap-1" style="min-width: 175px;">
                                     @if($customer->province)
@@ -339,6 +437,7 @@
                                     @endif
                                 </div>
                             </td>
+                            @if($customerList === 'all')
                             <td class="px-4">
                                 <div style="min-width: 310px; max-width: 440px; white-space: normal;">
                                     @forelse(array_slice($breakdown, 0, 3) as $service)
@@ -358,6 +457,7 @@
                                     @endif
                                 </div>
                             </td>
+                            @endif
                             @canany(['customers.edit', 'customers.delete'])
                             <td class="text-end pe-4 text-nowrap">
                                 @can('customers.edit')
@@ -422,6 +522,32 @@
                                     Đại diện: {{ $customer->representative }}
                                 </div>
                             @endif
+                            @if($customer->contact_person || $customer->phone || $customer->email)
+                                <div class="small text-muted mt-2">
+                                    @if($customer->contact_person)<div>Liên hệ: {{ $customer->contact_person }}</div>@endif
+                                    @if($customer->phone)<div><i class="fa-solid fa-phone me-1"></i>{{ $customer->phone }}</div>@endif
+                                    @if($customer->email)<div><i class="fa-solid fa-envelope me-1"></i>{{ $customer->email }}</div>@endif
+                                </div>
+                            @endif
+                            @can('customers.edit')
+                                <div class="mt-2" style="max-width: 220px;">
+                                    <label class="form-label text-muted small mb-1" style="font-size: 0.72rem;">Người chăm sóc:</label>
+                                    <select class="form-select form-select-sm border-secondary-subtle"
+                                            wire:change="updateCaretaker({{ $customer->id }}, $event.target.value)"
+                                            style="font-size: 0.8rem;">
+                                        <option value="">Chưa phân công</option>
+                                        @foreach($caretakerOptions as $caretaker)
+                                            <option value="{{ $caretaker->id }}" @selected((int) $customer->caretaker_id === (int) $caretaker->id)>
+                                                {{ $caretaker->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @else
+                                @if($customer->caretaker)
+                                    <div class="small text-muted mt-1">Chăm sóc: {{ $customer->caretaker->name }}</div>
+                                @endif
+                            @endcan
                         </div>
                         <div class="d-flex gap-1.5 flex-shrink-0">
                             <a href="{{ route('app.quotation-tracking.index', ['search' => $customer->name]) }}"
@@ -535,6 +661,40 @@
                                        class="form-control border-light-subtle @error('formData.representative') is-invalid @enderror"
                                        wire:model.defer="formData.representative" autocomplete="name">
                                 @error('formData.representative') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="customer-contact-person" class="form-label fw-bold text-body">Người liên hệ</label>
+                                <input id="customer-contact-person" type="text"
+                                       class="form-control border-light-subtle @error('formData.contact_person') is-invalid @enderror"
+                                       wire:model.defer="formData.contact_person" autocomplete="name">
+                                @error('formData.contact_person') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="customer-phone" class="form-label fw-bold text-body">Số điện thoại</label>
+                                <input id="customer-phone" type="tel"
+                                       class="form-control border-light-subtle @error('formData.phone') is-invalid @enderror"
+                                       wire:model.defer="formData.phone" autocomplete="tel">
+                                @error('formData.phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="customer-email" class="form-label fw-bold text-body">Email</label>
+                                <input id="customer-email" type="email"
+                                       class="form-control border-light-subtle @error('formData.email') is-invalid @enderror"
+                                       wire:model.defer="formData.email" autocomplete="email">
+                                @error('formData.email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="customer-caretaker" class="form-label fw-bold text-body">Người chăm sóc</label>
+                                <select id="customer-caretaker"
+                                        class="form-select border-light-subtle @error('formData.caretaker_id') is-invalid @enderror"
+                                        wire:model.defer="formData.caretaker_id">
+                                    <option value="">Chưa phân công</option>
+                                    @foreach($caretakerOptions as $caretaker)
+                                        <option value="{{ $caretaker->id }}">{{ $caretaker->name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="form-text">Chỉ gồm nhân viên Kinh doanh và Trưởng phòng Kinh doanh đang hoạt động.</div>
+                                @error('formData.caretaker_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-12">
                                 <label for="customer-address" class="form-label fw-bold text-body">Địa chỉ</label>

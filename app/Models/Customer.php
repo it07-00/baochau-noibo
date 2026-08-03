@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\CustomerCareStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -25,11 +27,32 @@ class Customer extends Model
         'slug',
         'tax_code',
         'address',
+        'phone',
+        'email',
         'province',
         'ward',
         'industrial_park',
         'representative',
+        'contact_person',
+        'caretaker_id',
+        'care_status',
+        'is_ghg_inventory',
+        'is_energy_audit',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_ghg_inventory' => 'boolean',
+            'is_energy_audit'  => 'boolean',
+            'care_status'      => CustomerCareStatus::class,
+        ];
+    }
+
+    public function caretaker(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'caretaker_id');
+    }
 
     public function getRouteKeyName(): string
     {
