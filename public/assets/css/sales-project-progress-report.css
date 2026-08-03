@@ -25,6 +25,25 @@
     min-width: 0;
 }
 
+.pipeline-step-body {
+    max-height: 420px !important;
+    overflow-y: auto !important;
+    flex: 0 0 auto !important;
+}
+
+.pipeline-step-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pipeline-step-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pipeline-step-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+}
+
 .pipeline-contract-card,
 .pipeline-contract-card .card-body {
     flex: 0 0 auto !important;

@@ -132,7 +132,7 @@
                         </div>
                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.7rem;">{{ count($pipeline[$stepKey]) }}</span>
                     </div>
-                    <div class="card-body p-1.5 pt-0 pipeline-step-body flex-grow-0">
+                    <div class="card-body p-1.5 pt-0 pipeline-step-body" style="max-height: 420px; overflow-y: auto;">
                         @forelse($pipeline[$stepKey] as $contract)
                             <article class="card border border-light-subtle shadow-sm rounded-2 mb-1.5 bg-body pipeline-contract-card flex-grow-0" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
                                 <div class="card-body p-2 flex-grow-0">
