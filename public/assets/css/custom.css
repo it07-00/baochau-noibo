@@ -1346,6 +1346,14 @@
     --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
+/* Light mode: text-muted / text-secondary phải đủ đậm để dễ đọc */
+:root:not([data-bs-theme="dark"]) .text-muted,
+:root:not([data-bs-theme="dark"]) .text-secondary,
+:root:not([data-bs-theme="dark"]) .text-body-secondary {
+    --bs-text-opacity: 1;
+    color: #374151 !important;
+}
+
 /* Adjust sidebar nav height since bottom profile is removed */
 .app-menubar .app-navbar {
     height: calc(100% - var(--app-header-height));
