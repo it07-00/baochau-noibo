@@ -180,6 +180,10 @@ enum Permission: string
     case INTERNAL_NOTIFICATIONS_MANAGE = 'internal-notifications.manage';
     case MARKETING_TARGETS_EDIT = 'marketing-targets.edit';
 
+    // Customer Lists (Dữ liệu khách hàng KKKNK / KTNL)
+    case CUSTOMER_LISTS_VIEW = 'customer-lists.view';
+    case CUSTOMER_LISTS_EDIT = 'customer-lists.edit';
+
     /** Dùng cho route middleware: Permission::toMiddleware(Permission::USERS_VIEW) */
     public static function toMiddleware(self ...$perms): string
     {

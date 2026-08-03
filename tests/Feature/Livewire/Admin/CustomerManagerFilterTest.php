@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Livewire\Admin;
 
+use App\Livewire\Admin\Customers\CustomerListManager;
 use App\Livewire\Admin\Customers\CustomerManager;
 use App\Models\ContractWaste;
 use App\Models\Customer;
@@ -122,10 +123,10 @@ class CustomerManagerFilterTest extends TestCase
         Livewire::actingAs($user)
             ->test(CustomerManager::class)
             ->assertViewHas('serviceQuotationOptions', function ($options) {
-                return $options->contains('Quan trắc môi trường') && !$options->contains('QTMT');
+                return $options->contains('Quan trắc môi trường') && ! $options->contains('QTMT');
             })
             ->assertViewHas('serviceContractOptions', function ($options) {
-                return $options->contains('Quan trắc môi trường') && !$options->contains('quan trắc môi trường');
+                return $options->contains('Quan trắc môi trường') && ! $options->contains('quan trắc môi trường');
             })
             ->set('serviceQuotationFilter', 'Quan trắc môi trường')
             ->set('serviceContractFilter', 'Quan trắc môi trường')
@@ -187,7 +188,10 @@ class CustomerManagerFilterTest extends TestCase
     public function test_it_filters_customers_by_caretaker_status(): void
     {
         $viewer = User::factory()->create();
-        $viewer->givePermissionTo(Permission::findOrCreate('customers.view'));
+        $viewer->givePermissionTo([
+            Permission::findOrCreate('customers.view'),
+            Permission::findOrCreate('customer-lists.view'),
+        ]);
         $caretaker = User::factory()->create(['name' => 'NVKD Chăm Sóc']);
 
         $assignedCustomer = Customer::create(['name' => 'Khách đã phân công', 'caretaker_id' => $caretaker->id]);
@@ -202,12 +206,11 @@ class CustomerManagerFilterTest extends TestCase
             ->assertSee('Khách chưa phân công')
             ->assertDontSee('Khách đã phân công');
 
-        Customer::create(['name' => 'Cơ sở phát thải KKKNK', 'phone' => '0901234567', 'is_ghg_inventory' => true]);
+        Customer::create(['name' => 'Khách hàng từ dữ liệu KKKNK', 'phone' => '0901234567', 'is_ghg_inventory' => true]);
 
         Livewire::actingAs($viewer)
-            ->test(CustomerManager::class)
-            ->set('customerList', 'ghg_inventory')
+            ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
             ->set('caretakerStatusFilter', 'has_contact')
-            ->assertSee('Cơ sở phát thải KKKNK');
+            ->assertSee('Khách hàng từ dữ liệu KKKNK');
     }
 }

@@ -53,6 +53,7 @@ class PermissionsSeeder extends Seeder
             PermissionEnum::COMMISSIONS_APPROVE->value, PermissionEnum::COMMISSIONS_CONFIRM_PAYMENT->value, PermissionEnum::COMMISSIONS_VIEW_ALL->value,
             PermissionEnum::INTERNAL_SOFTWARE_MANAGE->value, PermissionEnum::WORK_SCHEDULES_MANAGE_ALL->value, PermissionEnum::CONTRACTS_EDIT_FINANCE->value,
             PermissionEnum::INTERNAL_NOTIFICATIONS_MANAGE->value, PermissionEnum::MARKETING_TARGETS_EDIT->value,
+            PermissionEnum::CUSTOMER_LISTS_VIEW->value, PermissionEnum::CUSTOMER_LISTS_EDIT->value,
         ]);
 
         // ------------------------------------------------
@@ -90,6 +91,7 @@ class PermissionsSeeder extends Seeder
         Role::findOrCreate(RoleEnum::TP_KINH_DOANH->value)->syncPermissions([
             // Dữ liệu nền
             PermissionEnum::CUSTOMERS_VIEW->value, PermissionEnum::CUSTOMERS_CREATE->value, PermissionEnum::CUSTOMERS_EDIT->value,
+            PermissionEnum::CUSTOMER_LISTS_VIEW->value, PermissionEnum::CUSTOMER_LISTS_EDIT->value,
             PermissionEnum::HANDLERS_VIEW->value, PermissionEnum::HANDLERS_CREATE->value, PermissionEnum::HANDLERS_EDIT->value,
             // Hợp đồng: CRUD đầy đủ
             PermissionEnum::CONTRACTS_WASTE_VIEW->value, PermissionEnum::CONTRACTS_WASTE_CREATE->value, PermissionEnum::CONTRACTS_WASTE_EDIT->value, PermissionEnum::CONTRACTS_WASTE_DELETE->value,
@@ -129,6 +131,7 @@ class PermissionsSeeder extends Seeder
         Role::findOrCreate(RoleEnum::KINH_DOANH->value)->syncPermissions([
             // Dữ liệu nền
             PermissionEnum::CUSTOMERS_VIEW->value, PermissionEnum::CUSTOMERS_CREATE->value, PermissionEnum::CUSTOMERS_EDIT->value,
+            PermissionEnum::CUSTOMER_LISTS_VIEW->value, PermissionEnum::CUSTOMER_LISTS_EDIT->value,
             PermissionEnum::HANDLERS_VIEW->value,
             // Hợp đồng: xem + tạo
             PermissionEnum::CONTRACTS_WASTE_VIEW->value, PermissionEnum::CONTRACTS_WASTE_CREATE->value, PermissionEnum::CONTRACTS_WASTE_EDIT->value,

@@ -220,8 +220,10 @@ function initPopover() {
 
 function initSidebarMenu() {
 	
-	jQuery('.app-navbar .menubar > li.menu-arrow > a').next('.menu-inner').slideUp();
-	jQuery('.app-navbar .menu-inner > li > a').next('.menu-inner').slideUp();
+	jQuery('.app-navbar .menubar > li.menu-arrow > a:not(.open)').next('.menu-inner').slideUp();
+	jQuery('.app-navbar .menu-inner > li > a:not(.open)').next('.menu-inner').slideUp();
+	jQuery('.app-navbar .menubar > li.menu-arrow > a.open').next('.menu-inner').show();
+	jQuery('.app-navbar .menu-inner > li > a.open').next('.menu-inner').show();
 	
 	jQuery('.app-navbar .menubar > li.menu-arrow > a, .app-navbar .menu-inner > li > a').unbind().on('click', function(e){
 		if(jQuery(this).hasClass('open')){

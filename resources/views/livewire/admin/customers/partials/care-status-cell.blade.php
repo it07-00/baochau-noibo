@@ -1,4 +1,4 @@
-@if(auth()->user()->can('customers.edit'))
+@if($canEdit)
     <select class="form-select form-select-sm border-secondary-subtle py-1 px-2"
             wire:change="updateCareStatus({{ $customer->id }}, $event.target.value)"
             style="font-size: 0.82rem; max-width: 170px;"

@@ -1,6 +1,6 @@
 <div class="customer-directory">
-    @section('title', 'Quản lý khách hàng')
-    @section('page_title', 'Danh sách khách hàng')
+    @section('title', $directoryTitle)
+    @section('page_title', $directoryTitle)
 
     @push('styles')
     <style>
@@ -37,49 +37,29 @@
 
     <div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mt-2 mb-4">
         <div>
-            <h2 class="h4 fw-bold mb-1 text-body" style="letter-spacing: -0.025em;">Danh sách khách hàng</h2>
+            <h2 class="h4 fw-bold mb-1 text-body" style="letter-spacing: -0.025em;">{{ $directoryTitle }}</h2>
             <p class="text-muted mb-0 small" style="max-width: 680px;">
-                Theo dõi khách hàng theo tỉnh/thành, phường/xã, khu công nghiệp và hiệu suất báo giá – hợp đồng.
+                {{ $directoryDescription }}
             </p>
         </div>
-        @if($customerList === 'all')
+        @if(! $isCustomerListDirectory)
         <div class="d-flex flex-wrap gap-2">
-            @can('customers.edit')
+            @if($canNormalize)
             <button type="button" class="btn btn-outline-secondary rounded-8px btn-mobile-touch"
                     wire:click="previewLegacyNormalization" wire:loading.attr="disabled"
                     wire:target="previewLegacyNormalization">
                 <i class="fa-solid fa-wand-magic-sparkles me-1"></i>
                 Chuẩn hóa dữ liệu cũ
             </button>
-            @endcan
-            @can('customers.create')
+            @endif
+            @if($canCreate)
             <button type="button" class="btn btn-primary rounded-8px btn-mobile-touch" wire:click="openCreate">
                 <i class="fa-solid fa-plus me-1"></i>Thêm khách hàng
             </button>
-            @endcan
+            @endif
         </div>
         @endif
     </div>
-
-    <nav class="card border border-light-subtle shadow-sm rounded-3 bg-body mb-4" aria-label="Nhóm danh sách khách hàng">
-        <div class="nav nav-pills flex-nowrap gap-2 overflow-x-auto p-2">
-            <button type="button"
-                    class="nav-link text-nowrap {{ $customerList === 'all' ? 'active' : 'text-body' }}"
-                    wire:click="selectCustomerList('all')">
-                <i class="fa-solid fa-users me-1"></i>Khách hàng
-            </button>
-            <button type="button"
-                    class="nav-link text-nowrap {{ $customerList === 'ghg_inventory' ? 'active' : 'text-body' }}"
-                    wire:click="selectCustomerList('ghg_inventory')">
-                <i class="fa-solid fa-cloud me-1"></i>KH KKKNK
-            </button>
-            <button type="button"
-                    class="nav-link text-nowrap {{ $customerList === 'energy_audit' ? 'active' : 'text-body' }}"
-                    wire:click="selectCustomerList('energy_audit')">
-                <i class="fa-solid fa-bolt me-1"></i>KH KIỂM TOÁN NĂNG LƯỢNG
-            </button>
-        </div>
-    </nav>
 
     <div class="row g-3 mb-4">
         <div class="col-6 col-xl-3">
@@ -240,6 +220,24 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <label for="sector-filter" class="form-label text-muted small fw-bold text-uppercase mb-1">Ngành / Lĩnh vực</label>
+                        <select id="sector-filter" class="form-select border-secondary-subtle" wire:model.live="sectorFilter">
+                            <option value="">Tất cả ngành/lĩnh vực</option>
+                            @foreach($sectorOptions as $sector)
+                                <option value="{{ $sector }}">{{ $sector }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <label for="appendix-filter" class="form-label text-muted small fw-bold text-uppercase mb-1">Phụ lục</label>
+                        <select id="appendix-filter" class="form-select border-secondary-subtle" wire:model.live="appendixFilter">
+                            <option value="">Tất cả phụ lục</option>
+                            @foreach($appendixOptions as $appendix)
+                                <option value="{{ $appendix }}">{{ $appendix }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     @endif
                     <div class="col-6 col-md-4 col-lg-2">
                         <label for="ward-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Phường / xã</label>
@@ -304,7 +302,7 @@
                 </div>
             </div>
         </div>
-        <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,staffFilter,serviceQuotationFilter,serviceContractFilter,groupBy,resetFilters"></div>
+        <div wire:loading class="customer-loading" wire:target="search,provinceFilter,wardFilter,industrialParkFilter,staffFilter,caretakerStatusFilter,careStatusFilter,sectorFilter,appendixFilter,serviceQuotationFilter,serviceContractFilter,groupBy,resetFilters"></div>
     </div>
 
     <div class="card border border-light-subtle shadow-sm overflow-hidden rounded-3 bg-body">
@@ -319,23 +317,25 @@
                         @if($customerList !== 'all')
                         <th class="px-4 py-3 text-nowrap">Người chăm sóc</th>
                         <th class="px-4 py-3 text-nowrap">Trạng thái CS</th>
+                        <th class="px-4 py-3 text-nowrap">Ngành / Lĩnh vực</th>
+                        <th class="px-4 py-3 text-nowrap">Phụ lục</th>
                         @endif
                         <th class="px-4 py-3 text-nowrap">Khu vực</th>
                         @if($customerList === 'all')
                         <th class="px-4 py-3 text-nowrap">Dịch vụ &amp; hiệu suất</th>
                         @endif
-                        @canany(['customers.edit', 'customers.delete'])
+                        @if($canEdit || $canDelete)
                         <th class="text-end pe-4 py-3 text-nowrap" style="width: 120px;">Thao tác</th>
-                        @endcanany
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="border-0">
                     @php
                         $currentGroup = null;
-                        $hasActions = auth()->user()->canAny(['customers.edit', 'customers.delete']);
+                        $hasActions = $canEdit || $canDelete;
                         // all: STT, KH, phone, email, khu vực, dịch vụ, [actions] = 6+1 = 7(6)
-                        // regulatory: STT, KH, phone, email, caretaker, care_status, khu vực, [actions] = 7+1 = 8(7)
-                        $columnCount = ($customerList !== 'all' ? 8 : 7) - ($hasActions ? 0 : 1);
+                        // customer list: STT, KH, phone, email, caretaker, care_status, sector, appendix, khu vực, [actions] = 9+1 = 10(9)
+                        $columnCount = ($customerList !== 'all' ? 10 : 7) - ($hasActions ? 0 : 1);
                     @endphp
                     @forelse($customers as $customer)
                         @if($groupBy !== 'none' && $currentGroup !== $this->groupValue($customer))
@@ -358,10 +358,14 @@
                             </td>
                             <td class="px-4">
                                 <div style="min-width: 220px; max-width: 320px; white-space: normal; line-height: 1.4;">
-                                    <a href="{{ route('app.customers.contracts', $customer) }}"
-                                       class="fw-bold text-body text-decoration-none link-primary">
-                                        {{ $customer->name }}
-                                    </a>
+                                    @if($isCustomerListDirectory)
+                                        <span class="fw-bold text-body">{{ $customer->name }}</span>
+                                    @else
+                                        <a href="{{ route('app.customers.contracts', $customer) }}"
+                                           class="fw-bold text-body text-decoration-none link-primary">
+                                            {{ $customer->name }}
+                                        </a>
+                                    @endif
                                     @if($customer->tax_code)
                                         <div class="small text-muted mt-1 cursor-pointer"
                                              wire:click="filterBySearch('{{ addslashes($customer->tax_code) }}')"
@@ -395,7 +399,7 @@
                             </td>
                             @if($customerList !== 'all')
                             <td class="px-3" style="min-width: 175px;">
-                                @if(auth()->user()->can('customers.edit'))
+                                @if($canEdit)
                                     <select class="form-select form-select-sm border-secondary-subtle py-1 px-2 text-truncate"
                                             wire:change="updateCaretaker({{ $customer->id }}, $event.target.value)"
                                             style="font-size: 0.82rem; max-width: 190px;"
@@ -412,7 +416,21 @@
                                 @endif
                             </td>
                             <td class="px-3" style="min-width: 155px;">
-                                @include('livewire.admin.customers.partials.care-status-cell', ['customer' => $customer, 'careStatusOptions' => $careStatusOptions])
+                                @include('livewire.admin.customers.partials.care-status-cell', ['customer' => $customer, 'careStatusOptions' => $careStatusOptions, 'canEdit' => $canEdit])
+                            </td>
+                            <td class="px-4 text-nowrap" style="min-width: 160px; max-width: 240px;">
+                                @if($customer->sector)
+                                    <span class="small text-body" title="{{ $customer->sector }}">{{ $customer->sector }}</span>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
+                            <td class="px-4 text-nowrap text-center">
+                                @if($customer->appendix)
+                                    <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning-subtle px-2 py-1" style="font-size: 0.72rem;">{{ $customer->appendix }}</span>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
                             </td>
                             @endif
                             <td class="px-4">
@@ -463,16 +481,16 @@
                                 </div>
                             </td>
                             @endif
-                            @canany(['customers.edit', 'customers.delete'])
+                            @if($canEdit || $canDelete)
                             <td class="text-end pe-4 text-nowrap">
-                                @can('customers.edit')
+                                @if($canEdit)
                                 <button type="button" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px px-2 py-1.5 me-1"
                                         wire:click="openEdit({{ $customer->id }})"
                                         title="Sửa {{ $customer->name }}">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
-                                @endcan
-                                @can('customers.delete')
+                                @endif
+                                @if($canDelete)
                                 <button type="button" class="btn btn-sm btn-outline-danger border-light-subtle rounded-8px px-2 py-1.5"
                                         wire:click="delete({{ $customer->id }})"
                                         wire:confirm="Xác nhận xóa khách hàng này?"
@@ -480,15 +498,15 @@
                                         @disabled($this->totalContractsCount($customer) > 0)>
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
-                                @endcan
+                                @endif
                             </td>
-                            @endcanany
+                            @endif
                         </tr>
                     @empty
                         <tr>
                             <td colspan="{{ $columnCount }}" class="text-center py-5">
                                 <i class="fa-solid fa-users-slash fa-3x text-muted mb-3 opacity-40"></i>
-                                <div class="fw-semibold text-muted">Không tìm thấy khách hàng</div>
+                                <div class="fw-semibold text-muted">Không tìm thấy {{ $entityLabel }}</div>
                                 <div class="small text-muted mt-1">Thử thay đổi từ khóa hoặc xóa bộ lọc.</div>
                             </td>
                         </tr>
@@ -507,14 +525,18 @@
                         <i class="fa-solid fa-location-dot me-1"></i>{{ $mobileGroup }}
                     </div>
                 @endif
-                @php($breakdown = $this->serviceBreakdown($customer))
+                @php($breakdown = $isCustomerListDirectory ? [] : $this->serviceBreakdown($customer))
                 <article wire:key="customer-mobile-{{ $customer->id }}" class="card border-0 shadow-sm rounded-12px p-3 mb-3 bg-body">
                     <div class="d-flex align-items-start justify-content-between gap-2">
                         <div>
-                            <a href="{{ route('app.customers.contracts', $customer) }}"
-                               class="fw-bold text-body text-decoration-none link-primary">
-                                {{ $customer->name }}
-                            </a>
+                            @if($isCustomerListDirectory)
+                                <span class="fw-bold text-body">{{ $customer->name }}</span>
+                            @else
+                                <a href="{{ route('app.customers.contracts', $customer) }}"
+                                   class="fw-bold text-body text-decoration-none link-primary">
+                                    {{ $customer->name }}
+                                </a>
+                            @endif
                             @if($customer->tax_code)
                                 <div class="small text-muted mt-1 cursor-pointer"
                                      wire:click="filterBySearch('{{ addslashes($customer->tax_code) }}')">
@@ -534,7 +556,7 @@
                                     @if($customer->email)<div><i class="fa-solid fa-envelope me-1"></i>{{ $customer->email }}</div>@endif
                                 </div>
                             @endif
-                            @can('customers.edit')
+                            @if($canEdit)
                                 <div class="mt-2" style="max-width: 220px;">
                                     <label class="form-label text-muted small mb-1" style="font-size: 0.72rem;">Người chăm sóc:</label>
                                     <select class="form-select form-select-sm border-secondary-subtle"
@@ -552,8 +574,9 @@
                                 @if($customer->caretaker)
                                     <div class="small text-muted mt-1">Chăm sóc: {{ $customer->caretaker->name }}</div>
                                 @endif
-                            @endcan
+                            @endif
                         </div>
+                        @if(! $isCustomerListDirectory)
                         <div class="d-flex gap-1.5 flex-shrink-0">
                             <a href="{{ route('app.quotation-tracking.index', ['search' => $customer->name]) }}"
                                class="badge bg-primary bg-opacity-10 text-primary text-decoration-none px-2 py-1.5"
@@ -566,7 +589,20 @@
                                 {{ $this->totalContractsCount($customer) }} HĐ
                             </a>
                         </div>
+                        @endif
                     </div>
+
+                    @if($isCustomerListDirectory)
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                            @include('livewire.admin.customers.partials.care-status-cell', ['customer' => $customer, 'careStatusOptions' => $careStatusOptions, 'canEdit' => $canEdit])
+                            @if($customer->sector)
+                                <span class="badge bg-body-tertiary text-body border border-light-subtle">{{ $customer->sector }}</span>
+                            @endif
+                            @if($customer->appendix)
+                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Phụ lục {{ $customer->appendix }}</span>
+                            @endif
+                        </div>
+                    @endif
 
                     <div class="d-flex flex-wrap gap-1 mt-3">
                         @if($customer->province)
@@ -591,6 +627,7 @@
                         @endif
                     </div>
 
+                    @if(! $isCustomerListDirectory)
                     <div class="mt-3">
                         @forelse(array_slice($breakdown, 0, 3) as $service)
                             @include('livewire.admin.customers.partials.service-line', ['service' => $service, 'customer' => $customer])
@@ -598,28 +635,29 @@
                             <span class="small text-muted">Chưa phát sinh dịch vụ</span>
                         @endforelse
                     </div>
+                    @endif
 
-                    @canany(['customers.edit', 'customers.delete'])
+                    @if($canEdit || $canDelete)
                     <div class="d-flex gap-2 border-top mt-3 pt-3">
-                        @can('customers.edit')
+                        @if($canEdit)
                         <button type="button" class="btn btn-sm btn-outline-secondary border-light-subtle rounded-8px flex-fill py-2"
                                 wire:click="openEdit({{ $customer->id }})">
                             <i class="fa-solid fa-pen me-1"></i>Sửa
                         </button>
-                        @endcan
-                        @can('customers.delete')
+                        @endif
+                        @if($canDelete)
                         <button type="button" class="btn btn-sm btn-outline-danger border-light-subtle rounded-8px flex-fill py-2"
                                 wire:click="delete({{ $customer->id }})"
                                 wire:confirm="Xác nhận xóa khách hàng này?"
                                 @disabled($this->totalContractsCount($customer) > 0)>
                             <i class="fa-solid fa-trash me-1"></i>Xóa
                         </button>
-                        @endcan
+                        @endif
                     </div>
-                    @endcanany
+                    @endif
                 </article>
             @empty
-                <div class="text-center py-5 text-muted card border-0 shadow-sm rounded-12px">Không tìm thấy khách hàng.</div>
+                <div class="text-center py-5 text-muted card border-0 shadow-sm rounded-12px">Không tìm thấy {{ $entityLabel }}.</div>
             @endforelse
         </div>
 
@@ -636,7 +674,7 @@
                 <div class="modal-header border-bottom-0 bg-transparent p-4 pb-3">
                     <div>
                         <h5 id="customer-form-title" class="modal-title fw-bold text-body">
-                            {{ $isEditing ? 'Cập nhật khách hàng' : 'Thêm khách hàng mới' }}
+                            {{ $isEditing ? 'Cập nhật '.$entityLabel : 'Thêm '.$entityLabel.' mới' }}
                         </h5>
                         <p class="small text-muted mb-0 mt-1">Địa chỉ sẽ được tự nhận diện tỉnh/thành, phường/xã và KCN.</p>
                     </div>
@@ -647,7 +685,7 @@
                     <div class="modal-body p-4 pt-0">
                         <div class="row g-3">
                             <div class="col-md-7">
-                                <label for="customer-name" class="form-label fw-bold text-body">Tên khách hàng <span class="text-danger">*</span></label>
+                                <label for="customer-name" class="form-label fw-bold text-body">Tên {{ $entityLabel }} <span class="text-danger">*</span></label>
                                 <input id="customer-name" type="text"
                                        class="form-control border-light-subtle @error('formData.name') is-invalid @enderror"
                                        wire:model.defer="formData.name" autocomplete="organization">
@@ -743,13 +781,31 @@
                                        wire:model="formData.industrial_park" placeholder="Ví dụ: KCN Đông An">
                                 @error('formData.industrial_park') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
+                            @if($isCustomerListDirectory)
+                            <div class="col-md-8">
+                                <label for="customer-sector" class="form-label fw-bold text-body">Ngành / Lĩnh vực</label>
+                                <input id="customer-sector" type="text"
+                                       class="form-control border-light-subtle @error('formData.sector') is-invalid @enderror"
+                                       wire:model.defer="formData.sector"
+                                       placeholder="Ví dụ: Công nghiệp, Thương mại, Dịch vụ...">
+                                @error('formData.sector') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="customer-appendix" class="form-label fw-bold text-body">Phụ lục</label>
+                                <input id="customer-appendix" type="text"
+                                       class="form-control border-light-subtle @error('formData.appendix') is-invalid @enderror"
+                                       wire:model.defer="formData.appendix"
+                                       placeholder="Ví dụ: I, II, III...">
+                                @error('formData.appendix') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer border-top-0 bg-transparent p-4 pt-0 justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary rounded-8px px-4" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary rounded-8px px-4" wire:loading.attr="disabled" wire:target="save">
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm me-1"></span>
-                            Lưu khách hàng
+                            Lưu {{ $entityLabel }}
                         </button>
                     </div>
                 </form>
@@ -757,6 +813,7 @@
         </div>
     </div>
 
+    @if($canNormalize)
     <div wire:ignore.self class="modal fade" id="customerNormalizationModal" tabindex="-1"
          aria-labelledby="customer-normalization-title" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -819,6 +876,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     @push('scripts')
     <script>
@@ -830,13 +888,15 @@
             bootstrap.Modal.getInstance(document.getElementById('customerFormModal'))?.hide();
         });
 
-        window.addEventListener('openCustomerNormalizationModal', () => {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('customerNormalizationModal')).show();
-        });
+        @if($canNormalize)
+            window.addEventListener('openCustomerNormalizationModal', () => {
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('customerNormalizationModal')).show();
+            });
 
-        window.addEventListener('closeCustomerNormalizationModal', () => {
-            bootstrap.Modal.getInstance(document.getElementById('customerNormalizationModal'))?.hide();
-        });
+            window.addEventListener('closeCustomerNormalizationModal', () => {
+                bootstrap.Modal.getInstance(document.getElementById('customerNormalizationModal'))?.hide();
+            });
+        @endif
     </script>
     @endpush
 </div>

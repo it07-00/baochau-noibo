@@ -21,6 +21,7 @@ use App\Livewire\Admin\Contracts\ContractProjectManager;
 use App\Livewire\Admin\Contracts\ContractSustainabilityManager;
 use App\Livewire\Admin\Contracts\ContractWasteManager;
 use App\Livewire\Admin\Customers\CustomerContractsView;
+use App\Livewire\Admin\Customers\CustomerListManager;
 use App\Livewire\Admin\Customers\CustomerManager;
 use App\Livewire\Admin\DailyReports\DailyReportManager;
 use App\Livewire\Admin\Departments\DepartmentManager;
@@ -132,6 +133,19 @@ Route::middleware(['auth', 'active', 'intern.daily-report'])->name('app.')->grou
         Route::get('khach-hang', CustomerManager::class)->name('customers.index');
         Route::get('khach-hang/{customer}/hop-dong', CustomerContractsView::class)->name('customers.contracts');
     });
+
+    // Dữ liệu khách hàng KKKNK / KTNL (tách khỏi danh sách khách hàng hiện hữu)
+    Route::prefix('du-lieu-khach-hang')
+        ->name('customer-lists.')
+        ->middleware(Permission::toMiddleware(Permission::CUSTOMER_LISTS_VIEW))
+        ->group(function () {
+            Route::get('kkknk', CustomerListManager::class)
+                ->defaults('customerListType', 'ghg_inventory')
+                ->name('ghg-inventory');
+            Route::get('ktnl', CustomerListManager::class)
+                ->defaults('customerListType', 'energy_audit')
+                ->name('energy-audit');
+        });
 
     // Cài đặt
     Route::prefix('cai-dat')->name('settings.')->middleware(Permission::toMiddleware(Permission::SETTINGS_VIEW))->group(function () {

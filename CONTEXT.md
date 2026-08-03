@@ -53,6 +53,7 @@ Role chuẩn nằm tại `app/Enums/Role.php`:
 | `thuc-tap` | Thực tập |
 
 Quyền chi tiết nằm tại `app/Enums/Permission.php`. Route và Livewire action kiểm tra permission thay vì hardcode role. Các quyền hành động chi tiết mới bao gồm:
+- `customer-lists.view`, `customer-lists.edit`: Xem và cập nhật dữ liệu khách hàng KKKNK/KTNL độc lập với danh sách khách hàng hiện hữu.
 - `commissions.approve`, `commissions.confirm-payment`, `commissions.view-all`: Quy trình duyệt, xác nhận chi và xem tất cả yêu cầu hoa hồng.
 - `internal-software.manage`: Quản lý danh mục phần mềm nội bộ.
 - `work-schedules.manage-all`: Quản lý lịch công tác toàn công ty.
@@ -75,6 +76,7 @@ Middleware tùy chỉnh:
 |---|---|---|
 | Trang chủ/thống kê | `HomeBoard`, `StatisticsBoard`, `RankingsBoard` | nhiều nguồn tổng hợp |
 | Khách hàng | `Customers/CustomerManager` | `Customer` |
+| Dữ liệu khách hàng | `Customers/CustomerListManager` | `Customer` (phạm vi KKKNK/KTNL) |
 | Theo dõi báo giá | `Quotations/QuotationManager` | `Quotation`, `QuotationFile` |
 | Tạo báo giá | `QuotationDocuments/QuotationDocumentManager` | `QuotationDocument` và section/item/row |
 | Hợp đồng | `Contracts/*Manager` | sáu model hợp đồng |
@@ -93,11 +95,11 @@ Middleware tùy chỉnh:
 | Nội bộ | `InternalDocs/*`, `InternalNotifications/*` | `InternalDoc`, `InternalSoftware` |
 | Quản trị | `Users`, `Roles`, `Departments`, `Handlers` | `User`, `Department`, `Handler` |
 
-### Quản lý khách hàng & Danh sách cơ sở pháp lý
+### Quản lý khách hàng & Dữ liệu khách hàng KKKNK/KTNL
 
-- Module `CustomerManager` phục vụ 3 nhóm danh sách (tabs): Khách hàng thông thường (`all`), Cơ sở thuộc danh sách KKKNK (`ghg_inventory`), và Cơ sở thuộc danh sách Kiểm toán năng lượng (`energy_audit`).
-- Hai tab pháp lý (`ghg_inventory` và `energy_audit`) hỗ trợ phân công NVKD chăm sóc (`caretaker_id`) và quản lý **Trạng thái chăm sóc** (`care_status` thuộc Enum `CustomerCareStatus` gồm: `not_contacted`, `contacted`, `in_progress`, `signed`, `rejected`).
-- Cột "Dịch vụ & hiệu suất" chỉ hiển thị ở tab `all`; hai tab pháp lý ẩn cột dịch vụ để tập trung vào thông tin liên hệ và trạng thái chăm sóc.
+- Module `CustomerManager` chỉ phục vụ danh sách khách hàng hiện hữu và loại khỏi danh sách các bản ghi thuộc KKKNK/KTNL.
+- Module `CustomerListManager` phục vụ hai màn hình độc lập trong menu **Dữ liệu khách hàng**: KH KKKNK (`ghg_inventory`) và KH KTNL (`energy_audit`). Hai màn hình dùng quyền `customer-lists.view`/`customer-lists.edit`, không dùng quyền của danh sách Khách hàng hiện hữu và mọi action đều bị giới hạn theo đúng nguồn dữ liệu.
+- Hai danh sách dữ liệu khách hàng hỗ trợ phân công NVKD chăm sóc (`caretaker_id`) và quản lý **Trạng thái chăm sóc** (`care_status` thuộc Enum `CustomerCareStatus` gồm: `not_contacted`, `contacted`, `in_progress`, `signed`, `rejected`). Dữ liệu vẫn lưu trong bảng `customers` để giữ nguyên luồng import, nhưng không còn xuất hiện hay thao tác từ màn hình Khách hàng hiện hữu.
 
 ### Hỗ trợ từ báo cáo ngày
 
@@ -179,10 +181,10 @@ Người nhận tiến độ thông thường: Giám đốc, Trưởng phòng ki
 
 Danh sách khách hàng tổng hợp số báo giá/hợp đồng từ cả sáu model. Bộ lọc nhân viên khớp khi nhân viên là `staff_id` trên ít nhất một báo giá hoặc một hợp đồng của khách hàng. Các số liệu tổng quan phải dùng cùng query lọc với danh sách.
 
-Danh sách khách hàng có ba tab ngang: khách hàng (`all`), khách hàng thuộc danh sách kiểm kê khí nhà kính (`is_ghg_inventory`) và khách hàng thuộc danh sách kiểm toán năng lượng (`is_energy_audit`). Một khách hàng có thể đồng thời thuộc cả hai danh sách. Dữ liệu hai danh sách được nhập idempotent bằng lệnh `customers:import-regulatory-lists {ghg} {energy}`; import ghép theo tên đã chuẩn hóa khoảng trắng/case, chỉ điền vùng địa chỉ còn trống và không ghi đè thông tin liên hệ đã được chăm sóc thủ công.
+Màn hình Khách hàng không còn các tab KKKNK/KTNL và chỉ hiển thị bản ghi không thuộc hai nguồn dữ liệu này. Một khách hàng có thể đồng thời thuộc cả hai danh sách. Dữ liệu được nhập idempotent bằng lệnh `customers:import-regulatory-lists {ghg} {energy}`; import ghép theo tên đã chuẩn hóa khoảng trắng/case, chỉ điền vùng địa chỉ còn trống và không ghi đè thông tin liên hệ đã được chăm sóc thủ công.
 
-- Tab **Khách hàng** (`all`): Dành cho khách hàng truyền thống của công ty (đã có báo giá/hợp đồng). Hiển thị nút "Chuẩn hóa dữ liệu cũ" và "Thêm khách hàng". Không hiển thị cột "Người chăm sóc" vì nhân viên phụ trách đã được theo dõi qua Báo giá & Hợp đồng.
-- Tab **KH KKKNK** & **KH KIỂM TOÁN NĂNG LƯỢNG** (`ghg_inventory`, `energy_audit`): Dành cho danh sách cơ sở pháp lý nhập từ CSV quy định nhà nước. Ẩn nút "Chuẩn hóa dữ liệu cũ" và "Thêm khách hàng". Hiển thị cột **Người chăm sóc** với ô chọn `<select>` trực tiếp trên từng dòng để phân công nhân viên Kinh doanh hoặc Trưởng phòng Kinh doanh phụ trách tiếp cận.
+- **Khách hàng** (`CustomerManager`): Dành cho khách hàng truyền thống của công ty. Hiển thị nút "Chuẩn hóa dữ liệu cũ" và "Thêm khách hàng". Không hiển thị cột "Người chăm sóc" vì nhân viên phụ trách đã được theo dõi qua Báo giá & Hợp đồng.
+- **KH KKKNK** và **KH KTNL** (`CustomerListManager`): Là hai mục con của **Dữ liệu khách hàng**, dành cho dữ liệu khách hàng nhập từ các danh sách KKKNK/KTNL. Không có chức năng thêm/xóa/chuẩn hóa; hiển thị người chăm sóc, trạng thái chăm sóc, lĩnh vực và phụ lục áp dụng. Bộ lọc nâng cao có thêm **Ngành / Lĩnh vực** và **Phụ lục**; danh sách, KPI và phân trang dùng chung hai điều kiện lọc này.
 
 `Customer` lưu lại `phone`, `email`, `contact_person` và `caretaker_id`. Người chăm sóc phải là tài khoản đang hoạt động có role trong `Role::salesRoles()` (nhân viên Kinh doanh hoặc Trưởng phòng Kinh doanh); giới hạn này được kiểm tra ở cả danh sách lựa chọn và validation phía server.
 

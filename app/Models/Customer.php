@@ -38,14 +38,16 @@ class Customer extends Model
         'care_status',
         'is_ghg_inventory',
         'is_energy_audit',
+        'sector',
+        'appendix',
     ];
 
     protected function casts(): array
     {
         return [
             'is_ghg_inventory' => 'boolean',
-            'is_energy_audit'  => 'boolean',
-            'care_status'      => CustomerCareStatus::class,
+            'is_energy_audit' => 'boolean',
+            'care_status' => CustomerCareStatus::class,
         ];
     }
 

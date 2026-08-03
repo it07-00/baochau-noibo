@@ -2,49 +2,157 @@
 
 namespace Tests\Feature\Livewire\Admin;
 
+use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
+use App\Livewire\Admin\Customers\CustomerListManager;
 use App\Livewire\Admin\Customers\CustomerManager;
 use App\Models\Customer;
 use App\Models\User;
 use App\Services\CustomerRegulatoryListImporter;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
-class CustomerManagerRegulatoryListTest extends TestCase
+class CustomerManagerListTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_customer_tabs_show_the_selected_regulatory_list_only(): void
+    public function test_current_customer_directory_and_imported_customer_lists_are_separate(): void
     {
         $viewer = User::factory()->create();
-        $viewer->givePermissionTo(Permission::findOrCreate('customers.view'));
+        $viewer->givePermissionTo([
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_VIEW->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value),
+        ]);
 
         Customer::create(['name' => 'Khách hàng thông thường']);
-        Customer::create(['name' => 'Cơ sở thuộc danh sách KKKNK', 'province' => 'Tây Ninh', 'is_ghg_inventory' => true]);
-        Customer::create(['name' => 'Cơ sở thuộc danh sách năng lượng', 'is_energy_audit' => true]);
+        Customer::create(['name' => 'Khách hàng thuộc danh sách KKKNK', 'province' => 'Tây Ninh', 'is_ghg_inventory' => true]);
+        Customer::create(['name' => 'Khách hàng thuộc danh sách KTNL', 'is_energy_audit' => true]);
 
         Livewire::actingAs($viewer)
             ->test(CustomerManager::class)
-            ->assertSee('Khách hàng')
-            ->assertSee('KH KKKNK')
-            ->assertSee('KH KIỂM TOÁN NĂNG LƯỢNG')
-            ->call('selectCustomerList', 'ghg_inventory')
+            ->assertSee('Danh sách khách hàng')
+            ->assertSee('Khách hàng thông thường')
+            ->assertDontSee('Khách hàng thuộc danh sách KKKNK')
+            ->assertDontSee('Khách hàng thuộc danh sách KTNL')
+            ->assertDontSee('Nhóm danh sách khách hàng');
+
+        Livewire::actingAs($viewer)
+            ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
+            ->assertSee('Dữ liệu khách hàng KKKNK')
             ->assertViewHas('filterProvinces', fn ($provinces) => $provinces->contains('Tây Ninh'))
-            ->assertSee('Cơ sở thuộc danh sách KKKNK')
+            ->assertSee('Khách hàng thuộc danh sách KKKNK')
             ->assertDontSee('Khách hàng thông thường')
-            ->assertDontSee('Cơ sở thuộc danh sách năng lượng')
-            ->call('selectCustomerList', 'energy_audit')
-            ->assertSee('Cơ sở thuộc danh sách năng lượng')
-            ->assertDontSee('Cơ sở thuộc danh sách KKKNK');
+            ->assertDontSee('Khách hàng thuộc danh sách KTNL');
+
+        Livewire::actingAs($viewer)
+            ->test(CustomerListManager::class, ['customerListType' => 'energy_audit'])
+            ->assertSee('Dữ liệu khách hàng KTNL')
+            ->assertSee('Khách hàng thuộc danh sách KTNL')
+            ->assertDontSee('Khách hàng thuộc danh sách KKKNK');
+    }
+
+    public function test_it_filters_imported_customers_by_sector_and_appendix(): void
+    {
+        $viewer = User::factory()->create();
+        $viewer->givePermissionTo(Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value));
+
+        Customer::create([
+            'name' => 'Khách hàng xi măng phụ lục I',
+            'is_ghg_inventory' => true,
+            'sector' => 'Sản xuất xi măng',
+            'appendix' => 'Phụ lục I',
+        ]);
+        Customer::create([
+            'name' => 'Khách hàng xi măng phụ lục II',
+            'is_ghg_inventory' => true,
+            'sector' => 'Sản xuất xi măng',
+            'appendix' => 'Phụ lục II',
+        ]);
+        Customer::create([
+            'name' => 'Khách hàng thép phụ lục I',
+            'is_ghg_inventory' => true,
+            'sector' => 'Sản xuất thép',
+            'appendix' => 'Phụ lục I',
+        ]);
+
+        Livewire::actingAs($viewer)
+            ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
+            ->assertViewHas('sectorOptions', fn ($options) => $options->contains('Sản xuất xi măng') && $options->contains('Sản xuất thép'))
+            ->assertViewHas('appendixOptions', fn ($options) => $options->contains('Phụ lục I') && $options->contains('Phụ lục II'))
+            ->set('sectorFilter', 'Sản xuất xi măng')
+            ->assertSee('Khách hàng xi măng phụ lục I')
+            ->assertSee('Khách hàng xi măng phụ lục II')
+            ->assertDontSee('Khách hàng thép phụ lục I')
+            ->set('appendixFilter', 'Phụ lục I')
+            ->assertSee('Khách hàng xi măng phụ lục I')
+            ->assertDontSee('Khách hàng xi măng phụ lục II')
+            ->assertViewHas('summary', fn (array $summary) => $summary['customers'] === 1)
+            ->call('resetFilters')
+            ->assertSet('sectorFilter', '')
+            ->assertSet('appendixFilter', '');
+    }
+
+    public function test_customer_list_routes_use_their_own_permission_and_sidebar_menu(): void
+    {
+        $viewer = User::factory()->create(['is_active' => true]);
+        $viewer->givePermissionTo(Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value));
+
+        $this->actingAs($viewer)
+            ->get(route('app.customer-lists.ghg-inventory'))
+            ->assertOk()
+            ->assertSee('Dữ liệu khách hàng')
+            ->assertSee('KH KKKNK')
+            ->assertSee('KH KTNL')
+            ->assertDontSee(route('app.customers.index'), false);
+
+        $this->actingAs(User::factory()->create(['is_active' => true]))
+            ->get(route('app.customer-lists.energy-audit'))
+            ->assertForbidden();
+    }
+
+    public function test_each_directory_rejects_records_from_the_other_scope(): void
+    {
+        $editor = User::factory()->create();
+        $editor->givePermissionTo([
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_VIEW->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_EDIT->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_EDIT->value),
+        ]);
+
+        $customer = Customer::create(['name' => 'Khách hàng độc lập']);
+        $listedCustomer = Customer::create(['name' => 'Khách hàng thuộc dữ liệu KKKNK', 'is_ghg_inventory' => true]);
+
+        $attempts = [
+            fn () => Livewire::actingAs($editor)
+                ->test(CustomerManager::class)
+                ->call('openEdit', $listedCustomer->id),
+            fn () => Livewire::actingAs($editor)
+                ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
+                ->call('openEdit', $customer->id),
+        ];
+
+        foreach ($attempts as $attempt) {
+            try {
+                $attempt();
+                $this->fail('Thao tác ngoài phạm vi phải bị từ chối.');
+            } catch (ModelNotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     public function test_customer_contact_details_can_be_saved_with_a_sales_caretaker(): void
     {
         $creator = User::factory()->create();
-        $creator->givePermissionTo(Permission::findOrCreate('customers.create'));
+        $creator->givePermissionTo([
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_VIEW->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_CREATE->value),
+        ]);
 
         $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
         $salesCaretaker = User::factory()->create(['name' => 'Nhân viên chăm sóc', 'is_active' => true]);
@@ -121,7 +229,10 @@ class CustomerManagerRegulatoryListTest extends TestCase
     public function test_non_sales_users_cannot_be_assigned_as_customer_caretakers(): void
     {
         $creator = User::factory()->create();
-        $creator->givePermissionTo(Permission::findOrCreate('customers.create'));
+        $creator->givePermissionTo([
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_VIEW->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMERS_CREATE->value),
+        ]);
 
         $technicalRole = Role::findOrCreate(RoleEnum::KY_THUAT->value);
         $technicalUser = User::factory()->create(['name' => 'Nhân viên kỹ thuật', 'is_active' => true]);
@@ -180,19 +291,21 @@ class CustomerManagerRegulatoryListTest extends TestCase
         $this->assertDatabaseCount('customers', 1);
     }
 
-    public function test_sales_user_can_update_care_status_for_regulatory_facility(): void
+    public function test_sales_user_can_update_care_status_for_imported_customer(): void
     {
         $editor = User::factory()->create();
-        $editor->givePermissionTo(Permission::findOrCreate('customers.edit'));
+        $editor->givePermissionTo([
+            Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value),
+            Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_EDIT->value),
+        ]);
 
         $facility = Customer::create([
-            'name' => 'Cơ sở KKKNK cần chăm sóc',
+            'name' => 'Khách hàng KKKNK cần chăm sóc',
             'is_ghg_inventory' => true,
         ]);
 
         Livewire::actingAs($editor)
-            ->test(CustomerManager::class)
-            ->call('selectCustomerList', 'ghg_inventory')
+            ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
             ->call('updateCareStatus', $facility->id, 'contacted')
             ->assertDispatched('swal:toast');
 
@@ -202,50 +315,48 @@ class CustomerManagerRegulatoryListTest extends TestCase
         ]);
     }
 
-    public function test_it_filters_regulatory_facilities_by_care_status(): void
+    public function test_it_filters_imported_customers_by_care_status(): void
     {
         $viewer = User::factory()->create();
-        $viewer->givePermissionTo(Permission::findOrCreate('customers.view'));
+        $viewer->givePermissionTo(Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value));
 
-        Customer::create(['name' => 'Cơ sở chưa liên hệ',   'is_ghg_inventory' => true, 'care_status' => 'not_contacted']);
-        Customer::create(['name' => 'Cơ sở đã liên hệ',      'is_ghg_inventory' => true, 'care_status' => 'contacted']);
-        Customer::create(['name' => 'Cơ sở đang đàm phán',   'is_ghg_inventory' => true, 'care_status' => 'in_progress']);
+        Customer::create(['name' => 'Khách hàng chưa liên hệ', 'is_ghg_inventory' => true, 'care_status' => 'not_contacted']);
+        Customer::create(['name' => 'Khách hàng đã liên hệ', 'is_ghg_inventory' => true, 'care_status' => 'contacted']);
+        Customer::create(['name' => 'Khách hàng đang đàm phán', 'is_ghg_inventory' => true, 'care_status' => 'in_progress']);
 
         Livewire::actingAs($viewer)
-            ->test(CustomerManager::class)
-            ->call('selectCustomerList', 'ghg_inventory')
+            ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
             ->set('careStatusFilter', 'contacted')
-            ->assertSee('Cơ sở đã liên hệ')
-            ->assertDontSee('Cơ sở chưa liên hệ')
-            ->assertDontSee('Cơ sở đang đàm phán');
+            ->assertSee('Khách hàng đã liên hệ')
+            ->assertDontSee('Khách hàng chưa liên hệ')
+            ->assertDontSee('Khách hàng đang đàm phán');
     }
 
-    public function test_it_filters_regulatory_facilities_strictly_by_caretaker(): void
+    public function test_it_filters_imported_customers_strictly_by_caretaker(): void
     {
         $viewer = User::factory()->create();
-        $viewer->givePermissionTo(Permission::findOrCreate('customers.view'));
+        $viewer->givePermissionTo(Permission::findOrCreate(PermissionEnum::CUSTOMER_LISTS_VIEW->value));
 
         $salesRole = Role::findOrCreate(RoleEnum::KINH_DOANH->value);
         $sanSan = User::factory()->create(['name' => 'San San', 'is_active' => true]);
         $sanSan->assignRole($salesRole);
 
         Customer::create([
-            'name' => 'Cơ sở được San San chăm sóc',
+            'name' => 'Khách hàng được San San chăm sóc',
             'is_ghg_inventory' => true,
             'caretaker_id' => $sanSan->id,
         ]);
 
         Customer::create([
-            'name' => 'Cơ sở chưa được phân công',
+            'name' => 'Khách hàng chưa được phân công',
             'is_ghg_inventory' => true,
             'caretaker_id' => null,
         ]);
 
         Livewire::actingAs($viewer)
-            ->test(CustomerManager::class)
-            ->call('selectCustomerList', 'ghg_inventory')
+            ->test(CustomerListManager::class, ['customerListType' => 'ghg_inventory'])
             ->set('staffFilter', (string) $sanSan->id)
-            ->assertSee('Cơ sở được San San chăm sóc')
-            ->assertDontSee('Cơ sở chưa được phân công');
+            ->assertSee('Khách hàng được San San chăm sóc')
+            ->assertDontSee('Khách hàng chưa được phân công');
     }
 }

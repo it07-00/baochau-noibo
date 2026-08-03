@@ -48,7 +48,9 @@ class CustomerRegulatoryListImporter
                     $name,
                     $this->clean($row['Địa chỉ'] ?? null),
                     $this->clean($row['Tỉnh / Thành phố'] ?? null),
-                    'is_ghg_inventory'
+                    'is_ghg_inventory',
+                    $this->clean($row['Ngành / Lĩnh vực'] ?? $row['Lĩnh vực'] ?? null),
+                    $this->clean($row['Phụ lục'] ?? null)
                 );
             }
 
@@ -76,7 +78,9 @@ class CustomerRegulatoryListImporter
                     $name,
                     $address,
                     $currentProvince,
-                    'is_energy_audit'
+                    'is_energy_audit',
+                    $this->clean($row['Lĩnh vực'] ?? $row['Ngành nghề sản xuất'] ?? null),
+                    $this->clean($row['Phụ lục'] ?? null)
                 );
             }
 
@@ -94,7 +98,9 @@ class CustomerRegulatoryListImporter
         string $name,
         ?string $address,
         ?string $sourceProvince,
-        string $listColumn
+        string $listColumn,
+        ?string $sector = null,
+        ?string $appendix = null
     ): void {
         $key = $this->nameKey($name);
         /** @var Customer|null $customer */
@@ -115,6 +121,8 @@ class CustomerRegulatoryListImporter
                 'province' => $detected['province'],
                 'ward' => $detected['ward'],
                 'industrial_park' => $detected['industrial_park'],
+                'sector' => $sector,
+                'appendix' => $appendix,
                 $listColumn => true,
             ]);
             $customer->disableLogging();
@@ -131,6 +139,8 @@ class CustomerRegulatoryListImporter
             'province' => $detected['province'],
             'ward' => $detected['ward'],
             'industrial_park' => $detected['industrial_park'],
+            'sector' => $sector,
+            'appendix' => $appendix,
         ] as $field => $value) {
             if (blank($customer->getAttribute($field)) && filled($value)) {
                 $customer->setAttribute($field, $value);

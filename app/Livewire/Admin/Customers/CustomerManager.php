@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -32,6 +33,7 @@ class CustomerManager extends Component
 
     public string $search = '';
 
+    #[Locked]
     public string $customerList = 'all';
 
     public string $provinceFilter = '';
@@ -49,6 +51,10 @@ class CustomerManager extends Component
     public string $caretakerStatusFilter = '';
 
     public string $careStatusFilter = '';
+
+    public string $sectorFilter = '';
+
+    public string $appendixFilter = '';
 
     public string $serviceFilter = ''; // Backward compatibility for older/cached sessions
 
@@ -74,6 +80,8 @@ class CustomerManager extends Component
         'representative' => '',
         'contact_person' => '',
         'caretaker_id' => '',
+        'sector' => '',
+        'appendix' => '',
     ];
 
     /**
@@ -88,7 +96,40 @@ class CustomerManager extends Component
         'contractsSustainability' => [ContractSustainability::class, 'Phát triển bền vững'],
     ];
 
-    private const CUSTOMER_LISTS = ['all', 'ghg_inventory', 'energy_audit'];
+    protected function viewPermission(): Permission
+    {
+        return Permission::CUSTOMERS_VIEW;
+    }
+
+    protected function editPermission(): Permission
+    {
+        return Permission::CUSTOMERS_EDIT;
+    }
+
+    protected function createPermission(): ?Permission
+    {
+        return Permission::CUSTOMERS_CREATE;
+    }
+
+    protected function deletePermission(): ?Permission
+    {
+        return Permission::CUSTOMERS_DELETE;
+    }
+
+    protected function isCustomerListDirectory(): bool
+    {
+        return false;
+    }
+
+    protected function directoryTitle(): string
+    {
+        return 'Danh sách khách hàng';
+    }
+
+    protected function directoryDescription(): string
+    {
+        return 'Theo dõi khách hàng theo tỉnh/thành, phường/xã, khu công nghiệp và hiệu suất báo giá – hợp đồng.';
+    }
 
     public function paginationView(): string
     {
@@ -99,7 +140,6 @@ class CustomerManager extends Component
     {
         if (in_array($property, [
             'search',
-            'customerList',
             'provinceFilter',
             'wardFilter',
             'industrialParkFilter',
@@ -108,21 +148,13 @@ class CustomerManager extends Component
             'staffFilter',
             'caretakerStatusFilter',
             'careStatusFilter',
+            'sectorFilter',
+            'appendixFilter',
             'serviceFilter',
             'groupBy',
         ], true)) {
             $this->resetPage();
         }
-    }
-
-    public function selectCustomerList(string $list): void
-    {
-        abort_unless(in_array($list, self::CUSTOMER_LISTS, true), 404);
-
-        $this->customerList = $list;
-        $this->caretakerStatusFilter = '';
-        $this->careStatusFilter = '';
-        $this->resetPage();
     }
 
     public function updatedProvinceFilter(): void
@@ -173,6 +205,8 @@ class CustomerManager extends Component
             'staffFilter',
             'caretakerStatusFilter',
             'careStatusFilter',
+            'sectorFilter',
+            'appendixFilter',
             'serviceFilter',
         ]);
         $this->groupBy = 'province';
@@ -240,7 +274,7 @@ class CustomerManager extends Component
 
     public function previewLegacyNormalization(): void
     {
-        abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
+        abort_unless(! $this->isCustomerListDirectory() && auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
 
         $this->normalizationPreview = app(CustomerRegionNormalizer::class)->run();
         $this->dispatch('openCustomerNormalizationModal');
@@ -248,7 +282,7 @@ class CustomerManager extends Component
 
     public function normalizeLegacyCustomers(): void
     {
-        abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
+        abort_unless(! $this->isCustomerListDirectory() && auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
 
         $this->normalizationPreview = app(CustomerRegionNormalizer::class)->run(apply: true);
         $this->dispatch('closeCustomerNormalizationModal');
@@ -260,6 +294,9 @@ class CustomerManager extends Component
 
     public function openCreate(): void
     {
+        $permission = $this->createPermission();
+        abort_unless($permission && auth()->user()->can($permission->value), 403);
+
         $this->resetForm();
         $this->isEditing = false;
         $this->showModal = true;
@@ -268,7 +305,9 @@ class CustomerManager extends Component
 
     public function openEdit(int $id): void
     {
-        $customer = Customer::findOrFail($id);
+        abort_unless(auth()->user()->can($this->viewPermission()->value), 403);
+
+        $customer = $this->findScopedCustomer($id);
 
         $this->editingId = $customer->id;
         $this->formData = [
@@ -283,6 +322,8 @@ class CustomerManager extends Component
             'representative' => (string) ($customer->representative ?? ''),
             'contact_person' => (string) ($customer->contact_person ?? ''),
             'caretaker_id' => $customer->caretaker_id ? (string) $customer->caretaker_id : '',
+            'sector' => (string) ($customer->sector ?? ''),
+            'appendix' => (string) ($customer->appendix ?? ''),
         ];
 
         $this->isEditing = true;
@@ -298,10 +339,8 @@ class CustomerManager extends Component
 
     public function save(): void
     {
-        abort_unless(
-            auth()->user()->can($this->isEditing ? Permission::CUSTOMERS_EDIT->value : Permission::CUSTOMERS_CREATE->value),
-            403
-        );
+        $permission = $this->isEditing ? $this->editPermission() : $this->createPermission();
+        abort_unless($permission && auth()->user()->can($permission->value), 403);
 
         $this->validate([
             'formData.name' => 'required|string|max:255|unique:customers,name'.($this->editingId ? ','.$this->editingId : ''),
@@ -315,6 +354,8 @@ class CustomerManager extends Component
             'formData.representative' => 'nullable|string|max:255',
             'formData.contact_person' => 'nullable|string|max:255',
             'formData.caretaker_id' => ['nullable', 'integer', Rule::in($this->caretakerOptions()->pluck('id')->all())],
+            'formData.sector' => 'nullable|string|max:255',
+            'formData.appendix' => 'nullable|string|max:255',
         ], [], [
             'formData.name' => 'tên khách hàng',
             'formData.tax_code' => 'mã số thuế',
@@ -327,6 +368,8 @@ class CustomerManager extends Component
             'formData.representative' => 'người đại diện',
             'formData.contact_person' => 'người liên hệ',
             'formData.caretaker_id' => 'người chăm sóc',
+            'formData.sector' => 'ngành hoặc lĩnh vực',
+            'formData.appendix' => 'phụ lục',
         ]);
 
         $detected = VietnameseAddressParser::parse($this->formData['address'] ?? null);
@@ -342,11 +385,15 @@ class CustomerManager extends Component
             'representative' => $this->nullableFormValue('representative'),
             'contact_person' => $this->nullableFormValue('contact_person'),
             'caretaker_id' => filled($this->formData['caretaker_id'] ?? null) ? (int) $this->formData['caretaker_id'] : null,
+            'sector' => $this->nullableFormValue('sector'),
+            'appendix' => $this->nullableFormValue('appendix'),
         ];
 
         if ($this->isEditing && $this->editingId) {
-            Customer::whereKey($this->editingId)->update($data);
-            $message = 'Cập nhật khách hàng thành công.';
+            $this->findScopedCustomer($this->editingId)->update($data);
+            $message = $this->isCustomerListDirectory()
+                ? 'Cập nhật dữ liệu khách hàng thành công.'
+                : 'Cập nhật khách hàng thành công.';
         } else {
             Customer::create($data);
             $message = 'Thêm khách hàng thành công.';
@@ -359,7 +406,7 @@ class CustomerManager extends Component
 
     public function updateCaretaker(int $customerId, mixed $caretakerId): void
     {
-        abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
+        abort_unless(auth()->user()->can($this->editPermission()->value), 403);
 
         $caretakerId = filled($caretakerId) ? (int) $caretakerId : null;
 
@@ -375,7 +422,7 @@ class CustomerManager extends Component
             }
         }
 
-        $customer = Customer::findOrFail($customerId);
+        $customer = $this->findScopedCustomer($customerId);
         $customer->update(['caretaker_id' => $caretakerId]);
 
         $caretakerName = $caretakerId ? User::find($caretakerId)?->name : null;
@@ -391,7 +438,7 @@ class CustomerManager extends Component
 
     public function updateCareStatus(int $customerId, string $status): void
     {
-        abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);
+        abort_unless(auth()->user()->can($this->editPermission()->value), 403);
 
         $careStatus = CustomerCareStatus::tryFrom($status);
 
@@ -404,7 +451,7 @@ class CustomerManager extends Component
             return;
         }
 
-        $customer = Customer::findOrFail($customerId);
+        $customer = $this->findScopedCustomer($customerId);
         $customer->update(['care_status' => $careStatus->value]);
 
         $this->dispatch('swal:toast', [
@@ -415,9 +462,10 @@ class CustomerManager extends Component
 
     public function delete(int $id): void
     {
-        abort_unless(auth()->user()->can(Permission::CUSTOMERS_DELETE->value), 403);
+        $permission = $this->deletePermission();
+        abort_unless($permission && auth()->user()->can($permission->value), 403);
 
-        $customer = Customer::findOrFail($id);
+        $customer = $this->findScopedCustomer($id);
 
         if ($this->contractCountFromDatabase($customer) > 0) {
             $this->dispatch('swal:toast', [
@@ -502,6 +550,8 @@ class CustomerManager extends Component
             'representative' => '',
             'contact_person' => '',
             'caretaker_id' => '',
+            'sector' => '',
+            'appendix' => '',
         ];
         $this->resetErrorBag();
         $this->resetValidation();
@@ -534,12 +584,16 @@ class CustomerManager extends Component
                         ->orWhere('province', 'like', "%{$search}%")
                         ->orWhere('ward', 'like', "%{$search}%")
                         ->orWhere('industrial_park', 'like', "%{$search}%")
+                        ->orWhere('sector', 'like', "%{$search}%")
+                        ->orWhere('appendix', 'like', "%{$search}%")
                         ->orWhereHas('caretaker', fn (Builder $caretakerQuery) => $caretakerQuery->where('name', 'like', "%{$search}%"));
                 });
             })
             ->when($this->provinceFilter, fn (Builder $q) => $q->where('province', $this->provinceFilter))
             ->when($this->wardFilter, fn (Builder $q) => $q->where('ward', $this->wardFilter))
             ->when($this->industrialParkFilter, fn (Builder $q) => $q->where('industrial_park', $this->industrialParkFilter))
+            ->when($this->sectorFilter, fn (Builder $q) => $q->where('sector', $this->sectorFilter))
+            ->when($this->appendixFilter, fn (Builder $q) => $q->where('appendix', $this->appendixFilter))
             ->when($this->caretakerStatusFilter, function (Builder $query): void {
                 if ($this->caretakerStatusFilter === 'assigned') {
                     $query->whereNotNull('caretaker_id');
@@ -691,6 +745,11 @@ class CustomerManager extends Component
             'energy_audit' => $query->where('is_energy_audit', true),
             default => $query->where('is_ghg_inventory', false)->where('is_energy_audit', false),
         };
+    }
+
+    private function findScopedCustomer(int $id): Customer
+    {
+        return $this->applyCustomerList(Customer::query())->findOrFail($id);
     }
 
     private function distinctValues(string $column, ?Builder $query = null): Collection
@@ -902,6 +961,8 @@ class CustomerManager extends Component
 
     public function render()
     {
+        abort_unless(auth()->user()->can($this->viewPermission()->value), 403);
+
         $query = $this->customerQuery();
         $summaryQuery = clone $query;
         $customerIds = $summaryQuery
@@ -919,6 +980,8 @@ class CustomerManager extends Component
             || filled($this->staffFilter)
             || filled($this->caretakerStatusFilter)
             || filled($this->careStatusFilter)
+            || filled($this->sectorFilter)
+            || filled($this->appendixFilter)
             || filled($this->serviceContractFilter)
             || ! empty($this->serviceQuotationFilter)
             || filled($this->groupBy) && $this->groupBy !== 'province';
@@ -929,6 +992,8 @@ class CustomerManager extends Component
             'filterProvinces' => $this->provincesForCurrentList(),
             'wards' => $this->distinctValues('ward', $wardQuery),
             'industrialParks' => $this->distinctValues('industrial_park', $industrialParkQuery),
+            'sectorOptions' => $this->distinctValues('sector', $this->applyCustomerList(Customer::query())),
+            'appendixOptions' => $this->distinctValues('appendix', $this->applyCustomerList(Customer::query())),
             'serviceQuotationOptions' => $this->serviceQuotationOptions(),
             'serviceContractOptions' => $this->serviceContractOptions(),
             'staffOptions' => $this->staffOptions(),
@@ -936,6 +1001,14 @@ class CustomerManager extends Component
             'careStatusOptions' => CustomerCareStatus::options(),
             'summary' => $this->summary($customerIds),
             'hasAdvancedFilters' => $hasAdvancedFilters,
+            'directoryTitle' => $this->directoryTitle(),
+            'directoryDescription' => $this->directoryDescription(),
+            'isCustomerListDirectory' => $this->isCustomerListDirectory(),
+            'entityLabel' => 'khách hàng',
+            'canCreate' => ($permission = $this->createPermission()) && auth()->user()->can($permission->value),
+            'canEdit' => auth()->user()->can($this->editPermission()->value),
+            'canDelete' => ($permission = $this->deletePermission()) && auth()->user()->can($permission->value),
+            'canNormalize' => ! $this->isCustomerListDirectory() && auth()->user()->can(Permission::CUSTOMERS_EDIT->value),
         ])->layout('admin.layouts.app');
     }
 

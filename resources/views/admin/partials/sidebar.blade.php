@@ -135,7 +135,7 @@
                 @endif
 
                 {{-- ── TỔ CHỨC ──────────────────────────────────────── --}}
-                @if (auth()->user()->canany(['departments.view', 'handlers.view', 'customers.view', 'hr-profiles.view', 'cham-cong.view', 'cham-cong.edit']))
+                @if (auth()->user()->canany(['departments.view', 'handlers.view', 'customers.view', 'customer-lists.view', 'hr-profiles.view', 'cham-cong.view', 'cham-cong.edit']))
                     <li class="menu-heading">
                         <span class="menu-label">TỔ CHỨC</span>
                     </li>
@@ -175,6 +175,36 @@
                             </ul>
                         </li>
                     @endif
+
+                    @can('customer-lists.view')
+                        @php
+                            $isCustomerListMenu = request()->routeIs('app.customer-lists.*');
+                        @endphp
+                        <li class="menu-item menu-arrow {{ $isCustomerListMenu ? 'open' : '' }}">
+                            <a href="javascript:void(0)"
+                               class="menu-link {{ $isCustomerListMenu ? 'open' : '' }}"
+                               role="button" aria-expanded="{{ $isCustomerListMenu ? 'true' : 'false' }}">
+                                <i class="fi fi-rr-users-alt"></i>
+                                <span class="menu-label">Dữ liệu khách hàng</span>
+                            </a>
+                            <ul class="menu-inner">
+                                <li class="menu-item">
+                                    <a href="{{ route('app.customer-lists.ghg-inventory') }}"
+                                       class="menu-link {{ request()->routeIs('app.customer-lists.ghg-inventory') ? 'active' : '' }}">
+                                        <i class="fa-solid fa-cloud"></i>
+                                        <span class="menu-label">KH KKKNK</span>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('app.customer-lists.energy-audit') }}"
+                                       class="menu-link {{ request()->routeIs('app.customer-lists.energy-audit') ? 'active' : '' }}">
+                                        <i class="fa-solid fa-bolt"></i>
+                                        <span class="menu-label">KH KTNL</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endcan
 
                     @if (auth()->user()->canAny(['hr-profiles.view', 'cham-cong.view', 'cham-cong.edit']))
                         <li class="menu-item menu-arrow">
