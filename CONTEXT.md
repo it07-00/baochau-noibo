@@ -93,6 +93,13 @@ Middleware tùy chỉnh:
 | Nội bộ | `InternalDocs/*`, `InternalNotifications/*` | `InternalDoc`, `InternalSoftware` |
 | Quản trị | `Users`, `Roles`, `Departments`, `Handlers` | `User`, `Department`, `Handler` |
 
+### Quản lý khách hàng & Danh sách cơ sở pháp lý
+
+- Module `CustomerManager` phục vụ 3 nhóm danh sách (tabs): Khách hàng thông thường (`all`), Cơ sở thuộc danh sách KKKNK (`ghg_inventory`), và Cơ sở thuộc danh sách Kiểm toán năng lượng (`energy_audit`).
+- Hai tab pháp lý (`ghg_inventory` và `energy_audit`) hỗ trợ phân công NVKD chăm sóc (`caretaker_id`) và quản lý **Trạng thái chăm sóc** (`care_status` thuộc Enum `CustomerCareStatus` gồm: `not_contacted`, `contacted`, `in_progress`, `signed`, `rejected`).
+- Cột "Dịch vụ & hiệu suất" chỉ hiển thị ở tab `all`; hai tab pháp lý ẩn cột dịch vụ để tập trung vào thông tin liên hệ và trạng thái chăm sóc.
+- Lệnh Artisan `customers:import-regulatory-lists` nhập dữ liệu cơ sở KKKNK và KTNL (mặc định dùng `database/data/ghg_inventory_facilities.csv` và `database/data/energy_audit_facilities.csv`), tự động deduplicate theo tên/địa chỉ và bảo tồn thông tin liên hệ đã nhập tay.
+
 ### Hỗ trợ từ báo cáo ngày
 
 - Báo cáo có trạng thái `Gặp vấn đề, cần hỗ trợ` hoặc có nội dung `issues` được đưa vào hàng đợi hỗ trợ.

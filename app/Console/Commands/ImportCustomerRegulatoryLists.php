@@ -9,8 +9,8 @@ use Throwable;
 class ImportCustomerRegulatoryLists extends Command
 {
     protected $signature = 'customers:import-regulatory-lists
-                            {ghg : Đường dẫn CSV danh sách cơ sở phát thải khí nhà kính}
-                            {energy : Đường dẫn CSV danh sách cơ sở sử dụng năng lượng trọng điểm}';
+                            {ghg=database/data/ghg_inventory_facilities.csv : Đường dẫn CSV danh sách cơ sở phát thải khí nhà kính}
+                            {energy=database/data/energy_audit_facilities.csv : Đường dẫn CSV danh sách cơ sở sử dụng năng lượng trọng điểm}';
 
     protected $description = 'Nhập hai danh sách khách hàng KKKNK và kiểm toán năng lượng';
 
