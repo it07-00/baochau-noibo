@@ -149,6 +149,53 @@ class CustomerManager extends Component
         $this->resetPage();
     }
 
+    public function filterByProvince(string $province): void
+    {
+        $this->provinceFilter = trim($province);
+        $this->wardFilter = '';
+        $this->industrialParkFilter = '';
+        $this->resetPage();
+    }
+
+    public function filterByWard(string $ward, string $province = ''): void
+    {
+        if (filled($province)) {
+            $this->provinceFilter = trim($province);
+        }
+        $this->wardFilter = trim($ward);
+        $this->industrialParkFilter = '';
+        $this->resetPage();
+    }
+
+    public function filterByIndustrialPark(string $industrialPark, string $province = ''): void
+    {
+        if (filled($province)) {
+            $this->provinceFilter = trim($province);
+        }
+        $this->industrialParkFilter = trim($industrialPark);
+        $this->resetPage();
+    }
+
+    public function filterByGroup(string $groupValue): void
+    {
+        $groupValue = trim($groupValue);
+        if ($groupValue === '' || $groupValue === 'Chưa cập nhật') {
+            return;
+        }
+
+        match ($this->groupBy) {
+            'ward' => $this->filterByWard($groupValue),
+            'industrial_park' => $this->filterByIndustrialPark($groupValue),
+            default => $this->filterByProvince($groupValue),
+        };
+    }
+
+    public function filterBySearch(string $text): void
+    {
+        $this->search = trim($text);
+        $this->resetPage();
+    }
+
     public function previewLegacyNormalization(): void
     {
         abort_unless(auth()->user()->can(Permission::CUSTOMERS_EDIT->value), 403);

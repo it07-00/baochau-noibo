@@ -276,9 +276,11 @@
                             @php($currentGroup = $this->groupValue($customer))
                             <tr class="bg-body-tertiary border-top border-bottom border-light-subtle">
                                 <td colspan="{{ $columnCount }}" class="px-4 py-2.5">
-                                    <div class="d-flex align-items-center gap-2 fw-bold text-primary" style="font-size: 0.85rem;">
+                                    <div class="d-flex align-items-center gap-2 fw-bold text-primary cursor-pointer"
+                                         wire:click="filterByGroup('{{ addslashes($currentGroup) }}')"
+                                         title="Lọc theo {{ $currentGroup }}">
                                         <i class="fa-solid {{ $groupBy === 'industrial_park' ? 'fa-industry' : 'fa-location-dot' }}"></i>
-                                        {{ $currentGroup }}
+                                        <span>{{ $currentGroup }}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -295,27 +297,43 @@
                                         {{ $customer->name }}
                                     </a>
                                     @if($customer->tax_code)
-                                        <div class="small text-muted mt-1">MST: {{ $customer->tax_code }}</div>
+                                        <div class="small text-muted mt-1 cursor-pointer"
+                                             wire:click="filterBySearch('{{ addslashes($customer->tax_code) }}')"
+                                             title="Lọc theo MST: {{ $customer->tax_code }}">
+                                            MST: <span class="text-body">{{ $customer->tax_code }}</span>
+                                        </div>
                                     @endif
                                     @if($customer->representative)
-                                        <div class="small text-muted mt-1">Đại diện: {{ $customer->representative }}</div>
+                                        <div class="small text-muted mt-1 cursor-pointer"
+                                             wire:click="filterBySearch('{{ addslashes($customer->representative) }}')"
+                                             title="Lọc theo đại diện: {{ $customer->representative }}">
+                                            Đại diện: <span class="text-body">{{ $customer->representative }}</span>
+                                        </div>
                                     @endif
                                 </div>
                             </td>
                             <td class="px-4">
                                 <div class="d-flex flex-wrap gap-1" style="min-width: 175px;">
                                     @if($customer->province)
-                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 fs-72">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 fs-72 cursor-pointer"
+                                              wire:click="filterByProvince('{{ addslashes($customer->province) }}')"
+                                              title="Lọc theo tỉnh/thành: {{ $customer->province }}">
                                             <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
                                         </span>
                                     @else
                                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">Chưa có tỉnh/thành</span>
                                     @endif
                                     @if($customer->ward)
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1" style="font-size: 0.72rem;">{{ $customer->ward }}</span>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle px-2 py-1 fs-72 cursor-pointer"
+                                              wire:click="filterByWard('{{ addslashes($customer->ward) }}', '{{ addslashes($customer->province) }}')"
+                                              title="Lọc theo phường/xã: {{ $customer->ward }}">
+                                            {{ $customer->ward }}
+                                        </span>
                                     @endif
                                     @if($customer->industrial_park)
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2 py-1 fs-72">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2 py-1 fs-72 cursor-pointer"
+                                              wire:click="filterByIndustrialPark('{{ addslashes($customer->industrial_park) }}', '{{ addslashes($customer->province) }}')"
+                                              title="Lọc theo KCN: {{ $customer->industrial_park }}">
                                             <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                                         </span>
                                     @endif
@@ -379,7 +397,8 @@
             @forelse($customers as $customer)
                 @if($groupBy !== 'none' && $mobileGroup !== $this->groupValue($customer))
                     @php($mobileGroup = $this->groupValue($customer))
-                    <div class="small fw-bold text-primary text-uppercase mt-3 mb-2">
+                    <div class="small fw-bold text-primary text-uppercase mt-3 mb-2 cursor-pointer"
+                         wire:click="filterByGroup('{{ addslashes($mobileGroup) }}')">
                         <i class="fa-solid fa-location-dot me-1"></i>{{ $mobileGroup }}
                     </div>
                 @endif
@@ -392,10 +411,16 @@
                                 {{ $customer->name }}
                             </a>
                             @if($customer->tax_code)
-                                <div class="small text-muted mt-1">MST: {{ $customer->tax_code }}</div>
+                                <div class="small text-muted mt-1 cursor-pointer"
+                                     wire:click="filterBySearch('{{ addslashes($customer->tax_code) }}')">
+                                    MST: {{ $customer->tax_code }}
+                                </div>
                             @endif
                             @if($customer->representative)
-                                <div class="small text-muted mt-1">Đại diện: {{ $customer->representative }}</div>
+                                <div class="small text-muted mt-1 cursor-pointer"
+                                     wire:click="filterBySearch('{{ addslashes($customer->representative) }}')">
+                                    Đại diện: {{ $customer->representative }}
+                                </div>
                             @endif
                         </div>
                         <div class="d-flex gap-1.5 flex-shrink-0">
@@ -414,17 +439,22 @@
 
                     <div class="d-flex flex-wrap gap-1 mt-3">
                         @if($customer->province)
-                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 fs-72">
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-2 py-1 fs-72 cursor-pointer"
+                                  wire:click="filterByProvince('{{ addslashes($customer->province) }}')">
                                 <i class="fa-solid fa-location-dot me-1"></i>{{ $customer->province }}
                             </span>
                         @else
                             <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 fs-72">Chưa cập nhật</span>
                         @endif
                         @if($customer->ward)
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 fs-72">{{ $customer->ward }}</span>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle px-2 py-1 fs-72 cursor-pointer"
+                                  wire:click="filterByWard('{{ addslashes($customer->ward) }}', '{{ addslashes($customer->province) }}')">
+                                {{ $customer->ward }}
+                            </span>
                         @endif
                         @if($customer->industrial_park)
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2 py-1 fs-72">
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2 py-1 fs-72 cursor-pointer"
+                                  wire:click="filterByIndustrialPark('{{ addslashes($customer->industrial_park) }}', '{{ addslashes($customer->province) }}')">
                                 <i class="fa-solid fa-industry me-1"></i>{{ $customer->industrial_park }}
                             </span>
                         @endif
