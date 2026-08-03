@@ -5,7 +5,7 @@
     <div class="row g-3 mt-1">
         {{-- Header --}}
         <div class="col-12">
-            <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-body">
+            <div class="card border border-light-subtle shadow-sm rounded-3 bg-body">
                 <div class="card-body p-3 p-md-4">
                     <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
                         <div class="d-flex align-items-center gap-3">
@@ -36,7 +36,7 @@
                                     <i class="fa-solid fa-file-excel"></i>
                                     <span>Xuất Excel</span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-light-subtle">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-light-subtle" style="z-index: 1050;">
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2 small py-2"
                                            href="{{ route('app.attendance.export', ['month' => $selectedMonth]) }}">
