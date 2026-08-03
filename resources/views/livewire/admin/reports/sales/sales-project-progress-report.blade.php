@@ -132,11 +132,11 @@
                         </div>
                         <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.7rem;">{{ count($pipeline[$stepKey]) }}</span>
                     </div>
-                    <div class="card-body p-1.5 pt-0 pipeline-step-body" style="max-height: 420px; overflow-y: auto;">
+                    <div class="card-body p-2 pt-0 pipeline-step-body" style="max-height: 440px; overflow-y: auto;">
                         @forelse($pipeline[$stepKey] as $contract)
-                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-1.5 bg-body pipeline-contract-card flex-grow-0" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
-                                <div class="card-body p-2 flex-grow-0">
-                                    <div class="d-flex justify-content-between gap-1 align-items-start mb-1">
+                            <article class="card border border-light-subtle shadow-sm rounded-2 mb-2 bg-body pipeline-contract-card flex-grow-0" wire:key="pipeline-{{ $contract['source_key'] }}-{{ $contract['id'] }}">
+                                <div class="card-body p-2.5 flex-grow-0">
+                                    <div class="d-flex justify-content-between gap-1 align-items-start mb-1.5">
                                         <div class="min-w-0 me-1">
                                             <div class="fw-bold text-body text-truncate" style="font-size: 0.78rem;" title="{{ $contract['customer'] }}">{{ $contract['customer'] }}</div>
                                             @if(!empty($contract['shd']) && $contract['shd'] !== '—' && $contract['shd'] !== '-')
@@ -145,19 +145,19 @@
                                         </div>
                                         <span class="badge bg-primary bg-opacity-10 text-primary px-1.5 py-0.5 rounded-2 flex-shrink-0" style="font-size: 0.68rem;">{{ $contract['workflow_progress']['completed_count'] }}/6</span>
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-center text-muted mb-1" style="font-size: 0.68rem;">
+                                    <div class="d-flex justify-content-between align-items-center text-muted mb-1.5" style="font-size: 0.68rem;">
                                         <span class="text-truncate me-1" title="{{ $contract['assigned_staff'] }}"><i class="fa-regular fa-user me-1"></i>{{ $contract['assigned_staff'] }}</span>
                                         <span class="fw-semibold text-nowrap">{{ $contract['workflow_progress']['percent'] }}%</span>
                                     </div>
-                                    <div class="progress mb-1.5" style="height: 3px;">
+                                    <div class="progress mb-2" style="height: 3.5px;">
                                         <div class="progress-bar {{ $contract['workflow_progress']['percent'] >= 100 ? 'bg-success' : 'bg-primary' }}" style="width: {{ $contract['workflow_progress']['percent'] }}%"></div>
                                     </div>
-                                    <div class="d-flex gap-1">
-                                        <button type="button" class="btn btn-light btn-xs flex-grow-1 py-1 px-1 text-truncate" style="font-size: 0.68rem;" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                    <div class="d-flex gap-1.5">
+                                        <button type="button" class="btn btn-light btn-xs flex-grow-1 py-1 px-1.5 text-truncate" style="font-size: 0.68rem;" wire:click="showDetails('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
                                             <i class="fa-solid fa-eye me-1"></i>Chi tiết
                                         </button>
                                         @if($this->canAssign())
-                                            <button type="button" class="btn btn-outline-success btn-xs flex-grow-1 py-1 px-1 text-truncate" style="font-size: 0.68rem;" wire:click="openAssign('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
+                                            <button type="button" class="btn btn-outline-success btn-xs flex-grow-1 py-1 px-1.5 text-truncate" style="font-size: 0.68rem;" wire:click="openAssign('{{ $contract['source_key'] }}', {{ $contract['id'] }})">
                                                 <i class="fa-solid fa-user-check me-1"></i>Giao việc
                                             </button>
                                         @endif
