@@ -222,6 +222,11 @@ class ContractWasteManager extends Component
         $this->resetPage();
     }
 
+    public function updatedFilter()
+    {
+        $this->resetPage();
+    }
+
     public function updatedFormDataValue(): void
     {
         if (! $this->isEditing) {

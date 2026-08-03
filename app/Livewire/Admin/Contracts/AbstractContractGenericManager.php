@@ -226,6 +226,11 @@ abstract class AbstractContractGenericManager extends Component
         $this->resetPage();
     }
 
+    public function updatedFilter(): void
+    {
+        $this->resetPage();
+    }
+
     public function updatedFormDataValue(): void
     {
         if (! $this->isEditing) {
