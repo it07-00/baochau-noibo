@@ -145,7 +145,7 @@
         <div class="card-body p-3 p-md-4">
             {{-- Primary Filter Row --}}
             <div class="row g-2.5 g-md-3 align-items-end">
-                <div class="col-12 col-md-4 col-xl-4">
+                <div class="col-12 col-md-6 col-xl-3">
                     <label for="customer-search" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Tìm kiếm</label>
                     <div class="input-group">
                         <span class="input-group-text bg-body-tertiary border-end-0 text-body-secondary border-secondary-subtle">
@@ -158,7 +158,7 @@
                     </div>
                 </div>
 
-                <div class="col-6 col-md-4 col-xl-3">
+                <div class="col-6 col-md-3 col-xl-2">
                     <label for="province-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Tỉnh / thành</label>
                     <select id="province-filter" class="form-select border-secondary-subtle" wire:model.live="provinceFilter">
                         <option value="">Tất cả tỉnh/thành</option>
@@ -168,12 +168,24 @@
                     </select>
                 </div>
 
-                <div class="col-6 col-md-4 col-xl-3">
+                <div class="col-6 col-md-3 col-xl-2">
                     <label for="industrial-park-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Khu công nghiệp</label>
                     <select id="industrial-park-filter" class="form-select border-secondary-subtle" wire:model.live="industrialParkFilter">
                         <option value="">Tất cả KCN</option>
                         @foreach($industrialParks as $industrialPark)
                             <option value="{{ $industrialPark }}">{{ $industrialPark }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label for="staff-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                        {{ $customerList !== 'all' ? 'Người chăm sóc' : 'Nhân viên phụ trách' }}
+                    </label>
+                    <select id="staff-filter" class="form-select border-secondary-subtle" wire:model.live="staffFilter">
+                        <option value="">Tất cả {{ $customerList !== 'all' ? 'người chăm sóc' : 'nhân viên' }}</option>
+                        @foreach($staffOptions as $staff)
+                            <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -247,16 +259,8 @@
                             <option value="none">Không nhóm</option>
                         </select>
                     </div>
-                    <div class="col-12 col-md-4 col-lg-3">
-                        <label for="staff-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Nhân viên phụ trách</label>
-                        <select id="staff-filter" class="form-select border-secondary-subtle" wire:model.live="staffFilter">
-                            <option value="">Tất cả nhân viên</option>
-                            @foreach($staffOptions as $staff)
-                                <option value="{{ $staff->id }}">{{ $staff->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-3">
+                    @if($customerList === 'all')
+                    <div class="col-12 col-md-6 col-lg-2">
                         <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Dịch vụ báo giá</label>
                         <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
                             <button class="form-select text-start d-flex justify-content-between align-items-center dropdown-toggle border-secondary-subtle" type="button" @click="open = !open">
@@ -296,6 +300,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
