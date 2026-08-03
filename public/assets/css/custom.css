@@ -1334,12 +1334,16 @@
 }
 
 /* Text-muted contrast tweak (light mode only) */
-:root:not([data-bs-theme="dark"]) .text-muted {
-    --bs-text-opacity: 1;
-    color: #000 !important;
+:root:not([data-bs-theme="dark"]) .dropdown-menu {
+    --bs-dropdown-link-color: var(--bs-body-color);
 }
-.dropdown-menu {
-    --bs-dropdown-link-color: #000;
+:root[data-bs-theme="dark"] .dropdown-menu {
+    --bs-dropdown-bg: #1e293b;
+    --bs-dropdown-border-color: rgba(255, 255, 255, 0.15);
+    --bs-dropdown-color: #f1f5f9;
+    --bs-dropdown-link-color: #f1f5f9;
+    --bs-dropdown-link-hover-color: #ffffff;
+    --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 /* Adjust sidebar nav height since bottom profile is removed */

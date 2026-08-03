@@ -65,8 +65,8 @@
             <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
                 <a href="#" class="d-flex align-items-center py-2 text-decoration-none" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
                     <div class="text-end me-2 d-none d-lg-inline-block">
-                        <div class="fw-bold text-dark">{{ $headerView->displayName(auth()->user()) }}</div>
-                        <small class="text-body d-block lh-sm">
+                        <div class="fw-bold text-body">{{ $headerView->displayName(auth()->user()) }}</div>
+                        <small class="text-secondary d-block lh-sm">
                             <i class="fi fi-rr-angle-down text-3xs me-1"></i> {{ $headerView->roleLabel(auth()->user()) }}
                         </small>
                     </div>
@@ -74,14 +74,14 @@
                         <x-user-avatar :user="auth()->user()" :size="32" />
                     </div>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
+                <ul class="dropdown-menu dropdown-menu-end bg-body-tertiary border border-light-subtle shadow-sm w-225px mt-1">
                     <li class="d-flex align-items-center p-2">
                         <div class="avatar avatar-sm rounded-circle me-2">
                             <x-user-avatar :user="auth()->user()" :size="32" />
                         </div>
                         <div class="ms-1 overflow-hidden">
-                            <div class="fw-bold text-dark text-truncate" style="max-width: 150px;">{{ $headerView->displayName(auth()->user()) }}</div>
-                            <small class="text-body d-block lh-sm text-truncate" style="max-width: 150px;">{{ auth()->user()->email }}</small>
+                            <div class="fw-bold text-body text-truncate" style="max-width: 150px;">{{ $headerView->displayName(auth()->user()) }}</div>
+                            <small class="text-secondary d-block lh-sm text-truncate" style="max-width: 150px;">{{ auth()->user()->email }}</small>
                         </div>
                     </li>
                     <li>
