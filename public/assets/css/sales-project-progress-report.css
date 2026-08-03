@@ -46,6 +46,7 @@
 
 .pipeline-contract-card,
 .pipeline-contract-card .card-body {
+    --bs-card-height: auto !important;
     flex: 0 0 auto !important;
     height: auto !important;
 }
