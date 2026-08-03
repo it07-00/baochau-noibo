@@ -314,22 +314,18 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-body-tertiary text-uppercase text-secondary" style="font-size: 0.75rem; border-bottom: 1px solid var(--bs-border-color-translucent);">
                     <tr>
-                        <th class="text-center px-3 py-3 text-nowrap" style="width: 80px">STT</th>
+                        <th class="text-center px-3 py-3 text-nowrap" style="width: 60px">STT</th>
                         <th class="px-4 py-3 text-nowrap">Khách hàng</th>
-                        <th class="px-4 py-3 text-nowrap">Số điện thoại</th>
-                        <th class="px-4 py-3 text-nowrap">Email</th>
                         @if($customerList !== 'all')
-                        <th class="px-4 py-3 text-nowrap">Người chăm sóc</th>
-                        <th class="px-4 py-3 text-nowrap">Trạng thái CS</th>
-                        <th class="px-4 py-3 text-nowrap">Ngành / Lĩnh vực</th>
-                        <th class="px-4 py-3 text-nowrap">Phụ lục</th>
+                        <th class="px-3 py-3 text-nowrap" style="min-width: 210px;">Người chăm sóc</th>
+                        <th class="px-3 py-3 text-nowrap" style="min-width: 195px;">Trạng thái CS</th>
                         @endif
                         <th class="px-4 py-3 text-nowrap">Khu vực</th>
                         @if($customerList === 'all')
                         <th class="px-4 py-3 text-nowrap">Dịch vụ &amp; hiệu suất</th>
                         @endif
                         @if($canEdit || $canDelete)
-                        <th class="text-end pe-4 py-3 text-nowrap" style="width: 120px;">Thao tác</th>
+                        <th class="text-end pe-4 py-3 text-nowrap" style="width: 100px;">Thao tác</th>
                         @endif
                     </tr>
                 </thead>
@@ -337,9 +333,9 @@
                     @php
                         $currentGroup = null;
                         $hasActions = $canEdit || $canDelete;
-                        // all: STT, KH, phone, email, khu vực, dịch vụ, [actions] = 6+1 = 7(6)
-                        // customer list: STT, KH, phone, email, caretaker, care_status, sector, appendix, khu vực, [actions] = 9+1 = 10(9)
-                        $columnCount = ($customerList !== 'all' ? 10 : 7) - ($hasActions ? 0 : 1);
+                        // all: STT, KH, khu vực, dịch vụ, [actions] = 5(4)
+                        // customer list: STT, KH, caretaker, care_status, khu vực, [actions] = 6(5)
+                        $columnCount = ($customerList !== 'all' ? 6 : 5) - ($hasActions ? 0 : 1);
                     @endphp
                     @forelse($customers as $customer)
                         @if($groupBy !== 'none' && $currentGroup !== $this->groupValue($customer))
@@ -360,53 +356,83 @@
                             <td class="text-center text-muted fw-semibold ps-4">
                                 {{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}
                             </td>
-                            <td class="px-4">
-                                <div style="min-width: 220px; max-width: 320px; white-space: normal; line-height: 1.4;">
-                                    @if($isCustomerListDirectory)
-                                        <span class="fw-bold text-body">{{ $customer->name }}</span>
-                                    @else
-                                        <a href="{{ route('app.customers.contracts', $customer) }}"
-                                           class="fw-bold text-body text-decoration-none link-primary">
-                                            {{ $customer->name }}
-                                        </a>
-                                    @endif
-                                    @if($customer->tax_code)
-                                        <div class="small text-muted mt-1 cursor-pointer"
-                                             wire:click="filterBySearch('{{ addslashes($customer->tax_code) }}')"
-                                             title="Lọc theo MST: {{ $customer->tax_code }}">
-                                            MST: <span class="text-body">{{ $customer->tax_code }}</span>
+                            <td class="px-4 py-3">
+                                <div style="min-width: 250px; max-width: 380px; white-space: normal; line-height: 1.45;">
+                                    <div>
+                                        @if($isCustomerListDirectory)
+                                            <span class="fw-bold text-body">{{ $customer->name }}</span>
+                                        @else
+                                            <a href="{{ route('app.customers.contracts', $customer) }}"
+                                               class="fw-bold text-body text-decoration-none link-primary">
+                                                {{ $customer->name }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                    @if($customer->tax_code || $customer->representative || ($customer->contact_person && $customer->contact_person !== $customer->representative))
+                                        <div class="small text-muted mt-1">
+                                            @if($customer->tax_code)
+                                                <span class="me-2 cursor-pointer"
+                                                      wire:click="filterBySearch('{{ addslashes($customer->tax_code) }}')"
+                                                      title="Lọc theo MST: {{ $customer->tax_code }}">
+                                                    MST: <span class="text-body fw-medium">{{ $customer->tax_code }}</span>
+                                                </span>
+                                            @endif
+                                            @if($customer->representative)
+                                                <span class="me-2 cursor-pointer"
+                                                      wire:click="filterBySearch('{{ addslashes($customer->representative) }}')"
+                                                      title="Lọc theo đại diện: {{ $customer->representative }}">
+                                                    ĐĐ: <span class="text-body fw-medium">{{ $customer->representative }}</span>
+                                                </span>
+                                            @endif
+                                            @if($customer->contact_person && $customer->contact_person !== $customer->representative)
+                                                <span class="cursor-pointer"
+                                                      wire:click="filterBySearch('{{ addslashes($customer->contact_person) }}')"
+                                                      title="Lọc theo người liên hệ: {{ $customer->contact_person }}">
+                                                    LH: <span class="text-body fw-medium">{{ $customer->contact_person }}</span>
+                                                </span>
+                                            @endif
                                         </div>
                                     @endif
-                                    @if($customer->representative)
-                                        <div class="small text-muted mt-1 cursor-pointer"
-                                             wire:click="filterBySearch('{{ addslashes($customer->representative) }}')"
-                                             title="Lọc theo đại diện: {{ $customer->representative }}">
-                                            Đại diện: <span class="text-body">{{ $customer->representative }}</span>
+                                    @if($customer->phone || $customer->email)
+                                        <div class="small text-muted mt-1 d-flex flex-wrap align-items-center gap-2">
+                                            @if($customer->phone)
+                                                <a href="tel:{{ $customer->phone }}" class="text-body text-decoration-none d-inline-flex align-items-center gap-1">
+                                                    <i class="fa-solid fa-phone text-secondary" style="font-size: 0.72rem;"></i>
+                                                    <span>{{ $customer->phone }}</span>
+                                                </a>
+                                            @endif
+                                            @if($customer->phone && $customer->email)
+                                                <span class="text-muted opacity-50">•</span>
+                                            @endif
+                                            @if($customer->email)
+                                                <a href="mailto:{{ $customer->email }}" class="text-body text-decoration-none d-inline-flex align-items-center gap-1 text-truncate" style="max-width: 210px;" title="{{ $customer->email }}">
+                                                    <i class="fa-solid fa-envelope text-secondary" style="font-size: 0.72rem;"></i>
+                                                    <span>{{ $customer->email }}</span>
+                                                </a>
+                                            @endif
                                         </div>
                                     @endif
-                                    @if($customer->contact_person && $customer->contact_person !== $customer->representative)
-                                        <div class="small text-muted mt-1 cursor-pointer"
-                                             wire:click="filterBySearch('{{ addslashes($customer->contact_person) }}')"
-                                             title="Lọc theo người liên hệ: {{ $customer->contact_person }}">
-                                            Liên hệ: <span class="text-body">{{ $customer->contact_person }}</span>
+                                    @if($customer->sector || $customer->appendix)
+                                        <div class="d-flex flex-wrap align-items-center gap-1.5 mt-1.5">
+                                            @if($customer->sector)
+                                                <span class="badge bg-body-tertiary text-body border border-secondary-subtle" style="font-weight: 500; font-size: 0.72rem;" title="Ngành/Lĩnh vực: {{ $customer->sector }}">
+                                                    <i class="fa-solid fa-layer-group me-1 text-secondary"></i>{{ $customer->sector }}
+                                                </span>
+                                            @endif
+                                            @if($customer->appendix)
+                                                <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning-subtle" style="font-size: 0.72rem;" title="Phụ lục {{ $customer->appendix }}">
+                                                    PL {{ $customer->appendix }}
+                                                </span>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-4 text-nowrap">{{ $customer->phone ?: '—' }}</td>
-                            <td class="px-4">
-                                @if($customer->email)
-                                    <a href="mailto:{{ $customer->email }}" class="text-body text-decoration-none">{{ $customer->email }}</a>
-                                @else
-                                    —
-                                @endif
-                            </td>
                             @if($customerList !== 'all')
-                            <td class="px-3" style="min-width: 175px;">
+                            <td class="px-3" style="min-width: 210px;">
                                 @if($canEdit)
-                                    <select class="form-select form-select-sm border-secondary-subtle py-1 px-2 text-truncate"
+                                    <select class="form-select form-select-sm border-secondary-subtle py-1.5 px-2.5 text-truncate w-100"
                                             wire:change="updateCaretaker({{ $customer->id }}, $event.target.value)"
-                                            style="font-size: 0.82rem; max-width: 190px;"
                                             title="Phân công người chăm sóc">
                                         <option value="">Chưa phân công</option>
                                         @foreach($caretakerOptions as $caretaker)
@@ -416,25 +442,11 @@
                                         @endforeach
                                     </select>
                                 @else
-                                    <span class="text-body">{{ $customer->caretaker?->name ?: '—' }}</span>
+                                    <span class="text-body fw-medium">{{ $customer->caretaker?->name ?: '—' }}</span>
                                 @endif
                             </td>
-                            <td class="px-3" style="min-width: 155px;">
+                            <td class="px-3" style="min-width: 195px;">
                                 @include('livewire.admin.customers.partials.care-status-cell', ['customer' => $customer, 'careStatusOptions' => $careStatusOptions, 'canEdit' => $canEdit])
-                            </td>
-                            <td class="px-4 text-nowrap" style="min-width: 160px; max-width: 240px;">
-                                @if($customer->sector)
-                                    <span class="small text-body" title="{{ $customer->sector }}">{{ $customer->sector }}</span>
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
-                            </td>
-                            <td class="px-4 text-nowrap text-center">
-                                @if($customer->appendix)
-                                    <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning-subtle px-2 py-1" style="font-size: 0.72rem;">{{ $customer->appendix }}</span>
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
                             </td>
                             @endif
                             <td class="px-4">
