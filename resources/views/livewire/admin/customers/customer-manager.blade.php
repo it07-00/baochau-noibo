@@ -148,6 +148,27 @@
                     </select>
                 </div>
 
+                @if($customerList !== 'all')
+                <div class="col-6 col-md-3 col-xl-2">
+                    <label for="sector-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Ngành / Lĩnh vực</label>
+                    <select id="sector-filter" class="form-select border-secondary-subtle" wire:model.live="sectorFilter">
+                        <option value="">Tất cả ngành/lĩnh vực</option>
+                        @foreach($sectorOptions as $sector)
+                            <option value="{{ $sector }}">{{ $sector }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3 col-xl-1">
+                    <label for="appendix-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Phụ lục</label>
+                    <select id="appendix-filter" class="form-select border-secondary-subtle" wire:model.live="appendixFilter">
+                        <option value="">Tất cả</option>
+                        @foreach($appendixOptions as $appendix)
+                            <option value="{{ $appendix }}">{{ $appendix }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @else
                 <div class="col-6 col-md-3 col-xl-2">
                     <label for="industrial-park-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Khu công nghiệp</label>
                     <select id="industrial-park-filter" class="form-select border-secondary-subtle" wire:model.live="industrialParkFilter">
@@ -157,8 +178,9 @@
                         @endforeach
                     </select>
                 </div>
+                @endif
 
-                <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-12 col-md-6 {{ $customerList !== 'all' ? 'col-xl-2' : 'col-xl-3' }}">
                     <label for="staff-filter" class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
                         {{ $customerList !== 'all' ? 'Người chăm sóc' : 'Nhân viên phụ trách' }}
                     </label>
