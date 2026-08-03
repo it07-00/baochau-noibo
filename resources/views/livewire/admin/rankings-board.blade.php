@@ -270,12 +270,17 @@ document.addEventListener('DOMContentLoaded', function () {
             destroyChart('salesRanking');
             salesChartEl.innerHTML = '';
 
+            var isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            var textColor = isDark ? '#cbd5e1' : '#64748b';
+            var gridColor = isDark ? 'rgba(255,255,255,0.1)' : '#e9ecef';
+
             if (labels.length) {
                 window.rankingsBoardCharts.salesRanking = new ApexCharts(salesChartEl, {
                     chart: {
                         type: 'bar',
                         height: 360,
-                        toolbar: { show: false }
+                        toolbar: { show: false },
+                        foreColor: textColor
                     },
                     series: [
                         { name: 'Tổng doanh số', data: totals }
@@ -285,11 +290,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         labels: {
                             rotate: -15,
                             trim: true,
-                            style: { fontSize: '12px' }
+                            style: { fontSize: '12px', colors: textColor }
                         }
                     },
                     yaxis: {
                         labels: {
+                            style: { colors: textColor },
                             formatter: function (val) { return formatCurrency(val); }
                         }
                     },
@@ -311,12 +317,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         show: false
                     },
                     tooltip: {
+                        theme: isDark ? 'dark' : 'light',
                         y: {
                             formatter: function (val) { return formatCurrency(val); }
                         }
                     },
                     grid: {
-                        borderColor: '#e9ecef'
+                        borderColor: gridColor
                     }
                 });
 
